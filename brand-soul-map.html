@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quantum Terminal: Brand Soul Map</title>
+
+    
+
+    <!-- React & Babel -->
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    
+
+    <!-- PDF Export Libraries -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    
+
+    <!-- Tailwind Setup -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+
+        tailwind.config = {
+
+            darkMode: 'class',
+
+            theme: {
+
+                extend: {
+
+                    fontFamily: {
+
+                        sans: ['Inter', 'sans-serif'],
+
+                        mono: ['JetBrains Mono', 'Courier New', 'monospace'],
+
+                    },
+
+                    colors: {
+
+                        quantum: '#4ade80',
+
+                        alert: '#ef4444',
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    </script>
+
+    <style>
+    .qb-send-results-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #4ade80;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 16px 32px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-top: 24px;
+      transition: opacity .15s;
+    }
+    .qb-send-results-btn:hover { opacity: .85; }
+
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        
+
+        body {
+
+            font-family: 'Inter', sans-serif;
+
+            background-color: #ffffff;
+
+            color: #000000;
+
+            overflow: hidden;
+
+            transition: background-color 0.3s ease, color 0.3s ease;
+
+        }
+
+        
+
+        html.dark body {
+
+            background-color: #000000;
+
+            color: #ffffff;
+
+        }
+
+        
+
+        /* The Global Noise Texture */
+
+        .noise-overlay {
+
+            position: fixed;
+
+            top: 0; left: 0; width: 100vw; height: 100vh;
+
+            pointer-events: none;
+
+            z-index: 9999;
+
+            opacity: 0.025;
+
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+
+            mix-blend-mode: difference;
+
+        }
+
+        /* Clinical Cyber-Glassmorphism */
+
+        .glass-panel {
+
+            background: rgba(255, 255, 255, 0.8);
+
+            backdrop-filter: blur(24px);
+
+            -webkit-backdrop-filter: blur(24px);
+
+            border: 1px solid rgba(0, 0, 0, 0.06);
+
+            border-radius: 32px;
+
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.02);
+
+            transition: background-color 0.3s, border-color 0.3s;
+
+        }
+
+        
+
+        html.dark .glass-panel {
+
+            background: rgba(10, 10, 10, 0.6);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+
+        }
+
+        .glass-dock {
+
+            background: rgba(255, 255, 255, 0.9);
+
+            backdrop-filter: blur(24px);
+
+            -webkit-backdrop-filter: blur(24px);
+
+            border: 1px solid rgba(0, 0, 0, 0.08);
+
+            border-radius: 40px;
+
+            transition: background-color 0.3s, border-color 0.3s;
+
+        }
+
+        html.dark .glass-dock {
+
+            background: rgba(10, 10, 10, 0.85);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+        /* Custom Scrollbar - Minimal */
+
+        ::-webkit-scrollbar { width: 4px; }
+
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
+
+        html.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+
+        ::-webkit-scrollbar-thumb:hover { background: #4ade80; }
+
+        /* Physics & Motion */
+
+        .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes fadeInUp {
+
+            from { opacity: 0; transform: translateY(24px); }
+
+            to { opacity: 1; transform: translateY(0); }
+
+        }
+
+        .image-overlay-text { text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+
+        
+
+        /* Grayscale & High Contrast for Visual Headers */
+
+        .quantum-img {
+
+            filter: grayscale(100%) contrast(125%);
+
+            opacity: 0.8;
+
+            mix-blend-mode: luminosity;
+
+        }
+
+        html.dark .quantum-img {
+
+            opacity: 0.5;
+
+        }
+
+    </style>
+
+    <!-- Firebase Imports -->
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        
+
+        window.FirebaseCore = { 
+
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, 
+
+            onAuthStateChanged, GoogleAuthProvider, signInWithPopup, 
+
+            getFirestore, collection, doc, setDoc, onSnapshot 
+
+        };
+
+    </script>
+
+</head>
+
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        const ensureFirebase = () => {
+
+            if (!window.FirebaseCore) throw new Error("Firebase not loaded");
+
+            return window.FirebaseCore;
+
+        };
+
+        // --- ICONS (Safe Inline SVG) ---
+
+        const SvgIcon = ({ children, className = "w-5 h-5", onClick, style }) => (
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className} onClick={onClick} style={style}>
+
+                {children}
+
+            </svg>
+
+        );
+
+        const IconCamera = (props) => <SvgIcon {...props}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></SvgIcon>;
+
+        const IconUsers = (props) => <SvgIcon {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></SvgIcon>;
+
+        const IconMusic = (props) => <SvgIcon {...props}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></SvgIcon>;
+
+        const IconGlobe = (props) => <SvgIcon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></SvgIcon>;
+
+        const IconMap = (props) => <SvgIcon {...props}><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></SvgIcon>;
+
+        const IconCheck = (props) => <SvgIcon className={props.className || "w-4 h-4"} {...props}><polyline points="20 6 9 17 4 12"/></SvgIcon>;
+
+        const IconChevronRight = (props) => <SvgIcon {...props}><polyline points="9 18 15 12 9 6"/></SvgIcon>;
+
+        const IconChevronLeft = (props) => <SvgIcon {...props}><polyline points="15 18 9 12 15 6"/></SvgIcon>;
+
+        const IconLock = (props) => <SvgIcon className={props.className || "w-4 h-4"} {...props}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></SvgIcon>;
+
+        const IconMenu = (props) => <SvgIcon {...props}><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></SvgIcon>;
+
+        const IconX = (props) => <SvgIcon className={props.className || "w-4 h-4"} {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></SvgIcon>;
+
+        const IconCompass = (props) => <SvgIcon {...props}><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></SvgIcon>;
+
+        const IconCopy = (props) => <SvgIcon {...props}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></SvgIcon>;
+
+        const IconDownload = (props) => <SvgIcon {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></SvgIcon>;
+
+        const IconSun = (props) => <SvgIcon {...props}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></SvgIcon>;
+
+        const IconMoon = (props) => <SvgIcon {...props}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></SvgIcon>;
+
+        const IconTerminal = (props) => <SvgIcon {...props}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></SvgIcon>;
+
+        // --- DATA DEFAULTS ---
+
+        const IMAGES = {
+
+            intro: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200&auto=format&fit=crop",
+
+            identity: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+
+            purpose: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?q=80&w=1200&auto=format&fit=crop",
+
+            craft: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
+
+            tribe: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200&auto=format&fit=crop",
+
+            signal: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop",
+
+            world: "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?q=80&w=1200&auto=format&fit=crop",
+
+            synthesis: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200&auto=format&fit=crop"
+
+        };
+
+        const INITIAL_DATA = {
+
+            brandName: '',
+
+            mod1Force: '', mod1Room: '', mod1Myth: '', mod1Portrait: '',
+
+            docTitle: '', docImage: '', docArgument: '', docVoices: '', docFinalLine: '', docReflection: '',
+
+            manifestoQuoteId: null, manifestoBelief: '', manifestoProof: '', manifestoOpposite: '', originalManifesto: '',
+
+            primaryArch: null, secondaryArch: null, tensionArch: null, archFusion: '', archShadow: '',
+
+            abName: '', abPromise: '', abBelief: '', abSells: '', abNever: '', 
+
+            bBelief: '', bSells: '', bNever: '', posAdj1: '', posAdj2: '', posAdj3: '', posFor: '', posNotFor: '',
+
+            cWords: [], cEss: '', cuWords: [], cuEss: '', vWords: [], vEss: '', lWords: [], lEss: '', valWords: [], valEss: '', 
+
+            cEssReason: '', cuEssReason: '', vEssReason: '', lEssReason: '', valEssReason: '',
+
+            fanLetter: '', fanSurprise: '', fanNeeds: '', fanTarget: '',
+
+            a1: '', a1Q: '', a2: '', a2Q: '', na1: '', na1C: '', na2: '', na2C: '', alignPrinciple: '', alignAlways: '', alignNever: '',
+
+            leadChoice: '', infChoice: '', innChoice: '', creChoice: '', endChoice: '', behTheme: '',
+
+            songs: [{n:'', t:'', f:'', w:''}, {n:'', t:'', f:'', w:''}, {n:'', t:'', f:'', w:''}, {n:'', t:'', f:'', w:''}, {n:'', t:'', f:'', w:''}], 
+
+            rhythmTempo: '', rhythmEmotion: '', voiceSynthesis: '',
+
+            always: ['', '', '', '', ''], nevers: ['', '', '', '', ''], 
+
+            coreAlwaysIdx: null, coreNeverIdx: null, coreConviction: '', decFramework: '',
+
+            movementId: null, movBelief: '', movStance: '', movRefusal: '',
+
+            firstName: '', lastName: '', companyName: '', email: '',
+
+            aiSpark: '', aiEssence: ''
+
+        };
+
+        const BINARIES = [
+
+            { id: "lead", options: [{ name: "Gandhi", desc: "Moral authority, patience. Long game." }, { name: "Malcolm X", desc: "Urgency, confrontation. Truth." }] },
+
+            { id: "influence", options: [{ name: "Oprah", desc: "Intimacy at scale. Vulnerability." }, { name: "Anna Wintour", desc: "Authority through curation. Standard." }] },
+
+            { id: "innovate", options: [{ name: "Elon Musk", desc: "Moonshots. Changing physics." }, { name: "Steve Jobs", desc: "Obsession with 3mm. Experience." }] },
+
+            { id: "create", options: [{ name: "Picasso", desc: "Prolific, form-breaking. Expansive." }, { name: "Frida Kahlo", desc: "Autobiographical, interior. Intensive." }] },
+
+            { id: "endure", options: [{ name: "Muhammad Ali", desc: "Conviction and professional identity." }, { name: "Michael Jordan", desc: "Standard set and refused to lower." }] }
+
+        ];
+
+        const BINARY_KEYS = { lead: 'leadChoice', influence: 'infChoice', innovate: 'innChoice', create: 'creChoice', endure: 'endChoice' };
+
+        const ARCHETYPES = [
+
+            { id: "hero", name: "The Hero", brand: "Nike" }, { id: "rebel", name: "The Rebel", brand: "Harley" },
+
+            { id: "magician", name: "The Magician", brand: "Disney" }, { id: "explorer", name: "The Explorer", brand: "Patagonia" },
+
+            { id: "sage", name: "The Sage", brand: "TED" }, { id: "innocent", name: "The Innocent", brand: "Dove" },
+
+            { id: "everyman", name: "The Everyman", brand: "IKEA" }, { id: "jester", name: "The Jester", brand: "Old Spice" },
+
+            { id: "lover", name: "The Lover", brand: "Gucci" }, { id: "caregiver", name: "The Caregiver", brand: "TOMS" },
+
+            { id: "creator", name: "The Creator", brand: "LEGO" }, { id: "ruler", name: "The Ruler", brand: "Microsoft" }
+
+        ];
+
+        const WORD_BANKS = {
+
+            culture: ["Visionary", "Grounded", "Rebellious", "Sacred", "Electric", "Intimate", "Rigorous", "Warm", "Sovereign", "Expansive", "Devoted", "Radical", "Elegant", "Raw", "Structured", "Wild", "Generous", "Precise", "Playful", "Ancient", "Progressive", "Still", "Fierce"],
+
+            customers: ["Seeker", "Builder", "Inheritor", "Questioner", "Transformer", "Leader", "Visionary", "Wounded healer", "Disruptor", "Awakened", "Outlier", "Devotee", "Pioneer", "Overcomer", "Architect", "Alchemist", "Observer", "Catalyst", "Lover", "Warrior"],
+
+            voice: ["Direct", "Poetic", "Warm", "Sharp", "Playful", "Authoritative", "Intimate", "Honest", "Ceremonial", "Conversational", "Provocative", "Gentle", "Urgent", "Philosophical", "Precise", "Irreverent", "Compassionate", "Intellectual", "Mythic", "Grounded", "Passionate", "Calm"],
+
+            look: ["Cinematic", "Tactile", "Luminous", "Minimal", "Lush", "Industrial", "Sacred", "Futuristic", "Handcrafted", "Architectural", "Organic", "Electric", "Timeless", "Avant-garde", "Earthy", "Sleek", "Layered", "Raw", "Curated", "Ancient", "Monumental"],
+
+            value: ["Clarity", "Momentum", "Belonging", "Permission", "Authority", "Courage", "Mastery", "Peace", "Identity", "Direction", "Power", "Confidence", "Wholeness", "Voice", "Legacy", "Freedom", "Precision", "Visibility", "Purpose", "Wealth", "Dignity"]
+
+        };
+
+        const MOVEMENTS = [
+
+            { id: "renaissance", name: "The Renaissance", desc: "Human capability and beauty as an organizing principle." },
+
+            { id: "enlightenment", name: "The Enlightenment", desc: "Reason, transparency, and dignity through information." },
+
+            { id: "harlem", name: "The Harlem Renaissance", desc: "Art as resistance, identity as revolution from the margins." },
+
+            { id: "civil", name: "The Civil Rights Movement", desc: "Dignity is non-negotiable. Stated value must be practiced." },
+
+            { id: "punk", name: "Punk", desc: "Bypass gatekeepers. DIY as philosophy, conviction over permission." },
+
+            { id: "modernism", name: "Modernism", desc: "Refusing the existing form entirely to build a new category." },
+
+            { id: "romantic", name: "The Romantic Movement", desc: "Emotion, sublime, and deeply human at the center." },
+
+            { id: "futurism", name: "Futurism", desc: "Burn boats, bet on the future, rejection of nostalgia." },
+
+            { id: "environmental", name: "The Environmental Movement", desc: "Long-term view. What we leave behind > what we accumulate." }
+
+        ];
+
+        const QUOTES = [
+
+            { id: 1, quote: "I am large, I contain multitudes.", author: "Walt Whitman" },
+
+            { id: 2, quote: "The most common way people give up their power is by thinking they don't have any.", author: "Alice Walker" },
+
+            { id: 3, quote: "To exist is to resist.", author: "Frantz Fanon" },
+
+            { id: 4, quote: "Everything you can imagine is real.", author: "Pablo Picasso" },
+
+            { id: 5, quote: "The wound is the place where the light enters you.", author: "Rumi" }
+
+        ];
+
+        const generateAI = async (data) => {
+
+            const primA = ARCHETYPES.find(a=>a.id===data.primaryArch)?.name || '';
+            const secA = ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name || '';
+            const mov = MOVEMENTS.find(m=>m.id===data.movementId)?.name || '';
+            const alwaysText = data.coreAlwaysIdx !== null && data.always?.[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : '';
+            const neverText = data.coreNeverIdx !== null && data.nevers?.[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : '';
+
+            const systemPrompt = `You are a master brand strategist trained in the Quantum Branding methodology. Your role is to synthesize raw brand inputs into precise, emotionally resonant brand intelligence. You do not write marketing copy. You surface truth.
+
+Quantum Branding principles: identity before tactics. Coherence before scale. Emotional truth before performance. The brand exists as a paradox — it contains contradictions that make it real, not a positioning statement.
+
+A Spark statement is not a tagline. It is a declaration of the brand's place in the world — specific, bold, paradoxical, and undeniably true to the inputs given. It should feel like it could only be about this exact brand.
+
+A Brand Essence is a single compressed sentence: "[Brand Name] — The brand that transforms [tension/problem] into [transformation/outcome]." It must be specific to the inputs, not generic.
+
+Respond with valid JSON only. No preamble. No explanation. No markdown. Just the JSON object.`;
+
+            const userPrompt = `Brand Name: ${data.brandName || 'Unknown'}
+Primary Archetype: ${primA}
+Secondary Archetype: ${secA}
+Movement/Heritage: ${mov}
+Lead Figure (how they move through the world): ${data.leadChoice || ''}
+Innovator Figure: ${data.innChoice || ''}
+Core Belief (manifesto): ${data.manifestoBelief || ''}
+Three defining adjectives: ${data.posAdj1 || ''}, ${data.posAdj2 || ''}, ${data.posAdj3 || ''}
+Target audience essence: ${data.cuEss || ''}
+Audience hidden baggage/surprise: ${data.fanSurprise || ''}
+Audience target behavior: ${data.fanTarget || ''}
+Core doctrine: ${data.docArgument || ''}
+Original manifesto statement: ${data.originalManifesto || ''}
+Natural force the brand embodies: ${data.mod1Force || ''}
+Always: ${alwaysText}
+Never: ${neverText}
+
+Generate a Spark statement (200-350 words, declarative, paradoxical, specific — reads like a manifesto, not a pitch) and a Brand Essence (one sentence, format: "[Brand Name] — The brand that transforms [X] into [Y]").
+
+Return this exact JSON structure:
+{
+  "spark": "...",
+  "essence": "..."
+}`;
+
+            try {
+
+                const response = await fetch('/api/claude', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1200,
+                        system: systemPrompt,
+                        messages: [{ role: 'user', content: userPrompt }]
+                    })
+                });
+
+                const result = await response.json();
+                if (result.error) throw new Error(result.error.message || 'API error');
+
+                const text = result.content?.[0]?.text || '';
+                const clean = text.replace(/```json|```/g, '').trim();
+                const parsed = JSON.parse(clean);
+                return parsed;
+
+            } catch (e) {
+
+                console.error("AI Generation failed:", e);
+                return null;
+
+            }
+
+        };
+
+        const sendEmail = async (data, spark, essence) => {
+            // Email dispatch via future /api/send-email integration
+            // Klaviyo or Resend can be wired here once configured
+        };
+
+        const generateDefaultMap = (data) => {
+
+            const primA = ARCHETYPES.find(a=>a.id===data.primaryArch)?.name || '[Primary]';
+
+            const secA = ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name || '[Secondary]';
+
+            const mov = MOVEMENTS.find(m=>m.id===data.movementId)?.name || '[Movement]';
+
+            const alwaysText = data.coreAlwaysIdx !== null && data.always[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : '[core always]';
+
+            const neverText = data.coreNeverIdx !== null && data.nevers[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : '[core never]';
+
+            const spark = `${data.brandName} is not just a business. Moving through the world like ${data.leadChoice || '[Lead Figure]'} and innovating like ${data.innChoice || '[Innovator]'}, we are the only brand that can be ${primA} and ${secA} simultaneously. We exist to prove that ${data.manifestoBelief || '[belief]'}. We are definitively ${data.posAdj1 || '[adj]'}, ${data.posAdj2 || '[adj]'}, ${data.posAdj3 || '[adj]'}, built exclusively for the ${data.cuEss || '[audience]'} who arrives carrying ${data.fanSurprise || '[baggage]'}. We will always ${alwaysText}, and we absolutely refuse to ${neverText}, because we are the contemporary heirs to ${mov}. This is not a market position. It is a place in history.`;
+
+            const essence = `${data.brandName} — The brand that transforms ${data.docArgument || '[argument]'} into ${data.originalManifesto || '[manifesto]'}.`;
+
+            return { spark, essence, primA, secA, mov, alwaysText, neverText };
+
+        };
+
+        // --- UI PRIMITIVES (QUANTUM BRANDING) ---
+
+        const VisualHeader = ({ title, subtitle, imageUrl }) => (
+
+            <div className="relative w-full h-56 md:h-72 rounded-[32px] overflow-hidden mb-12 border border-black/5 dark:border-white/10 fade-in">
+
+                <img src={imageUrl} alt={title} className="quantum-img absolute inset-0 w-full h-full object-cover" />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 dark:from-black dark:via-black/80 to-transparent flex flex-col items-center justify-end text-center p-8">
+
+                    <span className="inline-block rounded-full border border-quantum/30 bg-quantum/10 text-quantum font-mono text-[10px] tracking-[0.3em] px-3 py-1 uppercase mb-4">
+
+                        {subtitle}
+
+                    </span>
+
+                    <h2 className="text-4xl md:text-5xl font-black text-black dark:text-white tracking-tighter uppercase leading-[1.1] image-overlay-text mb-2">{title}</h2>
+
+                </div>
+
+            </div>
+
+        );
+
+        const FormField = ({ label, helper, children }) => (
+
+            <div className="mb-8">
+
+                <label className="block font-mono text-[10px] tracking-[0.3em] text-black/70 dark:text-white/50 uppercase mb-2">{label}</label>
+
+                {helper && <p className="font-light italic text-zinc-500 text-sm mb-3 leading-relaxed">{helper}</p>}
+
+                {children}
+
+            </div>
+
+        );
+
+        const TextInput = ({ value, onChange, placeholder, rows = 3 }) => (
+
+            <textarea className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-[24px] p-5 text-black dark:text-white font-mono text-sm focus:outline-none focus:ring-1 focus:ring-quantum focus:border-quantum transition-all shadow-none resize-none" rows={rows} placeholder={placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} />
+
+        );
+
+        const InputLine = ({ value, onChange, placeholder, type = "text" }) => (
+
+            <input type={type} className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-[16px] p-4 text-black dark:text-white font-mono text-sm focus:outline-none focus:ring-1 focus:ring-quantum focus:border-quantum transition-all shadow-none" placeholder={placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} />
+
+        );
+
+        const CheckpointPanel = ({ title, subtitle, children }) => (
+
+            <div className="max-w-3xl mx-auto py-8">
+
+                <div className="text-center mb-8">
+
+                    <span className="inline-block rounded-full border border-quantum/30 bg-quantum/10 text-quantum font-mono text-[10px] tracking-[0.3em] px-3 py-1 uppercase mb-4">
+
+                        {subtitle}
+
+                    </span>
+
+                    <h2 className="text-4xl font-black tracking-tighter text-black dark:text-white uppercase leading-[1.1]">{title}</h2>
+
+                </div>
+
+                <div className="glass-panel p-10 md:p-14 rounded-[32px] font-sans text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed relative overflow-hidden">
+
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-quantum/20 via-quantum to-quantum/20"></div>
+
+                    {children}
+
+                </div>
+
+                <p className="text-center font-mono text-quantum text-[10px] uppercase tracking-[0.4em] mt-8">SYS.SYNCED</p>
+
+            </div>
+
+        );
+
+        const App = () => {
+
+            const [user, setUser] = useState(null);
+
+            const [db, setDb] = useState(null);
+
+            const [authInstance, setAuthInstance] = useState(null);
+
+            const [isLoaded, setIsLoaded] = useState(false);
+
+            const [isSaving, setIsSaving] = useState(false);
+
+            const [currentStep, setCurrentStep] = useState(0);
+
+            const [maxStepReached, setMaxStepReached] = useState(0);
+
+            const [data, setData] = useState(INITIAL_DATA);
+
+            const [isGenerating, setIsGenerating] = useState(false);
+
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+            
+
+            const [isDarkMode, setIsDarkMode] = useState(() => {
+
+                if (typeof window !== 'undefined') {
+
+                    const saved = localStorage.getItem('theme');
+
+                    if (saved) return saved === 'dark';
+
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                }
+
+                return true; // Default to dark for the true Quantum Branding experience
+
+            });
+
+            useEffect(() => {
+
+                if (isDarkMode) {
+
+                    document.documentElement.classList.add('dark');
+
+                    localStorage.setItem('theme', 'dark');
+
+                } else {
+
+                    document.documentElement.classList.remove('dark');
+
+                    localStorage.setItem('theme', 'light');
+
+                }
+
+            }, [isDarkMode]);
+
+            const toggleTheme = () => setIsDarkMode(!isDarkMode);
+
+            const isStepValid = (idx) => {
+
+                switch(idx) {
+
+                    case 0: return data.brandName.trim() !== '';
+
+                    case 1: return data.mod1Force.trim() !== '' && data.mod1Portrait.trim() !== '';
+
+                    case 2: return true; 
+
+                    case 3: return data.docArgument.trim() !== '' && data.originalManifesto.trim() !== '';
+
+                    case 4: return true; 
+
+                    case 5: return data.primaryArch !== null && data.secondaryArch !== null && data.posAdj1.trim() !== '';
+
+                    case 6: return true; 
+
+                    case 7: return data.cEss !== '' && data.cuEss !== '' && data.fanTarget.trim() !== '';
+
+                    case 8: return true; 
+
+                    case 9: return data.a1.trim() !== '' && data.na1.trim() !== '' && data.leadChoice !== '';
+
+                    case 10: return true; 
+
+                    case 11: return data.coreAlwaysIdx !== null && data.coreNeverIdx !== null && data.always[data.coreAlwaysIdx]?.trim() !== '' && data.movementId !== null;
+
+                    case 12: return true; 
+
+                    case 13:
+
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                        const isValidEmail = emailRegex.test(data.email.trim());
+
+                        const hasName = data.firstName.trim() !== '' && data.lastName.trim() !== '';
+
+                        const hasCompany = data.companyName.trim() !== '';
+
+                        return isValidEmail && (hasName || hasCompany);
+
+                    case 14: return true; 
+
+                    default: return false;
+
+                }
+
+            };
+
+            useEffect(() => {
+
+                const initFirebase = async () => {
+
+                    try {
+
+                        const { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore } = ensureFirebase();
+
+                        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+                        const app = initializeApp(firebaseConfig);
+
+                        const auth = getAuth(app);
+
+                        const firestoreDb = getFirestore(app);
+
+                        setDb(firestoreDb);
+
+                        setAuthInstance(auth);
+
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+
+                            await signInWithCustomToken(auth, __initial_auth_token);
+
+                        } else {
+
+                            await signInAnonymously(auth);
+
+                        }
+
+                        onAuthStateChanged(auth, (usr) => { if (usr) setUser(usr); });
+
+                    } catch (err) {
+
+                        console.error("Firebase init failed:", err);
+
+                        setIsLoaded(true); 
+
+                    }
+
+                };
+
+                initFirebase();
+
+            }, []);
+
+            useEffect(() => {
+
+                if (!user || !db) return;
+
+                const { doc, onSnapshot } = ensureFirebase();
+
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+                const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'brandMap', 'progress');
+
+                const unsubscribe = onSnapshot(docRef, (docSnap) => {
+
+                    if (docSnap.exists()) {
+
+                        const savedData = docSnap.data();
+
+                        if (savedData.answers) setData(prev => ({...prev, ...savedData.answers}));
+
+                        if (savedData.maxStep !== undefined && !isLoaded) {
+
+                            setMaxStepReached(savedData.maxStep);
+
+                            setCurrentStep(savedData.currentStep || 0);
+
+                        }
+
+                    }
+
+                    if (!isLoaded) setIsLoaded(true);
+
+                }, (err) => {
+
+                    console.error("Fetch error:", err);
+
+                    if (!isLoaded) setIsLoaded(true);
+
+                });
+
+                return () => unsubscribe();
+
+            }, [user, db, isLoaded]);
+
+            useEffect(() => {
+
+                if (!user || !db || !isLoaded) return;
+
+                const saveToDb = async () => {
+
+                    setIsSaving(true);
+
+                    try {
+
+                        const { doc, setDoc } = ensureFirebase();
+
+                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+                        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'brandMap', 'progress');
+
+                        await setDoc(docRef, { answers: data, currentStep: currentStep, maxStep: maxStepReached }, { merge: true });
+
+                    } catch(err) { console.error("Save error:", err); } finally { setTimeout(() => setIsSaving(false), 500); }
+
+                };
+
+                const timeout = setTimeout(saveToDb, 1500);
+
+                return () => clearTimeout(timeout);
+
+            }, [data, currentStep, maxStepReached, user, db, isLoaded]);
+
+            const handleGoogleSignIn = async () => {
+
+                if (!authInstance) return;
+
+                try {
+
+                    const { GoogleAuthProvider, signInWithPopup } = ensureFirebase();
+
+                    const provider = new GoogleAuthProvider();
+
+                    await signInWithPopup(authInstance, provider);
+
+                } catch(e) { console.error("Google sign in error", e); }
+
+            };
+
+            const updateData = (key, value) => setData(prev => ({ ...prev, [key]: value }));
+
+            const IntroModule = () => (
+
+                <div className="max-w-3xl mx-auto">
+
+                    <VisualHeader title="The Brand Soul Map" subtitle="SYSTEM INITIALIZATION" imageUrl={IMAGES.intro} />
+
+                    <div className="glass-panel p-10 md:p-14">
+
+                        <h2 className="text-3xl font-black text-black dark:text-white tracking-tighter uppercase leading-[1.1] mb-4">A Diagnostic Instrument.</h2>
+
+                        <p className="text-zinc-600 dark:text-zinc-400 mb-10 leading-relaxed font-light italic text-lg">
+
+                            The brand isn't being invented here. It's being uncovered. Over the next 6 modules, you will define the core convictions, positioning, and cultural stance of your brand. You cannot skip ahead. We will guide you step by step.
+
+                        </p>
+
+                        <FormField label="Input Designation: Brand Name">
+
+                            <InputLine value={data.brandName} onChange={(v) => updateData('brandName', v)} placeholder="e.g. Acme Corp" />
+
+                        </FormField>
+
+                    </div>
+
+                </div>
+
+            );
+
+            const Module1 = () => (
+
+                <div className="max-w-4xl mx-auto">
+
+                    <VisualHeader title="Module I: Identity" subtitle="Exercises 1–4" imageUrl={IMAGES.identity} />
+
+                    <div className="space-y-12">
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">01. Natural Force</h3>
+
+                            <FormField label="The Energy" helper="What force of nature most accurately represents the energy of your brand?">
+
+                                <TextInput value={data.mod1Force} onChange={(v) => updateData('mod1Force', v)} placeholder="Describe the force..." rows={2} />
+
+                            </FormField>
+
+                            
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4 mt-12">02. The Museum Room</h3>
+
+                            <FormField label="The Artifacts" helper="If your brand were a room in a museum, what objects are in it?">
+
+                                <TextInput value={data.mod1Room} onChange={(v) => updateData('mod1Room', v)} placeholder="Describe the aesthetic and artifacts..." rows={2} />
+
+                            </FormField>
+
+                            
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4 mt-12">03. Mythological Figure</h3>
+
+                            <FormField label="The Archetype" helper="Which mythic figure or historical legend embodies your brand?">
+
+                                <TextInput value={data.mod1Myth} onChange={(v) => updateData('mod1Myth', v)} placeholder="e.g. Prometheus bringing fire..." rows={2} />
+
+                            </FormField>
+
+                            
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4 mt-12">04. The Identity Portrait</h3>
+
+                            <FormField label="The Synthesis" helper="Synthesize the force, the artifacts, and the myth into your brand's portrait.">
+
+                                <TextInput value={data.mod1Portrait} onChange={(v) => updateData('mod1Portrait', v)} placeholder="Combine them into a cohesive identity..." rows={3} />
+
+                            </FormField>
+
+                        </section>
+
+                    </div>
+
+                </div>
+
+            );
+
+            const Module1Recap = () => (
+
+                <CheckpointPanel title="Identity Portrait" subtitle="Checkpoint I">
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Energy</span>
+
+                    <span className="text-zinc-800 dark:text-zinc-200">{data.mod1Force || '[Natural Force]'}</span></p>
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Aesthetic</span>
+
+                    <span className="text-zinc-800 dark:text-zinc-200">{data.mod1Room || '[Museum Room]'}</span></p>
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Archetype</span>
+
+                    <span className="text-black dark:text-white font-bold">{data.mod1Myth || '[Mythological Figure]'}</span></p>
+
+                    <div className="mt-8 pt-6 border-t border-black/10 dark:border-white/10">
+
+                        <p className="font-light italic text-zinc-600 dark:text-zinc-400">"{data.mod1Portrait || '[Synthesized Portrait]'}"</p>
+
+                    </div>
+
+                </CheckpointPanel>
+
+            );
+
+            const Module2 = () => (
+
+                <div className="max-w-4xl mx-auto">
+
+                    <VisualHeader title="Module II: Purpose" subtitle="Exercise 5 & 6" imageUrl={IMAGES.purpose} />
+
+                    <div className="space-y-12">
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-6 border-b border-black/5 dark:border-white/10 pb-4">05. The Documentary Legacy</h3>
+
+                            <FormField label="The Title" helper="What is the documentary called?">
+
+                                <InputLine value={data.docTitle} onChange={(v) => updateData('docTitle', v)} placeholder="Title here..." />
+
+                            </FormField>
+
+                            <FormField label="The Opening Image" helper="The film opens on a single image. What is that image?">
+
+                                <TextInput value={data.docImage} onChange={(v) => updateData('docImage', v)} placeholder="Describe the opening shot..." rows={2} />
+
+                            </FormField>
+
+                            <FormField label="The Central Argument" helper="Complete: 'This is the story of a brand that proved ____.'">
+
+                                <TextInput value={data.docArgument} onChange={(v) => updateData('docArgument', v)} placeholder="..." rows={2} />
+
+                            </FormField>
+
+                            <FormField label="The Three Voices" helper="Describe the three real people interviewed.">
+
+                                <TextInput value={data.docVoices} onChange={(v) => updateData('docVoices', v)} placeholder="Who they were before, what happened, who they became..." />
+
+                            </FormField>
+
+                            <FormField label="The Final Line" helper="The last words spoken in the film.">
+
+                                <TextInput value={data.docFinalLine} onChange={(v) => updateData('docFinalLine', v)} placeholder="Quote..." rows={2} />
+
+                            </FormField>
+
+                        </section>
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-6 border-b border-black/5 dark:border-white/10 pb-4">06. The Manifesto Line</h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+
+                                {QUOTES.map(q => (
+
+                                    <div key={q.id} onClick={() => updateData('manifestoQuoteId', q.id)}
+
+                                        className={`p-6 rounded-[24px] cursor-pointer border transition-all duration-300 ${data.manifestoQuoteId === q.id ? 'bg-quantum/10 border-quantum ring-1 ring-quantum' : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30'}`}>
+
+                                        <p className="font-light italic text-zinc-600 dark:text-zinc-300 text-lg leading-relaxed mb-4">"{q.quote}"</p>
+
+                                        <p className="font-mono text-[10px] text-quantum uppercase tracking-[0.3em]">— {q.author}</p>
+
+                                    </div>
+
+                                ))}
+
+                            </div>
+
+                            {data.manifestoQuoteId && (
+
+                                <div className="space-y-8 fade-in bg-black/5 dark:bg-white/5 p-8 rounded-[24px] border border-black/10 dark:border-white/10">
+
+                                    <FormField label="What is the specific belief encoded in this line?">
+
+                                        <TextInput value={data.manifestoBelief} onChange={(v) => updateData('manifestoBelief', v)} rows={2} />
+
+                                    </FormField>
+
+                                    <FormField label="Write Your Own Manifesto Line">
+
+                                        <InputLine value={data.originalManifesto} onChange={(v) => updateData('originalManifesto', v)} placeholder="We believe that..." />
+
+                                    </FormField>
+
+                                </div>
+
+                            )}
+
+                        </section>
+
+                    </div>
+
+                </div>
+
+            );
+
+            const Module2Recap = () => (
+
+                <CheckpointPanel title="Purpose Declaration" subtitle="Checkpoint II">
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Transformation</span>
+
+                    We help people go from where they are to where they need to be, because {data.brandName || 'this brand'} exists to prove that <span className="text-black dark:text-white font-bold">{data.docArgument || '[Argument]'}</span>.</p>
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Legacy</span>
+
+                    The story begins with <span className="text-zinc-800 dark:text-zinc-200">{data.docImage || '[Image]'}</span> and ends with the final words: <span className="font-light italic text-zinc-600 dark:text-zinc-400">"{data.docFinalLine || '[Final Line]'}"</span>.</p>
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Belief</span>
+
+                    <span className="text-quantum font-bold tracking-wide">"{data.originalManifesto || '[Your Original Manifesto]'}"</span></p>
+
+                </CheckpointPanel>
+
+            );
+
+            const Module3 = () => (
+
+                <div className="max-w-4xl mx-auto">
+
+                    <VisualHeader title="Module III: Craft" subtitle="Exercise 7 & 8" imageUrl={IMAGES.craft} />
+
+                    <div className="space-y-12">
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-6 border-b border-black/5 dark:border-white/10 pb-4">07. Brand DNA</h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+                                {['primaryArch', 'secondaryArch', 'tensionArch'].map((role, idx) => (
+
+                                    <div key={role} className="flex flex-col bg-black/5 dark:bg-white/5 p-5 rounded-[24px] border border-black/10 dark:border-white/10">
+
+                                        <label className="font-mono text-[10px] tracking-[0.3em] text-black/70 dark:text-white/50 uppercase mb-3">
+
+                                            {idx === 0 ? '1. Primary' : idx === 1 ? '2. Secondary' : '3. Tension'}
+
+                                        </label>
+
+                                        <select className="bg-white dark:bg-black border border-black/10 dark:border-white/10 rounded-xl p-3 text-black dark:text-white focus:ring-1 focus:ring-quantum outline-none font-mono text-sm shadow-none"
+
+                                            value={data[role] || ''} onChange={(e) => updateData(role, e.target.value)}>
+
+                                            <option value="">SELECT...</option>
+
+                                            {ARCHETYPES.map(a => <option key={a.id} value={a.id}>{a.name} ({a.brand})</option>)}
+
+                                        </select>
+
+                                    </div>
+
+                                ))}
+
+                            </div>
+
+                            {data.primaryArch && data.secondaryArch && data.tensionArch && (
+
+                                <div className="space-y-6 fade-in pt-4">
+
+                                    <FormField label="The Fusion" helper={`Complete: Only we can be ${ARCHETYPES.find(a=>a.id===data.primaryArch)?.name} and ${ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name} at the same time because...`}>
+
+                                        <TextInput value={data.archFusion} onChange={(v) => updateData('archFusion', v)} rows={2} />
+
+                                    </FormField>
+
+                                </div>
+
+                            )}
+
+                        </section>
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">08. Anti-Brand Mirror</h3>
+
+                            <div className="grid md:grid-cols-2 gap-8 mb-12">
+
+                                <div className="bg-alert/10 border border-alert/30 p-6 rounded-[24px]">
+
+                                    <h4 className="text-alert font-mono text-[10px] tracking-[0.3em] uppercase mb-6 flex items-center gap-2"><IconXCircle className="w-4 h-4" /> THE ANTI-BRAND</h4>
+
+                                    <input className="w-full bg-white/50 dark:bg-black/50 border border-alert/30 rounded-xl mb-4 p-4 text-sm text-black dark:text-white outline-none focus:ring-1 focus:ring-alert font-mono shadow-none" placeholder="NAME..." value={data.abName} onChange={(e) => updateData('abName', e.target.value)} />
+
+                                    <textarea className="w-full bg-white/50 dark:bg-black/50 border border-alert/30 rounded-xl p-4 text-sm text-black dark:text-white outline-none focus:ring-1 focus:ring-alert font-mono shadow-none resize-none" placeholder="BELIEFS ABOUT PEOPLE..." value={data.abBelief} onChange={(e) => updateData('abBelief', e.target.value)} rows="3"></textarea>
+
+                                </div>
+
+                                <div className="bg-quantum/10 border border-quantum/30 p-6 rounded-[24px]">
+
+                                    <h4 className="text-quantum font-mono text-[10px] tracking-[0.3em] uppercase mb-6 flex items-center gap-2"><IconCheckCircle className="w-4 h-4" /> YOUR BRAND</h4>
+
+                                    <div className="bg-white/50 dark:bg-black/50 border border-quantum/30 rounded-xl mb-4 p-4 text-sm font-black text-black dark:text-white shadow-none uppercase">{data.brandName || '[BRAND NAME]'}</div>
+
+                                    <textarea className="w-full bg-white/50 dark:bg-black/50 border border-quantum/30 rounded-xl p-4 text-sm text-black dark:text-white outline-none focus:ring-1 focus:ring-quantum font-mono shadow-none resize-none" placeholder="BELIEFS ABOUT PEOPLE..." value={data.bBelief} onChange={(e) => updateData('bBelief', e.target.value)} rows="3"></textarea>
+
+                                </div>
+
+                            </div>
+
+                            
+
+                            <div className="bg-black/5 dark:bg-white/5 p-8 rounded-[24px] border border-black/10 dark:border-white/10">
+
+                                <h4 className="font-mono text-[10px] tracking-[0.3em] text-black/70 dark:text-white/50 uppercase mb-6">POSITIONING SPINE</h4>
+
+                                <div className="flex flex-wrap gap-3 mb-6 items-center">
+
+                                    <span className="text-zinc-600 dark:text-zinc-400 font-mono text-sm uppercase">"We are definitively</span>
+
+                                    <input className="bg-white dark:bg-black border border-black/10 dark:border-white/10 text-black dark:text-white w-32 p-3 rounded-xl text-center font-black outline-none focus:border-quantum focus:ring-1 focus:ring-quantum uppercase shadow-none" placeholder="ADJ 1" value={data.posAdj1} onChange={(e)=>updateData('posAdj1',e.target.value)} /> <span className="text-zinc-600 dark:text-zinc-400">,</span>
+
+                                    <input className="bg-white dark:bg-black border border-black/10 dark:border-white/10 text-black dark:text-white w-32 p-3 rounded-xl text-center font-black outline-none focus:border-quantum focus:ring-1 focus:ring-quantum uppercase shadow-none" placeholder="ADJ 2" value={data.posAdj2} onChange={(e)=>updateData('posAdj2',e.target.value)} /> <span className="text-zinc-600 dark:text-zinc-400">,</span>
+
+                                    <input className="bg-white dark:bg-black border border-black/10 dark:border-white/10 text-black dark:text-white w-32 p-3 rounded-xl text-center font-black outline-none focus:border-quantum focus:ring-1 focus:ring-quantum uppercase shadow-none" placeholder="ADJ 3" value={data.posAdj3} onChange={(e)=>updateData('posAdj3',e.target.value)} /> <span className="text-zinc-600 dark:text-zinc-400 font-mono text-sm">."</span>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </div>
+
+            );
+
+            const Module3Recap = () => {
+
+                const pA = ARCHETYPES.find(a=>a.id===data.primaryArch)?.name || '[Primary]';
+
+                const sA = ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name || '[Secondary]';
+
+                return (
+
+                    <CheckpointPanel title="Positioning Spine" subtitle="Checkpoint III">
+
+                        <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">DNA</span>
+
+                        {data.brandName} operates with the core architecture of <span className="text-black dark:text-white font-bold">{pA}</span> and the texture of <span className="text-black dark:text-white font-bold">{sA}</span>.</p>
+
+                        <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">The Moat</span>
+
+                        We believe <span className="font-light italic text-zinc-600 dark:text-zinc-400">{data.bBelief || '[Your Belief]'}</span>. {data.abName || 'Our opposite'} believes <span className="font-light italic text-zinc-600 dark:text-zinc-400">{data.abBelief || '[Their Belief]'}</span>. These cannot coexist.</p>
+
+                        <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">The Claim</span>
+
+                        We are <span className="text-quantum font-bold uppercase tracking-widest">{data.posAdj1 || '___'}, {data.posAdj2 || '___'}, {data.posAdj3 || '___'}</span>.</p>
+
+                    </CheckpointPanel>
+
+                );
+
+            };
+
+            const WordSelector = ({ dimension, words, selectedWords, essentialWord, onToggleWord, onSetEssential }) => (
+
+                <div className="mb-8 p-8 bg-black/5 dark:bg-white/5 rounded-[24px] border border-black/10 dark:border-white/10">
+
+                    <h4 className="font-mono text-[10px] tracking-[0.3em] text-black dark:text-white uppercase mb-6 flex items-center gap-3">
+
+                        <span className="w-1.5 h-1.5 rounded-full bg-quantum"></span>{dimension}
+
+                    </h4>
+
+                    <div className="flex flex-wrap gap-2 mb-6">
+
+                        {words.map(w => {
+
+                            const isSelected = selectedWords.includes(w);
+
+                            const isEssential = essentialWord === w;
+
+                            return (
+
+                                <button key={w} onClick={() => onToggleWord(w)}
+
+                                    className={`px-4 py-2 text-sm rounded-full border transition-all duration-200 uppercase font-mono ${isEssential ? 'bg-quantum border-quantum text-black font-bold shadow-[0_0_15px_rgba(74,222,128,0.3)]' : isSelected ? 'bg-black dark:bg-white border-black dark:border-white text-white dark:text-black shadow-none' : 'bg-white dark:bg-transparent border-black/10 dark:border-white/10 text-zinc-500 hover:border-black/30 dark:hover:border-white/30 hover:text-black dark:hover:text-white'}`}>
+
+                                    {w}
+
+                                </button>
+
+                            );
+
+                        })}
+
+                    </div>
+
+                    {selectedWords.length > 0 && (
+
+                        <div className="mt-6 pt-6 border-t border-black/10 dark:border-white/10 fade-in">
+
+                            <label className="font-mono text-[10px] tracking-[0.3em] text-black/70 dark:text-white/50 uppercase block mb-4">Mark 1 as Essential:</label>
+
+                            <div className="flex flex-wrap gap-2">
+
+                                {selectedWords.map(w => (
+
+                                    <button key={`ess-${w}`} onClick={() => onSetEssential(w)} className={`px-4 py-1.5 text-xs rounded-full border transition-all uppercase font-mono ${essentialWord === w ? 'bg-quantum/20 border-quantum text-quantum font-bold' : 'bg-transparent border-black/10 dark:border-white/10 text-zinc-500 hover:border-black/30 dark:hover:border-white/30'}`}>
+
+                                        {w}
+
+                                    </button>
+
+                                ))}
+
+                            </div>
+
+                        </div>
+
+                    )}
+
+                </div>
+
+            );
+
+            const Module4 = () => {
+
+                const toggleWord = (listKey, word) => {
+
+                    const current = data[listKey] || [];
+
+                    if (current.includes(word)) updateData(listKey, current.filter(w => w !== word));
+
+                    else if (current.length < 5) updateData(listKey, [...current, word]);
+
+                };
+
+                return (
+
+                    <div className="max-w-4xl mx-auto">
+
+                        <VisualHeader title="Module IV: Tribe" subtitle="Exercise 9 & 10" imageUrl={IMAGES.tribe} />
+
+                        <div className="space-y-12">
+
+                            <section className="glass-panel p-8 md:p-12">
+
+                                <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">09. Brand Attributes</h3>
+
+                                <WordSelector dimension="Culture" words={WORD_BANKS.culture} selectedWords={data.cWords} essentialWord={data.cEss} onToggleWord={(w)=>toggleWord('cWords',w)} onSetEssential={(w)=>updateData('cEss',w)} />
+
+                                <WordSelector dimension="Customers" words={WORD_BANKS.customers} selectedWords={data.cuWords} essentialWord={data.cuEss} onToggleWord={(w)=>toggleWord('cuWords',w)} onSetEssential={(w)=>updateData('cuEss',w)} />
+
+                                <WordSelector dimension="Voice" words={WORD_BANKS.voice} selectedWords={data.vWords} essentialWord={data.vEss} onToggleWord={(w)=>toggleWord('vWords',w)} onSetEssential={(w)=>updateData('vEss',w)} />
+
+                                <WordSelector dimension="Look/Feel" words={WORD_BANKS.look} selectedWords={data.lWords} essentialWord={data.lEss} onToggleWord={(w)=>toggleWord('lWords',w)} onSetEssential={(w)=>updateData('lEss',w)} />
+
+                                <WordSelector dimension="Value Prop" words={WORD_BANKS.value} selectedWords={data.valWords} essentialWord={data.valEss} onToggleWord={(w)=>toggleWord('valWords',w)} onSetEssential={(w)=>updateData('valEss',w)} />
+
+                            </section>
+
+                            <section className="glass-panel p-8 md:p-12">
+
+                                <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">10. The Fan Letter</h3>
+
+                                <div className="mb-10">
+
+                                    <textarea className="w-full h-80 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-[24px] p-8 text-black dark:text-white font-serif text-lg focus:outline-none focus:ring-1 focus:ring-quantum focus:border-quantum shadow-none resize-none leading-relaxed" placeholder="Dear team, Ten years ago..." value={data.fanLetter} onChange={(e) => updateData('fanLetter', e.target.value)} />
+
+                                </div>
+
+                                <div className="space-y-8 bg-transparent border border-black/10 dark:border-white/10 p-8 md:p-10 rounded-[24px]">
+
+                                    <FormField label="What detail surprised you?">
+
+                                        <TextInput value={data.fanSurprise} onChange={(v)=>updateData('fanSurprise',v)} rows={2} />
+
+                                    </FormField>
+
+                                    <FormField label="One sentence describing their inner life:">
+
+                                        <TextInput value={data.fanTarget} onChange={(v)=>updateData('fanTarget',v)} rows={2} />
+
+                                    </FormField>
+
+                                    <FormField label="What does this person need?">
+
+                                        <TextInput value={data.fanNeeds} onChange={(v)=>updateData('fanNeeds',v)} rows={2} />
+
+                                    </FormField>
+
+                                </div>
+
+                            </section>
+
+                        </div>
+
+                    </div>
+
+                );
+
+            };
+
+            const Module4Recap = () => (
+
+                <CheckpointPanel title="Community Soul" subtitle="Checkpoint IV">
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Vocabulary</span>
+
+                    <span className="text-quantum font-mono uppercase tracking-[0.2em]">{data.cEss||'_'} · {data.cuEss||'_'} · {data.vEss||'_'} · {data.lEss||'_'} · {data.valEss||'_'}</span></p>
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">The Person</span>
+
+                    <span className="text-zinc-800 dark:text-zinc-200">{data.fanTarget || '[Description]'}</span></p>
+
+                </CheckpointPanel>
+
+            );
+
+            const Module5 = () => (
+
+                <div className="max-w-4xl mx-auto">
+
+                    <VisualHeader title="Module V: Signal" subtitle="Exercise 11, 12 & 13" imageUrl={IMAGES.signal} />
+
+                    <div className="space-y-12">
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">11. Aligned / Non-Aligned</h3>
+
+                            <div className="grid md:grid-cols-2 gap-8 mb-8">
+
+                                <div className="bg-quantum/10 border border-quantum/30 p-8 rounded-[24px]">
+
+                                    <h4 className="text-quantum font-mono text-[10px] tracking-[0.3em] uppercase mb-6 flex items-center gap-2"><IconCheckCircle className="w-4 h-4"/> ALIGNED WITH</h4>
+
+                                    <input className="w-full bg-white/50 dark:bg-black/50 border border-quantum/30 rounded-xl p-4 mb-4 text-black dark:text-white font-bold outline-none focus:ring-1 focus:ring-quantum uppercase font-mono shadow-none" placeholder="BRAND A..." value={data.a1} onChange={(e)=>updateData('a1',e.target.value)} />
+
+                                </div>
+
+                                <div className="bg-alert/10 border border-alert/30 p-8 rounded-[24px]">
+
+                                    <h4 className="text-alert font-mono text-[10px] tracking-[0.3em] uppercase mb-6 flex items-center gap-2"><IconXCircle className="w-4 h-4"/> NON-ALIGNED WITH</h4>
+
+                                    <input className="w-full bg-white/50 dark:bg-black/50 border border-alert/30 rounded-xl p-4 mb-4 text-black dark:text-white font-bold outline-none focus:ring-1 focus:ring-alert uppercase font-mono shadow-none" placeholder="BRAND C..." value={data.na1} onChange={(e)=>updateData('na1',e.target.value)} />
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">12. Celebrity Personification</h3>
+
+                            <div className="space-y-8">
+
+                                {BINARIES.map((bin) => {
+
+                                    const stateKey = BINARY_KEYS[bin.id];
+
+                                    return (
+
+                                    <div key={bin.id} className="bg-black/5 dark:bg-white/5 p-8 rounded-[24px] border border-black/10 dark:border-white/10">
+
+                                        <h4 className="font-mono text-[10px] tracking-[0.3em] text-black dark:text-white uppercase mb-6 flex items-center gap-3">
+
+                                            <span className="w-1.5 h-1.5 rounded-full bg-quantum"></span> HOW YOUR BRAND {bin.id.toUpperCase()}S
+
+                                        </h4>
+
+                                        <div className="flex flex-col md:flex-row gap-4">
+
+                                            {bin.options.map(opt => (
+
+                                                <div key={opt.name} onClick={() => updateData(stateKey, opt.name)}
+
+                                                    className={`flex-1 p-6 rounded-[20px] cursor-pointer border transition-all duration-200 ${data[stateKey] === opt.name ? 'bg-white dark:bg-black border-quantum ring-1 ring-quantum shadow-[0_0_20px_rgba(74,222,128,0.15)]' : 'bg-transparent border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30'}`}>
+
+                                                    <div className="font-black text-black dark:text-white text-lg mb-2 uppercase tracking-tight">{opt.name}</div>
+
+                                                    <div className="font-light italic text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">{opt.desc}</div>
+
+                                                </div>
+
+                                            ))}
+
+                                        </div>
+
+                                    </div>
+
+                                )})}
+
+                            </div>
+
+                        </section>
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">13. The Soundtrack</h3>
+
+                            <div className="space-y-4">
+
+                                {data.songs.map((song, i) => (
+
+                                    <div key={i} className="flex flex-col md:flex-row gap-4 bg-black/5 dark:bg-white/5 p-4 rounded-[20px] border border-black/10 dark:border-white/10 items-center">
+
+                                        <span className="text-quantum font-mono text-[10px] w-8 text-center">0{i+1}.</span>
+
+                                        <input className="flex-1 bg-transparent border-none p-2 text-sm text-black dark:text-white outline-none w-full md:w-auto font-mono uppercase focus:ring-0 placeholder-zinc-500" placeholder="SONG NAME..." value={song.n} onChange={(e)=>{let s=[...data.songs]; s[i] = {...s[i], n: e.target.value}; updateData('songs',s)}} />
+
+                                    </div>
+
+                                ))}
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </div>
+
+            );
+
+            const Module5Recap = () => (
+
+                <CheckpointPanel title="Voice & Tone" subtitle="Checkpoint V">
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Alignment</span>
+
+                    We align with {data.a1||'_'}. We refuse {data.na1||'_'}.</p>
+
+                    <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">Behavioral DNA</span>
+
+                    {data.brandName} leads like <span className="text-black dark:text-white font-bold">{data.leadChoice||'_'}</span> and endures like <span className="text-black dark:text-white font-bold">{data.endChoice||'_'}</span>.</p>
+
+                </CheckpointPanel>
+
+            );
+
+            const Module6 = () => (
+
+                <div className="max-w-4xl mx-auto">
+
+                    <VisualHeader title="Module VI: World" subtitle="Exercise 14 & 15" imageUrl={IMAGES.world} />
+
+                    <div className="space-y-12">
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">14. Never / Always Manifesto</h3>
+
+                            <div className="grid md:grid-cols-2 gap-10">
+
+                                <div className="bg-quantum/10 p-8 rounded-[24px] border border-quantum/30">
+
+                                    <h4 className="text-quantum font-mono text-[10px] tracking-[0.3em] uppercase mb-6 flex items-center gap-2"><IconCheck className="w-4 h-4" /> THE ALWAYS</h4>
+
+                                    {data.always.map((a, i) => (
+
+                                        <div key={`a-${i}`} className="flex gap-4 mb-4 items-center">
+
+                                            <input type="radio" name="coreAlways" checked={data.coreAlwaysIdx === i} onChange={()=>updateData('coreAlwaysIdx', i)} className="w-4 h-4 accent-quantum cursor-pointer" />
+
+                                            <input className="w-full bg-white/50 dark:bg-black/50 border border-quantum/30 rounded-xl text-black dark:text-white p-3 text-sm outline-none focus:ring-1 focus:ring-quantum font-mono shadow-none" placeholder="We always..." value={a} onChange={(e)=>{let arr=[...data.always]; arr[i]=e.target.value; updateData('always',arr)}} />
+
+                                        </div>
+
+                                    ))}
+
+                                </div>
+
+                                <div className="bg-alert/10 p-8 rounded-[24px] border border-alert/30">
+
+                                    <h4 className="text-alert font-mono text-[10px] tracking-[0.3em] uppercase mb-6 flex items-center gap-2"><IconX className="w-4 h-4" /> THE NEVER</h4>
+
+                                    {data.nevers.map((n, i) => (
+
+                                        <div key={`n-${i}`} className="flex gap-4 mb-4 items-center">
+
+                                            <input type="radio" name="coreNever" checked={data.coreNeverIdx === i} onChange={()=>updateData('coreNeverIdx', i)} className="w-4 h-4 accent-alert cursor-pointer" />
+
+                                            <input className="w-full bg-white/50 dark:bg-black/50 border border-alert/30 rounded-xl text-black dark:text-white p-3 text-sm outline-none focus:ring-1 focus:ring-alert font-mono shadow-none" placeholder="We never..." value={n} onChange={(e)=>{let arr=[...data.nevers]; arr[i]=e.target.value; updateData('nevers',arr)}} />
+
+                                        </div>
+
+                                    ))}
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <section className="glass-panel p-8 md:p-12">
+
+                            <h3 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase mb-8 border-b border-black/5 dark:border-white/10 pb-4">15. Cultural Movement</h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                                {MOVEMENTS.map(m => (
+
+                                    <div key={m.id} onClick={() => updateData('movementId', m.id)}
+
+                                        className={`p-6 rounded-[24px] cursor-pointer border transition-all duration-200 ${data.movementId === m.id ? 'bg-quantum/10 border-quantum ring-1 ring-quantum shadow-[0_0_15px_rgba(74,222,128,0.1)]' : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30'}`}>
+
+                                        <h4 className="font-black text-black dark:text-white uppercase tracking-tight text-lg mb-2">{m.name}</h4>
+
+                                        <p className="font-light italic text-zinc-500 text-sm leading-relaxed">{m.desc}</p>
+
+                                    </div>
+
+                                ))}
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </div>
+
+            );
+
+            const Module6Recap = () => {
+
+                const mov = MOVEMENTS.find(m=>m.id===data.movementId)?.name || '[Movement]';
+
+                const alwaysText = data.coreAlwaysIdx !== null && data.always[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : 'Not yet selected';
+
+                const neverText = data.coreNeverIdx !== null && data.nevers[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : 'Not yet selected';
+
+                return (
+
+                    <CheckpointPanel title="Cultural Position" subtitle="Checkpoint VI">
+
+                        <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">The Code</span>
+
+                        Always <span className="text-black dark:text-white font-bold">{alwaysText}</span>. Never <span className="text-black dark:text-white font-bold">{neverText}</span>.</p>
+
+                        <p className="mb-6"><span className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50 block mb-2">The Stance</span>
+
+                        {data.brandName} is the contemporary heir to <span className="text-quantum font-bold uppercase tracking-wider">{mov}</span>.</p>
+
+                    </CheckpointPanel>
+
+                );
+
+            };
+
+            const LeadCaptureModule = () => (
+
+                <div className="max-w-3xl mx-auto py-12 fade-in">
+
+                    <div className="text-center mb-12">
+
+                        <span className="inline-block rounded-full border border-quantum/30 bg-quantum/10 text-quantum font-mono text-[10px] tracking-[0.3em] px-3 py-1 uppercase mb-4">
+
+                            FINAL PROTOCOL
+
+                        </span>
+
+                        <h2 className="text-4xl md:text-5xl font-black text-black dark:text-white tracking-tighter uppercase leading-[1.1]">Authorization Required</h2>
+
+                    </div>
+
+                    <div className="glass-panel p-10 md:p-14">
+
+                        <p className="font-light italic text-zinc-500 mb-10 text-center">Provide your identity and email to secure your final Brand Soul Map.</p>
+
+                        <div className="space-y-6">
+
+                            <FormField label="Email Address (Required)">
+
+                                <InputLine type="email" value={data.email} onChange={(v) => updateData('email', v)} placeholder="you@example.com" />
+
+                            </FormField>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                <InputLine value={data.firstName} onChange={(v) => updateData('firstName', v)} placeholder="First Name" />
+
+                                <InputLine value={data.lastName} onChange={(v) => updateData('lastName', v)} placeholder="Last Name" />
+
+                            </div>
+
+                            <div className="flex items-center gap-4 my-8 opacity-30">
+
+                                <div className="h-px bg-black dark:bg-white flex-1"></div>
+
+                                <span className="font-mono text-[10px] tracking-[0.3em] uppercase">OR</span>
+
+                                <div className="h-px bg-black dark:bg-white flex-1"></div>
+
+                            </div>
+
+                            <InputLine value={data.companyName} onChange={(v) => updateData('companyName', v)} placeholder="Company Name" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            );
+
+            const SynthesisPanel = () => {
+
+                const mapData = generateDefaultMap(data);
+
+                const copyToClipboard = () => {
+
+                    const text = document.getElementById('soul-map-content').innerText;
+
+                    navigator.clipboard.writeText(text).then(() => alert('COPIED TO CLIPBOARD.')).catch(e => alert(e));
+
+                };
+
+                const downloadPDF = async () => {
+
+                    const el = document.getElementById('soul-map-content');
+
+                    el.style.padding = "40px";
+
+                    const isDark = document.documentElement.classList.contains('dark');
+
+                    const canvas = await html2canvas(el, { scale: 2, backgroundColor: isDark ? '#000000' : '#ffffff' });
+
+                    el.style.padding = "";
+
+                    const imgData = canvas.toDataURL('image/png');
+
+                    const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, (canvas.height * pdfWidth) / canvas.width);
+
+                    pdf.save(`${data.brandName}_SOULMAP.pdf`);
+
+                };
+
+                if (isGenerating) {
+
+                    return (
+
+                        <div className="max-w-5xl mx-auto py-32 fade-in flex flex-col items-center justify-center text-center min-h-[60vh]">
+
+                            <div className="relative w-16 h-16 mb-8">
+
+                                <div className="absolute inset-0 border border-quantum/30 rounded-full animate-[ping_3s_linear_infinite]"></div>
+
+                                <div className="absolute inset-0 border border-quantum rounded-full border-t-transparent animate-spin"></div>
+
+                                <div className="absolute inset-0 m-auto w-2 h-2 bg-quantum rounded-full animate-pulse"></div>
+
+                            </div>
+
+                            <h2 className="text-3xl font-mono text-quantum tracking-[0.2em] uppercase mb-4">Processing Quantum Synthesis...</h2>
+
+                            <p className="font-light italic text-zinc-500 text-lg">AI is distilling your strategy and preparing transmission.</p>
+
+                        </div>
+
+                    );
+
+                }
+
+                return (
+
+                    <div className="max-w-5xl mx-auto pb-20 fade-in">
+
+                        <VisualHeader title="The Synthesis" subtitle="FINAL OUTPUT" imageUrl={IMAGES.synthesis} />
+
+                        <div className="flex flex-col sm:flex-row justify-between items-end mb-12 px-4 gap-4">
+
+                            <div>
+
+                                <h2 className="text-3xl font-black text-black dark:text-white tracking-tighter uppercase leading-[1.1] mb-2">The Brand Soul Map</h2>
+
+                                <p className="font-mono text-[10px] text-quantum uppercase tracking-[0.3em]">SYS.TRANSMITTED TO {data.email}</p>
+
+                            </div>
+
+                            <div className="flex gap-3">
+
+                                <button onClick={copyToClipboard} className="flex items-center gap-2 bg-transparent text-black dark:text-white px-6 py-3 rounded-full border border-black/20 dark:border-white/20 font-black text-xs uppercase tracking-widest hover:border-black dark:hover:border-white transition-colors active:scale-95">
+
+                                    <IconCopy /> COPY
+
+                                </button>
+
+                                <button onClick={downloadPDF} className="flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest hover:bg-quantum hover:text-black dark:hover:bg-quantum dark:hover:text-black transition-colors active:scale-95">
+
+                                    <IconDownload /> PDF
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div id="soul-map-content" className="bg-white dark:bg-black border border-black/10 dark:border-white/10 rounded-[32px] p-10 md:p-20 relative overflow-hidden">
+
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-quantum/20 via-quantum to-quantum/20"></div>
+
+                            <div className="text-center mb-20 pb-12 border-b border-black/10 dark:border-white/10">
+
+                                <h1 className="text-4xl md:text-7xl font-black text-black dark:text-white tracking-tighter uppercase mb-4 leading-[1.1]">{data.brandName}</h1>
+
+                                <p className="font-mono text-[10px] text-quantum uppercase tracking-[0.4em]">THE SOUL MAP</p>
+
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-x-16 gap-y-12 mb-16 font-sans">
+
+                                <div><h3 className="font-mono text-[10px] text-black/70 dark:text-white/50 uppercase tracking-[0.3em] mb-6 border-l-2 border-quantum/30 pl-4">I. The Purpose</h3>
+
+                                    <div className="space-y-4 text-sm text-black dark:text-white">
+
+                                        <p><span className="font-mono text-[10px] tracking-[0.2em] text-zinc-400 block mb-1">LEGACY</span> "{data.brandName} will prove {data.docArgument || '___'}"</p>
+
+                                        <p><span className="font-mono text-[10px] tracking-[0.2em] text-zinc-400 block mb-1">BELIEF</span> "{data.originalManifesto || '___'}"</p>
+
+                                    </div>
+
+                                </div>
+
+                                <div><h3 className="font-mono text-[10px] text-black/70 dark:text-white/50 uppercase tracking-[0.3em] mb-6 border-l-2 border-quantum/30 pl-4">II. The Positioning</h3>
+
+                                    <div className="space-y-4 text-sm text-black dark:text-white">
+
+                                        <p><span className="font-mono text-[10px] tracking-[0.2em] text-zinc-400 block mb-1">DNA</span> {mapData.primA} + {mapData.secA}</p>
+
+                                        <p><span className="font-mono text-[10px] tracking-[0.2em] text-zinc-400 block mb-1">MOAT</span> We believe {data.bBelief || '___'}.</p>
+
+                                        <p><span className="font-mono text-[10px] tracking-[0.2em] text-zinc-400 block mb-1">CLAIM</span> We are {data.posAdj1||'___'}, {data.posAdj2||'___'}, {data.posAdj3||'___'}.</p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div className="text-center mb-20 mt-16 font-light italic text-2xl text-zinc-600 dark:text-zinc-400 leading-relaxed px-4 md:px-12">
+
+                                <h3 className="font-mono text-[10px] text-quantum uppercase tracking-[0.3em] mb-8 non-italic border-t border-black/10 dark:border-white/10 pt-16 mx-auto w-1/2">THE SPARK</h3>
+
+                                "{data.aiSpark || mapData.spark}"
+
+                            </div>
+
+                            <div className="text-center pt-16 border-t border-black/10 dark:border-white/10 mt-20">
+
+                                <h3 className="font-mono text-[10px] text-black/70 dark:text-white/50 uppercase tracking-[0.3em] mb-8">THE ESSENCE</h3>
+
+                                <p className="text-3xl md:text-5xl font-black text-black dark:text-white tracking-tighter uppercase leading-[1.1]">{data.aiEssence || mapData.essence}</p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                );
+
+            };
+
+            const STEPS = [
+
+                { title: 'INITIALIZE', isCheckpoint: false, component: <IntroModule /> },
+
+                { title: 'IDENTITY', isCheckpoint: false, component: <Module1 /> },
+
+                { title: 'SYS.SYNC 01', isCheckpoint: true, component: <Module1Recap /> },
+
+                { title: 'PURPOSE', isCheckpoint: false, component: <Module2 /> },
+
+                { title: 'SYS.SYNC 02', isCheckpoint: true, component: <Module2Recap /> },
+
+                { title: 'CRAFT', isCheckpoint: false, component: <Module3 /> },
+
+                { title: 'SYS.SYNC 03', isCheckpoint: true, component: <Module3Recap /> },
+
+                { title: 'TRIBE', isCheckpoint: false, component: <Module4 /> },
+
+                { title: 'SYS.SYNC 04', isCheckpoint: true, component: <Module4Recap /> },
+
+                { title: 'SIGNAL', isCheckpoint: false, component: <Module5 /> },
+
+                { title: 'SYS.SYNC 05', isCheckpoint: true, component: <Module5Recap /> },
+
+                { title: 'WORLD', isCheckpoint: false, component: <Module6 /> },
+
+                { title: 'SYS.SYNC 06', isCheckpoint: true, component: <Module6Recap /> },
+
+                { title: 'AUTH', isCheckpoint: false, component: <LeadCaptureModule /> },
+
+                { title: 'SYNTHESIS', isCheckpoint: false, component: <SynthesisPanel /> }
+
+            ];
+
+            const handleNext = async () => {
+
+                if (currentStep === STEPS.length - 2) {
+
+                    setIsGenerating(true);
+
+                    setCurrentStep(currentStep + 1);
+
+                    setMaxStepReached(Math.max(maxStepReached, currentStep + 1));
+
+                    const sc = document.getElementById('main-scroll-container');
+
+                    if(sc) sc.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    try {
+
+                        const ai = await generateAI(data);
+
+                        const dm = generateDefaultMap(data);
+
+                        let s = dm.spark, e = dm.essence;
+
+                        if (ai?.spark && ai?.essence) {
+
+                            s = ai.spark; e = ai.essence;
+
+                            setData(prev => ({ ...prev, aiSpark: s, aiEssence: e }));
+
+                        }
+
+                        await sendEmail(data, s, e);
+
+                        // ── QB OS: Auto-populate QBP ──────────────────────────
+                        try {
+                            const primA = ARCHETYPES.find(a=>a.id===data.primaryArch)?.name || '';
+                            const secA = ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name || '';
+                            const mov = MOVEMENTS ? (MOVEMENTS.find(m=>m.id===data.movementId)?.name || '') : '';
+                            const alwaysText = data.coreAlwaysIdx !== null && data.always && data.always[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : '';
+                            const neverText = data.coreNeverIdx !== null && data.nevers && data.nevers[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : '';
+                            const existing = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
+                            const updated = Object.assign({}, existing, {
+                                brandName: data.brandName || existing.brandName || '',
+                                brandEssence: (data.aiEssence || s.split('—')[1]?.trim() || existing.brandEssence || '').substring(0, 300),
+                                spark: (s || existing.spark || '').substring(0, 800),
+                                archetype: primA ? (primA + (secA ? ' + ' + secA : '')) : (existing.archetype || ''),
+                                manifesto: data.originalManifesto || existing.manifesto || '',
+                                antiBrand: neverText ? ('We refuse to: ' + neverText) : (existing.antiBrand || ''),
+                                alwaysNever: ((alwaysText ? 'Always: ' + alwaysText : '') + (neverText ? ' | Never: ' + neverText : '')) || existing.alwaysNever || '',
+                                primaryPersona: data.cuEss ? ('The ' + data.cuEss + ' who ' + (data.fanTarget || '')) : (existing.primaryPersona || ''),
+                                naturalForce: data.mod1Force || existing.naturalForce || '',
+                                paradox: data.posAdj1 && data.posAdj2 ? (data.posAdj1 + ' yet ' + data.posAdj2) : (existing.paradox || ''),
+                                soulMapComplete: true,
+                                soulMapCompletedAt: new Date().toISOString()
+                            });
+                            localStorage.setItem('qb_qbp', JSON.stringify(updated));
+                            localStorage.setItem('qb_soul_map_done', '1');
+                            window._qbSoulMapComplete = true;
+                            // Show floating results button
+                            var existingBtn = document.getElementById('qb-float-results');
+                            if (!existingBtn) {
+                              var btn = document.createElement('button');
+                              btn.id = 'qb-float-results';
+                              btn.className = 'qb-send-results-btn';
+                              btn.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:1000;box-shadow:0 8px 32px rgba(74,222,128,.25);';
+                              btn.innerHTML = '📄 Send me my results';
+                              btn.addEventListener('click', function() {
+                                var qbp = {};
+                                try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) {}
+                                window.QB_showResultsModal({
+                                  toolId: 'soul-map',
+                                  qbp: qbp,
+                                  results: { spark: qbp.spark, essence: qbp.brandEssence },
+                                  pdfPage: '/brand-soul-map-pdf.html'
+                                });
+                              });
+                              document.body.appendChild(btn);
+                            }
+                            // Signal parent Hub if in iframe context
+                            if (window.parent && window.parent !== window) {
+                                window.parent.postMessage({ type: 'QB_PHASE_COMPLETE', phase: 1, tool: 'soul-map', qbp: updated }, '*');
+                            }
+                        } catch(qbErr) { console.warn('QB QBP sync:', qbErr); }
+                        // ── END QB OS ─────────────────────────────────────────
+
+
+                    } catch (err) { console.error(err); } finally { setIsGenerating(false); }
+
+                } else {
+
+                    const ns = Math.min(STEPS.length - 1, currentStep + 1);
+
+                    setCurrentStep(ns);
+
+                    setMaxStepReached(Math.max(maxStepReached, ns));
+
+                    const sc = document.getElementById('main-scroll-container');
+
+                    if(sc) sc.scrollTo({ top: 0, behavior: 'smooth' });
+
+                }
+
+            };
+
+            if (!isLoaded) {
+
+                return (
+
+                    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-black">
+
+                        <div className="relative w-12 h-12 mb-4">
+
+                            <div className="absolute inset-0 border border-quantum/30 rounded-full animate-[ping_3s_linear_infinite]"></div>
+
+                            <div className="absolute inset-0 border border-quantum rounded-full border-t-transparent animate-spin"></div>
+
+                            <div className="absolute inset-0 m-auto w-2 h-2 bg-quantum rounded-full animate-pulse"></div>
+
+                        </div>
+
+                        <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/70 dark:text-white/50">BOOTING SEQUENCE...</p>
+
+                    </div>
+
+                );
+
+            }
+
+            const isNextDisabled = isGenerating || !isStepValid(currentStep);
+
+            const progress = (currentStep / (STEPS.length - 1)) * 100;
+
+            const ThemeToggle = () => (
+
+                <button onClick={toggleTheme} className="p-2 rounded-full bg-black/5 dark:bg-white/5 text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors border border-black/10 dark:border-white/10">
+
+                    {isDarkMode ? <IconSun className="w-4 h-4"/> : <IconMoon className="w-4 h-4"/>}
+
+                </button>
+
+            );
+
+            return (
+
+                <div className={`flex h-screen w-full font-sans overflow-hidden ${isDarkMode ? 'dark' : ''}`}>
+
+                    <div className="noise-overlay"></div>
+
+                    <div className="md:hidden absolute top-0 left-0 right-0 flex items-center justify-between p-4 bg-white/90 dark:bg-black/90 backdrop-blur-md border-b border-black/5 dark:border-white/10 z-50">
+
+                        <h1 className="font-black text-black dark:text-white uppercase flex items-center gap-2 tracking-tighter"><IconTerminal className="w-4 h-4" /> SOUL MAP</h1>
+
+                        <div className="flex items-center gap-3"><ThemeToggle /><button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 bg-black/5 dark:bg-white/5 text-black dark:text-white rounded border border-black/10 dark:border-white/10"><IconMenu /></button></div>
+
+                    </div>
+
+                    {isMobileMenuOpen && <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)}></div>}
+
+                    
+
+                    <div className={`fixed inset-y-0 left-0 w-72 md:w-[280px] bg-[#fcfcfc] dark:bg-[#050505] border-r border-black/5 dark:border-white/5 flex-shrink-0 flex flex-col p-8 z-50 transform transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 h-screen overflow-y-auto`}>
+
+                        <div className="mb-12 hidden md:flex items-start justify-between">
+
+                            <div>
+
+                                <h1 className="text-xl font-black text-black dark:text-white uppercase flex items-center gap-2 tracking-tighter"><IconTerminal className="w-5 h-5 text-quantum" /> SOUL MAP</h1>
+
+                                <p className="font-mono text-[9px] text-zinc-500 uppercase mt-2 tracking-[0.3em]">STRATEGY TERMINAL</p>
+
+                            </div>
+
+                            <ThemeToggle />
+
+                        </div>
+
+                        <nav className="flex-1">
+
+                            <ul className="relative space-y-1">
+
+                                {STEPS.map((step, idx) => {
+
+                                    const isLocked = idx > maxStepReached, isActive = currentStep === idx, isComp = isStepValid(idx);
+
+                                    return (
+
+                                        <li key={idx} className="relative z-10">
+
+                                            <button onClick={() => { if(!isLocked) { setCurrentStep(idx); setIsMobileMenuOpen(false); const sc = document.getElementById('main-scroll-container'); if(sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); } }}
+
+                                                disabled={isLocked} className={`w-full text-left flex items-center gap-4 py-3 px-3 border-l-2 transition-all font-mono text-[10px] tracking-[0.2em] uppercase ${isActive ? 'text-quantum border-quantum bg-quantum/5' : isLocked ? 'text-black/30 dark:text-white/30 border-transparent cursor-not-allowed' : 'text-zinc-500 border-transparent hover:border-black/10 dark:hover:border-white/10 hover:text-black dark:hover:text-white'}`}>
+
+                                                <span className="w-4 flex justify-center">{(isComp && idx < currentStep && !isActive) ? <IconCheck className="w-3 h-3 text-quantum" /> : (isLocked ? <IconLock className="w-3 h-3 opacity-50" /> : (idx < 9 ? `0${idx}` : idx))}</span>
+
+                                                <span className="flex-1 truncate">{step.title}</span>
+
+                                            </button>
+
+                                        </li>
+
+                                    );
+
+                                })}
+
+                            </ul>
+
+                        </nav>
+
+                        <div className="mt-8 pt-6 border-t border-black/5 dark:border-white/5 flex flex-col gap-4">
+
+                            {user?.isAnonymous && <button onClick={handleGoogleSignIn} className="font-mono text-[10px] tracking-[0.2em] uppercase bg-black text-white dark:bg-white dark:text-black p-4 rounded-full font-black flex items-center justify-center gap-2 hover:bg-quantum hover:text-black dark:hover:bg-quantum transition-colors active:scale-95"><IconGlobe className="w-4 h-4" /> LINK ACCOUNT</button>}
+
+                            <div className="flex items-center gap-2 font-mono text-[9px] text-zinc-500 uppercase tracking-[0.3em] justify-center">
+
+                                {isSaving ? <span className="text-quantum flex items-center gap-2"><div className="w-1.5 h-1.5 bg-quantum rounded-full animate-ping"></div> SYNCING...</span> : <span><IconCheck className="w-3 h-3 inline mr-1 text-quantum"/> SYS.SYNCED</span>}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="main-scroll-container" className="flex-1 h-full overflow-y-auto relative bg-white dark:bg-black bg-dots pt-16 md:pt-0">
+
+                        <div className="w-full max-w-5xl mx-auto px-4 md:px-12 pt-8 md:pt-16 pb-32"><div className="animate-fade-in-up">{STEPS[currentStep].component}</div></div>
+
+                        <div className="sticky bottom-8 w-full px-4 md:px-12 pointer-events-none flex justify-center z-40">
+
+                            <div className="pointer-events-auto w-full max-w-3xl glass-dock p-3 flex justify-between items-center relative overflow-hidden">
+
+                                <div className="absolute top-0 left-0 h-[2px] bg-black/5 dark:bg-white/5 w-full"><div className="h-full bg-quantum transition-all duration-500" style={{ width: `${progress}%` }}></div></div>
+
+                                <button onClick={() => { setCurrentStep(Math.max(0, currentStep - 1)); const sc = document.getElementById('main-scroll-container'); if(sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); }}
+
+                                    disabled={currentStep === 0 || isGenerating} className={`flex items-center gap-2 px-6 py-3 rounded-full font-black text-[10px] tracking-[0.2em] uppercase transition-all border border-transparent ${currentStep === 0 || isGenerating ? 'text-black/30 dark:text-white/30 cursor-not-allowed opacity-50' : 'text-black dark:text-white hover:border-black/10 dark:hover:border-white/10 active:scale-95'}`}><IconChevronLeft className="w-4 h-4" /> PREV</button>
+
+                                <div className="flex items-center gap-4">
+
+                                    {isNextDisabled && !isGenerating && currentStep !== STEPS.length - 1 && <span className="hidden sm:block font-mono text-[9px] text-alert uppercase tracking-[0.3em] border border-alert/30 bg-alert/10 px-3 py-1.5 rounded-full">REQUIREMENTS NOT MET</span>}
+
+                                    <button onClick={handleNext} disabled={isNextDisabled || currentStep === STEPS.length - 1}
+
+                                        className={`flex items-center gap-2 px-8 py-4 rounded-full font-black uppercase tracking-[0.2em] text-[10px] transition-all ${isNextDisabled || currentStep === STEPS.length - 1 ? 'bg-black/5 dark:bg-white/5 text-black/30 dark:text-white/30 cursor-not-allowed' : 'bg-black text-white dark:bg-white dark:text-black hover:bg-quantum hover:text-black dark:hover:bg-quantum active:scale-95'}`}>
+
+                                        {currentStep === STEPS.length - 2 ? 'INITIATE SYNTHESIS' : (STEPS[currentStep + 1]?.isCheckpoint ? 'VIEW DIAGNOSTIC' : 'NEXT MODULE')} <IconChevronRight className="w-4 h-4" />
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            );
+
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+
+        root.render(<App />);
+
+    </script>
+
+
+  <!-- QB Results Modal -->
+  <script src="/qb-results-modal.js"></script>
+</body>
+
+</html>
