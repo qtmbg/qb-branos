@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Voice Guide Agent</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;--bg5:#252525;
+  --border:#2a2a2a;--border2:#333;--border3:#3a3a3a;
+  --text:#e8e8e8;--text2:#888;--text3:#555;--text4:#333;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
+  --red:#ef4444;--red2:rgba(239,68,68,0.1);
+  --amber:#f59e0b;--amber2:rgba(245,158,11,0.1);
+  --blue:#60a5fa;--blue2:rgba(96,165,250,0.1);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);
+  --teal:#2dd4bf;--teal2:rgba(45,212,191,0.1);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--green)}
+textarea{resize:vertical;line-height:1.6}
+select option{background:var(--bg3)}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scanH{0%{left:-80%}100%{left:200%}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+@keyframes typeIn{from{width:0}to{width:100%}}
+.fade-in{animation:fadeIn .4s ease forwards}
+.slide-in{animation:slideIn .3s ease forwards}
+.blink{animation:pulse 1.4s ease infinite}
+.spin{animation:spin .9s linear infinite}
+.scan-line{position:relative;overflow:hidden}
+.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.05),transparent);animation:scanH 3s linear infinite}
+.tab-btn{padding:8px 16px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer;white-space:nowrap}
+.tab-btn:hover{border-color:var(--border2);color:var(--text2)}
+.tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
+.before-after-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ba-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-family:var(--mono);padding:6px 14px;border-bottom:1px solid var(--border)}
+.ba-text{padding:14px;font-size:13px;line-height:1.7;color:var(--text)}
+.rule-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:8px;transition:border-color .15s}
+.rule-card:hover{border-color:var(--border2)}
+.pill{display:inline-block;padding:3px 10px;border-radius:4px;font-size:11px;font-family:var(--mono);margin:2px}
+.pill-green{background:var(--green2);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
+.pill-red{background:var(--red2);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.pill-amber{background:var(--amber2);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.pill-blue{background:var(--blue2);color:var(--blue);border:1px solid rgba(96,165,250,0.2)}
+.pill-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
+.pill-neutral{background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.slider-thumb::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);cursor:pointer;border:2px solid var(--bg)}
+.slider-thumb::-webkit-slider-runnable-track{background:var(--border2);height:3px;border-radius:2px}
+.slider-thumb{-webkit-appearance:none;width:100%;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
+</style>
+<script>
+// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  // QBP
+  var urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  // Universal AI call — works with Anthropic or Gemini
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.content[0].text;
+  };
+  window.QB_AUTOFILL = function(fieldMap){
+    if(!window.QB_QBP) return;
+    Object.entries(fieldMap).forEach(function(kv){
+      var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
+      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
+    });
+  };
+})();
+</script>
+</head>
+<body>
+<script>
+// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  // QBP: URL param (base64 encoded) > localStorage
+  const urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+})();
+// ── END QB SPINE ──────────────────────────────────────────────────────────────
+</script>
+<script>
+// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  // QBP: URL param (base64 encoded) > localStorage
+  const urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+})();
+// ── END QB SPINE ──────────────────────────────────────────────────────────────
+</script>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ── CONSTANTS ──────────────────────────────────────────────────────────────────
+const NATURAL_FORCES    = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
+const ARCHETYPES        = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Lover','The Jester','The Everyman','The Innocent'];
+const MYTH_FIGURES      = ['The Alchemist','The Oracle','The Warrior','The Creator','The Sage','The Trickster','The Sovereign','The Healer'];
+const TONE_MODES        = ['Instagram caption','LinkedIn thought-leadership post','Cold outreach email','About page','Sales page headline','Newsletter opening','YouTube intro','Podcast bio','Website hero copy','Press release'];
+const OUTPUT_TABS       = ['Voice DNA','Writing Rules','Tone Modes','Before & After','Content Templates','Copy Generator'];
+
+// ── SHARED UI ──────────────────────────────────────────────────────────────────
+const MonoLabel = ({children,color,mb=8})=>(
+  <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:color||'var(--text3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>
+);
+const Card=({children,accent,style={}})=>(
+  <div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>{children}</div>
+);
+const Section=({title,number,children,note})=>(
+  <div style={{marginBottom:32}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:16,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{number}</span>
+      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
+      {note&&<span style={{fontSize:11,color:'var(--text3)',fontStyle:'italic',marginLeft:'auto'}}>{note}</span>}
+    </div>
+    {children}
+  </div>
+);
+const TF=({label,value,onChange,placeholder,rows=2,hint})=>(
+  <div style={{marginBottom:16}}>
+    <MonoLabel>{label}</MonoLabel>
+    {rows>1
+      ?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+      :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>
+    }
+    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:5,fontStyle:'italic'}}>{hint}</div>}
+  </div>
+);
+const SF=({label,options,value,onChange})=>(
+  <div style={{marginBottom:16}}>
+    <MonoLabel>{label}</MonoLabel>
+    <select value={value} onChange={e=>onChange(e.target.value)}>
+      <option value="">— select —</option>
+      {options.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
+const SliderF=({label,left,right,value,onChange})=>(
+  <div style={{marginBottom:18}}>
+    <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+      <MonoLabel mb={0}>{label}</MonoLabel>
+      <span style={{fontFamily:'var(--mono)',fontSize:11,color:'var(--green)'}}>{value}/10</span>
+    </div>
+    <input type="range" min={1} max={10} value={value} onChange={e=>onChange(parseInt(e.target.value))} className="slider-thumb" style={{marginBottom:5}}/>
+    <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:'var(--text3)'}}>
+      <span>{left}</span><span>{right}</span>
+    </div>
+  </div>
+);
+
+// ── VOICE DNA DISPLAY ─────────────────────────────────────────────────────────
+const VoiceDNAPanel = ({data})=>{
+  if(!data) return null;
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+      {/* Core identity statement */}
+      <div style={{background:'var(--bg)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'20px 24px'}} className="scan-line">
+        <MonoLabel color="var(--green)">Voice Identity Statement</MonoLabel>
+        <p style={{fontSize:15,lineHeight:1.8,color:'var(--text)',fontStyle:'italic'}}>"{data.voiceIdentityStatement}"</p>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        {/* Personality pillars */}
+        <Card accent="rgba(167,139,250,0.2)">
+          <MonoLabel color="var(--purple)">Personality pillars</MonoLabel>
+          {data.personalityPillars?.map((p,i)=>(
+            <div key={i} style={{padding:'8px 0',borderBottom:i<data.personalityPillars.length-1?'1px solid var(--border)':''}}>
+              <div style={{fontSize:13,fontWeight:500,color:'var(--text)',marginBottom:3}}>{p.pillar}</div>
+              <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.5}}>{p.inPractice}</div>
+            </div>
+          ))}
+        </Card>
+
+        {/* Register + rhythm */}
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <Card accent="rgba(96,165,250,0.2)">
+            <MonoLabel color="var(--blue)">Voice register</MonoLabel>
+            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{data.voiceRegister}</p>
+          </Card>
+          <Card accent="rgba(45,212,191,0.2)">
+            <MonoLabel color="var(--teal)">Rhythm + tempo</MonoLabel>
+            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{data.rhythmTempo}</p>
+          </Card>
+        </div>
+      </div>
+
+      {/* Aligned / refuses */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <Card accent="rgba(74,222,128,0.15)">
+          <MonoLabel color="var(--green)">Sounds aligned with</MonoLabel>
+          {data.alignedWith?.map((a,i)=>(
+            <div key={i} style={{padding:'6px 0',borderBottom:i<data.alignedWith.length-1?'1px solid var(--border)':''}}>
+              <div style={{fontSize:12,fontWeight:500,color:'var(--text)',marginBottom:2}}>{a.brand}</div>
+              <div style={{fontSize:11,color:'var(--text3)'}}>{a.reason}</div>
+            </div>
+          ))}
+        </Card>
+        <Card accent="rgba(239,68,68,0.15)">
+          <MonoLabel color="var(--red)">Refuses to sound like</MonoLabel>
+          {data.refuses?.map((r,i)=>(
+            <div key={i} style={{padding:'6px 0',borderBottom:i<data.refuses.length-1?'1px solid var(--border)':''}}>
+              <div style={{fontSize:12,fontWeight:500,color:'var(--text)',marginBottom:2}}>{r.brand}</div>
+              <div style={{fontSize:11,color:'var(--text3)'}}>{r.reason}</div>
+            </div>
+          ))}
+        </Card>
+      </div>
+
+      {/* Always / Never */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <Card>
+          <MonoLabel color="var(--green)">Always</MonoLabel>
+          {data.alwaysDoes?.map((a,i)=><span key={i} className="pill pill-green">{a}</span>)}
+        </Card>
+        <Card>
+          <MonoLabel color="var(--red)">Never</MonoLabel>
+          {data.neverDoes?.map((n,i)=><span key={i} className="pill pill-red">{n}</span>)}
+        </Card>
+      </div>
+
+      {/* Sentence architecture */}
+      <Card accent="rgba(245,158,11,0.2)">
+        <MonoLabel color="var(--amber)">Sentence architecture</MonoLabel>
+        <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7,marginBottom:10}}>{data.sentenceArchitecture?.description}</p>
+        <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+          {data.sentenceArchitecture?.characteristics?.map((c,i)=><span key={i} className="pill pill-amber">{c}</span>)}
+        </div>
+      </Card>
+
+      {/* Celebrity synthesis */}
+      <Card accent="rgba(167,139,250,0.15)">
+        <MonoLabel color="var(--purple)">Behavioral synthesis — this voice moves like</MonoLabel>
+        <p style={{fontSize:14,lineHeight:1.7,color:'var(--text)',fontStyle:'italic'}}>"{data.behavioralSynthesis}"</p>
+      </Card>
+    </div>
+  );
+};
+
+// ── WRITING RULES PANEL ───────────────────────────────────────────────────────
+const WritingRulesPanel = ({data})=>{
+  if(!data?.writingRules) return null;
+  const [open,setOpen]=useState(null);
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:8}}>
+      <div style={{marginBottom:8,fontSize:12,color:'var(--text2)',lineHeight:1.6}}>
+        {data.writingRulesIntro}
+      </div>
+      {data.writingRules.map((rule,i)=>(
+        <div key={i} className="rule-card" onClick={()=>setOpen(open===i?null:i)} style={{cursor:'pointer'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10}}>
+              <span style={{fontFamily:'var(--mono)',fontSize:10,color:rule.type==='do'?'var(--green)':rule.type==='never'?'var(--red)':'var(--amber)',border:`1px solid ${rule.type==='do'?'rgba(74,222,128,0.25)':rule.type==='never'?'rgba(239,68,68,0.25)':'rgba(245,158,11,0.25)'}`,padding:'2px 8px',borderRadius:3}}>
+                {rule.type==='do'?'DO':rule.type==='never'?'NEVER':'CAUTION'}
+              </span>
+              <span style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{rule.rule}</span>
+            </div>
+            <span style={{color:'var(--text3)',fontSize:12}}>{open===i?'↑':'↓'}</span>
+          </div>
+          {open===i&&(
+            <div className="slide-in" style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--border)'}}>
+              <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.7,marginBottom:10}}>{rule.explanation}</p>
+              {rule.wrongExample&&(
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                  <div style={{background:'var(--red2)',borderRadius:6,padding:'10px 12px'}}>
+                    <div style={{fontSize:10,color:'var(--red)',fontFamily:'var(--mono)',letterSpacing:'.15em',marginBottom:6}}>WRONG</div>
+                    <p style={{fontSize:12,color:'var(--text)',lineHeight:1.6,fontStyle:'italic'}}>"{rule.wrongExample}"</p>
+                  </div>
+                  <div style={{background:'var(--green3)',border:'1px solid rgba(74,222,128,0.1)',borderRadius:6,padding:'10px 12px'}}>
+                    <div style={{fontSize:10,color:'var(--green)',fontFamily:'var(--mono)',letterSpacing:'.15em',marginBottom:6}}>RIGHT</div>
+                    <p style={{fontSize:12,color:'var(--text)',lineHeight:1.6,fontStyle:'italic'}}>"{rule.rightExample}"</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ── TONE MODES PANEL ──────────────────────────────────────────────────────────
+const ToneModesPanel = ({data})=>{
+  if(!data?.toneModes) return null;
+  const [active,setActive]=useState(0);
+  const mode = data.toneModes[active];
+  return(
+    <div className="fade-in">
+      <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:20}}>
+        {data.toneModes.map((m,i)=>(
+          <button key={i} className={`tab-btn${active===i?' active':''}`} onClick={()=>setActive(i)}>
+            {m.context}
+          </button>
+        ))}
+      </div>
+      {mode&&(
+        <div className="fade-in" key={active}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+            <Card accent="rgba(96,165,250,0.2)">
+              <MonoLabel color="var(--blue)">Tone shift for {mode.context}</MonoLabel>
+              <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6,marginBottom:8}}>{mode.toneShift}</p>
+              <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+                {mode.toneWords?.map((w,i)=><span key={i} className="pill pill-blue">{w}</span>)}
+              </div>
+            </Card>
+            <Card>
+              <MonoLabel>What changes, what stays constant</MonoLabel>
+              <div style={{marginBottom:8}}>
+                <div style={{fontSize:11,color:'var(--green)',marginBottom:4}}>Changes →</div>
+                <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.5}}>{mode.whatChanges}</p>
+              </div>
+              <div>
+                <div style={{fontSize:11,color:'var(--amber)',marginBottom:4}}>Constant →</div>
+                <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.5}}>{mode.whatStaysConstant}</p>
+              </div>
+            </Card>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <div className="before-after-card">
+              <div className="ba-label" style={{background:'var(--red2)',color:'var(--red)'}}>Generic version</div>
+              <div className="ba-text" style={{color:'var(--text3)'}}>{mode.genericExample}</div>
+            </div>
+            <div className="before-after-card">
+              <div className="ba-label" style={{background:'var(--green3)',color:'var(--green)',borderBottom:'1px solid rgba(74,222,128,0.1)'}}>On-brand version</div>
+              <div className="ba-text">{mode.onBrandExample}</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── BEFORE/AFTER PANEL ────────────────────────────────────────────────────────
+const BeforeAfterPanel = ({data})=>{
+  if(!data?.beforeAfter) return null;
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.7}}>{data.beforeAfterIntro}</div>
+      {data.beforeAfter.map((item,i)=>(
+        <div key={i}>
+          <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:8}}>{item.scenario}</div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+            <div className="before-after-card">
+              <div className="ba-label" style={{background:'var(--red2)',color:'var(--red)'}}>Before — generic</div>
+              <div className="ba-text" style={{color:'var(--text3)'}}>{item.before}</div>
+            </div>
+            <div className="before-after-card">
+              <div className="ba-label" style={{background:'var(--green3)',color:'var(--green)',borderBottom:'1px solid rgba(74,222,128,0.1)'}}>After — on brand</div>
+              <div className="ba-text">{item.after}</div>
+            </div>
+          </div>
+          {item.whyItWorks&&(
+            <div style={{padding:'8px 12px',background:'var(--bg4)',borderRadius:6,marginTop:6,fontSize:11,color:'var(--text3)',lineHeight:1.5}}>
+              <span style={{color:'var(--amber)'}}>Why it works: </span>{item.whyItWorks}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ── TEMPLATES PANEL ───────────────────────────────────────────────────────────
+const TemplatesPanel = ({data})=>{
+  if(!data?.contentTemplates) return null;
+  const [active,setActive]=useState(0);
+  const tpl = data.contentTemplates[active];
+  const copyText = t => navigator.clipboard.writeText(t).catch(()=>{});
+  return(
+    <div className="fade-in">
+      <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:20}}>
+        {data.contentTemplates.map((t,i)=>(
+          <button key={i} className={`tab-btn${active===i?' active':''}`} onClick={()=>setActive(i)}>{t.name}</button>
+        ))}
+      </div>
+      {tpl&&(
+        <div className="fade-in" key={active}>
+          <div style={{marginBottom:12,fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{tpl.usage}</div>
+          <div style={{position:'relative'}}>
+            <div style={{background:'var(--bg3)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'20px 24px',fontFamily:'var(--mono)',fontSize:12,lineHeight:2,color:'var(--text)',whiteSpace:'pre-wrap'}}>
+              {tpl.template}
+            </div>
+            <button
+              onClick={()=>copyText(tpl.template)}
+              style={{position:'absolute',top:10,right:10,background:'var(--bg4)',border:'1px solid var(--border)',color:'var(--text2)',padding:'5px 12px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}
+            >Copy</button>
+          </div>
+          {tpl.example&&(
+            <div style={{marginTop:12}}>
+              <MonoLabel color="var(--text3)">Example using this template</MonoLabel>
+              <div style={{background:'var(--bg)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px',fontSize:13,color:'var(--text)',lineHeight:1.8,fontStyle:'italic'}}>
+                "{tpl.example}"
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── COPY GENERATOR ────────────────────────────────────────────────────────────
+const CopyGeneratorPanel = ({voiceData,qbp})=>{
+  const [context,setContext]=useState('');
+  const [brief,setBrief]=useState('');
+  const [platform,setPlatform]=useState('');
+  const [generated,setGenerated]=useState('');
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState('');
+
+  const generate = async()=>{
+    if(!context||!brief){ setError('Fill the context and brief fields.'); return; }
+    setError(''); setGenerated(''); setLoading(true);
+
+    const sysPrompt = `You are the Quantum Branding Copy Agent. You write copy that sounds exactly like this specific brand's voice — no more, no less.
+The Voice Guide defines the brand's exact verbal identity. You apply it without deviation.
+Return ONLY the copy, nothing else — no explanation, no headline label, no preamble.`;
+
+    const userPrompt = `BRAND VOICE DNA:
+${JSON.stringify(voiceData, null, 2)}
+
+QBP CONTEXT:
+Brand: ${qbp.brandName}
+Essence: ${qbp.brandEssence}
+Archetype: ${qbp.archetype}
+Natural Force: ${qbp.naturalForce}
+
+COPY REQUEST:
+Context / format: ${context}
+Platform: ${platform||'unspecified'}
+Brief: ${brief}
+
+Write this copy in the exact voice defined above. Apply the correct tone mode for the platform. Follow all writing rules. Do not break character.`;
+
+    try{
+      const res = await fetch('/api/claude',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:800,
+          system:sysPrompt,
+          messages:[{role:'user',content:userPrompt}]
+        })
+      });
+      const d = await res.json();
+      if(d.error) throw new Error(d.error.message);
+      setGenerated(d.content[0].text.trim());
+    }catch(e){ setError(e.message); }
+    setLoading(false);
+  };
+
+  const copy = ()=>navigator.clipboard.writeText(generated).catch(()=>{});
+
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.7}}>
+        The voice guide is loaded. Describe what you need — the agent writes it in the brand's exact voice.
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <TF label="Format / context" value={context} onChange={setContext} placeholder="e.g. Instagram caption, LinkedIn post, email subject line, hero headline" rows={1}/>
+        <TF label="Platform" value={platform} onChange={setPlatform} placeholder="e.g. Instagram, LinkedIn, email, website" rows={1}/>
+      </div>
+      <TF label="What to write" value={brief} onChange={setBrief} placeholder="e.g. Announce a new discovery session. Speak to founders who feel their brand has outgrown them. Drive toward booking." rows={3}/>
+      {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:6,padding:'10px 14px',fontSize:12,color:'var(--red)'}}>{error}</div>}
+      <div style={{display:'flex',justifyContent:'flex-end'}}>
+        <button onClick={generate} disabled={loading||!context||!brief} style={{background:(!loading&&context&&brief)?'var(--green)':'var(--bg3)',color:(!loading&&context&&brief)?'#000':'var(--text3)',padding:'10px 24px',borderRadius:6,fontWeight:700,fontSize:12,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
+          {loading?'Writing...':'Generate Copy →'}
+        </button>
+      </div>
+      {loading&&(
+        <div style={{display:'flex',alignItems:'center',gap:10,color:'var(--text2)',fontSize:12}}>
+          <div style={{width:14,height:14,border:'1.5px solid var(--border)',borderTop:'1.5px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+          Applying voice rules...
+        </div>
+      )}
+      {generated&&(
+        <div className="fade-in">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+            <MonoLabel color="var(--green)">Generated copy</MonoLabel>
+            <button onClick={copy} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:'var(--text2)',padding:'5px 12px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Copy</button>
+          </div>
+          <div style={{background:'var(--bg)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'20px 24px',fontSize:14,lineHeight:1.9,color:'var(--text)',whiteSpace:'pre-wrap'}}>
+            {generated}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── MAIN APP ───────────────────────────────────────────────────────────────────
+const STEPS = ['QBP Input','Generating','Voice Guide'];
+
+export default function App(){
+  const [step,setStep]=useState(0);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState('');
+  const [result,setResult]=useState(null);
+  const [activeTab,setActiveTab]=useState('Voice DNA');
+
+  // QBP fields
+  const [brandName,setBrandName]=useState('');
+  const [brandEssence,setBrandEssence]=useState('');
+  const [manifestoLine,setManifestoLine]=useState('');
+  const [naturalForce,setNaturalForce]=useState('');
+  const [archetype,setArchetype]=useState('');
+  const [mythFigure,setMythFigure]=useState('');
+  const [antiBrand,setAntiBrand]=useState('');
+  const [paradox,setParadox]=useState('');
+  const [fanLetter,setFanLetter]=useState('');
+  const [alignedBrands,setAlignedBrands]=useState('');
+  const [refusedBrands,setRefusedBrands]=useState('');
+  const [celebritySynth,setCelebritySynth]=useState('');
+  const [rhythm,setRhythm]=useState('');
+  const [alwaysNever,setAlwaysNever]=useState('');
+  const [spark,setSpark]=useState('');
+  // Tone sliders
+  const [formal,setFormal]=useState(5);
+  const [sparse,setSparse]=useState(5);
+  const [emotional,setEmotional]=useState(5);
+  const [direct,setDirect]=useState(5);
+  const [serious,setSerious]=useState(5);
+  // Platforms
+  const [platforms,setPlatforms]=useState({instagram:true,linkedin:true,email:true,website:true,youtube:false,podcast:false});
+
+  const qbp = {brandName,brandEssence,manifestoLine,naturalForce,archetype,mythFigure,antiBrand,paradox,fanLetter,alignedBrands,refusedBrands,celebritySynth,rhythm,alwaysNever,spark,toneSliders:{formal,sparse,emotional,direct,serious}};
+
+  const isValid = ()=>brandName&&brandEssence&&naturalForce&&archetype;
+
+  const togglePlatform = p=>setPlatforms(prev=>({...prev,[p]:!prev[p]}));
+  const selectedPlatforms = Object.entries(platforms).filter(([,v])=>v).map(([k])=>k);
+
+  const buildPrompt = ()=>`You are the Voice Guide Agent inside the Quantum Branding BrandOS ecosystem.
+Your function is to produce a complete, precise, executable Voice Guide from a Quantum Brand Profile.
+This is not a generic brand voice document. Every element must be traceable to the QBP.
+The output must be specific enough that any writer, AI agent, or content creator can produce on-brand copy after reading it once.
+Return ONLY valid JSON — no markdown, no preamble.
+
+QUANTUM BRAND PROFILE:
+Brand Name: ${brandName}
+Brand Essence: ${brandEssence}
+Manifesto Line: ${manifestoLine||'not specified'}
+Natural Force: ${naturalForce}
+Primary Archetype: ${archetype}
+Mythological Figure: ${mythFigure||'not specified'}
+Anti-Brand: ${antiBrand||'not specified'}
+Central Paradox: ${paradox||'not specified'}
+Fan Letter (ideal client): ${fanLetter||'not specified'}
+Aligned brands: ${alignedBrands||'not specified'}
+Refused brands: ${refusedBrands||'not specified'}
+Celebrity synthesis: ${celebritySynth||'not specified'}
+Rhythm/tempo notes: ${rhythm||'not specified'}
+Always/Never notes: ${alwaysNever||'not specified'}
+The Spark (narrative synthesis): ${spark||'not specified'}
+
+TONE CALIBRATION (1=left pole, 10=right pole):
+Formal(1)↔Casual(10): ${formal}
+Sparse(1)↔Generous(10): ${sparse}
+Rational(1)↔Emotional(10): ${emotional}
+Indirect(1)↔Direct(10): ${direct}
+Serious(1)↔Playful(10): ${serious}
+
+PLATFORMS TO COVER: ${selectedPlatforms.join(', ')||'Instagram, LinkedIn, Email, Website'}
+
+Return a JSON object with EXACTLY this structure:
+{
+  "voiceIdentityStatement": "One sentence that captures the complete voice identity — the synthesis of WHO it sounds like, HOW it moves, and WHAT it refuses",
+  "personalityPillars": [
+    {"pillar": "pillar name", "inPractice": "what this means in actual writing — specific, not abstract"}
+  ],
+  "voiceRegister": "2-3 sentences on the register — pitch, presence, authority level, emotional temperature",
+  "rhythmTempo": "2-3 sentences on sentence rhythm, cadence patterns, pacing",
+  "alignedWith": [
+    {"brand": "brand name", "reason": "specific quality this brand shares — not general alignment"}
+  ],
+  "refuses": [
+    {"brand": "brand name or type", "reason": "specific quality this brand refuses — structural, not aesthetic"}
+  ],
+  "alwaysDoes": ["specific writing behavior — concrete, not vague — 6-8 items"],
+  "neverDoes": ["specific forbidden behavior — concrete — 6-8 items"],
+  "sentenceArchitecture": {
+    "description": "2-3 sentences on how sentences are built — length, structure, punctuation philosophy",
+    "characteristics": ["characteristic 1", "characteristic 2", "characteristic 3", "characteristic 4"]
+  },
+  "behavioralSynthesis": "The celebrity/figure synthesis sentence — 'This voice leads like X, creates like Y, endures like Z'",
+  "writingRulesIntro": "1-2 sentences framing the rules",
+  "writingRules": [
+    {
+      "rule": "short rule title",
+      "type": "do" | "never" | "caution",
+      "explanation": "why this rule exists, traced to QBP",
+      "wrongExample": "example of violating this rule",
+      "rightExample": "correct on-brand version"
+    }
+  ],
+  "toneModes": [
+    {
+      "context": "platform or context name",
+      "toneShift": "how the voice shifts for this context",
+      "toneWords": ["word1","word2","word3"],
+      "whatChanges": "what is different here",
+      "whatStaysConstant": "what never changes regardless",
+      "genericExample": "generic off-brand version",
+      "onBrandExample": "specific on-brand version in this voice"
+    }
+  ],
+  "beforeAfterIntro": "1 sentence framing the before/after section",
+  "beforeAfter": [
+    {
+      "scenario": "writing scenario name",
+      "before": "generic, off-brand version",
+      "after": "on-brand version in this exact voice",
+      "whyItWorks": "specific reason traced to a voice rule or QBP element"
+    }
+  ],
+  "contentTemplates": [
+    {
+      "name": "template name",
+      "usage": "when to use this — specific context",
+      "template": "the actual template with [VARIABLES] in brackets — make it genuinely useful and specific to this brand's voice",
+      "example": "a filled-in example of the template in use"
+    }
+  ]
+}
+
+Requirements:
+- writingRules: minimum 8 rules
+- toneModes: one per selected platform, minimum 4
+- beforeAfter: minimum 5 scenarios covering different contexts
+- contentTemplates: minimum 5 templates (Instagram caption, LinkedIn post, email subject, CTA, bio)
+- personalityPillars: exactly 4
+- ALL examples must sound like THIS brand — specific, not generic`;
+
+  const run = async()=>{
+    if(!isValid()){setError('Complete the required fields (*).');return;}
+    setError('');setLoading(true);setStep(1);
+    try{
+      const res = await fetch('/api/claude',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:6000,
+          messages:[{role:'user',content:buildPrompt()}]
+        })
+      });
+      const d = await res.json();
+      if(d.error) throw new Error(d.error.message);
+      const raw = d.content[0].text.trim();
+      const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+      setResult(JSON.parse(clean));
+      setActiveTab('Voice DNA');
+      setStep(2);
+    }catch(e){setError('Agent error: '+e.message);setStep(0);}
+    setLoading(false);
+  };
+
+  const exportGuide = ()=>{
+    const blob = new Blob([JSON.stringify({qbp,voiceGuide:result},null,2)],{type:'application/json'});
+    const a = document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`${brandName.replace(/\s+/g,'-').toLowerCase()}-voice-guide.json`;
+    a.click();
+  };
+
+  return(
+    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+
+      {/* HEADER */}
+      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
+          <div style={{width:1,height:14,background:'var(--border)'}}/>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>Voice Guide Agent v1.0</div>
+        </div>
+        <div style={{display:'flex',gap:6,alignItems:'center'}}>
+          {STEPS.map((s,i)=>(
+            <React.Fragment key={i}>
+              <div style={{display:'flex',alignItems:'center',gap:5}}>
+                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
+                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4)',letterSpacing:'.1em',fontFamily:'var(--mono)'}}>{s}</span>
+              </div>
+              {i<STEPS.length-1&&<div style={{width:14,height:1,background:'var(--border)',margin:'0 2px'}}/>}
+            </React.Fragment>
+          ))}
+        </div>
+      </header>
+
+      <main style={{flex:1,maxWidth:960,margin:'0 auto',width:'100%',padding:'40px 24px'}}>
+
+        {/* ── STEP 0: INPUT ── */}
+        {step===0&&(
+          <div className="fade-in">
+            <div style={{marginBottom:40}}>
+              <MonoLabel color="var(--green)">// QBP — Verbal Identity Input</MonoLabel>
+              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:8}}>Voice Guide Agent</h1>
+              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:600}}>Feed your Quantum Brand Profile. The agent produces a complete verbal identity system — voice DNA, writing rules, tone modes per platform, before/after rewrites, templates, and a live copy generator.</p>
+            </div>
+
+            <Section number={1} title="Brand Core" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand this voice belongs to" rows={1}/>
+                <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
+              </div>
+              <TF label="Brand Essence — irreducible truth *" value={brandEssence} onChange={setBrandEssence} placeholder="The sentence carved in stone" rows={2}/>
+              <TF label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The one belief that drives everything" rows={1}/>
+              <TF label="The Spark — narrative synthesis" value={spark} onChange={setSpark} placeholder="3-5 sentence synthesis of who this brand is, why it exists, what it is here to do" rows={3}/>
+            </Section>
+
+            <Section number={2} title="Soul Map — Verbal Data">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
+                <SF label="Mythological Figure" options={MYTH_FIGURES} value={mythFigure} onChange={setMythFigure}/>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <TF label="Aligned Brands — 2 brands this voice aligns with" value={alignedBrands} onChange={setAlignedBrands} placeholder="e.g. Patagonia, Bottega Veneta — with why" rows={2}/>
+                <TF label="Refused Brands — what this voice refuses" value={refusedBrands} onChange={setRefusedBrands} placeholder="e.g. corporate consulting, startup growth hacking — with why" rows={2}/>
+              </div>
+              <TF label="Celebrity Synthesis — 'this brand leads like X, creates like Y, endures like Z'" value={celebritySynth} onChange={setCelebritySynth} placeholder="e.g. Leads like Dieter Rams, creates like Virgil Abloh, endures like Coco Chanel" rows={2}/>
+              <TF label="Rhythm / Tempo notes" value={rhythm} onChange={setRhythm} placeholder="e.g. Short declarative sentences. Occasional long arcs. Never lists. Never bullet points in public writing." rows={2}/>
+              <TF label="Always / Never — voice rules you already know" value={alwaysNever} onChange={setAlwaysNever} placeholder="e.g. Always: direct, challenge-first, no filler. Never: jargon, passive voice, corporate softeners." rows={2}/>
+              <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be — verbally" rows={1}/>
+              <TF label="Fan Letter — describe your ideal client" value={fanLetter} onChange={setFanLetter} placeholder="The person this brand was built for — their state, their desire, what they carry" rows={2}/>
+            </Section>
+
+            <Section number={3} title="Tone Calibration">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 32px'}}>
+                <SliderF label="Formal ↔ Casual" left="Formal" right="Casual" value={formal} onChange={setFormal}/>
+                <SliderF label="Sparse ↔ Generous" left="Sparse" right="Generous" value={sparse} onChange={setSparse}/>
+                <SliderF label="Rational ↔ Emotional" left="Rational" right="Emotional" value={emotional} onChange={setEmotional}/>
+                <SliderF label="Indirect ↔ Direct" left="Indirect" right="Direct" value={direct} onChange={setDirect}/>
+              </div>
+              <SliderF label="Serious ↔ Playful" left="Serious" right="Playful" value={serious} onChange={setSerious}/>
+            </Section>
+
+            <Section number={4} title="Platforms" note="select all that apply">
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                {Object.entries(platforms).map(([p,on])=>(
+                  <button key={p} onClick={()=>togglePlatform(p)}
+                    style={{padding:'8px 16px',borderRadius:5,fontSize:12,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase',background:on?'var(--green2)':'var(--bg3)',border:`1px solid ${on?'rgba(74,222,128,0.3)':'var(--border)'}`,color:on?'var(--green)':'var(--text3)',transition:'all .2s'}}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </Section>
+
+            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'12px 16px',marginBottom:20,fontSize:13,color:'var(--red)'}}>{error}</div>}
+
+            <div style={{display:'flex',justifyContent:'flex-end'}}>
+              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
+                Generate Voice Guide →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 1: GENERATING ── */}
+        {step===1&&(
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:440,gap:24,textAlign:'center'}}>
+            <div style={{width:52,height:52,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+            <div>
+              <MonoLabel color="var(--green)">Agent Processing</MonoLabel>
+              <div style={{color:'var(--text2)',fontSize:13,lineHeight:2,maxWidth:400}}>
+                Reading Quantum Brand Profile<br/>
+                Synthesizing voice identity from Soul data<br/>
+                Building personality pillars and register<br/>
+                Calibrating tone modes per platform<br/>
+                Writing rules from always/never signals<br/>
+                Generating before/after rewrites<br/>
+                Building content templates<br/>
+                Assembling Voice Guide...
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 2: VOICE GUIDE ── */}
+        {step===2&&result&&(
+          <div className="fade-in">
+            {/* Header */}
+            <div style={{marginBottom:28,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+              <div>
+                <MonoLabel color="var(--green)">// Voice Guide — Complete</MonoLabel>
+                <h1 style={{fontSize:24,fontWeight:700,marginBottom:4}}>{brandName}</h1>
+                <p style={{color:'var(--text2)',fontSize:13}}>Complete verbal identity system — all elements traceable to Quantum Brand Profile</p>
+              </div>
+              <div style={{display:'flex',gap:8}}>
+                <button onClick={exportGuide} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 16px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Export JSON</button>
+                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 16px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Guide</button>
+              </div>
+            </div>
+
+            {/* Tab nav */}
+            <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:24,paddingBottom:16,borderBottom:'1px solid var(--border)'}}>
+              {OUTPUT_TABS.map(t=>(
+                <button key={t} className={`tab-btn${activeTab===t?' active':''}`} onClick={()=>setActiveTab(t)}>{t}</button>
+              ))}
+            </div>
+
+            {/* Tab content */}
+            {activeTab==='Voice DNA'&&<VoiceDNAPanel data={result}/>}
+            {activeTab==='Writing Rules'&&<WritingRulesPanel data={result}/>}
+            {activeTab==='Tone Modes'&&<ToneModesPanel data={result}/>}
+            {activeTab==='Before & After'&&<BeforeAfterPanel data={result}/>}
+            {activeTab==='Content Templates'&&<TemplatesPanel data={result}/>}
+            {activeTab==='Copy Generator'&&<CopyGeneratorPanel voiceData={result} qbp={qbp}/>}
+          </div>
+        )}
+
+      </main>
+
+      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>Voice Guide Agent / Phase 02</span>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
