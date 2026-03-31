@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Quarterly Brand Review Agent</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;--bg5:#252525;
+  --border:#2a2a2a;--border2:#333;
+  --text:#e8e8e8;--text2:#888;--text3:#555;--text4:#333;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
+  --red:#ef4444;--red2:rgba(239,68,68,0.1);
+  --amber:#f59e0b;--amber2:rgba(245,158,11,0.1);
+  --blue:#60a5fa;--blue2:rgba(96,165,250,0.12);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.12);
+  --teal:#2dd4bf;--teal2:rgba(45,212,191,0.1);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--green)}
+textarea{resize:vertical;line-height:1.6}
+select option{background:var(--bg3)}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scanH{0%{left:-80%}100%{left:200%}}
+@keyframes reveal{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.fade-in{animation:fadeIn .35s ease forwards}
+.reveal{animation:reveal .4s ease forwards}
+.blink{animation:pulse 1.4s ease infinite}
+.spin{animation:spin .9s linear infinite}
+.scan-line{position:relative;overflow:hidden}
+.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.04),transparent);animation:scanH 3s linear infinite}
+.tab-btn{padding:7px 14px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer;white-space:nowrap}
+.tab-btn:hover{border-color:var(--border2);color:var(--text2)}
+.tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
+.update-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:8px}
+.diff-old{background:var(--red2);border-radius:4px;padding:10px 14px;font-size:12px;color:'var(--text3)';line-height:1.6;margin-bottom:4px;border-left:2px solid var(--red)}
+.diff-new{background:var(--green3);border:1px solid rgba(74,222,128,0.1);border-radius:4px;padding:10px 14px;font-size:12px;color:var(--text);line-height:1.6;border-left:2px solid var(--green)}
+.initiative-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:10px}
+.pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:10px;font-family:var(--mono);margin:2px;letter-spacing:.04em}
+.pill-green{background:var(--green2);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
+.pill-red{background:var(--red2);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.pill-amber{background:var(--amber2);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.pill-blue{background:var(--blue2);color:var(--blue);border:1px solid rgba(96,165,250,0.2)}
+.pill-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
+.pill-neutral{background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+</style>
+<script>
+// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  // QBP
+  var urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  // Universal AI call — works with Anthropic or Gemini
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.content[0].text;
+  };
+  window.QB_AUTOFILL = function(fieldMap){
+    if(!window.QB_QBP) return;
+    Object.entries(fieldMap).forEach(function(kv){
+      var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
+      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
+    });
+  };
+})();
+</script>
+</head>
+<body>
+<script>
+// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  // QBP: URL param (base64 encoded) > localStorage
+  const urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+})();
+// ── END QB SPINE ──────────────────────────────────────────────────────────────
+</script>
+<script>
+// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  // QBP: URL param (base64 encoded) > localStorage
+  const urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+})();
+// ── END QB SPINE ──────────────────────────────────────────────────────────────
+</script>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef}=React;
+
+const ARCHETYPES=['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
+const NATURAL_FORCES=['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
+const QUARTERS=['Q1 (Jan–Mar)','Q2 (Apr–Jun)','Q3 (Jul–Sep)','Q4 (Oct–Dec)'];
+
+const ML=({c,children,mb=8})=><div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:c||'var(--text3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
+const Card=({children,accent,style={}})=><div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>{children}</div>;
+const TF=({label,value,onChange,placeholder,rows=1,hint})=>(
+  <div style={{marginBottom:14}}>
+    <ML>{label}</ML>
+    {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+    :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
+    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
+  </div>
+);
+const SF=({label,options,value,onChange})=>(
+  <div style={{marginBottom:14}}>
+    <ML>{label}</ML>
+    <select value={value} onChange={e=>onChange(e.target.value)}>
+      <option value="">— select —</option>
+      {options.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
+const Sec=({n,title,children,note})=>(
+  <div style={{marginBottom:28}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{n}</span>
+      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
+      {note&&<span style={{fontSize:11,color:'var(--text3)',marginLeft:'auto'}}>{note}</span>}
+    </div>
+    {children}
+  </div>
+);
+
+// ── QBP DIFF VIEW ─────────────────────────────────────────────────────────────
+const QBPDiffPanel=({updates})=>{
+  if(!updates?.length) return <div style={{color:'var(--text3)',fontSize:13,padding:'20px 0'}}>No QBP updates recommended this quarter. The profile holds.</div>;
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:10}}>
+      <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.7,marginBottom:8,padding:'10px 14px',background:'var(--bg4)',borderRadius:6}}>
+        The QBP evolves based on what has been learned. These updates reflect what the brand has become — not what it was designed to be. Accept changes that feel true. Reject those that feel reactive.
+      </div>
+      {updates.map((u,i)=>(
+        <div key={i} className="update-card">
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+            <span style={{fontFamily:'var(--mono)',fontSize:9,padding:'2px 8px',borderRadius:3,
+              background:u.changeType==='strengthen'?'var(--green2)':u.changeType==='evolve'?'var(--blue2)':u.changeType==='add'?'var(--purple2)':'var(--amber2)',
+              color:u.changeType==='strengthen'?'var(--green)':u.changeType==='evolve'?'var(--blue)':u.changeType==='add'?'var(--purple)':'var(--amber)',
+              border:`1px solid ${u.changeType==='strengthen'?'rgba(74,222,128,0.2)':u.changeType==='evolve'?'rgba(96,165,250,0.2)':u.changeType==='add'?'rgba(167,139,250,0.2)':'rgba(245,158,11,0.2)'}`
+            }}>{u.changeType?.toUpperCase()}</span>
+            <span style={{fontSize:12,fontWeight:500,color:'var(--text)'}}>{u.field}</span>
+          </div>
+          {u.currentValue&&(
+            <div className="diff-old">
+              <span style={{fontSize:9,color:'var(--red)',fontFamily:'var(--mono)',letterSpacing:'.1em',display:'block',marginBottom:4}}>CURRENT</span>
+              {u.currentValue}
+            </div>
+          )}
+          <div className="diff-new">
+            <span style={{fontSize:9,color:'var(--green)',fontFamily:'var(--mono)',letterSpacing:'.1em',display:'block',marginBottom:4}}>PROPOSED UPDATE</span>
+            {u.proposedValue}
+          </div>
+          <div style={{marginTop:8,fontSize:11,color:'var(--text3)',fontStyle:'italic'}}>{u.reasoning}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ── INITIATIVES PANEL ─────────────────────────────────────────────────────────
+const InitiativesPanel=({initiatives})=>{
+  if(!initiatives?.length) return null;
+  const bandColor={now:'var(--green)',next:'var(--blue)',later:'var(--amber)',park:'var(--text3)'};
+  const bandBg={now:'var(--green2)',next:'var(--blue2)',later:'var(--amber2)',park:'var(--bg4)'};
+  const bands=['now','next','later','park'];
+  return(
+    <div className="fade-in">
+      {bands.map(band=>{
+        const bItems=initiatives.filter(ini=>ini.band?.toLowerCase()===band);
+        if(!bItems.length) return null;
+        return(
+          <div key={band} style={{marginBottom:24}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+              <div style={{width:32,height:20,borderRadius:4,background:bandBg[band],border:`1px solid ${bandColor[band]}40`,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <span style={{fontFamily:'var(--mono)',fontSize:9,color:bandColor[band],letterSpacing:'.08em'}}>{band.toUpperCase()}</span>
+              </div>
+              <div style={{flex:1,height:1,background:'var(--border)'}}/>
+            </div>
+            {bItems.map((ini,i)=>(
+              <div key={i} className="initiative-card">
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:12,marginBottom:8}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:14,fontWeight:500,color:'var(--text)',marginBottom:4}}>{ini.name}</div>
+                    <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+                      {ini.platform&&<span className="pill pill-neutral">{ini.platform}</span>}
+                      {ini.pillar&&<span className="pill pill-neutral">{ini.pillar}</span>}
+                      {ini.effort&&<span className="pill pill-neutral">{ini.effort} effort</span>}
+                    </div>
+                  </div>
+                  <div style={{textAlign:'right',flexShrink:0}}>
+                    <div style={{fontFamily:'var(--mono)',fontSize:16,fontWeight:700,color:bandColor[band]}}>{ini.score||'—'}</div>
+                    <div style={{fontSize:9,color:'var(--text3)',letterSpacing:'.1em',textTransform:'uppercase'}}>score</div>
+                  </div>
+                </div>
+                <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:8}}>{ini.rationale}</p>
+                {ini.successMetric&&(
+                  <div style={{fontSize:11,color:'var(--text3)'}}><span style={{color:'var(--text2)'}}>Success metric: </span>{ini.successMetric}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+const STEPS=['Review Input','Generating','Q-Review'];
+
+export default function App(){
+  const [step,setStep]=useState(0);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState('');
+  const [result,setResult]=useState(null);
+  const [activeTab,setActiveTab]=useState('narrative');
+
+  // Current QBP
+  const [brandName,setBrandName]=useState('');
+  const [brandEssence,setBrandEssence]=useState('');
+  const [spark,setSpark]=useState('');
+  const [naturalForce,setNaturalForce]=useState('');
+  const [archetype,setArchetype]=useState('');
+  const [manifesto,setManifesto]=useState('');
+  const [antiBrand,setAntiBrand]=useState('');
+  const [primaryPersona,setPrimaryPersona]=useState('');
+  const [offer,setOffer]=useState('');
+  const [voiceNotes,setVoiceNotes]=useState('');
+
+  // Quarter data
+  const [quarter,setQuarter]=useState('');
+  const [year,setYear]=useState(new Date().getFullYear().toString());
+  const [contentProduced,setContentProduced]=useState('');
+  const [topPerformers,setTopPerformers]=useState('');
+  const [lowestPerformers,setLowestPerformers]=useState('');
+  const [keyMetrics,setKeyMetrics]=useState('');
+  const [businessOutcomes,setBusinessOutcomes]=useState('');
+  const [audienceEvolution,setAudienceEvolution]=useState('');
+  const [whatWorked,setWhatWorked]=useState('');
+  const [whatDidnt,setWhatDidnt]=useState('');
+  const [biggestLesson,setBiggestLesson]=useState('');
+  const [brandFeeling,setBrandFeeling]=useState('');
+  const [identityDrift,setIdentityDrift]=useState('');
+  const [emergingOpportunities,setEmergingOpportunities]=useState('');
+  const [nextQGoal,setNextQGoal]=useState('');
+
+  const isValid=()=>brandName&&brandEssence&&quarter&&(whatWorked||topPerformers||keyMetrics);
+
+  const buildPrompt=()=>`You are the Quarterly Brand Review Agent inside the Quantum Branding BrandOS ecosystem.
+Your function is to run a full quarterly review that does three things:
+1. Read what happened this quarter through the brand lens — what the data says, what it means for identity
+2. Update the Quantum Brand Profile based on what was learned — the brand is not static
+3. Produce the strategic direction for the next 90 days — the War Table for Q+1
+
+This is the tool that makes the system self-evolving. The brand gets smarter each quarter.
+Return ONLY valid JSON — no markdown, no preamble.
+
+CURRENT QUANTUM BRAND PROFILE:
+Brand: ${brandName}
+Essence: ${brandEssence}
+The Spark: ${spark||'not specified'}
+Natural Force: ${naturalForce||'not specified'}
+Archetype: ${archetype||'not specified'}
+Manifesto: ${manifesto||'not specified'}
+Anti-Brand: ${antiBrand||'not specified'}
+Primary Persona: ${primaryPersona||'not specified'}
+Core Offer: ${offer||'not specified'}
+Voice Notes: ${voiceNotes||'not specified'}
+
+QUARTER UNDER REVIEW: ${quarter} ${year}
+
+QUARTERLY DATA:
+Content produced: ${contentProduced||'not specified'}
+Top performing content: ${topPerformers||'not specified'}
+Lowest performing content: ${lowestPerformers||'not specified'}
+Key metrics: ${keyMetrics||'not specified'}
+Business outcomes: ${businessOutcomes||'not specified'}
+Audience evolution: ${audienceEvolution||'not specified'}
+What worked: ${whatWorked||'not specified'}
+What didn't work: ${whatDidnt||'not specified'}
+Biggest lesson: ${biggestLesson||'not specified'}
+How the brand felt this quarter: ${brandFeeling||'not specified'}
+Identity drift noticed: ${identityDrift||'not specified'}
+Emerging opportunities: ${emergingOpportunities||'not specified'}
+Goal for next quarter: ${nextQGoal||'not specified'}
+
+Return this exact JSON structure:
+{
+  "quarterNarrative": "4-6 sentences. The honest story of this quarter — what the brand became, what it learned, what it proved, and what it must leave behind. Written with the authority of a strategist who has seen the full picture.",
+  "quarterGrade": {
+    "overall": "A | B | C | D",
+    "brandCoherence": "A | B | C | D",
+    "contentQuality": "A | B | C | D",
+    "audienceAlignment": "A | B | C | D",
+    "commercialProgress": "A | B | C | D",
+    "gradeExplanation": "2-3 sentences on the grade — honest, not harsh, not soft"
+  },
+  "keyLearnings": [
+    {
+      "learning": "specific insight — not generic",
+      "evidence": "what in the data supports this",
+      "implication": "what this changes going forward"
+    }
+  ],
+  "whatToCarryForward": ["specific asset, content type, angle, behavior to double down on"],
+  "whatToLeave": ["specific thing to stop or retire — with honest reason"],
+  "qbpUpdates": [
+    {
+      "field": "QBP field name — e.g. Brand Essence, Voice Notes, Primary Persona, Archetype, Anti-Brand",
+      "changeType": "strengthen | evolve | add | recalibrate",
+      "currentValue": "what it currently says",
+      "proposedValue": "what it should say now — after this quarter's learnings",
+      "reasoning": "why this update — specific evidence from the quarter"
+    }
+  ],
+  "nextQuarterTheme": "One sentence. The single overarching theme for Q+1 — what this quarter is fundamentally about",
+  "nextQuarterNorthStar": "The one metric / outcome that would make Q+1 a success. Specific.",
+  "initiatives": [
+    {
+      "name": "initiative name",
+      "band": "now | next | later | park",
+      "platform": "which platform(s)",
+      "pillar": "content pillar it serves",
+      "rationale": "why this initiative, why now — traced to quarter learnings",
+      "effort": "low | medium | high",
+      "score": number 40-100,
+      "successMetric": "how to know if this worked"
+    }
+  ],
+  "contentFocus": {
+    "primaryFormat": "the format to lead with next quarter",
+    "primaryAngle": "the content angle / territory to own",
+    "voiceEvolution": "how the voice should evolve — if at all",
+    "platformPriority": ["platform 1 — reason", "platform 2 — reason", "platform 3 — reason"]
+  },
+  "offerSignals": "What the quarter's data says about the offer — is it landing, is it being understood, does it need repositioning?",
+  "identityCheck": {
+    "driftAssessment": "Did the brand drift from its identity this quarter? Where and why?",
+    "recalibration": "Specific moves to re-anchor or strengthen identity heading into Q+1",
+    "coreToProtect": "The single most important identity element to protect next quarter"
+  },
+  "warTableSummary": {
+    "constraint": "Time | Money | Clarity | Team | Trust — the binding constraint for Q+1",
+    "nowList": ["top 3 initiatives — name only"],
+    "nextList": ["next 2-3 — name only"],
+    "parkList": ["what to park — name only"]
+  },
+  "closingDirective": "One paragraph. The strategic directive for Q+1 — written directly to the founder. What the brand is doing, why, and what it is betting on. The document that runs the next 90 days."
+}
+
+Requirements:
+- keyLearnings: minimum 4, maximum 6
+- qbpUpdates: only include genuine updates — if the QBP holds, return empty array
+- initiatives: minimum 8, across all bands
+- All analysis must be specific to THIS brand and THIS quarter's data — no generic advice
+- The quarterNarrative and closingDirective must be written with real strategic authority — the kind a founder reads once and acts on`;
+
+  const run=async()=>{
+    if(!isValid()){setError('Complete required fields: brand name, essence, quarter, and at least one data field.');return;}
+    setError('');setLoading(true);setStep(1);
+    try{
+      const res=await fetch('/api/claude',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:8000,
+          messages:[{role:'user',content:buildPrompt()}]
+        })
+      });
+      const d=await res.json();
+      if(d.error) throw new Error(d.error.message);
+      const raw=d.content[0].text.trim();
+      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+      setResult(JSON.parse(clean));
+      setActiveTab('narrative');
+      setStep(2);
+    }catch(e){setError('Agent error: '+e.message);setStep(0);}
+    setLoading(false);
+  };
+
+  const exportReview=()=>{
+    if(!result) return;
+    const lines=[`QUARTERLY BRAND REVIEW — ${quarter} ${year}`,'Generated by QB BrandOS — Quarterly Brand Review Agent',`Brand: ${brandName}`,''];
+    lines.push('QUARTER NARRATIVE:',result.quarterNarrative,'');
+    if(result.quarterGrade){
+      lines.push('GRADES:');
+      Object.entries(result.quarterGrade).forEach(([k,v])=>k!=='gradeExplanation'&&lines.push(`  ${k}: ${v}`));
+      lines.push(result.quarterGrade.gradeExplanation,'');
+    }
+    lines.push('KEY LEARNINGS:');
+    result.keyLearnings?.forEach((l,i)=>lines.push(`${i+1}. ${l.learning}`,`   Evidence: ${l.evidence}`,`   Implication: ${l.implication}`,''));
+    lines.push('CARRY FORWARD:');
+    result.whatToCarryForward?.forEach(w=>lines.push(`+ ${w}`));
+    lines.push('','LEAVE BEHIND:');
+    result.whatToLeave?.forEach(w=>lines.push(`- ${w}`));
+    lines.push('','QBP UPDATES:');
+    result.qbpUpdates?.forEach(u=>{lines.push(`${u.field} (${u.changeType}):`,`  Current: ${u.currentValue||'—'}`,`  Proposed: ${u.proposedValue}`,`  Why: ${u.reasoning}`,'');});
+    lines.push('','NEXT QUARTER:');
+    lines.push(`Theme: ${result.nextQuarterTheme}`);
+    lines.push(`North Star: ${result.nextQuarterNorthStar}`,'');
+    if(result.warTableSummary){
+      lines.push('WAR TABLE:');
+      lines.push(`Constraint: ${result.warTableSummary.constraint}`);
+      lines.push('NOW:',result.warTableSummary.nowList?.join(', '));
+      lines.push('NEXT:',result.warTableSummary.nextList?.join(', '));
+      lines.push('PARK:',result.warTableSummary.parkList?.join(', '),'');
+    }
+    lines.push('CLOSING DIRECTIVE:',result.closingDirective);
+    const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`${brandName.replace(/\s+/g,'-').toLowerCase()}-${quarter.replace(/\s+/g,'-')}-${year}-review.txt`;
+    a.click();
+  };
+
+  const gradeColor=g=>{
+    if(!g) return 'var(--text3)';
+    if(g==='A') return 'var(--green)';
+    if(g==='B') return 'var(--blue)';
+    if(g==='C') return 'var(--amber)';
+    return 'var(--red)';
+  };
+
+  return(
+    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+
+      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
+          <div style={{width:1,height:14,background:'var(--border)'}}/>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>Quarterly Brand Review Agent v1.0</div>
+        </div>
+        <div style={{display:'flex',gap:5,alignItems:'center'}}>
+          {STEPS.map((s,i)=>(
+            <React.Fragment key={i}>
+              <div style={{display:'flex',alignItems:'center',gap:4}}>
+                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
+                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4)',fontFamily:'var(--mono)',letterSpacing:'.1em'}}>{s}</span>
+              </div>
+              {i<STEPS.length-1&&<div style={{width:12,height:1,background:'var(--border)',margin:'0 2px'}}/>}
+            </React.Fragment>
+          ))}
+        </div>
+      </header>
+
+      <main style={{flex:1,maxWidth:960,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
+
+        {step===0&&(
+          <div className="fade-in">
+            <div style={{marginBottom:36}}>
+              <ML c="var(--green)">// Phase 05 — Intelligence + Pivot</ML>
+              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:8}}>Quarterly Brand Review Agent</h1>
+              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:620}}>The tool that makes the system self-evolving. Feed the quarter's data, the agent reads it through your brand identity, updates the QBP with what was learned, and produces the full strategic direction for the next 90 days.</p>
+            </div>
+
+            <Sec n={1} title="Current Quantum Brand Profile" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand under review" rows={1}/>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                  <SF label="Natural Force" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
+                  <SF label="Archetype" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
+                </div>
+              </div>
+              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="Current irreducible truth — one sentence" rows={2}/>
+              <TF label="The Spark — current narrative" value={spark} onChange={setSpark} placeholder="Current synthesis of who the brand is and why it exists" rows={3}/>
+              <TF label="Manifesto Line" value={manifesto} onChange={setManifesto} placeholder="Current core belief" rows={1}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Primary Persona" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who the brand currently serves" rows={2}/>
+                <TF label="Core Offer" value={offer} onChange={setOffer} placeholder="What the brand currently sells" rows={2}/>
+              </div>
+              <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What the brand refuses to be" rows={1}/>
+              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How the brand currently writes and speaks" rows={2}/>
+            </Sec>
+
+            <Sec n={2} title="Quarter Under Review" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <SF label="Quarter *" options={QUARTERS} value={quarter} onChange={setQuarter}/>
+                <TF label="Year" value={year} onChange={setYear} placeholder="e.g. 2025" rows={1}/>
+              </div>
+            </Sec>
+
+            <Sec n={3} title="Performance Data" note="fill what you have">
+              <TF label="Content produced this quarter" value={contentProduced} onChange={setContentProduced} placeholder="e.g. 24 IG posts, 12 LinkedIn posts, 3 YouTube videos, 6 newsletter issues" rows={2}/>
+              <TF label="Top performing content" value={topPerformers} onChange={setTopPerformers} placeholder="Describe what performed best — which posts, topics, formats, and rough numbers" rows={3}/>
+              <TF label="Lowest performing content" value={lowestPerformers} onChange={setLowestPerformers} placeholder="What underperformed — and any patterns" rows={2}/>
+              <TF label="Key metrics across the quarter" value={keyMetrics} onChange={setKeyMetrics} placeholder="Follower growth, engagement rates, reach, email list, website traffic — whatever you track" rows={2}/>
+              <TF label="Business outcomes" value={businessOutcomes} onChange={setBusinessOutcomes} placeholder="Leads, calls booked, sales, revenue attributable to content and brand activity" rows={2}/>
+            </Sec>
+
+            <Sec n={4} title="Reflection">
+              <TF label="How the audience evolved" value={audienceEvolution} onChange={setAudienceEvolution} placeholder="Who started showing up? Did the persona match? Any new segments?" rows={2}/>
+              <TF label="What worked — your honest read" value={whatWorked} onChange={setWhatWorked} placeholder="What genuinely worked this quarter — in content, strategy, offer, or brand" rows={3}/>
+              <TF label="What didn't — your honest read" value={whatDidnt} onChange={setWhatDidnt} placeholder="What failed, underperformed, or felt wrong — even if the numbers didn't reflect it yet" rows={3}/>
+              <TF label="Biggest lesson" value={biggestLesson} onChange={setBiggestLesson} placeholder="The single most important thing you learned this quarter — about your brand, your audience, or yourself" rows={2}/>
+              <TF label="How the brand felt this quarter" value={brandFeeling} onChange={setBrandFeeling} placeholder="Honest gut check — did it feel like you? Did it feel coherent? Or did something feel off?" rows={2}/>
+              <TF label="Identity drift noticed" value={identityDrift} onChange={setIdentityDrift} placeholder="Any moments where the brand drifted from its identity — in content, offers, or communication" rows={2}/>
+              <TF label="Emerging opportunities" value={emergingOpportunities} onChange={setEmergingOpportunities} placeholder="What became visible this quarter that didn't exist before — new angles, audiences, formats, or moves" rows={2}/>
+              <TF label="Goal for next quarter" value={nextQGoal} onChange={setNextQGoal} placeholder="What does success look like at the end of Q+1? Be specific." rows={2}/>
+            </Sec>
+
+            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'11px 15px',marginBottom:16,fontSize:13,color:'var(--red)'}}>{error}</div>}
+
+            <div style={{display:'flex',justifyContent:'flex-end'}}>
+              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
+                Run Quarterly Review →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step===1&&(
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:460,gap:24,textAlign:'center'}}>
+            <div style={{position:'relative',width:60,height:60}}>
+              <div style={{position:'absolute',inset:0,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+              <div style={{position:'absolute',inset:8,border:'1px solid var(--border2)',borderRight:'1px solid var(--purple)',borderRadius:'50%',animation:'spin .7s linear infinite reverse'}}/>
+              <div style={{position:'absolute',inset:18,border:'1px solid var(--border)',borderBottom:'1px solid var(--amber)',borderRadius:'50%'}} className="spin"/>
+            </div>
+            <div>
+              <ML c="var(--green)">Quarterly Review Processing</ML>
+              <div style={{color:'var(--text2)',fontSize:13,lineHeight:2.1,maxWidth:420}}>
+                Reading quarter's data through brand lens<br/>
+                Grading brand performance + coherence<br/>
+                Identifying key learnings<br/>
+                Evaluating QBP for updates<br/>
+                Building next quarter's War Table<br/>
+                Writing strategic direction for Q+1<br/>
+                Generating closing directive...
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step===2&&result&&(
+          <div className="fade-in">
+            <div style={{marginBottom:24,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+              <div>
+                <ML c="var(--green)">// Quarterly Review — Complete</ML>
+                <h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>{brandName} — {quarter} {year}</h1>
+                <p style={{color:'var(--text2)',fontSize:13}}>Brand reviewed · QBP updated · Q+1 direction set</p>
+              </div>
+              <div style={{display:'flex',gap:8}}>
+                <button onClick={exportReview} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Export Review</button>
+                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Review</button>
+              </div>
+            </div>
+
+            {/* Grade cards */}
+            {result.quarterGrade&&(
+              <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:8,marginBottom:16}}>
+                {[
+                  {label:'Overall',key:'overall'},
+                  {label:'Brand Coherence',key:'brandCoherence'},
+                  {label:'Content',key:'contentQuality'},
+                  {label:'Audience',key:'audienceAlignment'},
+                  {label:'Commercial',key:'commercialProgress'},
+                ].map(g=>(
+                  <div key={g.key} style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'12px',textAlign:'center'}}>
+                    <div style={{fontFamily:'var(--mono)',fontSize:28,fontWeight:900,color:gradeColor(result.quarterGrade[g.key]),lineHeight:1}}>{result.quarterGrade[g.key]||'—'}</div>
+                    <div style={{fontSize:9,color:'var(--text3)',marginTop:4,letterSpacing:'.1em',textTransform:'uppercase',lineHeight:1.3}}>{g.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Tabs */}
+            <div style={{display:'flex',gap:5,flexWrap:'wrap',marginBottom:20,paddingBottom:14,borderBottom:'1px solid var(--border)'}}>
+              {[
+                {key:'narrative',label:'Narrative'},
+                {key:'learnings',label:'Learnings'},
+                {key:'qbp',label:`QBP Updates (${result.qbpUpdates?.length||0})`},
+                {key:'q1',label:'Q+1 Direction'},
+                {key:'initiatives',label:'War Table'},
+                {key:'directive',label:'Closing Directive'},
+              ].map(t=>(
+                <button key={t.key} className={`tab-btn${activeTab===t.key?' active':''}`} onClick={()=>setActiveTab(t.key)}>{t.label}</button>
+              ))}
+            </div>
+
+            {activeTab==='narrative'&&(
+              <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+                <div style={{background:'var(--bg)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'20px 24px'}} className="scan-line">
+                  <ML c="var(--green)" mb={10}>Quarter narrative</ML>
+                  <p style={{fontSize:15,lineHeight:1.85,color:'var(--text)'}}>{result.quarterNarrative}</p>
+                </div>
+                {result.quarterGrade?.gradeExplanation&&(
+                  <Card>
+                    <ML c="var(--text3)">Grade rationale</ML>
+                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{result.quarterGrade.gradeExplanation}</p>
+                  </Card>
+                )}
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                  {result.whatToCarryForward?.length>0&&(
+                    <Card accent="rgba(74,222,128,0.15)">
+                      <ML c="var(--green)">Carry forward</ML>
+                      {result.whatToCarryForward.map((w,i)=>(
+                        <div key={i} style={{display:'flex',gap:8,padding:'5px 0',borderBottom:i<result.whatToCarryForward.length-1?'1px solid var(--border)':'',fontSize:12,color:'var(--text)',lineHeight:1.5}}>
+                          <span style={{color:'var(--green)',flexShrink:0}}>+</span>{w}
+                        </div>
+                      ))}
+                    </Card>
+                  )}
+                  {result.whatToLeave?.length>0&&(
+                    <Card accent="rgba(239,68,68,0.15)">
+                      <ML c="var(--red)">Leave behind</ML>
+                      {result.whatToLeave.map((w,i)=>(
+                        <div key={i} style={{display:'flex',gap:8,padding:'5px 0',borderBottom:i<result.whatToLeave.length-1?'1px solid var(--border)':'',fontSize:12,color:'var(--text)',lineHeight:1.5}}>
+                          <span style={{color:'var(--red)',flexShrink:0}}>×</span>{w}
+                        </div>
+                      ))}
+                    </Card>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab==='learnings'&&(
+              <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:10}}>
+                {result.keyLearnings?.map((l,i)=>(
+                  <div key={i} className="reveal" style={{animationDelay:`${i*60}ms`}}>
+                    <Card>
+                      <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
+                        <span style={{fontFamily:'var(--mono)',fontSize:12,color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',padding:'2px 8px',borderRadius:3,flexShrink:0,marginTop:2}}>{String(i+1).padStart(2,'0')}</span>
+                        <div style={{flex:1}}>
+                          <p style={{fontSize:14,fontWeight:500,color:'var(--text)',lineHeight:1.5,marginBottom:10}}>{l.learning}</p>
+                          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                            <div style={{background:'var(--bg4)',borderRadius:5,padding:'8px 12px'}}>
+                              <ML c="var(--text3)" mb={3}>Evidence</ML>
+                              <p style={{fontSize:11,color:'var(--text2)',lineHeight:1.5}}>{l.evidence}</p>
+                            </div>
+                            <div style={{background:'var(--bg4)',borderRadius:5,padding:'8px 12px'}}>
+                              <ML c="var(--amber)" mb={3}>Implication</ML>
+                              <p style={{fontSize:11,color:'var(--text)',lineHeight:1.5}}>{l.implication}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab==='qbp'&&<QBPDiffPanel updates={result.qbpUpdates}/>}
+
+            {activeTab==='q1'&&(
+              <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+                <div style={{background:'var(--bg)',border:'1px solid rgba(167,139,250,0.2)',borderRadius:8,padding:'18px 22px'}}>
+                  <ML c="var(--purple)" mb={8}>Next quarter theme</ML>
+                  <p style={{fontSize:16,fontWeight:500,color:'var(--text)',lineHeight:1.5,marginBottom:8}}>{result.nextQuarterTheme}</p>
+                  <p style={{fontSize:13,color:'var(--text2)'}}>North Star: <span style={{color:'var(--green)'}}>{result.nextQuarterNorthStar}</span></p>
+                </div>
+                {result.contentFocus&&(
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                    <Card accent="rgba(96,165,250,0.2)">
+                      <ML c="var(--blue)">Content focus</ML>
+                      <div style={{marginBottom:8}}>
+                        <span style={{fontSize:11,color:'var(--text3)'}}>Primary format: </span>
+                        <span style={{fontSize:12,color:'var(--text)'}}>{result.contentFocus.primaryFormat}</span>
+                      </div>
+                      <div style={{marginBottom:8}}>
+                        <span style={{fontSize:11,color:'var(--text3)'}}>Primary angle: </span>
+                        <span style={{fontSize:12,color:'var(--text)'}}>{result.contentFocus.primaryAngle}</span>
+                      </div>
+                      <div>
+                        <span style={{fontSize:11,color:'var(--text3)'}}>Voice evolution: </span>
+                        <span style={{fontSize:12,color:'var(--text)'}}>{result.contentFocus.voiceEvolution}</span>
+                      </div>
+                    </Card>
+                    <Card>
+                      <ML>Platform priority</ML>
+                      {result.contentFocus.platformPriority?.map((p,i)=>(
+                        <div key={i} style={{display:'flex',gap:8,padding:'5px 0',borderBottom:i<result.contentFocus.platformPriority.length-1?'1px solid var(--border)':'',fontSize:12,color:'var(--text)',lineHeight:1.4}}>
+                          <span style={{color:'var(--text3)',flexShrink:0}}>{i+1}.</span>{p}
+                        </div>
+                      ))}
+                    </Card>
+                  </div>
+                )}
+                {result.offerSignals&&(
+                  <Card accent="rgba(245,158,11,0.15)">
+                    <ML c="var(--amber)">Offer signals</ML>
+                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{result.offerSignals}</p>
+                  </Card>
+                )}
+                {result.identityCheck&&(
+                  <Card accent="rgba(74,222,128,0.15)">
+                    <ML c="var(--green)">Identity check</ML>
+                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7,marginBottom:8}}>{result.identityCheck.driftAssessment}</p>
+                    <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:6}}>{result.identityCheck.recalibration}</p>
+                    <div style={{fontSize:11,color:'var(--text3)'}}><span style={{color:'var(--green)'}}>Protect: </span>{result.identityCheck.coreToProtect}</div>
+                  </Card>
+                )}
+              </div>
+            )}
+
+            {activeTab==='initiatives'&&(
+              <div className="fade-in">
+                {result.warTableSummary&&(
+                  <Card style={{marginBottom:16}}>
+                    <ML c="var(--text3)" mb={10}>Q+1 binding constraint</ML>
+                    <span style={{fontFamily:'var(--mono)',fontSize:12,padding:'4px 14px',borderRadius:4,background:'var(--amber2)',color:'var(--amber)',border:'1px solid rgba(245,158,11,0.2)'}}>{result.warTableSummary.constraint}</span>
+                  </Card>
+                )}
+                <InitiativesPanel initiatives={result.initiatives}/>
+              </div>
+            )}
+
+            {activeTab==='directive'&&(
+              <div className="fade-in">
+                <div style={{background:'var(--bg)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'24px 28px'}} className="scan-line">
+                  <ML c="var(--green)" mb={12}>Closing directive — the document that runs the next 90 days</ML>
+                  <p style={{fontSize:15,lineHeight:1.9,color:'var(--text)'}}>{result.closingDirective}</p>
+                </div>
+                <div style={{marginTop:12,display:'flex',justifyContent:'flex-end'}}>
+                  <button
+                    onClick={()=>navigator.clipboard.writeText(result.closingDirective).catch(()=>{})}
+                    style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 18px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}
+                  >Copy Directive</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+
+      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>Quarterly Brand Review Agent / Phase 05</span>
+      </footer>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
