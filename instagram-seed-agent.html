@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Instagram Seed Content Agent</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;--bg5:#252525;
+  --border:#2a2a2a;--border2:#333;
+  --text:#e8e8e8;--text2:#888;--text3:#555;--text4:#333;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
+  --red:#ef4444;--red2:rgba(239,68,68,0.1);
+  --amber:#f59e0b;--amber2:rgba(245,158,11,0.1);
+  --blue:#60a5fa;--blue2:rgba(96,165,250,0.1);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);
+  --pink:#f472b6;--pink2:rgba(244,114,182,0.1);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--green)}
+textarea{resize:vertical;line-height:1.6}
+select option{background:var(--bg3)}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scanH{0%{left:-80%}100%{left:200%}}
+.fade-in{animation:fadeIn .35s ease forwards}
+.blink{animation:pulse 1.4s ease infinite}
+.spin{animation:spin .9s linear infinite}
+.scan-line{position:relative;overflow:hidden}
+.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.05),transparent);animation:scanH 3s linear infinite}
+.tab-btn{padding:7px 14px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer}
+.tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
+.post-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s}
+.post-card:hover{border-color:var(--border2)}
+.post-card.selected{border-color:rgba(74,222,128,0.4);background:var(--bg4)}
+.grid-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:all .15s;border:1px solid var(--border)}
+.grid-cell:hover{border-color:var(--border2)}
+.grid-cell.active-cell{border-color:var(--green);box-shadow:0 0 0 1px rgba(74,222,128,0.3)}
+.pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:10px;font-family:var(--mono);margin:2px 2px 2px 0;letter-spacing:.05em}
+.pill-green{background:var(--green2);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
+.pill-pink{background:var(--pink2);color:var(--pink);border:1px solid rgba(244,114,182,0.2)}
+.pill-blue{background:var(--blue2);color:var(--blue);border:1px solid rgba(96,165,250,0.2)}
+.pill-amber{background:var(--amber2);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.pill-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
+.pill-neutral{background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.slider-thumb::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);cursor:pointer;border:2px solid var(--bg)}
+.slider-thumb::-webkit-slider-runnable-track{background:var(--border2);height:3px;border-radius:2px}
+.slider-thumb{-webkit-appearance:none;width:100%;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
+</style>
+<script>
+// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  // QBP
+  var urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  // Universal AI call — works with Anthropic or Gemini
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.content[0].text;
+  };
+  window.QB_AUTOFILL = function(fieldMap){
+    if(!window.QB_QBP) return;
+    Object.entries(fieldMap).forEach(function(kv){
+      var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
+      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
+    });
+  };
+})();
+</script>
+</head>
+<body>
+<script>
+// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  // QBP: URL param (base64 encoded) > localStorage
+  const urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+})();
+// ── END QB SPINE ──────────────────────────────────────────────────────────────
+</script>
+<script>
+// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  // QBP: URL param (base64 encoded) > localStorage
+  const urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+})();
+// ── END QB SPINE ──────────────────────────────────────────────────────────────
+</script>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback}=React;
+
+// ── CONSTANTS ──────────────────────────────────────────────────────────────────
+const CONTENT_ARCS = [
+  {id:'identity',label:'Identity arc',desc:'Posts 1-3 establish WHO you are — energy, philosophy, force'},
+  {id:'belief',label:'Belief arc',desc:'Posts 4-6 establish WHAT you stand for — manifesto, stance, conviction'},
+  {id:'work',label:'Work arc',desc:'Posts 7-9 introduce WHAT you do — method, transformation, offer'},
+  {id:'community',label:'Community arc',desc:'Posts 10-12 build belonging — proof, invitation, belonging signal'},
+];
+
+const POST_TYPES = ['Single image','Carousel','Reel script','Quote graphic','Behind the scenes','Case study reveal','Manifesto post','Question post','Before/After','Story series'];
+const ARCHETYPES = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
+const NATURAL_FORCES = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
+
+const ARC_COLORS = {identity:'var(--purple)',belief:'var(--amber)',work:'var(--blue)',community:'var(--green)'};
+const ARC_BG = {identity:'var(--purple2)',belief:'var(--amber2)',work:'var(--blue2)',community:'var(--green2)'};
+const ARC_BORDER = {identity:'rgba(167,139,250,0.25)',belief:'rgba(245,158,11,0.25)',work:'rgba(96,165,250,0.25)',community:'rgba(74,222,128,0.25)'};
+
+// ── SHARED UI ──────────────────────────────────────────────────────────────────
+const MonoLabel=({c,children,mb=8})=><div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:c||'var(--text3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
+const Card=({children,accent,style={}})=><div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>{children}</div>;
+const TF=({label,value,onChange,placeholder,rows=1,hint})=>(
+  <div style={{marginBottom:14}}>
+    <MonoLabel>{label}</MonoLabel>
+    {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+    :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
+    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
+  </div>
+);
+const SF=({label,options,value,onChange})=>(
+  <div style={{marginBottom:14}}>
+    <MonoLabel>{label}</MonoLabel>
+    <select value={value} onChange={e=>onChange(e.target.value)}>
+      <option value="">— select —</option>
+      {options.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
+const Section=({title,number,children,note})=>(
+  <div style={{marginBottom:30}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:16,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{number}</span>
+      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
+      {note&&<span style={{fontSize:11,color:'var(--text3)',marginLeft:'auto'}}>{note}</span>}
+    </div>
+    {children}
+  </div>
+);
+
+// ── GRID VIEW ─────────────────────────────────────────────────────────────────
+const GridView=({posts,selected,onSelect})=>{
+  if(!posts?.length) return null;
+  const arcOf=i=>i<3?'identity':i<6?'belief':i<9?'work':'community';
+  return(
+    <div>
+      <MonoLabel c="var(--text3)" mb={12}>Grid preview — 12-post sequence</MonoLabel>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:3,marginBottom:20}}>
+        {posts.map((p,i)=>{
+          const arc=arcOf(i);
+          const isSelected=selected===i;
+          return(
+            <div key={i} className={`grid-cell${isSelected?' active-cell':''}`}
+              onClick={()=>onSelect(i)}
+              style={{background:isSelected?ARC_BG[arc]:'var(--bg3)',aspectRatio:'1',flexDirection:'column',gap:4,padding:6}}
+            >
+              <div style={{width:'100%',height:'70%',background:ARC_BG[arc],borderRadius:3,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <span style={{fontFamily:'var(--mono)',fontSize:9,color:ARC_COLORS[arc],letterSpacing:'.1em'}}>{String(i+1).padStart(2,'0')}</span>
+              </div>
+              <div style={{fontSize:9,color:'var(--text3)',textAlign:'center',lineHeight:1.3,overflow:'hidden',maxHeight:28,fontFamily:'var(--mono)'}}>
+                {p.postType}
+              </div>
+              <div style={{width:'100%',height:2,background:ARC_COLORS[arc],borderRadius:1,opacity:.6}}/>
+            </div>
+          );
+        })}
+      </div>
+      {/* Arc legend */}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+        {CONTENT_ARCS.map(a=>(
+          <div key={a.id} style={{display:'flex',alignItems:'center',gap:5,fontSize:10,color:'var(--text3)'}}>
+            <div style={{width:8,height:8,borderRadius:2,background:ARC_COLORS[a.id]}}/>
+            {a.label}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ── POST DETAIL ───────────────────────────────────────────────────────────────
+const PostDetail=({post,index,onCopyCaption})=>{
+  const [tab,setTab]=useState('caption');
+  if(!post) return null;
+  const arcOf=i=>i<3?'identity':i<6?'belief':i<9?'work':'community';
+  const arc=arcOf(index);
+  const arcColor=ARC_COLORS[arc];
+  const tabs=['caption','visual','hook','hashtags'];
+
+  return(
+    <div className="fade-in">
+      {/* Post header */}
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:14,gap:12}}>
+        <div>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+            <span style={{fontFamily:'var(--mono)',fontSize:10,color:arcColor,border:`1px solid ${ARC_BORDER[arc]}`,padding:'2px 8px',borderRadius:3}}>
+              {String(index+1).padStart(2,'0')} / {CONTENT_ARCS.find(a=>a.id===arc)?.label.toUpperCase()}
+            </span>
+            <span style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>{post.postType}</span>
+          </div>
+          <div style={{fontSize:15,fontWeight:600,color:'var(--text)',lineHeight:1.3}}>{post.postTitle}</div>
+        </div>
+        <button onClick={()=>onCopyCaption(post.caption)} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:'var(--text2)',padding:'6px 14px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase',flexShrink:0}}>Copy</button>
+      </div>
+
+      {/* Tabs */}
+      <div style={{display:'flex',gap:5,marginBottom:14}}>
+        {tabs.map(t=><button key={t} className={`tab-btn${tab===t?' active':''}`} onClick={()=>setTab(t)}>{t}</button>)}
+      </div>
+
+      {/* Caption */}
+      {tab==='caption'&&(
+        <div className="fade-in">
+          <div style={{background:'var(--bg)',border:`1px solid ${ARC_BORDER[arc]}`,borderRadius:8,padding:'16px 18px',fontSize:13,lineHeight:1.9,color:'var(--text)',whiteSpace:'pre-wrap',marginBottom:10}}>
+            {post.caption}
+          </div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:8}}>
+            <span style={{fontSize:11,color:'var(--text3)'}}>Goal:</span>
+            <span className="pill pill-neutral">{post.goal}</span>
+          </div>
+          {post.cta&&(
+            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:6,padding:'10px 14px'}}>
+              <span style={{fontSize:10,fontFamily:'var(--mono)',color:'var(--green)',letterSpacing:'.15em'}}>CTA → </span>
+              <span style={{fontSize:12,color:'var(--text)'}}>{post.cta}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Visual Brief */}
+      {tab==='visual'&&(
+        <div className="fade-in">
+          <Card accent={ARC_BORDER[arc]} style={{marginBottom:10}}>
+            <MonoLabel c={arcColor}>Visual direction</MonoLabel>
+            <p style={{fontSize:13,lineHeight:1.7,color:'var(--text)',marginBottom:12}}>{post.visualBrief}</p>
+            {post.colorMood&&(
+              <div style={{marginBottom:8}}>
+                <span style={{fontSize:11,color:'var(--text3)'}}>Color mood: </span>
+                <span style={{fontSize:12,color:'var(--text)'}}>{post.colorMood}</span>
+              </div>
+            )}
+            {post.composition&&(
+              <div>
+                <span style={{fontSize:11,color:'var(--text3)'}}>Composition: </span>
+                <span style={{fontSize:12,color:'var(--text)'}}>{post.composition}</span>
+              </div>
+            )}
+          </Card>
+          {post.midjourney&&(
+            <div>
+              <MonoLabel c="var(--blue)">Midjourney prompt</MonoLabel>
+              <div style={{background:'var(--bg)',border:'1px solid var(--border)',borderRadius:6,padding:'12px 14px',fontFamily:'var(--mono)',fontSize:11,lineHeight:1.7,color:'var(--text)',wordBreak:'break-word'}}>
+                {post.midjourney}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Hook analysis */}
+      {tab==='hook'&&(
+        <div className="fade-in">
+          <Card style={{marginBottom:10}}>
+            <MonoLabel c={arcColor}>Opening hook</MonoLabel>
+            <p style={{fontSize:14,lineHeight:1.7,color:'var(--text)',fontStyle:'italic',marginBottom:10}}>"{post.hook}"</p>
+            <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{post.hookAnalysis}</p>
+          </Card>
+          {post.psychologicalTrigger&&(
+            <Card>
+              <MonoLabel>Psychological mechanism</MonoLabel>
+              <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{post.psychologicalTrigger}</p>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* Hashtags */}
+      {tab==='hashtags'&&(
+        <div className="fade-in">
+          <div style={{marginBottom:12}}>
+            <MonoLabel c="var(--text3)" mb={10}>First comment hashtags</MonoLabel>
+            <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+              {post.hashtags?.map((h,i)=><span key={i} className="pill pill-neutral">#{h}</span>)}
+            </div>
+          </div>
+          {post.hashtagStrategy&&(
+            <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,padding:'10px 14px',background:'var(--bg4)',borderRadius:6}}>
+              {post.hashtagStrategy}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── STRATEGY OVERVIEW ─────────────────────────────────────────────────────────
+const StrategyPanel=({data})=>{
+  if(!data?.strategy) return null;
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+      <div style={{background:'var(--bg)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'18px 22px'}} className="scan-line">
+        <MonoLabel c="var(--green)">Strategic intent</MonoLabel>
+        <p style={{fontSize:14,lineHeight:1.8,color:'var(--text)'}}>{data.strategy.intent}</p>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        {CONTENT_ARCS.map(arc=>(
+          <Card key={arc.id} accent={ARC_BORDER[arc.id]}>
+            <MonoLabel c={ARC_COLORS[arc.id]}>{arc.label}</MonoLabel>
+            <div style={{fontSize:11,color:'var(--text3)',marginBottom:8,fontStyle:'italic'}}>{arc.desc}</div>
+            <p style={{fontSize:12,color:'var(--text)',lineHeight:1.6}}>{data.strategy.arcIntentions?.[arc.id]}</p>
+          </Card>
+        ))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <Card>
+          <MonoLabel>Posting sequence logic</MonoLabel>
+          <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{data.strategy.sequenceLogic}</p>
+        </Card>
+        <Card>
+          <MonoLabel>Grid aesthetic intention</MonoLabel>
+          <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{data.strategy.gridAesthetic}</p>
+        </Card>
+      </div>
+      {data.strategy.profileOptimizations&&(
+        <Card accent="rgba(244,114,182,0.2)">
+          <MonoLabel c="var(--pink)">Profile optimizations before first post</MonoLabel>
+          <ul style={{listStyle:'none',padding:0}}>
+            {data.strategy.profileOptimizations.map((o,i)=>(
+              <li key={i} style={{display:'flex',gap:10,padding:'6px 0',borderBottom:i<data.strategy.profileOptimizations.length-1?'1px solid var(--border)':'',fontSize:12,color:'var(--text)',lineHeight:1.5}}>
+                <span style={{color:'var(--pink)',flexShrink:0}}>→</span>{o}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+const STEPS=['QBP Input','Generating','Content Pack'];
+
+export default function App(){
+  const [step,setStep]=useState(0);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState('');
+  const [result,setResult]=useState(null);
+  const [selectedPost,setSelectedPost]=useState(0);
+  const [mainTab,setMainTab]=useState('grid');
+  const [copied,setCopied]=useState(false);
+
+  // QBP
+  const [brandName,setBrandName]=useState('');
+  const [brandEssence,setBrandEssence]=useState('');
+  const [manifestoLine,setManifestoLine]=useState('');
+  const [spark,setSpark]=useState('');
+  const [naturalForce,setNaturalForce]=useState('');
+  const [archetype,setArchetype]=useState('');
+  const [antiBrand,setAntiBrand]=useState('');
+  const [primaryPersona,setPrimaryPersona]=useState('');
+  const [offer,setOffer]=useState('');
+  const [voiceNotes,setVoiceNotes]=useState('');
+  const [visualNotes,setVisualNotes]=useState('');
+  const [colorPalette,setColorPalette]=useState('');
+  const [alwaysNever,setAlwaysNever]=useState('');
+  const [profileBio,setProfileBio]=useState('');
+  const [accountGoal,setAccountGoal]=useState('');
+
+  const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona;
+
+  const buildPrompt=()=>`You are the Instagram Seed Content Agent inside the Quantum Branding BrandOS ecosystem.
+Your function is to generate the first 12 Instagram posts for a brand — the posts that introduce the brand to the world, establish its identity, and invite its audience into its universe.
+These are not random posts. They follow a strategic 4-arc sequence: Identity (1-3), Belief (4-6), Work (7-9), Community (10-12).
+Every post must sound like this specific brand — on-voice, on-visual, strategically positioned.
+Return ONLY valid JSON — no markdown, no preamble.
+
+QUANTUM BRAND PROFILE:
+Brand: ${brandName}
+Essence: ${brandEssence}
+Manifesto: ${manifestoLine||'not specified'}
+The Spark: ${spark||'not specified'}
+Natural Force: ${naturalForce}
+Archetype: ${archetype}
+Anti-Brand: ${antiBrand||'not specified'}
+Primary Persona: ${primaryPersona}
+Core Offer: ${offer||'not specified'}
+Voice Notes: ${voiceNotes||'not specified'}
+Visual / Color: ${visualNotes||'not specified'} — Palette: ${colorPalette||'not specified'}
+Always/Never: ${alwaysNever||'not specified'}
+Profile Bio: ${profileBio||'not specified'}
+Account Goal: ${accountGoal||'Establish brand presence and attract ideal clients'}
+
+Return a JSON object with this EXACT structure:
+{
+  "strategy": {
+    "intent": "2-3 sentence strategic intent for this 12-post sequence",
+    "arcIntentions": {
+      "identity": "what the identity arc establishes for this specific brand",
+      "belief": "what the belief arc establishes",
+      "work": "what the work arc establishes",
+      "community": "what the community arc establishes"
+    },
+    "sequenceLogic": "why posts are ordered this way — psychological reasoning",
+    "gridAesthetic": "visual coherence intention — what the 12-post grid should feel like",
+    "profileOptimizations": ["specific bio tweak", "highlight cover direction", "profile photo direction", "link in bio strategy"]
+  },
+  "posts": [
+    {
+      "postNumber": 1,
+      "arc": "identity",
+      "postTitle": "short descriptive title for this post",
+      "postType": "Single image | Carousel | Reel script | Quote graphic",
+      "goal": "what this specific post achieves",
+      "hook": "the exact first line — the opening hook that stops the scroll",
+      "hookAnalysis": "why this hook works for this brand and this persona",
+      "caption": "the full caption exactly as it would be posted — in the brand's voice, with line breaks, all elements included",
+      "cta": "the call to action",
+      "visualBrief": "specific visual direction — what is in the image, how it's shot, what it communicates",
+      "colorMood": "color mood for this specific post",
+      "composition": "composition direction",
+      "midjourney": "complete Midjourney v6 prompt for the visual",
+      "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5","hashtag6","hashtag7","hashtag8","hashtag9","hashtag10"],
+      "hashtagStrategy": "why these hashtags — mix of reach, niche, and brand",
+      "psychologicalTrigger": "the psychological mechanism this post activates in the ideal persona"
+    }
+  ]
+}
+
+CRITICAL REQUIREMENTS:
+- All 12 posts must be fully written — captions complete, ready to post
+- Posts 1-3 arc=identity, 4-6 arc=belief, 7-9 arc=work, 10-12 arc=community
+- Every caption must sound unmistakably like THIS brand's voice — not generic Instagram content
+- Hooks must be specific and scroll-stopping — no generic openers
+- Visual briefs must be specific enough to brief a photographer or AI
+- Each post must serve its arc purpose while building on the previous
+- The 12 posts together tell a complete brand introduction story`;
+
+  const run=async()=>{
+    if(!isValid()){setError('Complete the required fields (*).');return;}
+    setError('');setLoading(true);setStep(1);
+    try{
+      const res=await fetch('/api/claude',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:8000,
+          messages:[{role:'user',content:buildPrompt()}]
+        })
+      });
+      const d=await res.json();
+      if(d.error) throw new Error(d.error.message);
+      const raw=d.content[0].text.trim();
+      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+      const parsed=JSON.parse(clean);
+      setResult(parsed);
+      setSelectedPost(0);
+      setMainTab('grid');
+      setStep(2);
+    }catch(e){setError('Agent error: '+e.message);setStep(0);}
+    setLoading(false);
+  };
+
+  const copyCaption=async(text)=>{
+    try{await navigator.clipboard.writeText(text);setCopied(true);setTimeout(()=>setCopied(false),2000);}
+    catch(e){}
+  };
+
+  const exportPack=()=>{
+    const lines=['INSTAGRAM SEED CONTENT PACK','Generated by QB BrandOS — Instagram Seed Content Agent','',`Brand: ${brandName}`,'='+'='.repeat(60),''];
+    result?.posts?.forEach(p=>{
+      lines.push(`POST ${String(p.postNumber).padStart(2,'0')} — ${p.arc.toUpperCase()} ARC`);
+      lines.push(`Type: ${p.postType} | Goal: ${p.goal}`);
+      lines.push('');
+      lines.push('CAPTION:');
+      lines.push(p.caption);
+      lines.push('');
+      lines.push(`CTA: ${p.cta||'—'}`);
+      lines.push('');
+      lines.push('VISUAL BRIEF:');
+      lines.push(p.visualBrief);
+      lines.push('');
+      lines.push('HASHTAGS:');
+      lines.push(p.hashtags?.map(h=>'#'+h).join(' ')||'');
+      lines.push('');
+      lines.push('-'.repeat(60));
+      lines.push('');
+    });
+    const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`${brandName.replace(/\s+/g,'-').toLowerCase()}-instagram-12-posts.txt`;
+    a.click();
+  };
+
+  const posts=result?.posts||[];
+  const arcOf=i=>i<3?'identity':i<6?'belief':i<9?'work':'community';
+
+  return(
+    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+
+      {/* HEADER */}
+      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
+          <div style={{width:1,height:14,background:'var(--border)'}}/>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>Instagram Seed Agent v1.0</div>
+        </div>
+        <div style={{display:'flex',gap:5,alignItems:'center'}}>
+          {STEPS.map((s,i)=>(
+            <React.Fragment key={i}>
+              <div style={{display:'flex',alignItems:'center',gap:4}}>
+                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
+                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4)',fontFamily:'var(--mono)',letterSpacing:'.1em'}}>{s}</span>
+              </div>
+              {i<STEPS.length-1&&<div style={{width:12,height:1,background:'var(--border)',margin:'0 2px'}}/>}
+            </React.Fragment>
+          ))}
+        </div>
+      </header>
+
+      <main style={{flex:1,maxWidth:1100,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
+
+        {/* ── STEP 0: INPUT ── */}
+        {step===0&&(
+          <div className="fade-in">
+            <div style={{marginBottom:36}}>
+              <MonoLabel c="var(--green)">// Phase 03 — Content Creation</MonoLabel>
+              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:8}}>Instagram Seed Content Agent</h1>
+              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:600}}>Feed the QBP. The agent generates the first 12 posts — fully written captions, visual briefs, Midjourney prompts, hooks, hashtags — as a complete content pack ready to publish.</p>
+            </div>
+
+            <Section number={1} title="Brand Core" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand entering Instagram" rows={1}/>
+                <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
+              </div>
+              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth — one sentence" rows={2}/>
+              <TF label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The belief that drives everything" rows={1}/>
+              <TF label="The Spark — narrative synthesis" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what it is here to do" rows={3}/>
+            </Section>
+
+            <Section number={2} title="Identity + Audience" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
+                <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be" rows={1}/>
+              </div>
+              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who is following this account — their state, desire, what they carry. Be specific." rows={3}
+                hint="The more specific, the more precisely targeted every post will be"/>
+              <TF label="Core Offer" value={offer} onChange={setOffer} placeholder="What this brand sells or does — the transformation it provides" rows={2}/>
+              <TF label="Account Goal" value={accountGoal} onChange={setAccountGoal} placeholder="e.g. Build authority, attract discovery call bookings, grow waitlist, sell digital product" rows={1}/>
+            </Section>
+
+            <Section number={3} title="Voice + Visual System">
+              <TF label="Voice Notes — how this brand writes" value={voiceNotes} onChange={setVoiceNotes} placeholder="e.g. Short declarative sentences. Challenge-first. No filler. Sounds like Dieter Rams meets Virgil Abloh." rows={2}/>
+              <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="e.g. Always: direct, one idea per post. Never: motivational quotes, hashtag stuffing, generic captions." rows={2}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Visual Direction" value={visualNotes} onChange={setVisualNotes} placeholder="e.g. Dark, editorial, architectural. Strong shadows. Minimal text on image." rows={2}/>
+                <TF label="Color Palette" value={colorPalette} onChange={setColorPalette} placeholder="e.g. Deep black, warm amber, aged bronze. No bright colors." rows={2}/>
+              </div>
+            </Section>
+
+            <Section number={4} title="Profile Context">
+              <TF label="Current or intended bio" value={profileBio} onChange={setProfileBio} placeholder="The bio text — the agent will suggest optimizations" rows={2}/>
+            </Section>
+
+            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'11px 15px',marginBottom:16,fontSize:13,color:'var(--red)'}}>{error}</div>}
+
+            <div style={{display:'flex',justifyContent:'flex-end'}}>
+              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
+                Generate 12 Posts →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 1: GENERATING ── */}
+        {step===1&&(
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:460,gap:24,textAlign:'center'}}>
+            <div style={{width:52,height:52,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+            <div>
+              <MonoLabel c="var(--green)">Agent Processing</MonoLabel>
+              <div style={{color:'var(--text2)',fontSize:13,lineHeight:2.1,maxWidth:420}}>
+                Reading Quantum Brand Profile<br/>
+                Mapping 12-post strategic arc sequence<br/>
+                Writing captions in brand voice<br/>
+                Building visual briefs from identity data<br/>
+                Generating Midjourney prompts<br/>
+                Analyzing hooks for persona resonance<br/>
+                Building hashtag architecture<br/>
+                Assembling content pack...
+              </div>
+            </div>
+            <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>12 posts · 4 arcs · complete pack</div>
+          </div>
+        )}
+
+        {/* ── STEP 2: CONTENT PACK ── */}
+        {step===2&&result&&(
+          <div className="fade-in">
+            {/* Header */}
+            <div style={{marginBottom:24,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+              <div>
+                <MonoLabel c="var(--green)">// Content Pack — 12 Posts Complete</MonoLabel>
+                <h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>{brandName}</h1>
+                <p style={{color:'var(--text2)',fontSize:13}}>First 12 posts · 4-arc sequence · ready to publish</p>
+              </div>
+              <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                {copied&&<span style={{fontSize:11,color:'var(--green)',fontFamily:'var(--mono)'}}>Copied ✓</span>}
+                <button onClick={exportPack} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Export Pack</button>
+                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Pack</button>
+              </div>
+            </div>
+
+            {/* Main tabs */}
+            <div style={{display:'flex',gap:6,marginBottom:20,paddingBottom:14,borderBottom:'1px solid var(--border)'}}>
+              {['grid','list','strategy'].map(t=>(
+                <button key={t} className={`tab-btn${mainTab===t?' active':''}`} onClick={()=>setMainTab(t)}>
+                  {t==='grid'?'Grid View':t==='list'?'Post List':'Strategy'}
+                </button>
+              ))}
+            </div>
+
+            {/* Strategy tab */}
+            {mainTab==='strategy'&&<StrategyPanel data={result}/>}
+
+            {/* Grid + detail view */}
+            {mainTab==='grid'&&(
+              <div style={{display:'grid',gridTemplateColumns:'220px 1fr',gap:24,alignItems:'start'}}>
+                <GridView posts={posts} selected={selectedPost} onSelect={setSelectedPost}/>
+                <PostDetail post={posts[selectedPost]} index={selectedPost} onCopyCaption={copyCaption}/>
+              </div>
+            )}
+
+            {/* List view */}
+            {mainTab==='list'&&(
+              <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                {posts.map((p,i)=>{
+                  const arc=arcOf(i);
+                  return(
+                    <div key={i} className={`post-card${selectedPost===i?' selected':''}`}
+                      onClick={()=>{setSelectedPost(i);setMainTab('grid');}}
+                      style={{padding:'14px 18px'}}
+                    >
+                      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
+                        <div style={{display:'flex',alignItems:'center',gap:10,flex:1,minWidth:0}}>
+                          <span style={{fontFamily:'var(--mono)',fontSize:10,color:ARC_COLORS[arc],border:`1px solid ${ARC_BORDER[arc]}`,padding:'2px 7px',borderRadius:3,flexShrink:0}}>
+                            {String(i+1).padStart(2,'0')}
+                          </span>
+                          <div style={{minWidth:0}}>
+                            <div style={{fontSize:13,fontWeight:500,color:'var(--text)',marginBottom:2,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{p.postTitle}</div>
+                            <div style={{fontSize:11,color:'var(--text3)'}}>{p.postType} · {CONTENT_ARCS.find(a=>a.id===arc)?.label}</div>
+                          </div>
+                        </div>
+                        <div style={{fontSize:11,color:'var(--text3)',flexShrink:0,maxWidth:280,textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                          {p.hook}
+                        </div>
+                        <span style={{color:'var(--text3)',fontSize:12,flexShrink:0}}>→</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+      </main>
+
+      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>Instagram Seed Agent / Phase 03</span>
+      </footer>
+    </div>
+  );
+}
+
+
+// ── QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────────
+// Injected by QB OS build system
+// Adds approve/revise/remove to each content piece, up to 3 rounds
+
+function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revisionField='content'}) {
+  const [states, setStates] = React.useState(() => {
+    const s = {};
+    items.forEach((item,i) => { s[i] = {status:'pending', round:0, feedback:'', item}; });
+    return s;
+  });
+  const [revising, setRevising] = React.useState({});
+
+  const allApproved = Object.values(states).every(s => s.status === 'approved' || s.status === 'removed');
+  const approvedItems = Object.values(states).filter(s => s.status === 'approved').map(s => s.item);
+
+  React.useEffect(() => {
+    if (allApproved && approvedItems.length > 0) onAllApproved && onAllApproved(approvedItems);
+  }, [allApproved]);
+
+  const approve = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'approved'}}));
+  const remove = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'removed'}}));
+  const startRevise = (i) => setRevising(prev => ({...prev, [i]: true}));
+  const submitRevise = async (i) => {
+    const feedback = document.getElementById('revision-input-' + i)?.value || '';
+    if (!feedback.trim()) return;
+    setStates(prev => ({...prev, [i]: {...prev[i], status:'revising', round: prev[i].round + 1, feedback}}));
+    setRevising(prev => ({...prev, [i]: false}));
+    // Trigger regeneration via QB_AI
+    if (window.QB_AI && states[i].round < 3) {
+      try {
+        const original = JSON.stringify(states[i].item);
+        const prompt = 'You produced this content piece: ' + original + '\n\nThe user requests this revision: ' + feedback + '\n\nReturn ONLY the revised version as a JSON object with the same structure. No markdown, no preamble.';
+        const sys = 'You are a content revision agent. Revise the content piece exactly as requested. Maintain brand voice and platform requirements. Return only valid JSON.';
+        const raw = await window.QB_AI(sys, prompt, 1000);
+        const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+        const revised = JSON.parse(clean);
+        setStates(prev => ({...prev, [i]: {...prev[i], status:'revised', item: revised}}));
+      } catch(e) {
+        setStates(prev => ({...prev, [i]: {...prev[i], status:'pending'}}));
+      }
+    }
+  };
+
+  const statusColor = {pending:'var(--text3)', approved:'var(--green)', removed:'var(--red)', revising:'var(--amber)', revised:'var(--blue)'};
+  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — review again'};
+
+  return (
+    <div>
+      <div style={{background:'rgba(74,222,128,0.05)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'12px 16px',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
+        <div>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:2}}>Content Review</div>
+          <div style={{fontSize:12,color:'var(--text2)'}}>{Object.values(states).filter(s=>s.status==='approved').length} approved · {Object.values(states).filter(s=>s.status==='pending'||s.status==='revised').length} pending · {Object.values(states).filter(s=>s.status==='removed').length} removed</div>
+        </div>
+        {allApproved && approvedItems.length > 0 && (
+          <div style={{fontFamily:'var(--mono)',fontSize:10,padding:'6px 14px',borderRadius:5,background:'var(--green)',color:'#000',fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase'}}>All done ✓</div>
+        )}
+      </div>
+      {items.map((item, i) => {
+        const s = states[i];
+        if (!s) return null;
+        const isRevising = revising[i];
+        const maxRoundsReached = s.round >= 3;
+        return (
+          <div key={i} style={{background:'var(--bg3)',border:'1px solid '+(s.status==='approved'?'rgba(74,222,128,0.2)':s.status==='removed'?'rgba(239,68,68,0.15)':'var(--border)'),borderRadius:10,marginBottom:12,overflow:'hidden',opacity:s.status==='removed'?0.4:1,transition:'all .2s'}}>
+            <div style={{padding:'14px 18px 0'}}>
+              {renderItem(s.item, i)}
+            </div>
+            <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 18px',borderTop:'1px solid var(--border)',background:'rgba(0,0,0,0.2)',flexWrap:'wrap'}}>
+              <div style={{fontFamily:'var(--mono)',fontSize:9,color:statusColor[s.status],letterSpacing:'.1em',flex:1}}>
+                {statusLabel[s.status]} {s.round > 0 ? '(Round '+s.round+'/3)' : ''}
+              </div>
+              {(s.status==='pending'||s.status==='revised') && !isRevising && (
+                <>
+                  <button onClick={()=>approve(i)} style={{background:'rgba(74,222,128,0.12)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>✓ Approve</button>
+                  {!maxRoundsReached && <button onClick={()=>startRevise(i)} style={{background:'rgba(245,158,11,0.1)',color:'var(--amber)',border:'1px solid rgba(245,158,11,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>↻ Revise</button>}
+                  <button onClick={()=>remove(i)} style={{background:'rgba(239,68,68,0.08)',color:'var(--red)',border:'1px solid rgba(239,68,68,0.15)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>× Remove</button>
+                </>
+              )}
+              {s.status==='approved' && <button onClick={()=>setStates(prev=>({...prev,[i]:{...prev[i],status:'pending'}}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Undo</button>}
+              {s.status==='revising' && <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--amber)'}}>Generating revision…</div>}
+            </div>
+            {isRevising && (
+              <div style={{padding:'12px 18px',background:'rgba(245,158,11,0.04)',borderTop:'1px solid rgba(245,158,11,0.1)'}}>
+                <div style={{fontFamily:'var(--mono)',fontSize:9,color:'var(--amber)',letterSpacing:'.1em',marginBottom:6}}>REVISION REQUEST {s.round+1}/3</div>
+                <textarea id={'revision-input-'+i} placeholder="What should change? Be specific: e.g. 'Make the hook more direct' or 'Remove the question format'" style={{width:'100%',background:'var(--bg3)',border:'1px solid rgba(245,158,11,0.2)',color:'var(--text)',borderRadius:6,padding:'10px 14px',fontSize:12,fontFamily:'var(--font)',resize:'vertical',minHeight:60,outline:'none'}} rows={2}/>
+                <div style={{display:'flex',gap:8,marginTop:8}}>
+                  <button onClick={()=>submitRevise(i)} style={{background:'var(--amber)',color:'#000',padding:'7px 16px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',fontWeight:700,letterSpacing:'.08em',cursor:'pointer'}}>Submit Revision →</button>
+                  <button onClick={()=>setRevising(prev=>({...prev,[i]:false}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'7px 12px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Cancel</button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+// ── END QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
