@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Your Brand Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#000;--bg2:#0a0a0a;--bg3:#111;--bg4:#1a1a1a;--bg5:#222;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --text:#e4e4e7;--text2:#888;--text3:#555;--text4:#333;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
+  --amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;--pink:#f472b6;--teal:#2dd4bf;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none;background:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes scanH{0%{left:-80%}100%{left:200%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fillBar{from{width:0}to{width:var(--target-w)}}
+.fade-in{animation:fadeIn 0.4s ease forwards}
+.blink{animation:pulse 2s ease infinite}
+.scan{position:relative;overflow:hidden}
+.scan::after{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.05),transparent);animation:scanH 3s linear infinite}
+
+/* ── PROGRESS BAR ── */
+#progress-bar-wrap{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.04);z-index:200}
+#progress-bar-fill{height:100%;background:var(--green);transition:width 0.6s cubic-bezier(0.4,0,0.2,1);border-radius:0 2px 2px 0}
+
+/* ── HEADER ── */
+header{position:fixed;top:3px;left:0;right:0;height:60px;background:rgba(0,0,0,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:100;display:flex;align-items:center}
+.header-inner{max-width:900px;margin:0 auto;width:100%;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-family:var(--mono);font-size:10px;letter-spacing:0.3em;color:var(--green);text-transform:uppercase;text-decoration:none}
+.step-counter{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:0.1em}
+.step-counter span{color:var(--text2)}
+
+/* ── MAIN ── */
+main{max-width:720px;margin:0 auto;padding:100px 24px 80px}
+
+/* ── JOURNEY PHASES ── */
+.phase-section{margin-bottom:8px}
+.phase-header{display:flex;align-items:center;gap:12px;padding:16px 0;border-top:1px solid var(--border);cursor:pointer}
+.phase-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;flex-shrink:0;transition:all 0.25s ease}
+.phase-dot.done{background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);color:var(--green)}
+.phase-dot.active{background:var(--green);color:#000;box-shadow:0 0 12px rgba(74,222,128,0.4)}
+.phase-dot.locked{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:var(--text3)}
+.phase-title{font-weight:600;font-size:15px;color:var(--text);flex:1}
+.phase-title.locked{color:var(--text3)}
+.phase-status{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 8px;border-radius:3px;flex-shrink:0}
+.phase-status.done{background:rgba(74,222,128,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.15)}
+.phase-status.active{background:rgba(255,255,255,0.04);color:var(--text2);border:1px solid var(--border)}
+.phase-status.locked{color:var(--text4);border:1px solid rgba(255,255,255,0.03)}
+.phase-chevron{color:var(--text3);font-size:12px;transition:transform 0.2s ease;flex-shrink:0}
+.phase-chevron.open{transform:rotate(180deg)}
+
+/* ── STEPS ── */
+.steps-container{padding-bottom:12px;overflow:hidden}
+.step-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:10px;transition:all 0.2s ease}
+.step-card.active-step{border-color:rgba(74,222,128,0.25);background:rgba(74,222,128,0.03)}
+.step-card.done-step{border-color:rgba(74,222,128,0.1);opacity:0.7}
+.step-card.locked-step{opacity:0.4;pointer-events:none}
+.step-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:0}
+.step-num{font-family:var(--mono);font-size:10px;color:var(--text3);width:24px;flex-shrink:0;padding-top:2px;letter-spacing:0.1em}
+.step-num.active{color:var(--green)}
+.step-num.done{color:var(--green)}
+.step-body{flex:1}
+.step-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3}
+.step-name.done{color:var(--green)}
+.step-desc{font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:12px}
+.step-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.step-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,0.03);color:var(--text3);border:1px solid var(--border);text-transform:uppercase}
+.step-output{background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.1);border-radius:8px;padding:10px 14px;margin-bottom:14px}
+.step-output-label{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;color:var(--green);text-transform:uppercase;margin-bottom:4px}
+.step-output-text{font-size:12px;color:var(--text);line-height:1.5}
+.step-action{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn-go{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#000;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 20px;border-radius:8px;cursor:pointer;transition:all 0.15s ease;font-family:var(--mono)}
+.btn-go:hover{background:#fff;transform:translateY(-1px)}
+.btn-done{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,0.08);color:var(--green);font-weight:600;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 18px;border-radius:8px;cursor:pointer;transition:all 0.15s ease;border:1px solid rgba(74,222,128,0.2);font-family:var(--mono)}
+.btn-done:hover{background:rgba(74,222,128,0.15)}
+.btn-skip{font-size:11px;color:var(--text3);cursor:pointer;transition:color 0.15s ease;text-decoration:underline;text-underline-offset:3px}
+.btn-skip:hover{color:var(--text2)}
+.step-done-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:0.1em}
+
+/* ── COMPLETION CARD ── */
+.completion-card{background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.15);border-radius:16px;padding:32px;text-align:center;margin-top:32px}
+.completion-check{width:56px;height:56px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:24px}
+.completion-title{font-size:24px;font-weight:900;color:#fff;margin-bottom:8px;letter-spacing:-0.02em}
+.completion-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:440px;margin:0 auto 24px}
+.completion-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* ── CURRENT STEP HERO ── */
+#current-step-hero{background:var(--bg2);border:1px solid rgba(74,222,128,0.2);border-radius:16px;padding:28px;margin-bottom:32px}
+.csh-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--green);text-transform:uppercase;margin-bottom:10px}
+.csh-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3}
+.csh-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.csh-time{font-family:var(--mono);font-size:10px;color:var(--text3);display:flex;align-items:center;gap:6px;margin-bottom:20px}
+.csh-output{background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;margin-bottom:20px}
+.csh-output-label{font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
+.csh-output-item{font-size:13px;color:var(--text);display:flex;gap:8px;padding:3px 0}
+.csh-output-dot{color:var(--green);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar-fill"></div></div>
+
+<header>
+  <div class="header-inner">
+    <a href="qb-branidos-hub.html" class="logo">QB BrandOS</a>
+    <div class="step-counter">Step <span id="current-step-display">1</span> of <span id="total-steps-display">18</span></div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em" id="phase-display">Phase 01 — Discovery</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Current Step Hero -->
+  <div id="current-step-hero" class="scan fade-in">
+    <div class="csh-eyebrow" id="hero-eyebrow">Your next step</div>
+    <div class="csh-title" id="hero-title">Loading your journey…</div>
+    <div class="csh-desc" id="hero-desc"></div>
+    <div class="csh-time">
+      <span>⏱</span>
+      <span id="hero-time"></span>
+    </div>
+    <div class="csh-output" id="hero-output" style="display:none">
+      <div class="csh-output-label">You will get</div>
+      <div id="hero-output-items"></div>
+    </div>
+    <button class="btn-go" id="hero-btn" onclick="openCurrentStep()">Open Tool →</button>
+  </div>
+
+  <!-- Journey Map -->
+  <div id="journey-map"></div>
+
+  <!-- Completion -->
+  <div id="completion-card" class="completion-card" style="display:none">
+    <div class="completion-check">✓</div>
+    <div class="completion-title">Your brand is built.</div>
+    <div class="completion-sub">You have completed the full QB BrandOS journey. Your QBP is fully populated, your brand system is live, and the intelligence cycle begins. Every quarter, the system gets smarter.</div>
+    <div class="completion-ctas">
+      <a href="qb-branidos-hub.html" class="btn-go">Return to Hub →</a>
+      <a href="brand-performance-dashboard.html" class="btn-done">Start Performance Review</a>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── JOURNEY DEFINITION ───────────────────────────────────────────────────────
+const JOURNEY = [
+  {
+    phase: 1, phaseLabel: 'Discovery', phaseColor: '#7c3aed',
+    steps: [
+      {
+        id: 'soul-map', name: 'Brand Soul Map', storageKey: 'qb_soul_map_done',
+        time: '45–60 min',
+        desc: 'Uncover your brand\'s irreducible truth. 12 modules. 15 exercises. The foundational identity document that every other tool in the system reads from.',
+        outputs: ['Your Brand Essence — one precise sentence', 'The Spark — your full brand narrative', 'Primary + Secondary Archetype', 'Manifesto line and Anti-Brand', 'Your primary persona defined'],
+        file: 'brand-soul-map.html',
+        phase: 1
+      },
+      {
+        id: 'sensescape', name: 'Sensescape', storageKey: 'qb_sensescape_done',
+        time: '30–40 min',
+        desc: 'Map the sensory universe of your brand through 47 spectrums across 7 chapters — color, type, form, motion, texture. Produces the Designer Brief and Sensescape Codex.',
+        outputs: ['Color territory with emotional logic', 'Typography direction and weight', 'Designer Brief ready to send', 'Visual paradoxes identified'],
+        file: 'sensescape.html',
+        phase: 1
+      },
+      {
+        id: 'visual-dna', name: 'Visual DNA', storageKey: 'qb_visual_dna_done',
+        time: '20–30 min',
+        desc: 'Three rounds of instinctive image selection build your visual reference library. What you keep reveals the brand\'s true visual personality — faster and more accurate than any mood board exercise.',
+        outputs: ['10 reference images defining your visual world', 'Visual DNA Brief for your designer', 'Fast-discard blocklist — what to avoid', 'Texture and form vocabulary'],
+        file: 'visual-dna.html',
+        phase: 1
+      },
+      {
+        id: 'war-table', name: 'The War Table', storageKey: 'qb_war_table_done',
+        time: '30–45 min',
+        desc: 'Strategic prioritization across 6 dimensions. Takes all your potential moves and outputs a ranked 60-day action plan with a full Strategic Command Document.',
+        outputs: ['Ranked initiative list with scores', '60-day field plan', 'Strategic Command Document', 'Trade-off analysis'],
+        file: 'war-table.html',
+        phase: 1
+      }
+    ]
+  },
+  {
+    phase: 2, phaseLabel: 'Brand Creation', phaseColor: '#a78bfa',
+    steps: [
+      {
+        id: 'logo-direction', name: 'Logo Direction Agent', storageKey: 'qb_logo_dir_done',
+        time: '15–20 min',
+        desc: 'The AI reads your complete QBP and produces a full logo brief — visual direction, reference examples, and exact Midjourney/Ideogram prompts ready to generate your logo concepts.',
+        outputs: ['Complete logo brief', '3 directional concepts', 'Midjourney + Ideogram prompts', 'Typography shortlist', 'Color application guide'],
+        file: 'logo-direction-agent.html',
+        phase: 2
+      },
+      {
+        id: 'logo-evaluation', name: 'Logo Evaluation Agent', storageKey: 'qb_logo_eval_done',
+        time: '10–15 min',
+        desc: 'Upload your logo concepts. The agent scores each one against your QBP identity — pass, refine, or reject — with detailed reasoning so you know exactly why and what to do next.',
+        outputs: ['Per-concept verdict (pass/refine/reject)', 'Identity alignment score', 'Specific revision directions', 'Final selection recommendation'],
+        file: 'logo-evaluation-agent.html',
+        phase: 2
+      },
+      {
+        id: 'voice-guide', name: 'Voice Guide Agent', storageKey: 'qb_voice_done',
+        time: '20–25 min',
+        desc: 'Your complete verbal identity system — voice DNA, writing rules, tone modes per platform, brand vocabulary, and a live copy generator that writes in your exact voice.',
+        outputs: ['Voice DNA document', 'Platform-specific tone modes', 'Writing rules and examples', '10 brand vocabulary words', 'Live copy generator'],
+        file: 'voice-guide-agent.html',
+        phase: 2
+      }
+    ]
+  },
+  {
+    phase: 3, phaseLabel: 'Content Creation', phaseColor: '#f472b6',
+    steps: [
+      {
+        id: 'instagram', name: 'Instagram Seed Agent', storageKey: 'qb_ig_done',
+        time: '15–20 min',
+        desc: 'First 12 posts built on a 4-arc strategic sequence. Each post has a caption, visual brief, Midjourney prompt, hook, and hashtag set. Your Instagram is live-ready.',
+        outputs: ['12 complete post packs', 'Grid strategy and arc sequence', 'Visual briefs for each post', 'Midjourney prompts', 'Hashtag strategy'],
+        file: 'instagram-seed-agent.html',
+        phase: 3
+      },
+      {
+        id: 'linkedin', name: 'LinkedIn Strategy Agent', storageKey: 'qb_li_done',
+        time: '20–25 min',
+        desc: 'Rewrites your personal profile and company page. Scripts 12 founder posts and 8 brand posts across 4 themed weeks. Your LinkedIn is positioned and stocked.',
+        outputs: ['Rewritten personal profile', 'Rewritten company page', '12 founder posts scripted', '8 brand posts scripted', '4-week content calendar'],
+        file: 'linkedin-strategy-agent.html',
+        phase: 3
+      },
+      {
+        id: 'youtube', name: 'YouTube Strategy Agent', storageKey: 'qb_yt_done',
+        time: '20–25 min',
+        desc: 'Channel strategy, positioning, and 6 full video scripts — each with hook, structure, talking points, and a short-form repurpose brief. Your YouTube channel is ready to launch.',
+        outputs: ['Channel positioning and about text', '6 full video scripts', 'Short-form repurpose briefs', 'Thumbnail direction per video', 'Upload cadence strategy'],
+        file: 'youtube-strategy-agent.html',
+        phase: 3
+      },
+      {
+        id: 'newsletter', name: 'Newsletter Architecture', storageKey: 'qb_nl_done',
+        time: '15–20 min',
+        desc: 'The newsletter as a publishing platform — name, structure, cadence, recurring sections, and first 4 issues fully drafted and ready to send.',
+        outputs: ['Newsletter name and positioning', 'Issue structure template', 'First 4 issues drafted', 'Welcome email written', 'Growth strategy'],
+        file: 'newsletter-architecture-agent.html',
+        phase: 3
+      },
+      {
+        id: 'content-bridge', name: 'Content Bridge', storageKey: 'qb_bridge_done',
+        time: '20–30 min',
+        desc: 'Takes your scripts and produces platform-ready production briefs for HeyGen (video), Creatify (UGC ads), or Canva (static posts). Step-by-step instructions for each platform.',
+        outputs: ['Production brief per piece', 'Formatted script with pacing marks', 'Platform settings and export specs', 'Brand application guide', 'Quality checklist'],
+        file: 'content-bridge.html',
+        phase: 3
+      }
+    ]
+  },
+  {
+    phase: 4, phaseLabel: 'Execution', phaseColor: '#2dd4bf',
+    steps: [
+      {
+        id: 'repurposing', name: 'Content Repurposing Engine', storageKey: 'qb_rep_done',
+        time: '10–15 min',
+        desc: 'Paste one piece of long-form content. The engine rebuilds it natively across 10 platforms — up to 25 pieces, all on-brand, all platform-specific in format and tone.',
+        outputs: ['25 platform-adapted pieces', 'LinkedIn article version', 'Twitter/X thread', 'Instagram carousel script', 'Email newsletter version', 'YouTube short script'],
+        file: 'content-repurposing-engine.html',
+        phase: 4
+      }
+    ]
+  },
+  {
+    phase: 5, phaseLabel: 'Intelligence', phaseColor: '#60a5fa',
+    steps: [
+      {
+        id: 'performance', name: 'Brand Performance Dashboard', storageKey: 'qb_perf_done',
+        time: '20–30 min',
+        desc: 'Bring your platform analytics. The dashboard reads them as brand signals — not metrics. Returns health scores across 5 dimensions, signal cards with specific actions, and strategic directions.',
+        outputs: ['5-dimension health score', 'Signal cards with actions', 'Audience alignment analysis', '3 strategic directions', 'Next 30 days plan'],
+        file: 'brand-performance-dashboard.html',
+        phase: 5
+      },
+      {
+        id: 'quarterly', name: 'Quarterly Brand Review', storageKey: 'qb_qr_done',
+        time: '30–40 min',
+        desc: 'The tool that makes the system self-evolving. Updates your QBP from what was learned, grades the quarter across 5 dimensions, and sets the full strategic direction for the next 90 days.',
+        outputs: ['Updated QBP with learnings', 'Quarter grade across 5 dimensions', 'Quarter narrative', 'Next quarter theme + north star', 'Full War Table for Q+1'],
+        file: 'quarterly-brand-review-agent.html',
+        phase: 5
+      }
+    ]
+  }
+];
+
+// Flatten all steps for indexing
+const ALL_STEPS = [];
+JOURNEY.forEach(phase => {
+  phase.steps.forEach(step => {
+    ALL_STEPS.push({ ...step, phaseLabel: phase.phaseLabel, phaseColor: phase.phaseColor });
+  });
+});
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+function isStepDone(step) {
+  // Check localStorage for completion flag OR QB OS QBP fields
+  if (localStorage.getItem(step.storageKey)) return true;
+  // Secondary check from QBP for phase 01 tools
+  try {
+    const qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
+    if (step.id === 'soul-map' && qbp.soulMapComplete) return true;
+    if (step.id === 'sensescape' && qbp.sensescapeComplete) return true;
+    if (step.id === 'visual-dna' && qbp.visualDnaComplete) return true;
+    if (step.id === 'war-table' && qbp.warTableComplete) return true;
+  } catch(e) {}
+  return false;
+}
+
+function markDone(stepId) {
+  const step = ALL_STEPS.find(s => s.id === stepId);
+  if (step) localStorage.setItem(step.storageKey, '1');
+  render();
+}
+
+function getCurrentStep() {
+  for (let i = 0; i < ALL_STEPS.length; i++) {
+    if (!isStepDone(ALL_STEPS[i])) return i;
+  }
+  return ALL_STEPS.length; // all done
+}
+
+function getProgress() {
+  const done = ALL_STEPS.filter(s => isStepDone(s)).length;
+  return { done, total: ALL_STEPS.length, pct: Math.round((done / ALL_STEPS.length) * 100) };
+}
+
+function openStep(step) {
+  const key = localStorage.getItem('qb_api_key') || '';
+  const provider = localStorage.getItem('qb_provider') || 'anthropic';
+  let url = step.file + '?provider=' + provider;
+  if (key) url += '&apikey=' + encodeURIComponent(key);
+  // Pass QBP as base64
+  try {
+    const qbp = localStorage.getItem('qb_qbp');
+    if (qbp) url += '&qbp=' + btoa(qbp);
+  } catch(e) {}
+  window.open(url, '_blank');
+}
+
+function openCurrentStep() {
+  const idx = getCurrentStep();
+  if (idx < ALL_STEPS.length) openStep(ALL_STEPS[idx]);
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  const progress = getProgress();
+  const currentIdx = getCurrentStep();
+  const currentStep = ALL_STEPS[currentIdx];
+  const allDone = currentIdx >= ALL_STEPS.length;
+
+  // Progress bar
+  document.getElementById('progress-bar-fill').style.width = progress.pct + '%';
+
+  // Header
+  document.getElementById('current-step-display').textContent = Math.min(currentIdx + 1, progress.total);
+  document.getElementById('total-steps-display').textContent = progress.total;
+  if (currentStep) {
+    document.getElementById('phase-display').textContent = 'Phase 0' + currentStep.phase + ' — ' + currentStep.phaseLabel;
+  } else {
+    document.getElementById('phase-display').textContent = 'Journey Complete';
+  }
+
+  // Hero
+  if (allDone) {
+    document.getElementById('current-step-hero').style.display = 'none';
+    document.getElementById('completion-card').style.display = 'block';
+  } else {
+    document.getElementById('current-step-hero').style.display = 'block';
+    document.getElementById('completion-card').style.display = 'none';
+    document.getElementById('hero-eyebrow').textContent = 'Phase 0' + currentStep.phase + ' · Step ' + (currentIdx + 1) + ' of ' + progress.total;
+    document.getElementById('hero-title').textContent = currentStep.name;
+    document.getElementById('hero-desc').textContent = currentStep.desc;
+    document.getElementById('hero-time').textContent = currentStep.time + ' · Opens in new tab';
+    const outputBox = document.getElementById('hero-output');
+    const outputItems = document.getElementById('hero-output-items');
+    if (currentStep.outputs && currentStep.outputs.length) {
+      outputBox.style.display = 'block';
+      outputItems.innerHTML = currentStep.outputs.map(o =>
+        '<div class="csh-output-item"><span class="csh-output-dot">→</span><span>' + o + '</span></div>'
+      ).join('');
+    } else {
+      outputBox.style.display = 'none';
+    }
+  }
+
+  // Journey map
+  const map = document.getElementById('journey-map');
+  map.innerHTML = '';
+
+  // Progress summary
+  const summary = document.createElement('div');
+  summary.style.cssText = 'display:flex;align-items:center;gap:16px;margin-bottom:24px;padding:14px 18px;background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.1);border-radius:10px';
+  summary.innerHTML = '<div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--green);line-height:1">' + progress.done + '</div>' +
+    '<div><div style="font-size:13px;color:#fff;font-weight:500;margin-bottom:2px">Steps completed</div>' +
+    '<div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em">' + progress.pct + '% through your journey</div></div>' +
+    '<div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-left:8px"><div style="height:100%;background:var(--green);width:' + progress.pct + '%;border-radius:2px;transition:width 0.6s ease"></div></div>';
+  map.appendChild(summary);
+
+  // Phases
+  JOURNEY.forEach(phase => {
+    const phDone = phase.steps.every(s => isStepDone(s));
+    const phActive = !phDone && phase.steps.some(s => !isStepDone(s) && (
+      phase.steps.indexOf(s) === 0 ||
+      isStepDone(phase.steps[phase.steps.indexOf(s) - 1])
+    ));
+
+    const section = document.createElement('div');
+    section.className = 'phase-section';
+
+    const header = document.createElement('div');
+    header.className = 'phase-header';
+    header.style.cursor = 'pointer';
+
+    const dot = document.createElement('div');
+    dot.className = 'phase-dot ' + (phDone ? 'done' : phActive ? 'active' : 'locked');
+    dot.textContent = phDone ? '✓' : '0' + phase.phase;
+    dot.style.borderColor = phDone || phActive ? phase.phaseColor + '50' : '';
+    if (phActive) { dot.style.background = phase.phaseColor; dot.style.boxShadow = '0 0 12px ' + phase.phaseColor + '60'; }
+    if (phDone) { dot.style.background = phase.phaseColor + '20'; dot.style.color = phase.phaseColor; }
+
+    const title = document.createElement('div');
+    title.className = 'phase-title' + (!phDone && !phActive ? ' locked' : '');
+    title.textContent = phase.phaseLabel;
+    if (phActive || phDone) title.style.color = '#fff';
+
+    const statusEl = document.createElement('div');
+    statusEl.className = 'phase-status ' + (phDone ? 'done' : phActive ? 'active' : 'locked');
+    const doneCt = phase.steps.filter(s => isStepDone(s)).length;
+    statusEl.textContent = phDone ? 'Complete' : phActive ? (doneCt + '/' + phase.steps.length) : 'Locked';
+
+    const chevron = document.createElement('div');
+    chevron.className = 'phase-chevron' + (phActive || phDone ? ' open' : '');
+    chevron.textContent = '▾';
+
+    header.appendChild(dot);
+    header.appendChild(title);
+    header.appendChild(statusEl);
+    header.appendChild(chevron);
+
+    const stepsContainer = document.createElement('div');
+    stepsContainer.className = 'steps-container';
+    if (!phActive && !phDone) stepsContainer.style.display = 'none';
+
+    header.addEventListener('click', () => {
+      const isOpen = stepsContainer.style.display !== 'none';
+      stepsContainer.style.display = isOpen ? 'none' : 'block';
+      chevron.classList.toggle('open', !isOpen);
+    });
+
+    phase.steps.forEach((step, stepIdx) => {
+      const done = isStepDone(step);
+      const isCurrentStep = ALL_STEPS.indexOf(ALL_STEPS.find(s => s.id === step.id)) === currentIdx;
+
+      // Is this step accessible? (previous step done or it's first)
+      const prevStep = phase.steps[stepIdx - 1];
+      const accessible = stepIdx === 0 || (prevStep && isStepDone(prevStep));
+      const phaseAccessible = phase.phase === 1 || JOURNEY[phase.phase - 2].steps.every(s => isStepDone(s));
+      const canOpen = phaseAccessible && accessible;
+
+      const card = document.createElement('div');
+      card.className = 'step-card ' + (done ? 'done-step' : isCurrentStep ? 'active-step' : !canOpen ? 'locked-step' : '');
+
+      const h = document.createElement('div');
+      h.className = 'step-header';
+
+      const num = document.createElement('div');
+      num.className = 'step-num ' + (done ? 'done' : isCurrentStep ? 'active' : '');
+      num.textContent = String(ALL_STEPS.findIndex(s => s.id === step.id) + 1).padStart(2, '0');
+
+      const body = document.createElement('div');
+      body.className = 'step-body';
+
+      const name = document.createElement('div');
+      name.className = 'step-name ' + (done ? 'done' : '');
+      name.textContent = (done ? '✓ ' : '') + step.name;
+
+      const desc = document.createElement('div');
+      desc.className = 'step-desc';
+      desc.textContent = step.desc;
+
+      const meta = document.createElement('div');
+      meta.className = 'step-meta';
+      const timeTag = document.createElement('span');
+      timeTag.className = 'step-tag';
+      timeTag.textContent = '⏱ ' + step.time;
+      meta.appendChild(timeTag);
+      const phaseTag = document.createElement('span');
+      phaseTag.className = 'step-tag';
+      phaseTag.textContent = 'Phase 0' + step.phase;
+      phaseTag.style.color = phase.phaseColor;
+      phaseTag.style.borderColor = phase.phaseColor + '30';
+      meta.appendChild(phaseTag);
+
+      body.appendChild(name);
+      body.appendChild(desc);
+      body.appendChild(meta);
+
+      if (step.outputs && step.outputs.length && !done) {
+        const outputBox = document.createElement('div');
+        outputBox.className = 'step-output';
+        outputBox.innerHTML = '<div class="step-output-label">You will get</div>' +
+          step.outputs.slice(0, 3).map(o => '<div style="font-size:11px;color:var(--text);display:flex;gap:6px;padding:1px 0"><span style="color:var(--green)">→</span><span>' + o + '</span></div>').join('') +
+          (step.outputs.length > 3 ? '<div style="font-size:11px;color:var(--text3);margin-top:2px">+' + (step.outputs.length - 3) + ' more outputs</div>' : '');
+        body.appendChild(outputBox);
+      }
+
+      // Action buttons
+      if (!done) {
+        const actions = document.createElement('div');
+        actions.className = 'step-action';
+
+        if (canOpen) {
+          const goBtn = document.createElement('button');
+          goBtn.className = 'btn-go';
+          goBtn.textContent = isCurrentStep ? 'Open Now →' : 'Open →';
+          goBtn.addEventListener('click', () => openStep(step));
+          actions.appendChild(goBtn);
+
+          const doneBtn = document.createElement('button');
+          doneBtn.className = 'btn-done';
+          doneBtn.textContent = '✓ Mark Complete';
+          doneBtn.addEventListener('click', () => markDone(step.id));
+          actions.appendChild(doneBtn);
+        }
+
+        body.appendChild(actions);
+      } else {
+        const doneBadge = document.createElement('div');
+        doneBadge.className = 'step-done-badge';
+        doneBadge.textContent = '✓ Complete';
+        body.appendChild(doneBadge);
+      }
+
+      h.appendChild(num);
+      h.appendChild(body);
+      card.appendChild(h);
+      stepsContainer.appendChild(card);
+    });
+
+    section.appendChild(header);
+    section.appendChild(stepsContainer);
+    map.appendChild(section);
+  });
+}
+
+// ── LISTEN FOR TOOL COMPLETION MESSAGES ────────────────────────────────────
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'QB_PHASE_COMPLETE') {
+    const tool = e.data.tool;
+    const step = ALL_STEPS.find(s => s.id === tool);
+    if (step) {
+      localStorage.setItem(step.storageKey, '1');
+      render();
+    }
+  }
+});
+
+// Reset button (dev/testing)
+function resetJourney() {
+  if (!confirm('Reset your journey progress? This does not delete your QBP.')) return;
+  ALL_STEPS.forEach(s => localStorage.removeItem(s.storageKey));
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
