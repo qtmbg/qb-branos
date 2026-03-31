@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Logo Evaluation Agent</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;--bg5:#2a2a2a;
+  --border:#2a2a2a;--border2:#333;--border3:#3a3a3a;
+  --text:#e8e8e8;--text2:#888;--text3:#555;--text4:#333;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
+  --red:#ef4444;--red2:rgba(239,68,68,0.1);
+  --amber:#f59e0b;--amber2:rgba(245,158,11,0.1);
+  --blue:#60a5fa;--blue2:rgba(96,165,250,0.1);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--green)}
+textarea{resize:vertical;line-height:1.6}
+select option{background:var(--bg3)}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scanH{0%{left:-100%}100%{left:200%}}
+@keyframes meterFill{from{width:0}to{width:var(--target)}}
+@keyframes countUp{from{opacity:0}to{opacity:1}}
+.fade-in{animation:fadeIn .35s ease forwards}
+.fade-in-up{animation:fadeInUp .5s ease forwards}
+.blink{animation:pulse 1.4s ease infinite}
+.spin{animation:spin .9s linear infinite}
+.scan-line{position:relative;overflow:hidden}
+.scan-line::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.05),transparent);animation:scanH 2.5s linear infinite}
+.drop-zone{border:1.5px dashed var(--border2);border-radius:10px;transition:all .2s;cursor:pointer}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--green);background:var(--green3)}
+.score-meter{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px}
+.score-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.verdict-pass{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25)}
+.verdict-refine{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25)}
+.verdict-reject{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25)}
+.tab-btn{padding:8px 16px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer}
+.tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
+</style>
+<script>
+// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  // QBP
+  var urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  // Universal AI call — works with Anthropic or Gemini
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.content[0].text;
+  };
+  window.QB_AUTOFILL = function(fieldMap){
+    if(!window.QB_QBP) return;
+    Object.entries(fieldMap).forEach(function(kv){
+      var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
+      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
+    });
+  };
+})();
+</script>
+</head>
+<body>
+<script>
+// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  // QBP: URL param (base64 encoded) > localStorage
+  const urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+})();
+// ── END QB SPINE ──────────────────────────────────────────────────────────────
+</script>
+<script>
+// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  // QBP: URL param (base64 encoded) > localStorage
+  const urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+})();
+// ── END QB SPINE ──────────────────────────────────────────────────────────────
+</script>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ─── SCORE DIMENSIONS ────────────────────────────────────────────────────────
+
+const DIMENSIONS = [
+  { id:'geometry',    label:'Geometry Alignment',   color:'var(--blue)',   desc:'Does the form vocabulary match the Sensescape scores?' },
+  { id:'archetype',   label:'Archetype Expression',  color:'var(--purple)', desc:'Does the mark carry the Mythological Figure and Soul?' },
+  { id:'energy',      label:'Energy Match',          color:'var(--green)',  desc:'Does it transmit the Natural Force correctly?' },
+  { id:'complexity',  label:'Complexity Score',      color:'var(--amber)',  desc:'Is the complexity level right for the brand?' },
+  { id:'antiPattern', label:'Anti-Pattern Compliance',color:'var(--red)',   desc:'Does it violate any blocklist items?' },
+  { id:'essence',     label:'Essence Test',          color:'#e879f9',       desc:'Does it carry the Brand Essence without words?' },
+];
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+
+const toBase64 = (file) => new Promise((res, rej) => {
+  const r = new FileReader();
+  r.onload = () => res(r.result.split(',')[1]);
+  r.onerror = rej;
+  r.readAsDataURL(file);
+});
+
+const scoreColor = (s) => {
+  if(s >= 80) return 'var(--green)';
+  if(s >= 55) return 'var(--amber)';
+  return 'var(--red)';
+};
+
+const verdictClass = (v) => {
+  if(!v) return '';
+  const vl = v.toLowerCase();
+  if(vl.includes('pass') || vl.includes('approved')) return 'verdict-pass';
+  if(vl.includes('refine') || vl.includes('revise') || vl.includes('conditional')) return 'verdict-refine';
+  return 'verdict-reject';
+};
+
+const verdictColor = (v) => {
+  if(!v) return 'var(--text2)';
+  const vl = v.toLowerCase();
+  if(vl.includes('pass') || vl.includes('approved')) return 'var(--green)';
+  if(vl.includes('refine') || vl.includes('revise') || vl.includes('conditional')) return 'var(--amber)';
+  return 'var(--red)';
+};
+
+// ─── SUB-COMPONENTS ───────────────────────────────────────────────────────────
+
+const MonoLabel = ({ children, color }) => (
+  <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.2em',color:color||'var(--text3)',textTransform:'uppercase',marginBottom:8}}>
+    {children}
+  </div>
+);
+
+const Card = ({ children, accent, style={} }) => (
+  <div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>
+    {children}
+  </div>
+);
+
+const AnimatedScore = ({ score, color, delay=0 }) => {
+  const [displayed, setDisplayed] = useState(0);
+  useEffect(()=>{
+    const t = setTimeout(()=>{
+      let s = 0;
+      const inc = score / 40;
+      const id = setInterval(()=>{
+        s = Math.min(s + inc, score);
+        setDisplayed(Math.round(s));
+        if(s >= score) clearInterval(id);
+      }, 20);
+      return ()=>clearInterval(id);
+    }, delay);
+    return ()=>clearTimeout(t);
+  },[score]);
+  return <span style={{color, fontFamily:'var(--mono)', fontSize:13, fontWeight:700}}>{displayed}</span>;
+};
+
+const ScoreMeter = ({ score, color, delay=0 }) => {
+  const [width, setWidth] = useState(0);
+  useEffect(()=>{
+    const t = setTimeout(()=>setWidth(score), delay + 200);
+    return ()=>clearTimeout(t);
+  },[score]);
+  return (
+    <div className="score-meter">
+      <div className="score-fill" style={{width:`${width}%`, background:color, transition:`width ${1.2 + delay/1000}s cubic-bezier(.4,0,.2,1)`}}/>
+    </div>
+  );
+};
+
+const TextField = ({label, value, onChange, placeholder, multiline, rows=3}) => (
+  <div style={{marginBottom:16}}>
+    <MonoLabel>{label}</MonoLabel>
+    {multiline
+      ? <textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+      : <input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>
+    }
+  </div>
+);
+
+const Section = ({title, number, children, accent}) => (
+  <div style={{marginBottom:32}}>
+    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,paddingBottom:12,borderBottom:`1px solid ${accent||'var(--border)'}` }}>
+      <span style={{fontFamily:'var(--mono)',fontSize:10,color:accent||'var(--green)',letterSpacing:'0.2em'}}>0{number}</span>
+      <span style={{fontSize:13,fontWeight:500,letterSpacing:'0.05em',textTransform:'uppercase'}}>{title}</span>
+    </div>
+    {children}
+  </div>
+);
+
+// ─── IMAGE UPLOAD ─────────────────────────────────────────────────────────────
+
+const ImageUpload = ({ image, onImage, label }) => {
+  const [dragging, setDragging] = useState(false);
+  const inputRef = useRef();
+
+  const handle = async (file) => {
+    if(!file || !file.type.startsWith('image/')) return;
+    const b64 = await toBase64(file);
+    const url = URL.createObjectURL(file);
+    onImage({ base64: b64, url, name: file.name, type: file.type });
+  };
+
+  return (
+    <div
+      className={`drop-zone${dragging?' drag-over':''}`}
+      style={{padding:image?0:'40px 20px',textAlign:'center',position:'relative',overflow:'hidden'}}
+      onClick={()=>!image && inputRef.current.click()}
+      onDragOver={e=>{e.preventDefault();setDragging(true)}}
+      onDragLeave={()=>setDragging(false)}
+      onDrop={e=>{e.preventDefault();setDragging(false);handle(e.dataTransfer.files[0])}}
+    >
+      {image ? (
+        <div style={{position:'relative'}}>
+          <img src={image.url} alt="logo" style={{width:'100%',maxHeight:280,objectFit:'contain',borderRadius:8,display:'block'}}/>
+          <button
+            onClick={e=>{e.stopPropagation();onImage(null)}}
+            style={{position:'absolute',top:8,right:8,background:'rgba(0,0,0,0.7)',border:'1px solid var(--border2)',color:'var(--text)',padding:'4px 10px',borderRadius:4,fontSize:11,fontFamily:'var(--mono)'}}
+          >Remove</button>
+          <div style={{padding:'10px 14px',textAlign:'left'}}>
+            <span style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>{image.name}</span>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div style={{width:48,height:48,border:'1px solid var(--border2)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 16px',fontSize:20}}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/>
+            </svg>
+          </div>
+          <div style={{fontSize:13,color:'var(--text2)',marginBottom:6}}>{label || 'Drop logo image here'}</div>
+          <div style={{fontSize:11,color:'var(--text3)'}}>PNG, JPG, SVG · or click to browse</div>
+        </>
+      )}
+      <input ref={inputRef} type="file" accept="image/*" style={{display:'none'}} onChange={e=>handle(e.target.files[0])}/>
+    </div>
+  );
+};
+
+// ─── RADAR CHART (pure SVG) ───────────────────────────────────────────────────
+
+const RadarChart = ({ scores }) => {
+  const cx=120, cy=120, r=80, n=scores.length;
+  const pts = scores.map((s,i)=>{
+    const a = (i/n)*2*Math.PI - Math.PI/2;
+    const d = (s.score/100)*r;
+    return {x:cx+d*Math.cos(a), y:cy+d*Math.sin(a), lx:cx+(r+22)*Math.cos(a), ly:cy+(r+22)*Math.sin(a), label:s.label.split(' ')[0]};
+  });
+  const poly = pts.map(p=>`${p.x},${p.y}`).join(' ');
+  const webs = [.25,.5,.75,1].map(f=>
+    scores.map((_,i)=>{const a=(i/n)*2*Math.PI-Math.PI/2;return `${cx+r*f*Math.cos(a)},${cy+r*f*Math.sin(a)}`;}).join(' ')
+  );
+  return (
+    <svg width="240" height="240" viewBox="0 0 240 240">
+      {webs.map((w,i)=><polygon key={i} points={w} fill="none" stroke="var(--border2)" strokeWidth=".5"/>)}
+      {scores.map((_,i)=>{const a=(i/n)*2*Math.PI-Math.PI/2;return <line key={i} x1={cx} y1={cy} x2={cx+r*Math.cos(a)} y2={cy+r*Math.sin(a)} stroke="var(--border2)" strokeWidth=".5"/>;}) }
+      <polygon points={poly} fill="rgba(74,222,128,0.12)" stroke="var(--green)" strokeWidth="1.5" strokeLinejoin="round"/>
+      {pts.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--green)"/>)}
+      {pts.map((p,i)=>(
+        <text key={i} x={p.lx} y={p.ly} textAnchor="middle" dominantBaseline="middle"
+          style={{fontSize:8,fontFamily:'var(--mono)',fill:'var(--text3)',textTransform:'uppercase'}}>
+          {p.label}
+        </text>
+      ))}
+    </svg>
+  );
+};
+
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+const STEPS = ['Setup','Upload','Evaluating','Verdict'];
+
+export default function App() {
+  const [step, setStep] = useState(0);
+  const [activeTab, setActiveTab] = useState('scores');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState(null);
+  const [concepts, setConcepts] = useState([{ id:1, image:null, name:'Concept A' }]);
+  const [activeConcept, setActiveConcept] = useState(0);
+  const [results, setResults] = useState({});
+
+  // QBP fields
+  const [brandName, setBrandName]       = useState('');
+  const [brandEssence, setBrandEssence] = useState('');
+  const [naturalForce, setNaturalForce] = useState('');
+  const [museumRoom, setMuseumRoom]     = useState('');
+  const [archetype, setArchetype]       = useState('');
+  const [antiBrand, setAntiBrand]       = useState('');
+  const [paradox, setParadox]           = useState('');
+  const [markType, setMarkType]         = useState('');
+  const [cornerSpec, setCornerSpec]     = useState('');
+  const [complexitySpec, setComplexitySpec] = useState('');
+  const [symmetrySpec, setSymmetrySpec] = useState('');
+  const [colorTerritory, setColorTerritory] = useState('');
+  const [antiPatterns, setAntiPatterns] = useState('');
+  const [qualityTest, setQualityTest]   = useState('');
+
+  const isSetupValid = () => brandName && brandEssence && naturalForce && museumRoom && archetype;
+  const currentConcept = concepts[activeConcept];
+  const hasImage = currentConcept?.image;
+
+  const addConcept = () => {
+    const id = concepts.length+1;
+    setConcepts(prev=>[...prev,{id,image:null,name:`Concept ${String.fromCharCode(64+id)}`}]);
+    setActiveConcept(concepts.length);
+  };
+
+  const updateImage = (img) => {
+    setConcepts(prev=>prev.map((c,i)=>i===activeConcept?{...c,image:img}:c));
+  };
+
+  const updateName = (name) => {
+    setConcepts(prev=>prev.map((c,i)=>i===activeConcept?{...c,name}:c));
+  };
+
+  const buildPrompt = (concept) => `You are the Logo Evaluation Agent inside the Quantum Branding BrandOS ecosystem.
+Your function is to score and evaluate a logo concept against the Quantum Brand Profile with surgical precision.
+You see the logo image. You know the brand's complete identity data. You return a verdict.
+You do not give general design feedback. You score against specific QBP dimensions.
+Return ONLY valid JSON — no markdown, no preamble.
+
+QUANTUM BRAND PROFILE:
+Brand: ${brandName}
+Brand Essence (the irreducible truth): ${brandEssence}
+Natural Force: ${naturalForce}
+Museum Room: ${museumRoom}
+Primary Archetype: ${archetype}
+Anti-Brand (what it refuses to be): ${antiBrand||'not specified'}
+Central Paradox: ${paradox||'not specified'}
+Expected Mark Type: ${markType||'not specified'}
+Corner Radius Direction: ${cornerSpec||'not specified'}
+Complexity Direction: ${complexitySpec||'not specified'}
+Symmetry Direction: ${symmetrySpec||'not specified'}
+Color Territory: ${colorTerritory||'not specified'}
+Anti-Pattern Blocklist: ${antiPatterns||'not specified'}
+Quality Test: ${qualityTest||'Does this mark carry the Brand Essence without words?'}
+
+Evaluate this logo concept against the QBP and return:
+{
+  "overallScore": number 0-100,
+  "verdict": "PASS — Ready for use" | "REFINE — Conditional approval with changes" | "REJECT — Fundamental misalignment",
+  "verdictReason": "2-3 sentences explaining the verdict with specific references to QBP fields",
+  "dimensions": [
+    { "id": "geometry", "label": "Geometry Alignment", "score": 0-100, "finding": "1-2 sentences", "evidence": "what you see in the mark that supports this score" },
+    { "id": "archetype", "label": "Archetype Expression", "score": 0-100, "finding": "1-2 sentences", "evidence": "specific visual element that expresses or fails to express the archetype" },
+    { "id": "energy", "label": "Energy Match", "score": 0-100, "finding": "1-2 sentences", "evidence": "how the mark does or doesn't transmit the Natural Force" },
+    { "id": "complexity", "label": "Complexity Score", "score": 0-100, "finding": "1-2 sentences", "evidence": "what the complexity level communicates and whether it matches" },
+    { "id": "antiPattern", "label": "Anti-Pattern Compliance", "score": 0-100, "finding": "1-2 sentences", "evidence": "any blocklist violations or clean compliance" },
+    { "id": "essence", "label": "Essence Test", "score": 0-100, "finding": "1-2 sentences", "evidence": "can a stranger feel the Brand Essence from this mark alone?" }
+  ],
+  "strengths": ["specific strength 1 traced to QBP", "specific strength 2", "specific strength 3"],
+  "criticalIssues": ["specific issue 1 with fix direction", "specific issue 2 if any"],
+  "refinementDirections": ["actionable direction 1 if REFINE verdict", "actionable direction 2"],
+  "designerNote": "One paragraph for the designer. What to keep, what to change, and why — all traced to QBP data. Specific, not general.",
+  "passedQualityTest": true | false,
+  "qualityTestExplanation": "Why it passes or fails the quality test question"
+}`;
+
+  const runEvaluation = async () => {
+    const imagedConcepts = concepts.filter(c=>c.image);
+    if(!imagedConcepts.length) { setError('Upload at least one logo concept to evaluate.'); return; }
+    setError(''); setLoading(true); setStep(2);
+    const newResults = {};
+    for(const concept of imagedConcepts) {
+      try {
+        const res = await fetch('/api/claude',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            model:'claude-sonnet-4-20250514',
+            max_tokens:3000,
+            messages:[{
+              role:'user',
+              content:[
+                { type:'image', source:{ type:'base64', media_type:concept.image.type, data:concept.image.base64 }},
+                { type:'text', text:buildPrompt(concept) }
+              ]
+            }]
+          })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        const raw = data.content[0].text.trim();
+        const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+        newResults[concept.id] = JSON.parse(clean);
+      } catch(e) {
+        newResults[concept.id] = { error: e.message };
+      }
+    }
+    setResults(newResults);
+    setActiveConcept(0);
+    setStep(3);
+    setLoading(false);
+  };
+
+  const activeResult = results[concepts[activeConcept]?.id];
+  const radarData = activeResult?.dimensions?.map(d=>({score:d.score, label:d.label})) || [];
+
+  return (
+    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+
+      {/* HEADER */}
+      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
+        <div style={{display:'flex',alignItems:'center',gap:16}}>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
+          <div style={{width:1,height:16,background:'var(--border)'}}/>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.2em',color:'var(--text3)',textTransform:'uppercase'}}>Logo Evaluation Agent v1.0</div>
+        </div>
+        <div style={{display:'flex',gap:6,alignItems:'center'}}>
+          {STEPS.map((s,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:5}}>
+              <div style={{
+                width:6,height:6,borderRadius:'50%',
+                background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',
+                opacity:i===step?1:i<step?0.6:0.3,
+                boxShadow:i===step?'0 0 6px rgba(74,222,128,0.5)':''
+              }}/>
+              <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4)',letterSpacing:'0.1em',fontFamily:'var(--mono)'}}>{s}</span>
+              {i<STEPS.length-1&&<div style={{width:16,height:1,background:'var(--border)',margin:'0 2px'}}/>}
+            </div>
+          ))}
+        </div>
+      </header>
+
+      <main style={{flex:1,maxWidth:960,margin:'0 auto',width:'100%',padding:'40px 24px'}}>
+
+        {/* ── STEP 0: QBP SETUP ── */}
+        {step===0 && (
+          <div className="fade-in">
+            <div style={{marginBottom:40}}>
+              <MonoLabel color="var(--green)">// QBP Context — Identity Calibration</MonoLabel>
+              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:8}}>Logo Evaluation Agent</h1>
+              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:580}}>The agent reads your logo concept as an image, scores it against your Quantum Brand Profile across six dimensions, and returns a pass/refine/reject verdict with specific, traceable reasoning.</p>
+            </div>
+
+            <Section number={1} title="Brand Core">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <TextField label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The name under evaluation"/>
+                <TextField label="Natural Force *" value={naturalForce} onChange={setNaturalForce} placeholder="e.g. Lightning, Wildfire, The Ocean"/>
+              </div>
+              <TextField label="Brand Essence — the irreducible truth *" value={brandEssence} onChange={setBrandEssence} placeholder="The sentence carved in stone. Every concept is tested against this." multiline rows={2}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <TextField label="Museum Room *" value={museumRoom} onChange={setMuseumRoom} placeholder="e.g. Bauhaus, Minimalism, Surrealism"/>
+                <TextField label="Primary Archetype *" value={archetype} onChange={setArchetype} placeholder="e.g. The Alchemist, The Sage, The Rebel"/>
+              </div>
+              <TextField label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be visually"/>
+              <TextField label="Central Paradox" value={paradox} onChange={setParadox} placeholder="e.g. Wild yet Restrained, Ancient yet Newborn"/>
+            </Section>
+
+            <Section number={2} title="Expected Visual Spec — from Logo Direction Brief">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <TextField label="Expected Mark Type" value={markType} onChange={setMarkType} placeholder="e.g. Symbol + wordmark combination"/>
+                <TextField label="Corner Radius Direction" value={cornerSpec} onChange={setCornerSpec} placeholder="e.g. Zero — sharp surgical edges"/>
+                <TextField label="Complexity Direction" value={complexitySpec} onChange={setComplexitySpec} placeholder="e.g. Essential — one irreducible form"/>
+                <TextField label="Symmetry Direction" value={symmetrySpec} onChange={setSymmetrySpec} placeholder="e.g. Asymmetric — deliberate tension"/>
+              </div>
+              <TextField label="Color Territory" value={colorTerritory} onChange={setColorTerritory} placeholder="e.g. Deep warm amber to near-black. No corporate blue." multiline rows={2}/>
+              <TextField label="Anti-Pattern Blocklist" value={antiPatterns} onChange={setAntiPatterns} placeholder="e.g. No startup gradients, no rounded sans-serif wordmarks, no tech aesthetic..." multiline rows={2}/>
+            </Section>
+
+            <Section number={3} title="Quality Test">
+              <TextField
+                label="The single question every concept must answer yes to"
+                value={qualityTest}
+                onChange={setQualityTest}
+                placeholder="e.g. Does this mark carry the brand's irreducible truth without words? Would a stranger feel the brand's nature before reading the name?"
+                multiline rows={2}
+              />
+            </Section>
+
+            {error && <div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,0.3)',borderRadius:6,padding:'12px 16px',marginBottom:20,fontSize:13,color:'var(--red)'}}>{error}</div>}
+
+            <div style={{display:'flex',justifyContent:'flex-end'}}>
+              <button
+                onClick={()=>{ if(!isSetupValid()){setError('Fill required fields (*)');return;} setError('');setStep(1); }}
+                style={{background:isSetupValid()?'var(--green)':'var(--bg3)',color:isSetupValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}
+              >
+                Upload Concepts →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 1: UPLOAD ── */}
+        {step===1 && (
+          <div className="fade-in">
+            <div style={{marginBottom:32,display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+              <div>
+                <MonoLabel color="var(--green)">// Upload — Logo Concepts</MonoLabel>
+                <h1 style={{fontSize:24,fontWeight:700,marginBottom:6}}>{brandName}</h1>
+                <p style={{color:'var(--text2)',fontSize:13}}>Upload 1–4 logo concepts. Each will be scored independently against the QBP.</p>
+              </div>
+              <button onClick={()=>setStep(0)} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 16px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'0.1em',textTransform:'uppercase'}}>← Setup</button>
+            </div>
+
+            {/* Concept tabs */}
+            <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
+              {concepts.map((c,i)=>(
+                <button key={c.id} onClick={()=>setActiveConcept(i)}
+                  className={`tab-btn${activeConcept===i?' active':''}`}
+                  style={{position:'relative'}}>
+                  {c.name}
+                  {c.image && <span style={{marginLeft:6,width:6,height:6,borderRadius:'50%',background:'var(--green)',display:'inline-block',verticalAlign:'middle'}}/>}
+                </button>
+              ))}
+              {concepts.length < 4 && (
+                <button onClick={addConcept} style={{padding:'8px 14px',borderRadius:5,fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',fontFamily:'var(--mono)',background:'transparent',border:'1px dashed var(--border2)',color:'var(--text3)'}}>+ Add</button>
+              )}
+            </div>
+
+            {/* Active concept */}
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:28}}>
+              <div>
+                <MonoLabel>Concept name</MonoLabel>
+                <input type="text" value={currentConcept?.name||''} onChange={e=>updateName(e.target.value)} style={{marginBottom:12}}/>
+                <MonoLabel>Logo image</MonoLabel>
+                <ImageUpload image={currentConcept?.image} onImage={updateImage}/>
+              </div>
+              <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
+                <MonoLabel color="var(--text3)">What the agent will evaluate</MonoLabel>
+                {DIMENSIONS.map(d=>(
+                  <div key={d.id} style={{display:'flex',gap:10,alignItems:'flex-start',padding:'8px 0',borderBottom:'1px solid var(--border)'}}>
+                    <div style={{width:6,height:6,borderRadius:'50%',background:d.color,marginTop:5,flexShrink:0}}/>
+                    <div>
+                      <div style={{fontSize:12,fontWeight:500,color:'var(--text)',marginBottom:2}}>{d.label}</div>
+                      <div style={{fontSize:11,color:'var(--text3)'}}>{d.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* All concepts summary */}
+            {concepts.length > 1 && (
+              <div style={{display:'flex',gap:10,marginBottom:24,flexWrap:'wrap'}}>
+                {concepts.map((c,i)=>(
+                  <div key={c.id} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 12px',background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:6,fontSize:12}}>
+                    <span style={{width:6,height:6,borderRadius:'50%',background:c.image?'var(--green)':'var(--text4)',display:'inline-block'}}/>
+                    <span style={{color:c.image?'var(--text)':'var(--text3)'}}>{c.name}</span>
+                    <span style={{color:'var(--text3)',fontSize:10}}>{c.image?'ready':'no image'}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {error && <div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,0.3)',borderRadius:6,padding:'12px 16px',marginBottom:20,fontSize:13,color:'var(--red)'}}>{error}</div>}
+
+            <div style={{display:'flex',justifyContent:'flex-end'}}>
+              <button
+                onClick={runEvaluation}
+                disabled={!concepts.some(c=>c.image)}
+                style={{background:concepts.some(c=>c.image)?'var(--green)':'var(--bg3)',color:concepts.some(c=>c.image)?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:'var(--mono)'}}
+              >
+                Run Evaluation →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 2: EVALUATING ── */}
+        {step===2 && (
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:440,gap:24,textAlign:'center'}}>
+            <div style={{width:52,height:52,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+            <div>
+              <MonoLabel color="var(--green)">Agent Processing</MonoLabel>
+              <div style={{color:'var(--text2)',fontSize:13,lineHeight:2,maxWidth:380}}>
+                Reading logo concept images<br/>
+                Scanning geometry against Sensescape scores<br/>
+                Testing archetype expression<br/>
+                Checking anti-pattern compliance<br/>
+                Running Brand Essence quality test<br/>
+                Assembling verdict...
+              </div>
+            </div>
+            <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>
+              Evaluating {concepts.filter(c=>c.image).length} concept{concepts.filter(c=>c.image).length>1?'s':''}
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 3: VERDICT ── */}
+        {step===3 && (
+          <div className="fade-in">
+            {/* Header */}
+            <div style={{marginBottom:28,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+              <div>
+                <MonoLabel color="var(--green)">// Verdict — Evaluation Complete</MonoLabel>
+                <h1 style={{fontSize:24,fontWeight:700,marginBottom:4}}>{brandName}</h1>
+                <p style={{color:'var(--text2)',fontSize:13}}>{concepts.filter(c=>c.image).length} concept{concepts.filter(c=>c.image).length>1?'s':''} evaluated against Quantum Brand Profile</p>
+              </div>
+              <div style={{display:'flex',gap:8}}>
+                <button onClick={()=>setStep(1)} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 16px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'0.1em',textTransform:'uppercase'}}>← Upload</button>
+                <button onClick={()=>{setStep(0);setResults({});setConcepts([{id:1,image:null,name:'Concept A'}]);setActiveConcept(0);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 16px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'0.1em',textTransform:'uppercase'}}>New Eval</button>
+              </div>
+            </div>
+
+            {/* Concept selector */}
+            {concepts.filter(c=>c.image).length > 1 && (
+              <div style={{display:'flex',gap:8,marginBottom:24,flexWrap:'wrap'}}>
+                {concepts.filter(c=>c.image).map((c,i)=>{
+                  const r = results[c.id];
+                  const score = r?.overallScore;
+                  return (
+                    <button key={c.id} onClick={()=>setActiveConcept(concepts.indexOf(c))}
+                      className={`tab-btn${concepts[activeConcept]?.id===c.id?' active':''}`}
+                    >
+                      {c.name}
+                      {score!=null && <span style={{marginLeft:8,fontSize:10,fontFamily:'var(--mono)',color:scoreColor(score)}}>{score}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {activeResult?.error ? (
+              <div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,0.3)',borderRadius:8,padding:'20px',color:'var(--red)',fontSize:13}}>
+                Evaluation failed: {activeResult.error}
+              </div>
+            ) : activeResult && (
+              <div>
+                {/* Top section: image + verdict + radar */}
+                <div style={{display:'grid',gridTemplateColumns:'240px 1fr 240px',gap:20,marginBottom:20,alignItems:'start'}}>
+
+                  {/* Logo image */}
+                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,overflow:'hidden'}}>
+                    <img src={concepts[activeConcept]?.image?.url} alt="concept" style={{width:'100%',objectFit:'contain',maxHeight:200,display:'block'}}/>
+                    <div style={{padding:'8px 12px'}}>
+                      <span style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>{concepts[activeConcept]?.name}</span>
+                    </div>
+                  </div>
+
+                  {/* Verdict card */}
+                  <div style={{display:'flex',flexDirection:'column',gap:16}}>
+                    {/* Overall score */}
+                    <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'20px 24px',textAlign:'center'}}>
+                      <MonoLabel color="var(--text3)">Overall score</MonoLabel>
+                      <div style={{fontSize:56,fontWeight:900,lineHeight:1,marginBottom:4,color:scoreColor(activeResult.overallScore)}}>
+                        <AnimatedScore score={activeResult.overallScore} color={scoreColor(activeResult.overallScore)}/>
+                      </div>
+                      <div style={{fontSize:10,color:'var(--text3)',fontFamily:'var(--mono)'}}>/100</div>
+                      <ScoreMeter score={activeResult.overallScore} color={scoreColor(activeResult.overallScore)} delay={0}/>
+                    </div>
+
+                    {/* Verdict */}
+                    <div className={verdictClass(activeResult.verdict)} style={{borderRadius:8,padding:'16px 20px'}}>
+                      <div style={{fontSize:11,fontFamily:'var(--mono)',letterSpacing:'0.15em',color:verdictColor(activeResult.verdict),marginBottom:8,textTransform:'uppercase'}}>
+                        {activeResult.verdict}
+                      </div>
+                      <p style={{fontSize:13,lineHeight:1.7,color:'var(--text)'}}>{activeResult.verdictReason}</p>
+                    </div>
+
+                    {/* Quality test */}
+                    <div style={{background:'var(--bg3)',border:`1px solid ${activeResult.passedQualityTest?'rgba(74,222,128,0.2)':'rgba(239,68,68,0.2)'}`,borderRadius:8,padding:'14px 18px'}}>
+                      <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+                        <span style={{width:8,height:8,borderRadius:'50%',background:activeResult.passedQualityTest?'var(--green)':'var(--red)',display:'inline-block'}}/>
+                        <span style={{fontSize:10,fontFamily:'var(--mono)',letterSpacing:'0.15em',color:activeResult.passedQualityTest?'var(--green)':'var(--red)',textTransform:'uppercase'}}>
+                          Quality Test — {activeResult.passedQualityTest?'Passed':'Failed'}
+                        </span>
+                      </div>
+                      <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{activeResult.qualityTestExplanation}</p>
+                    </div>
+                  </div>
+
+                  {/* Radar */}
+                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:16,display:'flex',flexDirection:'column',alignItems:'center'}}>
+                    <MonoLabel color="var(--text3)">Dimension profile</MonoLabel>
+                    <RadarChart scores={radarData}/>
+                  </div>
+                </div>
+
+                {/* Tabs */}
+                <div style={{display:'flex',gap:6,marginBottom:16,flexWrap:'wrap'}}>
+                  {['scores','strengths','issues','designer'].map(t=>(
+                    <button key={t} className={`tab-btn${activeTab===t?' active':''}`} onClick={()=>setActiveTab(t)}>
+                      {t==='scores'?'Dimension Scores':t==='strengths'?'Strengths':t==='issues'?'Issues & Refinements':'Designer Note'}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab: Scores */}
+                {activeTab==='scores' && (
+                  <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:10}}>
+                    {activeResult.dimensions?.map((d,i)=>(
+                      <div key={d.id} style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'14px 18px'}}>
+                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:6}}>
+                          <div style={{display:'flex',alignItems:'center',gap:10}}>
+                            <div style={{width:6,height:6,borderRadius:'50%',background:DIMENSIONS.find(x=>x.id===d.id)?.color||'var(--green)'}}/>
+                            <span style={{fontSize:13,fontWeight:500}}>{d.label}</span>
+                          </div>
+                          <AnimatedScore score={d.score} color={scoreColor(d.score)} delay={i*80}/>
+                        </div>
+                        <ScoreMeter score={d.score} color={scoreColor(d.score)} delay={i*80}/>
+                        <p style={{fontSize:12,color:'var(--text2)',marginTop:8,lineHeight:1.6}}>{d.finding}</p>
+                        {d.evidence && <p style={{fontSize:11,color:'var(--text3)',marginTop:4,lineHeight:1.5,fontStyle:'italic'}}>{d.evidence}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Tab: Strengths */}
+                {activeTab==='strengths' && (
+                  <div className="fade-in">
+                    <Card accent="rgba(74,222,128,0.15)">
+                      <MonoLabel color="var(--green)">What this concept does right</MonoLabel>
+                      {activeResult.strengths?.map((s,i)=>(
+                        <div key={i} style={{display:'flex',gap:12,padding:'8px 0',borderBottom:i<activeResult.strengths.length-1?'1px solid var(--border)':''}}>
+                          <span style={{color:'var(--green)',fontFamily:'var(--mono)',fontSize:12,marginTop:1,flexShrink:0}}>+{i+1}</span>
+                          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{s}</p>
+                        </div>
+                      ))}
+                    </Card>
+                  </div>
+                )}
+
+                {/* Tab: Issues */}
+                {activeTab==='issues' && (
+                  <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+                    {activeResult.criticalIssues?.length>0 && (
+                      <Card accent="rgba(239,68,68,0.2)">
+                        <MonoLabel color="var(--red)">Critical issues</MonoLabel>
+                        {activeResult.criticalIssues.map((s,i)=>(
+                          <div key={i} style={{display:'flex',gap:12,padding:'8px 0',borderBottom:i<activeResult.criticalIssues.length-1?'1px solid var(--border)':''}}>
+                            <span style={{color:'var(--red)',fontFamily:'var(--mono)',fontSize:12,marginTop:1,flexShrink:0}}>!</span>
+                            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{s}</p>
+                          </div>
+                        ))}
+                      </Card>
+                    )}
+                    {activeResult.refinementDirections?.length>0 && (
+                      <Card accent="rgba(245,158,11,0.2)">
+                        <MonoLabel color="var(--amber)">Refinement directions</MonoLabel>
+                        {activeResult.refinementDirections.map((s,i)=>(
+                          <div key={i} style={{display:'flex',gap:12,padding:'8px 0',borderBottom:i<activeResult.refinementDirections.length-1?'1px solid var(--border)':''}}>
+                            <span style={{color:'var(--amber)',fontFamily:'var(--mono)',fontSize:12,marginTop:1,flexShrink:0}}>→</span>
+                            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{s}</p>
+                          </div>
+                        ))}
+                      </Card>
+                    )}
+                  </div>
+                )}
+
+                {/* Tab: Designer Note */}
+                {activeTab==='designer' && (
+                  <div className="fade-in">
+                    <Card accent="rgba(96,165,250,0.2)">
+                      <MonoLabel color="var(--blue)">Designer note — what to keep, what to change, and why</MonoLabel>
+                      <p style={{fontSize:14,lineHeight:1.8,color:'var(--text)'}}>{activeResult.designerNote}</p>
+                    </Card>
+                  </div>
+                )}
+
+              </div>
+            )}
+          </div>
+        )}
+
+      </main>
+
+      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'0.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'0.15em'}}>Logo Evaluation Agent / Phase 02</span>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
