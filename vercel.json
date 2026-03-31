@@ -1,0 +1,58 @@
+{
+  "version": 2,
+  "name": "quantumbranding-ai",
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/os",
+      "dest": "/qb-branidos-hub.html"
+    },
+    {
+      "src": "/scan",
+      "dest": "/signal-scan.html"
+    },
+    {
+      "src": "/panel",
+      "dest": "/predictive-panel.html"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.tailwindcss.com https://fonts.googleapis.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://a.klaviyo.com; img-src 'self' data: https:; frame-ancestors 'self'"
+        }
+      ]
+    }
+  ]
+}
