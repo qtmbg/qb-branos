@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB BrandOS — Access</title>
+<script src="https://js.stripe.com/v3/"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#000;--bg2:#0a0a0a;--bg3:#111;--bg4:#1a1a1a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --text:#e4e4e7;--text2:#888;--text3:#555;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);
+  --red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
+input{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:8px;padding:12px 16px;font-size:14px;width:100%;outline:none;transition:border-color .2s}
+input:focus{border-color:var(--green)}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-in{animation:fadeIn 0.4s ease forwards}
+.spin-anim{animation:spin 0.8s linear infinite}
+</style>
+</head>
+<body>
+
+<div id="app" style="width:100%;max-width:480px"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// QB BRANIDOS — PAYMENT GATE
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIGURATION — FILL THESE IN WHEN YOU HAVE YOUR KEYS
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CONFIG = {
+  // Stripe publishable key — from Stripe Dashboard → Developers → API Keys
+  // Starts with pk_live_ (production) or pk_test_ (testing)
+  STRIPE_PUBLISHABLE_KEY: 'pk_live_51T4LrnEHEAcWrG55GLqBVJyczc4WGgSQEKaZOOLE0lr8lZSlvpeyfxN1YgtXoOtbTHF97qB5C0D2MC48lrOVhVJ005iEJWgbZ',
+
+  // Stripe Price IDs — from Stripe Dashboard → Products → [product] → Pricing
+  // Create 3 products: Starter, Pro, Agency. Copy the price_xxx ID for each.
+  PRICES: {
+    starter: 'price_1TGZtpEHEAcWrG55WWEgeFAv',   // €97/month ✓ LIVE
+    pro:     'price_1TGZtsEHEAcWrG55IaXsFRd9',        // €297/month ✓ LIVE
+    agency:  'price_1TGZtvEHEAcWrG55Ti8Db9mX',     // €997/month ✓ LIVE
+  },
+
+
+  // Direct payment links — work without Stripe.js if needed
+  PAYMENT_LINKS: {
+    starter: 'https://buy.stripe.com/fZuaEX0js5z02CR7pQ2Ry01',
+    pro:     'https://buy.stripe.com/14AeVdgiq8Lc1yNcKa2Ry02',
+    agency:  'https://buy.stripe.com/7sYeVd2rAf9AfpD11s2Ry03',
+  },
+  // Success and cancel URLs — your deployed domain
+  SUCCESS_URL: 'https://app.quantumbranding.ai/qb-branidos-hub.html?payment=success',
+  CANCEL_URL:  'https://app.quantumbranding.ai/payment.html',
+
+  // Supabase — for user accounts and access control
+  // From supabase.com → your project → Settings → API
+  SUPABASE_URL:     'https://yushbxjwfhuokaezoioe.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0',
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DO NOT EDIT BELOW THIS LINE
+// ─────────────────────────────────────────────────────────────────────────────
+
+const isConfigured = !CONFIG.STRIPE_PUBLISHABLE_KEY.includes('REPLACE');
+let stripe = null;
+try {
+  if (isConfigured && typeof Stripe !== 'undefined') {
+    stripe = Stripe(CONFIG.STRIPE_PUBLISHABLE_KEY);
+  }
+} catch(e) {
+  console.warn('Stripe.js init failed:', e.message);
+}
+
+const PLANS = [
+  {
+    id:'starter',
+    name:'Starter',
+    price:'€97',
+    per:'/month',
+    desc:'Full access to all 18 tools. Unlimited runs. Your complete brand OS.',
+    features:['All 18 agent tools','Unlimited runs','QBP saved and connected','Gemini free tier compatible','Email support'],
+    color:'#888',
+    popular:false,
+  },
+  {
+    id:'pro',
+    name:'Pro',
+    price:'€297',
+    per:'/month',
+    desc:'Everything in Starter plus Predictive Panel and quarterly strategy access.',
+    features:['Everything in Starter','5 Predictive Panel runs/month','Priority support','Quarterly strategy access','Early access to new tools'],
+    color:'#4ade80',
+    popular:true,
+  },
+  {
+    id:'agency',
+    name:'Agency',
+    price:'€997',
+    per:'/month',
+    desc:'8 white-label client portals. Unlimited panels. Your brand on every output.',
+    features:['8 white-label client portals','Unlimited Predictive Panel runs','Agency brand on all outputs','Dedicated support','Custom onboarding'],
+    color:'#a78bfa',
+    popular:false,
+  },
+];
+
+let view = 'plans'; // plans | auth | processing | success | error
+let selectedPlan = null;
+let errorMsg = '';
+let authMode = 'signup'; // signup | login
+let loading = false;
+
+const app = document.getElementById('app');
+
+function render() {
+  app.innerHTML = '';
+  app.className = 'fade-in';
+
+  if (view === 'plans') renderPlans();
+  else if (view === 'auth') renderAuth();
+  else if (view === 'processing') renderProcessing();
+  else if (view === 'success') renderSuccess();
+  else if (view === 'error') renderError();
+}
+
+function renderPlans() {
+  // Logo
+  const logo = el('div', {style:'display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:32px'});
+  const dot = el('div', {style:'width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,0.8)'});
+  const txt = el('div', {style:'font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:#fff'}, '[QB_OS]');
+  logo.appendChild(dot); logo.appendChild(txt); app.appendChild(logo);
+
+  const title = el('div', {style:'text-align:center;margin-bottom:8px'});
+  title.innerHTML = '<h1 style="font-size:28px;font-weight:900;letter-spacing:-0.03em;color:#fff;line-height:1.1;margin-bottom:8px">Choose your plan</h1>' +
+    '<p style="color:#888;font-size:14px;line-height:1.6">Cancel any time. Signal Scan is always free.</p>';
+  app.appendChild(title);
+
+  if (!isConfigured) {
+    const warn = el('div', {style:'background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:12px;color:var(--amber);line-height:1.6;text-align:center;font-family:var(--mono)'});
+    warn.textContent = '⚠ Payment gate not configured. Add your Stripe keys to payment.html CONFIG object.';
+    app.appendChild(warn);
+  }
+
+  const sep = el('div', {style:'height:24px'}); app.appendChild(sep);
+
+  PLANS.forEach(plan => {
+    const card = el('div', {
+      style:`background:${plan.popular?'rgba(74,222,128,0.03)':'rgba(10,10,10,0.8)'};border:1px solid ${plan.popular?'rgba(74,222,128,0.25)':'rgba(255,255,255,0.06)'};border-radius:14px;padding:24px;margin-bottom:12px;cursor:pointer;transition:all 0.2s ease`,
+      onclick: () => selectPlan(plan.id)
+    });
+    card.addEventListener('mouseenter', () => { card.style.transform='translateY(-2px)'; card.style.borderColor=plan.popular?'rgba(74,222,128,0.4)':'rgba(255,255,255,0.12)'; });
+    card.addEventListener('mouseleave', () => { card.style.transform=''; card.style.borderColor=plan.popular?'rgba(74,222,128,0.25)':'rgba(255,255,255,0.06)'; });
+
+    const header = el('div', {style:'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px'});
+    const left = el('div');
+    const tierRow = el('div', {style:'display:flex;align-items:center;gap:8px;margin-bottom:4px'});
+    const tierName = el('div', {style:`font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:${plan.color}`}, plan.name);
+    tierRow.appendChild(tierName);
+    if (plan.popular) {
+      const badge = el('div', {style:'font-family:var(--mono);font-size:9px;padding:1px 8px;border-radius:3px;background:rgba(74,222,128,0.1);color:var(--green);border:1px solid rgba(74,222,128,0.2)'}, 'Most Popular');
+      tierRow.appendChild(badge);
+    }
+    left.appendChild(tierRow);
+    const priceRow = el('div', {style:'display:flex;align-items:baseline;gap:3px'});
+    priceRow.innerHTML = `<span style="font-size:36px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1">${plan.price}</span><span style="font-size:13px;color:#555">${plan.per}</span>`;
+    left.appendChild(priceRow);
+    header.appendChild(left);
+    const arrow = el('div', {style:`width:36px;height:36px;border-radius:50%;background:${plan.color}18;border:1px solid ${plan.color}30;display:flex;align-items:center;justify-content:center;font-size:16px;color:${plan.color};flex-shrink:0`}, '→');
+    header.appendChild(arrow);
+    card.appendChild(header);
+
+    const desc = el('div', {style:'font-size:13px;color:#666;line-height:1.6;margin-bottom:14px'}, plan.desc);
+    card.appendChild(desc);
+
+    const features = el('div', {style:'display:flex;flex-direction:column;gap:6px'});
+    plan.features.forEach(f => {
+      const row = el('div', {style:'display:flex;align-items:center;gap:8px;font-size:12px;color:#888'});
+      const dot2 = el('div', {style:'width:4px;height:4px;border-radius:50%;background:var(--green);flex-shrink:0'});
+      row.appendChild(dot2); row.appendChild(document.createTextNode(f));
+      features.appendChild(row);
+    });
+    card.appendChild(features);
+    app.appendChild(card);
+  });
+
+  // Free note
+  const free = el('div', {style:'text-align:center;margin-top:16px;padding:12px;background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.1);border-radius:40px;display:flex;align-items:center;justify-content:center;gap:8px'});
+  free.innerHTML = '<div style="width:5px;height:5px;border-radius:50%;background:var(--green)"></div><span style="font-size:13px;color:#888">Free: Signal Scan + Brand Soul Map + Sensescape — no account needed</span>';
+  app.appendChild(free);
+
+  // Login link
+  const loginLink = el('div', {style:'text-align:center;margin-top:16px'});
+  loginLink.innerHTML = '<span style="font-size:13px;color:#555">Already subscribed? </span><button  style="font-size:13px;color:var(--green);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Sign in →</button>';
+  app.appendChild(loginLink);
+  const ll = app.querySelector('#login-link');
+  if(ll) ll.addEventListener('click', showLogin);
+}
+
+function renderAuth() {
+  const plan = PLANS.find(p => p.id === selectedPlan);
+
+  const back = el('button', {style:'font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:24px;display:flex;align-items:center;gap:6px;letter-spacing:0.1em;text-transform:uppercase', onclick:()=>{view='plans';render();}}, '← Back');
+  app.appendChild(back);
+
+  if (plan) {
+    const planBadge = el('div', {style:`font-family:var(--mono);font-size:10px;padding:4px 12px;border-radius:4px;background:rgba(74,222,128,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.15);display:inline-block;margin-bottom:20px`});
+    planBadge.textContent = plan.name + ' · ' + plan.price + '/month';
+    app.appendChild(planBadge);
+  }
+
+  const title = el('h2', {style:'font-size:24px;font-weight:700;color:#fff;letter-spacing:-0.02em;margin-bottom:6px'});
+  title.textContent = authMode === 'signup' ? 'Create your account' : 'Sign in';
+  app.appendChild(title);
+
+  const sub = el('p', {style:'font-size:14px;color:#888;margin-bottom:24px'});
+  sub.textContent = authMode === 'signup' ? 'Your account stores your QBP and unlocks your tools.' : 'Welcome back.';
+  app.appendChild(sub);
+
+  if (errorMsg) {
+    const err = el('div', {style:'background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--red)'});
+    err.textContent = errorMsg;
+    app.appendChild(err);
+  }
+
+  const emailInput = el('input', {type:'email', placeholder:'your@email.com', style:'margin-bottom:10px'});
+  const passInput = el('input', {type:'password', placeholder:'Password (min 8 characters)', style:'margin-bottom:20px'});
+  app.appendChild(emailInput); app.appendChild(passInput);
+
+  const submitBtn = el('button', {
+    style:'width:100%;background:var(--green);color:#000;font-weight:700;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;padding:14px;border-radius:8px;font-family:var(--mono);transition:all 0.15s ease',
+    onclick: async () => {
+      const email = emailInput.value.trim();
+      const password = passInput.value;
+      if (!email || !password) { errorMsg='Please fill in all fields.'; render(); return; }
+      if (password.length < 8) { errorMsg='Password must be at least 8 characters.'; render(); return; }
+      await handleAuth(email, password);
+    }
+  }, authMode === 'signup' ? 'Continue to Payment →' : 'Sign In →');
+  submitBtn.addEventListener('mouseenter', () => submitBtn.style.background='#fff');
+  submitBtn.addEventListener('mouseleave', () => submitBtn.style.background='var(--green)');
+  app.appendChild(submitBtn);
+
+  const toggle = el('div', {style:'text-align:center;margin-top:16px;font-size:13px;color:#555'});
+  toggle.innerHTML = authMode === 'signup'
+    ? 'Already have an account? <button id="toggle-auth" style="color:var(--green);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Sign in</button>'
+    : 'New here? <button id="toggle-auth" style="color:var(--green);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Create account</button>';
+  app.appendChild(toggle);
+  const ta = app.querySelector('#toggle-auth');
+  if(ta) ta.addEventListener('click', function(){
+    authMode = authMode === 'signup' ? 'login' : 'signup';
+    errorMsg = '';
+    render();
+  });
+}
+
+function renderProcessing() {
+  app.style.textAlign = 'center';
+  const spinner = el('div', {style:'width:48px;height:48px;border:2px solid rgba(255,255,255,0.1);border-top:2px solid var(--green);border-radius:50%;margin:0 auto 20px;animation:spin 0.8s linear infinite'});
+  app.appendChild(spinner);
+  app.appendChild(el('div', {style:'font-size:18px;font-weight:600;color:#fff;margin-bottom:8px'}, 'Redirecting to checkout…'));
+  app.appendChild(el('div', {style:'font-size:13px;color:#888'}, 'You will complete payment securely on Stripe.'));
+}
+
+function renderSuccess() {
+  app.style.textAlign = 'center';
+  const check = el('div', {style:'width:56px;height:56px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:24px'}, '✓');
+  app.appendChild(check);
+  app.appendChild(el('h2', {style:'font-size:24px;font-weight:700;color:#fff;margin-bottom:8px'}, 'You\'re in.'));
+  app.appendChild(el('p', {style:'font-size:14px;color:#888;margin-bottom:24px;line-height:1.6'}, 'Your account is active. Your API key and QBP are waiting.'));
+  const btn = el('button', {style:'background:var(--green);color:#000;font-weight:700;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;padding:14px 32px;border-radius:8px;font-family:var(--mono)',onclick:()=>window.location.href='qb-branidos-hub.html'}, 'Enter QB BrandOS →');
+  app.appendChild(btn);
+}
+
+function renderError() {
+  app.style.textAlign = 'center';
+  app.appendChild(el('div', {style:'font-size:32px;margin-bottom:16px'}, '⚠'));
+  app.appendChild(el('h2', {style:'font-size:20px;font-weight:700;color:#fff;margin-bottom:8px'}, 'Something went wrong'));
+  app.appendChild(el('p', {style:'font-size:13px;color:#888;margin-bottom:20px'}, errorMsg || 'Please try again or contact nizzar@quantumbranding.ai'));
+  const btn = el('button', {style:'background:var(--green);color:#000;font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:11px 24px;border-radius:8px;font-family:var(--mono)',onclick:()=>{view='plans';errorMsg='';render();}}, '← Try Again');
+  app.appendChild(btn);
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function selectPlan(planId) {
+  selectedPlan = planId;
+  authMode = 'signup';
+  errorMsg = '';
+  // Check if already logged in
+  const session = getSession();
+  if (session) {
+    // Go straight to Stripe
+    redirectToStripe(session.email);
+  } else {
+    view = 'auth';
+    render();
+  }
+}
+
+function showLogin() {
+  selectedPlan = null;
+  authMode = 'login';
+  errorMsg = '';
+  view = 'auth';
+  render();
+}
+
+async function handleAuth(email, password) {
+  view = 'processing';
+  render();
+
+  if (!isConfigured) {
+    // Demo mode — bypass payment for testing
+    saveSession({ email, tier: selectedPlan || 'starter', demo: true });
+    localStorage.setItem('qb_user_email', email);
+    localStorage.setItem('qb_user_tier', selectedPlan || 'starter');
+    view = 'success';
+    render();
+    return;
+  }
+
+  try {
+    // Supabase auth
+    const endpoint = authMode === 'signup'
+      ? CONFIG.SUPABASE_URL + '/auth/v1/signup'
+      : CONFIG.SUPABASE_URL + '/auth/v1/token?grant_type=password';
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SUPABASE_ANON_KEY },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (data.error || (!data.access_token && !data.user)) {
+      errorMsg = data.error?.message || data.msg || 'Authentication failed';
+      view = 'auth'; render(); return;
+    }
+
+    const session = data.session || data;
+    saveSession({ email, token: session.access_token, supabaseId: data.user?.id });
+    localStorage.setItem('qb_user_email', email);
+
+    if (authMode === 'login') {
+      // Check existing tier
+      const tier = localStorage.getItem('qb_user_tier');
+      if (tier) { view = 'success'; render(); }
+      else { window.location.href = 'qb-branidos-hub.html'; }
+      return;
+    }
+
+    // New signup — go to Stripe
+    if (selectedPlan) await redirectToStripe(email);
+    else { view = 'success'; render(); }
+
+  } catch(e) {
+    errorMsg = 'Connection error: ' + e.message;
+    view = 'auth'; render();
+  }
+}
+
+async function redirectToStripe(email) {
+  view = 'processing'; render();
+  // Use direct payment link if Stripe.js not configured
+  if (!isConfigured || !stripe) {
+    const link = CONFIG.PAYMENT_LINKS[selectedPlan];
+    if (link) { window.location.href = link; return; }
+    view = 'success'; render(); return;
+  }
+  try {
+    const result = await stripe.redirectToCheckout({
+      lineItems: [{ price: CONFIG.PRICES[selectedPlan], quantity: 1 }],
+      mode: 'subscription',
+      successUrl: CONFIG.SUCCESS_URL + '&plan=' + selectedPlan,
+      cancelUrl: CONFIG.CANCEL_URL,
+      customerEmail: email,
+    });
+    if (result.error) throw new Error(result.error.message);
+  } catch(e) {
+    // Fallback to payment link
+    const link = CONFIG.PAYMENT_LINKS[selectedPlan];
+    if (link) { window.location.href = link; return; }
+    errorMsg = e.message;
+    view = 'error'; render();
+  }
+}
+
+// ── SESSION ───────────────────────────────────────────────────────────────────
+function saveSession(data) {
+  try { localStorage.setItem('qb_session', JSON.stringify(data)); } catch(e) {}
+}
+function getSession() {
+  try { const s = localStorage.getItem('qb_session'); return s ? JSON.parse(s) : null; } catch(e) { return null; }
+}
+
+// Check for success redirect
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('payment') === 'success') {
+  const plan = urlParams.get('plan');
+  if (plan) localStorage.setItem('qb_user_tier', plan);
+  view = 'success';
+}
+
+// ── DOM HELPER ────────────────────────────────────────────────────────────────
+function el(tag, props={}, text='') {
+  const e = document.createElement(tag);
+  Object.entries(props).forEach(([k,v]) => {
+    if (k === 'style') e.style.cssText = v;
+    else if (k === 'onclick' && typeof v === 'function') e.addEventListener('click', v);
+    else if (k === 'onclick' && typeof v === 'string') e.setAttribute('onclick', v);
+    else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (k === 'type' || k === 'placeholder' || k === 'min') e.setAttribute(k, v);
+    else if (k !== 'onclick') e.setAttribute(k, v);
+  });
+  if (text) e.textContent = text;
+  return e;
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', render);
+} else {
+  render();
+}
+</script>
+</body>
+</html>
