@@ -9,12 +9,12 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
-  --border:#2a2a2a;--border2:#333;
-  --text:#e8e8e8;--text2:#888;--text3:#555;
-  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
-  --red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;
-  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
+  --border:#2a2a2a;--border2:#333;
+  --text:#e8e8e8;--text2:#888;--text3:#555;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
+  --red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
 }
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
@@ -42,9 +42,9 @@ textarea{resize:none;line-height:1.6}
 .scan-line::after{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.06),transparent);animation:scanH 2.5s linear infinite}
 
 .option-btn{
-  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
-  padding:14px 18px;text-align:left;color:var(--text);font-size:14px;
-  transition:all .18s;width:100%;line-height:1.5;cursor:pointer;
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:14px 18px;text-align:left;color:var(--text);font-size:14px;
+  transition:all .18s;width:100%;line-height:1.5;cursor:pointer;
 }
 .option-btn:hover{border-color:var(--border2);background:var(--bg4)}
 .option-btn.selected{border-color:var(--green);background:var(--green2);color:var(--text)}
@@ -63,18 +63,27 @@ textarea{resize:none;line-height:1.6}
 .email-input:focus{border-color:var(--green)}
 
 .cta-primary{
-  background:var(--green);color:#000;padding:16px 32px;border-radius:8px;
-  font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;
-  font-family:var(--mono);width:100%;transition:opacity .15s;
+  background:var(--green);color:#000;padding:16px 32px;border-radius:8px;
+  font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;
+  font-family:var(--mono);width:100%;transition:opacity .15s;
 }
 .cta-primary:hover{opacity:.9}
 .cta-secondary{
-  background:none;border:1px solid var(--border);color:var(--text2);
-  padding:12px 24px;border-radius:7px;font-size:13px;font-family:var(--mono);
-  letter-spacing:.1em;text-transform:uppercase;transition:border-color .15s;
+  background:none;border:1px solid var(--border);color:var(--text2);
+  padding:12px 24px;border-radius:7px;font-size:13px;font-family:var(--mono);
+  letter-spacing:.1em;text-transform:uppercase;transition:border-color .15s;
 }
 .cta-secondary:hover{border-color:var(--border2);color:var(--text)}
 </style>
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
 </head>
 <body>
 
@@ -83,152 +92,152 @@ textarea{resize:none;line-height:1.6}
 <script>
 // ── KLAVIYO CONFIG — reads from URL params (passed by Hub) or set manually ──
 (function(){
-  var p=new URLSearchParams(window.location.search);
-  var kpk=p.get('kpk');var kli=p.get('kli');
-  if(kpk) window.QB_KLAVIYO_KEY=kpk;
-  if(kli) window.QB_KLAVIYO_LIST_ID=kli;
-  // Manual override: set these directly if embedding Signal Scan standalone
-  // window.QB_KLAVIYO_KEY = 'pk_your_public_key_here';
-  // window.QB_KLAVIYO_LIST_ID = 'your_list_id_here';
+  var p=new URLSearchParams(window.location.search);
+  var kpk=p.get('kpk');var kli=p.get('kli');
+  if(kpk) window.QB_KLAVIYO_KEY=kpk;
+  if(kli) window.QB_KLAVIYO_LIST_ID=kli;
+  // Manual override: set these directly if embedding Signal Scan standalone
+  // window.QB_KLAVIYO_KEY = 'pk_your_public_key_here';
+  // window.QB_KLAVIYO_LIST_ID = 'your_list_id_here';
 })();
 
 // ── QUESTIONS ─────────────────────────────────────────────────────────────────
 const QUESTIONS = [
-  {
-    id:'moment',
-    q:'Where are you right now?',
-    sub:'Be honest. The scan only works if you are.',
-    type:'single',
-    options:[
-      {v:'blank',  l:'Building from zero — I have an idea but no brand yet'},
-      {v:'doubt',  l:'I have a brand but something feels off or unclear'},
-      {v:'scale',  l:'I am making money but competition is arriving'},
-      {v:'pivot',  l:'Something fundamental needs to change in my direction'},
-    ]
-  },
-  {
-    id:'identity',
-    q:'Can you say what your brand stands for in one sentence?',
-    sub:'Not what you do. What you stand for.',
-    type:'single',
-    options:[
-      {v:0, l:'Yes — clearly and without hesitation'},
-      {v:1, l:'Roughly yes, but I struggle to phrase it consistently'},
-      {v:2, l:'I know it internally but cannot articulate it'},
-      {v:3, l:'No — this is exactly the problem'},
-    ]
-  },
-  {
-    id:'visual',
-    q:'When someone sees your brand visually, what do they feel?',
-    sub:'Think logo, colors, fonts, overall look.',
-    type:'single',
-    options:[
-      {v:0, l:'Exactly what I intend them to feel'},
-      {v:1, l:'Something close but not quite right'},
-      {v:2, l:'I am not sure — I never tested this'},
-      {v:3, l:'Probably nothing distinctive'},
-    ]
-  },
-  {
-    id:'voice',
-    q:'How consistent is your brand voice across platforms?',
-    sub:'LinkedIn, Instagram, email, website — does it sound like the same brand?',
-    type:'single',
-    options:[
-      {v:0, l:'Very consistent — unmistakably the same voice everywhere'},
-      {v:1, l:'Mostly consistent with some drift'},
-      {v:2, l:'Each platform sounds different — no real coherence'},
-      {v:3, l:'I have no defined voice — I write differently every time'},
-    ]
-  },
-  {
-    id:'positioning',
-    q:'Can your ideal client immediately understand why you and not someone else?',
-    sub:'Does your positioning create a clear reason to choose you specifically?',
-    type:'single',
-    options:[
-      {v:0, l:'Yes — my differentiation is clear and specific'},
-      {v:1, l:'Somewhat — but I could be confused with competitors'},
-      {v:2, l:'No — I struggle to articulate what makes me different'},
-      {v:3, l:'I compete mostly on price because the difference is unclear'},
-    ]
-  },
-  {
-    id:'content',
-    q:'Does your content attract the right people?',
-    sub:'Not just engagement — do the right clients find you through what you publish?',
-    type:'single',
-    options:[
-      {v:0, l:'Yes — my content consistently brings in qualified leads'},
-      {v:1, l:'Sometimes — hits and misses'},
-      {v:2, l:'I get engagement but not the right clients'},
-      {v:3, l:'My content does not generate leads at all'},
-    ]
-  },
-  {
-    id:'price',
-    q:'Does your brand support the price you want to charge?',
-    sub:'Do clients pay without negotiating, or do you constantly justify your rates?',
-    type:'single',
-    options:[
-      {v:0, l:'Yes — clients rarely question my pricing'},
-      {v:1, l:'Sometimes — depends on the client'},
-      {v:2, l:'I regularly have to justify or discount'},
-      {v:3, l:'I undercharge because I do not trust my brand to hold the price'},
-    ]
-  },
-  {
-    id:'describe',
-    q:'In your own words — what is the single biggest problem your brand has right now?',
-    sub:'One sentence. Do not overthink it.',
-    type:'text',
-    placeholder:'Type here…'
-  }
+  {
+    id:'moment',
+    q:'Where are you right now?',
+    sub:'Be honest. The scan only works if you are.',
+    type:'single',
+    options:[
+      {v:'blank',  l:'Building from zero — I have an idea but no brand yet'},
+      {v:'doubt',  l:'I have a brand but something feels off or unclear'},
+      {v:'scale',  l:'I am making money but competition is arriving'},
+      {v:'pivot',  l:'Something fundamental needs to change in my direction'},
+    ]
+  },
+  {
+    id:'identity',
+    q:'Can you say what your brand stands for in one sentence?',
+    sub:'Not what you do. What you stand for.',
+    type:'single',
+    options:[
+      {v:0, l:'Yes — clearly and without hesitation'},
+      {v:1, l:'Roughly yes, but I struggle to phrase it consistently'},
+      {v:2, l:'I know it internally but cannot articulate it'},
+      {v:3, l:'No — this is exactly the problem'},
+    ]
+  },
+  {
+    id:'visual',
+    q:'When someone sees your brand visually, what do they feel?',
+    sub:'Think logo, colors, fonts, overall look.',
+    type:'single',
+    options:[
+      {v:0, l:'Exactly what I intend them to feel'},
+      {v:1, l:'Something close but not quite right'},
+      {v:2, l:'I am not sure — I never tested this'},
+      {v:3, l:'Probably nothing distinctive'},
+    ]
+  },
+  {
+    id:'voice',
+    q:'How consistent is your brand voice across platforms?',
+    sub:'LinkedIn, Instagram, email, website — does it sound like the same brand?',
+    type:'single',
+    options:[
+      {v:0, l:'Very consistent — unmistakably the same voice everywhere'},
+      {v:1, l:'Mostly consistent with some drift'},
+      {v:2, l:'Each platform sounds different — no real coherence'},
+      {v:3, l:'I have no defined voice — I write differently every time'},
+    ]
+  },
+  {
+    id:'positioning',
+    q:'Can your ideal client immediately understand why you and not someone else?',
+    sub:'Does your positioning create a clear reason to choose you specifically?',
+    type:'single',
+    options:[
+      {v:0, l:'Yes — my differentiation is clear and specific'},
+      {v:1, l:'Somewhat — but I could be confused with competitors'},
+      {v:2, l:'No — I struggle to articulate what makes me different'},
+      {v:3, l:'I compete mostly on price because the difference is unclear'},
+    ]
+  },
+  {
+    id:'content',
+    q:'Does your content attract the right people?',
+    sub:'Not just engagement — do the right clients find you through what you publish?',
+    type:'single',
+    options:[
+      {v:0, l:'Yes — my content consistently brings in qualified leads'},
+      {v:1, l:'Sometimes — hits and misses'},
+      {v:2, l:'I get engagement but not the right clients'},
+      {v:3, l:'My content does not generate leads at all'},
+    ]
+  },
+  {
+    id:'price',
+    q:'Does your brand support the price you want to charge?',
+    sub:'Do clients pay without negotiating, or do you constantly justify your rates?',
+    type:'single',
+    options:[
+      {v:0, l:'Yes — clients rarely question my pricing'},
+      {v:1, l:'Sometimes — depends on the client'},
+      {v:2, l:'I regularly have to justify or discount'},
+      {v:3, l:'I undercharge because I do not trust my brand to hold the price'},
+    ]
+  },
+  {
+    id:'describe',
+    q:'In your own words — what is the single biggest problem your brand has right now?',
+    sub:'One sentence. Do not overthink it.',
+    type:'text',
+    placeholder:'Type here…'
+  }
 ];
 
 // ── SCORING ───────────────────────────────────────────────────────────────────
 const DIMENSIONS = [
-  {id:'identity',   label:'Identity Clarity',    qIds:['identity'],             weight:20},
-  {id:'visual',     label:'Visual Coherence',     qIds:['visual'],               weight:18},
-  {id:'voice',      label:'Voice Consistency',    qIds:['voice'],                weight:17},
-  {id:'positioning',label:'Market Positioning',   qIds:['positioning'],          weight:22},
-  {id:'content',    label:'Content Performance',  qIds:['content'],              weight:13},
-  {id:'price',      label:'Brand Authority',      qIds:['price'],                weight:10},
+  {id:'identity',   label:'Identity Clarity',    qIds:['identity'],             weight:20},
+  {id:'visual',     label:'Visual Coherence',     qIds:['visual'],               weight:18},
+  {id:'voice',      label:'Voice Consistency',    qIds:['voice'],                weight:17},
+  {id:'positioning',label:'Market Positioning',   qIds:['positioning'],          weight:22},
+  {id:'content',    label:'Content Performance',  qIds:['content'],              weight:13},
+  {id:'price',      label:'Brand Authority',      qIds:['price'],                weight:10},
 ];
 
 function calcScores(answers){
-  let total = 0;
-  const dims = DIMENSIONS.map(d=>{
-    const vals = d.qIds.map(id=>answers[id]??2);
-    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
-    // 0=perfect, 3=worst — invert to score
-    const score = Math.round(((3-avg)/3)*100);
-    total += score * (d.weight/100);
-    return {...d, score};
-  });
-  return {overall: Math.round(total), dims};
+  let total = 0;
+  const dims = DIMENSIONS.map(d=>{
+    const vals = d.qIds.map(id=>answers[id]??2);
+    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+    // 0=perfect, 3=worst — invert to score
+    const score = Math.round(((3-avg)/3)*100);
+    total += score * (d.weight/100);
+    return {...d, score};
+  });
+  return {overall: Math.round(total), dims};
 }
 
 function getVerdict(score, moment){
-  if(score>=80) return {grade:'A',label:'Strong Foundation',color:'var(--green)',desc:'Your brand has real coherence. The system helps you sharpen and scale what is already working.'};
-  if(score>=60) return {grade:'B',label:'Clear Gaps',color:'var(--blue)',desc:'The bones are right but key elements are misaligned. Targeted work produces rapid improvement.'};
-  if(score>=40) return {grade:'C',label:'Structural Issues',color:'var(--amber)',desc:'Your brand is working against you. The gaps are costing you clients and price authority.'};
-  return {grade:'D',label:'Foundation Needed',color:'var(--red)',desc:'The brand is not doing its job. Before more content or campaigns — rebuild from identity.'};
+  if(score>=80) return {grade:'A',label:'Strong Foundation',color:'var(--green)',desc:'Your brand has real coherence. The system helps you sharpen and scale what is already working.'};
+  if(score>=60) return {grade:'B',label:'Clear Gaps',color:'var(--blue)',desc:'The bones are right but key elements are misaligned. Targeted work produces rapid improvement.'};
+  if(score>=40) return {grade:'C',label:'Structural Issues',color:'var(--amber)',desc:'Your brand is working against you. The gaps are costing you clients and price authority.'};
+  return {grade:'D',label:'Foundation Needed',color:'var(--red)',desc:'The brand is not doing its job. Before more content or campaigns — rebuild from identity.'};
 }
 
 function getTopGap(dims){
-  return [...dims].sort((a,b)=>a.score-b.score)[0];
+  return [...dims].sort((a,b)=>a.score-b.score)[0];
 }
 
 function getRecommendedPath(moment, topGap){
-  const paths = {
-    blank:   {tool:'Brand Soul Map',    file:'brand-soul-map.html',    desc:'Start at identity. Everything else is built from here.'},
-    doubt:   {tool:'Logo Evaluation',   file:'logo-evaluation-agent.html', desc:'Audit what you have against identity standards before rebuilding.'},
-    scale:   {tool:'War Table',         file:'war-table.html',         desc:'Pressure-test your next move with strategic prioritization.'},
-    pivot:   {tool:'Brand Soul Map',    file:'brand-soul-map.html',    desc:'Rebuild the foundation before redirecting execution.'},
-  };
-  return paths[moment] || paths.blank;
+  const paths = {
+    blank:   {tool:'Brand Soul Map',    file:'brand-soul-map.html',    desc:'Start at identity. Everything else is built from here.'},
+    doubt:   {tool:'Logo Evaluation',   file:'logo-evaluation-agent.html', desc:'Audit what you have against identity standards before rebuilding.'},
+    scale:   {tool:'War Table',         file:'war-table.html',         desc:'Pressure-test your next move with strategic prioritization.'},
+    pivot:   {tool:'Brand Soul Map',    file:'brand-soul-map.html',    desc:'Rebuild the foundation before redirecting execution.'},
+  };
+  return paths[moment] || paths.blank;
 }
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -245,378 +254,379 @@ const app = document.getElementById('app');
 function render(){ app.innerHTML=''; app.appendChild(build()); }
 
 function monoLabel(text, color='var(--text3)', extra={}){
-  const e = document.createElement('div');
-  Object.assign(e.style,{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color,textTransform:'uppercase',marginBottom:'8px',...extra});
-  e.textContent=text; return e;
+  const e = document.createElement('div');
+  Object.assign(e.style,{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color,textTransform:'uppercase',marginBottom:'8px',...extra});
+  e.textContent=text; return e;
 }
 function h1(html, style={}){
-  const e=document.createElement('h1');
-  Object.assign(e.style,{fontSize:28,fontWeight:900,lineHeight:1.2,marginBottom:10,letterSpacing:'-.02em',...style});
-  e.innerHTML=html; return e;
+  const e=document.createElement('h1');
+  Object.assign(e.style,{fontSize:28,fontWeight:900,lineHeight:1.2,marginBottom:10,letterSpacing:'-.02em',...style});
+  e.innerHTML=html; return e;
 }
 function p(text, style={}){
-  const e=document.createElement('p');
-  Object.assign(e.style,{color:'var(--text2)',fontSize:14,lineHeight:1.75,...style});
-  e.textContent=text; return e;
+  const e=document.createElement('p');
+  Object.assign(e.style,{color:'var(--text2)',fontSize:14,lineHeight:1.75,...style});
+  e.textContent=text; return e;
 }
 function div(style={}, children=[]){
-  const e=document.createElement('div');
-  Object.assign(e.style,style);
-  children.filter(Boolean).forEach(c=>{
-    if(c instanceof Node) e.appendChild(c);
-    else if(typeof c==='string') e.appendChild(document.createTextNode(c));
-  });
-  return e;
+  const e=document.createElement('div');
+  Object.assign(e.style,style);
+  if (!Array.isArray(children)) children = [children];
+  children.filter(Boolean).forEach(c=>{
+    if(c instanceof Node) e.appendChild(c);
+    else if(typeof c==='string' || typeof c==='number') e.appendChild(document.createTextNode(c));
+  });
+  return e;
 }
 
 // ── SCREENS ───────────────────────────────────────────────────────────────────
 function build(){
-  if(step===0) return buildIntro();
-  if(step>=1&&step<=8) return buildQuestion();
-  if(step===9) return analyzing ? buildAnalyzing() : buildEmail();
-  if(step===10) return buildResults();
-  return buildIntro();
+  if(step===0) return buildIntro();
+  if(step>=1&&step<=8) return buildQuestion();
+  if(step===9) return analyzing ? buildAnalyzing() : buildEmail();
+  if(step===10) return buildResults();
+  return buildIntro();
 }
 
 function buildIntro(){
-  const wrap=div({flex:1,display:'flex',flexDirection:'column',justifyContent:'center',animation:'fadeIn .45s ease'});
+  const wrap=div({flex:1,display:'flex',flexDirection:'column',justifyContent:'center',animation:'fadeIn .45s ease'});
 
-  wrap.appendChild(div({marginBottom:48},[
-    monoLabel('Quantum Branding — Free Tool','var(--green)',{marginBottom:20}),
-    h1('Brand Signal Scan'),
-    p('8 questions. 5 minutes. A precise read on where your brand is strong, where it is losing you money, and exactly what to do first.'),
-    div({marginTop:16,display:'flex',gap:20,flexWrap:'wrap'},[
-      div({display:'flex',alignItems:'center',gap:6},[
-        div({width:6,height:6,borderRadius:'50%',background:'var(--green)',flexShrink:0}),
-        div({fontSize:12,color:'var(--text3)'},'5 minutes'),
-      ]),
-      div({display:'flex',alignItems:'center',gap:6},[
-        div({width:6,height:6,borderRadius:'50%',background:'var(--green)',flexShrink:0}),
-        div({fontSize:12,color:'var(--text3)'},'Instant score'),
-      ]),
-      div({display:'flex',alignItems:'center',gap:6},[
-        div({width:6,height:6,borderRadius:'50%',background:'var(--green)',flexShrink:0}),
-        div({fontSize:12,color:'var(--text3)'},'No credit card'),
-      ]),
-    ]),
-  ]));
+  wrap.appendChild(div({marginBottom:48},[
+    monoLabel('Quantum Branding — Free Tool','var(--green)',{marginBottom:20}),
+    h1('Brand Signal Scan'),
+    p('8 questions. 5 minutes. A precise read on where your brand is strong, where it is losing you money, and exactly what to do first.'),
+    div({marginTop:16,display:'flex',gap:20,flexWrap:'wrap'},[
+      div({display:'flex',alignItems:'center',gap:6},[
+        div({width:6,height:6,borderRadius:'50%',background:'var(--green)',flexShrink:0}),
+        div({fontSize:12,color:'var(--text3)'},'5 minutes'),
+      ]),
+      div({display:'flex',alignItems:'center',gap:6},[
+        div({width:6,height:6,borderRadius:'50%',background:'var(--green)',flexShrink:0}),
+        div({fontSize:12,color:'var(--text3)'},'Instant score'),
+      ]),
+      div({display:'flex',alignItems:'center',gap:6},[
+        div({width:6,height:6,borderRadius:'50%',background:'var(--green)',flexShrink:0}),
+        div({fontSize:12,color:'var(--text3)'},'No credit card'),
+      ]),
+    ]),
+  ]));
 
-  const btn=document.createElement('button');
-  btn.className='cta-primary';btn.textContent='Start the Scan →';
-  btn.onclick=()=>{step=1;render();};
-  wrap.appendChild(btn);
+  const btn=document.createElement('button');
+  btn.className='cta-primary';btn.textContent='Start the Scan →';
+  btn.onclick=()=>{step=1;render();};
+  wrap.appendChild(btn);
 
-  wrap.appendChild(div({marginTop:20,textAlign:'center'},[
-    p('Used by 1,000+ founders and brand builders.',{fontSize:12,color:'var(--text3)',textAlign:'center'})
-  ]));
+  wrap.appendChild(div({marginTop:20,textAlign:'center'},[
+    p('Used by 1,000+ founders and brand builders.',{fontSize:12,color:'var(--text3)',textAlign:'center'})
+  ]));
 
-  return wrap;
+  return wrap;
 }
 
 function buildQuestion(){
-  const qIdx = step-1;
-  const q = QUESTIONS[qIdx];
-  const pct = (step/8)*100;
+  const qIdx = step-1;
+  const q = QUESTIONS[qIdx];
+  const pct = (step/8)*100;
 
-  const wrap=div({flex:1,display:'flex',flexDirection:'column',animation:'fadeIn .35s ease'});
+  const wrap=div({flex:1,display:'flex',flexDirection:'column',animation:'fadeIn .35s ease'});
 
-  // Progress
-  const progWrap=div({marginBottom:28},[]);
-  const progBar=div({class:'progress-bar'},[]);
-  const progFill=document.createElement('div');
-  progFill.className='progress-fill';
-  progFill.style.width=`${pct}%`;
-  progBar.appendChild(progFill);
-  progWrap.appendChild(progBar);
-  progWrap.appendChild(div({display:'flex',justifyContent:'space-between'},[
-    div({fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.1em'},`${step} of 8`),
-    div({fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.1em'},`${Math.round(pct)}%`),
-  ]));
-  wrap.appendChild(progWrap);
+  // Progress
+  const progWrap=div({marginBottom:28},[]);
+  const progBar=div({class:'progress-bar'},[]);
+  const progFill=document.createElement('div');
+  progFill.className='progress-fill';
+  progFill.style.width=`${pct}%`;
+  progBar.appendChild(progFill);
+  progWrap.appendChild(progBar);
+  progWrap.appendChild(div({display:'flex',justifyContent:'space-between'},[
+    div({fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.1em'},`${step} of 8`),
+    div({fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.1em'},`${Math.round(pct)}%`),
+  ]));
+  wrap.appendChild(progWrap);
 
-  // Question
-  wrap.appendChild(div({marginBottom:28},[
-    monoLabel(`Question 0${step}`,'var(--text3)',{marginBottom:12}),
-    h1(q.q,{fontSize:22,marginBottom:8}),
-    p(q.sub,{fontSize:13}),
-  ]));
+  // Question
+  wrap.appendChild(div({marginBottom:28},[
+    monoLabel(`Question 0${step}`,'var(--text3)',{marginBottom:12}),
+    h1(q.q,{fontSize:22,marginBottom:8}),
+    p(q.sub,{fontSize:13}),
+  ]));
 
-  // Options or text
-  if(q.type==='single'){
-    const optWrap=div({display:'flex',flexDirection:'column',gap:10,flex:1},[]);
-    q.options.forEach(opt=>{
-      const btn=document.createElement('button');
-      btn.className=`option-btn${answers[q.id]===opt.v?' selected':''}`;
-      btn.innerHTML=`<div style="display:flex;align-items:flex-start;gap:12px"><div class="opt-dot" style="width:8px;height:8px;border-radius:50%;background:${answers[q.id]===opt.v?'var(--green)':'var(--border2)'};flex-shrink:0;margin-top:6px;transition:background .15s"></div><span>${opt.l}</span></div>`;
-      btn.onclick=()=>{
-        answers[q.id]=opt.v;
-        if(step<8){setTimeout(()=>{step++;render();},220);}
-        else{render();}
-      };
-      optWrap.appendChild(btn);
-    });
-    wrap.appendChild(optWrap);
-  } else {
-    const ta=document.createElement('textarea');
-    ta.placeholder=q.placeholder||'Type here…';
-    ta.rows=3;ta.value=answers[q.id]||'';
-    ta.addEventListener('input',e=>{answers[q.id]=e.target.value;});
-    wrap.appendChild(ta);
-    wrap.appendChild(div({height:16}));
-    const next=document.createElement('button');
-    next.className='cta-primary';next.textContent='Continue →';
-    next.onclick=()=>{
-      if(!answers[q.id]?.trim()){answers[q.id]='Not specified';}
-      step++;render();
-    };
-    wrap.appendChild(next);
-  }
+  // Options or text
+  if(q.type==='single'){
+    const optWrap=div({display:'flex',flexDirection:'column',gap:10,flex:1},[]);
+    q.options.forEach(opt=>{
+      const btn=document.createElement('button');
+      btn.className=`option-btn${answers[q.id]===opt.v?' selected':''}`;
+      btn.innerHTML=`<div style="display:flex;align-items:flex-start;gap:12px"><div class="opt-dot" style="width:8px;height:8px;border-radius:50%;background:${answers[q.id]===opt.v?'var(--green)':'var(--border2)'};flex-shrink:0;margin-top:6px;transition:background .15s"></div><span>${opt.l}</span></div>`;
+      btn.onclick=()=>{
+        answers[q.id]=opt.v;
+        if(step<8){setTimeout(()=>{step++;render();},220);}
+        else{render();}
+      };
+      optWrap.appendChild(btn);
+    });
+    wrap.appendChild(optWrap);
+  } else {
+    const ta=document.createElement('textarea');
+    ta.placeholder=q.placeholder||'Type here…';
+    ta.rows=3;ta.value=answers[q.id]||'';
+    ta.addEventListener('input',e=>{answers[q.id]=e.target.value;});
+    wrap.appendChild(ta);
+    wrap.appendChild(div({height:16}));
+    const next=document.createElement('button');
+    next.className='cta-primary';next.textContent='Continue →';
+    next.onclick=()=>{
+      if(!answers[q.id]?.trim()){answers[q.id]='Not specified';}
+      step++;render();
+    };
+    wrap.appendChild(next);
+  }
 
-  // Back
-  if(step>1){
-    wrap.appendChild(div({marginTop:20,textAlign:'center'},[
-      (()=>{const b=document.createElement('button');b.className='cta-secondary';b.textContent='← Back';b.onclick=()=>{step--;render();};return b;})()
-    ]));
-  }
+  // Back
+  if(step>1){
+    wrap.appendChild(div({marginTop:20,textAlign:'center'},[
+      (()=>{const b=document.createElement('button');b.className='cta-secondary';b.textContent='← Back';b.onclick=()=>{step--;render();};return b;})()
+    ]));
+  }
 
-  return wrap;
+  return wrap;
 }
 
 function buildEmail(){
-  const wrap=div({flex:1,display:'flex',flexDirection:'column',justifyContent:'center',animation:'fadeIn .4s ease'});
+  const wrap=div({flex:1,display:'flex',flexDirection:'column',justifyContent:'center',animation:'fadeIn .4s ease'});
 
-  wrap.appendChild(div({marginBottom:32},[
-    monoLabel('Almost there','var(--green)',{marginBottom:16}),
-    h1('Your scan is ready.',{fontSize:26}),
-    p('Enter your email to receive your complete Brand Signal Report — your score, the gaps, and the exact first move.'),
-    div({marginTop:12,fontSize:12,color:'var(--text3)',lineHeight:1.7},'No spam. No sales sequence. Just your report — and one follow-up if we think there is something specific you should know about your situation.'),
-  ]));
+  wrap.appendChild(div({marginBottom:32},[
+    monoLabel('Almost there','var(--green)',{marginBottom:16}),
+    h1('Your scan is ready.',{fontSize:26}),
+    p('Enter your email to receive your complete Brand Signal Report — your score, the gaps, and the exact first move.'),
+    div({marginTop:12,fontSize:12,color:'var(--text3)',lineHeight:1.7},'No spam. No sales sequence. Just your report — and one follow-up if we think there is something specific you should know about your situation.'),
+  ]));
 
-  const emailEl=document.createElement('input');
-  emailEl.type='email';emailEl.placeholder='your@email.com';emailEl.className='email-input';
-  emailEl.value=email;emailEl.addEventListener('input',e=>{email=e.target.value;});
-  wrap.appendChild(emailEl);
-  wrap.appendChild(div({height:12}));
+  const emailEl=document.createElement('input');
+  emailEl.type='email';emailEl.placeholder='your@email.com';emailEl.className='email-input';
+  emailEl.value=email;emailEl.addEventListener('input',e=>{email=e.target.value;});
+  wrap.appendChild(emailEl);
+  wrap.appendChild(div({height:12}));
 
-  const btn=document.createElement('button');
-  btn.className='cta-primary';btn.textContent='Send My Report →';
-  btn.onclick=async()=>{
-    if(!email.includes('@')){emailEl.style.borderColor='var(--red)';return;}
-    emailSubmitted=true;
-    analyzing=true;
-    step=9;render();
-    // Calculate scores immediately
-    result = calcScores(answers);
-    const topGap = getTopGap(result.dims);
-    const verdict = getVerdict(result.overall, answers.moment);
-    // ── KLAVIYO INTEGRATION ──────────────────────────────────────────────────
-    // Replace QB_KLAVIYO_KEY with your Klaviyo Public API Key (starts with pk_)
-    // Replace QB_KLAVIYO_LIST_ID with your Signal Scan list ID from Klaviyo
-    const QB_KLAVIYO_KEY = window.QB_KLAVIYO_KEY || '';
-    const QB_KLAVIYO_LIST_ID = window.QB_KLAVIYO_LIST_ID || '';
-    if(QB_KLAVIYO_KEY && QB_KLAVIYO_LIST_ID){
-      try{
-        // Step 1: Create or update the profile with scan data
-        const profileRes = await fetch('https://a.klaviyo.com/client/profiles/?company_id='+QB_KLAVIYO_KEY,{
-          method:'POST',
-          headers:{'Content-Type':'application/json','revision':'2024-10-15'},
-          body:JSON.stringify({
-            data:{
-              type:'profile',
-              attributes:{
-                email:email,
-                properties:{
-                  signal_scan_score: result.overall,
-                  signal_scan_grade: verdict.grade,
-                  signal_scan_verdict: verdict.label,
-                  signal_scan_top_gap: topGap.label,
-                  signal_scan_moment: answers.moment,
-                  signal_scan_describe: answers.describe||'',
-                  signal_scan_date: new Date().toISOString().split('T')[0],
-                }
-              }
-            }
-          })
-        });
-        // Step 2: Subscribe to the Signal Scan list
-        if(profileRes.ok||profileRes.status===409){
-          await fetch('https://a.klaviyo.com/client/subscriptions/?company_id='+QB_KLAVIYO_KEY,{
-            method:'POST',
-            headers:{'Content-Type':'application/json','revision':'2024-10-15'},
-            body:JSON.stringify({
-              data:{
-                type:'subscription',
-                attributes:{
-                  profile:{data:{type:'profile',attributes:{email:email}}},
-                  custom_source:'Signal Scan'
-                },
-                relationships:{list:{data:{type:'list',id:QB_KLAVIYO_LIST_ID}}}
-              }
-            })
-          });
-        }
-      }catch(err){
-        // Silent fail — never block the user experience for analytics
-        console.warn('Klaviyo sync failed silently:',err);
-      }
-    }
-    // ── END KLAVIYO ──────────────────────────────────────────────────────────
-    setTimeout(()=>{analyzing=false;step=10;render();},2800);
-  };
-  wrap.appendChild(btn);
+  const btn=document.createElement('button');
+  btn.className='cta-primary';btn.textContent='Send My Report →';
+  btn.onclick=async()=>{
+    if(!email.includes('@')){emailEl.style.borderColor='var(--red)';return;}
+    emailSubmitted=true;
+    analyzing=true;
+    step=9;render();
+    // Calculate scores immediately
+    result = calcScores(answers);
+    const topGap = getTopGap(result.dims);
+    const verdict = getVerdict(result.overall, answers.moment);
+    // ── KLAVIYO INTEGRATION ──────────────────────────────────────────────────
+    // Replace QB_KLAVIYO_KEY with your Klaviyo Public API Key (starts with pk_)
+    // Replace QB_KLAVIYO_LIST_ID with your Signal Scan list ID from Klaviyo
+    const QB_KLAVIYO_KEY = window.QB_KLAVIYO_KEY || '';
+    const QB_KLAVIYO_LIST_ID = window.QB_KLAVIYO_LIST_ID || '';
+    if(QB_KLAVIYO_KEY && QB_KLAVIYO_LIST_ID){
+      try{
+        // Step 1: Create or update the profile with scan data
+        const profileRes = await fetch('https://a.klaviyo.com/client/profiles/?company_id='+QB_KLAVIYO_KEY,{
+          method:'POST',
+          headers:{'Content-Type':'application/json','revision':'2024-10-15'},
+          body:JSON.stringify({
+            data:{
+              type:'profile',
+              attributes:{
+                email:email,
+                properties:{
+                  signal_scan_score: result.overall,
+                  signal_scan_grade: verdict.grade,
+                  signal_scan_verdict: verdict.label,
+                  signal_scan_top_gap: topGap.label,
+                  signal_scan_moment: answers.moment,
+                  signal_scan_describe: answers.describe||'',
+                  signal_scan_date: new Date().toISOString().split('T')[0],
+                }
+              }
+            }
+          })
+        });
+        // Step 2: Subscribe to the Signal Scan list
+        if(profileRes.ok||profileRes.status===409){
+          await fetch('https://a.klaviyo.com/client/subscriptions/?company_id='+QB_KLAVIYO_KEY,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','revision':'2024-10-15'},
+            body:JSON.stringify({
+              data:{
+                type:'subscription',
+                attributes:{
+                  profile:{data:{type:'profile',attributes:{email:email}}},
+                  custom_source:'Signal Scan'
+                },
+                relationships:{list:{data:{type:'list',id:QB_KLAVIYO_LIST_ID}}}
+              }
+            })
+          });
+        }
+      }catch(err){
+        // Silent fail — never block the user experience for analytics
+        console.warn('Klaviyo sync failed silently:',err);
+      }
+    }
+    // ── END KLAVIYO ──────────────────────────────────────────────────────────
+    setTimeout(()=>{analyzing=false;step=10;render();},2800);
+  };
+  wrap.appendChild(btn);
 
-  wrap.appendChild(div({marginTop:16,textAlign:'center'},[
-    div({fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)',letterSpacing:'.05em'},'Your data is never shared or sold.')
-  ]));
+  wrap.appendChild(div({marginTop:16,textAlign:'center'},[
+    div({fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)',letterSpacing:'.05em'},'Your data is never shared or sold.')
+  ]));
 
-  return wrap;
+  return wrap;
 }
 
 function buildAnalyzing(){
-  const wrap=div({flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:24,textAlign:'center'});
+  const wrap=div({flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:24,textAlign:'center'});
 
-  const spinner=div({width:48,height:48,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'});
-  spinner.style.animation='spin .8s linear infinite';
-  wrap.appendChild(spinner);
+  const spinner=div({width:48,height:48,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'});
+  spinner.style.animation='spin .8s linear infinite';
+  wrap.appendChild(spinner);
 
-  wrap.appendChild(div({textAlign:'center'},[
-    monoLabel('Analyzing your brand','var(--green)',{marginBottom:10,textAlign:'center'}),
-    div({fontSize:13,color:'var(--text2)',lineHeight:2},[
-      document.createTextNode('Reading your answers through the brand lens…'),
-    ]),
-  ]));
+  wrap.appendChild(div({textAlign:'center'},[
+    monoLabel('Analyzing your brand','var(--green)',{marginBottom:10,textAlign:'center'}),
+    div({fontSize:13,color:'var(--text2)',lineHeight:2},[
+      document.createTextNode('Reading your answers through the brand lens…'),
+    ]),
+  ]));
 
-  return wrap;
+  return wrap;
 }
 
 function buildResults(){
-  if(!result) return buildIntro();
-  const {overall, dims} = result;
-  const verdict = getVerdict(overall, answers.moment);
-  const topGap = getTopGap(dims);
-  const path = getRecommendedPath(answers.moment, topGap);
-  const circumference = 2*Math.PI*54;
-  const offset = circumference - (overall/100)*circumference;
+  if(!result) return buildIntro();
+  const {overall, dims} = result;
+  const verdict = getVerdict(overall, answers.moment);
+  const topGap = getTopGap(dims);
+  const path = getRecommendedPath(answers.moment, topGap);
+  const circumference = 2*Math.PI*54;
+  const offset = circumference - (overall/100)*circumference;
 
-  const wrap=div({flex:1,display:'flex',flexDirection:'column',animation:'fadeIn .45s ease'});
+  const wrap=div({flex:1,display:'flex',flexDirection:'column',animation:'fadeIn .45s ease'});
 
-  // Header
-  wrap.appendChild(div({marginBottom:28},[
-    monoLabel('Brand Signal Report','var(--green)',{marginBottom:10}),
-    h1('Your score.',{fontSize:24,marginBottom:4}),
-    div({fontSize:13,color:'var(--text3)'},'Based on 8 brand health dimensions'),
-  ]));
+  // Header
+  wrap.appendChild(div({marginBottom:28},[
+    monoLabel('Brand Signal Report','var(--green)',{marginBottom:10}),
+    h1('Your score.',{fontSize:24,marginBottom:4}),
+    div({fontSize:13,color:'var(--text3)'},'Based on 8 brand health dimensions'),
+  ]));
 
-  // Score + verdict
-  const scoreRow=div({display:'flex',gap:20,alignItems:'flex-start',marginBottom:28,flexWrap:'wrap'},[]);
+  // Score + verdict
+  const scoreRow=div({display:'flex',gap:20,alignItems:'flex-start',marginBottom:28,flexWrap:'wrap'},[]);
 
-  // Ring
-  const svgNS='http://www.w3.org/2000/svg';
-  const svg=document.createElementNS(svgNS,'svg');
-  svg.setAttribute('width','120');svg.setAttribute('height','120');svg.setAttribute('viewBox','0 0 120 120');
-  svg.style.flexShrink='0';
-  const bgCircle=document.createElementNS(svgNS,'circle');
-  bgCircle.setAttribute('cx','60');bgCircle.setAttribute('cy','60');bgCircle.setAttribute('r','54');
-  bgCircle.setAttribute('class','score-ring-bg');svg.appendChild(bgCircle);
-  const fgCircle=document.createElementNS(svgNS,'circle');
-  fgCircle.setAttribute('cx','60');fgCircle.setAttribute('cy','60');fgCircle.setAttribute('r','54');
-  fgCircle.setAttribute('class','score-ring-fg');
-  fgCircle.setAttribute('stroke',verdict.color);
-  fgCircle.setAttribute('stroke-dasharray',circumference);
-  fgCircle.setAttribute('stroke-dashoffset',circumference);
-  svg.appendChild(fgCircle);
-  const scoreText=document.createElementNS(svgNS,'text');
-  scoreText.setAttribute('x','60');scoreText.setAttribute('y','60');
-  scoreText.setAttribute('text-anchor','middle');scoreText.setAttribute('dominant-baseline','central');
-  scoreText.setAttribute('font-family','JetBrains Mono,monospace');scoreText.setAttribute('font-size','24');
-  scoreText.setAttribute('font-weight','700');scoreText.setAttribute('fill',verdict.color);
-  scoreText.textContent=overall;svg.appendChild(scoreText);
-  const gradeText=document.createElementNS(svgNS,'text');
-  gradeText.setAttribute('x','60');gradeText.setAttribute('y','80');
-  gradeText.setAttribute('text-anchor','middle');gradeText.setAttribute('font-family','Inter,sans-serif');
-  gradeText.setAttribute('font-size','11');gradeText.setAttribute('fill','var(--text3)');
-  gradeText.textContent='/100';svg.appendChild(gradeText);
-  scoreRow.appendChild(svg);
-  setTimeout(()=>{fgCircle.style.strokeDashoffset=offset;},100);
+  // Ring
+  const svgNS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(svgNS,'svg');
+  svg.setAttribute('width','120');svg.setAttribute('height','120');svg.setAttribute('viewBox','0 0 120 120');
+  svg.style.flexShrink='0';
+  const bgCircle=document.createElementNS(svgNS,'circle');
+  bgCircle.setAttribute('cx','60');bgCircle.setAttribute('cy','60');bgCircle.setAttribute('r','54');
+  bgCircle.setAttribute('class','score-ring-bg');svg.appendChild(bgCircle);
+  const fgCircle=document.createElementNS(svgNS,'circle');
+  fgCircle.setAttribute('cx','60');fgCircle.setAttribute('cy','60');fgCircle.setAttribute('r','54');
+  fgCircle.setAttribute('class','score-ring-fg');
+  fgCircle.setAttribute('stroke',verdict.color);
+  fgCircle.setAttribute('stroke-dasharray',circumference);
+  fgCircle.setAttribute('stroke-dashoffset',circumference);
+  svg.appendChild(fgCircle);
+  const scoreText=document.createElementNS(svgNS,'text');
+  scoreText.setAttribute('x','60');scoreText.setAttribute('y','60');
+  scoreText.setAttribute('text-anchor','middle');scoreText.setAttribute('dominant-baseline','central');
+  scoreText.setAttribute('font-family','JetBrains Mono,monospace');scoreText.setAttribute('font-size','24');
+  scoreText.setAttribute('font-weight','700');scoreText.setAttribute('fill',verdict.color);
+  scoreText.textContent=overall;svg.appendChild(scoreText);
+  const gradeText=document.createElementNS(svgNS,'text');
+  gradeText.setAttribute('x','60');gradeText.setAttribute('y','80');
+  gradeText.setAttribute('text-anchor','middle');gradeText.setAttribute('font-family','Inter,sans-serif');
+  gradeText.setAttribute('font-size','11');gradeText.setAttribute('fill','var(--text3)');
+  gradeText.textContent='/100';svg.appendChild(gradeText);
+  scoreRow.appendChild(svg);
+  setTimeout(()=>{fgCircle.style.strokeDashoffset=offset;},100);
 
-  // Verdict text
-  const verdictBlock=div({flex:1,minWidth:180},[]);
-  const gradePill=div({display:'inline-flex',alignItems:'center',gap:8,padding:'4px 12px',borderRadius:5,background:verdict.color+'18',border:`1px solid ${verdict.color}30`,marginBottom:10},[]);
-  gradePill.appendChild(div({fontFamily:'var(--mono)',fontSize:12,fontWeight:700,color:verdict.color},verdict.grade));
-  gradePill.appendChild(div({fontFamily:'var(--mono)',fontSize:10,color:verdict.color,letterSpacing:'.1em',textTransform:'uppercase'},verdict.label));
-  verdictBlock.appendChild(gradePill);
-  verdictBlock.appendChild(div({fontSize:13,color:'var(--text)',lineHeight:1.7},verdict.desc));
-  scoreRow.appendChild(verdictBlock);
-  wrap.appendChild(scoreRow);
+  // Verdict text
+  const verdictBlock=div({flex:1,minWidth:180},[]);
+  const gradePill=div({display:'inline-flex',alignItems:'center',gap:8,padding:'4px 12px',borderRadius:5,background:verdict.color+'18',border:`1px solid ${verdict.color}30`,marginBottom:10},[]);
+  gradePill.appendChild(div({fontFamily:'var(--mono)',fontSize:12,fontWeight:700,color:verdict.color},verdict.grade));
+  gradePill.appendChild(div({fontFamily:'var(--mono)',fontSize:10,color:verdict.color,letterSpacing:'.1em',textTransform:'uppercase'},verdict.label));
+  verdictBlock.appendChild(gradePill);
+  verdictBlock.appendChild(div({fontSize:13,color:'var(--text)',lineHeight:1.7},verdict.desc));
+  scoreRow.appendChild(verdictBlock);
+  wrap.appendChild(scoreRow);
 
-  // Dimension bars
-  wrap.appendChild(div({background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px',marginBottom:20},[
-    monoLabel('Dimension breakdown','var(--text3)',{marginBottom:16}),
-    ...dims.map((d,i)=>{
-      const barColor = d.score>=70?'var(--green)':d.score>=45?'var(--amber)':'var(--red)';
-      const row=div({marginBottom:i<dims.length-1?12:0},[]);
-      row.appendChild(div({display:'flex',justifyContent:'space-between',marginBottom:6},[
-        div({fontSize:12,color:d.id===topGap.id?'var(--text)':'var(--text2)',fontWeight:d.id===topGap.id?600:400},d.label+(d.id===topGap.id?' ← biggest gap':'')),
-        div({fontFamily:'var(--mono)',fontSize:11,color:barColor},d.score),
-      ]));
-      const barBg=div({class:'gap-bar-bg'},[]);
-      const barFill=document.createElement('div');
-      barFill.className='gap-bar-fill';
-      barFill.style.cssText=`background:${barColor};width:0;--delay:${i*0.1}s`;
-      barBg.appendChild(barFill);
-      row.appendChild(barBg);
-      setTimeout(()=>{barFill.style.width=d.score+'%';},200+i*80);
-      return row;
-    }),
-  ]));
+  // Dimension bars
+  wrap.appendChild(div({background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px',marginBottom:20},[
+    monoLabel('Dimension breakdown','var(--text3)',{marginBottom:16}),
+    ...dims.map((d,i)=>{
+      const barColor = d.score>=70?'var(--green)':d.score>=45?'var(--amber)':'var(--red)';
+      const row=div({marginBottom:i<dims.length-1?12:0},[]);
+      row.appendChild(div({display:'flex',justifyContent:'space-between',marginBottom:6},[
+        div({fontSize:12,color:d.id===topGap.id?'var(--text)':'var(--text2)',fontWeight:d.id===topGap.id?600:400},d.label+(d.id===topGap.id?' ← biggest gap':'')),
+        div({fontFamily:'var(--mono)',fontSize:11,color:barColor},d.score),
+      ]));
+      const barBg=div({class:'gap-bar-bg'},[]);
+      const barFill=document.createElement('div');
+      barFill.className='gap-bar-fill';
+      barFill.style.cssText=`background:${barColor};width:0;--delay:${i*0.1}s`;
+      barBg.appendChild(barFill);
+      row.appendChild(barBg);
+      setTimeout(()=>{barFill.style.width=d.score+'%';},200+i*80);
+      return row;
+    }),
+  ]));
 
-  // Biggest gap + what it means
-  wrap.appendChild(div({background:'var(--bg)',border:`1px solid ${verdict.color}25`,borderRadius:8,padding:'16px 20px',marginBottom:20},[
-    monoLabel(`Biggest gap: ${topGap.label}`,verdict.color,{marginBottom:8}),
-    div({fontSize:13,color:'var(--text)',lineHeight:1.7},
-      topGap.id==='identity'?'You cannot scale what you cannot define. The brand will keep losing authority until the identity is precise — not approximate.':
-      topGap.id==='visual'?'Visual incoherence signals lack of conviction. Clients read uncertainty in design before they read your words.':
-      topGap.id==='voice'?'A brand that sounds different everywhere has no presence. Consistency is the primary driver of trust in a crowded market.':
-      topGap.id==='positioning'?'If clients cannot immediately understand why you specifically, they default to price comparison. Positioning is the most commercially expensive gap.':
-      topGap.id==='content'?'Content that does not attract the right clients is not content strategy — it is noise production. The brief is wrong before the content is written.':
-      'Your brand is not holding the prices you should charge. This is an authority gap — not a pricing problem.'
-    ),
-  ]));
+  // Biggest gap + what it means
+  wrap.appendChild(div({background:'var(--bg)',border:`1px solid ${verdict.color}25`,borderRadius:8,padding:'16px 20px',marginBottom:20},[
+    monoLabel(`Biggest gap: ${topGap.label}`,verdict.color,{marginBottom:8}),
+    div({fontSize:13,color:'var(--text)',lineHeight:1.7},
+      topGap.id==='identity'?'You cannot scale what you cannot define. The brand will keep losing authority until the identity is precise — not approximate.':
+      topGap.id==='visual'?'Visual incoherence signals lack of conviction. Clients read uncertainty in design before they read your words.':
+      topGap.id==='voice'?'A brand that sounds different everywhere has no presence. Consistency is the primary driver of trust in a crowded market.':
+      topGap.id==='positioning'?'If clients cannot immediately understand why you specifically, they default to price comparison. Positioning is the most commercially expensive gap.':
+      topGap.id==='content'?'Content that does not attract the right clients is not content strategy — it is noise production. The brief is wrong before the content is written.':
+      'Your brand is not holding the prices you should charge. This is an authority gap — not a pricing problem.'
+    ),
+  ]));
 
-  // Recommended first move
-  wrap.appendChild(div({background:'var(--green3)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'16px 20px',marginBottom:24},[
-    monoLabel('Recommended first move','var(--green)',{marginBottom:8}),
-    div({fontSize:15,fontWeight:600,color:'var(--text)',marginBottom:4},path.tool),
-    div({fontSize:13,color:'var(--text2)',lineHeight:1.6,marginBottom:14},path.desc),
-    (()=>{
-      const btn=document.createElement('button');
-      btn.className='cta-primary';btn.style.width='auto';btn.style.padding='10px 24px';
-      btn.textContent=`Open ${path.tool} →`;
-      btn.onclick=()=>{
-        window.open(path.file,'_blank');
-      };
-      return btn;
-    })(),
-  ]));
+  // Recommended first move
+  wrap.appendChild(div({background:'var(--green3)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'16px 20px',marginBottom:24},[
+    monoLabel('Recommended first move','var(--green)',{marginBottom:8}),
+    div({fontSize:15,fontWeight:600,color:'var(--text)',marginBottom:4},path.tool),
+    div({fontSize:13,color:'var(--text2)',lineHeight:1.6,marginBottom:14},path.desc),
+    (()=>{
+      const btn=document.createElement('button');
+      btn.className='cta-primary';btn.style.width='auto';btn.style.padding='10px 24px';
+      btn.textContent=`Open ${path.tool} →`;
+      btn.onclick=()=>{
+        window.open(path.file,'_blank');
+      };
+      return btn;
+    })(),
+  ]));
 
-  // Full system CTA
-  wrap.appendChild(div({background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px',marginBottom:16},[
-    div({fontSize:13,color:'var(--text)',lineHeight:1.6,marginBottom:12},'Want the full system? QB BrandOS takes you from this scan through every phase — identity, visual system, voice, content, execution, and quarterly intelligence. All connected. All traceable back to who you actually are.'),
-    (()=>{
-      const btn=document.createElement('button');
-      btn.className='cta-primary';
-      btn.textContent='Explore the Full System →';
-      btn.onclick=()=>{window.open('qb-branidos-hub.html','_blank');};
-      return btn;
-    })(),
-  ]));
+  // Full system CTA
+  wrap.appendChild(div({background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px',marginBottom:16},[
+    div({fontSize:13,color:'var(--text)',lineHeight:1.6,marginBottom:12},'Want the full system? QB BrandOS takes you from this scan through every phase — identity, visual system, voice, content, execution, and quarterly intelligence. All connected. All traceable back to who you actually are.'),
+    (()=>{
+      const btn=document.createElement('button');
+      btn.className='cta-primary';
+      btn.textContent='Explore the Full System →';
+      btn.onclick=()=>{window.open('qb-branidos-hub.html','_blank');};
+      return btn;
+    })(),
+  ]));
 
-  // Restart
-  wrap.appendChild(div({textAlign:'center'},[
-    (()=>{const b=document.createElement('button');b.className='cta-secondary';b.textContent='Run another scan';b.onclick=()=>{step=0;answers={};result=null;email='';emailSubmitted=false;render();};return b;})()
-  ]));
+  // Restart
+  wrap.appendChild(div({textAlign:'center'},[
+    (()=>{const b=document.createElement('button');b.className='cta-secondary';b.textContent='Run another scan';b.onclick=()=>{step=0;answers={};result=null;email='';emailSubmitted=false;render();};return b;})()
+  ]));
 
-  return wrap;
+  return wrap;
 }
 
 render();
