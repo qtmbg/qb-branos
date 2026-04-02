@@ -213,7 +213,7 @@ function escHtml(str) {
 }
 
 function openTool(file) {
-  const key = localStorage.getItem('qb_api_key') || '';
+  const key = localStorage.getItem('qb_apikey') || '';
   const qbpStr = localStorage.getItem('qb_qbp') || '';
   let url = file;
   const params = [];
@@ -232,11 +232,11 @@ function render() {
   document.getElementById('cover-date').textContent = 'Generated: ' + now + ' · QB BrandOS v3';
 
   // ── SECTION 01: Identity Core ──────────────────────────────────────────────
-  const idDone = !!qbp.soulMapComplete;
+  const idDone = !!(qbp.brandEssence);
   document.getElementById('identity-status').className = 'status-badge ' + (idDone ? 'status-done' : 'status-pending');
   document.getElementById('identity-status').textContent = idDone ? '✓ Complete' : 'Pending';
   
-  if (idDone || qbp.brandEssence || qbp.spark) {
+  if (idDone || qbp.spark) {
     document.getElementById('identity-content').innerHTML =
       field('Brand Essence', qbp.brandEssence, true) +
       field('The Spark', qbp.spark) +
@@ -255,11 +255,11 @@ function render() {
   }
 
   // ── SECTION 02: Sensory Universe ──────────────────────────────────────────
-  const sensDone = !!qbp.sensescapeComplete;
+  const sensDone = !!(qbp.colorTerritory);
   document.getElementById('sensory-status').className = 'status-badge ' + (sensDone ? 'status-done' : 'status-pending');
   document.getElementById('sensory-status').textContent = sensDone ? '✓ Complete' : 'Pending';
 
-  if (sensDone || qbp.colorTerritory) {
+  if (sensDone) {
     document.getElementById('sensory-content').innerHTML =
       field('Color Territory', qbp.colorTerritory, true) +
       fieldGrid([
@@ -272,7 +272,7 @@ function render() {
   }
 
   // ── SECTION 03: Visual DNA ──────────────────────────────────────────────
-  const visDone = !!qbp.visualDnaComplete;
+  const visDone = !!(qbp.visualDnaCompletedAt);
   document.getElementById('visual-status').className = 'status-badge ' + (visDone ? 'status-done' : 'status-pending');
   document.getElementById('visual-status').textContent = visDone ? '✓ Complete' : 'Pending';
 
@@ -292,7 +292,7 @@ function render() {
   }
 
   // ── SECTION 04: Strategic Direction ──────────────────────────────────────
-  const warDone = !!qbp.warTableComplete;
+  const warDone = !!(qbp.warTableCompletedAt);
   document.getElementById('strategy-status').className = 'status-badge ' + (warDone ? 'status-done' : 'status-pending');
   document.getElementById('strategy-status').textContent = warDone ? '✓ Complete' : 'Pending';
 
