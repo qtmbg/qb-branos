@@ -1,431 +1,99 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-qb-tool="hub">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS - Command Center</title>
+<title>QB BrandOS — The Brand Operating System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<script>
-  // Flash-free theme initialization
-  (function() {
-    try {
-      var theme = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-    } catch(e) {}
-  })();
-</script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="qb-system.css">
 <style>
-/* Base Reset & Variables */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Tool-specific styles — base from qb-system.css */
+  /* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInFast{from{opacity:0}to{opacity:1}}
+@keyframes scanH{0%{left:-80%}100%{left:200%}}
+@keyframes notifIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes doorPulse{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 24px 2px var(--door-glow)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-in{animation:fadeIn .4s ease forwards}
+.fade-fast{animation:fadeInFast .2s ease forwards}
+.scan-line{position:relative;overflow:hidden}
+.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(58,95,74,0.04),transparent);animation:scanH 3s linear infinite}
 
-:root {
-  /* Phase Colors */
-  --blue: #60a5fa;   /* Phase 01 */
-  --green: #4ade80;  /* Phase 02 & Primary */
-  --pink: #f472b6;   /* Phase 03 */
-  --teal: #2dd4bf;   /* Phase 04 */
-  --amber: #f59e0b;  /* Phase 05 */
-  
-  /* Typography */
-  --font: 'Inter', system-ui, -apple-system, sans-serif;
-  --mono: 'JetBrains Mono', monospace;
-}
+/* Nav */
+.nav-btn{padding:6px 14px;border-radius:5px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid transparent;color:var(--text3);transition:all .15s;cursor:pointer}
+.nav-btn:hover{color:var(--text2);border-color:var(--border)}
+.nav-btn.active{color:var(--green);background:var(--green2);border-color:rgba(58,95,74,0.25)}
 
-[data-theme="dark"] {
-  --bg-rgb: 0, 0, 0;
-  --bg: #000000;
-  --bg-elevated: #0a0a0a;
-  --bg2: rgba(255, 255, 255, 0.04);
-  --bg3: rgba(255, 255, 255, 0.08);
-  --bg-hover: rgba(255, 255, 255, 0.12);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.15);
-  
-  --text: #ffffff;
-  --text2: #a0a0a0;
-  --text3: #666666;
-  --text-inverse: #000000;
-  
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.2);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
-  --red: #ef4444;
-}
+/* Entry door cards */
+.door-card{background:var(--bg3);border:2px solid var(--border);border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px}
+.door-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--door-color);opacity:.6;transition:opacity .22s}
+.door-card:hover{transform:translateY(-3px)}
+.door-card:hover::before{opacity:1}
+.door-card.door-0{--door-color:#4ade80;--door-glow:rgba(74,222,128,0.15)}
+.door-card.door-1{--door-color:#60a5fa;--door-glow:rgba(96,165,250,0.15)}
+.door-card.door-2{--door-color:#f59e0b;--door-glow:rgba(245,158,11,0.15)}
+.door-card.door-3{--door-color:#a78bfa;--door-glow:rgba(167,139,250,0.15)}
+.door-card:hover{border-color:var(--door-color);box-shadow:0 0 24px 2px var(--door-glow)}
 
-[data-theme="light"] {
-  --bg-rgb: 255, 255, 255;
-  --bg: #ffffff;
-  --bg-elevated: #f8f9fa;
-  --bg2: rgba(0, 0, 0, 0.03);
-  --bg3: rgba(0, 0, 0, 0.06);
-  --bg-hover: rgba(0, 0, 0, 0.09);
-  --border: rgba(0, 0, 0, 0.08);
-  --border-strong: rgba(0, 0, 0, 0.15);
-  
-  --text: #111111;
-  --text2: #444444;
-  --text3: #777777;
-  --text-inverse: #ffffff;
-  
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-  --red: #dc2626;
-}
+/* Tool cards */
+.tool-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;cursor:pointer;transition:all .18s}
+.tool-card:hover{border-color:var(--border2);transform:translateY(-1px);background:var(--bg4)}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  min-height: 100vh;
-  overflow-x: hidden;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text3); }
-
-/* Global Elements */
-button {
-  cursor: pointer;
-  font-family: var(--font);
-  border: none;
-  outline: none;
-  background: transparent;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.glass {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-/* Animations */
-@keyframes fadeInUp { 
-  from { opacity: 0; transform: translateY(24px); } 
-  to { opacity: 1; transform: translateY(0); } 
-}
-
-.animate-cascade {
-  opacity: 0;
-  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: calc(var(--idx, 0) * 0.08s);
-}
-
-/* Typography Utilities */
-.mono-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-/* System Header */
-.system-header {
-  height: 48px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(var(--bg-rgb), 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.header-brand {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: var(--text);
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.header-badge {
-  font-size: 10px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: var(--bg3);
-  color: var(--text2);
-}
-
-.theme-toggle {
-  color: var(--text3);
-  font-size: 14px;
-  padding: 8px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.theme-toggle:hover { color: var(--text); background: var(--bg2); }
-
-/* Layout */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 48px 24px 96px 24px;
-}
-
-/* Health Meter Section */
-.meter-section {
-  display: flex;
-  align-items: center;
-  gap: 64px;
-  margin-bottom: 64px;
-  padding: 48px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  position: relative;
-  overflow: hidden;
-}
-
-.meter-chart {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  flex-shrink: 0;
-}
-
-.meter-chart svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.meter-bg { fill: none; stroke: var(--bg3); stroke-width: 8; }
-.meter-fill {
-  fill: none; stroke: var(--green); stroke-width: 10;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.meter-text {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.meter-percent { font-family: var(--mono); font-size: 48px; font-weight: 700; color: var(--text); line-height: 1; }
-.meter-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.15em; margin-top: 8px; }
-
-.meter-content { flex: 1; }
-.meter-title { font-size: 32px; font-weight: 700; color: var(--text); margin-bottom: 16px; letter-spacing: -0.02em; }
-.meter-desc { font-size: 16px; color: var(--text2); line-height: 1.6; max-width: 600px; margin-bottom: 32px; }
-
-.primary-btn {
-  background: var(--text);
-  color: var(--bg);
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.05em;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: transform 0.2s, background 0.2s;
-}
-.primary-btn:hover { transform: translateY(-2px); background: var(--green); color: #000; }
-
-/* Phase Sections (Zones) */
-.phase-section { 
-  margin-bottom: 64px; 
-  padding: 32px;
-  border-radius: 16px;
-  background: rgba(var(--phase-rgb), 0.03);
-  border: 1px solid rgba(var(--phase-rgb), 0.1);
-  transition: background 0.3s ease;
-}
-
-.phase-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 24px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid rgba(var(--phase-rgb), 0.15);
-  cursor: pointer;
-  user-select: none;
-}
-
-.phase-header-left { display: flex; align-items: center; gap: 16px; }
-.phase-num {
-  font-family: var(--mono); font-size: 13px; font-weight: 700;
-  padding: 8px 12px; border-radius: 6px;
-  background: var(--phase-bg); color: var(--phase-color);
-  border: 1px solid var(--phase-border);
-}
-.phase-title { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
-
-.phase-toggle { color: var(--phase-color); font-size: 14px; transition: transform 0.3s; opacity: 0.7; }
-.phase-section.collapsed .phase-toggle { transform: rotate(-90deg); }
-.phase-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-  transition: all 0.3s ease;
-}
-.phase-section.collapsed .phase-grid { display: none; }
-
-/* Tool Cards */
-.tool-card {
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--border); /* Default left border */
-}
-
-/* Card States */
-.tool-card.state-completed {
-  opacity: 0.55;
-  padding: 20px 24px;
-  border-left-color: var(--green);
-}
-.tool-card.state-completed .card-desc { display: none; /* Collapsed feel */ }
-.tool-card.state-completed:hover { opacity: 1; border-color: var(--border-strong); border-left-color: var(--green); transform: translateY(-2px); }
-
-.tool-card.state-progress {
-  border-left-color: var(--phase-color);
-  background: var(--bg3);
-  box-shadow: var(--shadow-sm);
-}
-.tool-card.state-progress:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-strong);
-  border-left-color: var(--phase-color);
-  box-shadow: 0 8px 32px rgba(var(--phase-rgb), 0.15);
-}
-
-.tool-card.state-locked {
-  opacity: 0.35;
-  filter: grayscale(100%);
-  pointer-events: none;
-  border-left-color: transparent;
-}
-
-/* Next Tool Dominance */
-.tool-card.is-next {
-  transform: scale(1.02);
-  border-color: var(--phase-color);
-  box-shadow: 0 0 24px rgba(var(--phase-rgb), 0.2);
-  z-index: 10;
-  background: var(--bg-hover);
-}
-.tool-card.is-next:hover {
-  transform: scale(1.03) translateY(-4px);
-  box-shadow: 0 12px 40px rgba(var(--phase-rgb), 0.3);
-}
-
-/* Card Content */
-.card-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
-.card-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  background: var(--bg3); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; color: var(--text); flex-shrink: 0;
-}
-.state-progress .card-icon { color: var(--phase-color); border-color: rgba(var(--phase-rgb), 0.3); background: rgba(var(--phase-rgb), 0.1); }
-.state-completed .card-icon { color: var(--green); }
-.is-next .card-icon { font-size: 24px; }
-
-.card-title { font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 4px; }
-.card-desc { font-size: 14px; color: var(--text2); line-height: 1.6; flex: 1; margin-bottom: 24px; }
-
-.card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
-.card-status { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
-
-.status-completed { color: var(--green); }
-.status-progress { color: var(--phase-color); }
-.status-locked { color: var(--text3); }
-
-.card-btn {
-  padding: 8px 16px; border-radius: 6px; font-size: 11px; font-weight: 600;
-  font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em;
-  background: var(--bg); color: var(--text); border: 1px solid var(--border);
-  transition: all 0.2s;
-}
-.state-progress .card-btn { background: var(--phase-color); color: #000; border-color: var(--phase-color); }
-.tool-card:hover .card-btn { transform: translateX(4px); }
-.state-progress:hover .card-btn { background: var(--text); color: var(--bg); border-color: var(--text); }
-.is-next .card-btn { padding: 10px 20px; font-size: 12px; }
-
-/* Start Here Badge */
-.start-badge {
-  position: absolute; top: -1px; right: 24px;
-  background: var(--phase-color); color: #000;
-  font-family: var(--mono); font-size: 10px; font-weight: 700;
-  padding: 6px 12px; border-radius: 0 0 6px 6px;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  box-shadow: 0 4px 12px rgba(var(--phase-rgb), 0.3);
-}
+/* Settings */
+.setting-block{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin-bottom:12px}
+.key-wrap{position:relative}
+.key-wrap input{padding-right:72px;font-family:var(--mono);font-size:12px;letter-spacing:.03em}
+.key-show{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--bg4);border:1px solid var(--border);color:var(--text3);padding:3px 9px;border-radius:3px;font-size:9px;font-family:var(--mono);cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.toggle-track{width:42px;height:22px;border-radius:11px;background:var(--bg4);border:1px solid var(--border2);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.toggle-track.on{background:var(--green)}
+.toggle-knob{width:16px;height:16px;border-radius:50%;background:white;position:absolute;top:2px;left:2px;transition:left .18s}
+.toggle-track.on .toggle-knob{left:22px}
 
 /* Notifications */
-#notifs { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-.notif {
-  background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px;
-  padding: 12px 24px; font-size: 12px; font-weight: 500; font-family: var(--mono);
-  box-shadow: var(--shadow-md); letter-spacing: 0.05em;
-  animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-  .nav-links { display: none !important; }
-  .container { padding: 24px 16px 64px 16px; }
-  .meter-section { flex-direction: column; text-align: center; gap: 32px; padding: 32px 24px; }
-  .phase-section { padding: 24px 16px; margin-bottom: 32px; }
-  .phase-grid { grid-template-columns: 1fr; }
-  .system-header { padding: 0 16px; }
-  .tool-card.is-next { transform: scale(1); }
-  .tool-card.is-next:hover { transform: translateY(-4px); }
-}
+.notif{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:8px 20px;font-size:11px;font-family:var(--mono);z-index:999;animation:notifIn .2s ease;letter-spacing:.08em;white-space:nowrap}
+.client-badge{position:fixed;top:10px;right:10px;z-index:900;background:rgba(58,95,74,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:4px 12px;font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:.2em;text-transform:uppercase;pointer-events:none}
 </style>
 </head>
 <body>
-
 <script>
+
 // ── QB OS: Supabase Access Check ─────────────────────────────────────────────
 (async function(){
   const SUPA_URL = 'https://yushbxjwfhuokaezoioe.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0';
   
+  // Check for payment success redirect
   const params = new URLSearchParams(window.location.search);
   if (params.get('payment') === 'success') {
     const plan = params.get('plan') || 'starter';
     localStorage.setItem('qb_user_tier', plan);
     localStorage.setItem('qb_paid', '1');
+    // Clean URL
     window.history.replaceState({}, '', window.location.pathname);
   }
   
+  // Load user session from Supabase if token exists
   const session = (() => { try { return JSON.parse(localStorage.getItem('qb_session') || '{}'); } catch(e) { return {}; } })();
   
   if (session && session.token) {
     try {
       const res = await fetch(SUPA_URL + '/rest/v1/profiles?select=tier,subscription_status,qbp', {
-        headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + session.token, 'Content-Type': 'application/json' }
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': 'Bearer ' + session.token,
+          'Content-Type': 'application/json'
+        }
       });
       if (res.ok) {
         const data = await res.json();
         if (data && data[0]) {
           const profile = data[0];
+          // Update local tier from server
           if (profile.tier) localStorage.setItem('qb_user_tier', profile.tier);
           if (profile.subscription_status) localStorage.setItem('qb_sub_status', profile.subscription_status);
+          // Restore QBP from server if local is empty
           if (profile.qbp && Object.keys(profile.qbp).length > 0) {
             const localQBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
             if (Object.keys(localQBP).length === 0) {
@@ -434,9 +102,10 @@ button {
           }
         }
       }
-    } catch(e) {}
+    } catch(e) { /* silent fail — local state is fallback */ }
   }
   
+  // Expose access check function for tools
   window.QB_HAS_ACCESS = function(feature) {
     const tier = localStorage.getItem('qb_user_tier') || 'free';
     const paid = localStorage.getItem('qb_paid') === '1';
@@ -445,13 +114,14 @@ button {
     if (feature === 'panel') return isActive && (tier === 'pro' || tier === 'agency');
     if (feature === 'agency') return isActive && tier === 'agency';
     if (feature === 'free') return true;
-    return isActive;
+    return isActive; // all paid features
   };
   
   window.QB_TIER = localStorage.getItem('qb_user_tier') || 'free';
   window.QB_SUPA_URL = SUPA_URL;
   window.QB_SUPA_KEY = SUPA_KEY;
   
+  // Save QBP to Supabase when it changes
   const originalSetItem = localStorage.setItem.bind(localStorage);
   localStorage.setItem = function(key, value) {
     originalSetItem(key, value);
@@ -460,7 +130,12 @@ button {
         const qbp = JSON.parse(value);
         fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + session.supabaseId, {
           method: 'PATCH',
-          headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + session.token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          headers: {
+            'apikey': SUPA_KEY,
+            'Authorization': 'Bearer ' + session.token,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
           body: JSON.stringify({ qbp, updated_at: new Date().toISOString() })
         }).catch(() => {});
       } catch(e) {}
@@ -468,411 +143,750 @@ button {
   };
 })();
 // ── END QB OS Access Check ────────────────────────────────────────────────────
-</script>
 
+</script>
 <div id="app"></div>
 <div id="notifs"></div>
 
 <script>
-// ── DATA & CONSTANTS ──────────────────────────────────────────────────────────
+// ── ALL 15 TOOLS ──────────────────────────────────────────────────────────────
+const TOOLS = [
+  // Phase 01 — Discovery
+  {id:'soul-map',    ph:1, pl:'Discovery',       name:'Brand Soul Map',             desc:'Uncover your brand identity through 6 modules and 15 exercises. Outputs your Soul Map — the foundational identity document.',         color:'#7c3aed',icon:'◬', file:'brand-soul-map.html'},
+  {id:'sensescape',  ph:1, pl:'Discovery',       name:'Sensescape',                 desc:'Map the sensory universe of your brand — 47 spectrums across 7 chapters. Outputs the Designer Brief and Sensescape Codex.',            color:'#7c3aed',icon:'◌', file:'sensescape.html'},
+  {id:'visual-dna',  ph:1, pl:'Discovery',       name:'Visual DNA',                 desc:'Build your visual reference library through 3 rounds of instinctive image selection. Outputs the Visual DNA Brief and blocklist.',       color:'#7c3aed',icon:'◫', file:'visual-dna.html'},
+  {id:'war-table',   ph:1, pl:'Discovery',       name:'The War Table',              desc:'Strategic prioritization tool. Score initiatives across 6 dimensions. Outputs a 60-day field plan and Strategic Command Document.',      color:'#7c3aed',icon:'◧', file:'war-table.html'},
+  // Phase 02 — Brand Creation
+  {id:'logo-dir',    ph:2, pl:'Brand Creation',  name:'Logo Direction Agent',       desc:'Complete logo brief and Midjourney/Ideogram prompts — derived from your QBP identity profile.',                                        color:'#a78bfa',icon:'◈', file:'logo-direction-agent.html'},
+  {id:'logo-eval',   ph:2, pl:'Brand Creation',  name:'Logo Evaluation Agent',      desc:'Upload logo concepts. Each scored against your QBP. Pass, refine, or reject verdict with full reasoning.',                             color:'#a78bfa',icon:'◎', file:'logo-evaluation-agent.html'},
+  {id:'voice',       ph:2, pl:'Brand Creation',  name:'Voice Guide Agent',          desc:'Complete verbal identity — voice DNA, writing rules, tone modes per platform, templates, and live copy generator.',                     color:'#a78bfa',icon:'◉', file:'voice-guide-agent.html'},
+  // Phase 03 — Content
+  {id:'instagram',   ph:3, pl:'Content',         name:'Instagram Seed Agent',       desc:'First 12 posts — captions, visual briefs, Midjourney prompts, hooks, hashtags. 4-arc strategic sequence.',                             color:'#f472b6',icon:'⬡', file:'instagram-seed-agent.html'},
+  {id:'linkedin',    ph:3, pl:'Content',         name:'LinkedIn Strategy Agent',    desc:'Personal + company page rewrites. 12 founder posts and 8 brand posts scripted across 4 themed weeks.',                                  color:'#f472b6',icon:'⬢', file:'linkedin-strategy-agent.html'},
+  {id:'youtube',     ph:3, pl:'Content',         name:'YouTube Strategy Agent',     desc:'Channel strategy, 6 full video scripts, short-form repurpose briefs for every video.',                                                  color:'#f472b6',icon:'▷', file:'youtube-strategy-agent.html'},
+  {id:'newsletter',  ph:3, pl:'Content',         name:'Newsletter Architecture',    desc:'Newsletter as a publishing platform — name, structure, cadence, first 4 issues fully drafted.',                                         color:'#f472b6',icon:'✉', file:'newsletter-architecture-agent.html'},
+  {id:'bridge',      ph:3, pl:'Content',         name:'Content Bridge',             desc:'Translates QB scripts into platform-ready production briefs for HeyGen, Creatify, Canva, and more. You direct. Platforms produce.',     color:'#f472b6',icon:'⇢', file:'content-bridge.html'},
+  // Phase 04 — Execution
+  {id:'repurpose',   ph:4, pl:'Execution',       name:'Content Repurposing Engine', desc:'One piece of long-form content → up to 25 pieces across 10 platforms. All rebuilt natively. All on brand.',                            color:'#2dd4bf',icon:'⟳', file:'content-repurposing-engine.html'},
+  // Phase 05 — Intelligence
+  {id:'performance', ph:5, pl:'Intelligence',    name:'Brand Performance Dashboard',desc:'Performance data read as brand signals. Health scores, signal cards, audience analysis, strategic directions.',                         color:'#60a5fa',icon:'◐', file:'brand-performance-dashboard.html'},
+  {id:'quarterly',   ph:5, pl:'Intelligence',    name:'Quarterly Brand Review',     desc:'Updates the QBP from what was learned. Grades the quarter. Sets full strategic direction for the next 90 days.',                        color:'#60a5fa',icon:'↻', file:'quarterly-brand-review-agent.html'},
+  // Phase 02.5 — Validation Gate
+  {id:'panel',       ph:6, pl:'Validation',      name:'Predictive Panel',           desc:'Test before you launch. Runs your concept through synthetic persona panels — scenario distribution, confidence zones, go/no-go verdict.',  color:'#f59e0b',icon:'◈', file:'predictive-panel.html'},
+  // Acquisition
+  {id:'signal-scan', ph:0, pl:'Acquisition',     name:'Signal Scan',                desc:'Free brand diagnostic. 8 questions, instant score, personalized gap analysis. Your public-facing lead capture tool.',                    color:'#4ade80',icon:'◎', file:'signal-scan.html'},
+];
 
 const PHASES = [
-  { n: 1, id: '01', label: 'Discovery',      color: 'var(--blue)',  rgb: '96, 165, 250' },
-  { n: 2, id: '02', label: 'Brand Creation', color: 'var(--green)', rgb: '74, 222, 128' },
-  { n: 3, id: '03', label: 'Content',        color: 'var(--pink)',  rgb: '244, 114, 182' },
-  { n: 4, id: '04', label: 'Execution',      color: 'var(--teal)',  rgb: '45, 212, 191' },
-  { n: 5, id: '05', label: 'Intelligence',   color: 'var(--amber)', rgb: '245, 158, 11' },
+  {n:1, label:'Discovery',      color:'#7c3aed', note:'4 tools'},
+  {n:2, label:'Brand Creation', color:'#a78bfa', note:'3 tools'},
+  {n:3, label:'Content',        color:'#f472b6', note:'5 tools'},
+  {n:4, label:'Execution',      color:'#2dd4bf', note:'1 tool'},
+  {n:5, label:'Intelligence',   color:'#60a5fa', note:'2 tools'},
+  {n:6, label:'Validation',     color:'#f59e0b', note:'Predictive Panel'},
 ];
 
-const TOOLS = [
-  // Phase 01: Discovery (Blue)
-  { id: 'soul-map',    ph: 1, name: 'Brand Soul Map',             desc: 'Uncover your brand identity through 6 modules and 15 exercises.', file: 'brand-soul-map.html', icon: '🧭' },
-  { id: 'sensescape',  ph: 1, name: 'Sensescape',                 desc: 'Map the sensory universe of your brand across 47 spectrums.', file: 'sensescape.html', icon: '🗺️' },
-  { id: 'visual-dna',  ph: 1, name: 'Visual DNA',                 desc: 'Build your visual reference library through instinctive selection.', file: 'visual-dna.html', icon: '🖼️' },
-  { id: 'war-table',   ph: 1, name: 'The War Table',              desc: 'Strategic prioritization tool. Score initiatives across 6 dimensions.', file: 'war-table.html', icon: '⚔️' },
-  { id: 'brand-doc',   ph: 1, name: 'Brand Document',             desc: 'Compile all Phase 01 outputs into your master foundational document.', file: 'brand-document.html', icon: '📄' },
-  
-  // Phase 02: Brand Creation (Green)
-  { id: 'logo-dir',    ph: 2, name: 'Logo Direction Agent',       desc: 'Complete logo brief and prompt generation derived from your QBP.', file: 'logo-direction-agent.html', icon: '🎯' },
-  { id: 'logo-eval',   ph: 2, name: 'Logo Evaluation Agent',      desc: 'Upload concepts for AI scoring against your established identity.', file: 'logo-evaluation-agent.html', icon: '⚖️' },
-  { id: 'voice',       ph: 2, name: 'Voice Guide Agent',          desc: 'Complete verbal identity: tone modes, rules, and live copy generator.', file: 'voice-guide-agent.html', icon: '🎙️' },
-  
-  // Phase 03: Content (Pink)
-  { id: 'instagram',   ph: 3, name: 'Instagram Seed Agent',       desc: 'First 12 posts: captions, briefs, hooks, and strategic sequence.', file: 'instagram-seed-agent.html', icon: '📱' },
-  { id: 'linkedin',    ph: 3, name: 'LinkedIn Strategy Agent',    desc: 'Profile rewrites and 20 targeted posts scripted across 4 weeks.', file: 'linkedin-strategy-agent.html', icon: '👔' },
-  { id: 'youtube',     ph: 3, name: 'YouTube Strategy Agent',     desc: 'Channel strategy, 6 full scripts, and short-form repurpose briefs.', file: 'youtube-strategy-agent.html', icon: '🎬' },
-  { id: 'newsletter',  ph: 3, name: 'Newsletter Architecture',    desc: 'Structure your publishing platform: first 4 issues fully drafted.', file: 'newsletter-architecture-agent.html', icon: '📬' },
-  { id: 'bridge',      ph: 3, name: 'Content Bridge',             desc: 'Translate scripts into production briefs for HeyGen, Canva, etc.', file: 'content-bridge.html', icon: '🌉' },
-  
-  // Phase 04: Execution (Teal)
-  { id: 'repurpose',   ph: 4, name: 'Content Repurposing Engine', desc: '1 long-form piece -> 25 native pieces across 10 platforms.', file: 'content-repurposing-engine.html', icon: '🔄' },
-  { id: 'scheduler',   ph: 4, name: 'Content Scheduler',          desc: 'Organize, tag, and map your generated content to a timeline.', file: 'content-scheduler.html', icon: '📅' },
-  
-  // Phase 05: Intelligence (Amber)
-  { id: 'performance', ph: 5, name: 'Brand Performance Dashboard',desc: 'Translate data into brand signals, health scores, and directions.', file: 'brand-performance-dashboard.html', icon: '📈' },
-  { id: 'quarterly',   ph: 5, name: 'Quarterly Brand Review',     desc: 'Update QBP, grade the quarter, and set the 90-day trajectory.', file: 'quarterly-brand-review-agent.html', icon: '🗓️' },
-  { id: 'panel',       ph: 6, name: 'Predictive Panel',           desc: 'Test before launch via synthetic persona panels and scenarios.', file: 'predictive-panel.html', icon: '🔮' },
+// Entry point journeys — 4 doors
+const DOORS = [
+  {
+    id:'blank',
+    color:'#4ade80',
+    number:'01',
+    headline:'I have an idea.',
+    subline:'No brand yet. I need to build from zero.',
+    body:'You start at discovery. The system walks you through identity, sensory mapping, visual language, and strategic prioritization — then hands you to the creation and content tools.',
+    badge:'Full journey',
+    startPhase:1,
+    path:['Brand Soul Map','Sensescape','Visual DNA','War Table','Logo Direction','Voice Guide','Instagram Seed','LinkedIn Strategy','Content Bridge'],
+    firstTool:'brand-soul-map.html',
+  },
+  {
+    id:'doubter',
+    color:'#60a5fa',
+    number:'02',
+    headline:'I have a brand.',
+    subline:'But something feels off. I need to audit and validate.',
+    body:'Skip discovery if you have brand assets. The Logo Evaluation Agent and Voice Guide read what you have against identity standards and tell you exactly what to keep, fix, or rebuild.',
+    badge:'Brand audit',
+    startPhase:2,
+    path:['Logo Evaluation Agent','Voice Guide Agent','Brand Performance Dashboard','War Table'],
+    firstTool:'logo-evaluation-agent.html',
+  },
+  {
+    id:'player',
+    color:'#f59e0b',
+    number:'03',
+    headline:'I am already playing.',
+    subline:'Making money. But competition is coming. Time to evolve.',
+    body:'You need strategic intelligence, not identity building. Start with the War Table to pressure-test your next move, then use the Quarterly Review to align your brand evolution with business momentum.',
+    badge:'Strategic evolution',
+    startPhase:1,
+    path:['War Table','Brand Performance Dashboard','Quarterly Brand Review','Logo Direction','Content agents'],
+    firstTool:'war-table.html',
+  },
+  {
+    id:'pivot',
+    color:'#a78bfa',
+    number:'04',
+    headline:'I need to pivot.',
+    subline:'Something fundamental has to change. I carry what I have built.',
+    body:'You have assets, audience, and experience — but the direction has to shift. The Brand Soul Map rebuilds your foundation. The Quarterly Review resets the strategic trajectory from what exists.',
+    badge:'Transformation',
+    startPhase:1,
+    path:['Brand Soul Map','Quarterly Brand Review','War Table','Logo Direction','Voice Guide'],
+    firstTool:'brand-soul-map.html',
+  },
 ];
-
-// Map phase 6 (Panel) visually to Phase 5
-TOOLS.forEach(t => { if(t.ph === 6) t.ph = 5; });
 
 const QBP_FIELDS = [
-  'brandName', 'brandEssence', 'spark', 'naturalForce', 'archetype', 
-  'manifesto', 'antiBrand', 'paradox', 'primaryPersona', 'offer', 
-  'voiceNotes', 'alwaysNever', 'colorTerritory', 'exemplarWords'
+  {k:'brandName',     l:'Brand Name',        p:'The brand this system belongs to',r:1},
+  {k:'brandEssence',  l:'Brand Essence',     p:'The irreducible truth — one sentence',r:2},
+  {k:'spark',         l:'The Spark',         p:'Who this brand is, why it exists, what it is here to do',r:3},
+  {k:'naturalForce',  l:'Natural Force',     p:'e.g. Lightning, Wildfire, The Ocean',r:1},
+  {k:'archetype',     l:'Primary Archetype', p:'e.g. The Alchemist, The Sage, The Rebel',r:1},
+  {k:'manifesto',     l:'Manifesto Line',    p:'The one belief that drives everything',r:1},
+  {k:'antiBrand',     l:'Anti-Brand',        p:'What this brand refuses to be',r:1},
+  {k:'paradox',       l:'Central Paradox',   p:'e.g. Wild yet Restrained, Ancient yet Newborn',r:1},
+  {k:'primaryPersona',l:'Primary Persona',   p:'Who this brand serves — specific about their state and desire',r:3},
+  {k:'offer',         l:'Core Offer',        p:'What this brand sells — the transformation it creates',r:2},
+  {k:'voiceNotes',    l:'Voice Notes',       p:'How this brand writes — rhythm, register, what it never sounds like',r:2},
+  {k:'alwaysNever',   l:'Always / Never',    p:'e.g. Always: direct. Never: jargon, passive voice.',r:2},
+  {k:'colorTerritory',l:'Color Territory',   p:'Visual color direction from Sensescape',r:1},
+  {k:'exemplarWords', l:'Visual DNA Words',  p:'Words describing your 10 reference images from Visual DNA',r:2},
 ];
-const CORE_FIELDS = ['brandName', 'brandEssence', 'naturalForce', 'archetype', 'primaryPersona'];
 
-// ── STATE & INIT ──────────────────────────────────────────────────────────────
+// ── STATE ─────────────────────────────────────────────────────────────────────
 const S = {
-  qbp: {},
-  theme: 'dark',
-  completedTools: [],
-  collapsedPhases: {}
+  view:'entry',   // entry | hub | qbp | settings
+  chosenDoor:null,
+  qbp:{},
+  apiKey:'',
+  keyVisible:false,
+  clientMode:false,
+  firstVisit:true,
+  whiteLabel:null,
+  klaviyoPublicKey:'',
+  klaviyoListId:'',
 };
 
-function load() {
-  try { const q = localStorage.getItem('qb_qbp'); if(q) S.qbp = JSON.parse(q); } catch(e) {}
-  try { const ct = localStorage.getItem('qb_completed_tools'); if(ct) S.completedTools = JSON.parse(ct); } catch(e) {}
-  try { const th = localStorage.getItem('qb-theme'); if(th) S.theme = th; } catch(e) {}
-
-  // Parse Contracts
-  const params = new URLSearchParams(window.location.search);
-  if(params.get('apikey')) localStorage.setItem('qb_apikey', params.get('apikey'));
-  if(params.get('provider')) localStorage.setItem('qb_provider', params.get('provider'));
-  if(params.get('qbp')) {
-    try { 
-      S.qbp = JSON.parse(atob(params.get('qbp'))); 
-      localStorage.setItem('qb_qbp', JSON.stringify(S.qbp)); 
-    } catch(e) {}
-  }
+function load(){
+  try{const q=localStorage.getItem('qb_qbp');if(q)S.qbp=JSON.parse(q);}catch(e){}
+  try{const k=localStorage.getItem('qb_api_key');if(k)S.apiKey=k;}catch(e){}
+  try{const c=localStorage.getItem('qb_client');if(c)S.clientMode=JSON.parse(c);}catch(e){}
+  try{const v=localStorage.getItem('qb_visited');if(v){S.firstVisit=false;S.view='hub';}}catch(e){}
+  try{const kpk=localStorage.getItem('qb_klaviyo_pk');if(kpk)S.klaviyoPublicKey=kpk;}catch(e){}
+  try{const kli=localStorage.getItem('qb_klaviyo_list');if(kli)S.klaviyoListId=kli;}catch(e){}
+  // White-label URL parameters
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('brand'))S.whiteLabel={
+    name:decodeURIComponent(params.get('brand')),
+    color:params.get('color')?decodeURIComponent(params.get('color')):'#4ade80',
+    logo:params.get('logo')?decodeURIComponent(params.get('logo')):null,
+  };
+  if(params.get('client')==='1'){S.clientMode=true;}
+  if(params.get('apikey')){S.apiKey=decodeURIComponent(params.get('apikey'));localStorage.setItem('qb_api_key',S.apiKey);}
+  if(params.get('qbp')){try{S.qbp=JSON.parse(atob(params.get('qbp')));localStorage.setItem('qb_qbp',JSON.stringify(S.qbp));}catch(e){}}
+  if(S.whiteLabel){document.documentElement.style.setProperty('--green',S.whiteLabel.color);document.documentElement.style.setProperty('--green2',S.whiteLabel.color+'1e');document.documentElement.style.setProperty('--green3',S.whiteLabel.color+'0d');}
 }
-
-function toggleTheme() {
-  S.theme = S.theme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', S.theme);
-  localStorage.setItem('qb-theme', S.theme);
-  render();
+function persist(){
+  try{localStorage.setItem('qb_qbp',JSON.stringify(S.qbp));}catch(e){}
+  try{localStorage.setItem('qb_api_key',S.apiKey);}catch(e){}
+  try{localStorage.setItem('qb_client',JSON.stringify(S.clientMode));}catch(e){}
+  try{if(S.klaviyoPublicKey)localStorage.setItem('qb_klaviyo_pk',S.klaviyoPublicKey);}catch(e){}
+  try{if(S.klaviyoListId)localStorage.setItem('qb_klaviyo_list',S.klaviyoListId);}catch(e){}
 }
-
-function getHealth() {
-  const coreDone = CORE_FIELDS.filter(k => { const v = S.qbp[k]; return v && (typeof v === 'string' ? v.trim() : true); }).length;
-  const allDone = QBP_FIELDS.filter(k => { const v = S.qbp[k]; return v && (typeof v === 'string' ? v.trim() : true); }).length;
-  return {
-    corePct: Math.round((coreDone / CORE_FIELDS.length) * 100) || 0,
-    allPct: Math.round((allDone / QBP_FIELDS.length) * 100) || 0,
-    isCoreComplete: coreDone === CORE_FIELDS.length
+function markVisited(){
+  try{localStorage.setItem('qb_visited','1');}catch(e){}
+}
+function pct(){
+  const req=['brandName','brandEssence','naturalForce','archetype','primaryPersona'];
+  return{
+    core:req.filter(k=>S.qbp[k]?.trim()).length, coreTotal:req.length,
+    all:QBP_FIELDS.filter(f=>S.qbp[f.k]?.trim()).length, allTotal:QBP_FIELDS.length,
   };
 }
 
-// Compute Tool States: completed | progress | locked
-function computeToolStates() {
-  const health = getHealth();
-  let nextToStartFound = false;
-  
-  // Phase Unlocks Logic
-  const isPh1Unlocked = true;
-  const isPh2Unlocked = health.isCoreComplete;
-  const isPh3Unlocked = health.isCoreComplete; // Simplify: Core unlocks 2 & 3
-  const isPh4Unlocked = health.isCoreComplete && S.completedTools.includes('instagram'); // Just an example heuristic
-  const isPh5Unlocked = health.isCoreComplete;
-
-  TOOLS.forEach((tool, index) => {
-    let isCompleted = S.completedTools.includes(tool.id);
-    
-    // Fallback checks for foundations if not strictly marked
-    if (tool.id === 'soul-map' && S.qbp.brandEssence) isCompleted = true;
-    if (tool.id === 'sensescape' && S.qbp.colorTerritory) isCompleted = true;
-    if (tool.id === 'visual-dna' && S.qbp.exemplarWords) isCompleted = true;
-
-    let isUnlocked = false;
-    if (tool.ph === 1) isUnlocked = isPh1Unlocked;
-    if (tool.ph === 2) isUnlocked = isPh2Unlocked;
-    if (tool.ph === 3) isUnlocked = isPh3Unlocked;
-    if (tool.ph === 4) isUnlocked = isPh4Unlocked;
-    if (tool.ph === 5) isUnlocked = isPh5Unlocked;
-
-    if (isCompleted) {
-      tool.state = 'completed';
-      tool.isNext = false;
-    } else if (isUnlocked) {
-      tool.state = 'progress';
-      if (!nextToStartFound) {
-        tool.isNext = true;
-        nextToStartFound = true;
-      } else {
-        tool.isNext = false;
-      }
-    } else {
-      tool.state = 'locked';
-      tool.isNext = false;
-    }
-  });
-}
-
-function togglePhase(ph) {
-  S.collapsedPhases[ph] = !S.collapsedPhases[ph];
-  render();
+// ── NOTIFY ────────────────────────────────────────────────────────────────────
+function notify(msg,type='ok'){
+  const a=document.getElementById('notifs');
+  const n=document.createElement('div');
+  n.className='notif';
+  n.style.color=type==='ok'?'var(--green)':type==='err'?'var(--red)':'var(--amber)';
+  n.style.borderColor=type==='ok'?'rgba(74,222,128,0.25)':type==='err'?'rgba(239,68,68,0.25)':'rgba(245,158,11,0.25)';
+  n.textContent=msg;a.appendChild(n);
+  setTimeout(()=>n.remove(),2500);
 }
 
 // ── DOM HELPERS ───────────────────────────────────────────────────────────────
-function notify(msg, type='ok') {
-  const a = document.getElementById('notifs');
-  const n = document.createElement('div');
-  n.className = 'notif';
-  n.style.color = type === 'err' ? 'var(--red)' : 'var(--green)';
-  n.style.borderColor = type === 'err' ? 'rgba(239,68,68,0.25)' : 'rgba(74,222,128,0.25)';
-  n.textContent = msg;
-  a.appendChild(n);
-  setTimeout(() => n.remove(), 3000);
-}
-
-function el(tag, props={}, children=[]) {
-  const e = document.createElement(tag);
-  Object.entries(props).forEach(([k, v]) => {
-    if (k === 'style' && typeof v === 'object') Object.assign(e.style, v);
-    else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2).toLowerCase(), v);
-    else if (k === 'class') e.className = v;
-    else if (k === 'html') e.innerHTML = v; // Use cautiously
-    else e.setAttribute(k, v);
+function el(tag,props={},children=[]){
+  const e=document.createElement(tag);
+  Object.entries(props).forEach(([k,v])=>{
+    if(k==='style'&&typeof v==='object')Object.assign(e.style,v);
+    else if(k.startsWith('on'))e.addEventListener(k.slice(2).toLowerCase(),v);
+    else if(k==='html')e.innerHTML=v;
+    else if(k==='class')e.className=v;
+    else e.setAttribute(k,v);
   });
-  [children].flat(Infinity).forEach(c => {
-    if (c == null) return;
-    if (c instanceof Node) e.appendChild(c);
-    else if (typeof c === 'string' || typeof c === 'number') e.appendChild(document.createTextNode(String(c)));
+  [children].flat(Infinity).forEach(c=>{
+    if(c==null)return;
+    if(c instanceof Node)e.appendChild(c);
+    else if(typeof c==='string'||typeof c==='number')e.appendChild(document.createTextNode(String(c)));
   });
   return e;
 }
+const d=(s,c=[])=>el('div',{style:typeof s==='string'?{}:s},c);
+const mono=(t,color='var(--text3)',extra={})=>el('div',{style:{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.18em',color,textTransform:'uppercase',...extra}},[t]);
 
-// ── UI BUILDERS ───────────────────────────────────────────────────────────────
-
-function buildHeader() {
-  const header = el('header', { class: 'system-header' });
-  
-  const left = el('div', { class: 'header-brand' }, [
-    'QB_BRANDOS',
-    el('span', { class: 'header-badge' }, 'COMMAND CENTER')
-  ]);
-  
-  const right = el('div', { style: { display: 'flex', gap: '16px', alignItems: 'center' } });
-  
-  const navLinks = el('div', { class: 'nav-links', style: { display: 'flex', gap: '24px', marginRight: '16px' } });
-  ['Discovery', 'Creation', 'Content', 'Execution', 'Intelligence'].forEach((name, i) => {
-    const a = el('a', { 
-      style: { color: 'var(--text2)', fontSize: '12px', textDecoration: 'none', fontWeight: '500', transition: 'color 0.2s' },
-      href: `#phase-${i+1}`
-    }, name);
-    a.onmouseover = () => a.style.color = 'var(--text)';
-    a.onmouseout = () => a.style.color = 'var(--text2)';
-    navLinks.appendChild(a);
-  });
-  
-  right.appendChild(navLinks);
-  
-  const themeBtn = el('button', { class: 'theme-toggle', onClick: toggleTheme, title: 'Toggle Theme' }, [
-    S.theme === 'dark' ? '☀️' : '🌙'
-  ]);
-  
-  right.appendChild(themeBtn);
-  
-  header.appendChild(left);
-  header.appendChild(right);
-  return header;
-}
-
-function buildHealthMeter(health) {
-  const section = el('div', { class: 'meter-section animate-cascade', style: { '--idx': 0 } });
-  
-  // SVG Ring (200px)
-  const radius = 90;
-  const circum = 2 * Math.PI * radius;
-  const offset = circum - (health.allPct / 100) * circum;
-  
-  const svgNS = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("viewBox", "0 0 200 200");
-  
-  const bgCircle = document.createElementNS(svgNS, "circle");
-  bgCircle.setAttribute("cx", "100"); bgCircle.setAttribute("cy", "100"); bgCircle.setAttribute("r", radius);
-  bgCircle.setAttribute("class", "meter-bg");
-  
-  const fillCircle = document.createElementNS(svgNS, "circle");
-  fillCircle.setAttribute("cx", "100"); fillCircle.setAttribute("cy", "100"); fillCircle.setAttribute("r", radius);
-  fillCircle.setAttribute("class", "meter-fill");
-  fillCircle.setAttribute("stroke-dasharray", circum);
-  fillCircle.setAttribute("stroke-dashoffset", circum); // Start empty for animation
-  
-  // Trigger animation after mount
-  setTimeout(() => fillCircle.setAttribute("stroke-dashoffset", offset), 100);
-  
-  svg.appendChild(bgCircle);
-  svg.appendChild(fillCircle);
-  
-  const chartWrapper = el('div', { class: 'meter-chart' });
-  chartWrapper.appendChild(svg);
-  
-  const textOverlay = el('div', { class: 'meter-text' }, [
-    el('span', { class: 'meter-percent' }, `${health.allPct}%`),
-    el('span', { class: 'meter-label' }, 'HEALTH')
-  ]);
-  chartWrapper.appendChild(textOverlay);
-  section.appendChild(chartWrapper);
-  
-  // Content Block
-  const content = el('div', { class: 'meter-content' });
-  
-  if (health.allPct === 0) {
-    content.appendChild(el('div', { class: 'meter-title' }, 'System Offline. Awaiting Data.'));
-    content.appendChild(el('div', { class: 'meter-desc' }, 'Your Quantum Brand Profile (QBP) is empty. The OS requires foundational identity data to power its agents. Begin with the Brand Soul Map to establish your core truth.'));
-  } else if (!health.isCoreComplete) {
-    content.appendChild(el('div', { class: 'meter-title' }, 'Core Incomplete. Initialization paused.'));
-    content.appendChild(el('div', { class: 'meter-desc' }, 'You have started building your identity, but core requirements are missing. Complete Phase 01 to unlock downstream creation and content agents.'));
-  } else {
-    content.appendChild(el('div', { class: 'meter-title' }, `BrandOS Active: ${S.qbp.brandName || 'Unnamed Brand'}`));
-    content.appendChild(el('div', { class: 'meter-desc' }, 'Core foundation established. All Phase 02 and 03 agents are unlocked and reading from your live QBP. Proceed with generation or continue expanding your profile depth.'));
-  }
-  
-  // Find "Next" tool
-  const nextTool = TOOLS.find(t => t.isNext) || TOOLS.find(t => t.state === 'progress') || TOOLS[0];
-  
-  const btn = el('button', { 
-    class: 'primary-btn', 
-    onClick: () => launchTool(nextTool) 
-  }, [
-    health.allPct === 0 ? 'Initialize Soul Map →' : `Resume: ${nextTool.name} →`
-  ]);
-  content.appendChild(btn);
-  
-  section.appendChild(content);
-  return section;
-}
-
-function buildPhaseSection(phaseDef, phaseTools, idx) {
-  const isCollapsed = S.collapsedPhases[phaseDef.n];
-  const section = el('div', { 
-    id: `phase-${phaseDef.n}`,
-    class: `phase-section animate-cascade ${isCollapsed ? 'collapsed' : ''}`, 
-    style: { 
-      '--idx': idx + 1,
-      '--phase-color': phaseDef.color,
-      '--phase-rgb': phaseDef.rgb,
-      '--phase-bg': `rgba(${phaseDef.rgb}, 0.1)`,
-      '--phase-border': `rgba(${phaseDef.rgb}, 0.25)`
+// ── SVG MAP ───────────────────────────────────────────────────────────────────
+function buildMap(){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','100%');svg.setAttribute('viewBox','0 0 680 96');svg.style.display='block';
+  const pw=116,ph=44,py=16,gap=14;
+  PHASES.forEach((p,i)=>{
+    const x=10+i*(pw+gap);
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    Object.entries({x,y:py,width:pw,height:ph,rx:6,fill:p.color+'16',stroke:p.color+'45','stroke-width':'.7'}).forEach(([k,v])=>r.setAttribute(k,v));
+    g.appendChild(r);
+    const nt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    Object.entries({x:x+8,y:py+13,'font-family':'JetBrains Mono,monospace','font-size':8,fill:p.color,opacity:.65}).forEach(([k,v])=>nt.setAttribute(k,v));
+    nt.textContent=`0${p.n}`;g.appendChild(nt);
+    const lt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    Object.entries({x:x+pw/2,y:py+30,'text-anchor':'middle','font-family':'Inter,sans-serif','font-size':11,'font-weight':500,fill:'#e8e8e8'}).forEach(([k,v])=>lt.setAttribute(k,v));
+    lt.textContent=p.label;g.appendChild(lt);
+    svg.appendChild(g);
+    if(i<PHASES.length-1){
+      const a=document.createElementNS('http://www.w3.org/2000/svg','line');
+      Object.entries({x1:x+pw+2,y1:py+ph/2,x2:x+pw+gap-2,y2:py+ph/2,stroke:'#333','stroke-width':1}).forEach(([k,v])=>a.setAttribute(k,v));
+      svg.appendChild(a);
     }
   });
+  const sl=document.createElementNS('http://www.w3.org/2000/svg','line');
+  Object.entries({x1:10,y1:78,x2:670,y2:78,stroke:'rgba(74,222,128,0.1)','stroke-width':1,'stroke-dasharray':'4 4'}).forEach(([k,v])=>sl.setAttribute(k,v));
+  svg.appendChild(sl);
+  const st=document.createElementNS('http://www.w3.org/2000/svg','text');
+  Object.entries({x:340,y:91,'text-anchor':'middle','font-family':'JetBrains Mono,monospace','font-size':7.5,fill:'rgba(74,222,128,0.28)','letter-spacing':3}).forEach(([k,v])=>st.setAttribute(k,v));
+  st.textContent='QUANTUM BRAND PROFILE — THE LIVING SPINE';svg.appendChild(st);
+  return svg;
+}
 
-  const header = el('div', { class: 'phase-header', onClick: () => togglePhase(phaseDef.n) }, [
-    el('div', { class: 'phase-header-left' }, [
-      el('span', { class: 'phase-num' }, phaseDef.id),
-      el('h2', { class: 'phase-title' }, phaseDef.label)
-    ]),
-    el('div', { class: 'phase-toggle' }, '▼')
-  ]);
-  section.appendChild(header);
+// ── ENTRY SCREEN ──────────────────────────────────────────────────────────────
+function buildEntry(){
+  const wrap=el('div',{class:'fade-in',style:{maxWidth:1000,margin:'0 auto',padding:'60px 24px'}});
 
-  const grid = el('div', { class: 'phase-grid' });
-  
-  phaseTools.forEach((tool, tIdx) => {
-    // Generate a unique stagger index for this tool card
-    const cardIdx = (idx * 5) + tIdx + 2; 
+  // Logo line
+  wrap.appendChild(d({textAlign:'center',marginBottom:48},[
+    mono('Quantum Branding','var(--green)',{display:'inline-block',marginBottom:16,fontSize:11,letterSpacing:'.4em'}),
+    el('h1',{style:{fontSize:42,fontWeight:900,lineHeight:1.1,letterSpacing:'-.03em',marginBottom:16},
+      html:'The Brand <span style="color:var(--text3);font-weight:300">Operating System</span>'}),
+    el('p',{style:{color:'var(--text2)',fontSize:16,lineHeight:1.7,maxWidth:480,margin:'0 auto'}},
+      ['From idea to orbit. Tell us where you are and we route you to exactly what you need.']),
+  ]));
 
-    const card = el('div', { 
-      class: `tool-card state-${tool.state} animate-cascade ${tool.isNext ? 'is-next' : ''}`,
-      style: { '--idx': cardIdx }
-    });
-    
-    if (tool.isNext) {
-      card.appendChild(el('div', { class: 'start-badge' }, 'Recommended Next Step'));
-    }
+  // 4 doors grid
+  const grid=d({display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:40},[]);
 
-    const cHeader = el('div', { class: 'card-header' }, [
-      el('div', { class: 'card-icon' }, tool.icon),
-      el('div', { class: 'card-title' }, tool.name)
-    ]);
-    card.appendChild(cHeader);
-    
-    card.appendChild(el('div', { class: 'card-desc' }, tool.desc));
-    
-    const cFooter = el('div', { class: 'card-footer' });
-    
-    // Status text
-    let statusText = '';
-    let statusIcon = '';
-    if (tool.state === 'completed') { statusText = 'Completed'; statusIcon = '✓'; }
-    else if (tool.state === 'progress') { statusText = 'Ready'; statusIcon = '●'; }
-    else { statusText = 'Locked'; statusIcon = '🔒'; }
-    
-    cFooter.appendChild(el('div', { class: `card-status status-${tool.state}` }, [
-      el('span', {}, statusIcon),
-      el('span', {}, statusText)
+  DOORS.forEach((door,i)=>{
+    const card=el('div',{class:`door-card door-${i}`});
+
+    // Number + badge row
+    card.appendChild(d({display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:4},[
+      el('div',{style:{fontFamily:'var(--mono)',fontSize:11,color:door.color,letterSpacing:'.2em',opacity:.7}},[door.number]),
+      el('div',{style:{fontFamily:'var(--mono)',fontSize:9,padding:'2px 9px',borderRadius:3,background:door.color+'18',color:door.color,border:`1px solid ${door.color}30`,letterSpacing:'.1em',textTransform:'uppercase'}},[door.badge]),
     ]));
-    
-    // Action Button
-    if (tool.state !== 'locked') {
-      const btn = el('button', { class: 'card-btn', onClick: (e) => { e.stopPropagation(); launchTool(tool); } }, 
-        tool.state === 'completed' ? 'Review →' : 'Launch →'
-      );
-      cFooter.appendChild(btn);
-      
-      // Make whole card clickable if not locked
-      card.style.cursor = 'pointer';
-      card.onclick = () => launchTool(tool);
-    } else {
-      // Locked context
-      cFooter.appendChild(el('div', { style: { fontSize: '10px', color: 'var(--text3)', fontFamily: 'var(--mono)'} }, `Req: Core QBP`));
-    }
-    
-    card.appendChild(cFooter);
+
+    // Headline
+    card.appendChild(el('h2',{style:{fontSize:22,fontWeight:700,color:'var(--text)',lineHeight:1.2,marginBottom:2}},[door.headline]));
+    card.appendChild(el('div',{style:{fontSize:14,color:door.color,fontWeight:400,marginBottom:12}},[door.subline]));
+    card.appendChild(el('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.7,marginBottom:16,flex:1}},[door.body]));
+
+    // Path preview
+    const pathWrap=d({display:'flex',flexWrap:'wrap',gap:5,marginBottom:18},[]);
+    door.path.slice(0,4).forEach(t=>{
+      pathWrap.appendChild(el('span',{style:{fontSize:10,padding:'2px 8px',borderRadius:3,background:'var(--bg4)',color:'var(--text3)',border:'1px solid var(--border)',fontFamily:'var(--mono)',letterSpacing:'.04em'}},[t]));
+    });
+    if(door.path.length>4) pathWrap.appendChild(el('span',{style:{fontSize:10,color:'var(--text3)',padding:'2px 4px',fontFamily:'var(--mono)'}},[`+${door.path.length-4} more`]));
+    card.appendChild(pathWrap);
+
+    // CTA
+    const btn=el('button',{
+      style:{width:'100%',background:door.color,color:'#000',padding:'12px',borderRadius:7,fontWeight:700,fontSize:12,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)'},
+      onClick:(e)=>{
+        e.stopPropagation();
+        S.chosenDoor=door;
+        S.firstVisit=false;
+        markVisited();
+        // If they have no QBP, show QBP setup first; else go to hub
+        const p=pct();
+        if(p.core===0&&door.id!=='player'){
+          S.view='qbp';
+        } else {
+          S.view='hub';
+        }
+        render();
+        // Open first tool in new tab
+        setTimeout(()=>{
+          if(S.apiKey){
+            window.open(`${door.firstTool}?apikey=${encodeURIComponent(S.apiKey)}`,'_blank');
+          } else {
+            window.open(door.firstTool,'_blank');
+          }
+        },300);
+      }
+    },['Enter this path →']);
+    card.appendChild(btn);
     grid.appendChild(card);
   });
-  
-  section.appendChild(grid);
-  return section;
+  wrap.appendChild(grid);
+
+  // Bottom — already have account
+  const already=d({textAlign:'center',paddingTop:24,borderTop:'1px solid var(--border)'},[
+    el('span',{style:{fontSize:12,color:'var(--text3)'}},'Returning? '),
+    el('button',{
+      style:{fontSize:12,color:'var(--green)',background:'none',padding:'0 4px',textDecoration:'underline',textUnderlineOffset:3},
+      onClick:()=>{S.view='hub';S.firstVisit=false;markVisited();render();}
+    },['Go directly to your system →']),
+  ]);
+  wrap.appendChild(already);
+  return wrap;
 }
 
-function launchTool(tool) {
-  if (tool.state === 'locked') return;
-  
-  const params = new URLSearchParams();
-  const apikey = localStorage.getItem('qb_apikey');
-  const provider = localStorage.getItem('qb_provider');
-  
-  if (apikey) params.set('apikey', apikey);
-  if (provider) params.set('provider', provider);
-  
-  const qs = params.toString();
-  window.open(qs ? `${tool.file}?${qs}` : tool.file, '_blank');
+// ── HEADER ────────────────────────────────────────────────────────────────────
+function buildHeader(){
+  const p=pct();
+  const h=el('header',{style:{borderBottom:'1px solid var(--border)',padding:'0 24px',height:52,display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:100}});
+
+  h.appendChild(d({display:'flex',alignItems:'center',gap:14},[
+    el('div',{style:{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase',cursor:'pointer'},
+      onClick:()=>{S.view=S.firstVisit?'entry':'hub';render();}},
+      [S.whiteLabel?S.whiteLabel.name:'QB_BRANIDOS']),
+    d({width:1,height:14,background:'var(--border)'}),
+    el('div',{style:{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.1em',color:'var(--text3)',textTransform:'uppercase'}},
+      [S.whiteLabel?'Brand Operating System':'Brand OS']),
+  ]));
+
+  if(!S.clientMode&&S.view!=='entry'){
+    h.appendChild(d({display:'flex',gap:4},[
+      ...['hub','qbp','settings'].map(v=>{
+        const labels={hub:'System',qbp:'QBP',settings:'Settings'};
+        const b=el('button',{class:`nav-btn${S.view===v?' active':''}`,onClick:()=>{S.view=v;render();}});
+        b.textContent=labels[v];return b;
+      }),
+    ]));
+  }
+
+  const right=d({display:'flex',alignItems:'center',gap:10},[]);
+  if(S.view==='entry'){
+    // Skip entry button for returning users
+  } else if(S.qbp.brandName){
+    const pill=el('div',{style:{fontFamily:'var(--mono)',fontSize:10,padding:'4px 10px',borderRadius:4,
+      background:p.core===p.coreTotal?'rgba(74,222,128,0.1)':'rgba(245,158,11,0.08)',
+      color:p.core===p.coreTotal?'var(--green)':'var(--amber)',
+      border:`1px solid ${p.core===p.coreTotal?'rgba(74,222,128,0.2)':'rgba(245,158,11,0.2)'}`,
+      letterSpacing:'.07em',textTransform:'uppercase'}});
+    pill.textContent=`${S.qbp.brandName} · ${Math.round(p.all/p.allTotal*100)}%`;
+    right.appendChild(pill);
+  }
+  if(S.apiKey&&S.view!=='entry'){
+    const kp=el('div',{style:{fontFamily:'var(--mono)',fontSize:9,padding:'3px 9px',borderRadius:4,background:'rgba(96,165,250,0.08)',color:'var(--blue)',border:'1px solid rgba(96,165,250,0.15)',letterSpacing:'.08em'}});
+    kp.textContent='API ✓';right.appendChild(kp);
+  }
+  h.appendChild(right);
+  return h;
 }
 
-function render() {
-  computeToolStates();
-  const health = getHealth();
-  
-  const app = document.getElementById('app');
-  app.innerHTML = '';
-  
-  const shell = el('div', { style: { display: 'flex', flexDirection: 'column', minHeight: '100vh' } });
+// ── HUB VIEW ──────────────────────────────────────────────────────────────────
+function buildHub(){
+  const wrap=el('div',{class:'fade-in',style:{padding:'36px 24px',maxWidth:1100,margin:'0 auto'}});
+  const p=pct();
+  const hasKey=!!S.apiKey;
+  const door=S.chosenDoor;
+
+  // Hero — personalized if door was chosen
+  const heroTitle=door?`${door.headline.replace('.','')}`:'Your Brand Operating System';
+  const heroBadge=door?door.badge:null;
+
+  wrap.appendChild(d({marginBottom:32},[
+    !S.clientMode?mono('// Quantum Branding BrandOS','var(--green)',{marginBottom:10}):null,
+    heroBadge?el('div',{style:{fontFamily:'var(--mono)',fontSize:9,display:'inline-block',padding:'3px 10px',borderRadius:3,background:door.color+'18',color:door.color,border:`1px solid ${door.color}30`,letterSpacing:'.1em',textTransform:'uppercase',marginBottom:10}},['Path: '+heroBadge]):null,
+    el('h1',{style:{fontSize:S.clientMode?40:28,fontWeight:900,lineHeight:1.1,marginBottom:10,letterSpacing:'-.02em'},
+      html:S.qbp.brandName&&S.clientMode?S.qbp.brandName
+        :S.qbp.brandName?`${S.qbp.brandName} <span style="color:var(--text3);font-weight:300">/ BrandOS</span>`
+        :'From idea <span style="color:var(--text3);font-weight:300">to orbit.</span>'}),
+    !S.clientMode?el('p',{style:{color:'var(--text2)',fontSize:13,lineHeight:1.7,maxWidth:540}},
+      [door?door.body:'15 tools. 5 phases. One connected system. Discovery → Creation → Content → Execution → Intelligence.']):null,
+  ]));
+
+  // Recommended path banner (if door chosen)
+  if(door&&!S.clientMode){
+    const banner=d({background:`${door.color}08`,border:`1px solid ${door.color}25`,borderRadius:8,padding:'14px 18px',marginBottom:20},[
+      mono('Recommended path for your journey','var(--text3)',{marginBottom:8}),
+      d({display:'flex',flexWrap:'wrap',gap:6},[
+        ...door.path.map((t,i)=>
+          el('div',{style:{display:'flex',alignItems:'center',gap:6}},[
+            el('span',{style:{fontSize:11,padding:'3px 10px',borderRadius:4,background:'var(--bg3)',color:door.color,border:`1px solid ${door.color}20`,fontFamily:'var(--mono)',letterSpacing:'.04em'}},[t]),
+            i<door.path.length-1?el('span',{style:{color:'var(--text3)',fontSize:10}},['→']):null,
+          ])
+        ),
+      ]),
+    ]);
+    wrap.appendChild(banner);
+  }
+
+  if(!S.clientMode){
+    // Key banner
+    if(!hasKey){
+      const kb=el('div',{style:{background:'rgba(96,165,250,0.06)',border:'1px solid rgba(96,165,250,0.2)',borderRadius:8,padding:'12px 18px',marginBottom:10,display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,cursor:'pointer'},onClick:()=>{S.view='settings';render();}});
+      kb.appendChild(d({flex:1},[
+        mono('API Key required','var(--blue)',{marginBottom:4}),
+        el('div',{style:{fontSize:12,color:'var(--text)',lineHeight:1.5}},['Add your Anthropic API key in Settings. Every agent needs it to run.']),
+      ]));
+      kb.appendChild(el('button',{style:{background:'var(--blue)',color:'#000',padding:'7px 16px',borderRadius:4,fontWeight:700,fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',flexShrink:0}},['Settings →']));
+      wrap.appendChild(kb);
+    }
+    // QBP setup banner
+    if(p.core===0){
+      const qb=el('div',{style:{background:'var(--green3)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'12px 18px',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,cursor:'pointer'},onClick:()=>{S.view='qbp';render();}});
+      qb.appendChild(d({flex:1},[
+        mono('Set up your QBP','var(--green)',{marginBottom:4}),
+        el('div',{style:{fontSize:12,color:'var(--text)',lineHeight:1.5}},['Every agent tool reads from your Quantum Brand Profile. Complete it once — every output becomes identity-rooted.']),
+      ]));
+      qb.appendChild(el('button',{style:{background:'var(--green)',color:'#000',padding:'7px 16px',borderRadius:4,fontWeight:700,fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',flexShrink:0}},['Set Up →']));
+      wrap.appendChild(qb);
+    } else {
+      // QBP snapshot
+      const snap=d({background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'10px 16px',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,flexWrap:'wrap'},[
+        d({display:'flex',gap:20,flexWrap:'wrap',flex:1},[
+          ...[{k:'naturalForce',l:'Force'},{k:'archetype',l:'Archetype'},{k:'offer',l:'Offer'}].filter(f=>S.qbp[f.k]).map(f=>d({},[
+            el('div',{style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--text3)',letterSpacing:'.15em',marginBottom:2,textTransform:'uppercase'}},[f.l]),
+            el('div',{style:{fontSize:12,color:'var(--text)',maxWidth:180,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},[S.qbp[f.k]]),
+          ])),
+        ]),
+        el('button',{style:{background:'none',border:'1px solid var(--border)',color:'var(--text3)',padding:'5px 12px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'},onClick:()=>{S.view='qbp';render();}},['Edit QBP']),
+      ]);
+      wrap.appendChild(snap);
+    }
+  }
+
+  // Phases + tools
+  PHASES.forEach(phase=>{
+    const phTools=TOOLS.filter(t=>t.ph===phase.n);
+    const sec=d({marginBottom:32},[]);
+    sec.appendChild(d({display:'flex',alignItems:'center',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'},[
+      d({width:26,height:26,borderRadius:5,background:`${phase.color}18`,border:`1px solid ${phase.color}35`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--mono)',fontSize:10,color:phase.color,flexShrink:0},[`0${phase.n}`]),
+      d({flex:1},[el('div',{style:{fontSize:13,fontWeight:500,color:'var(--text)'}},[phase.label])]),
+      el('div',{style:{fontFamily:'var(--mono)',fontSize:9,color:phase.color,background:`${phase.color}10`,border:`1px solid ${phase.color}20`,padding:'2px 8px',borderRadius:3,letterSpacing:'.1em',textTransform:'uppercase',flexShrink:0}},[phase.note]),
+    ]));
+
+    const grid=d({display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:10},[]);
+    phTools.forEach(tool=>{
+      // Highlight if in recommended path
+      const inPath=door&&door.path.some(pt=>tool.name.includes(pt)||pt.includes(tool.name.split(' ')[0]));
+      const card=el('div',{class:'tool-card',style:{borderTop:`2px solid ${inPath?tool.color:tool.color+'30'}`}});
+      card.appendChild(d({display:'flex',alignItems:'flex-start',gap:12,marginBottom:8},[
+        d({width:32,height:32,borderRadius:7,background:`${tool.color}15`,border:`1px solid ${tool.color}30`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,color:tool.color,flexShrink:0},[tool.icon]),
+        el('div',{style:{fontSize:13,fontWeight:500,color:'var(--text)',lineHeight:1.3,flex:1}},[tool.name]),
+        inPath?el('div',{style:{fontFamily:'var(--mono)',fontSize:8,padding:'1px 6px',borderRadius:2,background:tool.color+'20',color:tool.color,border:`1px solid ${tool.color}30`,letterSpacing:'.08em',flexShrink:0}},['★ PATH']):null,
+      ]));
+      card.appendChild(el('p',{style:{fontSize:11,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},[tool.desc]));
+      card.appendChild(d({display:'flex',alignItems:'center',justifyContent:'space-between'},[
+        el('div',{style:{fontFamily:'var(--mono)',fontSize:9,padding:'2px 7px',borderRadius:3,background:`${phase.color}12`,color:phase.color,border:`1px solid ${phase.color}20`,letterSpacing:'.06em',textTransform:'uppercase'}},[`Phase 0${tool.ph}`]),
+        el('button',{
+          style:{background:tool.color,color:'#000',padding:'6px 14px',borderRadius:5,fontWeight:700,fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',fontFamily:'var(--mono)'},
+          onClick:(e)=>{e.stopPropagation();launch(tool);}
+        },['Open →']),
+      ]));
+      card.addEventListener('click',()=>launch(tool));
+      grid.appendChild(card);
+    });
+    sec.appendChild(grid);
+    wrap.appendChild(sec);
+  });
+
+  // Validation Gate section (Predictive Panel)
+  const panelTool=TOOLS.find(t=>t.id==='panel');
+  if(panelTool){
+    const valSec=d({marginBottom:32},[]);
+    valSec.appendChild(d({display:'flex',alignItems:'center',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'},[
+      d({width:26,height:26,borderRadius:5,background:'rgba(245,158,11,0.12)',border:'1px solid rgba(245,158,11,0.25)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--mono)',fontSize:9,color:'var(--amber)',flexShrink:0},['2.5']),
+      d({flex:1},[el('div',{style:{fontSize:13,fontWeight:500,color:'var(--text)'}},'Validation Gate')]),
+      el('div',{style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--amber)',background:'rgba(245,158,11,0.08)',border:'1px solid rgba(245,158,11,0.18)',padding:'2px 8px',borderRadius:3,letterSpacing:'.1em',textTransform:'uppercase',flexShrink:0}},['Predictive Panel']),
+    ]));
+    const pCard=el('div',{class:'tool-card',style:{borderTop:'2px solid rgba(245,158,11,0.4)',maxWidth:520}});
+    pCard.appendChild(d({display:'flex',alignItems:'flex-start',gap:12,marginBottom:8},[
+      d({width:32,height:32,borderRadius:7,background:'rgba(245,158,11,0.12)',border:'1px solid rgba(245,158,11,0.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,color:'var(--amber)',flexShrink:0},[panelTool.icon]),
+      el('div',{style:{fontSize:13,fontWeight:500,color:'var(--text)',lineHeight:1.3,flex:1}},[panelTool.name]),
+      el('div',{style:{fontFamily:'var(--mono)',fontSize:8,padding:'1px 6px',borderRadius:2,background:'rgba(245,158,11,0.12)',color:'var(--amber)',border:'1px solid rgba(245,158,11,0.2)',letterSpacing:'.08em',flexShrink:0}},['Phase 2.5']),
+    ]));
+    pCard.appendChild(el('p',{style:{fontSize:11,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},[panelTool.desc]));
+    pCard.appendChild(d({display:'flex',alignItems:'center',justifyContent:'space-between'},[
+      el('div',{style:{fontSize:11,color:'var(--text3)'}},'Between strategy and execution'),
+      el('button',{style:{background:'var(--amber)',color:'#000',padding:'6px 14px',borderRadius:5,fontWeight:700,fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',fontFamily:'var(--mono)'},onClick:(e)=>{e.stopPropagation();launch(panelTool);}},['Open →']),
+    ]));
+    pCard.addEventListener('click',()=>launch(panelTool));
+    valSec.appendChild(pCard);
+    wrap.appendChild(valSec);
+  }
+
+  // Signal Scan section (acquisition tool)
+  if(!S.clientMode){
+    const scanTool=TOOLS.find(t=>t.id==='signal-scan');
+    if(scanTool){
+      const scanSec=d({marginBottom:32},[]);
+      scanSec.appendChild(d({display:'flex',alignItems:'center',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'},[
+        d({width:26,height:26,borderRadius:5,background:'rgba(74,222,128,0.1)',border:'1px solid rgba(74,222,128,0.2)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--mono)',fontSize:9,color:'var(--green)',flexShrink:0},['↑']),
+        d({flex:1},[el('div',{style:{fontSize:13,fontWeight:500,color:'var(--text)'}},'Acquisition')]),
+        el('div',{style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--green)',background:'rgba(74,222,128,0.06)',border:'1px solid rgba(74,222,128,0.15)',padding:'2px 8px',borderRadius:3,letterSpacing:'.1em',textTransform:'uppercase',flexShrink:0}},['Free lead capture']),
+      ]));
+      const sCard=el('div',{class:'tool-card',style:{borderTop:'2px solid rgba(74,222,128,0.35)',maxWidth:520}});
+      sCard.appendChild(d({display:'flex',alignItems:'flex-start',gap:12,marginBottom:8},[
+        d({width:32,height:32,borderRadius:7,background:'rgba(74,222,128,0.1)',border:'1px solid rgba(74,222,128,0.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,color:'var(--green)',flexShrink:0},[scanTool.icon]),
+        el('div',{style:{fontSize:13,fontWeight:500,color:'var(--text)',lineHeight:1.3,flex:1}},[scanTool.name]),
+      ]));
+      sCard.appendChild(el('p',{style:{fontSize:11,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},[scanTool.desc]));
+      sCard.appendChild(d({display:'flex',alignItems:'center',justifyContent:'space-between'},[
+        el('div',{style:{fontSize:11,color:'var(--text3)'}},'Embed on your website · free for visitors'),
+        el('button',{style:{background:'var(--green)',color:'#000',padding:'6px 14px',borderRadius:5,fontWeight:700,fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',fontFamily:'var(--mono)'},onClick:(e)=>{e.stopPropagation();launch(scanTool);}},['Preview →']),
+      ]));
+      sCard.addEventListener('click',()=>launch(scanTool));
+      scanSec.appendChild(sCard);
+      wrap.appendChild(scanSec);
+    }
+  }
+
+  if(!S.clientMode){
+    wrap.appendChild(d({borderTop:'1px solid var(--border)',paddingTop:18,marginTop:8,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12},[
+      el('div',{style:{fontSize:11,color:'var(--text3)',lineHeight:1.6,maxWidth:480}},['18 standalone HTML files. One folder. API key set in Settings passes to every tool automatically. No installation, no backend, no build step.']),
+      el('button',{style:{background:'none',border:'1px solid var(--border)',color:'var(--text3)',padding:'5px 14px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'},
+        onClick:()=>{S.view='entry';S.firstVisit=true;render();}},['Change path']),
+    ]));
+  }
+  return wrap;
+}
+
+// ── TOOL LAUNCH ───────────────────────────────────────────────────────────────
+function launch(tool){
+  const provider=localStorage.getItem('qb_provider')||'anthropic';
+  const params=new URLSearchParams();
+  if(S.apiKey) params.set('apikey',S.apiKey);
+  params.set('provider',provider);
+  // Pass Klaviyo keys to Signal Scan
+  if(tool.id==='signal-scan'){
+    if(S.klaviyoPublicKey) params.set('kpk',S.klaviyoPublicKey);
+    if(S.klaviyoListId) params.set('kli',S.klaviyoListId);
+  }
+  window.open(`${tool.file}?${params.toString()}`,'_blank');
+  notify(`Opening ${tool.name}…`);
+}
+
+// ── QBP EDITOR ────────────────────────────────────────────────────────────────
+function buildQBP(){
+  const wrap=el('div',{class:'fade-in',style:{padding:'36px 24px',maxWidth:760,margin:'0 auto'}});
+  const p=pct();const pct2=Math.round(p.all/p.allTotal*100);
+  wrap.appendChild(d({marginBottom:28},[
+    mono('// Quantum Brand Profile','var(--green)',{marginBottom:10}),
+    el('h1',{style:{fontSize:24,fontWeight:700,marginBottom:8}},['Your Brand Identity']),
+    el('p',{style:{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:520}},['The source of truth every agent reads from. Complete it once — every output reflects exactly who you are. Refine it each quarter as your brand evolves.']),
+  ]));
+  wrap.appendChild(d({background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'14px 18px',marginBottom:28},[
+    d({display:'flex',justifyContent:'space-between',marginBottom:8},[
+      mono('Profile completeness','var(--text3)',{marginBottom:0}),
+      el('div',{style:{fontFamily:'var(--mono)',fontSize:11,color:pct2===100?'var(--green)':pct2>50?'var(--amber)':'var(--text3)'}},[`${pct2}%`]),
+    ]),
+    d({height:3,background:'var(--border)',borderRadius:2,overflow:'hidden'},[
+      d({height:'100%',width:pct2+'%',background:pct2===100?'var(--green)':pct2>50?'var(--amber)':'var(--text3)',borderRadius:2,transition:'width .6s ease'}),
+    ]),
+  ]));
+  QBP_FIELDS.forEach(f=>{
+    const g=d({marginBottom:14},[el('div',{style:{fontFamily:'var(--mono)',fontSize:9,letterSpacing:'.18em',color:'var(--text3)',textTransform:'uppercase',marginBottom:5}},[f.l])]);
+    if(f.r>1){const ta=el('textarea',{placeholder:f.p,rows:f.r});ta.value=S.qbp[f.k]||'';ta.addEventListener('input',e=>{S.qbp[f.k]=e.target.value;});g.appendChild(ta);}
+    else{const inp=el('input',{type:'text',placeholder:f.p});inp.value=S.qbp[f.k]||'';inp.addEventListener('input',e=>{S.qbp[f.k]=e.target.value;});g.appendChild(inp);}
+    wrap.appendChild(g);
+  });
+  wrap.appendChild(d({display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:24,paddingTop:20,borderTop:'1px solid var(--border)',flexWrap:'wrap',gap:12},[
+    d({display:'flex',gap:8},[
+      el('button',{style:{background:'none',border:'1px solid var(--border)',color:'var(--text2)',padding:'9px 16px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'},onClick:exportQBP},['Export']),
+      el('button',{style:{background:'none',border:'1px solid var(--border)',color:'var(--text2)',padding:'9px 16px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'},onClick:importQBP},['Import']),
+    ]),
+    el('button',{style:{background:'var(--green)',color:'#000',padding:'10px 26px',borderRadius:5,fontWeight:700,fontSize:12,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)'},
+      onClick:()=>{persist();notify('QBP saved ✓');render();}},['Save QBP']),
+  ]));
+  return wrap;
+}
+function exportQBP(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify({version:'QB_BrandOS_v3',saved:new Date().toISOString(),qbp:S.qbp},null,2)],{type:'application/json'}));
+  a.download=`${(S.qbp.brandName||'brand').replace(/\s+/g,'-').toLowerCase()}-qbp.json`;a.click();
+  notify('QBP exported ✓');
+}
+function importQBP(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{const r=new FileReader();r.onload=ev=>{
+    try{const d=JSON.parse(ev.target.result);if(d.qbp){S.qbp=d.qbp;persist();notify('QBP imported ✓');render();}else notify('Invalid file','err');}
+    catch{notify('Could not read file','err');}
+  };r.readAsText(e.target.files[0]);};inp.click();
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────────────
+function buildSettings(){
+  const wrap=el('div',{class:'fade-in',style:{padding:'36px 24px',maxWidth:660,margin:'0 auto'}});
+  wrap.appendChild(d({marginBottom:28},[
+    mono('// Settings','var(--green)',{marginBottom:10}),
+    el('h1',{style:{fontSize:24,fontWeight:700,marginBottom:8}},['Settings']),
+    el('p',{style:{color:'var(--text2)',fontSize:14,lineHeight:1.7}},['API key, display mode, data management. Everything stored locally — nothing sent anywhere except directly to Anthropic.']),
+  ]));
+
+  // API KEY
+  const keyBlock=el('div',{class:'setting-block'});
+  keyBlock.appendChild(mono('Anthropic API Key','var(--blue)',{marginBottom:6}));
+  keyBlock.appendChild(el('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},['Required for every agent tool. Get yours at console.anthropic.com → API Keys. Once saved here, every tool you open from this Hub will use it automatically — you never enter it again.']));
+  const kw=el('div',{class:'key-wrap'});
+  const ki=el('input',{type:S.keyVisible?'text':'password',placeholder:'sk-ant-api03-...'});
+  ki.value=S.apiKey||'';ki.addEventListener('input',e=>{S.apiKey=e.target.value;});
+  const kt=el('button',{class:'key-show',onClick:()=>{S.keyVisible=!S.keyVisible;render();}});
+  kt.textContent=S.keyVisible?'Hide':'Show';
+  kw.appendChild(ki);kw.appendChild(kt);keyBlock.appendChild(kw);
+  keyBlock.appendChild(d({marginTop:10,display:'flex',gap:8,alignItems:'center'},[
+    el('button',{style:{background:'var(--blue)',color:'#000',padding:'8px 18px',borderRadius:5,fontWeight:700,fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)'},onClick:()=>{persist();notify('API key saved ✓');}},['Save Key']),
+    el('button',{style:{background:'none',border:'1px solid var(--border)',color:'var(--text3)',padding:'8px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'},onClick:()=>{S.apiKey='';persist();notify('Key removed');render();}},['Remove']),
+    S.apiKey?el('div',{style:{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.08em'}},['✓ All tools will use this key']):null,
+  ]));
+  wrap.appendChild(keyBlock);
+
+  // AI PROVIDER
+  const provBlock=el('div',{class:'setting-block'});
+  provBlock.appendChild(mono('AI Provider','var(--teal)',{marginBottom:6}));
+  provBlock.appendChild(el('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},['Choose which AI provider powers the agent tools. Anthropic (Claude) produces the highest quality outputs. Gemini 2.0 Flash is free — good for testing and early stage use.']));
+  const currentProvider=localStorage.getItem('qb_provider')||'anthropic';
+  provBlock.appendChild(d({display:'flex',gap:8},[
+    ...['anthropic','gemini'].map(prov=>{
+      const isActive=currentProvider===prov;
+      const labels={anthropic:'Anthropic (Claude) — Recommended',gemini:'Gemini 2.0 Flash — Free tier'};
+      const colors={anthropic:'var(--blue)',gemini:'var(--teal)'};
+      return el('button',{
+        style:{
+          padding:'9px 16px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.08em',textTransform:'uppercase',
+          background:isActive?colors[prov]+'18':'none',
+          border:`1px solid ${isActive?colors[prov]+'50':'var(--border)'}`,
+          color:isActive?colors[prov]:'var(--text3)',transition:'all .15s',
+        },
+        onClick:()=>{localStorage.setItem('qb_provider',prov);notify(`Provider set: ${prov} ✓`);render();}
+      },[labels[prov]]);
+    }),
+  ]));
+  provBlock.appendChild(d({marginTop:10,fontSize:11,color:'var(--text3)',lineHeight:1.6},[
+    currentProvider==='gemini'?'⚠ Gemini free tier has rate limits. For client work, switch to Anthropic.':'✓ Claude Sonnet 4 — best quality for all agent tools.',
+  ]));
+  wrap.appendChild(provBlock);
+
+  // CLIENT MODE
+  const cb=el('div',{class:'setting-block'});
+  cb.appendChild(mono('Client Delivery Mode','var(--purple)',{marginBottom:6}));
+  cb.appendChild(el('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},['Hides QBP editor, Settings, and all builder navigation. The system becomes a clean client-facing product. Your client sees only their brand name, the path, and the tools. Toggle off to return to build mode.']));
+  const tt=el('div',{class:`toggle-track${S.clientMode?' on':''}`,onClick:()=>{S.clientMode=!S.clientMode;persist();render();}});
+  tt.appendChild(el('div',{class:'toggle-knob'}));
+  cb.appendChild(d({display:'flex',alignItems:'center',gap:12},[
+    tt,
+    el('span',{style:{fontSize:13,color:S.clientMode?'var(--green)':'var(--text2)'}},[S.clientMode?'On — client view active':'Off — full build mode']),
+  ]));
+  wrap.appendChild(cb);
+
+  // QBP BACKUP
+  const bb=el('div',{class:'setting-block'});
+  bb.appendChild(mono('QBP Backup','var(--amber)',{marginBottom:6}));
+  bb.appendChild(el('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},['Export as JSON to back up or share. Import to restore or switch between brands.']));
+  bb.appendChild(d({display:'flex',gap:8},[
+    el('button',{style:{background:'var(--amber)',color:'#000',padding:'8px 18px',borderRadius:5,fontWeight:700,fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)'},onClick:exportQBP},['Export QBP']),
+    el('button',{style:{background:'none',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'},onClick:importQBP},['Import QBP']),
+  ]));
+  wrap.appendChild(bb);
+
+  // KLAVIYO INTEGRATION
+  const klavBlock=el('div',{class:'setting-block'});
+  klavBlock.appendChild(mono('Klaviyo Integration','var(--pink)',{marginBottom:6}));
+  klavBlock.appendChild(el('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},['Connect Klaviyo to automatically capture Signal Scan leads, tag them with their score and top gap, and trigger the 5-email nurture sequence. Requires your Klaviyo Public API Key and a list ID.']));
+  const kpkInp=el('input',{type:'text',placeholder:'Klaviyo Public API Key — starts with pk_...'});
+  kpkInp.value=S.klaviyoPublicKey||'';kpkInp.style.marginBottom='8px';
+  kpkInp.addEventListener('input',e=>{S.klaviyoPublicKey=e.target.value;});
+  klavBlock.appendChild(kpkInp);
+  const kliInp=el('input',{type:'text',placeholder:'Signal Scan List ID — find in Klaviyo → Lists'});
+  kliInp.value=S.klaviyoListId||'';kliInp.style.marginBottom='12px';
+  kliInp.addEventListener('input',e=>{S.klaviyoListId=e.target.value;});
+  klavBlock.appendChild(kliInp);
+  klavBlock.appendChild(d({display:'flex',gap:8,alignItems:'center'},[
+    el('button',{style:{background:'var(--pink)',color:'#000',padding:'8px 18px',borderRadius:5,fontWeight:700,fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)'},
+      onClick:()=>{persist();notify('Klaviyo keys saved ✓');}},['Save']),
+    S.klaviyoPublicKey&&S.klaviyoListId?el('div',{style:{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.08em'}},['✓ Signal Scan will sync leads to Klaviyo automatically']):null,
+  ]));
+  klavBlock.appendChild(d({marginTop:12,background:'var(--bg4)',borderRadius:6,padding:'10px 14px'},[
+    el('div',{style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--text3)',letterSpacing:'.12em',marginBottom:6,textTransform:'uppercase'}},['Where to find these in Klaviyo']),
+    el('div',{style:{fontSize:11,color:'var(--text2)',lineHeight:1.8}},['Public API Key: Klaviyo → Settings → API Keys → Create Public API Key']),
+    el('div',{style:{fontSize:11,color:'var(--text2)',lineHeight:1.8}},['List ID: Klaviyo → Lists & Segments → Select your list → Settings → List ID']),
+    el('div',{style:{fontSize:11,color:'var(--text3)',lineHeight:1.8,marginTop:4}},['Profile properties passed: signal_scan_score, signal_scan_grade, signal_scan_top_gap, signal_scan_moment, signal_scan_date']),
+  ]));
+  wrap.appendChild(klavBlock);
+
+  // ENTRY POINT
+  const eb=el('div',{class:'setting-block'});
+  eb.appendChild(mono('Journey Entry Point','var(--teal)',{marginBottom:6}));
+  eb.appendChild(el('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},['Change which path you are on, or reset to see the entry screen again.']));
+  eb.appendChild(d({display:'flex',gap:8,flexWrap:'wrap'},[
+    ...DOORS.map(door=>el('button',{
+      style:{background:S.chosenDoor?.id===door.id?door.color+'20':'none',border:`1px solid ${S.chosenDoor?.id===door.id?door.color+'50':'var(--border)'}`,color:S.chosenDoor?.id===door.id?door.color:'var(--text3)',padding:'6px 14px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',textTransform:'uppercase'},
+      onClick:()=>{S.chosenDoor=door;S.view='hub';render();notify(`Path set: ${door.badge}`);}
+    },[door.badge])),
+    el('button',{style:{background:'none',border:'1px dashed var(--border)',color:'var(--text3)',padding:'6px 14px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',textTransform:'uppercase'},
+      onClick:()=>{S.view='entry';S.firstVisit=true;localStorage.removeItem('qb_visited');render();}},['Reset entry']),
+  ]));
+  wrap.appendChild(eb);
+
+  // DANGER
+  const danger=el('div',{class:'setting-block',style:{border:'1px solid rgba(239,68,68,0.15)'}});
+  danger.appendChild(mono('Danger Zone','var(--red)',{marginBottom:6}));
+  danger.appendChild(el('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:10}},['Clears all stored data — QBP, API key, and preferences. Export your QBP first.']));
+  danger.appendChild(el('button',{style:{background:'none',border:'1px solid rgba(239,68,68,0.3)',color:'var(--red)',padding:'7px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'},
+    onClick:()=>{
+      if(!confirm('Clear all QB BrandOS data?'))return;
+      ['qb_qbp','qb_api_key','qb_client','qb_visited'].forEach(k=>localStorage.removeItem(k));
+      Object.assign(S,{qbp:{},apiKey:'',clientMode:false,firstVisit:true,chosenDoor:null,view:'entry'});
+      notify('All data cleared');render();
+    }},['Clear All Data']));
+  wrap.appendChild(danger);
+  return wrap;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  const app=document.getElementById('app');app.innerHTML='';
+  const shell=el('div',{style:{display:'flex',flexDirection:'column',minHeight:'100vh'}});
   shell.appendChild(buildHeader());
 
-  const main = el('main', { class: 'container' });
-  
-  main.appendChild(buildHealthMeter(health));
-  
-  PHASES.forEach((phaseDef, idx) => {
-    const phaseTools = TOOLS.filter(t => t.ph === phaseDef.n);
-    if (phaseTools.length > 0) {
-      main.appendChild(buildPhaseSection(phaseDef, phaseTools, idx));
-    }
-  });
-  
+  // System map (hidden on entry screen)
+  if(S.view!=='entry'){
+    shell.appendChild(d({borderBottom:'1px solid var(--border)',padding:'14px 24px',background:'var(--bg2)'}, [
+      d({maxWidth:1100,margin:'0 auto'},[buildMap()])
+    ]));
+  }
+
+  const main=el('main',{style:{flex:1}});
+  if(S.view==='entry') main.appendChild(buildEntry());
+  else if(S.view==='hub') main.appendChild(buildHub());
+  else if(S.view==='qbp') main.appendChild(buildQBP());
+  else if(S.view==='settings') main.appendChild(buildSettings());
   shell.appendChild(main);
+
+  if(S.view!=='entry'){
+    shell.appendChild(el('footer',{style:{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}},[
+      el('span',{style:{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}},['Quantum Branding BrandOS v3']),
+      el('span',{style:{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.12em'}},['18 tools · From idea to orbit']),
+    ]));
+  }
+  if(S.clientMode) shell.appendChild(el('div',{class:'client-badge'},['Client View']));
   app.appendChild(shell);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
-load();
-render();
+load();render();
 </script>
+<script src="qb-shell.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-qb-tool="brand-soul-map">
 
 <head>
 
@@ -32,106 +32,15 @@
 
     <!-- Tailwind Setup -->
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    
 
-    <script>
+    <link rel="stylesheet" href="qb-system.css">
+    <link rel="stylesheet" href="qb-compat.css">
+<style>
+  /* Tool-specific styles — base from qb-system.css */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-        tailwind.config = {
-
-            darkMode: 'class',
-
-            theme: {
-
-                extend: {
-
-                    fontFamily: {
-
-                        sans: ['Inter', 'sans-serif'],
-
-                        mono: ['JetBrains Mono', 'Courier New', 'monospace'],
-
-                    },
-
-                    colors: {
-
-                        quantum: '#4ade80',
-
-                        alert: '#ef4444',
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    </script>
-
-    <script>
-      (function() {
-        try {
-          var theme = localStorage.getItem('qb-theme') || 'dark';
-          document.documentElement.setAttribute('data-theme', theme);
-          if (theme === 'dark') document.documentElement.classList.add('dark');
-        } catch(e) {}
-      })();
-    </script>
-
-    <style>
-    .qb-send-results-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: #4ade80;
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      padding: 16px 32px;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      margin-top: 24px;
-      transition: opacity .15s;
-    }
-    .qb-send-results-btn:hover { opacity: .85; }
-
-
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
-
-        
-
-        body {
-
-            font-family: 'Inter', sans-serif;
-
-            background-color: #ffffff;
-
-            color: #000000;
-
-            overflow: hidden;
-
-            transition: background-color 0.3s ease, color 0.3s ease;
-
-        }
-
-        [data-theme="light"] {
-            --text2: #444444;
-            --text3: #777777;
-        }
-
-        html.dark body {
-
-            background-color: #000000;
-
-            color: #ffffff;
-
-        }
-
-        
+        html.dark 
 
         /* The Global Noise Texture */
 
@@ -173,8 +82,6 @@
 
         }
 
-        
-
         html.dark .glass-panel {
 
             background: rgba(10, 10, 10, 0.6);
@@ -211,15 +118,7 @@
 
         /* Custom Scrollbar - Minimal */
 
-        ::-webkit-scrollbar { width: 4px; }
-
-        ::-webkit-scrollbar-track { background: transparent; }
-
-        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
-
-        html.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
-
-        ::-webkit-scrollbar-thumb:hover { background: #4ade80; }
+        html.dark 
 
         /* Physics & Motion */
 
@@ -234,8 +133,6 @@
         }
 
         .image-overlay-text { text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-
-        
 
         /* Grayscale & High Contrast for Visual Headers */
 
@@ -254,8 +151,7 @@
             opacity: 0.5;
 
         }
-
-    </style>
+</style>
 
     <!-- Firebase Imports -->
 
@@ -493,71 +389,28 @@
 
         const generateAI = async (data) => {
 
-            const primA = ARCHETYPES.find(a=>a.id===data.primaryArch)?.name || '';
-            const secA = ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name || '';
-            const mov = MOVEMENTS.find(m=>m.id===data.movementId)?.name || '';
-            const alwaysText = data.coreAlwaysIdx !== null && data.always?.[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : '';
-            const neverText = data.coreNeverIdx !== null && data.nevers?.[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : '';
-
-            const systemPrompt = `You are a master brand strategist trained in the Quantum Branding methodology. Your role is to synthesize raw brand inputs into precise, emotionally resonant brand intelligence. You do not write marketing copy. You surface truth.
-
-Quantum Branding principles: identity before tactics. Coherence before scale. Emotional truth before performance. The brand exists as a paradox — it contains contradictions that make it real, not a positioning statement.
-
-A Spark statement is not a tagline. It is a declaration of the brand's place in the world — specific, bold, paradoxical, and undeniably true to the inputs given. It should feel like it could only be about this exact brand.
-
-A Brand Essence is a single compressed sentence: "[Brand Name] — The brand that transforms [tension/problem] into [transformation/outcome]." It must be specific to the inputs, not generic.
-
-Respond with valid JSON only. No preamble. No explanation. No markdown. Just the JSON object.`;
-
-            const userPrompt = `Brand Name: ${data.brandName || 'Unknown'}
-Primary Archetype: ${primA}
-Secondary Archetype: ${secA}
-Movement/Heritage: ${mov}
-Lead Figure (how they move through the world): ${data.leadChoice || ''}
-Innovator Figure: ${data.innChoice || ''}
-Core Belief (manifesto): ${data.manifestoBelief || ''}
-Three defining adjectives: ${data.posAdj1 || ''}, ${data.posAdj2 || ''}, ${data.posAdj3 || ''}
-Target audience essence: ${data.cuEss || ''}
-Audience hidden baggage/surprise: ${data.fanSurprise || ''}
-Audience target behavior: ${data.fanTarget || ''}
-Core doctrine: ${data.docArgument || ''}
-Original manifesto statement: ${data.originalManifesto || ''}
-Natural force the brand embodies: ${data.mod1Force || ''}
-Always: ${alwaysText}
-Never: ${neverText}
-
-Generate a Spark statement (200-350 words, declarative, paradoxical, specific — reads like a manifesto, not a pitch) and a Brand Essence (one sentence, format: "[Brand Name] — The brand that transforms [X] into [Y]").
-
-Return this exact JSON structure:
-{
-  "spark": "...",
-  "essence": "..."
-}`;
+            const BACKEND_URL = "https://YOUR-VERCEL-APP.vercel.app/api/generate";
 
             try {
 
-                const response = await fetch('/api/claude', {
+                const response = await fetch(BACKEND_URL, {
+
                     method: 'POST',
+
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: 'claude-sonnet-4-20250514',
-                        max_tokens: 1200,
-                        system: systemPrompt,
-                        messages: [{ role: 'user', content: userPrompt }]
-                    })
+
+                    body: JSON.stringify(data)
+
                 });
 
-                const result = await response.json();
-                if (result.error) throw new Error(result.error.message || 'API error');
+                if (!response.ok) throw new Error("Backend API Error");
 
-                const text = result.content?.[0]?.text || '';
-                const clean = text.replace(/```json|```/g, '').trim();
-                const parsed = JSON.parse(clean);
-                return parsed;
+                return await response.json();
 
             } catch (e) {
 
-                console.error("AI Generation failed:", e);
+                console.error("AI Generation failed.", e);
+
                 return null;
 
             }
@@ -565,8 +418,23 @@ Return this exact JSON structure:
         };
 
         const sendEmail = async (data, spark, essence) => {
-            // Email dispatch via future /api/send-email integration
-            // Klaviyo or Resend can be wired here once configured
+
+            const BACKEND_URL = "https://YOUR-VERCEL-APP.vercel.app/api/send-email";
+
+            try {
+
+                await fetch(BACKEND_URL, {
+
+                    method: 'POST',
+
+                    headers: { 'Content-Type': 'application/json' },
+
+                    body: JSON.stringify({ data, spark, essence })
+
+                });
+
+            } catch (e) { console.error("Email dispatch failed.", e); }
+
         };
 
         const generateDefaultMap = (data) => {
@@ -694,12 +562,19 @@ Return this exact JSON structure:
             
 
             const [isDarkMode, setIsDarkMode] = useState(() => {
+
                 if (typeof window !== 'undefined') {
-                    const saved = localStorage.getItem('qb-theme');
+
+                    const saved = localStorage.getItem('theme');
+
                     if (saved) return saved === 'dark';
-                    return true;
+
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+
                 }
+
                 return true; // Default to dark for the true Quantum Branding experience
+
             });
 
             useEffect(() => {
@@ -708,17 +583,15 @@ Return this exact JSON structure:
 
                     document.documentElement.classList.add('dark');
 
-                    localStorage.setItem('qb-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
 
                 } else {
 
                     document.documentElement.classList.remove('dark');
 
-                    localStorage.setItem('qb-theme', 'light');
+                    localStorage.setItem('theme', 'light');
 
                 }
-
-                document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
 
             }, [isDarkMode]);
 
@@ -1965,40 +1838,17 @@ Return this exact JSON structure:
                                 primaryPersona: data.cuEss ? ('The ' + data.cuEss + ' who ' + (data.fanTarget || '')) : (existing.primaryPersona || ''),
                                 naturalForce: data.mod1Force || existing.naturalForce || '',
                                 paradox: data.posAdj1 && data.posAdj2 ? (data.posAdj1 + ' yet ' + data.posAdj2) : (existing.paradox || ''),
+                                soulMapComplete: true,
                                 soulMapCompletedAt: new Date().toISOString()
                             });
                             localStorage.setItem('qb_qbp', JSON.stringify(updated));
                             localStorage.setItem('qb_soul_map_done', '1');
-                            window._qbSoulMapComplete = true;
-                            // Show floating results button
-                            var existingBtn = document.getElementById('qb-float-results');
-                            if (!existingBtn) {
-                              var btn = document.createElement('button');
-                              btn.id = 'qb-float-results';
-                              btn.className = 'qb-send-results-btn';
-                              btn.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:1000;box-shadow:0 8px 32px rgba(74,222,128,.25);';
-                              btn.innerHTML = '📄 Send me my results';
-                              btn.addEventListener('click', function() {
-                                var qbp = {};
-                                try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) {}
-                                if (window.QB_showResultsModal) {
-                                  window.QB_showResultsModal({
-                                    toolId: 'soul-map',
-                                    qbp: qbp,
-                                    results: { spark: qbp.spark, essence: qbp.brandEssence },
-                                    pdfPage: '/brand-soul-map-pdf.html'
-                                  });
-                                }
-                              });
-                              document.body.appendChild(btn);
-                            }
                             // Signal parent Hub if in iframe context
                             if (window.parent && window.parent !== window) {
                                 window.parent.postMessage({ type: 'QB_PHASE_COMPLETE', phase: 1, tool: 'soul-map', qbp: updated }, '*');
                             }
                         } catch(qbErr) { console.warn('QB QBP sync:', qbErr); }
                         // ── END QB OS ─────────────────────────────────────────
-
 
                     } catch (err) { console.error(err); } finally { setIsGenerating(false); }
 
@@ -2182,7 +2032,7 @@ Return this exact JSON structure:
 
     </script>
 
-
+<script src="qb-shell.js"></script>
 </body>
 
 </html>

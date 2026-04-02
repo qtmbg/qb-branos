@@ -1,72 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-qb-tool="predictive-panel">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QB — Predictive Panel</title>
 <script>
-  (function() {
-    try {
-      var theme = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-      if (theme === 'dark') document.documentElement.classList.add('dark');
-    } catch(e) {}
-  })();
-</script>
-<script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
 (function(){
-  var params = new URLSearchParams(window.location.search);
-  // QBP
-  var urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-  // Universal AI call
-  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
-    maxTokens = maxTokens || 4000;
-    var body = {
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: maxTokens,
-      system: systemPrompt,
-      messages: [{role: 'user', content: userPrompt}]
-    };
-    const res = await fetch('/api/claude', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    const d = await res.json();
-    if(d.error) throw new Error(d.error.message);
-    return d.content[0].text;
-  };
+  var params=new URLSearchParams(window.location.search);
+  var urlKey=params.get('apikey');
+  if(urlKey)localStorage.setItem('qb_api_key',urlKey);
+  window.QB_API_KEY=urlKey||localStorage.getItem('qb_api_key')||'';
+  try{window.QB_QBP=JSON.parse(localStorage.getItem('qb_qbp')||'{}');}catch(e){window.QB_QBP={};}
 })();
 </script>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="qb-system.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
-  --border:#2a2a2a;--border2:#333;
-  --text:#e8e8e8;--text2:#888;--text3:#555;
-  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
-  --red:#ef4444;--red2:rgba(239,68,68,0.1);
-  --amber:#f59e0b;--amber2:rgba(245,158,11,0.1);
-  --blue:#60a5fa;--blue2:rgba(96,165,250,0.12);
-  --purple:#a78bfa;--purple2:rgba(167,139,250,0.12);
-  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
-}
-body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
-input:focus,textarea:focus{border-color:var(--green)}
-textarea{resize:vertical;line-height:1.6}
-select option{background:var(--bg3)}
-button{cursor:pointer;font-family:var(--font);border:none;outline:none}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  /* Tool-specific styles — base from qb-system.css */
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes scanH{0%{left:-80%}100%{left:200%}}
@@ -76,9 +31,9 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 .spin{animation:spin .8s linear infinite}
 .blink{animation:pulse 1.4s ease infinite}
 .scan-line{position:relative;overflow:hidden}
-.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.05),transparent);animation:scanH 2.5s linear infinite}
+.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(58,95,74,0.05),transparent);animation:scanH 2.5s linear infinite}
 .tab-btn{padding:7px 14px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer}
-.tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
+.tab-btn.active{background:var(--green2);border-color:rgba(58,95,74,0.3);color:var(--green)}
 .scenario-bar{height:32px;border-radius:4px;transition:width 1.2s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;padding:0 12px;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;min-width:40px}
 .persona-chip{padding:4px 10px;border-radius:20px;font-size:11px;font-family:var(--mono);letter-spacing:.05em;border:1px solid;display:inline-block;margin:2px}
 </style>
@@ -92,124 +47,124 @@ const {useState,useEffect,useRef}=React;
 const ML=({c,children,mb=8})=><div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:c||'var(--text3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
 const Card=({children,accent,style={}})=><div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>{children}</div>;
 const TF=({label,value,onChange,placeholder,rows=1,hint})=>(
-  <div style={{marginBottom:14}}>
-    <ML>{label}</ML>
-    {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
-    :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
-    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
-  </div>
+  <div style={{marginBottom:14}}>
+    <ML>{label}</ML>
+    {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+    :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
+    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
+  </div>
 );
 const Sec=({n,title,children,note})=>(
-  <div style={{marginBottom:28}}>
-    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
-      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{n}</span>
-      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
-      {note&&<span style={{fontSize:11,color:'var(--text3)',marginLeft:'auto'}}>{note}</span>}
-    </div>
-    {children}
-  </div>
+  <div style={{marginBottom:28}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{n}</span>
+      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
+      {note&&<span style={{fontSize:11,color:'var(--text3)',marginLeft:'auto'}}>{note}</span>}
+    </div>
+    {children}
+  </div>
 );
 
 // ── ANIMATED PROBABILITY BAR ──────────────────────────────────────────────────
 const ProbBar=({label,pct,color,delay=0,highlight=false})=>{
-  const [w,setW]=useState(0);
-  useEffect(()=>{const t=setTimeout(()=>setW(pct),delay+200);return()=>clearTimeout(t);},[pct]);
-  return(
-    <div style={{marginBottom:8}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
-        <span style={{fontSize:12,color:highlight?'var(--text)':'var(--text2)',fontWeight:highlight?500:400}}>{label}</span>
-        <span style={{fontFamily:'var(--mono)',fontSize:12,fontWeight:700,color}}>{pct}%</span>
-        </div>
-      <div style={{height:8,background:'var(--border)',borderRadius:4,overflow:'hidden'}}>
-        <div style={{height:'100%',width:`${w}%`,background:color,borderRadius:4,transition:`width 1.1s cubic-bezier(.4,0,.2,1) ${delay}ms`}}/>
-      </div>
-    </div>
-  );
+  const [w,setW]=useState(0);
+  useEffect(()=>{const t=setTimeout(()=>setW(pct),delay+200);return()=>clearTimeout(t);},[pct]);
+  return(
+    <div style={{marginBottom:8}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
+        <span style={{fontSize:12,color:highlight?'var(--text)':'var(--text2)',fontWeight:highlight?500:400}}>{label}</span>
+        <span style={{fontFamily:'var(--mono)',fontSize:12,fontWeight:700,color}}>{pct}%</span>
+      </div>
+      <div style={{height:8,background:'var(--border)',borderRadius:4,overflow:'hidden'}}>
+        <div style={{height:'100%',width:`${w}%`,background:color,borderRadius:4,transition:`width 1.1s cubic-bezier(.4,0,.2,1) ${delay}ms`}}/>
+      </div>
+    </div>
+  );
 };
 
 // ── ANIMATED COUNTER ──────────────────────────────────────────────────────────
 const AnimCount=({target,suffix='',color='var(--text)',size=32,delay=0})=>{
-  const [v,setV]=useState(0);
-  useEffect(()=>{
-    const t=setTimeout(()=>{
-      let n=0;const step=target/50;
-      const id=setInterval(()=>{n=Math.min(n+step,target);setV(Math.round(n));if(n>=target)clearInterval(id);},20);
-      return()=>clearInterval(id);
-    },delay);
-    return()=>clearTimeout(t);
-  },[target]);
-  return <span style={{fontFamily:'var(--mono)',fontSize:size,fontWeight:700,color}}>{v}{suffix}</span>;
+  const [v,setV]=useState(0);
+  useEffect(()=>{
+    const t=setTimeout(()=>{
+      let n=0;const step=target/50;
+      const id=setInterval(()=>{n=Math.min(n+step,target);setV(Math.round(n));if(n>=target)clearInterval(id);},20);
+      return()=>clearInterval(id);
+    },delay);
+    return()=>clearTimeout(t);
+  },[target]);
+  return <span style={{fontFamily:'var(--mono)',fontSize:size,fontWeight:700,color}}>{v}{suffix}</span>;
 };
 
 // ── VERDICT DISPLAY ───────────────────────────────────────────────────────────
 const VerdictBadge=({verdict})=>{
-  const v=verdict?.toLowerCase()||'';
-  const isGo=v.includes('go')&&!v.includes('no-go');
-  const isNoGo=v.includes('no-go')||v.includes('no go');
-  const isCond=v.includes('conditional')||v.includes('pivot')||v.includes('refine');
-  const color=isGo?'var(--green)':isNoGo?'var(--red)':'var(--amber)';
-  const bg=isGo?'rgba(74,222,128,0.1)':isNoGo?'rgba(239,68,68,0.1)':'rgba(245,158,11,0.1)';
-  const label=isGo?'GO — Launch Ready':isNoGo?'NO-GO — Do Not Launch':'CONDITIONAL — Pivot Required';
-  return(
-    <div style={{display:'flex',alignItems:'center',gap:12,padding:'16px 20px',borderRadius:8,background:bg,border:`1px solid ${color}30`}}>
-      <div style={{width:12,height:12,borderRadius:'50%',background:color,flexShrink:0}}/>
-      <span style={{fontFamily:'var(--mono)',fontSize:13,fontWeight:700,color,letterSpacing:'.1em',textTransform:'uppercase'}}>{label}</span>
-    </div>
-  );
+  const v=verdict?.toLowerCase()||'';
+  const isGo=v.includes('go')&&!v.includes('no-go');
+  const isNoGo=v.includes('no-go')||v.includes('no go');
+  const isCond=v.includes('conditional')||v.includes('pivot')||v.includes('refine');
+  const color=isGo?'var(--green)':isNoGo?'var(--red)':'var(--amber)';
+  const bg=isGo?'rgba(74,222,128,0.1)':isNoGo?'rgba(239,68,68,0.1)':'rgba(245,158,11,0.1)';
+  const label=isGo?'GO — Launch Ready':isNoGo?'NO-GO — Do Not Launch':'CONDITIONAL — Pivot Required';
+  return(
+    <div style={{display:'flex',alignItems:'center',gap:12,padding:'16px 20px',borderRadius:8,background:bg,border:`1px solid ${color}30`}}>
+      <div style={{width:12,height:12,borderRadius:'50%',background:color,flexShrink:0}}/>
+      <span style={{fontFamily:'var(--mono)',fontSize:13,fontWeight:700,color,letterSpacing:'.1em',textTransform:'uppercase'}}>{label}</span>
+    </div>
+  );
 };
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 const STEPS=['Panel Input','Running Panel','Results'];
 const PANEL_SIZES=[
-  {v:'1000',l:'1,000 personas — Fast (3 min)'},
-  {v:'5000',l:'5,000 personas — Standard (5 min)'},
-  {v:'10000',l:'10,000 personas — Deep (8 min)'},
+  {v:'1000',l:'1,000 personas — Fast (3 min)'},
+  {v:'5000',l:'5,000 personas — Standard (5 min)'},
+  {v:'10000',l:'10,000 personas — Deep (8 min)'},
 ];
 
-function App(){
-  const [step,setStep]=useState(0);
-  const [loading,setLoading]=useState(false);
-  const [error,setError]=useState('');
-  const [result,setResult]=useState(null);
-  const [activeTab,setActiveTab]=useState('distribution');
-  const [loadingMsg,setLoadingMsg]=useState('');
+export default function App(){
+  const [step,setStep]=useState(0);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState('');
+  const [result,setResult]=useState(null);
+  const [activeTab,setActiveTab]=useState('distribution');
+  const [loadingMsg,setLoadingMsg]=useState('');
 
-  // Load from QBP
-  const qbp=window.QB_QBP||{};
+  // Load from QBP
+  const qbp=window.QB_QBP||{};
 
-  // Input fields
-  const [brandName,setBrandName]=useState(qbp.brandName||'');
-  const [brandEssence,setBrandEssence]=useState(qbp.brandEssence||'');
-  const [primaryPersona,setPrimaryPersona]=useState(qbp.primaryPersona||'');
-  const [naturalForce,setNaturalForce]=useState(qbp.naturalForce||'');
-  const [archetype,setArchetype]=useState(qbp.archetype||'');
-  const [productConcept,setProductConcept]=useState('');
-  const [pricePoint,setPricePoint]=useState('');
-  const [launchChannel,setLaunchChannel]=useState('');
-  const [competitorContext,setCompetitorContext]=useState('');
-  const [panelSize,setPanelSize]=useState('5000');
-  const [additionalContext,setAdditionalContext]=useState('');
+  // Input fields
+  const [brandName,setBrandName]=useState(qbp.brandName||'');
+  const [brandEssence,setBrandEssence]=useState(qbp.brandEssence||'');
+  const [primaryPersona,setPrimaryPersona]=useState(qbp.primaryPersona||'');
+  const [naturalForce,setNaturalForce]=useState(qbp.naturalForce||'');
+  const [archetype,setArchetype]=useState(qbp.archetype||'');
+  const [productConcept,setProductConcept]=useState('');
+  const [pricePoint,setPricePoint]=useState('');
+  const [launchChannel,setLaunchChannel]=useState('');
+  const [competitorContext,setCompetitorContext]=useState('');
+  const [panelSize,setPanelSize]=useState('5000');
+  const [additionalContext,setAdditionalContext]=useState('');
 
-  const isValid=()=>brandName&&primaryPersona&&productConcept&&pricePoint;
+  const isValid=()=>brandName&&primaryPersona&&productConcept&&pricePoint;
 
-  const LOADING_MSGS=[
-    'Building synthetic persona library…',
-    'Seeding 5,000 market agents from your persona profile…',
-    'Running scenario simulations…',
-    'Mapping probability distributions across outcomes…',
-    'Identifying high-confidence zones…',
-    'Detecting failure points…',
-    'Scoring brand-market fit…',
-    'Assembling panel verdict…',
-  ];
+  const LOADING_MSGS=[
+    'Building synthetic persona library…',
+    'Seeding 5,000 market agents from your persona profile…',
+    'Running scenario simulations…',
+    'Mapping probability distributions across outcomes…',
+    'Identifying high-confidence zones…',
+    'Detecting failure points…',
+    'Scoring brand-market fit…',
+    'Assembling panel verdict…',
+  ];
 
-  const run=async()=>{
-    if(!isValid()){setError('Complete the required fields.');return;}
-    setError('');setLoading(true);setStep(1);
-    let mi=0;setLoadingMsg(LOADING_MSGS[0]);
-    const iv=setInterval(()=>{mi=Math.min(mi+1,LOADING_MSGS.length-1);setLoadingMsg(LOADING_MSGS[mi]);},2200);
+  const run=async()=>{
+    if(!isValid()){setError('Complete the required fields.');return;}
+    setError('');setLoading(true);setStep(1);
+    let mi=0;setLoadingMsg(LOADING_MSGS[0]);
+    const iv=setInterval(()=>{mi=Math.min(mi+1,LOADING_MSGS.length-1);setLoadingMsg(LOADING_MSGS[mi]);},2200);
 
-    const systemPrompt=`You are the Predictive Panel Engine inside the Quantum Branding BrandOS ecosystem.
+    const systemPrompt=`You are the Predictive Panel Engine inside the Quantum Branding BrandOS ecosystem.
 You operate as a probabilistic forecasting system for brand and product launches.
 You do NOT give opinions. You run structured scenario simulations and assign probabilities to outcomes.
 You think in probabilities, not predictions. In scenarios, not single outcomes. In combinations, not isolated variables.
@@ -217,7 +172,7 @@ You identify: the most stable repeatable patterns, the highest-confidence zones,
 Your output is a market intelligence document that tells a founder exactly what will happen and why — before they spend a dollar.
 Return ONLY valid JSON. No markdown, no preamble.`;
 
-    const userPrompt=`QUANTUM BRAND PROFILE:
+    const userPrompt=`QUANTUM BRAND PROFILE:
 Brand: ${brandName}
 Brand Essence: ${brandEssence||'not specified'}
 Primary Persona: ${primaryPersona}
@@ -235,64 +190,64 @@ Panel size: ${panelSize} synthetic personas built from the primary persona profi
 
 Run a full Predictive Panel simulation and return:
 {
-  "overallConfidenceScore": number 0-100,
-  "verdict": "GO — Launch Ready" | "CONDITIONAL GO — Pivot Required" | "NO-GO — Fundamental Issues",
-  "verdictReason": "2-3 sentences. The core finding. Why this verdict.",
-  "panelSummary": "3-4 sentences. What the ${panelSize} synthetic personas showed overall. What surprised, what confirmed, what the aggregate pattern revealed.",
-  "scenarios": [
-    {
-      "name": "scenario name — specific, not generic",
-      "probability": number 0-100,
-      "description": "what happens in this scenario",
-      "conditions": "what must be true for this scenario to unfold",
-      "isHighConfidence": true|false
-    }
-  ],
-  "highConfidenceZones": [
-    {
-      "finding": "what is highly predictable across scenarios",
-      "probability": number 0-100,
-      "implication": "what this means commercially",
-      "exploitable": true|false
-    }
-  ],
-  "failurePoints": [
-    {
-      "risk": "specific risk — what breaks",
-      "probability": number 0-100,
-      "trigger": "what causes this failure",
-      "mitigation": "how to prevent or reduce it"
-    }
-  ],
-  "personaSegments": [
-    {
-      "segment": "segment name from the persona",
-      "size": "% of panel",
-      "response": "how this segment responds to the launch",
-      "conversionProbability": number 0-100,
-      "insight": "what this segment reveals about the offer"
-    }
-  ],
-  "brandFitScore": number 0-100,
-  "brandFitAnalysis": "Does this launch align with the brand identity? Is the price coherent with brand positioning? Traced to QBP.",
-  "pricingAnalysis": {
-    "priceResistanceProbability": number 0-100,
-    "optimalPriceDirection": "too high | too low | on target | slightly high | slightly low",
-    "priceInsight": "what the panel revealed about price tolerance in this persona at this brand level"
-  },
-  "channelAnalysis": "How the launch channel fits or misses the persona's discovery behavior. Specific recommendation.",
-  "pivotDirections": [
-    {
-      "direction": "specific pivot if needed",
-      "expectedConfidenceGain": "from X% to Y% on overall confidence",
-      "effort": "low | medium | high"
-    }
-  ],
-  "topExploitableAdvantage": "The single highest-probability, highest-impact edge this brand has in this launch. The thing to double down on.",
-  "launchReadinessChecklist": [
-    {"item": "specific readiness check", "status": "ready" | "needs work" | "critical gap"}
-  ],
-  "finalDirective": "One paragraph written directly to the founder. What the panel found, what to do with it, and what the single most important action is before launch."
+  "overallConfidenceScore": number 0-100,
+  "verdict": "GO — Launch Ready" | "CONDITIONAL GO — Pivot Required" | "NO-GO — Fundamental Issues",
+  "verdictReason": "2-3 sentences. The core finding. Why this verdict.",
+  "panelSummary": "3-4 sentences. What the ${panelSize} synthetic personas showed overall. What surprised, what confirmed, what the aggregate pattern revealed.",
+  "scenarios": [
+    {
+      "name": "scenario name — specific, not generic",
+      "probability": number 0-100,
+      "description": "what happens in this scenario",
+      "conditions": "what must be true for this scenario to unfold",
+      "isHighConfidence": true|false
+    }
+  ],
+  "highConfidenceZones": [
+    {
+      "finding": "what is highly predictable across scenarios",
+      "probability": number 0-100,
+      "implication": "what this means commercially",
+      "exploitable": true|false
+    }
+  ],
+  "failurePoints": [
+    {
+      "risk": "specific risk — what breaks",
+      "probability": number 0-100,
+      "trigger": "what causes this failure",
+      "mitigation": "how to prevent or reduce it"
+    }
+  ],
+  "personaSegments": [
+    {
+      "segment": "segment name from the persona",
+      "size": "% of panel",
+      "response": "how this segment responds to the launch",
+      "conversionProbability": number 0-100,
+      "insight": "what this segment reveals about the offer"
+    }
+  ],
+  "brandFitScore": number 0-100,
+  "brandFitAnalysis": "Does this launch align with the brand identity? Is the price coherent with brand positioning? Traced to QBP.",
+  "pricingAnalysis": {
+    "priceResistanceProbability": number 0-100,
+    "optimalPriceDirection": "too high | too low | on target | slightly high | slightly low",
+    "priceInsight": "what the panel revealed about price tolerance in this persona at this brand level"
+  },
+  "channelAnalysis": "How the launch channel fits or misses the persona's discovery behavior. Specific recommendation.",
+  "pivotDirections": [
+    {
+      "direction": "specific pivot if needed",
+      "expectedConfidenceGain": "from X% to Y% on overall confidence",
+      "effort": "low | medium | high"
+    }
+  ],
+  "topExploitableAdvantage": "The single highest-probability, highest-impact edge this brand has in this launch. The thing to double down on.",
+  "launchReadinessChecklist": [
+    {"item": "specific readiness check", "status": "ready" | "needs work" | "critical gap"}
+  ],
+  "finalDirective": "One paragraph written directly to the founder. What the panel found, what to do with it, and what the single most important action is before launch."
 }
 
 Requirements:
@@ -304,389 +259,395 @@ Requirements:
 - All probabilities must be internally consistent (scenario probabilities roughly sum to 100%)
 - Everything must be specific to THIS brand, THIS product, THIS persona — no generic market advice`;
 
-    try{
-      const res=await fetch('/api/claude',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:5000,
-          system:systemPrompt,
-          messages:[{role:'user',content:userPrompt}]
-        })
-      });
-      clearInterval(iv);
-      const d=await res.json();
-      if(d.error)throw new Error(d.error.message);
-      const raw=d.content[0].text.trim();
-      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      setResult(JSON.parse(clean));
-      setActiveTab('distribution');
-      setStep(2);
-    }catch(e){clearInterval(iv);setError('Panel error: '+e.message);setStep(0);}
-    setLoading(false);
-  };
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key':window.QB_API_KEY||'',
+          'anthropic-version':'2023-06-01',
+          'anthropic-dangerous-direct-browser-access':'true'
+        },
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:5000,
+          system:systemPrompt,
+          messages:[{role:'user',content:userPrompt}]
+        })
+      });
+      clearInterval(iv);
+      const d=await res.json();
+      if(d.error)throw new Error(d.error.message);
+      const raw=d.content[0].text.trim();
+      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+      setResult(JSON.parse(clean));
+      setActiveTab('distribution');
+      setStep(2);
+    }catch(e){clearInterval(iv);setError('Panel error: '+e.message);setStep(0);}
+    setLoading(false);
+  };
 
-  const verdictColor=(v)=>{
-    const vl=(v||'').toLowerCase();
-    if(vl.includes('no-go')||vl.includes('no go'))return'var(--red)';
-    if(vl.includes('conditional')||vl.includes('pivot'))return'var(--amber)';
-    return'var(--green)';
-  };
+  const verdictColor=(v)=>{
+    const vl=(v||'').toLowerCase();
+    if(vl.includes('no-go')||vl.includes('no go'))return'var(--red)';
+    if(vl.includes('conditional')||vl.includes('pivot'))return'var(--amber)';
+    return'var(--green)';
+  };
 
-  const copy=t=>navigator.clipboard.writeText(t).catch(()=>{});
+  const copy=t=>navigator.clipboard.writeText(t).catch(()=>{});
 
-  return(
-    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+  return(
+    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
 
-      {/* HEADER */}
-      <header style={{borderBottom:'1px solid var(--border)',padding:'0 24px',height:52,display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
-        <div style={{display:'flex',alignItems:'center',gap:14}}>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
-          <div style={{width:1,height:14,background:'var(--border)'}}/>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>Predictive Panel v1.0</div>
-        </div>
-        <div style={{display:'flex',gap:5,alignItems:'center'}}>
-          {STEPS.map((s,i)=>(
-            <React.Fragment key={i}>
-              <div style={{display:'flex',alignItems:'center',gap:4}}>
-                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
-                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4,#2a2a2a)',fontFamily:'var(--mono)',letterSpacing:'.1em'}}>{s}</span>
-              </div>
-              {i<STEPS.length-1&&<div style={{width:12,height:1,background:'var(--border)',margin:'0 2px'}}/>}
-            </React.Fragment>
-          ))}
-        </div>
-      </header>
+      {/* HEADER */}
+      <header style={{borderBottom:'1px solid var(--border)',padding:'0 24px',height:52,display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
+          <div style={{width:1,height:14,background:'var(--border)'}}/>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>Predictive Panel v1.0</div>
+        </div>
+        <div style={{display:'flex',gap:5,alignItems:'center'}}>
+          {STEPS.map((s,i)=>(
+            <React.Fragment key={i}>
+              <div style={{display:'flex',alignItems:'center',gap:4}}>
+                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
+                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4,#2a2a2a)',fontFamily:'var(--mono)',letterSpacing:'.1em'}}>{s}</span>
+              </div>
+              {i<STEPS.length-1&&<div style={{width:12,height:1,background:'var(--border)',margin:'0 2px'}}/>}
+            </React.Fragment>
+          ))}
+        </div>
+      </header>
 
-      <main style={{flex:1,maxWidth:920,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
+      <main style={{flex:1,maxWidth:920,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
 
-        {/* ── STEP 0: INPUT ── */}
-        {step===0&&(
-          <div className="fade-in">
-            <div style={{marginBottom:36}}>
-              <ML c="var(--green)">// Predictive Panel — Market Validation</ML>
-              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:10}}>Test before you launch.</h1>
-              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:580}}>
-                A Predictive Panel runs your product concept through thousands of synthetic personas built from your exact target profile. What comes back is not opinion — it is a probability distribution of how your real market will actually behave. Know the failure points before you spend the money.
-              </p>
-            </div>
+        {/* ── STEP 0: INPUT ── */}
+        {step===0&&(
+          <div className="fade-in">
+            <div style={{marginBottom:36}}>
+              <ML c="var(--green)">// Predictive Panel — Market Validation</ML>
+              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:10}}>Test before you launch.</h1>
+              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:580}}>
+                A Predictive Panel runs your product concept through thousands of synthetic personas built from your exact target profile. What comes back is not opinion — it is a probability distribution of how your real market will actually behave. Know the failure points before you spend the money.
+              </p>
+            </div>
 
-            {/* Panel size selector */}
-            <div style={{background:'var(--bg3)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'14px 18px',marginBottom:24}}>
-              <ML c="var(--green)" mb={10}>Panel size</ML>
-              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-                {PANEL_SIZES.map(ps=>(
-                  <button key={ps.v} onClick={()=>setPanelSize(ps.v)}
-                    style={{padding:'8px 16px',borderRadius:5,fontSize:12,fontFamily:'var(--mono)',letterSpacing:'.06em',
-                      background:panelSize===ps.v?'var(--green2)':'var(--bg4)',
-                      border:`1px solid ${panelSize===ps.v?'rgba(74,222,128,0.3)':'var(--border)'}`,
-                      color:panelSize===ps.v?'var(--green)':'var(--text3)',transition:'all .15s'}}>
-                    {ps.l}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Panel size selector */}
+            <div style={{background:'var(--bg3)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'14px 18px',marginBottom:24}}>
+              <ML c="var(--green)" mb={10}>Panel size</ML>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                {PANEL_SIZES.map(ps=>(
+                  <button key={ps.v} onClick={()=>setPanelSize(ps.v)}
+                    style={{padding:'8px 16px',borderRadius:5,fontSize:12,fontFamily:'var(--mono)',letterSpacing:'.06em',
+                      background:panelSize===ps.v?'var(--green2)':'var(--bg4)',
+                      border:`1px solid ${panelSize===ps.v?'rgba(74,222,128,0.3)':'var(--border)'}`,
+                      color:panelSize===ps.v?'var(--green)':'var(--text3)',transition:'all .15s'}}>
+                    {ps.l}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            <Sec n={1} title="Brand Identity" note="pre-filled from QBP if available">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand launching this product" rows={1}/>
-                <TF label="Natural Force" value={naturalForce} onChange={setNaturalForce} placeholder="e.g. Lightning, Wildfire, The Ocean" rows={1}/>
-              </div>
-              <TF label="Brand Essence" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth" rows={2}/>
-              <TF label="Archetype" value={archetype} onChange={setArchetype} placeholder="e.g. The Alchemist, The Sage, The Rebel" rows={1}/>
-            </Sec>
+            <Sec n={1} title="Brand Identity" note="pre-filled from QBP if available">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand launching this product" rows={1}/>
+                <TF label="Natural Force" value={naturalForce} onChange={setNaturalForce} placeholder="e.g. Lightning, Wildfire, The Ocean" rows={1}/>
+              </div>
+              <TF label="Brand Essence" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth" rows={2}/>
+              <TF label="Archetype" value={archetype} onChange={setArchetype} placeholder="e.g. The Alchemist, The Sage, The Rebel" rows={1}/>
+            </Sec>
 
-            <Sec n={2} title="The Launch" note="* required">
-              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona}
-                placeholder="Who is buying this? Be specific — their role, situation, desire, what they carry. The more precise, the more accurate the panel."
-                rows={3} hint="This is what the synthetic personas are built from. Specificity is everything."/>
-              <TF label="Product / Offer Concept *" value={productConcept} onChange={setProductConcept}
-                placeholder="What exactly is being launched? Describe the offer, the format, what it does, the transformation it creates."
-                rows={3}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-                <TF label="Price Point *" value={pricePoint} onChange={setPricePoint} placeholder="e.g. €997, €197/month, €5,000" rows={1}/>
-                <TF label="Primary Launch Channel" value={launchChannel} onChange={setLaunchChannel} placeholder="e.g. LinkedIn, Instagram, email list, webinar" rows={1}/>
-              </div>
-              <TF label="Competitive Context" value={competitorContext} onChange={setCompetitorContext}
-                placeholder="Who else is in this space? What alternatives does your persona already use or consider?" rows={2}/>
-              <TF label="Additional Context" value={additionalContext} onChange={setAdditionalContext}
-                placeholder="Anything else the panel should know — timing, market conditions, why now, existing proof points" rows={2}/>
-            </Sec>
+            <Sec n={2} title="The Launch" note="* required">
+              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona}
+                placeholder="Who is buying this? Be specific — their role, situation, desire, what they carry. The more precise, the more accurate the panel."
+                rows={3} hint="This is what the synthetic personas are built from. Specificity is everything."/>
+              <TF label="Product / Offer Concept *" value={productConcept} onChange={setProductConcept}
+                placeholder="What exactly is being launched? Describe the offer, the format, what it does, the transformation it creates."
+                rows={3}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Price Point *" value={pricePoint} onChange={setPricePoint} placeholder="e.g. €997, €197/month, €5,000" rows={1}/>
+                <TF label="Primary Launch Channel" value={launchChannel} onChange={setLaunchChannel} placeholder="e.g. LinkedIn, Instagram, email list, webinar" rows={1}/>
+              </div>
+              <TF label="Competitive Context" value={competitorContext} onChange={setCompetitorContext}
+                placeholder="Who else is in this space? What alternatives does your persona already use or consider?" rows={2}/>
+              <TF label="Additional Context" value={additionalContext} onChange={setAdditionalContext}
+                placeholder="Anything else the panel should know — timing, market conditions, why now, existing proof points" rows={2}/>
+            </Sec>
 
-            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'11px 15px',marginBottom:16,fontSize:13,color:'var(--red)'}}>{error}</div>}
+            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'11px 15px',marginBottom:16,fontSize:13,color:'var(--red)'}}>{error}</div>}
 
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-              <div style={{fontSize:12,color:'var(--text3)',fontFamily:'var(--mono)'}}>{parseInt(panelSize).toLocaleString()} synthetic personas · AI scenario simulation</div>
-              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
-                Run Panel →
-              </button>
-            </div>
-          </div>
-        )}
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div style={{fontSize:12,color:'var(--text3)',fontFamily:'var(--mono)'}}>{parseInt(panelSize).toLocaleString()} synthetic personas · AI scenario simulation</div>
+              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
+                Run Panel →
+              </button>
+            </div>
+          </div>
+        )}
 
-        {/* ── STEP 1: RUNNING ── */}
-        {step===1&&(
-          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:480,gap:28,textAlign:'center'}}>
-            <div style={{position:'relative',width:64,height:64}}>
-              <div style={{position:'absolute',inset:0,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
-              <div style={{position:'absolute',inset:8,border:'1px solid var(--border2)',borderRight:'1px solid var(--amber)',borderRadius:'50%',animation:'spin .6s linear infinite reverse'}}/>
-              <div style={{position:'absolute',inset:18,border:'1px solid var(--border)',borderBottom:'1px solid var(--blue)',borderRadius:'50%'}} className="spin"/>
-            </div>
-            <div>
-              <ML c="var(--green)">Panel Running</ML>
-              <div style={{fontSize:14,color:'var(--text)',fontWeight:500,marginBottom:8}}>{loadingMsg}</div>
-              <div style={{fontSize:12,color:'var(--text3)'}}>{parseInt(panelSize).toLocaleString()} synthetic personas · probabilistic scenario engine</div>
-            </div>
-            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'14px 20px',maxWidth:400,fontSize:12,color:'var(--text2)',lineHeight:1.7,textAlign:'left'}}>
-              The panel simulates how your exact target persona — split into behavioral sub-segments — responds to your product, price, and brand. Each agent runs independently. The aggregate reveals patterns no single opinion can.
-            </div>
-          </div>
-        )}
+        {/* ── STEP 1: RUNNING ── */}
+        {step===1&&(
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:480,gap:28,textAlign:'center'}}>
+            <div style={{position:'relative',width:64,height:64}}>
+              <div style={{position:'absolute',inset:0,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+              <div style={{position:'absolute',inset:8,border:'1px solid var(--border2)',borderRight:'1px solid var(--amber)',borderRadius:'50%',animation:'spin .6s linear infinite reverse'}}/>
+              <div style={{position:'absolute',inset:18,border:'1px solid var(--border)',borderBottom:'1px solid var(--blue)',borderRadius:'50%'}} className="spin"/>
+            </div>
+            <div>
+              <ML c="var(--green)">Panel Running</ML>
+              <div style={{fontSize:14,color:'var(--text)',fontWeight:500,marginBottom:8}}>{loadingMsg}</div>
+              <div style={{fontSize:12,color:'var(--text3)'}}>{parseInt(panelSize).toLocaleString()} synthetic personas · probabilistic scenario engine</div>
+            </div>
+            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'14px 20px',maxWidth:400,fontSize:12,color:'var(--text2)',lineHeight:1.7,textAlign:'left'}}>
+              The panel simulates how your exact target persona — split into behavioral sub-segments — responds to your product, price, and brand. Each agent runs independently. The aggregate reveals patterns no single opinion can.
+            </div>
+          </div>
+        )}
 
-        {/* ── STEP 2: RESULTS ── */}
-        {step===2&&result&&(
-          <div className="fade-in">
-            {/* Header */}
-            <div style={{marginBottom:24,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
-              <div>
-                <ML c="var(--green)">// Panel Complete — {parseInt(panelSize).toLocaleString()} Personas</ML>
-                <h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>{brandName} — {productConcept.slice(0,50)}{productConcept.length>50?'…':''}</h1>
-                <p style={{color:'var(--text2)',fontSize:13}}>Market simulation complete · Probabilistic verdict ready</p>
-              </div>
-              <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Panel</button>
-            </div>
+        {/* ── STEP 2: RESULTS ── */}
+        {step===2&&result&&(
+          <div className="fade-in">
+            {/* Header */}
+            <div style={{marginBottom:24,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+              <div>
+                <ML c="var(--green)">// Panel Complete — {parseInt(panelSize).toLocaleString()} Personas</ML>
+                <h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>{brandName} — {productConcept.slice(0,50)}{productConcept.length>50?'…':''}</h1>
+                <p style={{color:'var(--text2)',fontSize:13}}>Market simulation complete · Probabilistic verdict ready</p>
+              </div>
+              <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Panel</button>
+            </div>
 
-            {/* Top metrics */}
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginBottom:16}}>
-              {[
-                {label:'Confidence Score',val:result.overallConfidenceScore,suffix:'',color:result.overallConfidenceScore>=70?'var(--green)':result.overallConfidenceScore>=45?'var(--amber)':'var(--red)',size:36},
-                {label:'Brand Fit',val:result.brandFitScore,suffix:'',color:result.brandFitScore>=70?'var(--green)':result.brandFitScore>=45?'var(--amber)':'var(--red)',size:36},
-                {label:'Price Resistance',val:result.pricingAnalysis?.priceResistanceProbability,suffix:'%',color:result.pricingAnalysis?.priceResistanceProbability<30?'var(--green)':result.pricingAnalysis?.priceResistanceProbability<60?'var(--amber)':'var(--red)',size:36},
-              ].map((m,i)=>(
-                <div key={i} style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px',textAlign:'center'}}>
-                  <AnimCount target={m.val||0} suffix={m.suffix} color={m.color} size={m.size} delay={i*150}/>
-                  <div style={{fontSize:9,color:'var(--text3)',letterSpacing:'.12em',textTransform:'uppercase',marginTop:6}}>{m.label}</div>
-                </div>
-              ))}
-            </div>
+            {/* Top metrics */}
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginBottom:16}}>
+              {[
+                {label:'Confidence Score',val:result.overallConfidenceScore,suffix:'',color:result.overallConfidenceScore>=70?'var(--green)':result.overallConfidenceScore>=45?'var(--amber)':'var(--red)',size:36},
+                {label:'Brand Fit',val:result.brandFitScore,suffix:'',color:result.brandFitScore>=70?'var(--green)':result.brandFitScore>=45?'var(--amber)':'var(--red)',size:36},
+                {label:'Price Resistance',val:result.pricingAnalysis?.priceResistanceProbability,suffix:'%',color:result.pricingAnalysis?.priceResistanceProbability<30?'var(--green)':result.pricingAnalysis?.priceResistanceProbability<60?'var(--amber)':'var(--red)',size:36},
+              ].map((m,i)=>(
+                <div key={i} style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px',textAlign:'center'}}>
+                  <AnimCount target={m.val||0} suffix={m.suffix} color={m.color} size={m.size} delay={i*150}/>
+                  <div style={{fontSize:9,color:'var(--text3)',letterSpacing:'.12em',textTransform:'uppercase',marginTop:6}}>{m.label}</div>
+                </div>
+              ))}
+            </div>
 
-            {/* Verdict */}
-            <div style={{marginBottom:16}}>
-              <VerdictBadge verdict={result.verdict}/>
-              {result.verdictReason&&<div style={{marginTop:10,fontSize:13,color:'var(--text)',lineHeight:1.7,padding:'12px 16px',background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:6}}>{result.verdictReason}</div>}
-            </div>
+            {/* Verdict */}
+            <div style={{marginBottom:16}}>
+              <VerdictBadge verdict={result.verdict}/>
+              {result.verdictReason&&<div style={{marginTop:10,fontSize:13,color:'var(--text)',lineHeight:1.7,padding:'12px 16px',background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:6}}>{result.verdictReason}</div>}
+            </div>
 
-            {/* Tabs */}
-            <div style={{display:'flex',gap:5,flexWrap:'wrap',marginBottom:20,paddingBottom:14,borderBottom:'1px solid var(--border)'}}>
-              {['distribution','confidence','personas','risks','pricing','directive'].map(t=>(
-                <button key={t} className={`tab-btn${activeTab===t?' active':''}`} onClick={()=>setActiveTab(t)}>
-                  {t==='distribution'?'Scenarios':t==='confidence'?'High Confidence':t==='personas'?'Segments':t==='risks'?'Failure Points':t==='pricing'?'Pricing + Channel':'Directive'}
-                </button>
-              ))}
-            </div>
+            {/* Tabs */}
+            <div style={{display:'flex',gap:5,flexWrap:'wrap',marginBottom:20,paddingBottom:14,borderBottom:'1px solid var(--border)'}}>
+              {['distribution','confidence','personas','risks','pricing','directive'].map(t=>(
+                <button key={t} className={`tab-btn${activeTab===t?' active':''}`} onClick={()=>setActiveTab(t)}>
+                  {t==='distribution'?'Scenarios':t==='confidence'?'High Confidence':t==='personas'?'Segments':t==='risks'?'Failure Points':t==='pricing'?'Pricing + Channel':'Directive'}
+                </button>
+              ))}
+            </div>
 
-            {/* SCENARIO DISTRIBUTION */}
-            {activeTab==='distribution'&&(
-              <div className="fade-in">
-                <div style={{marginBottom:8,fontSize:12,color:'var(--text2)',lineHeight:1.7}}>{result.panelSummary}</div>
-                <div style={{marginTop:16,display:'flex',flexDirection:'column',gap:10}}>
-                  {result.scenarios?.map((s,i)=>{
-                    const color=s.probability>=50?'var(--green)':s.probability>=25?'var(--blue)':s.probability>=10?'var(--amber)':'var(--red)';
-                    return(
-                      <div key={i} style={{background:'var(--bg3)',border:`1px solid ${s.isHighConfidence?'rgba(74,222,128,0.2)':'var(--border)'}`,borderRadius:8,padding:'14px 18px'}}>
-                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-                          <div style={{display:'flex',alignItems:'center',gap:8}}>
-                            {s.isHighConfidence&&<span style={{fontFamily:'var(--mono)',fontSize:9,padding:'1px 7px',borderRadius:3,background:'rgba(74,222,128,0.1)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',letterSpacing:'.1em'}}>HIGH CONFIDENCE</span>}
-                            <span style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{s.name}</span>
-                          </div>
-                          <span style={{fontFamily:'var(--mono)',fontSize:14,fontWeight:700,color}}>{s.probability}%</span>
-                        </div>
-                        <div style={{height:8,background:'var(--border)',borderRadius:4,overflow:'hidden',marginBottom:10}}>
-                          <div className="scenario-bar" style={{height:'100%',width:0,background:color,borderRadius:4,transition:`width 1s cubic-bezier(.4,0,.2,1) ${i*80}ms`}}
-                            ref={el=>{if(el)setTimeout(()=>{el.style.width=s.probability+'%';},i*80+100);}}/>
-                        </div>
-                        <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:6}}>{s.description}</p>
-                        {s.conditions&&<div style={{fontSize:11,color:'var(--text3)',fontStyle:'italic'}}>Conditions: {s.conditions}</div>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            {/* SCENARIO DISTRIBUTION */}
+            {activeTab==='distribution'&&(
+              <div className="fade-in">
+                <div style={{marginBottom:8,fontSize:12,color:'var(--text2)',lineHeight:1.7}}>{result.panelSummary}</div>
+                <div style={{marginTop:16,display:'flex',flexDirection:'column',gap:10}}>
+                  {result.scenarios?.map((s,i)=>{
+                    const color=s.probability>=50?'var(--green)':s.probability>=25?'var(--blue)':s.probability>=10?'var(--amber)':'var(--red)';
+                    return(
+                      <div key={i} style={{background:'var(--bg3)',border:`1px solid ${s.isHighConfidence?'rgba(74,222,128,0.2)':'var(--border)'}`,borderRadius:8,padding:'14px 18px'}}>
+                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                          <div style={{display:'flex',alignItems:'center',gap:8}}>
+                            {s.isHighConfidence&&<span style={{fontFamily:'var(--mono)',fontSize:9,padding:'1px 7px',borderRadius:3,background:'rgba(74,222,128,0.1)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',letterSpacing:'.1em'}}>HIGH CONFIDENCE</span>}
+                            <span style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{s.name}</span>
+                          </div>
+                          <span style={{fontFamily:'var(--mono)',fontSize:14,fontWeight:700,color}}>{s.probability}%</span>
+                        </div>
+                        <div style={{height:8,background:'var(--border)',borderRadius:4,overflow:'hidden',marginBottom:10}}>
+                          <div className="scenario-bar" style={{height:'100%',width:0,background:color,borderRadius:4,transition:`width 1s cubic-bezier(.4,0,.2,1) ${i*80}ms`}}
+                            ref={el=>{if(el)setTimeout(()=>{el.style.width=s.probability+'%';},i*80+100);}}/>
+                        </div>
+                        <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:6}}>{s.description}</p>
+                        {s.conditions&&<div style={{fontSize:11,color:'var(--text3)',fontStyle:'italic'}}>Conditions: {s.conditions}</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-            {/* HIGH CONFIDENCE ZONES */}
-            {activeTab==='confidence'&&(
-              <div className="fade-in">
-                <div style={{marginBottom:16,fontSize:12,color:'var(--text2)',lineHeight:1.7}}>These findings appear consistently across all scenarios. They are the most reliable signals in the panel — build strategy around them.</div>
-                {result.highConfidenceZones?.map((z,i)=>(
-                  <div key={i} style={{background:'var(--bg3)',border:`1px solid ${z.exploitable?'rgba(74,222,128,0.2)':'var(--border)'}`,borderRadius:8,padding:'16px 20px',marginBottom:10}}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8,gap:12}}>
-                      <div style={{display:'flex',gap:8,alignItems:'center',flex:1}}>
-                        {z.exploitable&&<span style={{fontFamily:'var(--mono)',fontSize:9,padding:'1px 7px',borderRadius:3,background:'rgba(74,222,128,0.1)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',flexShrink:0}}>EXPLOITABLE</span>}
-                        <span style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{z.finding}</span>
-                      </div>
-                      <AnimCount target={z.probability} suffix="%" color="var(--green)" size={18} delay={i*100}/>
-                    </div>
-                    <ProbBar label="" pct={z.probability} color="var(--green)" delay={i*80}/>
-                    <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginTop:8}}>{z.implication}</p>
-                  </div>
-                ))}
-                {result.topExploitableAdvantage&&(
-                  <div style={{background:'rgba(74,222,128,0.06)',border:'1px solid rgba(74,222,128,0.2)',borderRadius:8,padding:'16px 20px',marginTop:12}}>
-                    <ML c="var(--green)" mb={8}>Top exploitable advantage</ML>
-                    <p style={{fontSize:14,color:'var(--text)',lineHeight:1.7,fontWeight:500}}>{result.topExploitableAdvantage}</p>
-                  </div>
-                )}
-              </div>
-            )}
+            {/* HIGH CONFIDENCE ZONES */}
+            {activeTab==='confidence'&&(
+              <div className="fade-in">
+                <div style={{marginBottom:16,fontSize:12,color:'var(--text2)',lineHeight:1.7}}>These findings appear consistently across all scenarios. They are the most reliable signals in the panel — build strategy around them.</div>
+                {result.highConfidenceZones?.map((z,i)=>(
+                  <div key={i} style={{background:'var(--bg3)',border:`1px solid ${z.exploitable?'rgba(74,222,128,0.2)':'var(--border)'}`,borderRadius:8,padding:'16px 20px',marginBottom:10}}>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8,gap:12}}>
+                      <div style={{display:'flex',gap:8,alignItems:'center',flex:1}}>
+                        {z.exploitable&&<span style={{fontFamily:'var(--mono)',fontSize:9,padding:'1px 7px',borderRadius:3,background:'rgba(74,222,128,0.1)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',flexShrink:0}}>EXPLOITABLE</span>}
+                        <span style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{z.finding}</span>
+                      </div>
+                      <AnimCount target={z.probability} suffix="%" color="var(--green)" size={18} delay={i*100}/>
+                    </div>
+                    <ProbBar label="" pct={z.probability} color="var(--green)" delay={i*80}/>
+                    <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginTop:8}}>{z.implication}</p>
+                  </div>
+                ))}
+                {result.topExploitableAdvantage&&(
+                  <div style={{background:'rgba(74,222,128,0.06)',border:'1px solid rgba(74,222,128,0.2)',borderRadius:8,padding:'16px 20px',marginTop:12}}>
+                    <ML c="var(--green)" mb={8}>Top exploitable advantage</ML>
+                    <p style={{fontSize:14,color:'var(--text)',lineHeight:1.7,fontWeight:500}}>{result.topExploitableAdvantage}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* PERSONA SEGMENTS */}
-            {activeTab==='personas'&&(
-              <div className="fade-in">
-                <div style={{marginBottom:12,fontSize:12,color:'var(--text2)',lineHeight:1.7}}>The {parseInt(panelSize).toLocaleString()} personas were split into behavioral sub-segments. Each responds differently.</div>
-                {result.personaSegments?.map((seg,i)=>{
-                  const c=seg.conversionProbability>=60?'var(--green)':seg.conversionProbability>=35?'var(--amber)':'var(--red)';
-                  return(
-                    <div key={i} style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'14px 18px',marginBottom:10}}>
-                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10,gap:12}}>
-                        <div>
-                          <div style={{fontSize:13,fontWeight:500,color:'var(--text)',marginBottom:3}}>{seg.segment}</div>
-                          <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>{seg.size} of panel</div>
-                        </div>
-                        <div style={{textAlign:'right',flexShrink:0}}>
-                          <div style={{fontFamily:'var(--mono)',fontSize:18,fontWeight:700,color:c}}>{seg.conversionProbability}%</div>
-                          <div style={{fontSize:9,color:'var(--text3)',letterSpacing:'.1em',textTransform:'uppercase'}}>conversion</div>
-                        </div>
-                      </div>
-                      <ProbBar label="" pct={seg.conversionProbability} color={c} delay={i*80}/>
-                      <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginTop:10,marginBottom:6}}>{seg.response}</p>
-                      <div style={{fontSize:11,color:'var(--text3)',fontStyle:'italic'}}>{seg.insight}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            {/* PERSONA SEGMENTS */}
+            {activeTab==='personas'&&(
+              <div className="fade-in">
+                <div style={{marginBottom:12,fontSize:12,color:'var(--text2)',lineHeight:1.7}}>The {parseInt(panelSize).toLocaleString()} personas were split into behavioral sub-segments. Each responds differently.</div>
+                {result.personaSegments?.map((seg,i)=>{
+                  const c=seg.conversionProbability>=60?'var(--green)':seg.conversionProbability>=35?'var(--amber)':'var(--red)';
+                  return(
+                    <div key={i} style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'14px 18px',marginBottom:10}}>
+                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10,gap:12}}>
+                        <div>
+                          <div style={{fontSize:13,fontWeight:500,color:'var(--text)',marginBottom:3}}>{seg.segment}</div>
+                          <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>{seg.size} of panel</div>
+                        </div>
+                        <div style={{textAlign:'right',flexShrink:0}}>
+                          <div style={{fontFamily:'var(--mono)',fontSize:18,fontWeight:700,color:c}}>{seg.conversionProbability}%</div>
+                          <div style={{fontSize:9,color:'var(--text3)',letterSpacing:'.1em',textTransform:'uppercase'}}>conversion</div>
+                        </div>
+                      </div>
+                      <ProbBar label="" pct={seg.conversionProbability} color={c} delay={i*80}/>
+                      <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginTop:10,marginBottom:6}}>{seg.response}</p>
+                      <div style={{fontSize:11,color:'var(--text3)',fontStyle:'italic'}}>{seg.insight}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
-            {/* FAILURE POINTS */}
-            {activeTab==='risks'&&(
-              <div className="fade-in">
-                <div style={{marginBottom:12,fontSize:12,color:'var(--text2)',lineHeight:1.7}}>Specific points where this launch breaks. Know them before you spend the budget.</div>
-                {result.failurePoints?.map((fp,i)=>{
-                  const c=fp.probability>=50?'var(--red)':fp.probability>=25?'var(--amber)':'var(--blue)';
-                  return(
-                    <div key={i} style={{background:'var(--bg3)',border:`1px solid ${fp.probability>=50?'rgba(239,68,68,0.2)':'var(--border)'}`,borderRadius:8,padding:'14px 18px',marginBottom:10}}>
-                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8,gap:12}}>
-                        <span style={{fontSize:13,fontWeight:500,color:'var(--text)',flex:1}}>{fp.risk}</span>
-                        <span style={{fontFamily:'var(--mono)',fontSize:13,fontWeight:700,color:c,flexShrink:0}}>{fp.probability}% probability</span>
-                      </div>
-                      <ProbBar label="" pct={fp.probability} color={c} delay={i*80}/>
-                      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10}}>
-                        <div style={{background:'var(--bg4)',borderRadius:5,padding:'8px 12px'}}>
-                          <ML c="var(--text3)" mb={3}>Trigger</ML>
-                          <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.5}}>{fp.trigger}</p>
-                        </div>
-                        <div style={{background:'var(--bg4)',borderRadius:5,padding:'8px 12px'}}>
-                          <ML c="var(--green)" mb={3}>Mitigation</ML>
-                          <p style={{fontSize:12,color:'var(--text)',lineHeight:1.5}}>{fp.mitigation}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-                {result.pivotDirections?.length>0&&(
-                  <div style={{marginTop:16}}>
-                    <ML c="var(--amber)" mb={10}>Pivot directions if needed</ML>
-                    {result.pivotDirections.map((pd,i)=>(
-                      <div key={i} style={{background:'var(--amber2)',border:'1px solid rgba(245,158,11,0.2)',borderRadius:8,padding:'12px 16px',marginBottom:8}}>
-                        <div style={{fontSize:13,fontWeight:500,color:'var(--text)',marginBottom:4}}>{pd.direction}</div>
-                        <div style={{display:'flex',gap:16,fontSize:11,color:'var(--text3)'}}>
-                          <span>Expected gain: <span style={{color:'var(--amber)'}}>{pd.expectedConfidenceGain}</span></span>
-                          <span>Effort: <span style={{color:'var(--amber)'}}>{pd.effort}</span></span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+            {/* FAILURE POINTS */}
+            {activeTab==='risks'&&(
+              <div className="fade-in">
+                <div style={{marginBottom:12,fontSize:12,color:'var(--text2)',lineHeight:1.7}}>Specific points where this launch breaks. Know them before you spend the budget.</div>
+                {result.failurePoints?.map((fp,i)=>{
+                  const c=fp.probability>=50?'var(--red)':fp.probability>=25?'var(--amber)':'var(--blue)';
+                  return(
+                    <div key={i} style={{background:'var(--bg3)',border:`1px solid ${fp.probability>=50?'rgba(239,68,68,0.2)':'var(--border)'}`,borderRadius:8,padding:'14px 18px',marginBottom:10}}>
+                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8,gap:12}}>
+                        <span style={{fontSize:13,fontWeight:500,color:'var(--text)',flex:1}}>{fp.risk}</span>
+                        <span style={{fontFamily:'var(--mono)',fontSize:13,fontWeight:700,color:c,flexShrink:0}}>{fp.probability}% probability</span>
+                      </div>
+                      <ProbBar label="" pct={fp.probability} color={c} delay={i*80}/>
+                      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10}}>
+                        <div style={{background:'var(--bg4)',borderRadius:5,padding:'8px 12px'}}>
+                          <ML c="var(--text3)" mb={3}>Trigger</ML>
+                          <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.5}}>{fp.trigger}</p>
+                        </div>
+                        <div style={{background:'var(--bg4)',borderRadius:5,padding:'8px 12px'}}>
+                          <ML c="var(--green)" mb={3}>Mitigation</ML>
+                          <p style={{fontSize:12,color:'var(--text)',lineHeight:1.5}}>{fp.mitigation}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {result.pivotDirections?.length>0&&(
+                  <div style={{marginTop:16}}>
+                    <ML c="var(--amber)" mb={10}>Pivot directions if needed</ML>
+                    {result.pivotDirections.map((pd,i)=>(
+                      <div key={i} style={{background:'var(--amber2)',border:'1px solid rgba(245,158,11,0.2)',borderRadius:8,padding:'12px 16px',marginBottom:8}}>
+                        <div style={{fontSize:13,fontWeight:500,color:'var(--text)',marginBottom:4}}>{pd.direction}</div>
+                        <div style={{display:'flex',gap:16,fontSize:11,color:'var(--text3)'}}>
+                          <span>Expected gain: <span style={{color:'var(--amber)'}}>{pd.expectedConfidenceGain}</span></span>
+                          <span>Effort: <span style={{color:'var(--amber)'}}>{pd.effort}</span></span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* PRICING + CHANNEL */}
-            {activeTab==='pricing'&&(
-              <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
-                {result.pricingAnalysis&&(
-                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
-                    <ML c="var(--amber)" mb={10}>Pricing analysis</ML>
-                    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:12}}>
-                      <span style={{fontSize:12,color:'var(--text2)'}}>Price direction:</span>
-                      <span style={{fontFamily:'var(--mono)',fontSize:12,padding:'3px 10px',borderRadius:4,
-                        background:result.pricingAnalysis.optimalPriceDirection==='on target'?'rgba(74,222,128,0.1)':'rgba(245,158,11,0.1)',
-                        color:result.pricingAnalysis.optimalPriceDirection==='on target'?'var(--green)':'var(--amber)',
-                        border:`1px solid ${result.pricingAnalysis.optimalPriceDirection==='on target'?'rgba(74,222,128,0.2)':'rgba(245,158,11,0.2)'}`}}>
-                        {result.pricingAnalysis.optimalPriceDirection?.toUpperCase()}
-                      </span>
-                    </div>
-                    <ProbBar label="Price resistance probability" pct={result.pricingAnalysis.priceResistanceProbability||0}
-                      color={result.pricingAnalysis.priceResistanceProbability<30?'var(--green)':result.pricingAnalysis.priceResistanceProbability<60?'var(--amber)':'var(--red)'}/>
-                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7,marginTop:12}}>{result.pricingAnalysis.priceInsight}</p>
-                  </div>
-                )}
-                {result.channelAnalysis&&(
-                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
-                    <ML c="var(--blue)" mb={8}>Channel analysis</ML>
-                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{result.channelAnalysis}</p>
-                  </div>
-                )}
-                {result.brandFitAnalysis&&(
-                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
-                    <ML c="var(--purple)" mb={8}>Brand fit analysis</ML>
-                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{result.brandFitAnalysis}</p>
-                  </div>
-                )}
-                {result.launchReadinessChecklist&&(
-                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
-                    <ML c="var(--text3)" mb={12}>Launch readiness checklist</ML>
-                    {result.launchReadinessChecklist.map((item,i)=>{
-                      const c=item.status==='ready'?'var(--green)':item.status==='critical gap'?'var(--red)':'var(--amber)';
-                      const symbol=item.status==='ready'?'✓':item.status==='critical gap'?'✕':'△';
-                      return(
-                        <div key={i} style={{display:'flex',gap:10,padding:'7px 0',borderBottom:i<result.launchReadinessChecklist.length-1?'1px solid var(--border)':'',alignItems:'center'}}>
-                          <span style={{fontFamily:'var(--mono)',fontSize:12,color:c,flexShrink:0,width:14}}>{symbol}</span>
-                          <span style={{fontSize:12,color:'var(--text)',flex:1}}>{item.item}</span>
-                          <span style={{fontFamily:'var(--mono)',fontSize:9,color:c,letterSpacing:'.08em',textTransform:'uppercase',flexShrink:0}}>{item.status}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
+            {/* PRICING + CHANNEL */}
+            {activeTab==='pricing'&&(
+              <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+                {result.pricingAnalysis&&(
+                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
+                    <ML c="var(--amber)" mb={10}>Pricing analysis</ML>
+                    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:12}}>
+                      <span style={{fontSize:12,color:'var(--text2)'}}>Price direction:</span>
+                      <span style={{fontFamily:'var(--mono)',fontSize:12,padding:'3px 10px',borderRadius:4,
+                        background:result.pricingAnalysis.optimalPriceDirection==='on target'?'rgba(74,222,128,0.1)':'rgba(245,158,11,0.1)',
+                        color:result.pricingAnalysis.optimalPriceDirection==='on target'?'var(--green)':'var(--amber)',
+                        border:`1px solid ${result.pricingAnalysis.optimalPriceDirection==='on target'?'rgba(74,222,128,0.2)':'rgba(245,158,11,0.2)'}`}}>
+                        {result.pricingAnalysis.optimalPriceDirection?.toUpperCase()}
+                      </span>
+                    </div>
+                    <ProbBar label="Price resistance probability" pct={result.pricingAnalysis.priceResistanceProbability||0}
+                      color={result.pricingAnalysis.priceResistanceProbability<30?'var(--green)':result.pricingAnalysis.priceResistanceProbability<60?'var(--amber)':'var(--red)'}/>
+                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7,marginTop:12}}>{result.pricingAnalysis.priceInsight}</p>
+                  </div>
+                )}
+                {result.channelAnalysis&&(
+                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
+                    <ML c="var(--blue)" mb={8}>Channel analysis</ML>
+                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{result.channelAnalysis}</p>
+                  </div>
+                )}
+                {result.brandFitAnalysis&&(
+                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
+                    <ML c="var(--purple)" mb={8}>Brand fit analysis</ML>
+                    <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{result.brandFitAnalysis}</p>
+                  </div>
+                )}
+                {result.launchReadinessChecklist&&(
+                  <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px'}}>
+                    <ML c="var(--text3)" mb={12}>Launch readiness checklist</ML>
+                    {result.launchReadinessChecklist.map((item,i)=>{
+                      const c=item.status==='ready'?'var(--green)':item.status==='critical gap'?'var(--red)':'var(--amber)';
+                      const symbol=item.status==='ready'?'✓':item.status==='critical gap'?'✕':'△';
+                      return(
+                        <div key={i} style={{display:'flex',gap:10,padding:'7px 0',borderBottom:i<result.launchReadinessChecklist.length-1?'1px solid var(--border)':'',alignItems:'center'}}>
+                          <span style={{fontFamily:'var(--mono)',fontSize:12,color:c,flexShrink:0,width:14}}>{symbol}</span>
+                          <span style={{fontSize:12,color:'var(--text)',flex:1}}>{item.item}</span>
+                          <span style={{fontFamily:'var(--mono)',fontSize:9,color:c,letterSpacing:'.08em',textTransform:'uppercase',flexShrink:0}}>{item.status}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* DIRECTIVE */}
-            {activeTab==='directive'&&(
-              <div className="fade-in">
-                <div style={{background:'var(--bg)',border:`1px solid ${verdictColor(result.verdict)}25`,borderRadius:8,padding:'24px 28px'}} className="scan-line">
-                  <ML c="var(--green)" mb={12}>Final directive — what to do with this</ML>
-                  <p style={{fontSize:15,lineHeight:1.9,color:'var(--text)'}}>{result.finalDirective}</p>
-                </div>
-                <div style={{marginTop:10,display:'flex',justifyContent:'flex-end'}}>
-                  <button onClick={()=>copy(result.finalDirective)} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'7px 16px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Copy</button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+            {/* DIRECTIVE */}
+            {activeTab==='directive'&&(
+              <div className="fade-in">
+                <div style={{background:'var(--bg)',border:`1px solid ${verdictColor(result.verdict)}25`,borderRadius:8,padding:'24px 28px'}} className="scan-line">
+                  <ML c="var(--green)" mb={12}>Final directive — what to do with this</ML>
+                  <p style={{fontSize:15,lineHeight:1.9,color:'var(--text)'}}>{result.finalDirective}</p>
+                </div>
+                <div style={{marginTop:10,display:'flex',justifyContent:'flex-end'}}>
+                  <button onClick={()=>copy(result.finalDirective)} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'7px 16px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Copy</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
-      </main>
+      </main>
 
-      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>Predictive Panel / Validation Gate</span>
-      </footer>
-    </div>
-  );
+      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>Predictive Panel / Validation Gate</span>
+      </footer>
+    </div>
+  );
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
+<script src="qb-shell.js"></script>
 </body>
 </html>
