@@ -62,6 +62,15 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 .slider-thumb{-webkit-appearance:none;width:100%;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
 </style>
 <script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
+<script>
 // QB_SPINE v2 — API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
@@ -98,28 +107,6 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 </script>
 </head>
 <body>
-<script>
-// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  // QBP: URL param (base64 encoded) > localStorage
-  const urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-})();
-// ── END QB SPINE ──────────────────────────────────────────────────────────────
-</script>
-<script>
-// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  // QBP: URL param (base64 encoded) > localStorage
-  const urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-})();
-// ── END QB SPINE ──────────────────────────────────────────────────────────────
-</script>
 <div id="root"></div>
 
 <script type="text/babel">
@@ -526,7 +513,7 @@ Write this copy in the exact voice defined above. Apply the correct tone mode fo
 // ── MAIN APP ───────────────────────────────────────────────────────────────────
 const STEPS = ['QBP Input','Generating','Voice Guide'];
 
-export default function App(){
+function App(){
   const [step,setStep]=useState(0);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState('');
@@ -557,6 +544,21 @@ export default function App(){
   const [serious,setSerious]=useState(5);
   // Platforms
   const [platforms,setPlatforms]=useState({instagram:true,linkedin:true,email:true,website:true,youtube:false,podcast:false});
+
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.manifesto) setManifestoLine(q.manifesto);
+    if (q.naturalForce) setNaturalForce(q.naturalForce);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.mythFigure) setMythFigure(q.mythFigure);
+    if (q.antiBrand) setAntiBrand(q.antiBrand);
+    if (q.paradox) setParadox(q.paradox);
+    if (q.spark) setSpark(q.spark);
+    if (q.alwaysNever) setAlwaysNever(q.alwaysNever);
+    if (q.primaryPersona) setFanLetter(q.primaryPersona);
+  }, []);
 
   const qbp = {brandName,brandEssence,manifestoLine,naturalForce,archetype,mythFigure,antiBrand,paradox,fanLetter,alignedBrands,refusedBrands,celebritySynth,rhythm,alwaysNever,spark,toneSliders:{formal,sparse,emotional,direct,serious}};
 
