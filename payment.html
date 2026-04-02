@@ -26,6 +26,15 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 .fade-in{animation:fadeIn 0.4s ease forwards}
 .spin-anim{animation:spin 0.8s linear infinite}
 </style>
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
 </head>
 <body>
 
