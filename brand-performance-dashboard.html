@@ -61,6 +61,15 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 .post-entry{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:6px}
 </style>
 <script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
+<script>
 // QB_SPINE v2 — API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
@@ -97,28 +106,6 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 </script>
 </head>
 <body>
-<script>
-// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  // QBP: URL param (base64 encoded) > localStorage
-  const urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-})();
-// ── END QB SPINE ──────────────────────────────────────────────────────────────
-</script>
-<script>
-// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  // QBP: URL param (base64 encoded) > localStorage
-  const urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-})();
-// ── END QB SPINE ──────────────────────────────────────────────────────────────
-</script>
 <div id="root"></div>
 <script type="text/babel">
 const {useState,useRef,useEffect}=React;
@@ -248,7 +235,7 @@ const Gauge=({score,label,color,delay=0})=>{
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 const STEPS=['Brand + Data','Analyzing','Dashboard'];
 
-export default function App(){
+function App(){
   const [step,setStep]=useState(0);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState('');
@@ -273,6 +260,17 @@ export default function App(){
   const [unexpectedFindings,setUnexpectedFindings]=useState('');
   const [audienceFeedback,setAudienceFeedback]=useState('');
   const [conversionData,setConversionData]=useState('');
+
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+    if (q.alwaysNever) setAlwaysNever(q.alwaysNever);
+    if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
+    if (q.offer) setOffer(q.offer);
+  }, []);
 
   const addPlatform=()=>setPlatforms(prev=>[...prev,{platform:'',topPosts:'',lowPosts:'',metrics:'',observations:''}]);
   const updatePlatform=(i,field,val)=>setPlatforms(prev=>prev.map((p,idx)=>idx===i?{...p,[field]:val}:p));
