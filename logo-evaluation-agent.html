@@ -53,6 +53,15 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 .tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
 </style>
 <script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
+<script>
 // QB_SPINE v2 — API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
@@ -89,28 +98,6 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 </script>
 </head>
 <body>
-<script>
-// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  // QBP: URL param (base64 encoded) > localStorage
-  const urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-})();
-// ── END QB SPINE ──────────────────────────────────────────────────────────────
-</script>
-<script>
-// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  // QBP: URL param (base64 encoded) > localStorage
-  const urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-})();
-// ── END QB SPINE ──────────────────────────────────────────────────────────────
-</script>
 <div id="root"></div>
 
 <script type="text/babel">
@@ -305,7 +292,7 @@ const RadarChart = ({ scores }) => {
 
 const STEPS = ['Setup','Upload','Evaluating','Verdict'];
 
-export default function App() {
+function App() {
   const [step, setStep] = useState(0);
   const [activeTab, setActiveTab] = useState('scores');
   const [loading, setLoading] = useState(false);
@@ -330,6 +317,18 @@ export default function App() {
   const [colorTerritory, setColorTerritory] = useState('');
   const [antiPatterns, setAntiPatterns] = useState('');
   const [qualityTest, setQualityTest]   = useState('');
+
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.naturalForce) setNaturalForce(q.naturalForce);
+    if (q.museumRoom) setMuseumRoom(q.museumRoom);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.antiBrand) setAntiBrand(q.antiBrand);
+    if (q.paradox) setParadox(q.paradox);
+    if (q.colorTerritory) setColorTerritory(q.colorTerritory);
+  }, []);
 
   const isSetupValid = () => brandName && brandEssence && naturalForce && museumRoom && archetype;
   const currentConcept = concepts[activeConcept];
