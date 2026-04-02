@@ -68,6 +68,16 @@
 
     </script>
 
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('qb-theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+          if (theme === 'dark') document.documentElement.classList.add('dark');
+        } catch(e) {}
+      })();
+    </script>
+
     <style>
     .qb-send-results-btn {
       display: inline-flex;
@@ -108,7 +118,10 @@
 
         }
 
-        
+        [data-theme="light"] {
+            --text2: #444444;
+            --text3: #777777;
+        }
 
         html.dark body {
 
@@ -681,19 +694,12 @@ Return this exact JSON structure:
             
 
             const [isDarkMode, setIsDarkMode] = useState(() => {
-
                 if (typeof window !== 'undefined') {
-
-                    const saved = localStorage.getItem('theme');
-
+                    const saved = localStorage.getItem('qb-theme');
                     if (saved) return saved === 'dark';
-
-                    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-
+                    return true;
                 }
-
                 return true; // Default to dark for the true Quantum Branding experience
-
             });
 
             useEffect(() => {
@@ -702,15 +708,17 @@ Return this exact JSON structure:
 
                     document.documentElement.classList.add('dark');
 
-                    localStorage.setItem('theme', 'dark');
+                    localStorage.setItem('qb-theme', 'dark');
 
                 } else {
 
                     document.documentElement.classList.remove('dark');
 
-                    localStorage.setItem('theme', 'light');
+                    localStorage.setItem('qb-theme', 'light');
 
                 }
+
+                document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
 
             }, [isDarkMode]);
 
@@ -1957,7 +1965,6 @@ Return this exact JSON structure:
                                 primaryPersona: data.cuEss ? ('The ' + data.cuEss + ' who ' + (data.fanTarget || '')) : (existing.primaryPersona || ''),
                                 naturalForce: data.mod1Force || existing.naturalForce || '',
                                 paradox: data.posAdj1 && data.posAdj2 ? (data.posAdj1 + ' yet ' + data.posAdj2) : (existing.paradox || ''),
-                                soulMapComplete: true,
                                 soulMapCompletedAt: new Date().toISOString()
                             });
                             localStorage.setItem('qb_qbp', JSON.stringify(updated));
@@ -1974,12 +1981,14 @@ Return this exact JSON structure:
                               btn.addEventListener('click', function() {
                                 var qbp = {};
                                 try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) {}
-                                window.QB_showResultsModal({
-                                  toolId: 'soul-map',
-                                  qbp: qbp,
-                                  results: { spark: qbp.spark, essence: qbp.brandEssence },
-                                  pdfPage: '/brand-soul-map-pdf.html'
-                                });
+                                if (window.QB_showResultsModal) {
+                                  window.QB_showResultsModal({
+                                    toolId: 'soul-map',
+                                    qbp: qbp,
+                                    results: { spark: qbp.spark, essence: qbp.brandEssence },
+                                    pdfPage: '/brand-soul-map-pdf.html'
+                                  });
+                                }
                               });
                               document.body.appendChild(btn);
                             }
@@ -2174,8 +2183,6 @@ Return this exact JSON structure:
     </script>
 
 
-  <!-- QB Results Modal -->
-  <script src="/qb-results-modal.js"></script>
 </body>
 
 </html>
