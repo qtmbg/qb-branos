@@ -60,6 +60,15 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 .slider-thumb{-webkit-appearance:none;width:100%;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
 </style>
 <script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
+<script>
 // QB_SPINE v2 — API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
@@ -96,31 +105,9 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
 </script>
 </head>
 <body>
-<script>
-// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  // QBP: URL param (base64 encoded) > localStorage
-  const urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-})();
-// ── END QB SPINE ──────────────────────────────────────────────────────────────
-</script>
-<script>
-// ── QB SPINE — API KEY + QBP READER ──────────────────────────────────────────
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  // QBP: URL param (base64 encoded) > localStorage
-  const urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-})();
-// ── END QB SPINE ──────────────────────────────────────────────────────────────
-</script>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useRef}=React;
+const {useState,useEffect,useRef}=React;
 
 const ARCHETYPES=['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
 const NATURAL_FORCES=['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
@@ -366,7 +353,7 @@ const ChannelStrategy=({data})=>{
 };
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
-export default function App(){
+function App(){
   const [step,setStep]=useState(0);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState('');
@@ -390,6 +377,20 @@ export default function App(){
   const [channelGoal,setChannelGoal]=useState('');
   const [videoStyle,setVideoStyle]=useState('');
   const [existingContent,setExistingContent]=useState('');
+
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.spark) setSpark(q.spark);
+    if (q.naturalForce) setNaturalForce(q.naturalForce);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.manifesto) setManifestoLine(q.manifesto);
+    if (q.antiBrand) setAntiBrand(q.antiBrand);
+    if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
+    if (q.offer) setOffer(q.offer);
+    if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+  }, []);
 
   const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona&&offer;
 
