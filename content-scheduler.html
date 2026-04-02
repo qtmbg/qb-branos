@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QB — Content Scheduler</title>
 <script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
+<script>
 (function(){
   var p=new URLSearchParams(window.location.search);
   try{window.QB_QBP=JSON.parse(localStorage.getItem('qb_qbp')||'{}');}catch(e){window.QB_QBP={};}
@@ -68,7 +77,7 @@ const BEST_TIMES={
   facebook:['09:00','13:00','19:00'],
 };
 
-export default function App(){
+function App(){
   const [bufferToken,setBufferToken]=useState(localStorage.getItem('qb_buffer_token')||'');
   const [tokenSaved,setTokenSaved]=useState(!!localStorage.getItem('qb_buffer_token'));
   const [profiles,setProfiles]=useState([]);
