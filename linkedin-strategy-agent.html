@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-qb-tool="linkedin-strategy">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +8,30 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="qb-system.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* Tool-specific styles — base from qb-system.css */
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;--bg5:#252525;
+  --border:#2a2a2a;--border2:#333;
+  --text:#e8e8e8;--text2:#888;--text3:#555;--text4:#333;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
+  --red:#ef4444;--red2:rgba(239,68,68,0.1);
+  --amber:#f59e0b;--amber2:rgba(245,158,11,0.1);
+  --blue:#60a5fa;--blue2:rgba(96,165,250,0.12);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.12);
+  --teal:#2dd4bf;--teal2:rgba(45,212,191,0.1);
+  --pink:#f472b6;--pink2:rgba(244,114,182,0.1);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--green)}
+textarea{resize:vertical;line-height:1.6}
+select option{background:var(--bg3)}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes scanH{0%{left:-80%}100%{left:200%}}
@@ -20,10 +39,10 @@
 .blink{animation:pulse 1.4s ease infinite}
 .spin{animation:spin .9s linear infinite}
 .scan-line{position:relative;overflow:hidden}
-.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(58,95,74,0.04),transparent);animation:scanH 3s linear infinite}
+.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.04),transparent);animation:scanH 3s linear infinite}
 .tab-btn{padding:8px 16px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer;white-space:nowrap}
 .tab-btn:hover{border-color:var(--border2);color:var(--text2)}
-.tab-btn.active{background:var(--green2);border-color:rgba(58,95,74,0.3);color:var(--green)}
+.tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
 .tab-btn.personal.active{background:var(--blue2);border-color:rgba(96,165,250,0.3);color:var(--blue)}
 .tab-btn.company.active{background:var(--purple2);border-color:rgba(167,139,250,0.3);color:var(--purple)}
 .post-row{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 18px;cursor:pointer;transition:all .15s;margin-bottom:6px}
@@ -42,66 +61,47 @@
 .slider-thumb{-webkit-appearance:none;width:100%;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
 </style>
 <script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
+<script>
 // QB_SPINE v2 — API Key + QBP + Multi-provider adapter
 (function(){
-  var params = new URLSearchParams(window.location.search);
-  // API Key
-  var urlKey = params.get('apikey');
-  if(urlKey) localStorage.setItem('qb_api_key', urlKey);
-  window.QB_API_KEY = urlKey || localStorage.getItem('qb_api_key') || '';
-  // Provider: anthropic | gemini
-  var urlProvider = params.get('provider');
-  if(urlProvider) localStorage.setItem('qb_provider', urlProvider);
-  window.QB_PROVIDER = urlProvider || localStorage.getItem('qb_provider') || 'anthropic';
-  // QBP
-  var urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-  // Universal AI call — works with Anthropic or Gemini
-  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
-    maxTokens = maxTokens || 4000;
-    if(window.QB_PROVIDER === 'gemini'){
-      var model = 'gemini-2.0-flash';
-      var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + window.QB_API_KEY;
-      var body = {
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-        generationConfig: { maxOutputTokens: maxTokens, temperature: 0.7 }
-      };
-      var res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      var d = await res.json();
-      if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
-      return d.candidates[0].content.parts[0].text;
-    } else {
-      var url = 'https://api.anthropic.com/v1/messages';
-      var body = {
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
-      };
-      var res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': window.QB_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify(body)
-      });
-      var d = await res.json();
-      if(d.error) throw new Error(d.error.message);
-      return d.content[0].text;
-    }
-  };
-  window.QB_AUTOFILL = function(fieldMap){
-    if(!window.QB_QBP) return;
-    Object.entries(fieldMap).forEach(function(kv){
-      var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
-      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
-    });
-  };
+  var params = new URLSearchParams(window.location.search);
+  // QBP
+  var urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  // Universal AI call — works with Anthropic or Gemini
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.content[0].text;
+  };
+  window.QB_AUTOFILL = function(fieldMap){
+    if(!window.QB_QBP) return;
+    Object.entries(fieldMap).forEach(function(kv){
+      var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
+      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
+    });
+  };
 })();
 </script>
 </head>
@@ -123,289 +123,304 @@ const WEEK_BORDER=['rgba(96,165,250,0.2)','rgba(167,139,250,0.2)','rgba(245,158,
 const ML=({c,children,mb=8})=><div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:c||'var(--text3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
 const Card=({children,accent,style={}})=><div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>{children}</div>;
 const TF=({label,value,onChange,placeholder,rows=1,hint})=>(
-  <div style={{marginBottom:14}}>
-    <ML>{label}</ML>
-    {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
-    :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
-    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
-  </div>
+  <div style={{marginBottom:14}}>
+    <ML>{label}</ML>
+    {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+    :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
+    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
+  </div>
 );
 const SF=({label,options,value,onChange})=>(
-  <div style={{marginBottom:14}}>
-    <ML>{label}</ML>
-    <select value={value} onChange={e=>onChange(e.target.value)}>
-      <option value="">— select —</option>
-      {options.map(o=><option key={o} value={o}>{o}</option>)}
-    </select>
-  </div>
+  <div style={{marginBottom:14}}>
+    <ML>{label}</ML>
+    <select value={value} onChange={e=>onChange(e.target.value)}>
+      <option value="">— select —</option>
+      {options.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
 );
 const Section=({title,number,children,note})=>(
-  <div style={{marginBottom:28}}>
-    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
-      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{number}</span>
-      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
-      {note&&<span style={{fontSize:11,color:'var(--text3)',marginLeft:'auto'}}>{note}</span>}
-    </div>
-    {children}
-  </div>
+  <div style={{marginBottom:28}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{number}</span>
+      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
+      {note&&<span style={{fontSize:11,color:'var(--text3)',marginLeft:'auto'}}>{note}</span>}
+    </div>
+    {children}
+  </div>
 );
 
 // ── POST CARD ─────────────────────────────────────────────────────────────────
 const PostCard=({post,index,color,bgColor,borderColor,mode})=>{
-  const [open,setOpen]=useState(false);
-  const [copied,setCopied]=useState(false);
-  const copy=async(t)=>{try{await navigator.clipboard.writeText(t);setCopied(true);setTimeout(()=>setCopied(false),1800);}catch(e){}};
-  const wk=post.week?`W${post.week}`:`P${index+1}`;
-  return(
-    <div className={`post-row${open?' open':''}`} onClick={()=>setOpen(!open)}>
-      <div style={{display:'flex',alignItems:'center',gap:10,justifyContent:'space-between'}}>
-        <div style={{display:'flex',alignItems:'center',gap:10,flex:1,minWidth:0}}>
-          <span style={{fontFamily:'var(--mono)',fontSize:9,color,border:`1px solid ${borderColor}`,padding:'2px 7px',borderRadius:3,flexShrink:0,background:bgColor}}>{wk}·{String((post.dayNumber||index+1)).padStart(2,'0')}</span>
-          <div style={{flex:1,minWidth:0}}>
-            <div style={{fontSize:12,fontWeight:500,color:'var(--text)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',marginBottom:2}}>{post.postTitle}</div>
-            <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
-              <span className={`pill pill-${mode==='personal'?'blue':'purple'}`}>{post.postType}</span>
-              {post.contentPillar&&<span className="pill pill-neutral">{post.contentPillar}</span>}
-            </div>
-          </div>
-        </div>
-        <span style={{color:'var(--text3)',fontSize:11,flexShrink:0,transform:open?'rotate(180deg)':'none',transition:'transform .2s'}}>↓</span>
-      </div>
+  const [open,setOpen]=useState(false);
+  const [copied,setCopied]=useState(false);
+  const copy=async(t)=>{try{await navigator.clipboard.writeText(t);setCopied(true);setTimeout(()=>setCopied(false),1800);}catch(e){}};
+  const wk=post.week?`W${post.week}`:`P${index+1}`;
+  return(
+    <div className={`post-row${open?' open':''}`} onClick={()=>setOpen(!open)}>
+      <div style={{display:'flex',alignItems:'center',gap:10,justifyContent:'space-between'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,flex:1,minWidth:0}}>
+          <span style={{fontFamily:'var(--mono)',fontSize:9,color,border:`1px solid ${borderColor}`,padding:'2px 7px',borderRadius:3,flexShrink:0,background:bgColor}}>{wk}·{String((post.dayNumber||index+1)).padStart(2,'0')}</span>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:12,fontWeight:500,color:'var(--text)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',marginBottom:2}}>{post.postTitle}</div>
+            <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+              <span className={`pill pill-${mode==='personal'?'blue':'purple'}`}>{post.postType}</span>
+              {post.contentPillar&&<span className="pill pill-neutral">{post.contentPillar}</span>}
+            </div>
+          </div>
+        </div>
+        <span style={{color:'var(--text3)',fontSize:11,flexShrink:0,transform:open?'rotate(180deg)':'none',transition:'transform .2s'}}>↓</span>
+      </div>
 
-      {open&&(
-        <div className="fade-in" style={{marginTop:14,paddingTop:14,borderTop:'1px solid var(--border)'}} onClick={e=>e.stopPropagation()}>
-          {/* Hook */}
-          <div style={{background:'var(--bg)',border:`1px solid ${borderColor}`,borderRadius:6,padding:'12px 16px',marginBottom:12}}>
-            <ML c={color} mb={6}>Opening hook</ML>
-            <p style={{fontSize:13,fontStyle:'italic',color:'var(--text)',lineHeight:1.7}}>"{post.hook}"</p>
-            {post.hookType&&<div style={{marginTop:6,fontSize:11,color:'var(--text3)'}}>Hook type: <span style={{color:color}}>{post.hookType}</span></div>}
-          </div>
+      {open&&(
+        <div className="fade-in" style={{marginTop:14,paddingTop:14,borderTop:'1px solid var(--border)'}} onClick={e=>e.stopPropagation()}>
+          {/* Hook */}
+          <div style={{background:'var(--bg)',border:`1px solid ${borderColor}`,borderRadius:6,padding:'12px 16px',marginBottom:12}}>
+            <ML c={color} mb={6}>Opening hook</ML>
+          <p style={{fontSize:13,fontStyle:'italic',color:'var(--text)',lineHeight:1.7}}>"{post.hook}"</p>
+            {post.hookType&&<div style={{marginTop:6,fontSize:11,color:'var(--text3)'}}>Hook type: <span style={{color:color}}>{post.hookType}</span></div>}
+          </div>
 
-          {/* Full post */}
-          <div style={{marginBottom:12}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-              <ML c="var(--text3)" mb={0}>Full post</ML>
-              <button onClick={()=>copy(post.fullPost)} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:copied?'var(--green)':'var(--text2)',padding:'4px 12px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase',transition:'color .2s'}}>
-                {copied?'Copied ✓':'Copy'}
-              </button>
-            </div>
-            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:6,padding:'16px',fontSize:13,lineHeight:1.9,color:'var(--text)',whiteSpace:'pre-wrap',maxHeight:320,overflowY:'auto'}}>
-              {post.fullPost}
-            </div>
-          </div>
+          {/* Full post */}
+          <div style={{marginBottom:12}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+              <ML c="var(--text3)" mb={0}>Full post</ML>
+              <button onClick={()=>copy(post.fullPost)} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:copied?'var(--green)':'var(--text2)',padding:'4px 12px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase',transition:'color .2s'}}>
+                {copied?'Copied ✓':'Copy'}
+              </button>
+            </div>
+            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:6,padding:'16px',fontSize:13,lineHeight:1.9,color:'var(--text)',whiteSpace:'pre-wrap',maxHeight:320,overflowY:'auto'}}>
+              {post.fullPost}
+            </div>
+          </div>
 
-          {/* Meta row */}
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}>
-            {post.strategicPurpose&&(
-              <div style={{background:'var(--bg4)',borderRadius:6,padding:'10px 12px'}}>
-                <ML c="var(--text3)" mb={4}>Strategic purpose</ML>
-                <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.5}}>{post.strategicPurpose}</p>
-              </div>
-            )}
-            {post.cta&&(
-              <div style={{background:'var(--bg4)',borderRadius:6,padding:'10px 12px'}}>
-                <ML c="var(--green)" mb={4}>CTA</ML>
-                <p style={{fontSize:12,color:'var(--text)',lineHeight:1.5}}>{post.cta}</p>
-              </div>
-            )}
-          </div>
+          {/* Meta row */}
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}>
+            {post.strategicPurpose&&(
+              <div style={{background:'var(--bg4)',borderRadius:6,padding:'10px 12px'}}>
+                <ML c="var(--text3)" mb={4}>Strategic purpose</ML>
+                <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.5}}>{post.strategicPurpose}</p>
+              </div>
+            )}
+            {post.cta&&(
+              <div style={{background:'var(--bg4)',borderRadius:6,padding:'10px 12px'}}>
+                <ML c="var(--green)" mb={4}>CTA</ML>
+                <p style={{fontSize:12,color:'var(--text)',lineHeight:1.5}}>{post.cta}</p>
+              </div>
+            )}
+          </div>
 
-          {/* Hashtags */}
-          {post.hashtags?.length>0&&(
-            <div>
-              <ML c="var(--text3)" mb={6}>Hashtags</ML>
-              <div>{post.hashtags.map((h,i)=><span key={i} className="pill pill-neutral">#{h}</span>)}</div>
-            </div>
-          )}
+          {/* Hashtags */}
+          {post.hashtags?.length>0&&(
+            <div>
+              <ML c="var(--text3)" mb={6}>Hashtags</ML>
+              <div>{post.hashtags.map((h,i)=><span key={i} className="pill pill-neutral">#{h}</span>)}</div>
+            </div>
+          )}
 
-          {/* Best time */}
-          {post.bestTime&&(
-            <div style={{marginTop:10,fontSize:11,color:'var(--text3)'}}>Best time: <span style={{color:'var(--text2)'}}>{post.bestTime}</span></div>
-          )}
-        </div>
-      )}
-    </div>
-  );
+          {/* Best time */}
+          {post.bestTime&&(
+            <div style={{marginTop:10,fontSize:11,color:'var(--text3)'}}>Best time: <span style={{color:'var(--text2)'}}>{post.bestTime}</span></div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 // ── PROFILE SECTION ──────────────────────────────────────────────────────────
 const ProfilePanel=({data,mode})=>{
-  const [copied,setCopied]=useState('');
-  const copy=async(key,text)=>{try{await navigator.clipboard.writeText(text);setCopied(key);setTimeout(()=>setCopied(''),2000);}catch(e){}};
-  if(!data) return null;
-  const color=mode==='personal'?'var(--blue)':'var(--purple)';
-  const accent=mode==='personal'?'rgba(96,165,250,0.2)':'rgba(167,139,250,0.2)';
+  const [copied,setCopied]=useState('');
+  const copy=async(key,text)=>{try{await navigator.clipboard.writeText(text);setCopied(key);setTimeout(()=>setCopied(''),2000);}catch(e){}};
+  if(!data) return null;
+  const color=mode==='personal'?'var(--blue)':'var(--purple)';
+  const accent=mode==='personal'?'rgba(96,165,250,0.2)':'rgba(167,139,250,0.2)';
 
-  const CopyableBlock=({label,content,id})=>(
-    <div style={{marginBottom:14}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
-        <ML c={color} mb={0}>{label}</ML>
-        <button onClick={()=>copy(id,content)} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:copied===id?'var(--green)':'var(--text2)',padding:'3px 10px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>
-          {copied===id?'Copied ✓':'Copy'}
-        </button>
-      </div>
-      <div style={{background:'var(--bg)',border:`1px solid ${accent}`,borderRadius:6,padding:'12px 14px',fontSize:13,lineHeight:1.8,color:'var(--text)',whiteSpace:'pre-wrap'}}>{content}</div>
-    </div>
-  );
+  const CopyableBlock=({label,content,id})=>(
+    <div style={{marginBottom:14}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+        <ML c={color} mb={0}>{label}</ML>
+        <button onClick={()=>copy(id,content)} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:copied===id?'var(--green)':'var(--text2)',padding:'3px 10px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>
+          {copied===id?'Copied ✓':'Copy'}
+        </button>
+      </div>
+      <div style={{background:'var(--bg)',border:`1px solid ${accent}`,borderRadius:6,padding:'12px 14px',fontSize:13,lineHeight:1.8,color:'var(--text)',whiteSpace:'pre-wrap'}}>{content}</div>
+    </div>
+  );
 
-  return(
-    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
-      {data.headline&&<CopyableBlock label="Headline" content={data.headline} id="headline"/>}
-      {data.about&&<CopyableBlock label="About / Summary" content={data.about} id="about"/>}
-      {data.featuredSection&&<CopyableBlock label="Featured section strategy" content={data.featuredSection} id="featured"/>}
-      {data.bannerDirection&&(
-        <Card accent={accent}>
-          <ML c={color}>Banner / cover image direction</ML>
-          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{data.bannerDirection}</p>
-        </Card>
-      )}
-      {data.profilePhotoDirection&&(
-        <Card accent={accent}>
-          <ML c={color}>Profile photo direction</ML>
-          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{data.profilePhotoDirection}</p>
-        </Card>
-      )}
-      {data.experiencePositioning&&(
-        <Card accent={accent}>
-          <ML c={color}>Experience section positioning</ML>
-          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{data.experiencePositioning}</p>
-        </Card>
-      )}
-      {data.connectionStrategy&&(
-        <Card>
-          <ML>Connection + engagement strategy</ML>
-          <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.7}}>{data.connectionStrategy}</p>
-        </Card>
-      )}
-    </div>
-  );
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+      {data.headline&&<CopyableBlock label="Headline" content={data.headline} id="headline"/>}
+      {data.about&&<CopyableBlock label="About / Summary" content={data.about} id="about"/>}
+      {data.featuredSection&&<CopyableBlock label="Featured section strategy" content={data.featuredSection} id="featured"/>}
+      {data.bannerDirection&&(
+        <Card accent={accent}>
+          <ML c={color}>Banner / cover image direction</ML>
+          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{data.bannerDirection}</p>
+        </Card>
+      )}
+      {data.profilePhotoDirection&&(
+        <Card accent={accent}>
+          <ML c={color}>Profile photo direction</ML>
+          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{data.profilePhotoDirection}</p>
+        </Card>
+      )}
+      {data.experiencePositioning&&(
+        <Card accent={accent}>
+          <ML c={color}>Experience section positioning</ML>
+          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{data.experiencePositioning}</p>
+        </Card>
+      )}
+      {data.connectionStrategy&&(
+        <Card>
+          <ML>Connection + engagement strategy</ML>
+          <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.7}}>{data.connectionStrategy}</p>
+        </Card>
+      )}
+    </div>
+  );
 };
 
 // ── WEEK VIEW ─────────────────────────────────────────────────────────────────
 const WeekView=({posts,mode})=>{
-  const weeks=[1,2,3,4];
-  const color=mode==='personal'?'var(--blue)':'var(--purple)';
-  if(!posts?.length) return null;
-  return(
-    <div>
-      {weeks.map(w=>{
-        const wPosts=posts.filter(p=>p.week===w);
-        if(!wPosts.length) return null;
-        return(
-          <div key={w} style={{marginBottom:24}}>
-            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
-              <div style={{width:28,height:28,borderRadius:6,background:WEEK_BG[w-1],border:`1px solid ${WEEK_BORDER[w-1]}`,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                <span style={{fontFamily:'var(--mono)',fontSize:10,color:WEEK_COLORS[w-1]}}>W{w}</span>
-              </div>
-              {posts.find(p=>p.week===w)?.weekTheme&&(
-                <div>
-                  <div style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{posts.find(p=>p.week===w).weekTheme}</div>
-                  {posts.find(p=>p.week===w)?.weekIntent&&<div style={{fontSize:11,color:'var(--text3)',marginTop:1}}>{posts.find(p=>p.week===w).weekIntent}</div>}
-                </div>
-              )}
-            </div>
-            {wPosts.map((p,i)=>(
-              <PostCard key={i} post={p} index={posts.indexOf(p)} color={WEEK_COLORS[w-1]} bgColor={WEEK_BG[w-1]} borderColor={WEEK_BORDER[w-1]} mode={mode}/>
-            ))}
-          </div>
-        );
-      })}
-    </div>
-  );
+  const weeks=[1,2,3,4];
+  const color=mode==='personal'?'var(--blue)':'var(--purple)';
+  if(!posts?.length) return null;
+  return(
+    <div>
+      {weeks.map(w=>{
+        const wPosts=posts.filter(p=>p.week===w);
+        if(!wPosts.length) return null;
+        return(
+          <div key={w} style={{marginBottom:24}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+              <div style={{width:28,height:28,borderRadius:6,background:WEEK_BG[w-1],border:`1px solid ${WEEK_BORDER[w-1]}`,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <span style={{fontFamily:'var(--mono)',fontSize:10,color:WEEK_COLORS[w-1]}}>W{w}</span>
+              </div>
+              {posts.find(p=>p.week===w)?.weekTheme&&(
+                <div>
+                  <div style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{posts.find(p=>p.week===w).weekTheme}</div>
+                  {posts.find(p=>p.week===w)?.weekIntent&&<div style={{fontSize:11,color:'var(--text3)',marginTop:1}}>{posts.find(p=>p.week===w).weekIntent}</div>}
+                </div>
+              )}
+            </div>
+            {wPosts.map((p,i)=>(
+              <PostCard key={i} post={p} index={posts.indexOf(p)} color={WEEK_COLORS[w-1]} bgColor={WEEK_BG[w-1]} borderColor={WEEK_BORDER[w-1]} mode={mode}/>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 
 // ── STRATEGY OVERVIEW ─────────────────────────────────────────────────────────
 const StrategyOverview=({data,mode})=>{
-  if(!data?.strategy) return null;
-  const color=mode==='personal'?'var(--blue)':'var(--purple)';
-  const accent=mode==='personal'?'rgba(96,165,250,0.2)':'rgba(167,139,250,0.2)';
-  return(
-    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
-      <div style={{background:'var(--bg)',border:`1px solid ${accent}`,borderRadius:8,padding:'18px 22px'}} className="scan-line">
-        <ML c={color}>Strategic positioning</ML>
-        <p style={{fontSize:14,lineHeight:1.8,color:'var(--text)'}}>{data.strategy.positioning}</p>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-        <Card accent={accent}>
-          <ML c={color}>Content pillars</ML>
-          {data.strategy.contentPillars?.map((p,i)=>(
-            <div key={i} style={{padding:'7px 0',borderBottom:i<data.strategy.contentPillars.length-1?'1px solid var(--border)':''}}>
-              <div style={{fontSize:12,fontWeight:500,color:'var(--text)',marginBottom:2}}>{p.pillar}</div>
-              <div style={{fontSize:11,color:'var(--text3)',lineHeight:1.4}}>{p.why}</div>
-            </div>
-          ))}
-        </Card>
-        <div style={{display:'flex',flexDirection:'column',gap:10}}>
-          <Card>
-            <ML>Cadence</ML>
-            <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{data.strategy.cadence}</p>
-          </Card>
-          <Card>
-            <ML>Audience to target</ML>
-            <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{data.strategy.audienceTarget}</p>
-          </Card>
-        </div>
-      </div>
-      {data.strategy.uniqueEdge&&(
-        <Card accent={accent}>
-          <ML c={color}>Unique edge — what makes this account unmistakable</ML>
-          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{data.strategy.uniqueEdge}</p>
-        </Card>
-      )}
-      {data.strategy.weeklyThemes&&(
-        <Card>
-          <ML>4-week arc themes</ML>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:4}}>
-            {data.strategy.weeklyThemes.map((t,i)=>(
-              <div key={i} style={{background:WEEK_BG[i],border:`1px solid ${WEEK_BORDER[i]}`,borderRadius:6,padding:'8px 12px'}}>
-                <div style={{fontSize:10,fontFamily:'var(--mono)',color:WEEK_COLORS[i],marginBottom:3}}>WEEK {i+1}</div>
-                <div style={{fontSize:12,color:'var(--text)',fontWeight:500}}>{t.theme}</div>
-                <div style={{fontSize:11,color:'var(--text3)',marginTop:2}}>{t.intent}</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
-    </div>
-  );
+  if(!data?.strategy) return null;
+  const color=mode==='personal'?'var(--blue)':'var(--purple)';
+  const accent=mode==='personal'?'rgba(96,165,250,0.2)':'rgba(167,139,250,0.2)';
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+      <div style={{background:'var(--bg)',border:`1px solid ${accent}`,borderRadius:8,padding:'18px 22px'}} className="scan-line">
+        <ML c={color}>Strategic positioning</ML>
+        <p style={{fontSize:14,lineHeight:1.8,color:'var(--text)'}}>{data.strategy.positioning}</p>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <Card accent={accent}>
+          <ML c={color}>Content pillars</ML>
+          {data.strategy.contentPillars?.map((p,i)=>(
+            <div key={i} style={{padding:'7px 0',borderBottom:i<data.strategy.contentPillars.length-1?'1px solid var(--border)':''}}>
+              <div style={{fontSize:12,fontWeight:500,color:'var(--text)',marginBottom:2}}>{p.pillar}</div>
+              <div style={{fontSize:11,color:'var(--text3)',lineHeight:1.4}}>{p.why}</div>
+            </div>
+          ))}
+        </Card>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <Card>
+            <ML>Cadence</ML>
+            <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{data.strategy.cadence}</p>
+          </Card>
+          <Card>
+            <ML>Audience to target</ML>
+            <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{data.strategy.audienceTarget}</p>
+          </Card>
+        </div>
+      </div>
+      {data.strategy.uniqueEdge&&(
+        <Card accent={accent}>
+          <ML c={color}>Unique edge — what makes this account unmistakable</ML>
+          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{data.strategy.uniqueEdge}</p>
+        </Card>
+      )}
+      {data.strategy.weeklyThemes&&(
+        <Card>
+          <ML>4-week arc themes</ML>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:4}}>
+            {data.strategy.weeklyThemes.map((t,i)=>(
+              <div key={i} style={{background:WEEK_BG[i],border:`1px solid ${WEEK_BORDER[i]}`,borderRadius:6,padding:'8px 12px'}}>
+                <div style={{fontSize:10,fontFamily:'var(--mono)',color:WEEK_COLORS[i],marginBottom:3}}>WEEK {i+1}</div>
+                <div style={{fontSize:12,color:'var(--text)',fontWeight:500}}>{t.theme}</div>
+                <div style={{fontSize:11,color:'var(--text3)',marginTop:2}}>{t.intent}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+    </div>
+  );
 };
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 const STEPS=['QBP Input','Generating','Strategy'];
 
-export default function App(){
-  const [step,setStep]=useState(0);
-  const [loading,setLoading]=useState(false);
-  const [error,setError]=useState('');
-  const [result,setResult]=useState(null);
-  const [mode,setMode]=useState('personal'); // personal | company
-  const [modeTab,setModeTab]=useState('strategy'); // strategy | profile | posts
+function App(){
+  const [step,setStep]=useState(0);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState('');
+  const [result,setResult]=useState(null);
+  const [mode,setMode]=useState('personal'); // personal | company
+  const [modeTab,setModeTab]=useState('strategy'); // strategy | profile | posts
 
-  // QBP inputs
-  const [brandName,setBrandName]=useState('');
-  const [founderName,setFounderName]=useState('');
-  const [brandEssence,setBrandEssence]=useState('');
-  const [spark,setSpark]=useState('');
-  const [naturalForce,setNaturalForce]=useState('');
-  const [archetype,setArchetype]=useState('');
-  const [manifestoLine,setManifestoLine]=useState('');
-  const [antiBrand,setAntiBrand]=useState('');
-  const [primaryPersona,setPrimaryPersona]=useState('');
-  const [offer,setOffer]=useState('');
-  const [transformation,setTransformation]=useState('');
-  const [voiceNotes,setVoiceNotes]=useState('');
-  const [alwaysNever,setAlwaysNever]=useState('');
-  const [founderStory,setFounderStory]=useState('');
-  const [currentHeadline,setCurrentHeadline]=useState('');
-  const [currentAbout,setCurrentAbout]=useState('');
-  const [companyTagline,setCompanyTagline]=useState('');
-  const [linkedinGoal,setLinkedinGoal]=useState('');
-  const [methodName,setMethodName]=useState('');
-  const [pricePoint,setPricePoint]=useState('');
+  // QBP inputs
+  const [brandName,setBrandName]=useState('');
+  const [founderName,setFounderName]=useState('');
+  const [brandEssence,setBrandEssence]=useState('');
+  const [spark,setSpark]=useState('');
+  const [naturalForce,setNaturalForce]=useState('');
+  const [archetype,setArchetype]=useState('');
+  const [manifestoLine,setManifestoLine]=useState('');
+  const [antiBrand,setAntiBrand]=useState('');
+  const [primaryPersona,setPrimaryPersona]=useState('');
+  const [offer,setOffer]=useState('');
+  const [transformation,setTransformation]=useState('');
+  const [voiceNotes,setVoiceNotes]=useState('');
+  const [alwaysNever,setAlwaysNever]=useState('');
+  const [founderStory,setFounderStory]=useState('');
+  const [currentHeadline,setCurrentHeadline]=useState('');
+  const [currentAbout,setCurrentAbout]=useState('');
+  const [companyTagline,setCompanyTagline]=useState('');
+  const [linkedinGoal,setLinkedinGoal]=useState('');
+  const [methodName,setMethodName]=useState('');
+  const [pricePoint,setPricePoint]=useState('');
 
-  const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona&&offer;
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.spark) setSpark(q.spark);
+    if (q.naturalForce) setNaturalForce(q.naturalForce);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.manifesto) setManifestoLine(q.manifesto);
+    if (q.antiBrand) setAntiBrand(q.antiBrand);
+    if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
+    if (q.offer) setOffer(q.offer);
+    if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+    if (q.alwaysNever) setAlwaysNever(q.alwaysNever);
+  }, []);
 
-  const buildPrompt=()=>`You are the LinkedIn Strategy Agent inside the Quantum Branding BrandOS ecosystem.
+  const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona&&offer;
+
+  const buildPrompt=()=>`You are the LinkedIn Strategy Agent inside the Quantum Branding BrandOS ecosystem.
 Your function is to produce two complete, ready-to-execute LinkedIn strategies from a Quantum Brand Profile:
 1. The PERSONAL profile strategy — ${founderName||'the founder'} as thought leader and authority
 2. The COMPANY page strategy — ${brandName} as the product/practice
@@ -437,90 +452,90 @@ LinkedIn Goal: ${linkedinGoal||'Build authority, attract ideal clients, grow pra
 
 Return a JSON object with EXACTLY this structure:
 {
-  "personal": {
-    "profile": {
-      "headline": "the new headline — specific, positioning-forward, under 220 chars",
-      "about": "the full About section rewrite — narrative, authority-establishing, ends with CTA — 400-600 words, written in the founder's voice",
-      "featuredSection": "what to pin in featured — specific with reasoning",
-      "bannerDirection": "banner image visual brief",
-      "profilePhotoDirection": "profile photo brief — expression, framing, setting",
-      "experiencePositioning": "how to position the current role title and description",
-      "connectionStrategy": "who to connect with, how to engage, growth approach"
-    },
-    "strategy": {
-      "positioning": "2-3 sentence strategic positioning for this personal brand on LinkedIn",
-      "contentPillars": [
-        {"pillar": "pillar name", "why": "why this pillar for this persona"}
-      ],
-      "cadence": "posting frequency and timing recommendation",
-      "audienceTarget": "exactly who to target on LinkedIn",
-      "uniqueEdge": "what makes this LinkedIn account unmistakable in the feed",
-      "weeklyThemes": [
-        {"theme": "week theme", "intent": "what this week establishes"}
-      ]
-    },
-    "posts": [
-      {
-        "postNumber": 1,
-        "week": 1,
-        "dayNumber": 1,
-        "weekTheme": "Week 1 theme name",
-        "weekIntent": "What week 1 establishes",
-        "postTitle": "short descriptive title",
-        "postType": "Belief post | Contrarian take | Personal story | Framework reveal | etc",
-        "contentPillar": "which pillar this serves",
-        "hook": "the exact opening line — no filler, stops the scroll",
-        "hookType": "curiosity gap | bold statement | counter-intuitive | story open | direct challenge",
-        "fullPost": "the complete post exactly as it would be published — with line breaks, all sections, formatted for LinkedIn — 150-400 words",
-        "strategicPurpose": "what this post achieves in the 4-week arc",
-        "cta": "the specific call to action",
-        "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5"],
-        "bestTime": "e.g. Tuesday 8am"
-      }
-    ]
-  },
-  "company": {
-    "profile": {
-      "headline": "company page tagline — what ${brandName} does in one line",
-      "about": "company About section — product-focused, methodology-forward, outcome-driven — 200-400 words",
-      "featuredSection": "what to pin and why",
-      "bannerDirection": "company banner visual brief",
-      "profilePhotoDirection": "company logo display guidance",
-      "experiencePositioning": "how to describe the company in team member profiles",
-      "connectionStrategy": "company page growth strategy — how to build followers"
-    },
-    "strategy": {
-      "positioning": "2-3 sentence company page strategic positioning",
-      "contentPillars": [
-        {"pillar": "pillar name", "why": "why this pillar for the company page"}
-      ],
-      "cadence": "company page posting frequency",
-      "audienceTarget": "company page audience",
-      "uniqueEdge": "what makes the company page distinct from the personal page",
-      "weeklyThemes": [
-        {"theme": "week theme", "intent": "intent"}
-      ]
-    },
-    "posts": [
-      {
-        "postNumber": 1,
-        "week": 1,
-        "dayNumber": 1,
-        "weekTheme": "Week 1 theme name",
-        "weekIntent": "What week 1 establishes for the company page",
-        "postTitle": "short descriptive title",
-        "postType": "Method breakdown | Client result | Framework post | etc",
-        "contentPillar": "which pillar this serves",
-        "hook": "company page opening hook",
-        "hookType": "type of hook",
-        "fullPost": "complete company page post — more structured, proof-forward, less personal than founder — 100-300 words",
-        "strategicPurpose": "what this post achieves",
-        "cta": "specific CTA",
-        "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5"],
-        "bestTime": "best time to post"
-      }
-    ]
-  }
+  "personal": {
+    "profile": {
+      "headline": "the new headline — specific, positioning-forward, under 220 chars",
+      "about": "the full About section rewrite — narrative, authority-establishing, ends with CTA — 400-600 words, written in the founder's voice",
+      "featuredSection": "what to pin in featured — specific with reasoning",
+      "bannerDirection": "banner image visual brief",
+      "profilePhotoDirection": "profile photo brief — expression, framing, setting",
+      "experiencePositioning": "how to position the current role title and description",
+      "connectionStrategy": "who to connect with, how to engage, growth approach"
+    },
+    "strategy": {
+      "positioning": "2-3 sentence strategic positioning for this personal brand on LinkedIn",
+      "contentPillars": [
+        {"pillar": "pillar name", "why": "why this pillar for this persona"}
+      ],
+      "cadence": "posting frequency and timing recommendation",
+      "audienceTarget": "exactly who to target on LinkedIn",
+      "uniqueEdge": "what makes this LinkedIn account unmistakable in the feed",
+      "weeklyThemes": [
+        {"theme": "week theme", "intent": "what this week establishes"}
+      ]
+    },
+    "posts": [
+      {
+        "postNumber": 1,
+        "week": 1,
+        "dayNumber": 1,
+        "weekTheme": "Week 1 theme name",
+        "weekIntent": "What week 1 establishes",
+        "postTitle": "short descriptive title",
+        "postType": "Belief post | Contrarian take | Personal story | Framework reveal | etc",
+        "contentPillar": "which pillar this serves",
+        "hook": "the exact opening line — no filler, stops the scroll",
+        "hookType": "curiosity gap | bold statement | counter-intuitive | story open | direct challenge",
+        "fullPost": "the complete post exactly as it would be published — with line breaks, all sections, formatted for LinkedIn — 150-400 words",
+        "strategicPurpose": "what this post achieves in the 4-week arc",
+        "cta": "the specific call to action",
+        "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5"],
+        "bestTime": "e.g. Tuesday 8am"
+      }
+    ]
+  },
+  "company": {
+    "profile": {
+      "headline": "company page tagline — what ${brandName} does in one line",
+      "about": "company About section — product-focused, methodology-forward, outcome-driven — 200-400 words",
+      "featuredSection": "what to pin and why",
+      "bannerDirection": "company banner visual brief",
+      "profilePhotoDirection": "company logo display guidance",
+      "experiencePositioning": "how to describe the company in team member profiles",
+      "connectionStrategy": "company page growth strategy — how to build followers"
+    },
+    "strategy": {
+      "positioning": "2-3 sentence company page strategic positioning",
+      "contentPillars": [
+        {"pillar": "pillar name", "why": "why this pillar for the company page"}
+      ],
+      "cadence": "company page posting frequency",
+      "audienceTarget": "company page audience",
+      "uniqueEdge": "what makes the company page distinct from the personal page",
+      "weeklyThemes": [
+        {"theme": "week theme", "intent": "intent"}
+      ]
+    },
+    "posts": [
+      {
+        "postNumber": 1,
+        "week": 1,
+        "dayNumber": 1,
+        "weekTheme": "Week 1 theme name",
+        "weekIntent": "What week 1 establishes for the company page",
+        "postTitle": "short descriptive title",
+        "postType": "Method breakdown | Client result | Framework post | etc",
+        "contentPillar": "which pillar this serves",
+        "hook": "company page opening hook",
+        "hookType": "type of hook",
+        "fullPost": "complete company page post — more structured, proof-forward, less personal than founder — 100-300 words",
+        "strategicPurpose": "what this post achieves",
+        "cta": "specific CTA",
+        "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5"],
+        "bestTime": "best time to post"
+      }
+    ]
+  }
 }
 
 REQUIREMENTS:
@@ -534,326 +549,326 @@ REQUIREMENTS:
 - All posts must reflect THIS brand's specific voice and methodology — not generic LinkedIn content
 - Hooks must be specific, provocative, and persona-targeted. No "I want to talk about..." openers.`;
 
-  const run=async()=>{
-    if(!isValid()){setError('Complete the required fields (*).');return;}
-    setError('');setLoading(true);setStep(1);
-    try{
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':window.QB_API_KEY||'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:12000,
-          messages:[{role:'user',content:buildPrompt()}]
-        })
-      });
-      const d=await res.json();
-      if(d.error) throw new Error(d.error.message);
-      const raw=d.content[0].text.trim();
-      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      setResult(JSON.parse(clean));
-      setMode('personal');
-      setModeTab('strategy');
-      setStep(2);
-    }catch(e){setError('Agent error: '+e.message);setStep(0);}
-    setLoading(false);
-  };
+  const run=async()=>{
+    if(!isValid()){setError('Complete the required fields (*).');return;}
+    setError('');setLoading(true);setStep(1);
+    try{
+      const res=await fetch('/api/claude',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:12000,
+          messages:[{role:'user',content:buildPrompt()}]
+        })
+      });
+      const d=await res.json();
+      if(d.error) throw new Error(d.error.message);
+      const raw=d.content[0].text.trim();
+      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+      setResult(JSON.parse(clean));
+      setMode('personal');
+      setModeTab('strategy');
+      setStep(2);
+    }catch(e){setError('Agent error: '+e.message);setStep(0);}
+    setLoading(false);
+  };
 
-  const exportAll=()=>{
-    if(!result) return;
-    const lines=[`LINKEDIN STRATEGY PACK — ${brandName}`,'Generated by QB BrandOS — LinkedIn Strategy Agent',''];
-    ['personal','company'].forEach(m=>{
-      const data=result[m];
-      if(!data) return;
-      lines.push('='.repeat(60));
-      lines.push(m==='personal'?`PERSONAL PROFILE — ${founderName||'Founder'}`:`COMPANY PAGE — ${brandName}`);
-      lines.push('='.repeat(60),'');
-      if(data.profile?.headline){ lines.push('HEADLINE:');lines.push(data.profile.headline);lines.push('');}
-      if(data.profile?.about){ lines.push('ABOUT:');lines.push(data.profile.about);lines.push('');}
-      lines.push('-'.repeat(40),'POSTS:','');
-      data.posts?.forEach(p=>{
-        lines.push(`Week ${p.week} · Post ${p.postNumber} — ${p.postTitle}`);
-        lines.push(`Type: ${p.postType}`);
-        lines.push('');
-        lines.push(p.fullPost);
-        lines.push('');
-        if(p.hashtags?.length) lines.push(p.hashtags.map(h=>'#'+h).join(' '));
-        lines.push('');lines.push('-'.repeat(40),'');
-      });
-    });
-    const blob=new Blob([lines.join('\n')],{type:'text/plain'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=`${brandName.replace(/\s+/g,'-').toLowerCase()}-linkedin-strategy.txt`;
-    a.click();
-  };
+  const exportAll=()=>{
+    if(!result) return;
+    const lines=[`LINKEDIN STRATEGY PACK — ${brandName}`,'Generated by QB BrandOS — LinkedIn Strategy Agent',''];
+    ['personal','company'].forEach(m=>{
+      const data=result[m];
+      if(!data) return;
+      lines.push('='.repeat(60));
+      lines.push(m==='personal'?`PERSONAL PROFILE — ${founderName||'Founder'}`:`COMPANY PAGE — ${brandName}`);
+      lines.push('='.repeat(60),'');
+      if(data.profile?.headline){ lines.push('HEADLINE:');lines.push(data.profile.headline);lines.push('');}
+      if(data.profile?.about){ lines.push('ABOUT:');lines.push(data.profile.about);lines.push('');}
+      lines.push('-'.repeat(40),'POSTS:','');
+      data.posts?.forEach(p=>{
+        lines.push(`Week ${p.week} · Post ${p.postNumber} — ${p.postTitle}`);
+        lines.push(`Type: ${p.postType}`);
+        lines.push('');
+        lines.push(p.fullPost);
+        lines.push('');
+        if(p.hashtags?.length) lines.push(p.hashtags.map(h=>'#'+h).join(' '));
+        lines.push('');lines.push('-'.repeat(40),'');
+      });
+    });
+    const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`${brandName.replace(/\s+/g,'-').toLowerCase()}-linkedin-strategy.txt`;
+    a.click();
+  };
 
-  const currentData=result?.[mode];
-  const modeColor=mode==='personal'?'var(--blue)':'var(--purple)';
-  const modeAccent=mode==='personal'?'rgba(96,165,250,0.2)':'rgba(167,139,250,0.2)';
+  const currentData=result?.[mode];
+  const modeColor=mode==='personal'?'var(--blue)':'var(--purple)';
+  const modeAccent=mode==='personal'?'rgba(96,165,250,0.2)':'rgba(167,139,250,0.2)';
 
-  return(
-    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+  return(
+    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
 
-      {/* HEADER */}
-      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
-        <div style={{display:'flex',alignItems:'center',gap:14}}>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
-          <div style={{width:1,height:14,background:'var(--border)'}}/>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>LinkedIn Strategy Agent v1.0</div>
-        </div>
-        <div style={{display:'flex',gap:5,alignItems:'center'}}>
-          {STEPS.map((s,i)=>(
-            <React.Fragment key={i}>
-              <div style={{display:'flex',alignItems:'center',gap:4}}>
-                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
-                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4)',fontFamily:'var(--mono)',letterSpacing:'.1em'}}>{s}</span>
-              </div>
-              {i<STEPS.length-1&&<div style={{width:12,height:1,background:'var(--border)',margin:'0 2px'}}/>}
-            </React.Fragment>
-          ))}
-        </div>
-      </header>
+      {/* HEADER */}
+      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
+          <div style={{width:1,height:14,background:'var(--border)'}}/>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>LinkedIn Strategy Agent v1.0</div>
+        </div>
+        <div style={{display:'flex',gap:5,alignItems:'center'}}>
+          {STEPS.map((s,i)=>(
+            <React.Fragment key={i}>
+              <div style={{display:'flex',alignItems:'center',gap:4}}>
+                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
+                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4)',fontFamily:'var(--mono)',letterSpacing:'.1em'}}>{s}</span>
+              </div>
+              {i<STEPS.length-1&&<div style={{width:12,height:1,background:'var(--border)',margin:'0 2px'}}/>}
+            </React.Fragment>
+          ))}
+        </div>
+      </header>
 
-      <main style={{flex:1,maxWidth:1000,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
+      <main style={{flex:1,maxWidth:1000,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
 
-        {/* ── STEP 0: INPUT ── */}
-        {step===0&&(
-          <div className="fade-in">
-            <div style={{marginBottom:36}}>
-              <ML c="var(--green)">// Phase 03 — Content Creation</ML>
-              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:8}}>LinkedIn Strategy Agent</h1>
-              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:620}}>Two complete LinkedIn systems from one QBP input. Personal profile rewrite + 4 weeks of founder posts. Company page rewrite + 4 weeks of brand posts. Every post fully written and ready to publish.</p>
-            </div>
+        {/* ── STEP 0: INPUT ── */}
+        {step===0&&(
+          <div className="fade-in">
+            <div style={{marginBottom:36}}>
+              <ML c="var(--green)">// Phase 03 — Content Creation</ML>
+              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:8}}>LinkedIn Strategy Agent</h1>
+              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:620}}>Two complete LinkedIn systems from one QBP input. Personal profile rewrite + 4 weeks of founder posts. Company page rewrite + 4 weeks of brand posts. Every post fully written and ready to publish.</p>
+            </div>
 
-            <Section number={1} title="Brand + Founder Core" note="* required">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The practice / company name" rows={1}/>
-                <TF label="Founder Name *" value={founderName} onChange={setFounderName} placeholder="The personal profile owner" rows={1}/>
-              </div>
-              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth" rows={2}/>
-              <TF label="The Spark — narrative synthesis" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what transformation it creates" rows={3}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-                <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
-                <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
-              </div>
-            </Section>
+            <Section number={1} title="Brand + Founder Core" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The practice / company name" rows={1}/>
+                <TF label="Founder Name *" value={founderName} onChange={setFounderName} placeholder="The personal profile owner" rows={1}/>
+              </div>
+              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth" rows={2}/>
+              <TF label="The Spark — narrative synthesis" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what transformation it creates" rows={3}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
+                <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
+              </div>
+            </Section>
 
-            <Section number={2} title="Offer + Transformation" note="* required">
-              <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What you sell — be specific about format, price tier, transformation" rows={2}/>
-              <TF label="Transformation — before → after" value={transformation} onChange={setTransformation} placeholder="e.g. Scattered identity + weak positioning → coherent brand system that commands premium" rows={2}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-                <TF label="Method / Framework Name" value={methodName} onChange={setMethodName} placeholder="e.g. Quantum Branding, BrandOS, The Signal Scan" rows={1}/>
-                <TF label="Price Point" value={pricePoint} onChange={setPricePoint} placeholder="e.g. $997, $5K–$25K, $197/mo" rows={1}/>
-              </div>
-              <TF label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The one belief" rows={1}/>
-              <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be on LinkedIn" rows={1}/>
-            </Section>
+            <Section number={2} title="Offer + Transformation" note="* required">
+              <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What you sell — be specific about format, price tier, transformation" rows={2}/>
+              <TF label="Transformation — before → after" value={transformation} onChange={setTransformation} placeholder="e.g. Scattered identity + weak positioning → coherent brand system that commands premium" rows={2}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Method / Framework Name" value={methodName} onChange={setMethodName} placeholder="e.g. Quantum Branding, BrandOS, The Signal Scan" rows={1}/>
+                <TF label="Price Point" value={pricePoint} onChange={setPricePoint} placeholder="e.g. $997, $5K–$25K, $197/mo" rows={1}/>
+              </div>
+              <TF label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The one belief" rows={1}/>
+              <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be on LinkedIn" rows={1}/>
+            </Section>
 
-            <Section number={3} title="Audience + Goals">
-              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who reads this LinkedIn — role, struggle, desire, what they carry. Specific." rows={3} hint="Specificity here determines how precisely the agent targets every post"/>
-              <TF label="LinkedIn Goal" value={linkedinGoal} onChange={setLinkedinGoal} placeholder="e.g. Book discovery calls, build waitlist, establish thought leadership, sell course" rows={1}/>
-            </Section>
+            <Section number={3} title="Audience + Goals">
+              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who reads this LinkedIn — role, struggle, desire, what they carry. Specific." rows={3} hint="Specificity here determines how precisely the agent targets every post"/>
+              <TF label="LinkedIn Goal" value={linkedinGoal} onChange={setLinkedinGoal} placeholder="e.g. Book discovery calls, build waitlist, establish thought leadership, sell course" rows={1}/>
+            </Section>
 
-            <Section number={4} title="Voice + Profile Context">
-              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand writes — rhythm, register, what it sounds like" rows={2}/>
-              <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="Writing rules — what this brand always does and never does in copy" rows={2}/>
-              <TF label="Founder Story — what brought you here" value={founderStory} onChange={setFounderStory} placeholder="The origin — what you escaped, what you discovered, what you're building instead" rows={3}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-                <TF label="Current Headline (to improve)" value={currentHeadline} onChange={setCurrentHeadline} placeholder="Paste current headline" rows={1}/>
-                <TF label="Company Tagline (to improve)" value={companyTagline} onChange={setCompanyTagline} placeholder="Current company page tagline" rows={1}/>
-              </div>
-              <TF label="Current About (to rewrite)" value={currentAbout} onChange={setCurrentAbout} placeholder="Paste current About section — the agent will rewrite it" rows={3}/>
-            </Section>
+            <Section number={4} title="Voice + Profile Context">
+              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand writes — rhythm, register, what it sounds like" rows={2}/>
+              <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="Writing rules — what this brand always does and never does in copy" rows={2}/>
+              <TF label="Founder Story — what brought you here" value={founderStory} onChange={setFounderStory} placeholder="The origin — what you escaped, what you discovered, what you're building instead" rows={3}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <TF label="Current Headline (to improve)" value={currentHeadline} onChange={setCurrentHeadline} placeholder="Paste current headline" rows={1}/>
+                <TF label="Company Tagline (to improve)" value={companyTagline} onChange={setCompanyTagline} placeholder="Current company page tagline" rows={1}/>
+              </div>
+              <TF label="Current About (to rewrite)" value={currentAbout} onChange={setCurrentAbout} placeholder="Paste current About section — the agent will rewrite it" rows={3}/>
+            </Section>
 
-            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'11px 15px',marginBottom:16,fontSize:13,color:'var(--red)'}}>{error}</div>}
+            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'11px 15px',marginBottom:16,fontSize:13,color:'var(--red)'}}>{error}</div>}
 
-            <div style={{display:'flex',justifyContent:'flex-end'}}>
-              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
-                Generate LinkedIn Strategy →
-              </button>
-            </div>
-          </div>
-        )}
+            <div style={{display:'flex',justifyContent:'flex-end'}}>
+              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
+                Generate LinkedIn Strategy →
+              </button>
+            </div>
+          </div>
+        )}
 
-        {/* ── STEP 1: GENERATING ── */}
-        {step===1&&(
-          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:460,gap:24,textAlign:'center'}}>
-            <div style={{width:52,height:52,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
-            <div>
-              <ML c="var(--green)">Agent Processing</ML>
-              <div style={{color:'var(--text2)',fontSize:13,lineHeight:2.1,maxWidth:440}}>
-                Reading Quantum Brand Profile<br/>
-                Building personal authority positioning<br/>
-                Rewriting profile headline + About<br/>
-                Architecting 4-week personal post arc<br/>
-                Writing 12 founder posts in brand voice<br/>
-                Building company page strategy<br/>
-                Writing 8 company posts in brand register<br/>
-                Generating hashtag architecture<br/>
-                Assembling complete LinkedIn pack...
-              </div>
-            </div>
-            <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>2 profiles · 20 posts · 4-week arc</div>
-          </div>
-        )}
+        {/* ── STEP 1: GENERATING ── */}
+        {step===1&&(
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:460,gap:24,textAlign:'center'}}>
+            <div style={{width:52,height:52,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+            <div>
+              <ML c="var(--green)">Agent Processing</ML>
+              <div style={{color:'var(--text2)',fontSize:13,lineHeight:2.1,maxWidth:440}}>
+                Reading Quantum Brand Profile<br/>
+                Building personal authority positioning<br/>
+                Rewriting profile headline + About<br/>
+                Architecting 4-week personal post arc<br/>
+                Writing 12 founder posts in brand voice<br/>
+                Building company page strategy<br/>
+                Writing 8 company posts in brand register<br/>
+                Generating hashtag architecture<br/>
+                Assembling complete LinkedIn pack...
+              </div>
+            </div>
+            <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>2 profiles · 20 posts · 4-week arc</div>
+          </div>
+        )}
 
-        {/* ── STEP 2: OUTPUT ── */}
-        {step===2&&result&&(
-          <div className="fade-in">
-            {/* Header */}
-            <div style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
-              <div>
-                <ML c="var(--green)">// LinkedIn Strategy — Complete</ML>
-                <h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>{brandName}</h1>
-                <p style={{color:'var(--text2)',fontSize:13}}>2 profiles rewritten · 20 posts scripted · 4-week arc</p>
-              </div>
-              <div style={{display:'flex',gap:8}}>
-                <button onClick={exportAll} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Export All</button>
-                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Strategy</button>
-              </div>
-            </div>
+        {/* ── STEP 2: OUTPUT ── */}
+        {step===2&&result&&(
+          <div className="fade-in">
+            {/* Header */}
+            <div style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+              <div>
+                <ML c="var(--green)">// LinkedIn Strategy — Complete</ML>
+                <h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>{brandName}</h1>
+                <p style={{color:'var(--text2)',fontSize:13}}>2 profiles rewritten · 20 posts scripted · 4-week arc</p>
+              </div>
+              <div style={{display:'flex',gap:8}}>
+                <button onClick={exportAll} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Export All</button>
+                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Strategy</button>
+              </div>
+            </div>
 
-            {/* Mode selector */}
-            <div style={{display:'flex',gap:8,marginBottom:16}}>
-              <button className={`tab-btn personal${mode==='personal'?' active':''}`} onClick={()=>{setMode('personal');setModeTab('strategy');}}>
-                {founderName||'Founder'} — Personal
-              </button>
-              <button className={`tab-btn company${mode==='company'?' active':''}`} onClick={()=>{setMode('company');setModeTab('strategy');}}>
-                {brandName} — Company
-              </button>
-            </div>
+            {/* Mode selector */}
+            <div style={{display:'flex',gap:8,marginBottom:16}}>
+              <button className={`tab-btn personal${mode==='personal'?' active':''}`} onClick={()=>{setMode('personal');setModeTab('strategy');}}>
+                {founderName||'Founder'} — Personal
+              </button>
+              <button className={`tab-btn company${mode==='company'?' active':''}`} onClick={()=>{setMode('company');setModeTab('strategy');}}>
+                {brandName} — Company
+              </button>
+            </div>
 
-            {/* Sub-tabs */}
-            <div style={{display:'flex',gap:6,marginBottom:20,paddingBottom:14,borderBottom:'1px solid var(--border)'}}>
-              {['strategy','profile','posts'].map(t=>(
-                <button key={t} className={`tab-btn${modeTab===t?' active':''}`} onClick={()=>setModeTab(t)}>
-                  {t==='strategy'?'Strategy':t==='profile'?'Profile Rewrite':'4-Week Posts'}
-                </button>
-              ))}
-              <div style={{marginLeft:'auto',fontSize:11,color:'var(--text3)',display:'flex',alignItems:'center',gap:6}}>
-                <div style={{width:8,height:8,borderRadius:2,background:modeColor}}/>
-                {mode==='personal'?`${result.personal?.posts?.length||0} posts`:`${result.company?.posts?.length||0} posts`}
-              </div>
-            </div>
+            {/* Sub-tabs */}
+            <div style={{display:'flex',gap:6,marginBottom:20,paddingBottom:14,borderBottom:'1px solid var(--border)'}}>
+              {['strategy','profile','posts'].map(t=>(
+                <button key={t} className={`tab-btn${modeTab===t?' active':''}`} onClick={()=>setModeTab(t)}>
+                  {t==='strategy'?'Strategy':t==='profile'?'Profile Rewrite':'4-Week Posts'}
+                </button>
+              ))}
+              <div style={{marginLeft:'auto',fontSize:11,color:'var(--text3)',display:'flex',alignItems:'center',gap:6}}>
+                <div style={{width:8,height:8,borderRadius:2,background:modeColor}}/>
+                {mode==='personal'?`${result.personal?.posts?.length||0} posts`:`${result.company?.posts?.length||0} posts`}
+              </div>
+            </div>
 
-            {modeTab==='strategy'&&<StrategyOverview data={currentData} mode={mode}/>}
-            {modeTab==='profile'&&<ProfilePanel data={currentData?.profile} mode={mode}/>}
-            {modeTab==='posts'&&<WeekView posts={currentData?.posts} mode={mode}/>}
-          </div>
-        )}
+            {modeTab==='strategy'&&<StrategyOverview data={currentData} mode={mode}/>}
+            {modeTab==='profile'&&<ProfilePanel data={currentData?.profile} mode={mode}/>}
+            {modeTab==='posts'&&<WeekView posts={currentData?.posts} mode={mode}/>}
+          </div>
+        )}
 
-      </main>
+      </main>
 
-      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>LinkedIn Strategy Agent / Phase 03</span>
-      </footer>
-    </div>
-  );
+      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>LinkedIn Strategy Agent / Phase 03</span>
+      </footer>
+    </div>
+  );
 }
+
 
 // ── QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────────
 // Injected by QB OS build system
 // Adds approve/revise/remove to each content piece, up to 3 rounds
 
 function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revisionField='content'}) {
-  const [states, setStates] = React.useState(() => {
-    const s = {};
-    items.forEach((item,i) => { s[i] = {status:'pending', round:0, feedback:'', item}; });
-    return s;
-  });
-  const [revising, setRevising] = React.useState({});
+  const [states, setStates] = React.useState(() => {
+    const s = {};
+    items.forEach((item,i) => { s[i] = {status:'pending', round:0, feedback:'', item}; });
+    return s;
+  });
+  const [revising, setRevising] = React.useState({});
 
-  const allApproved = Object.values(states).every(s => s.status === 'approved' || s.status === 'removed');
-  const approvedItems = Object.values(states).filter(s => s.status === 'approved').map(s => s.item);
+  const allApproved = Object.values(states).every(s => s.status === 'approved' || s.status === 'removed');
+  const approvedItems = Object.values(states).filter(s => s.status === 'approved').map(s => s.item);
 
-  React.useEffect(() => {
-    if (allApproved && approvedItems.length > 0) onAllApproved && onAllApproved(approvedItems);
-  }, [allApproved]);
+  React.useEffect(() => {
+    if (allApproved && approvedItems.length > 0) onAllApproved && onAllApproved(approvedItems);
+  }, [allApproved]);
 
-  const approve = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'approved'}}));
-  const remove = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'removed'}}));
-  const startRevise = (i) => setRevising(prev => ({...prev, [i]: true}));
-  const submitRevise = async (i) => {
-    const feedback = document.getElementById('revision-input-' + i)?.value || '';
-    if (!feedback.trim()) return;
-    setStates(prev => ({...prev, [i]: {...prev[i], status:'revising', round: prev[i].round + 1, feedback}}));
-    setRevising(prev => ({...prev, [i]: false}));
-    // Trigger regeneration via QB_AI
-    if (window.QB_AI && states[i].round < 3) {
-      try {
-        const original = JSON.stringify(states[i].item);
-        const prompt = 'You produced this content piece: ' + original + '\n\nThe user requests this revision: ' + feedback + '\n\nReturn ONLY the revised version as a JSON object with the same structure. No markdown, no preamble.';
-        const sys = 'You are a content revision agent. Revise the content piece exactly as requested. Maintain brand voice and platform requirements. Return only valid JSON.';
-        const raw = await window.QB_AI(sys, prompt, 1000);
-        const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-        const revised = JSON.parse(clean);
-        setStates(prev => ({...prev, [i]: {...prev[i], status:'revised', item: revised}}));
-      } catch(e) {
-        setStates(prev => ({...prev, [i]: {...prev[i], status:'pending'}}));
-      }
-    }
-  };
+  const approve = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'approved'}}));
+  const remove = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'removed'}}));
+  const startRevise = (i) => setRevising(prev => ({...prev, [i]: true}));
+  const submitRevise = async (i) => {
+    const feedback = document.getElementById('revision-input-' + i)?.value || '';
+    if (!feedback.trim()) return;
+    setStates(prev => ({...prev, [i]: {...prev[i], status:'revising', round: prev[i].round + 1, feedback}}));
+    setRevising(prev => ({...prev, [i]: false}));
+    // Trigger regeneration via QB_AI
+    if (window.QB_AI && states[i].round < 3) {
+      try {
+        const original = JSON.stringify(states[i].item);
+        const prompt = 'You produced this content piece: ' + original + '\n\nThe user requests this revision: ' + feedback + '\n\nReturn ONLY the revised version as a JSON object with the same structure. No markdown, no preamble.';
+        const sys = 'You are a content revision agent. Revise the content piece exactly as requested. Maintain brand voice and platform requirements. Return only valid JSON.';
+        const raw = await window.QB_AI(sys, prompt, 1000);
+        const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+        const revised = JSON.parse(clean);
+        setStates(prev => ({...prev, [i]: {...prev[i], status:'revised', item: revised}}));
+      } catch(e) {
+        setStates(prev => ({...prev, [i]: {...prev[i], status:'pending'}}));
+      }
+    }
+  };
 
-  const statusColor = {pending:'var(--text3)', approved:'var(--green)', removed:'var(--red)', revising:'var(--amber)', revised:'var(--blue)'};
-  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — review again'};
+  const statusColor = {pending:'var(--text3)', approved:'var(--green)', removed:'var(--red)', revising:'var(--amber)', revised:'var(--blue)'};
+  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — review again'};
 
-  return (
-    <div>
-      <div style={{background:'rgba(74,222,128,0.05)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'12px 16px',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
-        <div>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:2}}>Content Review</div>
-          <div style={{fontSize:12,color:'var(--text2)'}}>{Object.values(states).filter(s=>s.status==='approved').length} approved · {Object.values(states).filter(s=>s.status==='pending'||s.status==='revised').length} pending · {Object.values(states).filter(s=>s.status==='removed').length} removed</div>
-        </div>
-        {allApproved && approvedItems.length > 0 && (
-          <div style={{fontFamily:'var(--mono)',fontSize:10,padding:'6px 14px',borderRadius:5,background:'var(--green)',color:'#000',fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase'}}>All done ✓</div>
-        )}
-      </div>
-      {items.map((item, i) => {
-        const s = states[i];
-        if (!s) return null;
-        const isRevising = revising[i];
-        const maxRoundsReached = s.round >= 3;
-        return (
-          <div key={i} style={{background:'var(--bg3)',border:'1px solid '+(s.status==='approved'?'rgba(74,222,128,0.2)':s.status==='removed'?'rgba(239,68,68,0.15)':'var(--border)'),borderRadius:10,marginBottom:12,overflow:'hidden',opacity:s.status==='removed'?0.4:1,transition:'all .2s'}}>
-            <div style={{padding:'14px 18px 0'}}>
-              {renderItem(s.item, i)}
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 18px',borderTop:'1px solid var(--border)',background:'rgba(0,0,0,0.2)',flexWrap:'wrap'}}>
-              <div style={{fontFamily:'var(--mono)',fontSize:9,color:statusColor[s.status],letterSpacing:'.1em',flex:1}}>
-                {statusLabel[s.status]} {s.round > 0 ? '(Round '+s.round+'/3)' : ''}
-              </div>
-              {(s.status==='pending'||s.status==='revised') && !isRevising && (
-                <>
-                  <button onClick={()=>approve(i)} style={{background:'rgba(74,222,128,0.12)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>✓ Approve</button>
-                  {!maxRoundsReached && <button onClick={()=>startRevise(i)} style={{background:'rgba(245,158,11,0.1)',color:'var(--amber)',border:'1px solid rgba(245,158,11,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>↻ Revise</button>}
-                  <button onClick={()=>remove(i)} style={{background:'rgba(239,68,68,0.08)',color:'var(--red)',border:'1px solid rgba(239,68,68,0.15)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>× Remove</button>
-                </>
-              )}
-              {s.status==='approved' && <button onClick={()=>setStates(prev=>({...prev,[i]:{...prev[i],status:'pending'}}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Undo</button>}
-              {s.status==='revising' && <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--amber)'}}>Generating revision…</div>}
-            </div>
-            {isRevising && (
-              <div style={{padding:'12px 18px',background:'rgba(245,158,11,0.04)',borderTop:'1px solid rgba(245,158,11,0.1)'}}>
-                <div style={{fontFamily:'var(--mono)',fontSize:9,color:'var(--amber)',letterSpacing:'.1em',marginBottom:6}}>REVISION REQUEST {s.round+1}/3</div>
-                <textarea id={'revision-input-'+i} placeholder="What should change? Be specific: e.g. 'Make the hook more direct' or 'Remove the question format'" style={{width:'100%',background:'var(--bg3)',border:'1px solid rgba(245,158,11,0.2)',color:'var(--text)',borderRadius:6,padding:'10px 14px',fontSize:12,fontFamily:'var(--font)',resize:'vertical',minHeight:60,outline:'none'}} rows={2}/>
-                <div style={{display:'flex',gap:8,marginTop:8}}>
-                  <button onClick={()=>submitRevise(i)} style={{background:'var(--amber)',color:'#000',padding:'7px 16px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',fontWeight:700,letterSpacing:'.08em',cursor:'pointer'}}>Submit Revision →</button>
-                  <button onClick={()=>setRevising(prev=>({...prev,[i]:false}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'7px 12px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Cancel</button>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+  return (
+    <div>
+      <div style={{background:'rgba(74,222,128,0.05)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'12px 16px',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
+        <div>
+          <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:2}}>Content Review</div>
+          <div style={{fontSize:12,color:'var(--text2)'}}>{Object.values(states).filter(s=>s.status==='approved').length} approved · {Object.values(states).filter(s=>s.status==='pending'||s.status==='revised').length} pending · {Object.values(states).filter(s=>s.status==='removed').length} removed</div>
+        </div>
+        {allApproved && approvedItems.length > 0 && (
+          <div style={{fontFamily:'var(--mono)',fontSize:10,padding:'6px 14px',borderRadius:5,background:'var(--green)',color:'#000',fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase'}}>All done ✓</div>
+        )}
+      </div>
+      {items.map((item, i) => {
+        const s = states[i];
+        if (!s) return null;
+        const isRevising = revising[i];
+        const maxRoundsReached = s.round >= 3;
+        return (
+          <div key={i} style={{background:'var(--bg3)',border:'1px solid '+(s.status==='approved'?'rgba(74,222,128,0.2)':s.status==='removed'?'rgba(239,68,68,0.15)':'var(--border)'),borderRadius:10,marginBottom:12,overflow:'hidden',opacity:s.status==='removed'?0.4:1,transition:'all .2s'}}>
+            <div style={{padding:'14px 18px 0'}}>
+              {renderItem(s.item, i)}
+            </div>
+            <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 18px',borderTop:'1px solid var(--border)',background:'rgba(0,0,0,0.2)',flexWrap:'wrap'}}>
+              <div style={{fontFamily:'var(--mono)',fontSize:9,color:statusColor[s.status],letterSpacing:'.1em',flex:1}}>
+                {statusLabel[s.status]} {s.round > 0 ? '(Round '+s.round+'/3)' : ''}
+              </div>
+              {(s.status==='pending'||s.status==='revised') && !isRevising && (
+                <>
+                  <button onClick={()=>approve(i)} style={{background:'rgba(74,222,128,0.12)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>✓ Approve</button>
+                  {!maxRoundsReached && <button onClick={()=>startRevise(i)} style={{background:'rgba(245,158,11,0.1)',color:'var(--amber)',border:'1px solid rgba(245,158,11,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>↻ Revise</button>}
+                  <button onClick={()=>remove(i)} style={{background:'rgba(239,68,68,0.08)',color:'var(--red)',border:'1px solid rgba(239,68,68,0.15)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>× Remove</button>
+                </>
+              )}
+              {s.status==='approved' && <button onClick={()=>setStates(prev=>({...prev,[i]:{...prev[i],status:'pending'}}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Undo</button>}
+              {s.status==='revising' && <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--amber)'}}>Generating revision…</div>}
+            </div>
+            {isRevising && (
+              <div style={{padding:'12px 18px',background:'rgba(245,158,11,0.04)',borderTop:'1px solid rgba(245,158,11,0.1)'}}>
+                <div style={{fontFamily:'var(--mono)',fontSize:9,color:'var(--amber)',letterSpacing:'.1em',marginBottom:6}}>REVISION REQUEST {s.round+1}/3</div>
+                <textarea id={'revision-input-'+i} placeholder="What should change? Be specific: e.g. 'Make the hook more direct' or 'Remove the question format'" style={{width:'100%',background:'var(--bg3)',border:'1px solid rgba(245,158,11,0.2)',color:'var(--text)',borderRadius:6,padding:'10px 14px',fontSize:12,fontFamily:'var(--font)',resize:'vertical',minHeight:60,outline:'none'}} rows={2}/>
+                <div style={{display:'flex',gap:8,marginTop:8}}>
+                  <button onClick={()=>submitRevise(i)} style={{background:'var(--amber)',color:'#000',padding:'7px 16px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',fontWeight:700,letterSpacing:'.08em',cursor:'pointer'}}>Submit Revision →</button>
+                  <button onClick={()=>setRevising(prev=>({...prev,[i]:false}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'7px 12px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Cancel</button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 // ── END QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
-<script src="qb-shell.js"></script>
 </body>
 </html>

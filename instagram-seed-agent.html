@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-qb-tool="instagram-seed">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +8,29 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="qb-system.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* Tool-specific styles — base from qb-system.css */
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;--bg5:#252525;
+  --border:#2a2a2a;--border2:#333;
+  --text:#e8e8e8;--text2:#888;--text3:#555;--text4:#333;
+  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
+  --red:#ef4444;--red2:rgba(239,68,68,0.1);
+  --amber:#f59e0b;--amber2:rgba(245,158,11,0.1);
+  --blue:#60a5fa;--blue2:rgba(96,165,250,0.1);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);
+  --pink:#f472b6;--pink2:rgba(244,114,182,0.1);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--green)}
+textarea{resize:vertical;line-height:1.6}
+select option{background:var(--bg3)}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes scanH{0%{left:-80%}100%{left:200%}}
@@ -20,15 +38,15 @@
 .blink{animation:pulse 1.4s ease infinite}
 .spin{animation:spin .9s linear infinite}
 .scan-line{position:relative;overflow:hidden}
-.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(58,95,74,0.05),transparent);animation:scanH 3s linear infinite}
+.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.05),transparent);animation:scanH 3s linear infinite}
 .tab-btn{padding:7px 14px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer}
-.tab-btn.active{background:var(--green2);border-color:rgba(58,95,74,0.3);color:var(--green)}
+.tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
 .post-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s}
 .post-card:hover{border-color:var(--border2)}
 .post-card.selected{border-color:rgba(74,222,128,0.4);background:var(--bg4)}
 .grid-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:all .15s;border:1px solid var(--border)}
 .grid-cell:hover{border-color:var(--border2)}
-.grid-cell.active-cell{border-color:var(--green);box-shadow:0 0 0 1px rgba(58,95,74,0.3)}
+.grid-cell.active-cell{border-color:var(--green);box-shadow:0 0 0 1px rgba(74,222,128,0.3)}
 .pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:10px;font-family:var(--mono);margin:2px 2px 2px 0;letter-spacing:.05em}
 .pill-green{background:var(--green2);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
 .pill-pink{background:var(--pink2);color:var(--pink);border:1px solid rgba(244,114,182,0.2)}
@@ -41,17 +59,18 @@
 .slider-thumb{-webkit-appearance:none;width:100%;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
 </style>
 <script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
+<script>
 // QB_SPINE v2 — API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
-  // API Key
-  var urlKey = params.get('apikey');
-  if(urlKey) localStorage.setItem('qb_api_key', urlKey);
-  window.QB_API_KEY = urlKey || localStorage.getItem('qb_api_key') || '';
-  // Provider: anthropic | gemini
-  var urlProvider = params.get('provider');
-  if(urlProvider) localStorage.setItem('qb_provider', urlProvider);
-  window.QB_PROVIDER = urlProvider || localStorage.getItem('qb_provider') || 'anthropic';
   // QBP
   var urlQBP = params.get('qbp');
   if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
@@ -59,40 +78,20 @@
   // Universal AI call — works with Anthropic or Gemini
   window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
     maxTokens = maxTokens || 4000;
-    if(window.QB_PROVIDER === 'gemini'){
-      var model = 'gemini-2.0-flash';
-      var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + window.QB_API_KEY;
-      var body = {
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-        generationConfig: { maxOutputTokens: maxTokens, temperature: 0.7 }
-      };
-      var res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      var d = await res.json();
-      if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
-      return d.candidates[0].content.parts[0].text;
-    } else {
-      var url = 'https://api.anthropic.com/v1/messages';
-      var body = {
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
-      };
-      var res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': window.QB_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify(body)
-      });
-      var d = await res.json();
-      if(d.error) throw new Error(d.error.message);
-      return d.content[0].text;
-    }
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.content[0].text;
   };
   window.QB_AUTOFILL = function(fieldMap){
     if(!window.QB_QBP) return;
@@ -359,7 +358,7 @@ const StrategyPanel=({data})=>{
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 const STEPS=['QBP Input','Generating','Content Pack'];
 
-export default function App(){
+function App(){
   const [step,setStep]=useState(0);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState('');
@@ -384,6 +383,22 @@ export default function App(){
   const [alwaysNever,setAlwaysNever]=useState('');
   const [profileBio,setProfileBio]=useState('');
   const [accountGoal,setAccountGoal]=useState('');
+
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.manifesto) setManifestoLine(q.manifesto);
+    if (q.spark) setSpark(q.spark);
+    if (q.naturalForce) setNaturalForce(q.naturalForce);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.antiBrand) setAntiBrand(q.antiBrand);
+    if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
+    if (q.offer) setOffer(q.offer);
+    if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+    if (q.alwaysNever) setAlwaysNever(q.alwaysNever);
+    if (q.colorTerritory) setColorPalette(q.colorTerritory);
+  }, []);
 
   const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona;
 
@@ -458,9 +473,9 @@ CRITICAL REQUIREMENTS:
     if(!isValid()){setError('Complete the required fields (*).');return;}
     setError('');setLoading(true);setStep(1);
     try{
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
+      const res=await fetch('/api/claude',{
         method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':window.QB_API_KEY||'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:8000,
@@ -694,6 +709,7 @@ CRITICAL REQUIREMENTS:
   );
 }
 
+
 // ── QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────────
 // Injected by QB OS build system
 // Adds approve/revise/remove to each content piece, up to 3 rounds
@@ -795,6 +811,5 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
-<script src="qb-shell.js"></script>
 </body>
 </html>

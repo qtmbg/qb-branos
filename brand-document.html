@@ -1,15 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" data-qb-tool="brand-document">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QB — Your Brand Document</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="qb-system.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* Tool-specific styles — base from qb-system.css */
-  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#000;--bg2:#0a0a0a;--bg3:#111;--bg4:#1a1a1a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --text:#e4e4e7;--text2:#888;--text3:#555;--text4:#333;
+  --green:#4ade80;--purple:#a78bfa;--amber:#f59e0b;--blue:#60a5fa;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+button{cursor:pointer;font-family:var(--font);border:none;background:none;color:inherit}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 .fade-in{animation:fadeIn 0.35s ease forwards}
 .spin{animation:spin 0.8s linear infinite}
@@ -36,7 +45,7 @@ main{max-width:900px;margin:0 auto;padding:40px 24px 80px}
 
 /* Document preview */
 #doc-preview{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.doc-cover{background:linear-gradient(135deg,#000 0%,#0a0a0a 50%,rgba(58,95,74,0.05) 100%);padding:48px;border-bottom:1px solid var(--border)}
+.doc-cover{background:linear-gradient(135deg,#000 0%,#0a0a0a 50%,rgba(74,222,128,0.05) 100%);padding:48px;border-bottom:1px solid var(--border)}
 .doc-cover-label{font-family:var(--mono);font-size:9px;letter-spacing:0.25em;color:var(--green);text-transform:uppercase;margin-bottom:20px}
 .doc-cover-brand{font-size:48px;font-weight:900;letter-spacing:-0.03em;color:#fff;line-height:1;margin-bottom:8px}
 .doc-cover-sub{font-size:14px;color:var(--text2);letter-spacing:0.05em}
@@ -48,7 +57,7 @@ main{max-width:900px;margin:0 auto;padding:40px 24px 80px}
 .doc-section-header{display:flex;align-items:center;gap:14px;margin-bottom:24px}
 .doc-section-num{font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:0.15em;width:28px}
 .doc-section-title{font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.01em}
-.doc-section-phase{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;padding:2px 8px;border-radius:3px;background:rgba(58,95,74,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.15)}
+.doc-section-phase{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;padding:2px 8px;border-radius:3px;background:rgba(74,222,128,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.15)}
 
 /* Field display */
 .doc-field{margin-bottom:20px}
@@ -69,7 +78,7 @@ main{max-width:900px;margin:0 auto;padding:40px 24px 80px}
 
 /* Status badge */
 .status-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:4px}
-.status-done{background:rgba(58,95,74,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.15)}
+.status-done{background:rgba(74,222,128,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.15)}
 .status-pending{background:rgba(255,255,255,0.03);color:var(--text3);border:1px solid rgba(255,255,255,0.05)}
 
 /* Mobile padding fix */
@@ -204,7 +213,7 @@ function escHtml(str) {
 }
 
 function openTool(file) {
-  const key = localStorage.getItem('qb_api_key') || '';
+  const key = localStorage.getItem('qb_apikey') || '';
   const qbpStr = localStorage.getItem('qb_qbp') || '';
   let url = file;
   const params = [];
@@ -223,11 +232,11 @@ function render() {
   document.getElementById('cover-date').textContent = 'Generated: ' + now + ' · QB BrandOS v3';
 
   // ── SECTION 01: Identity Core ──────────────────────────────────────────────
-  const idDone = !!qbp.soulMapComplete;
+  const idDone = !!(qbp.brandEssence);
   document.getElementById('identity-status').className = 'status-badge ' + (idDone ? 'status-done' : 'status-pending');
   document.getElementById('identity-status').textContent = idDone ? '✓ Complete' : 'Pending';
   
-  if (idDone || qbp.brandEssence || qbp.spark) {
+  if (idDone || qbp.spark) {
     document.getElementById('identity-content').innerHTML =
       field('Brand Essence', qbp.brandEssence, true) +
       field('The Spark', qbp.spark) +
@@ -246,11 +255,11 @@ function render() {
   }
 
   // ── SECTION 02: Sensory Universe ──────────────────────────────────────────
-  const sensDone = !!qbp.sensescapeComplete;
+  const sensDone = !!(qbp.colorTerritory);
   document.getElementById('sensory-status').className = 'status-badge ' + (sensDone ? 'status-done' : 'status-pending');
   document.getElementById('sensory-status').textContent = sensDone ? '✓ Complete' : 'Pending';
 
-  if (sensDone || qbp.colorTerritory) {
+  if (sensDone) {
     document.getElementById('sensory-content').innerHTML =
       field('Color Territory', qbp.colorTerritory, true) +
       fieldGrid([
@@ -263,7 +272,7 @@ function render() {
   }
 
   // ── SECTION 03: Visual DNA ──────────────────────────────────────────────
-  const visDone = !!qbp.visualDnaComplete;
+  const visDone = !!(qbp.visualDnaCompletedAt);
   document.getElementById('visual-status').className = 'status-badge ' + (visDone ? 'status-done' : 'status-pending');
   document.getElementById('visual-status').textContent = visDone ? '✓ Complete' : 'Pending';
 
@@ -283,7 +292,7 @@ function render() {
   }
 
   // ── SECTION 04: Strategic Direction ──────────────────────────────────────
-  const warDone = !!qbp.warTableComplete;
+  const warDone = !!(qbp.warTableCompletedAt);
   document.getElementById('strategy-status').className = 'status-badge ' + (warDone ? 'status-done' : 'status-pending');
   document.getElementById('strategy-status').textContent = warDone ? '✓ Complete' : 'Pending';
 
@@ -425,6 +434,5 @@ window.addEventListener('message', function(e) {
   if (e.data && e.data.type === 'QB_PHASE_COMPLETE') render();
 });
 </script>
-<script src="qb-shell.js"></script>
 </body>
 </html>

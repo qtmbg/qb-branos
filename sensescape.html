@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark" data-qb-tool="sensescape">
+<html lang="en" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +7,24 @@
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch(e) {}
+  })();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: { extend: { fontFamily: { sans: ["Inter", "sans-serif"], mono: ["JetBrains Mono", "Courier New", "monospace"] }, colors: { quantum: "#4ade80" } } }
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="qb-system.css">
-<link rel="stylesheet" href="qb-compat.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-white dark:bg-black min-h-screen">
 <div id="root"></div>
@@ -440,9 +454,11 @@ const SensoryVisualizer = ({ type, value }) => {
 
 // --- MAIN APP COMPONENT ---
 
-export default function App() {
+function App() {
 
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem('qb-theme') || 'dark'; } catch(e) { return 'dark'; }
+  });
 
   const [started, setStarted] = useState(false);
 
@@ -460,22 +476,23 @@ export default function App() {
 
   const [validationError, setValidationError] = useState('');
 
-  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
+  const toggleTheme = () => setTheme(t => {
+    const next = t === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('qb-theme', next);
+    document.documentElement.setAttribute('data-theme', next);
+    return next;
+  });
 
   // Sync theme with document root to ensure Tailwind 'dark:' utility classes trigger properly
 
   useEffect(() => {
-
     if (theme === 'dark') {
-
       document.documentElement.classList.add('dark');
-
     } else {
-
       document.documentElement.classList.remove('dark');
-
     }
-
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('qb-theme', theme);
   }, [theme]);
 
   // Initialize slider values to 5
@@ -592,6 +609,8 @@ export default function App() {
 
     const paradoxes = [];
 
+
+
     // Example Logic: Bold but Minimalist
 
     if (answers['e_bold_subtle'] < 4 && answers['e_min_max'] < 4) {
@@ -658,13 +677,33 @@ export default function App() {
         visualTerritoryNote: [shapeDir, density].filter(Boolean).join(' · ') || existing.visualTerritoryNote || '',
         typographyNote: [typeStyle, typeWeight].filter(Boolean).join(' · ') || existing.typographyNote || '',
         exemplarWords: [brandObject, brandMoment].filter(Boolean).join(' | ') || existing.exemplarWords || '',
-        sensescapeComplete: true,
         sensescapeCompletedAt: new Date().toISOString(),
         // Raw answers stored for Brand Document Builder
         sensescapeAnswers: answers
       });
       localStorage.setItem('qb_qbp', JSON.stringify(updated));
       localStorage.setItem('qb_sensescape_done', '1');
+          // Show results button on completion
+          setTimeout(function() {
+            if (!document.getElementById('qb-float-results')) {
+              var btn = document.createElement('button');
+              btn.id = 'qb-float-results';
+              btn.className = 'qb-send-results-btn';
+              btn.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:9000;box-shadow:0 8px 32px rgba(74,222,128,.25);';
+              btn.innerHTML = '&#128196; Send me my results';
+              btn.addEventListener('click', function() {
+                var qbp = {};
+                try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) {}
+                if (window.QB_showResultsModal) { window.QB_showResultsModal({
+                  toolId: 'sensescape',
+                  qbp: qbp,
+                  results: {},
+                  pdfPage: '/sensescape-pdf.html'
+                }); }
+              });
+              document.body.appendChild(btn);
+            }
+          }, 600);
       if (window.parent && window.parent !== window) {
         window.parent.postMessage({ type: 'QB_PHASE_COMPLETE', phase: 1, tool: 'sensescape', qbp: updated }, '*');
       }
@@ -672,11 +711,14 @@ export default function App() {
   }, [showCodex]);
   // ── END QB OS ───────────────────────────────────────────────────────────────
 
+
   const handleLeadSubmit = (e) => {
 
     e.preventDefault();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
 
     if (!emailRegex.test(leadData.email)) {
 
@@ -685,6 +727,8 @@ export default function App() {
       return;
 
     }
+
+
 
     const hasIdentity = leadData.firstName.trim() || leadData.lastName.trim() || leadData.company.trim();
 
@@ -737,15 +781,10 @@ export default function App() {
         <div className="relative z-20 min-h-screen text-[#000000] dark:text-[#ffffff] flex flex-col items-center justify-center p-6 selection:bg-[#16a34a]/20 dark:selection:bg-[#4ade80]/30 transition-colors duration-500">
 
           {/* Theme Toggle */}
-
-          <button onClick={toggleTheme} className="absolute top-6 right-6 inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-md hover:bg-white dark:hover:bg-zinc-900 transition-colors cursor-pointer">
-
+          <button onClick={toggleTheme} className="absolute top-6 right-6 z-50 inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-md hover:bg-white dark:hover:bg-zinc-900 transition-colors cursor-pointer">
             {theme === 'dark' ? <Sun size={14} className="text-[#4ade80]" /> : <Moon size={14} className="text-[#16a34a]" />}
-
             <span className="font-mono text-[10px] uppercase tracking-[0.3em]">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-
           </button>
-
           <div className="max-w-4xl w-full space-y-12 animate-fade-in-up">
 
             <div className="space-y-6">
@@ -850,12 +889,9 @@ export default function App() {
 
         <div className="relative z-20 min-h-screen text-[#000000] dark:text-[#ffffff] flex flex-col items-center justify-center p-6 transition-colors duration-500">
 
-          <button onClick={toggleTheme} className="absolute top-6 right-6 inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-md hover:bg-white dark:hover:bg-zinc-900 transition-colors cursor-pointer">
-
+          <button onClick={toggleTheme} className="absolute top-6 right-6 z-50 inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-md hover:bg-white dark:hover:bg-zinc-900 transition-colors cursor-pointer">
             {theme === 'dark' ? <Sun size={14} className="text-[#4ade80]" /> : <Moon size={14} className="text-[#16a34a]" />}
-
           </button>
-
           <div className="max-w-xl w-full space-y-10 animate-fade-in-up">
 
             <div className="space-y-4 text-center">
@@ -1038,13 +1074,12 @@ export default function App() {
 
         <div className="relative z-20 min-h-screen text-[#000000] dark:text-[#ffffff] p-6 md:p-12 transition-colors duration-500">
 
-          <button onClick={toggleTheme} className="absolute top-6 right-6 inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-md hover:bg-white dark:hover:bg-zinc-900 transition-colors cursor-pointer">
-
+          <button onClick={toggleTheme} className="absolute top-6 right-6 z-50 inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-md hover:bg-white dark:hover:bg-zinc-900 transition-colors cursor-pointer">
             {theme === 'dark' ? <Sun size={14} className="text-[#4ade80]" /> : <Moon size={14} className="text-[#16a34a]" />}
-
           </button>
-
           <div className="max-w-5xl mx-auto space-y-16 mt-8">
+
+
 
             <header className="space-y-6 border-b border-black/10 dark:border-white/10 pb-12">
 
@@ -1178,6 +1213,8 @@ export default function App() {
 
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/20 dark:via-black/5 dark:to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
+
+
                 <p className="relative z-10">
 
                   This brand exists in a space that feels <span className="font-black border-b-2 border-[#16a34a] dark:border-[#4ade80]">{answers.sw_cold_hot < 5 ? 'cool and precise' : 'warm and biological'}</span>,
@@ -1223,6 +1260,8 @@ export default function App() {
       </div>
 
       <div className="relative z-20 min-h-screen text-[#000000] dark:text-[#ffffff] font-sans selection:bg-[#16a34a]/20 dark:selection:bg-[#4ade80]/30 pb-24 transition-colors duration-500">
+
+
 
         {/* Progress Bar Header */}
 
@@ -1312,6 +1351,8 @@ export default function App() {
 
         <main className="max-w-5xl mx-auto px-6 py-16 md:py-24 space-y-32">
 
+
+
           {/* Chapter Intro */}
 
           <header className="space-y-6 animate-fade-in text-center max-w-3xl mx-auto">
@@ -1336,9 +1377,13 @@ export default function App() {
 
               <div key={q.id} className="space-y-8 animate-fade-in-up" style={{ animationDelay: `${idx * 100}ms` }}>
 
+
+
                 {q.type === 'slider' ? (
 
                   <div className="grid md:grid-cols-2 gap-16 items-center">
+
+
 
                     {/* Left Col: The Control */}
 
@@ -1368,6 +1413,8 @@ export default function App() {
 
                         <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-black/10 dark:bg-white/10 -translate-y-1/2" />
 
+
+
                         {/* Center mark */}
 
                         <div className="absolute top-1/2 left-1/2 w-[2px] h-4 bg-black/20 dark:bg-white/20 -translate-x-1/2 -translate-y-1/2" />
@@ -1387,6 +1434,8 @@ export default function App() {
                           style={{ height: '40px' }}
 
                         />
+
+
 
                         {/* Custom Thumb - Machine Switch Vibe */}
 
@@ -1587,6 +1636,5 @@ const AppWithStyles = () => (
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<AppWithStyles />);
 </script>
-<script src="qb-shell.js"></script>
 </body>
 </html>
