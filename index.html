@@ -1,939 +1,949 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Quantum Branding — The Brand Operating System</title>
-<meta name="description" content="QB BrandOS. The first AI-powered Brand Operating System. From idea to orbit — identity, visual system, voice, content, execution, and intelligence. One connected platform.">
-<link rel="canonical" href="https://quantumbranding.ai">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://quantumbranding.ai">
-<meta property="og:title" content="Quantum Branding — The Brand Operating System">
-<meta property="og:description" content="The first AI-powered Brand Operating System. From idea to orbit.">
-<meta name="twitter:card" content="summary_large_image">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Quantum Branding — The Brand Operating System</title>
+    <meta name="description" content="QB BrandOS. The first AI-powered Brand Operating System. From idea to orbit — identity, visual system, voice, content, execution, and intelligence. One connected platform.">
+    <link rel="canonical" href="https://quantumbranding.ai">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quantumbranding.ai">
+    <meta property="og:title" content="Quantum Branding — The Brand Operating System">
+    <meta property="og:description" content="The first AI-powered Brand Operating System. From idea to orbit.">
+    <meta name="twitter:card" content="summary_large_image">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<style>
-/* ─────────────────────────────────────────────────────
-   RESET + BASE
-───────────────────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{
-  background:#000;
-  color:#e4e4e7;
-  font-family:'Inter',sans-serif;
-  font-size:16px;
-  line-height:1.6;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-img{max-width:100%;display:block}
-a{text-decoration:none;color:inherit}
-button{cursor:pointer;font-family:'Inter',sans-serif;background:none;border:none;padding:0;color:inherit}
-ul,ol{list-style:none}
+    <style>
+        /* ─────────────────────────────────────────────────────
+           RESET + BASE
+        ───────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; height: 100%; }
+        body {
+            background: #000;
+            color: #e4e4e7;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            width: 100%;
+        }
+        img { max-width: 100%; display: block; }
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; font-family: 'Inter', sans-serif; background: none; border: none; padding: 0; color: inherit; outline: none; }
+        ul, ol { list-style: none; }
 
-/* ─────────────────────────────────────────────────────
-   DESIGN TOKENS
-───────────────────────────────────────────────────── */
-:root{
-  --bg:#000;
-  --bg-surface:#050505;
-  --bg-card:#0a0a0a;
-  --bg-raised:#111;
-  --border:rgba(255,255,255,0.06);
-  --border-hover:rgba(74,222,128,0.3);
-  --green:#4ade80;
-  --green-dim:rgba(74,222,128,0.12);
-  --green-faint:rgba(74,222,128,0.05);
-  --text:#e4e4e7;
-  --text-2:#888;
-  --text-3:#555;
-  --text-4:#333;
-  --mono:'JetBrains Mono',monospace;
-  --radius:12px;
-  --radius-lg:20px;
-  --max:1200px;
-}
+        /* ─────────────────────────────────────────────────────
+           DESIGN TOKENS
+        ───────────────────────────────────────────────────── */
+        :root {
+            --bg: #000;
+            --bg-surface: #050505;
+            --bg-card: #0a0a0a;
+            --bg-raised: #111;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(74, 222, 128, 0.3);
+            --green: #4ade80;
+            --green-dim: rgba(74, 222, 128, 0.12);
+            --green-faint: rgba(74, 222, 128, 0.05);
+            --text: #e4e4e7;
+            --text-2: #888;
+            --text-3: #555;
+            --text-4: #333;
+            --mono: 'JetBrains Mono', monospace;
+            --radius: 12px;
+            --radius-lg: 20px;
+            --max: 1200px;
+        }
 
-/* ─────────────────────────────────────────────────────
-   LAYOUT
-───────────────────────────────────────────────────── */
-.container{
-  width:100%;
-  max-width:var(--max);
-  margin:0 auto;
-  padding:0 24px;
-}
-@media(max-width:640px){.container{padding:0 20px}}
+        /* ─────────────────────────────────────────────────────
+           LAYOUT
+        ───────────────────────────────────────────────────── */
+        .container {
+            width: 100%;
+            max-width: var(--max);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        @media (max-width: 640px) { .container { padding: 0 20px; } }
 
-/* ─────────────────────────────────────────────────────
-   BACKGROUND EFFECTS
-───────────────────────────────────────────────────── */
-#grid-bg{
-  position:fixed;top:0;left:0;right:0;bottom:0;
-  z-index:0;pointer-events:none;
-  background-image:
-    linear-gradient(rgba(74,222,128,0.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(74,222,128,0.025) 1px,transparent 1px);
-  background-size:72px 72px;
-  mask-image:radial-gradient(ellipse 80% 80% at 50% 20%,black 20%,transparent 100%);
-  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 20%,black 20%,transparent 100%);
-}
-.glow-top{
-  position:absolute;top:-40%;left:50%;transform:translateX(-50%);
-  width:70%;height:80%;
-  background:radial-gradient(ellipse at center,rgba(74,222,128,0.07) 0%,transparent 70%);
-  pointer-events:none;z-index:0;
-}
+        /* ─────────────────────────────────────────────────────
+           BACKGROUND EFFECTS
+        ───────────────────────────────────────────────────── */
+        #grid-bg {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(74, 222, 128, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(74, 222, 128, 0.025) 1px, transparent 1px);
+            background-size: 72px 72px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 20%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 20%, transparent 100%);
+        }
+        .glow-top {
+            position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
+            width: 70%; height: 80%;
+            background: radial-gradient(ellipse at center, rgba(74, 222, 128, 0.07) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
 
-/* ─────────────────────────────────────────────────────
-   TYPOGRAPHY
-───────────────────────────────────────────────────── */
-.mono{font-family:var(--mono)}
-.eyebrow{
-  font-family:var(--mono);
-  font-size:10px;
-  letter-spacing:0.25em;
-  text-transform:uppercase;
-  color:var(--green);
-}
-.h1{
-  font-weight:900;
-  letter-spacing:-0.03em;
-  line-height:1.05;
-  color:#fff;
-  font-size:clamp(40px,8vw,80px);
-}
-.h2{
-  font-weight:900;
-  letter-spacing:-0.025em;
-  line-height:1.1;
-  color:#fff;
-  font-size:clamp(28px,5vw,52px);
-}
-.h3{
-  font-weight:700;
-  letter-spacing:-0.02em;
-  line-height:1.2;
-  color:#fff;
-  font-size:clamp(20px,3vw,28px);
-}
-.gradient-text{
-  background:linear-gradient(90deg,#fff 0%,#4ade80 40%,#fff 70%,#4ade80 100%);
-  background-size:200% 100%;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-  animation:gradient-shift 6s linear infinite;
-  display:inline;
-}
-@keyframes gradient-shift{
-  0%{background-position:0% 50%}
-  100%{background-position:200% 50%}
-}
+        /* ─────────────────────────────────────────────────────
+           TYPOGRAPHY
+        ───────────────────────────────────────────────────── */
+        .mono { font-family: var(--mono); }
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--green);
+        }
+        .h1 {
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            color: #fff;
+            font-size: clamp(40px, 8vw, 80px);
+        }
+        .h2 {
+            font-weight: 900;
+            letter-spacing: -0.025em;
+            line-height: 1.1;
+            color: #fff;
+            font-size: clamp(28px, 5vw, 52px);
+        }
+        .h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #fff;
+            font-size: clamp(20px, 3vw, 28px);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #fff 0%, #4ade80 40%, #fff 70%, #4ade80 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 6s linear infinite;
+            display: inline;
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
 
-/* ─────────────────────────────────────────────────────
-   GLASS + CARDS
-───────────────────────────────────────────────────── */
-.glass{
-  background:rgba(10,10,10,0.75);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  transition:border-color 0.25s ease,box-shadow 0.25s ease;
-}
-.glass:hover{
-  border-color:var(--border-hover);
-  box-shadow:0 0 40px -10px rgba(74,222,128,0.12);
-}
-.card{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  transition:border-color 0.2s ease,transform 0.2s ease;
-}
-.card:hover{
-  border-color:rgba(255,255,255,0.1);
-  transform:translateY(-2px);
-}
+        /* ─────────────────────────────────────────────────────
+           GLASS + CARDS
+        ───────────────────────────────────────────────────── */
+        .glass {
+            background: rgba(10, 10, 10, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .glass:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 0 40px -10px rgba(74, 222, 128, 0.12);
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
 
-/* ─────────────────────────────────────────────────────
-   BUTTONS
-───────────────────────────────────────────────────── */
-.btn-primary{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  background:var(--green);
-  color:#000;
-  font-weight:700;
-  font-size:11px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:15px 36px;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-  transition:background 0.2s ease,transform 0.15s ease;
-  white-space:nowrap;
-  font-family:'Inter',sans-serif;
-}
-.btn-primary:hover{background:#fff;transform:translateY(-1px)}
-.btn-primary:active{transform:translateY(0)}
+        /* ─────────────────────────────────────────────────────
+           BUTTONS
+        ───────────────────────────────────────────────────── */
+        .btn-primary {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--green);
+            color: #000;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 15px 36px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary:hover { background: #fff; transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
 
-.btn-ghost{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  background:transparent;
-  color:#e4e4e7;
-  font-weight:600;
-  font-size:11px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:14px 32px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.15);
-  cursor:pointer;
-  transition:border-color 0.2s ease,color 0.2s ease,transform 0.15s ease;
-  white-space:nowrap;
-  font-family:'Inter',sans-serif;
-}
-.btn-ghost:hover{border-color:rgba(74,222,128,0.4);color:var(--green);transform:translateY(-1px)}
-.btn-ghost:active{transform:translateY(0)}
+        .btn-ghost {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            background: transparent;
+            color: #e4e4e7;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 14px 32px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-ghost:hover { border-color: rgba(74, 222, 128, 0.4); color: var(--green); transform: translateY(-1px); }
+        .btn-ghost:active { transform: translateY(0); }
 
-.btn-sm{padding:10px 22px;font-size:10px}
+        .btn-sm { padding: 10px 22px; font-size: 10px; }
 
-/* ─────────────────────────────────────────────────────
-   NAVIGATION
-───────────────────────────────────────────────────── */
-#nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  height:64px;
-  background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  transition:background 0.3s ease;
-}
-.nav-inner{
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:24px;
-}
-.nav-logo{
-  display:flex;align-items:center;gap:10px;
-  cursor:pointer;flex-shrink:0;
-}
-.nav-logo-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 8px rgba(74,222,128,0.8);
-  transition:transform 0.3s ease;
-}
-.nav-logo:hover .nav-logo-dot{transform:scale(1.5)}
-.nav-logo-text{
-  font-family:var(--mono);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:0.3em;
-  text-transform:uppercase;
-  color:#fff;
-  transition:color 0.2s ease;
-}
-.nav-logo:hover .nav-logo-text{color:var(--green)}
-.nav-links{
-  display:flex;align-items:center;gap:32px;
-}
-.nav-link{
-  font-family:var(--mono);
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:0.15em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.5);
-  cursor:pointer;
-  transition:color 0.2s ease;
-  border:none;background:none;padding:0;
-}
-.nav-link:hover{color:var(--green)}
-.nav-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}
-.nav-mobile-btn{
-  display:none;
-  align-items:center;justify-content:center;
-  width:36px;height:36px;
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:8px;
-  background:none;cursor:pointer;
-  flex-direction:column;gap:4px;
-}
-.nav-mobile-btn span{
-  display:block;width:18px;height:1.5px;
-  background:#fff;border-radius:2px;
-  transition:all 0.25s ease;
-}
-@media(max-width:900px){
-  .nav-links{display:none}
-  .nav-signin{display:none!important}
-  .nav-mobile-btn{display:flex}
-}
+        /* ─────────────────────────────────────────────────────
+           NAVIGATION
+        ───────────────────────────────────────────────────── */
+        #nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            height: 64px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.3s ease;
+        }
+        .nav-inner {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .nav-logo {
+            display: flex; align-items: center; gap: 10px;
+            cursor: pointer; flex-shrink: 0;
+        }
+        .nav-logo-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.8);
+            transition: transform 0.3s ease;
+        }
+        .nav-logo:hover .nav-logo-dot { transform: scale(1.5); }
+        .nav-logo-text {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #fff;
+            transition: color 0.2s ease;
+        }
+        .nav-logo:hover .nav-logo-text { color: var(--green); }
+        .nav-links {
+            display: flex; align-items: center; gap: 32px;
+        }
+        .nav-link {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: color 0.2s ease;
+            border: none; background: none; padding: 0;
+        }
+        .nav-link:hover { color: var(--green); }
+        .nav-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .nav-mobile-btn {
+            display: none;
+            align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: none; cursor: pointer;
+            flex-direction: column; gap: 4px;
+        }
+        .nav-mobile-btn span {
+            display: block; width: 18px; height: 1.5px;
+            background: #fff; border-radius: 2px;
+            transition: all 0.25s ease;
+        }
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .nav-signin { display: none !important; }
+            .nav-mobile-btn { display: flex; }
+        }
 
-/* Mobile Menu */
-#mobile-menu{
-  display:none;
-  position:fixed;inset:0;z-index:200;
-  background:#000;
-  flex-direction:column;
-  padding:0 24px;
-}
-#mobile-menu.open{display:flex}
-.mobile-menu-header{
-  height:64px;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-.mobile-menu-close{
-  width:36px;height:36px;border:1px solid rgba(255,255,255,0.1);
-  border-radius:8px;background:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;color:#888;
-}
-.mobile-menu-links{
-  flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;
-  padding:32px 0;
-}
-.mobile-menu-link{
-  font-size:32px;font-weight:900;letter-spacing:-0.02em;
-  color:rgba(255,255,255,0.6);
-  cursor:pointer;padding:10px 0;
-  border:none;background:none;text-align:left;
-  transition:color 0.15s ease;
-}
-.mobile-menu-link:hover{color:var(--green)}
-.mobile-menu-cta{padding-bottom:48px}
+        /* Mobile Menu */
+        #mobile-menu {
+            display: none;
+            position: fixed; inset: 0; z-index: 200;
+            background: #000;
+            flex-direction: column;
+            padding: 0 24px;
+        }
+        #mobile-menu.open { display: flex; }
+        .mobile-menu-header {
+            height: 64px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .mobile-menu-close {
+            width: 36px; height: 36px; border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px; background: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: #888;
+        }
+        .mobile-menu-links {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px;
+            padding: 32px 0;
+        }
+        .mobile-menu-link {
+            font-size: 32px; font-weight: 900; letter-spacing: -0.02em;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer; padding: 10px 0;
+            border: none; background: none; text-align: left;
+            transition: color 0.15s ease;
+        }
+        .mobile-menu-link:hover { color: var(--green); }
+        .mobile-menu-cta { padding-bottom: 48px; }
 
-/* ─────────────────────────────────────────────────────
-   SECTIONS
-───────────────────────────────────────────────────── */
-section{position:relative;z-index:1}
-.section-divider{
-  border:none;
-  border-top:1px solid rgba(255,255,255,0.05);
-  margin:0;
-}
+        /* ─────────────────────────────────────────────────────
+           SECTIONS
+        ───────────────────────────────────────────────────── */
+        section { position: relative; z-index: 1; }
+        .section-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin: 0;
+        }
 
-/* ─────────────────────────────────────────────────────
-   HERO
-───────────────────────────────────────────────────── */
-#hero{
-  padding:140px 0 100px;
-  position:relative;overflow:hidden;
-}
-@media(max-width:640px){#hero{padding:110px 0 80px}}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:8px 16px;
-  border:1px solid rgba(74,222,128,0.25);
-  background:rgba(74,222,128,0.06);
-  border-radius:40px;
-  margin-bottom:32px;
-}
-.hero-eyebrow-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--green);
-  animation:pulse-dot 2s ease infinite;
-}
-@keyframes pulse-dot{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:0.5;transform:scale(0.8)}
-}
-.hero-headline{
-  margin-bottom:28px;
-  max-width:800px;
-}
-.hero-sub{
-  font-size:18px;
-  line-height:1.75;
-  color:#888;
-  max-width:540px;
-  margin-bottom:44px;
-}
-@media(max-width:640px){.hero-sub{font-size:16px}}
-.hero-ctas{
-  display:flex;flex-wrap:wrap;gap:14px;
-  margin-bottom:72px;
-}
-.hero-stats{
-  display:flex;flex-wrap:wrap;gap:48px;
-}
-.hero-stat-num{
-  font-family:var(--mono);
-  font-size:40px;
-  font-weight:700;
-  color:var(--green);
-  line-height:1;
-  margin-bottom:6px;
-}
-.hero-stat-label{
-  font-family:var(--mono);
-  font-size:9px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--text-3);
-}
+        /* ─────────────────────────────────────────────────────
+           HERO
+        ───────────────────────────────────────────────────── */
+        #hero {
+            padding: 140px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        @media (max-width: 640px) { #hero { padding: 110px 0 80px; } }
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            background: rgba(74, 222, 128, 0.06);
+            border-radius: 40px;
+            margin-bottom: 32px;
+        }
+        .hero-eyebrow-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--green);
+            animation: pulse-dot 2s ease infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+        .hero-headline {
+            margin-bottom: 28px;
+            max-width: 850px;
+        }
+        .hero-sub {
+            font-size: 18px;
+            line-height: 1.75;
+            color: #888;
+            max-width: 540px;
+            margin-bottom: 44px;
+        }
+        @media (max-width: 640px) { .hero-sub { font-size: 16px; } }
+        .hero-ctas {
+            display: flex; flex-wrap: wrap; gap: 14px;
+            margin-bottom: 72px;
+        }
+        .hero-stats {
+            display: flex; flex-wrap: wrap; gap: 48px;
+        }
+        .hero-stat-num {
+            font-family: var(--mono);
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--green);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .hero-stat-label {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text-3);
+        }
 
-/* ─────────────────────────────────────────────────────
-   PRESS STRIP
-───────────────────────────────────────────────────── */
-#press{
-  padding:20px 0;
-  border-top:1px solid rgba(255,255,255,0.05);
-  border-bottom:1px solid rgba(255,255,255,0.05);
-}
-.press-inner{
-  display:flex;
-  flex-wrap:wrap;
-  gap:32px 40px;
-  align-items:center;
-  opacity:0.28;
-  transition:opacity 0.3s ease;
-}
-#press:hover .press-inner{opacity:0.55}
-.press-item{
-  font-family:var(--mono);
-  font-size:9px;
-  letter-spacing:0.2em;
-  text-transform:uppercase;
-  color:#fff;
-  white-space:nowrap;
-}
+        /* ─────────────────────────────────────────────────────
+           PRESS STRIP
+        ───────────────────────────────────────────────────── */
+        #press {
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .press-inner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px 40px;
+            align-items: center;
+            opacity: 0.28;
+            transition: opacity 0.3s ease;
+        }
+        #press:hover .press-inner { opacity: 0.55; }
+        .press-item {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #fff;
+            white-space: nowrap;
+        }
 
-/* ─────────────────────────────────────────────────────
-   FOUR DOORS
-───────────────────────────────────────────────────── */
-#doors{padding:100px 0}
-@media(max-width:640px){#doors{padding:72px 0}}
-.doors-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-top:56px;
-}
-@media(max-width:768px){
-  .doors-grid{grid-template-columns:1fr}
-}
-.door-card{
-  background:var(--bg-card);
-  border:1px solid rgba(255,255,255,0.06);
-  border-top:2px solid var(--door-color,#4ade80);
-  border-radius:var(--radius-lg);
-  padding:28px 24px;
-  cursor:pointer;
-  transition:all 0.22s ease;
-  display:flex;flex-direction:column;gap:0;
-  text-decoration:none;
-  position:relative;
-  overflow:hidden;
-}
-.door-card::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,var(--door-glow,rgba(74,222,128,0.06)) 0%,transparent 60%);
-  opacity:0;transition:opacity 0.25s ease;pointer-events:none;
-}
-.door-card:hover{
-  border-color:var(--door-color,#4ade80);
-  box-shadow:0 0 30px -5px var(--door-glow,rgba(74,222,128,0.15));
-  transform:translateY(-3px);
-}
-.door-card:hover::after{opacity:1}
-.door-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:16px;
-}
-.door-num{
-  font-family:var(--mono);font-size:11px;
-  color:var(--door-color,#4ade80);letter-spacing:0.15em;
-}
-.door-badge{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:3px 10px;border-radius:4px;
-  background:var(--door-dim,rgba(74,222,128,0.1));
-  color:var(--door-color,#4ade80);
-  border:1px solid var(--door-border,rgba(74,222,128,0.2));
-}
-.door-title{
-  font-size:22px;font-weight:700;color:#fff;
-  line-height:1.2;margin-bottom:4px;
-}
-.door-sub{
-  font-size:14px;color:var(--door-color,#4ade80);
-  margin-bottom:14px;
-}
-.door-desc{
-  font-size:13px;color:var(--text-2);line-height:1.65;
-  margin-bottom:18px;flex:1;
-}
-.door-tags{
-  display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;
-}
-.door-tag{
-  font-family:var(--mono);font-size:10px;
-  padding:3px 9px;border-radius:4px;
-  background:rgba(255,255,255,0.03);
-  color:var(--text-3);
-  border:1px solid rgba(255,255,255,0.06);
-}
-.door-cta{
-  font-family:var(--mono);font-size:11px;
-  color:var(--door-color,#4ade80);
-  letter-spacing:0.1em;
-}
+        /* ─────────────────────────────────────────────────────
+           FOUR DOORS
+        ───────────────────────────────────────────────────── */
+        #doors { padding: 100px 0; }
+        @media (max-width: 640px) { #doors { padding: 72px 0; } }
+        .doors-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 56px;
+        }
+        @media (max-width: 768px) {
+            .doors-grid { grid-template-columns: 1fr; }
+        }
+        .door-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-top: 2px solid var(--door-color, #4ade80);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            display: flex; flex-direction: column; gap: 0;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .door-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, var(--door-glow, rgba(74, 222, 128, 0.06)) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.25s ease; pointer-events: none;
+        }
+        .door-card:hover {
+            border-color: var(--door-color, #4ade80);
+            box-shadow: 0 0 30px -5px var(--door-glow, rgba(74, 222, 128, 0.15));
+            transform: translateY(-3px);
+        }
+        .door-card:hover::after { opacity: 1; }
+        .door-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .door-num {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--door-color, #4ade80); letter-spacing: 0.15em;
+        }
+        .door-badge {
+            font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 3px 10px; border-radius: 4px;
+            background: var(--door-dim, rgba(74, 222, 128, 0.1));
+            color: var(--door-color, #4ade80);
+            border: 1px solid var(--door-border, rgba(74, 222, 128, 0.2));
+        }
+        .door-title {
+            font-size: 22px; font-weight: 700; color: #fff;
+            line-height: 1.2; margin-bottom: 4px;
+        }
+        .door-sub {
+            font-size: 14px; color: var(--door-color, #4ade80);
+            margin-bottom: 14px;
+        }
+        .door-desc {
+            font-size: 13px; color: var(--text-2); line-height: 1.65;
+            margin-bottom: 18px; flex: 1;
+        }
+        .door-tags {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px;
+        }
+        .door-tag {
+            font-family: var(--mono); font-size: 10px;
+            padding: 3px 9px; border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .door-cta {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--door-color, #4ade80);
+            letter-spacing: 0.1em;
+        }
 
-/* ─────────────────────────────────────────────────────
-   SIGNAL SCAN SECTION
-───────────────────────────────────────────────────── */
-#scan-section{
-  padding:100px 0;
-  background:rgba(74,222,128,0.02);
-  border-top:1px solid rgba(74,222,128,0.08);
-  border-bottom:1px solid rgba(74,222,128,0.08);
-}
-@media(max-width:640px){#scan-section{padding:72px 0}}
-.scan-center{text-align:center;max-width:480px;margin:0 auto 48px}
-.scan-widget{
-  max-width:600px;margin:0 auto;
-  background:rgba(74,222,128,0.04);
-  border:1px solid rgba(74,222,128,0.15);
-  border-radius:var(--radius-lg);
-  padding:32px;
-}
-.scan-widget-label{
-  font-family:var(--mono);font-size:10px;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--green);margin-bottom:20px;
-}
-.scan-widget-q{
-  font-size:16px;font-weight:600;color:#fff;
-  margin-bottom:20px;
-}
-.scan-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
-.scan-option{
-  background:rgba(0,0,0,0.4);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:10px;padding:14px 18px;
-  cursor:pointer;text-align:left;
-  transition:all 0.18s ease;
-}
-.scan-option:hover{
-  border-color:rgba(74,222,128,0.3);
-  background:rgba(74,222,128,0.04);
-}
-.scan-option-tag{
-  font-family:var(--mono);font-size:9px;
-  letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--green);display:block;margin-bottom:4px;
-}
-.scan-option-text{
-  font-size:14px;color:#fff;font-weight:500;
-}
-.scan-note{
-  text-align:center;font-family:var(--mono);font-size:10px;
-  letter-spacing:0.08em;color:var(--text-4);margin-top:16px;
-}
+        /* ─────────────────────────────────────────────────────
+           SIGNAL SCAN SECTION
+        ───────────────────────────────────────────────────── */
+        #scan-section {
+            padding: 100px 0;
+            background: rgba(74, 222, 128, 0.02);
+            border-top: 1px solid rgba(74, 222, 128, 0.08);
+            border-bottom: 1px solid rgba(74, 222, 128, 0.08);
+        }
+        @media (max-width: 640px) { #scan-section { padding: 72px 0; } }
+        .scan-center { text-align: center; max-width: 480px; margin: 0 auto 48px; }
+        .scan-widget {
+            max-width: 600px; margin: 0 auto;
+            background: rgba(74, 222, 128, 0.04);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+        }
+        .scan-widget-label {
+            font-family: var(--mono); font-size: 10px;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--green); margin-bottom: 20px;
+        }
+        .scan-widget-q {
+            font-size: 16px; font-weight: 600; color: #fff;
+            margin-bottom: 20px;
+        }
+        .scan-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+        .scan-option {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 10px; padding: 14px 18px;
+            cursor: pointer; text-align: left;
+            transition: all 0.18s ease;
+        }
+        .scan-option:hover {
+            border-color: rgba(74, 222, 128, 0.3);
+            background: rgba(74, 222, 128, 0.04);
+        }
+        .scan-option-tag {
+            font-family: var(--mono); font-size: 9px;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--green); display: block; margin-bottom: 4px;
+        }
+        .scan-option-text {
+            font-size: 14px; color: #fff; font-weight: 500;
+        }
+        .scan-note {
+            text-align: center; font-family: var(--mono); font-size: 10px;
+            letter-spacing: 0.08em; color: var(--text-4); margin-top: 16px;
+        }
 
-/* ─────────────────────────────────────────────────────
-   HOW IT WORKS
-───────────────────────────────────────────────────── */
-#how{padding:100px 0}
-@media(max-width:640px){#how{padding:72px 0}}
-.how-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:80px;align-items:start;margin-top:64px;
-}
-@media(max-width:900px){.how-grid{grid-template-columns:1fr;gap:48px}}
-.phase-list{display:flex;flex-direction:column}
-.phase-row{
-  display:flex;gap:20px;padding:24px 0;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-}
-.phase-row:last-child{border-bottom:none}
-.phase-n{
-  font-family:var(--mono);font-size:11px;
-  color:var(--green);letter-spacing:0.15em;
-  width:30px;flex-shrink:0;padding-top:2px;
-}
-.phase-n.amber{color:#f59e0b}
-.phase-info{flex:1}
-.phase-title{
-  font-size:15px;font-weight:600;color:#fff;
-  margin-bottom:4px;
-}
-.phase-tools{
-  font-family:var(--mono);font-size:10px;
-  color:var(--text-3);letter-spacing:0.06em;
-  margin-bottom:8px;
-}
-.phase-desc{font-size:13px;color:var(--text-2);line-height:1.65}
+        /* ─────────────────────────────────────────────────────
+           HOW IT WORKS
+        ───────────────────────────────────────────────────── */
+        #how { padding: 100px 0; }
+        @media (max-width: 640px) { #how { padding: 72px 0; } }
+        .how-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 80px; align-items: start; margin-top: 64px;
+        }
+        @media (max-width: 900px) { .how-grid { grid-template-columns: 1fr; gap: 48px; } }
+        .phase-list { display: flex; flex-direction: column; }
+        .phase-row {
+            display: flex; gap: 20px; padding: 24px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .phase-row:last-child { border-bottom: none; }
+        .phase-n {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--green); letter-spacing: 0.15em;
+            width: 30px; flex-shrink: 0; padding-top: 2px;
+        }
+        .phase-n.amber { color: #f59e0b; }
+        .phase-info { flex: 1; }
+        .phase-title {
+            font-size: 15px; font-weight: 600; color: #fff;
+            margin-bottom: 4px;
+        }
+        .phase-tools {
+            font-family: var(--mono); font-size: 10px;
+            color: var(--text-3); letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+        .phase-desc { font-size: 13px; color: var(--text-2); line-height: 1.65; }
 
-.qbp-card{
-  position:sticky;top:88px;
-  background:var(--bg-card);
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:var(--radius-lg);
-  padding:28px;
-}
-.qbp-card-label{
-  font-family:var(--mono);font-size:10px;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--green);margin-bottom:12px;
-}
-.qbp-card-desc{
-  font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:24px;
-}
-.qbp-fields{display:flex;flex-direction:column;gap:8px}
-.qbp-field{
-  display:flex;align-items:center;gap:10px;
-  background:rgba(74,222,128,0.04);
-  border:1px solid rgba(74,222,128,0.1);
-  border-radius:8px;padding:10px 14px;
-}
-.qbp-field-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--green);flex-shrink:0;
-}
-.qbp-field-name{
-  font-family:var(--mono);font-size:11px;
-  color:#fff;letter-spacing:0.04em;
-}
-.qbp-footer{
-  text-align:center;font-family:var(--mono);font-size:9px;
-  letter-spacing:0.12em;color:var(--text-4);margin-top:16px;
-  text-transform:uppercase;
-}
+        .qbp-card {
+            position: sticky; top: 88px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+        }
+        .qbp-card-label {
+            font-family: var(--mono); font-size: 10px;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--green); margin-bottom: 12px;
+        }
+        .qbp-card-desc {
+            font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 24px;
+        }
+        .qbp-fields { display: flex; flex-direction: column; gap: 8px; }
+        .qbp-field {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(74, 222, 128, 0.04);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            border-radius: 8px; padding: 10px 14px;
+        }
+        .qbp-field-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--green); flex-shrink: 0;
+        }
+        .qbp-field-name {
+            font-family: var(--mono); font-size: 11px;
+            color: #fff; letter-spacing: 0.04em;
+        }
+        .qbp-footer {
+            text-align: center; font-family: var(--mono); font-size: 9px;
+            letter-spacing: 0.12em; color: var(--text-4); margin-top: 16px;
+            text-transform: uppercase;
+        }
 
-/* ─────────────────────────────────────────────────────
-   TOOLS GRID
-───────────────────────────────────────────────────── */
-#tools{
-  padding:100px 0;
-  background:var(--bg-surface);
-  border-top:1px solid rgba(255,255,255,0.04);
-}
-@media(max-width:640px){#tools{padding:72px 0}}
-.tools-grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:10px;margin-top:48px;
-}
-@media(max-width:900px){.tools-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:500px){.tools-grid{grid-template-columns:repeat(2,1fr)}}
-.tool-chip{
-  background:rgba(255,255,255,0.02);
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:10px;
-  padding:14px 12px;text-align:center;
-  transition:border-color 0.2s ease;
-}
-.tool-chip:hover{border-color:rgba(255,255,255,0.1)}
-.tool-chip-phase{
-  font-family:var(--mono);font-size:9px;
-  letter-spacing:0.1em;margin-bottom:6px;
-}
-.tool-chip-name{
-  font-size:11px;font-weight:500;color:#fff;line-height:1.3;
-}
+        /* ─────────────────────────────────────────────────────
+           TOOLS GRID
+        ───────────────────────────────────────────────────── */
+        #tools {
+            padding: 100px 0;
+            background: var(--bg-surface);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        @media (max-width: 640px) { #tools { padding: 72px 0; } }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px; margin-top: 48px;
+        }
+        @media (max-width: 900px) { .tools-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 500px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } }
+        .tool-chip {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 14px 12px; text-align: center;
+            transition: border-color 0.2s ease;
+        }
+        .tool-chip:hover { border-color: rgba(255, 255, 255, 0.1); }
+        .tool-chip-phase {
+            font-family: var(--mono); font-size: 9px;
+            letter-spacing: 0.1em; margin-bottom: 6px;
+        }
+        .tool-chip-name {
+            font-size: 11px; font-weight: 500; color: #fff; line-height: 1.3;
+        }
 
-/* ─────────────────────────────────────────────────────
-   PREDICTIVE PANEL
-───────────────────────────────────────────────────── */
-#panel{padding:100px 0}
-@media(max-width:640px){#panel{padding:72px 0}}
-.panel-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:80px;align-items:center;margin-top:0;
-}
-@media(max-width:900px){.panel-grid{grid-template-columns:1fr;gap:48px}}
-.panel-features{display:flex;flex-direction:column;gap:18px}
-.panel-feature{display:flex;gap:14px}
-.panel-feature-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:#f59e0b;flex-shrink:0;margin-top:6px;
-}
-.panel-feature-title{
-  font-size:14px;font-weight:600;color:#fff;margin-bottom:3px;
-}
-.panel-feature-desc{font-size:13px;color:var(--text-2);line-height:1.6}
+        /* ─────────────────────────────────────────────────────
+           PREDICTIVE PANEL
+        ───────────────────────────────────────────────────── */
+        #panel { padding: 100px 0; }
+        @media (max-width: 640px) { #panel { padding: 72px 0; } }
+        .panel-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 80px; align-items: center;
+        }
+        @media (max-width: 900px) { .panel-grid { grid-template-columns: 1fr; gap: 48px; } }
+        .panel-features { display: flex; flex-direction: column; gap: 18px; }
+        .panel-feature { display: flex; gap: 14px; }
+        .panel-feature-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #f59e0b; flex-shrink: 0; margin-top: 6px;
+        }
+        .panel-feature-title {
+            font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 3px;
+        }
+        .panel-feature-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; }
 
-.panel-demo{
-  background:var(--bg-card);
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:var(--radius-lg);padding:28px;
-}
-.panel-demo-label{
-  font-family:var(--mono);font-size:10px;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:#f59e0b;margin-bottom:20px;
-}
-.confidence-row{
-  display:flex;justify-content:space-between;
-  align-items:center;margin-bottom:10px;
-}
-.confidence-label{font-size:13px;color:#fff;font-weight:500}
-.confidence-score{
-  font-family:var(--mono);font-size:18px;
-  font-weight:700;color:var(--green);
-}
-.confidence-bar-bg{
-  height:6px;background:rgba(255,255,255,0.06);
-  border-radius:3px;overflow:hidden;margin-bottom:20px;
-}
-.confidence-bar-fill{
-  height:100%;border-radius:3px;
-  background:var(--green);
-  transition:width 1.2s cubic-bezier(0.4,0,0.2,1);
-}
-.scenario-list{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
-.scenario-item{}
-.scenario-header{
-  display:flex;justify-content:space-between;
-  align-items:center;margin-bottom:5px;
-}
-.scenario-name{font-size:12px;color:var(--text-2)}
-.scenario-pct{
-  font-family:var(--mono);font-size:11px;font-weight:700;
-}
-.scenario-bar-bg{
-  height:4px;background:rgba(255,255,255,0.06);
-  border-radius:2px;overflow:hidden;
-}
-.scenario-bar-fill{
-  height:100%;border-radius:2px;
-  transition:width 1s cubic-bezier(0.4,0,0.2,1);
-}
-.verdict-box{
-  background:rgba(74,222,128,0.06);
-  border:1px solid rgba(74,222,128,0.15);
-  border-radius:10px;padding:16px;
-}
-.verdict-label{
-  font-family:var(--mono);font-size:9px;
-  letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--green);margin-bottom:6px;
-}
-.verdict-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:3px}
-.verdict-sub{font-size:12px;color:var(--text-2)}
+        .panel-demo {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-lg); padding: 28px;
+        }
+        .panel-demo-label {
+            font-family: var(--mono); font-size: 10px;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: #f59e0b; margin-bottom: 20px;
+        }
+        .confidence-row {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 10px;
+        }
+        .confidence-label { font-size: 13px; color: #fff; font-weight: 500; }
+        .confidence-score {
+            font-family: var(--mono); font-size: 18px;
+            font-weight: 700; color: var(--green);
+        }
+        .confidence-bar-bg {
+            height: 6px; background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px; overflow: hidden; margin-bottom: 20px;
+        }
+        .confidence-bar-fill {
+            height: 100%; border-radius: 3px;
+            background: var(--green);
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .scenario-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .scenario-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 5px;
+        }
+        .scenario-name { font-size: 12px; color: var(--text-2); }
+        .scenario-pct {
+            font-family: var(--mono); font-size: 11px; font-weight: 700;
+        }
+        .scenario-bar-bg {
+            height: 4px; background: rgba(255, 255, 255, 0.06);
+            border-radius: 2px; overflow: hidden;
+        }
+        .scenario-bar-fill {
+            height: 100%; border-radius: 2px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .verdict-box {
+            background: rgba(74, 222, 128, 0.06);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            border-radius: 10px; padding: 16px;
+        }
+        .verdict-label {
+            font-family: var(--mono); font-size: 9px;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--green); margin-bottom: 6px;
+        }
+        .verdict-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+        .verdict-sub { font-size: 12px; color: var(--text-2); }
 
-/* ─────────────────────────────────────────────────────
-   PRICING
-───────────────────────────────────────────────────── */
-#pricing{
-  padding:100px 0;
-  background:var(--bg-surface);
-  border-top:1px solid rgba(255,255,255,0.04);
-}
-@media(max-width:640px){#pricing{padding:72px 0}}
-.pricing-grid{
-  display:grid;grid-template-columns:1fr 1fr 1fr;
-  gap:16px;margin-top:56px;max-width:1000px;
-}
-@media(max-width:900px){.pricing-grid{grid-template-columns:1fr}}
-.price-card{
-  background:var(--bg-card);
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:var(--radius-lg);padding:32px;
-  transition:all 0.25s ease;
-  display:flex;flex-direction:column;
-}
-.price-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-2px)}
-.price-card.featured{
-  border-color:rgba(74,222,128,0.25);
-  background:rgba(74,222,128,0.03);
-}
-.price-card.featured:hover{border-color:rgba(74,222,128,0.4)}
-.price-tier{
-  font-family:var(--mono);font-size:10px;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--text-2);margin-bottom:24px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.price-popular{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.08em;
-  padding:2px 9px;border-radius:4px;
-  background:rgba(74,222,128,0.1);
-  color:var(--green);
-  border:1px solid rgba(74,222,128,0.2);
-}
-.price-amount{
-  margin-bottom:8px;display:flex;align-items:baseline;gap:4px;
-}
-.price-num{
-  font-size:52px;font-weight:900;color:#fff;
-  letter-spacing:-0.03em;line-height:1;
-}
-.price-per{font-size:14px;color:var(--text-3)}
-.price-desc{
-  font-size:13px;color:var(--text-2);line-height:1.65;
-  margin-bottom:24px;flex:1;
-}
-.price-features{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.price-feature{display:flex;align-items:center;gap:10px}
-.price-feature-dot{
-  width:4px;height:4px;border-radius:50%;
-  background:var(--green);flex-shrink:0;
-}
-.price-feature-text{font-size:13px;color:#888}
-.price-free-note{
-  text-align:center;margin-top:20px;
-  background:rgba(74,222,128,0.04);
-  border:1px solid rgba(74,222,128,0.1);
-  border-radius:40px;padding:12px 24px;
-  display:inline-flex;align-items:center;gap:8px;
-}
-.price-free-dot{
-  width:5px;height:5px;border-radius:50%;background:var(--green);
-}
-.price-free-text{font-size:13px;color:var(--text-2)}
+        /* ─────────────────────────────────────────────────────
+           PRICING
+        ───────────────────────────────────────────────────── */
+        #pricing {
+            padding: 100px 0;
+            background: var(--bg-surface);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        @media (max-width: 640px) { #pricing { padding: 72px 0; } }
+        .pricing-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 16px; margin-top: 56px; max-width: 1000px;
+        }
+        @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } }
+        .price-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-lg); padding: 32px;
+            transition: all 0.25s ease;
+            display: flex; flex-direction: column;
+        }
+        .price-card:hover { border-color: rgba(255, 255, 255, 0.12); transform: translateY(-2px); }
+        .price-card.featured {
+            border-color: rgba(74, 222, 128, 0.25);
+            background: rgba(74, 222, 128, 0.03);
+        }
+        .price-card.featured:hover { border-color: rgba(74, 222, 128, 0.4); }
+        .price-tier {
+            font-family: var(--mono); font-size: 10px;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--text-2); margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .price-popular {
+            font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+            padding: 2px 9px; border-radius: 4px;
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+        }
+        .price-amount {
+            margin-bottom: 8px; display: flex; align-items: baseline; gap: 4px;
+        }
+        .price-num {
+            font-size: 52px; font-weight: 900; color: #fff;
+            letter-spacing: -0.03em; line-height: 1;
+        }
+        .price-per { font-size: 14px; color: var(--text-3); }
+        .price-desc {
+            font-size: 13px; color: var(--text-2); line-height: 1.65;
+            margin-bottom: 24px; flex: 1;
+        }
+        .price-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+        .price-feature { display: flex; align-items: center; gap: 10px; }
+        .price-feature-dot {
+            width: 4px; height: 4px; border-radius: 50%;
+            background: var(--green); flex-shrink: 0;
+        }
+        .price-feature-text { font-size: 13px; color: #888; }
+        .price-free-note {
+            text-align: center; margin-top: 20px;
+            background: rgba(74, 222, 128, 0.04);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            border-radius: 40px; padding: 12px 24px;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .price-free-dot {
+            width: 5px; height: 5px; border-radius: 50%; background: var(--green);
+        }
+        .price-free-text { font-size: 13px; color: var(--text-2); }
 
-/* ─────────────────────────────────────────────────────
-   ABOUT
-───────────────────────────────────────────────────── */
-#about{padding:100px 0}
-@media(max-width:640px){#about{padding:72px 0}}
-.about-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:80px;align-items:center;margin-top:0;
-}
-@media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:48px}}
-.about-quote{
-  font-size:15px;font-style:italic;
-  color:rgba(255,255,255,0.5);
-  border-left:2px solid rgba(74,222,128,0.3);
-  padding-left:20px;margin:24px 0;line-height:1.7;
-}
-.about-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
-.credential-list{display:flex;flex-direction:column;gap:10px}
-.credential{
-  display:flex;gap:14px;align-items:flex-start;
-  background:rgba(255,255,255,0.02);
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:10px;padding:14px;
-  transition:border-color 0.2s ease;
-}
-.credential:hover{border-color:rgba(74,222,128,0.15)}
-.credential-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--green);flex-shrink:0;margin-top:6px;
-}
-.credential-main{font-size:13px;font-weight:500;color:#fff;margin-bottom:2px}
-.credential-sub{font-size:12px;color:var(--text-3)}
+        /* ─────────────────────────────────────────────────────
+           ABOUT
+        ───────────────────────────────────────────────────── */
+        #about { padding: 100px 0; }
+        @media (max-width: 640px) { #about { padding: 72px 0; } }
+        .about-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 80px; align-items: center;
+        }
+        @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 48px; } }
+        .about-quote {
+            font-size: 15px; font-style: italic;
+            color: rgba(255, 255, 255, 0.5);
+            border-left: 2px solid rgba(74, 222, 128, 0.3);
+            padding-left: 20px; margin: 24px 0; line-height: 1.7;
+        }
+        .about-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+        .credential-list { display: flex; flex-direction: column; gap: 10px; }
+        .credential {
+            display: flex; gap: 14px; align-items: flex-start;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px; padding: 14px;
+            transition: border-color 0.2s ease;
+        }
+        .credential:hover { border-color: rgba(74, 222, 128, 0.15); }
+        .credential-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--green); flex-shrink: 0; margin-top: 6px;
+        }
+        .credential-main { font-size: 13px; font-weight: 500; color: #fff; margin-bottom: 2px; }
+        .credential-sub { font-size: 12px; color: var(--text-3); }
 
-/* ─────────────────────────────────────────────────────
-   FINAL CTA
-───────────────────────────────────────────────────── */
-#final-cta{
-  padding:100px 0;
-  background:rgba(74,222,128,0.02);
-  border-top:1px solid rgba(74,222,128,0.08);
-  text-align:center;
-}
-@media(max-width:640px){#final-cta{padding:72px 0}}
-.final-cta-wrap{max-width:600px;margin:0 auto}
-.final-cta-btns{
-  display:flex;flex-wrap:wrap;gap:14px;
-  justify-content:center;
-}
+        /* ─────────────────────────────────────────────────────
+           FINAL CTA
+        ───────────────────────────────────────────────────── */
+        #final-cta {
+            padding: 100px 0;
+            background: rgba(74, 222, 128, 0.02);
+            border-top: 1px solid rgba(74, 222, 128, 0.08);
+            text-align: center;
+        }
+        @media (max-width: 640px) { #final-cta { padding: 72px 0; } }
+        .final-cta-wrap { max-width: 600px; margin: 0 auto; }
+        .final-cta-btns {
+            display: flex; flex-wrap: wrap; gap: 14px;
+            justify-content: center;
+        }
 
-/* ─────────────────────────────────────────────────────
-   FOOTER
-───────────────────────────────────────────────────── */
-#footer{
-  padding:64px 0 40px;
-  border-top:1px solid rgba(255,255,255,0.05);
-}
-.footer-grid{
-  display:grid;grid-template-columns:2fr 1fr 1fr;
-  gap:48px;margin-bottom:48px;
-}
-@media(max-width:768px){.footer-grid{grid-template-columns:1fr;gap:32px}}
-.footer-brand-logo{
-  display:flex;align-items:center;gap:10px;margin-bottom:16px;
-}
-.footer-brand-desc{font-size:13px;color:var(--text-3);line-height:1.7;max-width:300px}
-.footer-col-title{
-  font-family:var(--mono);font-size:9px;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--text-4);margin-bottom:16px;
-}
-.footer-link{
-  display:block;font-size:13px;color:var(--text-3);
-  margin-bottom:10px;cursor:pointer;
-  transition:color 0.15s ease;
-  text-decoration:none;
-}
-.footer-link:hover{color:var(--green)}
-.footer-bottom{
-  display:flex;flex-wrap:wrap;justify-content:space-between;
-  align-items:center;gap:12px;
-  padding-top:24px;
-  border-top:1px solid rgba(255,255,255,0.04);
-}
-.footer-copy{
-  font-family:var(--mono);font-size:10px;
-  color:var(--text-4);letter-spacing:0.08em;
-}
-.footer-redirect{
-  font-family:var(--mono);font-size:9px;
-  color:var(--text-4);letter-spacing:0.06em;
-}
+        /* ─────────────────────────────────────────────────────
+           FOOTER
+        ───────────────────────────────────────────────────── */
+        #footer {
+            padding: 64px 0 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 2fr 1fr 1fr;
+            gap: 48px; margin-bottom: 48px;
+        }
+        @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 32px; } }
+        .footer-brand-logo {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+        }
+        .footer-brand-desc { font-size: 13px; color: var(--text-3); line-height: 1.7; max-width: 300px; }
+        .footer-col-title {
+            font-family: var(--mono); font-size: 9px;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--text-4); margin-bottom: 16px;
+        }
+        .footer-link {
+            display: block; font-size: 13px; color: var(--text-3);
+            margin-bottom: 10px; cursor: pointer;
+            transition: color 0.15s ease;
+            text-decoration: none; border: none; background: none; text-align: left;
+        }
+        .footer-link:hover { color: var(--green); }
+        .footer-bottom {
+            display: flex; flex-wrap: wrap; justify-content: space-between;
+            align-items: center; gap: 12px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .footer-copy {
+            font-family: var(--mono); font-size: 10px;
+            color: var(--text-4); letter-spacing: 0.08em;
+        }
+        .footer-redirect {
+            font-family: var(--mono); font-size: 9px;
+            color: var(--text-4); letter-spacing: 0.06em;
+        }
 
-/* ─────────────────────────────────────────────────────
-   MODAL
-───────────────────────────────────────────────────── */
-#modal{
-  display:none;position:fixed;inset:0;z-index:300;
-  background:rgba(0,0,0,0.92);
-  align-items:center;justify-content:center;padding:24px;
-}
-#modal.open{display:flex}
-.modal-box{
-  background:var(--bg-card);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:var(--radius-lg);
-  padding:36px;max-width:480px;width:100%;
-  position:relative;
-  animation:modal-in 0.25s ease;
-}
-@keyframes modal-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.modal-close{
-  position:absolute;top:16px;right:16px;
-  width:32px;height:32px;
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:6px;background:none;cursor:pointer;
-  color:var(--text-3);font-size:16px;
-  display:flex;align-items:center;justify-content:center;
-  transition:color 0.15s ease,border-color 0.15s ease;
-}
-.modal-close:hover{color:#fff;border-color:rgba(255,255,255,0.2)}
+        /* ─────────────────────────────────────────────────────
+           MODAL
+        ───────────────────────────────────────────────────── */
+        #modal {
+            display: none; position: fixed; inset: 0; z-index: 300;
+            background: rgba(0, 0, 0, 0.92);
+            align-items: center; justify-content: center; padding: 24px;
+        }
+        #modal.open { display: flex; }
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 36px; max-width: 480px; width: 100%;
+            position: relative;
+            animation: modal-in 0.25s ease;
+        }
+        @keyframes modal-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px;
+            width: 32px; height: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px; background: none; cursor: pointer;
+            color: var(--text-3); font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            transition: color 0.15s ease, border-color 0.15s ease;
+        }
+        .modal-close:hover { color: #fff; border-color: rgba(255, 255, 255, 0.2); }
 
-/* ─────────────────────────────────────────────────────
-   ANIMATIONS
-───────────────────────────────────────────────────── */
-.reveal{
-  opacity:0;transform:translateY(20px);
-  transition:opacity 0.6s ease,transform 0.6s ease;
-}
-.reveal.visible{opacity:1;transform:translateY(0)}
+        /* ─────────────────────────────────────────────────────
+           ANIMATIONS
+        ───────────────────────────────────────────────────── */
+        .reveal {
+            opacity: 0; transform: translateY(15px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* Bar animation trigger */
-.bar-animated .confidence-bar-fill,
-.bar-animated .scenario-bar-fill{
-  width:0!important;
-}
-</style>
+        /* Bar animation trigger */
+        .bar-animated .confidence-bar-fill,
+        .bar-animated .scenario-bar-fill {
+            width: 0 !important;
+        }
+    </style>
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('qb-theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+          if (theme === 'dark') document.documentElement.classList.add('dark');
+        } catch(e) {}
+      })();
+    </script>
 </head>
 <body>
 
@@ -941,802 +951,767 @@ section{position:relative;z-index:1}
 
 <!-- ── MOBILE MENU ── -->
 <div id="mobile-menu" role="dialog" aria-label="Navigation">
-  <div class="mobile-menu-header">
-    <div class="nav-logo">
-      <div class="nav-logo-dot"></div>
-      <span class="nav-logo-text">[QB_OS]</span>
+    <div class="mobile-menu-header">
+        <div class="nav-logo">
+            <div class="nav-logo-dot"></div>
+            <span class="nav-logo-text">[QB_OS]</span>
+        </div>
+        <button class="mobile-menu-close" onclick="closeMenu()" aria-label="Close menu">×</button>
     </div>
-    <button class="mobile-menu-close" onclick="closeMenu()" aria-label="Close menu">×</button>
-  </div>
-  <nav class="mobile-menu-links">
-    <button class="mobile-menu-link" onclick="scrollToSection('how');closeMenu()">How it works</button>
-    <button class="mobile-menu-link" onclick="scrollToSection('tools');closeMenu()">The System</button>
-    <button class="mobile-menu-link" onclick="scrollToSection('pricing');closeMenu()">Pricing</button>
-    <button class="mobile-menu-link" onclick="scrollToSection('about');closeMenu()">Nizzar</button>
-    <button class="mobile-menu-link" onclick="openScanModal();closeMenu()">Free Scan</button>
-  </nav>
-  <div class="mobile-menu-cta">
-    <a href="https://app.quantumbranding.ai/os" class="btn-primary" style="width:100%">Enter QB BrandOS →</a>
-  </div>
+    <nav class="mobile-menu-links">
+        <button class="mobile-menu-link" onclick="scrollToSection('how');closeMenu()">How it works</button>
+        <button class="mobile-menu-link" onclick="scrollToSection('tools');closeMenu()">The System</button>
+        <button class="mobile-menu-link" onclick="scrollToSection('pricing');closeMenu()">Pricing</button>
+        <button class="mobile-menu-link" onclick="scrollToSection('about');closeMenu()">Nizzar</button>
+        <button class="mobile-menu-link" onclick="openScanModal();closeMenu()">Free Scan</button>
+    </nav>
+    <div class="mobile-menu-cta">
+        <a href="https://app.quantumbranding.ai/os" class="btn-primary" style="width:100%">Enter QB BrandOS →</a>
+    </div>
 </div>
 
 <!-- ── NAV ── -->
 <nav id="nav" role="navigation" aria-label="Main navigation">
-  <div class="container">
-    <div class="nav-inner">
+    <div class="container">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo" aria-label="Quantum Branding home">
+                <div class="nav-logo-dot"></div>
+                <span class="nav-logo-text">[QB_OS]</span>
+            </a>
 
-      <a href="/" class="nav-logo" aria-label="Quantum Branding home">
-        <div class="nav-logo-dot"></div>
-        <span class="nav-logo-text">[QB_OS]</span>
-      </a>
+            <div class="nav-links">
+                <button class="nav-link" onclick="scrollToSection('how')">How it works</button>
+                <button class="nav-link" onclick="scrollToSection('tools')">The System</button>
+                <button class="nav-link" onclick="scrollToSection('pricing')">Pricing</button>
+                <button class="nav-link" onclick="scrollToSection('about')">Nizzar</button>
+            </div>
 
-      <div class="nav-links">
-        <button class="nav-link" onclick="scrollToSection('how')">How it works</button>
-        <button class="nav-link" onclick="scrollToSection('tools')">The System</button>
-        <button class="nav-link" onclick="scrollToSection('pricing')">Pricing</button>
-        <button class="nav-link" onclick="scrollToSection('about')">Nizzar</button>
-      </div>
-
-      <div class="nav-actions">
-        <a href="https://app.quantumbranding.ai/os" class="btn-ghost btn-sm nav-signin" style="display:inline-flex">Sign In</a>
-        <button class="btn-primary btn-sm" onclick="openScanModal()">Free Brand Scan</button>
-        <button class="nav-mobile-btn" onclick="openMenu()" aria-label="Open menu" aria-expanded="false" id="menu-btn">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-
+            <div class="nav-actions">
+                <a href="https://app.quantumbranding.ai/os" class="btn-ghost btn-sm nav-signin">Sign In</a>
+                <button class="btn-primary btn-sm" onclick="openScanModal()">Free Brand Scan</button>
+                <button class="nav-mobile-btn" onclick="openMenu()" aria-label="Open menu" aria-expanded="false" id="menu-btn">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 </nav>
 
 <!-- ── HERO ── -->
 <section id="hero">
-  <div class="glow-top"></div>
-  <div class="container" style="position:relative;z-index:1">
+    <div class="glow-top"></div>
+    <div class="container" style="position:relative; z-index:1">
+        <div class="hero-eyebrow reveal">
+            <div class="hero-eyebrow-dot"></div>
+            <span class="eyebrow">The Brand Operating System</span>
+        </div>
 
-    <div class="hero-eyebrow reveal">
-      <div class="hero-eyebrow-dot"></div>
-      <span class="eyebrow">The Brand Operating System</span>
+        <div class="hero-headline reveal">
+            <h1 class="h1">
+                Your brand.<br>
+                <span class="gradient-text">Built by intelligence.</span><br>
+                <span style="font-weight:300; color:rgba(255,255,255,0.6); font-style:italic">Run like a system.</span>
+            </h1>
+        </div>
+
+        <p class="hero-sub reveal">
+            QB BrandOS is the first AI-powered Brand Operating System. From raw idea to a fully live, strategically active, self-evolving brand — in one connected platform. No agency. No guessing.
+        </p>
+
+        <div class="hero-ctas reveal">
+            <button class="btn-primary" onclick="openScanModal()">Scan My Brand — Free →</button>
+            <a href="https://app.quantumbranding.ai/os" class="btn-ghost">Enter the System</a>
+        </div>
+
+        <div class="hero-stats reveal">
+            <div>
+                <div class="hero-stat-num">18</div>
+                <div class="hero-stat-label">AI Agents</div>
+            </div>
+            <div>
+                <div class="hero-stat-num">5</div>
+                <div class="hero-stat-label">Phases</div>
+            </div>
+            <div>
+                <div class="hero-stat-num">1</div>
+                <div class="hero-stat-label">System</div>
+            </div>
+        </div>
     </div>
-
-    <div class="hero-headline reveal">
-      <h1 class="h1">
-        Your brand.<br>
-        <span class="gradient-text">Built by intelligence.</span><br>
-        <span style="font-weight:300;color:rgba(255,255,255,0.6);font-style:italic">Run like a system.</span>
-      </h1>
-    </div>
-
-    <p class="hero-sub reveal">
-      QB BrandOS is the first AI-powered Brand Operating System. From raw idea to a fully live, strategically active, self-evolving brand — in one connected platform. No agency. No guessing.
-    </p>
-
-    <div class="hero-ctas reveal">
-      <button class="btn-primary" onclick="openScanModal()">Scan My Brand — Free →</button>
-      <a href="https://app.quantumbranding.ai/os" class="btn-ghost">Enter the System</a>
-    </div>
-
-    <div class="hero-stats reveal">
-      <div>
-        <div class="hero-stat-num">18</div>
-        <div class="hero-stat-label">AI Agents</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">5</div>
-        <div class="hero-stat-label">Phases</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">1</div>
-        <div class="hero-stat-label">System</div>
-      </div>
-    </div>
-
-  </div>
 </section>
 
 <!-- ── PRESS ── -->
 <section id="press">
-  <div class="container">
-    <div class="press-inner">
-      <span class="press-item">New York Times</span>
-      <span class="press-item">Time Magazine</span>
-      <span class="press-item">Google Arts &amp; Culture</span>
-      <span class="press-item">The United Nations</span>
-      <span class="press-item">USAID</span>
-      <span class="press-item">TV5 Monde</span>
-      <span class="press-item">LA Lakers</span>
-      <span class="press-item">UM6P</span>
+    <div class="container">
+        <div class="press-inner">
+            <span class="press-item">New York Times</span>
+            <span class="press-item">Time Magazine</span>
+            <span class="press-item">Google Arts &amp; Culture</span>
+            <span class="press-item">The United Nations</span>
+            <span class="press-item">USAID</span>
+            <span class="press-item">TV5 Monde</span>
+            <span class="press-item">LA Lakers</span>
+            <span class="press-item">UM6P</span>
+        </div>
     </div>
-  </div>
 </section>
 
 <!-- ── FOUR DOORS ── -->
 <section id="doors">
-  <div class="container">
+    <div class="container">
+        <div class="reveal">
+            <p class="eyebrow" style="margin-bottom:16px">Where are you right now?</p>
+            <h2 class="h2" style="margin-bottom:16px">One system. Four entry points.</h2>
+            <p style="color:var(--text-2); font-size:16px; max-width:520px; line-height:1.7">
+                QB BrandOS meets you exactly where you are. Tell us your situation and the system routes you to precisely what you need — nothing more, nothing wasted.
+            </p>
+        </div>
 
-    <div class="reveal">
-      <p class="eyebrow" style="margin-bottom:16px">Where are you right now?</p>
-      <h2 class="h2" style="margin-bottom:16px">One system. Four entry points.</h2>
-      <p style="color:var(--text-2);font-size:16px;max-width:520px;line-height:1.7">
-        QB BrandOS meets you exactly where you are. Tell us your situation and the system routes you to precisely what you need — nothing more, nothing wasted.
-      </p>
+        <div class="doors-grid">
+            <a href="https://app.quantumbranding.ai/os?door=blank" class="door-card reveal" style="--door-color:#4ade80; --door-dim:rgba(74,222,128,0.1); --door-border:rgba(74,222,128,0.2); --door-glow:rgba(74,222,128,0.08)">
+                <div class="door-header">
+                    <span class="door-num">01</span>
+                    <span class="door-badge">Full Journey</span>
+                </div>
+                <div class="door-title">I have an idea.</div>
+                <div class="door-sub">No brand yet. Building from zero.</div>
+                <p class="door-desc">The system walks you through identity, sensory mapping, visual language, and strategic prioritization — then hands you to creation, content, and execution. You emerge with a complete, live brand.</p>
+                <div class="door-tags">
+                    <span class="door-tag">Brand Soul Map</span>
+                    <span class="door-tag">Sensescape</span>
+                    <span class="door-tag">Visual DNA</span>
+                    <span class="door-tag">Logo Agent</span>
+                    <span class="door-tag">Voice Guide</span>
+                    <span class="door-tag">+13 more</span>
+                </div>
+                <div class="door-cta">Start from zero →</div>
+            </a>
+
+            <a href="https://app.quantumbranding.ai/os?door=doubt" class="door-card reveal" style="--door-color:#60a5fa; --door-dim:rgba(96,165,250,0.1); --door-border:rgba(96,165,250,0.2); --door-glow:rgba(96,165,250,0.08)">
+                <div class="door-header">
+                    <span class="door-num" style="color:#60a5fa">02</span>
+                    <span class="door-badge" style="background:rgba(96,165,250,0.1); color:#60a5fa; border-color:rgba(96,165,250,0.2)">Brand Audit</span>
+                </div>
+                <div class="door-title">I have a brand.</div>
+                <div class="door-sub" style="color:#60a5fa">Something feels off. I need to validate.</div>
+                <p class="door-desc">The Logo Evaluation Agent and Voice Guide read what you have against identity standards. You get a precise verdict — what to keep, what to fix, what to rebuild — and a clear path forward.</p>
+                <div class="door-tags">
+                    <span class="door-tag">Logo Evaluation</span>
+                    <span class="door-tag">Voice Guide</span>
+                    <span class="door-tag">Brand Performance</span>
+                    <span class="door-tag">War Table</span>
+                </div>
+                <div class="door-cta" style="color:#60a5fa">Audit your brand →</div>
+            </a>
+
+            <a href="https://app.quantumbranding.ai/os?door=player" class="door-card reveal" style="--door-color:#f59e0b; --door-dim:rgba(245,158,11,0.1); --door-border:rgba(245,158,11,0.2); --door-glow:rgba(245,158,11,0.08)">
+                <div class="door-header">
+                    <span class="door-num" style="color:#f59e0b">03</span>
+                    <span class="door-badge" style="background:rgba(245,158,11,0.1); color:#f59e0b; border-color:rgba(245,158,11,0.2)">Strategic Evolution</span>
+                </div>
+                <div class="door-title">I am already playing.</div>
+                <div class="door-sub" style="color:#f59e0b">Making money. Competition is arriving.</div>
+                <p class="door-desc">Start with the War Table to pressure-test your next move. Run a Predictive Panel before committing budget. Use the Quarterly Review to align brand evolution with business momentum.</p>
+                <div class="door-tags">
+                    <span class="door-tag">War Table</span>
+                    <span class="door-tag">Predictive Panel</span>
+                    <span class="door-tag">Quarterly Review</span>
+                    <span class="door-tag">Performance</span>
+                </div>
+                <div class="door-cta" style="color:#f59e0b">Enter strategic mode →</div>
+            </a>
+
+            <a href="https://app.quantumbranding.ai/os?door=pivot" class="door-card reveal" style="--door-color:#a78bfa; --door-dim:rgba(167,139,250,0.1); --door-border:rgba(167,139,250,0.2); --door-glow:rgba(167,139,250,0.08)">
+                <div class="door-header">
+                    <span class="door-num" style="color:#a78bfa">04</span>
+                    <span class="door-badge" style="background:rgba(167,139,250,0.1); color:#a78bfa; border-color:rgba(167,139,250,0.2)">Transformation</span>
+                </div>
+                <div class="door-title">I need to pivot.</div>
+                <div class="door-sub" style="color:#a78bfa">Something fundamental has to change.</div>
+                <p class="door-desc">You have assets, audience, and experience — but the direction has to shift. The Brand Soul Map rebuilds the foundation. The Quarterly Review redirects the trajectory without erasing what you have earned.</p>
+                <div class="door-tags">
+                    <span class="door-tag">Brand Soul Map</span>
+                    <span class="door-tag">Quarterly Review</span>
+                    <span class="door-tag">War Table</span>
+                    <span class="door-tag">Voice Guide</span>
+                </div>
+                <div class="door-cta" style="color:#a78bfa">Begin the transformation →</div>
+            </a>
+        </div>
     </div>
-
-    <div class="doors-grid">
-
-      <a href="https://app.quantumbranding.ai/os?door=blank" class="door-card reveal"
-        style="--door-color:#4ade80;--door-dim:rgba(74,222,128,0.1);--door-border:rgba(74,222,128,0.2);--door-glow:rgba(74,222,128,0.08)">
-        <div class="door-header">
-          <span class="door-num">01</span>
-          <span class="door-badge">Full Journey</span>
-        </div>
-        <div class="door-title">I have an idea.</div>
-        <div class="door-sub">No brand yet. Building from zero.</div>
-        <p class="door-desc">The system walks you through identity, sensory mapping, visual language, and strategic prioritization — then hands you to creation, content, and execution. You emerge with a complete, live brand.</p>
-        <div class="door-tags">
-          <span class="door-tag">Brand Soul Map</span>
-          <span class="door-tag">Sensescape</span>
-          <span class="door-tag">Visual DNA</span>
-          <span class="door-tag">Logo Agent</span>
-          <span class="door-tag">Voice Guide</span>
-          <span class="door-tag">+13 more</span>
-        </div>
-        <div class="door-cta">Start from zero →</div>
-      </a>
-
-      <a href="https://app.quantumbranding.ai/os?door=doubt" class="door-card reveal"
-        style="--door-color:#60a5fa;--door-dim:rgba(96,165,250,0.1);--door-border:rgba(96,165,250,0.2);--door-glow:rgba(96,165,250,0.08)">
-        <div class="door-header">
-          <span class="door-num" style="color:#60a5fa">02</span>
-          <span class="door-badge" style="background:rgba(96,165,250,0.1);color:#60a5fa;border-color:rgba(96,165,250,0.2)">Brand Audit</span>
-        </div>
-        <div class="door-title">I have a brand.</div>
-        <div class="door-sub" style="color:#60a5fa">Something feels off. I need to validate.</div>
-        <p class="door-desc">The Logo Evaluation Agent and Voice Guide read what you have against identity standards. You get a precise verdict — what to keep, what to fix, what to rebuild — and a clear path forward.</p>
-        <div class="door-tags">
-          <span class="door-tag">Logo Evaluation</span>
-          <span class="door-tag">Voice Guide</span>
-          <span class="door-tag">Brand Performance</span>
-          <span class="door-tag">War Table</span>
-        </div>
-        <div class="door-cta" style="color:#60a5fa">Audit your brand →</div>
-      </a>
-
-      <a href="https://app.quantumbranding.ai/os?door=player" class="door-card reveal"
-        style="--door-color:#f59e0b;--door-dim:rgba(245,158,11,0.1);--door-border:rgba(245,158,11,0.2);--door-glow:rgba(245,158,11,0.08)">
-        <div class="door-header">
-          <span class="door-num" style="color:#f59e0b">03</span>
-          <span class="door-badge" style="background:rgba(245,158,11,0.1);color:#f59e0b;border-color:rgba(245,158,11,0.2)">Strategic Evolution</span>
-        </div>
-        <div class="door-title">I am already playing.</div>
-        <div class="door-sub" style="color:#f59e0b">Making money. Competition is arriving.</div>
-        <p class="door-desc">Start with the War Table to pressure-test your next move. Run a Predictive Panel before committing budget. Use the Quarterly Review to align brand evolution with business momentum.</p>
-        <div class="door-tags">
-          <span class="door-tag">War Table</span>
-          <span class="door-tag">Predictive Panel</span>
-          <span class="door-tag">Quarterly Review</span>
-          <span class="door-tag">Performance</span>
-        </div>
-        <div class="door-cta" style="color:#f59e0b">Enter strategic mode →</div>
-      </a>
-
-      <a href="https://app.quantumbranding.ai/os?door=pivot" class="door-card reveal"
-        style="--door-color:#a78bfa;--door-dim:rgba(167,139,250,0.1);--door-border:rgba(167,139,250,0.2);--door-glow:rgba(167,139,250,0.08)">
-        <div class="door-header">
-          <span class="door-num" style="color:#a78bfa">04</span>
-          <span class="door-badge" style="background:rgba(167,139,250,0.1);color:#a78bfa;border-color:rgba(167,139,250,0.2)">Transformation</span>
-        </div>
-        <div class="door-title">I need to pivot.</div>
-        <div class="door-sub" style="color:#a78bfa">Something fundamental has to change.</div>
-        <p class="door-desc">You have assets, audience, and experience — but the direction has to shift. The Brand Soul Map rebuilds the foundation. The Quarterly Review redirects the trajectory without erasing what you have earned.</p>
-        <div class="door-tags">
-          <span class="door-tag">Brand Soul Map</span>
-          <span class="door-tag">Quarterly Review</span>
-          <span class="door-tag">War Table</span>
-          <span class="door-tag">Voice Guide</span>
-        </div>
-        <div class="door-cta" style="color:#a78bfa">Begin the transformation →</div>
-      </a>
-
-    </div>
-  </div>
 </section>
 
 <!-- ── SIGNAL SCAN ── -->
 <section id="scan-section">
-  <div class="container">
+    <div class="container">
+        <div class="scan-center reveal">
+            <p class="eyebrow" style="margin-bottom:14px">Free · 5 minutes · Instant</p>
+            <h2 class="h2" style="margin-bottom:16px">Brand Signal Scan</h2>
+            <p style="color:var(--text-2); font-size:16px; line-height:1.7">
+                8 questions. A precise score across 6 brand health dimensions. Your biggest gap identified. Your recommended first move. Free, always.
+            </p>
+        </div>
 
-    <div class="scan-center reveal">
-      <p class="eyebrow" style="margin-bottom:14px">Free · 5 minutes · Instant</p>
-      <h2 class="h2" style="margin-bottom:16px">Brand Signal Scan</h2>
-      <p style="color:var(--text-2);font-size:16px;line-height:1.7">
-        8 questions. A precise score across 6 brand health dimensions. Your biggest gap identified. Your recommended first move. Free, always.
-      </p>
+        <div class="scan-widget reveal">
+            <div class="scan-widget-label">Brand Signal Scan — Free Diagnostic</div>
+            <div class="scan-widget-q">Where are you right now with your brand?</div>
+            <div class="scan-options">
+                <button class="scan-option" onclick="startScan('blank')">
+                    <span class="scan-option-tag">Blank Slate</span>
+                    <span class="scan-option-text">I have an idea — no brand yet</span>
+                </button>
+                <button class="scan-option" onclick="startScan('doubt')">
+                    <span class="scan-option-tag">The Doubter</span>
+                    <span class="scan-option-text">I have a brand — something feels off</span>
+                </button>
+                <button class="scan-option" onclick="startScan('player')">
+                    <span class="scan-option-tag">The Player</span>
+                    <span class="scan-option-text">I am making money — competition is arriving</span>
+                </button>
+                <button class="scan-option" onclick="startScan('pivot')">
+                    <span class="scan-option-tag">The Pivot</span>
+                    <span class="scan-option-text">I need to pivot — direction has to change</span>
+                </button>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="openScanModal()">Take the Full Scan — Free →</button>
+            <p class="scan-note">No account · No credit card · Instant results</p>
+        </div>
     </div>
-
-    <div class="scan-widget reveal">
-      <div class="scan-widget-label">Brand Signal Scan — Free Diagnostic</div>
-      <div class="scan-widget-q">Where are you right now with your brand?</div>
-      <div class="scan-options">
-        <button class="scan-option" onclick="startScan('blank')">
-          <span class="scan-option-tag">Blank Slate</span>
-          <span class="scan-option-text">I have an idea — no brand yet</span>
-        </button>
-        <button class="scan-option" onclick="startScan('doubt')">
-          <span class="scan-option-tag">The Doubter</span>
-          <span class="scan-option-text">I have a brand — something feels off</span>
-        </button>
-        <button class="scan-option" onclick="startScan('player')">
-          <span class="scan-option-tag">The Player</span>
-          <span class="scan-option-text">I am making money — competition is arriving</span>
-        </button>
-        <button class="scan-option" onclick="startScan('pivot')">
-          <span class="scan-option-tag">The Pivot</span>
-          <span class="scan-option-text">I need to pivot — direction has to change</span>
-        </button>
-      </div>
-      <button class="btn-primary" style="width:100%" onclick="openScanModal()">Take the Full Scan — Free →</button>
-      <p class="scan-note">No account · No credit card · Instant results</p>
-    </div>
-
-  </div>
 </section>
 
 <!-- ── HOW IT WORKS ── -->
 <section id="how">
-  <div class="container">
+    <div class="container">
+        <div class="reveal">
+            <p class="eyebrow" style="margin-bottom:16px">The five-phase journey</p>
+            <h2 class="h2" style="margin-bottom:16px">From idea to orbit.</h2>
+            <p style="color:var(--text-2); font-size:16px; max-width:520px; line-height:1.7">
+                Every phase connects. Every output feeds the next. The QBP — your Quantum Brand Profile — runs through the entire system as the living spine that keeps every tool on brand.
+            </p>
+        </div>
 
-    <div class="reveal">
-      <p class="eyebrow" style="margin-bottom:16px">The five-phase journey</p>
-      <h2 class="h2" style="margin-bottom:16px">From idea to orbit.</h2>
-      <p style="color:var(--text-2);font-size:16px;max-width:520px;line-height:1.7">
-        Every phase connects. Every output feeds the next. The QBP — your Quantum Brand Profile — runs through the entire system as the living spine that keeps every tool on brand.
-      </p>
+        <div class="how-grid">
+            <div class="phase-list reveal">
+                <div class="phase-row">
+                    <div class="phase-n">01</div>
+                    <div class="phase-info">
+                        <div class="phase-title">Discovery</div>
+                        <div class="phase-tools">Brand Soul Map · Sensescape · Visual DNA · War Table</div>
+                        <div class="phase-desc">Identity before everything. Your brand's irreducible truth, sensory universe, visual language, and strategic prioritization. The QBP is built here.</div>
+                    </div>
+                </div>
+
+                <div class="phase-row">
+                    <div class="phase-n">02</div>
+                    <div class="phase-info">
+                        <div class="phase-title">Brand Creation</div>
+                        <div class="phase-tools">Logo Direction · Logo Evaluation · Voice Guide</div>
+                        <div class="phase-desc">AI agents translate your identity into a complete visual brief, evaluate logo concepts against your QBP, and produce your full verbal identity system with a live copy generator.</div>
+                    </div>
+                </div>
+
+                <div class="phase-row">
+                    <div class="phase-n amber">2.5</div>
+                    <div class="phase-info">
+                        <div class="phase-title" style="color:#f59e0b">Validation Gate</div>
+                        <div class="phase-tools">Predictive Panel</div>
+                        <div class="phase-desc">Before execution. Thousands of synthetic personas simulate how your real market responds to your concept. Scenario distribution, confidence zones, go/no-go verdict.</div>
+                    </div>
+                </div>
+
+                <div class="phase-row">
+                    <div class="phase-n">03</div>
+                    <div class="phase-info">
+                        <div class="phase-title">Content Creation</div>
+                        <div class="phase-tools">Instagram · LinkedIn · YouTube · Newsletter · Content Bridge</div>
+                        <div class="phase-desc">Five agents produce your first months of content across every platform — scripts, briefs, hooks, strategies. The Content Bridge connects to HeyGen, Creatify, and Canva for production.</div>
+                    </div>
+                </div>
+
+                <div class="phase-row">
+                    <div class="phase-n">04</div>
+                    <div class="phase-info">
+                        <div class="phase-title">Execution</div>
+                        <div class="phase-tools">Content Repurposing Engine</div>
+                        <div class="phase-desc">One piece of long-form content becomes up to 25 pieces across 10 platforms — all rebuilt natively, all on-brand, all traceable back to the same identity.</div>
+                    </div>
+                </div>
+
+                <div class="phase-row">
+                    <div class="phase-n">05</div>
+                    <div class="phase-info">
+                        <div class="phase-title">Intelligence</div>
+                        <div class="phase-tools">Brand Performance Dashboard · Quarterly Brand Review</div>
+                        <div class="phase-desc">Performance data read as brand signals. The Quarterly Review updates your QBP from what was learned and sets the strategic direction for the next 90 days.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <div class="qbp-card">
+                    <div class="qbp-card-label">The Quantum Brand Profile</div>
+                    <div class="qbp-card-desc">
+                        Built once in Discovery. Read by every agent in every phase. Updated each quarter. The reason every output from every tool feels like the same brand.
+                    </div>
+                    <div class="qbp-fields">
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Brand Essence</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Natural Force</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Primary Archetype</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Manifesto Line</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Anti-Brand</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Central Paradox</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Primary Persona</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Voice Notes</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Color Territory</span></div>
+                        <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Visual DNA Words</span></div>
+                    </div>
+                    <div class="qbp-footer">Every agent reads from this. Always.</div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="how-grid">
-
-      <div class="phase-list reveal">
-
-        <div class="phase-row">
-          <div class="phase-n">01</div>
-          <div class="phase-info">
-            <div class="phase-title">Discovery</div>
-            <div class="phase-tools">Brand Soul Map · Sensescape · Visual DNA · War Table</div>
-            <div class="phase-desc">Identity before everything. Your brand's irreducible truth, sensory universe, visual language, and strategic prioritization. The QBP is built here.</div>
-          </div>
-        </div>
-
-        <div class="phase-row">
-          <div class="phase-n">02</div>
-          <div class="phase-info">
-            <div class="phase-title">Brand Creation</div>
-            <div class="phase-tools">Logo Direction · Logo Evaluation · Voice Guide</div>
-            <div class="phase-desc">AI agents translate your identity into a complete visual brief, evaluate logo concepts against your QBP, and produce your full verbal identity system with a live copy generator.</div>
-          </div>
-        </div>
-
-        <div class="phase-row">
-          <div class="phase-n amber">2.5</div>
-          <div class="phase-info">
-            <div class="phase-title" style="color:#f59e0b">Validation Gate</div>
-            <div class="phase-tools">Predictive Panel</div>
-            <div class="phase-desc">Before execution. Thousands of synthetic personas simulate how your real market responds to your concept. Scenario distribution, confidence zones, go/no-go verdict.</div>
-          </div>
-        </div>
-
-        <div class="phase-row">
-          <div class="phase-n">03</div>
-          <div class="phase-info">
-            <div class="phase-title">Content Creation</div>
-            <div class="phase-tools">Instagram · LinkedIn · YouTube · Newsletter · Content Bridge</div>
-            <div class="phase-desc">Five agents produce your first months of content across every platform — scripts, briefs, hooks, strategies. The Content Bridge connects to HeyGen, Creatify, and Canva for production.</div>
-          </div>
-        </div>
-
-        <div class="phase-row">
-          <div class="phase-n">04</div>
-          <div class="phase-info">
-            <div class="phase-title">Execution</div>
-            <div class="phase-tools">Content Repurposing Engine</div>
-            <div class="phase-desc">One piece of long-form content becomes up to 25 pieces across 10 platforms — all rebuilt natively, all on-brand, all traceable back to the same identity.</div>
-          </div>
-        </div>
-
-        <div class="phase-row">
-          <div class="phase-n">05</div>
-          <div class="phase-info">
-            <div class="phase-title">Intelligence</div>
-            <div class="phase-tools">Brand Performance Dashboard · Quarterly Brand Review</div>
-            <div class="phase-desc">Performance data read as brand signals. The Quarterly Review updates your QBP from what was learned and sets the strategic direction for the next 90 days.</div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="reveal">
-        <div class="qbp-card">
-          <div class="qbp-card-label">The Quantum Brand Profile</div>
-          <div class="qbp-card-desc">
-            Built once in Discovery. Read by every agent in every phase. Updated each quarter. The reason every output from every tool feels like the same brand.
-          </div>
-          <div class="qbp-fields">
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Brand Essence</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Natural Force</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Primary Archetype</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Manifesto Line</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Anti-Brand</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Central Paradox</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Primary Persona</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Voice Notes</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Color Territory</span></div>
-            <div class="qbp-field"><div class="qbp-field-dot"></div><span class="qbp-field-name">Visual DNA Words</span></div>
-          </div>
-          <div class="qbp-footer">Every agent reads from this. Always.</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
 </section>
 
 <!-- ── TOOLS GRID ── -->
 <section id="tools">
-  <div class="container">
+    <div class="container">
+        <div class="reveal">
+            <p class="eyebrow" style="margin-bottom:16px">18 tools. One system.</p>
+            <h2 class="h2">Everything connected.<br>Nothing redundant.</h2>
+        </div>
 
-    <div class="reveal">
-      <p class="eyebrow" style="margin-bottom:16px">18 tools. One system.</p>
-      <h2 class="h2">Everything connected.<br>Nothing redundant.</h2>
+        <div class="tools-grid">
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#7c3aed">01</div><div class="tool-chip-name">Brand Soul Map</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#7c3aed">01</div><div class="tool-chip-name">Sensescape</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#7c3aed">01</div><div class="tool-chip-name">Visual DNA</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#7c3aed">01</div><div class="tool-chip-name">War Table</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#a78bfa">02</div><div class="tool-chip-name">Logo Direction</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#a78bfa">02</div><div class="tool-chip-name">Logo Evaluation</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#a78bfa">02</div><div class="tool-chip-name">Voice Guide</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">Instagram Agent</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">LinkedIn Agent</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">YouTube Agent</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">Newsletter Arch.</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">Content Bridge</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#2dd4bf">04</div><div class="tool-chip-name">Repurposing Engine</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#60a5fa">05</div><div class="tool-chip-name">Performance Dashboard</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#60a5fa">05</div><div class="tool-chip-name">Quarterly Review</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#f59e0b">2.5</div><div class="tool-chip-name">Predictive Panel</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#4ade80">↑</div><div class="tool-chip-name">Signal Scan</div></div>
+            <div class="tool-chip"><div class="tool-chip-phase" style="color:#4ade80">∞</div><div class="tool-chip-name">BrandOS Hub</div></div>
+        </div>
+
+        <div style="text-align:center; margin-top:40px">
+            <a href="https://app.quantumbranding.ai/os" class="btn-ghost">Explore the full system →</a>
+        </div>
     </div>
-
-    <div class="tools-grid" style="margin-top:48px">
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#7c3aed">01</div><div class="tool-chip-name">Brand Soul Map</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#7c3aed">01</div><div class="tool-chip-name">Sensescape</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#7c3aed">01</div><div class="tool-chip-name">Visual DNA</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#7c3aed">01</div><div class="tool-chip-name">War Table</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#a78bfa">02</div><div class="tool-chip-name">Logo Direction</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#a78bfa">02</div><div class="tool-chip-name">Logo Evaluation</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#a78bfa">02</div><div class="tool-chip-name">Voice Guide</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">Instagram Agent</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">LinkedIn Agent</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">YouTube Agent</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">Newsletter Arch.</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#f472b6">03</div><div class="tool-chip-name">Content Bridge</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#2dd4bf">04</div><div class="tool-chip-name">Repurposing Engine</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#60a5fa">05</div><div class="tool-chip-name">Performance Dashboard</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#60a5fa">05</div><div class="tool-chip-name">Quarterly Review</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#f59e0b">2.5</div><div class="tool-chip-name">Predictive Panel</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#4ade80">↑</div><div class="tool-chip-name">Signal Scan</div></div>
-      <div class="tool-chip"><div class="tool-chip-phase" style="color:#4ade80">∞</div><div class="tool-chip-name">BrandOS Hub</div></div>
-    </div>
-
-    <div style="text-align:center;margin-top:40px">
-      <a href="https://app.quantumbranding.ai/os" class="btn-ghost">Explore the full system →</a>
-    </div>
-
-  </div>
 </section>
 
 <!-- ── PREDICTIVE PANEL ── -->
 <section id="panel">
-  <div class="container">
+    <div class="container">
+        <div class="panel-grid">
+            <div class="reveal">
+                <p class="eyebrow" style="margin-bottom:16px; color:#f59e0b">Before you spend a euro</p>
+                <h2 class="h2" style="margin-bottom:20px">Predictive Panels.<br><span style="color:#f59e0b">Know before you launch.</span></h2>
+                <p style="color:var(--text-2); font-size:16px; line-height:1.8; margin-bottom:32px">
+                    Before any product launch, brand evolution, or major campaign — run it through a Predictive Panel. Thousands of synthetic personas built from your exact QBP respond to your concept. Not opinion. Probability.
+                </p>
+                <div class="panel-features" style="margin-bottom:36px">
+                    <div class="panel-feature">
+                        <div class="panel-feature-dot"></div>
+                        <div>
+                            <div class="panel-feature-title">Scenario Distribution</div>
+                            <div class="panel-feature-desc">Every plausible outcome mapped with probability — from best case to failure mode</div>
+                        </div>
+                    </div>
+                    <div class="panel-feature">
+                        <div class="panel-feature-dot"></div>
+                        <div>
+                            <div class="panel-feature-title">High-Confidence Zones</div>
+                            <div class="panel-feature-desc">What appears consistently across all scenarios. Build strategy around these.</div>
+                        </div>
+                    </div>
+                    <div class="panel-feature">
+                        <div class="panel-feature-dot"></div>
+                        <div>
+                            <div class="panel-feature-title">Go / No-Go Verdict</div>
+                            <div class="panel-feature-desc">A clear recommendation before execution budget is committed</div>
+                        </div>
+                    </div>
+                    <div class="panel-feature">
+                        <div class="panel-feature-dot"></div>
+                        <div>
+                            <div class="panel-feature-title">Failure Point Mapping</div>
+                            <div class="panel-feature-desc">Exactly where and why the launch breaks — with specific mitigations</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://app.quantumbranding.ai/os" class="btn-primary" style="background:#f59e0b">Run a Panel →</a>
+            </div>
 
-    <div class="panel-grid">
+            <div class="panel-demo reveal bar-animated">
+                <div class="panel-demo-label">Panel Simulation — Example Output</div>
+                <div class="confidence-row">
+                    <span class="confidence-label">Overall confidence</span>
+                    <span class="confidence-score">74</span>
+                </div>
+                <div class="confidence-bar-bg">
+                    <div class="confidence-bar-fill" style="width:74%" data-width="74"></div>
+                </div>
 
-      <div class="reveal">
-        <p class="eyebrow" style="margin-bottom:16px;color:#f59e0b">Before you spend a euro</p>
-        <h2 class="h2" style="margin-bottom:20px">Predictive Panels.<br><span style="color:#f59e0b">Know before you launch.</span></h2>
-        <p style="color:var(--text-2);font-size:16px;line-height:1.8;margin-bottom:32px">
-          Before any product launch, brand evolution, or major campaign — run it through a Predictive Panel. Thousands of synthetic personas built from your exact QBP respond to your concept. Not opinion. Probability.
-        </p>
-        <div class="panel-features" style="margin-bottom:36px">
-          <div class="panel-feature">
-            <div class="panel-feature-dot"></div>
-            <div>
-              <div class="panel-feature-title">Scenario Distribution</div>
-              <div class="panel-feature-desc">Every plausible outcome mapped with probability — from best case to failure mode</div>
+                <div class="scenario-list">
+                    <div class="scenario-item">
+                        <div class="scenario-header">
+                            <span class="scenario-name">Strong launch — right audience</span>
+                            <span class="scenario-pct" style="color:#4ade80">62%</span>
+                        </div>
+                        <div class="scenario-bar-bg">
+                            <div class="scenario-bar-fill" style="background:#4ade80; width:62%" data-width="62"></div>
+                        </div>
+                    </div>
+                    <div class="scenario-item">
+                        <div class="scenario-header">
+                            <span class="scenario-name">Solid — needs price adjustment</span>
+                            <span class="scenario-pct" style="color:#60a5fa">22%</span>
+                        </div>
+                        <div class="scenario-bar-bg">
+                            <div class="scenario-bar-fill" style="background:#60a5fa; width:22%" data-width="22"></div>
+                        </div>
+                    </div>
+                    <div class="scenario-item">
+                        <div class="scenario-header">
+                            <span class="scenario-name">Moderate — channel misfit</span>
+                            <span class="scenario-pct" style="color:#f59e0b">11%</span>
+                        </div>
+                        <div class="scenario-bar-bg">
+                            <div class="scenario-bar-fill" style="background:#f59e0b; width:11%" data-width="11"></div>
+                        </div>
+                    </div>
+                    <div class="scenario-item">
+                        <div class="scenario-header">
+                            <span class="scenario-name">Failure — positioning unclear</span>
+                            <span class="scenario-pct" style="color:#ef4444">5%</span>
+                        </div>
+                        <div class="scenario-bar-bg">
+                            <div class="scenario-bar-fill" style="background:#ef4444; width:5%" data-width="5"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="verdict-box">
+                    <div class="verdict-label">Verdict</div>
+                    <div class="verdict-title">GO — Launch Ready</div>
+                    <div class="verdict-sub">Strong market fit. Tighten price anchor before launch.</div>
+                </div>
             </div>
-          </div>
-          <div class="panel-feature">
-            <div class="panel-feature-dot"></div>
-            <div>
-              <div class="panel-feature-title">High-Confidence Zones</div>
-              <div class="panel-feature-desc">What appears consistently across all scenarios. Build strategy around these.</div>
-            </div>
-          </div>
-          <div class="panel-feature">
-            <div class="panel-feature-dot"></div>
-            <div>
-              <div class="panel-feature-title">Go / No-Go Verdict</div>
-              <div class="panel-feature-desc">A clear recommendation before execution budget is committed</div>
-            </div>
-          </div>
-          <div class="panel-feature">
-            <div class="panel-feature-dot"></div>
-            <div>
-              <div class="panel-feature-title">Failure Point Mapping</div>
-              <div class="panel-feature-desc">Exactly where and why the launch breaks — with specific mitigations</div>
-            </div>
-          </div>
         </div>
-        <a href="https://app.quantumbranding.ai/os" class="btn-primary" style="background:#f59e0b">Run a Panel →</a>
-      </div>
-
-      <div class="panel-demo reveal bar-animated">
-        <div class="panel-demo-label">Panel Simulation — Example Output</div>
-
-        <div class="confidence-row">
-          <span class="confidence-label">Overall confidence</span>
-          <span class="confidence-score">74</span>
-        </div>
-        <div class="confidence-bar-bg">
-          <div class="confidence-bar-fill" style="width:74%" data-width="74"></div>
-        </div>
-
-        <div class="scenario-list">
-          <div class="scenario-item">
-            <div class="scenario-header">
-              <span class="scenario-name">Strong launch — right audience</span>
-              <span class="scenario-pct" style="color:#4ade80">62%</span>
-            </div>
-            <div class="scenario-bar-bg">
-              <div class="scenario-bar-fill" style="background:#4ade80;width:62%" data-width="62"></div>
-            </div>
-          </div>
-          <div class="scenario-item">
-            <div class="scenario-header">
-              <span class="scenario-name">Solid — needs price adjustment</span>
-              <span class="scenario-pct" style="color:#60a5fa">22%</span>
-            </div>
-            <div class="scenario-bar-bg">
-              <div class="scenario-bar-fill" style="background:#60a5fa;width:22%" data-width="22"></div>
-            </div>
-          </div>
-          <div class="scenario-item">
-            <div class="scenario-header">
-              <span class="scenario-name">Moderate — channel misfit</span>
-              <span class="scenario-pct" style="color:#f59e0b">11%</span>
-            </div>
-            <div class="scenario-bar-bg">
-              <div class="scenario-bar-fill" style="background:#f59e0b;width:11%" data-width="11"></div>
-            </div>
-          </div>
-          <div class="scenario-item">
-            <div class="scenario-header">
-              <span class="scenario-name">Failure — positioning unclear</span>
-              <span class="scenario-pct" style="color:#ef4444">5%</span>
-            </div>
-            <div class="scenario-bar-bg">
-              <div class="scenario-bar-fill" style="background:#ef4444;width:5%" data-width="5"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="verdict-box">
-          <div class="verdict-label">Verdict</div>
-          <div class="verdict-title">GO — Launch Ready</div>
-          <div class="verdict-sub">Strong market fit. Tighten price anchor before launch.</div>
-        </div>
-      </div>
-
     </div>
-  </div>
 </section>
 
 <!-- ── PRICING ── -->
 <section id="pricing">
-  <div class="container">
+    <div class="container">
+        <div style="text-align:center; margin-bottom:56px" class="reveal">
+            <p class="eyebrow" style="margin-bottom:16px">Pricing</p>
+            <h2 class="h2" style="margin-bottom:12px">Simple. No surprises.</h2>
+            <p style="color:var(--text-2); font-size:16px">The Signal Scan is always free. Cancel any paid tier any time.</p>
+        </div>
 
-    <div style="text-align:center;margin-bottom:56px" class="reveal">
-      <p class="eyebrow" style="margin-bottom:16px">Pricing</p>
-      <h2 class="h2" style="margin-bottom:12px">Simple. No surprises.</h2>
-      <p style="color:var(--text-2);font-size:16px">The Signal Scan is always free. Cancel any paid tier any time.</p>
+        <div class="pricing-grid reveal" style="margin:0 auto">
+            <div class="price-card">
+                <div class="price-tier">Starter</div>
+                <div class="price-amount">
+                    <span class="price-num">€97</span>
+                    <span class="price-per">/month</span>
+                </div>
+                <p class="price-desc">Full access to all 18 tools. Unlimited runs. Your complete brand OS, activated.</p>
+                <div class="price-features">
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">All 18 agent tools</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">QBP saved and connected</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Unlimited runs</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Gemini free tier compatible</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Email support</span></div>
+                </div>
+                <a href="https://app.quantumbranding.ai/os" class="btn-ghost" style="width:100%">Get Started →</a>
+            </div>
+
+            <div class="price-card featured">
+                <div class="price-tier">
+                    Pro
+                    <span class="price-popular">Most Popular</span>
+                </div>
+                <div class="price-amount">
+                    <span class="price-num">€297</span>
+                    <span class="price-per">/month</span>
+                </div>
+                <p class="price-desc">Everything in Starter plus Predictive Panel validation and quarterly strategy access.</p>
+                <div class="price-features">
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Everything in Starter</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">5 Predictive Panel runs/month</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Priority support</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Quarterly strategy session access</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Early access to new tools</span></div>
+                </div>
+                <button class="btn-primary" style="width:100%" onclick="openScanModal()">Start Pro →</button>
+            </div>
+
+            <div class="price-card">
+                <div class="price-tier">Agency</div>
+                <div class="price-amount">
+                    <span class="price-num">€997</span>
+                    <span class="price-per">/month</span>
+                </div>
+                <p class="price-desc">Up to 8 client portals. White-label delivery. Your system, your brand on every output.</p>
+                <div class="price-features">
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">8 white-label client portals</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Unlimited Predictive Panel runs</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Agency brand on all outputs</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Dedicated support</span></div>
+                    <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Custom onboarding</span></div>
+                </div>
+                <a href="mailto:nizzar@quantumbranding.ai" class="btn-ghost" style="width:100%">Talk to us →</a>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:28px">
+            <div class="price-free-note reveal" style="display:inline-flex">
+                <div class="price-free-dot"></div>
+                <span class="price-free-text">Free: Signal Scan + Brand Soul Map + Sensescape — no account needed</span>
+            </div>
+        </div>
     </div>
-
-    <div class="pricing-grid reveal" style="margin:0 auto">
-
-      <div class="price-card">
-        <div class="price-tier">Starter</div>
-        <div class="price-amount">
-          <span class="price-num">€97</span>
-          <span class="price-per">/month</span>
-        </div>
-        <p class="price-desc">Full access to all 18 tools. Unlimited runs. Your complete brand OS, activated.</p>
-        <div class="price-features">
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">All 18 agent tools</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">QBP saved and connected</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Unlimited runs</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Gemini free tier compatible</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Email support</span></div>
-        </div>
-        <a href="https://app.quantumbranding.ai/os" class="btn-ghost" style="width:100%">Get Started →</a>
-      </div>
-
-      <div class="price-card featured">
-        <div class="price-tier">
-          Pro
-          <span class="price-popular">Most Popular</span>
-        </div>
-        <div class="price-amount">
-          <span class="price-num">€297</span>
-          <span class="price-per">/month</span>
-        </div>
-        <p class="price-desc">Everything in Starter plus Predictive Panel validation and quarterly strategy access.</p>
-        <div class="price-features">
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Everything in Starter</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">5 Predictive Panel runs/month</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Priority support</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Quarterly strategy session access</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Early access to new tools</span></div>
-        </div>
-        <button class="btn-primary" style="width:100%" onclick="openScanModal()">Start Pro →</button>
-      </div>
-
-      <div class="price-card">
-        <div class="price-tier">Agency</div>
-        <div class="price-amount">
-          <span class="price-num">€997</span>
-          <span class="price-per">/month</span>
-        </div>
-        <p class="price-desc">Up to 8 client portals. White-label delivery. Your system, your brand on every output.</p>
-        <div class="price-features">
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">8 white-label client portals</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Unlimited Predictive Panel runs</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Agency brand on all outputs</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Dedicated support</span></div>
-          <div class="price-feature"><div class="price-feature-dot"></div><span class="price-feature-text">Custom onboarding</span></div>
-        </div>
-        <a href="mailto:nizzar@quantumbranding.ai" class="btn-ghost" style="width:100%">Talk to us →</a>
-      </div>
-
-    </div>
-
-    <div style="text-align:center;margin-top:28px">
-      <div class="price-free-note reveal" style="display:inline-flex">
-        <div class="price-free-dot"></div>
-        <span class="price-free-text">Free: Signal Scan + Brand Soul Map + Sensescape — no account needed</span>
-      </div>
-    </div>
-
-  </div>
 </section>
 
 <!-- ── ABOUT ── -->
 <section id="about">
-  <div class="container">
+    <div class="container">
+        <div class="about-grid">
+            <div class="reveal">
+                <p class="eyebrow" style="margin-bottom:16px">Nizzar Ben Chekroune</p>
+                <h2 class="h2" style="margin-bottom:20px">The methodology<br>behind the machine.</h2>
+                <p style="color:var(--text-2); font-size:16px; line-height:1.8; margin-bottom:16px">
+                    Born in Marrakech. Trained at the UN. Built brands across nightlife, Web3, UNIDO, and strategic consulting on three continents. The common thread everywhere: brands fail not because they lack effort but because they lack identity — a precise, irreducible truth that everything else is built from.
+                </p>
+                <p style="color:var(--text-2); font-size:16px; line-height:1.8; margin-bottom:0">
+                    Quantum Branding is that methodology, built from 20 years of watching what happens when identity is strong versus approximate. QB BrandOS is the methodology operationalized by AI — so any founder at any stage can build a brand that holds.
+                </p>
+                <blockquote class="about-quote">
+                    "In the AI era, you are either felt or forgotten."
+                </blockquote>
+                <div class="about-links">
+                    <a href="https://nizzar.com" class="btn-ghost btn-sm">nizzar.com →</a>
+                    <a href="https://linkedin.com/in/nizzar" class="btn-ghost btn-sm">LinkedIn →</a>
+                </div>
+            </div>
 
-    <div class="about-grid">
-
-      <div class="reveal">
-        <p class="eyebrow" style="margin-bottom:16px">Nizzar Ben Chekroune</p>
-        <h2 class="h2" style="margin-bottom:20px">The methodology<br>behind the machine.</h2>
-        <p style="color:var(--text-2);font-size:16px;line-height:1.8;margin-bottom:16px">
-          Born in Marrakech. Trained at the UN. Built brands across nightlife, Web3, UNIDO, and strategic consulting on three continents. The common thread everywhere: brands fail not because they lack effort but because they lack identity — a precise, irreducible truth that everything else is built from.
-        </p>
-        <p style="color:var(--text-2);font-size:16px;line-height:1.8;margin-bottom:0">
-          Quantum Branding is that methodology, built from 20 years of watching what happens when identity is strong versus approximate. QB BrandOS is the methodology operationalized by AI — so any founder at any stage can build a brand that holds.
-        </p>
-        <blockquote class="about-quote">
-          "In the AI era, you are either felt or forgotten."
-        </blockquote>
-        <div class="about-links">
-          <a href="https://nizzar.com" class="btn-ghost btn-sm">nizzar.com →</a>
-          <a href="https://linkedin.com/in/nizzar" class="btn-ghost btn-sm">LinkedIn →</a>
+            <div class="credential-list reveal">
+                <div class="credential">
+                    <div class="credential-dot"></div>
+                    <div>
+                        <div class="credential-main">United Nations Vienna</div>
+                        <div class="credential-sub">Diplomacy + narrative synthesis at scale</div>
+                    </div>
+                </div>
+                <div class="credential">
+                    <div class="credential-dot"></div>
+                    <div>
+                        <div class="credential-main">UNIDO + Moroccan Artisans</div>
+                        <div class="credential-sub">Human-centric brand strategy that became a global benchmark</div>
+                    </div>
+                </div>
+                <div class="credential">
+                    <div class="credential-dot"></div>
+                    <div>
+                        <div class="credential-main">La Minute Créative</div>
+                        <div class="credential-sub">Hollywood storytelling applied to brand — referenced by NYT, Time, Google Arts</div>
+                    </div>
+                </div>
+                <div class="credential">
+                    <div class="credential-dot"></div>
+                    <div>
+                        <div class="credential-main">UM6P — Mohammed VI Polytechnic</div>
+                        <div class="credential-sub">Innovation and entrepreneurship methodology</div>
+                    </div>
+                </div>
+                <div class="credential">
+                    <div class="credential-dot"></div>
+                    <div>
+                        <div class="credential-main">20+ years · 3 continents</div>
+                        <div class="credential-sub">Brand architecture across cultures, categories, and complexity</div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="credential-list reveal">
-        <div class="credential">
-          <div class="credential-dot"></div>
-          <div>
-            <div class="credential-main">United Nations Vienna</div>
-            <div class="credential-sub">Diplomacy + narrative synthesis at scale</div>
-          </div>
-        </div>
-        <div class="credential">
-          <div class="credential-dot"></div>
-          <div>
-            <div class="credential-main">UNIDO + Moroccan Artisans</div>
-            <div class="credential-sub">Human-centric brand strategy that became a global benchmark</div>
-          </div>
-        </div>
-        <div class="credential">
-          <div class="credential-dot"></div>
-          <div>
-            <div class="credential-main">La Minute Créative</div>
-            <div class="credential-sub">Hollywood storytelling applied to brand — referenced by NYT, Time, Google Arts</div>
-          </div>
-        </div>
-        <div class="credential">
-          <div class="credential-dot"></div>
-          <div>
-            <div class="credential-main">UM6P — Mohammed VI Polytechnic</div>
-            <div class="credential-sub">Innovation and entrepreneurship methodology</div>
-          </div>
-        </div>
-        <div class="credential">
-          <div class="credential-dot"></div>
-          <div>
-            <div class="credential-main">20+ years · 3 continents</div>
-            <div class="credential-sub">Brand architecture across cultures, categories, and complexity</div>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </div>
 </section>
 
 <!-- ── FINAL CTA ── -->
 <section id="final-cta">
-  <div class="container">
-    <div class="final-cta-wrap reveal">
-      <p class="eyebrow" style="margin-bottom:20px">Start today</p>
-      <h2 class="h2" style="margin-bottom:20px">
-        From idea<br><span class="gradient-text">to orbit.</span>
-      </h2>
-      <p style="color:var(--text-2);font-size:18px;line-height:1.7;margin-bottom:40px">
-        The Signal Scan is free. Five minutes. It tells you exactly where your brand stands and what to do first.
-      </p>
-      <div class="final-cta-btns">
-        <button class="btn-primary" onclick="openScanModal()" style="font-size:12px;padding:16px 44px">Scan My Brand — Free →</button>
-        <a href="https://app.quantumbranding.ai/os" class="btn-ghost" style="font-size:12px;padding:15px 36px">Enter QB BrandOS</a>
-      </div>
+    <div class="container">
+        <div class="final-cta-wrap reveal">
+            <p class="eyebrow" style="margin-bottom:20px">Start today</p>
+            <h2 class="h2" style="margin-bottom:20px">
+                From idea<br><span class="gradient-text">to orbit.</span>
+            </h2>
+            <p style="color:var(--text-2); font-size:18px; line-height:1.7; margin-bottom:40px">
+                The Signal Scan is free. Five minutes. It tells you exactly where your brand stands and what to do first.
+            </p>
+            <div class="final-cta-btns">
+                <button class="btn-primary" onclick="openScanModal()" style="font-size:12px; padding:16px 44px">Scan My Brand — Free →</button>
+                <a href="https://app.quantumbranding.ai/os" class="btn-ghost" style="font-size:12px; padding:15px 36px">Enter QB BrandOS</a>
+            </div>
+        </div>
     </div>
-  </div>
 </section>
 
 <!-- ── FOOTER ── -->
 <footer id="footer">
-  <div class="container">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand-logo">
+                    <div class="nav-logo-dot"></div>
+                    <span class="nav-logo-text">[QB_OS]</span>
+                </div>
+                <p class="footer-brand-desc">
+                    The Brand Operating System. From idea to orbit — identity, visual system, voice, content, execution, and intelligence in one connected platform.
+                </p>
+            </div>
 
-    <div class="footer-grid">
+            <div>
+                <div class="footer-col-title">System</div>
+                <button class="footer-link" onclick="scrollToSection('how')">How it works</button>
+                <button class="footer-link" onclick="scrollToSection('tools')">The 18 tools</button>
+                <button class="footer-link" onclick="scrollToSection('pricing')">Pricing</button>
+                <button class="footer-link" onclick="openScanModal()">Free Signal Scan</button>
+            </div>
 
-      <div>
-        <div class="footer-brand-logo">
-          <div class="nav-logo-dot"></div>
-          <span class="nav-logo-text">[QB_OS]</span>
+            <div>
+                <div class="footer-col-title">Contact</div>
+                <a href="mailto:nizzar@quantumbranding.ai" class="footer-link">nizzar@quantumbranding.ai</a>
+                <a href="https://nizzar.com" class="footer-link">nizzar.com</a>
+                <a href="https://linkedin.com/in/nizzar" class="footer-link">LinkedIn</a>
+                <a href="https://instagram.com/thequantumbranding" class="footer-link">Instagram</a>
+            </div>
         </div>
-        <p class="footer-brand-desc">
-          The Brand Operating System. From idea to orbit — identity, visual system, voice, content, execution, and intelligence in one connected platform.
-        </p>
-      </div>
 
-      <div>
-        <div class="footer-col-title">System</div>
-        <button class="footer-link" onclick="scrollToSection('how')">How it works</button>
-        <button class="footer-link" onclick="scrollToSection('tools')">The 18 tools</button>
-        <button class="footer-link" onclick="scrollToSection('pricing')">Pricing</button>
-        <button class="footer-link" onclick="openScanModal()">Free Signal Scan</button>
-      </div>
-
-      <div>
-        <div class="footer-col-title">Contact</div>
-        <a href="mailto:nizzar@quantumbranding.ai" class="footer-link">nizzar@quantumbranding.ai</a>
-        <a href="https://nizzar.com" class="footer-link">nizzar.com</a>
-        <a href="https://linkedin.com/in/nizzar" class="footer-link">LinkedIn</a>
-        <a href="https://instagram.com/thequantumbranding" class="footer-link">Instagram</a>
-      </div>
-
+        <div class="footer-bottom">
+            <span class="footer-copy">© 2025 Quantum Branding · quantumbranding.ai</span>
+            <span class="footer-redirect">thequantumbranding.com → redirects here · thequantumbranding.ai → redirects here</span>
+        </div>
     </div>
-
-    <div class="footer-bottom">
-      <span class="footer-copy">© 2025 Quantum Branding · quantumbranding.ai</span>
-      <span class="footer-redirect">thequantumbranding.com → redirects here · thequantumbranding.ai → redirects here</span>
-    </div>
-
-  </div>
 </footer>
 
 <!-- ── SCAN MODAL ── -->
 <div id="modal" role="dialog" aria-modal="true" aria-label="Start Brand Signal Scan">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeScanModal()" aria-label="Close">×</button>
-    <p class="eyebrow" style="margin-bottom:8px">Free · No account needed</p>
-    <h3 class="h3" style="margin-bottom:8px">Brand Signal Scan</h3>
-    <p style="color:var(--text-2);font-size:14px;line-height:1.65;margin-bottom:24px">
-      Take the full 8-question diagnostic. Instant score, gap analysis, and your recommended first move — no signup required.
-    </p>
-    <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn-primary" style="width:100%;margin-bottom:12px">
-      Open Signal Scan →
-    </a>
-    <p style="text-align:center;font-family:var(--mono);font-size:10px;color:var(--text-4);letter-spacing:0.08em">
-      No credit card · No account · Instant results
-    </p>
-  </div>
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeScanModal()" aria-label="Close">×</button>
+        <p class="eyebrow" style="margin-bottom:8px">Free · No account needed</p>
+        <h3 class="h3" style="margin-bottom:8px">Brand Signal Scan</h3>
+        <p style="color:var(--text-2); font-size:14px; line-height:1.65; margin-bottom:24px">
+            Take the full 8-question diagnostic. Instant score, gap analysis, and your recommended first move — no signup required.
+        </p>
+        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn-primary" style="width:100%; margin-bottom:12px">
+            Open Signal Scan →
+        </a>
+        <p style="text-align:center; font-family:var(--mono); font-size:10px; color:var(--text-4); letter-spacing:0.08em">
+            No credit card · No account · Instant results
+        </p>
+    </div>
 </div>
 
 <script>
 // ─── MENU ────────────────────────────────────────────────────────────────────
 function openMenu(){
-  document.getElementById('mobile-menu').classList.add('open');
-  document.body.style.overflow='hidden';
-  document.getElementById('menu-btn').setAttribute('aria-expanded','true');
+    document.getElementById('mobile-menu').classList.add('open');
+    document.body.style.overflow='hidden';
+    document.getElementById('menu-btn').setAttribute('aria-expanded','true');
 }
 function closeMenu(){
-  document.getElementById('mobile-menu').classList.remove('open');
-  document.body.style.overflow='';
-  document.getElementById('menu-btn').setAttribute('aria-expanded','false');
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.body.style.overflow='';
+    document.getElementById('menu-btn').setAttribute('aria-expanded','false');
 }
 
 // ─── MODAL ───────────────────────────────────────────────────────────────────
 function openScanModal(){
-  document.getElementById('modal').classList.add('open');
-  document.body.style.overflow='hidden';
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow='hidden';
 }
 function closeScanModal(){
-  document.getElementById('modal').classList.remove('open');
-  document.body.style.overflow='';
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow='';
 }
 document.getElementById('modal').addEventListener('click',function(e){
-  if(e.target===this)closeScanModal();
+    if(e.target===this)closeScanModal();
 });
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){closeScanModal();closeMenu();}
+    if(e.key==='Escape'){closeScanModal();closeMenu();}
 });
 
 // ─── SCROLL ──────────────────────────────────────────────────────────────────
 function scrollToSection(id){
-  var el=document.getElementById(id);
-  if(!el)return;
-  var offset=72;
-  var top=el.getBoundingClientRect().top+window.pageYOffset-offset;
-  window.scrollTo({top:top,behavior:'smooth'});
+    var el=document.getElementById(id);
+    if(!el)return;
+    var offset=80;
+    var top=el.getBoundingClientRect().top+window.pageYOffset-offset;
+    window.scrollTo({top:top,behavior:'smooth'});
 }
 
 // ─── NAV SCROLL EFFECT ───────────────────────────────────────────────────────
 window.addEventListener('scroll',function(){
-  var nav=document.getElementById('nav');
-  if(window.scrollY>40){
-    nav.style.background='rgba(0,0,0,0.97)';
-  } else {
-    nav.style.background='rgba(0,0,0,0.85)';
-  }
+    var nav=document.getElementById('nav');
+    if(window.scrollY>40){
+        nav.style.background='rgba(0,0,0,0.97)';
+    } else {
+        nav.style.background='rgba(0,0,0,0.85)';
+    }
 },{passive:true});
 
 // ─── SCAN OPTION SELECTION ───────────────────────────────────────────────────
 function startScan(door){
-  var opts=document.querySelectorAll('.scan-option');
-  opts.forEach(function(o){o.classList.remove('selected');});
-  var target=null;
-  opts.forEach(function(o){
-    if(o.getAttribute('onclick')==="startScan('"+door+"')")target=o;
-  });
-  if(target)target.classList.add('selected');
-  setTimeout(function(){
-    window.open('https://app.quantumbranding.ai/signal-scan.html?door='+door,'_blank');
-  },280);
+    var opts=document.querySelectorAll('.scan-option');
+    opts.forEach(function(o){o.classList.remove('selected');});
+    var target=null;
+    opts.forEach(function(o){
+        if(o.getAttribute('onclick')==="startScan('"+door+"')")target=o;
+    });
+    if(target)target.classList.add('selected');
+    setTimeout(function(){
+        window.open('https://app.quantumbranding.ai/signal-scan.html?door='+door,'_blank');
+    },280);
 }
 
 // ─── REVEAL ON SCROLL ────────────────────────────────────────────────────────
 var revealEls=document.querySelectorAll('.reveal');
 var revealObserver=new IntersectionObserver(function(entries){
-  entries.forEach(function(entry){
-    if(entry.isIntersecting){
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+    entries.forEach(function(entry){
+        if(entry.isIntersecting){
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+        }
+    });
+},{threshold:0.1,rootMargin:'0px 0px -20px 0px'});
 revealEls.forEach(function(el){revealObserver.observe(el);});
 
 // ─── BAR ANIMATIONS ──────────────────────────────────────────────────────────
 var panelDemo=document.querySelector('.panel-demo');
 var barsAnimated=false;
 var barObserver=new IntersectionObserver(function(entries){
-  entries.forEach(function(entry){
-    if(entry.isIntersecting&&!barsAnimated){
-      barsAnimated=true;
-      var fills=entry.target.querySelectorAll('[data-width]');
-      fills.forEach(function(f,i){
-        f.style.width='0';
-        var target=f.getAttribute('data-width');
-        setTimeout(function(){
-          f.style.width=target+'%';
-        },200+i*80);
-      });
-    }
-  });
+    entries.forEach(function(entry){
+        if(entry.isIntersecting&&!barsAnimated){
+            barsAnimated=true;
+            var fills=entry.target.querySelectorAll('[data-width]');
+            fills.forEach(function(f,i){
+                f.style.width='0';
+                var target=f.getAttribute('data-width');
+                setTimeout(function(){
+                    f.style.width=target+'%';
+                },200+i*80);
+            });
+        }
+    });
 },{threshold:0.3});
 if(panelDemo)barObserver.observe(panelDemo);
 </script>
