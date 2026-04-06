@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB BrandOS - Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+  // Flash-free theme initialization
+  (function(){var t=localStorage.getItem('qb-theme')||'dark';document.documentElement.setAttribute('data-theme',t)})();
+</script>
+<style>
+/* Base Reset & Design System Variables - "Entangled Time" */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html:not([data-theme]) { background: #080604; color: #A89A88; }
+
+:root, [data-theme="dark"] {
+  /* Backgrounds — walnut-black, never cold */
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140, 110, 70, 0.045);
+  --bg-elevated: rgba(140, 110, 70, 0.07);
+  --bg-overlay: rgba(18, 15, 10, 0.85);
+
+  /* Borders — warm-tinted, never cold gray */
+  --border-subtle: rgba(140, 110, 70, 0.06);
+  --border-medium: rgba(140, 110, 70, 0.11);
+  --border-strong: rgba(140, 110, 70, 0.18);
+
+  /* Primary Accent — Patina Green */
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58, 95, 74, 0.2);
+  --patina-faint: rgba(58, 95, 74, 0.08);
+
+  /* Secondary Accent — Tarnished Brass */
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168, 144, 62, 0.18);
+  --brass-faint: rgba(168, 144, 62, 0.06);
+
+  /* Text — cream, never cold white */
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+
+  /* Status Colors */
+  --success: #4A7A5E;
+  --warning: #A8903E;
+  --error: #8A4A4A;
+  --red: #8A4A4A;
+  --info: #4A7A8A;
+
+  /* FIX #1 + #6: Phase colors defined in CSS — was undefined (var(--blue) etc. didn't exist).
+     Named by phase number, consistent with Journey Guide ecosystem.
+     RGB values correctly match the hex value of each color. */
+  --phase-1: #4A7A5E;   /* Discovery      — Patina     | rgb 74,122,94   */
+  --phase-2: #4A7A8A;   /* Brand Creation  — Teal-Blue  | rgb 74,122,138  */
+  --phase-3: #8A5A5A;   /* Content        — Dusty Rose  | rgb 138,90,90   */
+  --phase-4: #5A7A6A;   /* Execution      — Sage        | rgb 90,122,106  */
+  --phase-5: #A8903E;   /* Intelligence   — Brass       | rgb 168,144,62  */
+
+  --shadow-sm: 0 4px 16px rgba(10, 8, 5, 0.4);
+  --shadow-md: 0 12px 32px rgba(10, 8, 5, 0.6);
+}
+
+[data-theme="light"] {
+  /* Light Mode Backgrounds — warm parchment */
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100, 80, 50, 0.04);
+  --bg-elevated: rgba(100, 80, 50, 0.07);
+  --bg-overlay: rgba(244, 240, 235, 0.9);
+
+  /* Light Mode Borders */
+  --border-subtle: rgba(100, 80, 50, 0.08);
+  --border-medium: rgba(100, 80, 50, 0.14);
+  --border-strong: rgba(100, 80, 50, 0.22);
+
+  /* Light Mode Patina */
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46, 78, 60, 0.15);
+  --patina-faint: rgba(46, 78, 60, 0.06);
+
+  /* Light Mode Brass */
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138, 116, 48, 0.15);
+  --brass-faint: rgba(138, 116, 48, 0.05);
+
+  /* Light Mode Text — dark ink on warm paper */
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+
+  /* Status Colors */
+  --success: #3A6A4E;
+  --warning: #8A7430;
+  --error: #9E3A3A;
+  --red: #9E3A3A;
+  --info: #2E5A6A;
+
+  /* FIX #1: Light mode phase colors — slightly deeper for readability on parchment */
+  --phase-1: #2E5A42;
+  --phase-2: #2E5A6A;
+  --phase-3: #6A3A3A;
+  --phase-4: #3A5A4A;
+  --phase-5: #8A7430;
+
+  --shadow-sm: 0 4px 12px rgba(100, 80, 50, 0.06);
+  --shadow-md: 0 12px 32px rgba(100, 80, 50, 0.1);
+}
+
+/* Typography Variables */
+:root {
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--bg-void);
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Signature Design Elements */
+
+/* 1. Film Grain Overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+/* Warm Vignette */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+  transition: background 0.4s ease;
+}
+[data-theme="light"] .vignette-overlay {
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* 2. Warm Glass Cards */
+.glass-card {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* 3. Brass Heartbeat Pulse */
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px var(--brass-dim), 0 0 2px var(--brass);
+  animation: beat 3s ease infinite;
+  display: inline-block;
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); opacity: 1; }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); opacity: 1; }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+
+/* 4. Manifesto Block */
+.manifesto-block {
+  position: relative;
+  padding: 24px 0 24px 26px;
+  margin: 32px 0;
+}
+.manifesto-block::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2.5px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--brass-dim);
+}
+
+/* 5. Input Focus */
+input:focus, textarea:focus, button:focus-visible {
+  border-color: var(--patina);
+  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-dim);
+  outline: none;
+}
+
+/* 6. Primary Button */
+.btn-primary {
+  background: var(--patina);
+  color: #E6DDD0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 13px 30px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+[data-theme="light"] .btn-primary { color: #FFFFFF; }
+.btn-primary:hover {
+  background: var(--patina-lit);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px -4px var(--patina-dim), 0 0 0 1px var(--brass-faint);
+  color: #E6DDD0;
+}
+
+button.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+button.btn-ghost:hover {
+  color: var(--text-1);
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+}
+
+/* Typography Classes */
+.font-serif { font-family: var(--font-serif); font-weight: 400; color: var(--text-1); }
+.font-mono  { font-family: var(--font-mono);  text-transform: uppercase; }
+
+.title-large  { font-size: 42px; line-height: 1.1; letter-spacing: -0.015em; }
+.title-medium { font-size: 28px; line-height: 1.2; letter-spacing: -0.01em; }
+.title-small  { font-size: 20px; line-height: 1.3; }
+
+.body-large   { font-size: 15px; line-height: 1.8; color: var(--text-2); }
+.body-regular { font-size: 14px; line-height: 1.7; color: var(--text-2); }
+.body-small   { font-size: 13px; line-height: 1.6; color: var(--text-3); }
+
+.label-mono { font-size: 9px; letter-spacing: 0.18em; color: var(--text-3); }
+.badge-mono {
+  font-size: 9px; letter-spacing: 0.15em; padding: 4px 8px; border-radius: 4px;
+  background: var(--bg-elevated); color: var(--text-2); border: 1px solid var(--border-subtle);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0);   }
+}
+.animate-cascade {
+  opacity: 0;
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(var(--idx, 0) * 0.08s);
+}
+
+/* Layout */
+.main-wrapper { position: relative; z-index: 2; }
+
+.system-header {
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-medium);
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+.header-brand { display: flex; align-items: center; gap: 16px; color: var(--text-1); }
+.header-brand-name { font-size: 11px; letter-spacing: 0.2em; font-weight: 700; }
+
+.nav-links { display: flex; gap: 32px; }
+.nav-link {
+  color: var(--text-3);
+  font-size: 12px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.nav-link:hover { color: var(--text-1); }
+
+.theme-toggle {
+  color: var(--text-3);
+  font-size: 16px;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  color: var(--text-1);
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+}
+
+.container { max-width: 1080px; margin: 0 auto; padding: 64px 24px 128px 24px; }
+
+/* Health Meter Section */
+.meter-section {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+  margin-bottom: 96px;
+  padding: 48px;
+}
+
+.meter-chart { position: relative; width: 180px; height: 180px; flex-shrink: 0; }
+.meter-chart svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.meter-bg   { fill: none; stroke: var(--border-strong); stroke-width: 4; }
+.meter-fill {
+  fill: none;
+  stroke: url(#meter-gradient);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  filter: drop-shadow(0 0 6px var(--brass-dim));
+}
+
+.meter-text {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.meter-percent { font-family: var(--font-serif); font-size: 48px; color: var(--text-1); line-height: 1; }
+.meter-label   { font-size: 10px; color: var(--text-3); margin-top: 8px; }
+
+.meter-content { flex: 1; }
+.meter-status  { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+
+/* Phase Sections */
+.phase-section { margin-bottom: 96px; position: relative; }
+.phase-section::before {
+  content: '';
+  position: absolute;
+  inset: -32px;
+  border-radius: 24px;
+  background: rgba(var(--phase-rgb), 0.02);
+  border: 1px solid rgba(var(--phase-rgb), 0.05);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.phase-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border-medium);
+  position: relative;
+}
+.phase-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0;
+  width: 100px; height: 1px;
+  background: var(--phase-color);
+  box-shadow: 0 0 8px var(--phase-color);
+}
+
+.phase-header-left { display: flex; align-items: center; gap: 24px; }
+.phase-num { font-size: 14px; color: var(--phase-color); opacity: 0.8; }
+
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* Tool Cards */
+.tool-card {
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  border-left: 1px solid var(--border-subtle);
+  min-height: 240px;
+}
+.tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+  background: var(--bg-elevated);
+}
+.tool-card:hover::before { opacity: 1; }
+
+.tool-card.state-completed { border-left: 3px solid var(--patina); opacity: 0.6; }
+.tool-card.state-completed:hover { opacity: 1; border-left-color: var(--patina-lit); }
+.tool-card.state-completed .card-desc { display: none; }
+.tool-card.state-completed .card-header { margin-bottom: 0; }
+.tool-card.state-completed { min-height: auto; padding: 24px 28px; }
+
+.tool-card.state-progress { border-left: 3px solid var(--phase-color); }
+.tool-card.state-progress:hover {
+  border-left-color: var(--phase-color);
+  box-shadow: 0 12px 40px rgba(var(--phase-rgb), 0.12), var(--shadow-sm);
+}
+
+.tool-card.state-locked {
+  opacity: 0.3;
+  pointer-events: none;
+  border-left-color: transparent;
+  filter: grayscale(80%);
+}
+
+.tool-card.is-next {
+  transform: scale(1.02);
+  border-color: var(--border-medium);
+  border-left: 3px solid var(--brass);
+  box-shadow: 0 0 32px var(--brass-faint), var(--shadow-sm);
+  background: var(--bg-elevated);
+  z-index: 10;
+}
+.tool-card.is-next::before {
+  background: radial-gradient(ellipse at center, var(--brass-dim) 0%, transparent 70%);
+  opacity: 1;
+}
+.tool-card.is-next:hover {
+  transform: scale(1.03) translateY(-4px);
+  box-shadow: 0 12px 48px var(--brass-dim);
+  border-left-color: var(--brass-lit);
+}
+
+.card-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.card-icon {
+  width: 48px; height: 48px; border-radius: 10px;
+  background: var(--bg-surface); border: 1px solid var(--border-medium);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--text-2); flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+.state-progress .card-icon  { color: var(--phase-color); border-color: rgba(var(--phase-rgb), 0.3); background: rgba(var(--phase-rgb), 0.05); }
+.state-completed .card-icon { color: var(--patina); border-color: var(--patina-dim); }
+.is-next .card-icon          { color: var(--brass); border-color: var(--brass-dim); background: var(--brass-faint); font-size: 24px; }
+
+/* FIX #15: card-title margin now applied — was defined in CSS but never used on tool card names */
+.card-title { margin-bottom: 8px; }
+.card-desc  { flex: 1; margin-bottom: 32px; }
+
+.card-footer  { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+.card-status  { display: flex; align-items: center; gap: 8px; }
+
+.status-completed { color: var(--patina); }
+.status-progress  { color: var(--phase-color); }
+.status-locked    { color: var(--text-4); }
+
+.card-btn {
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.tool-card:hover .card-btn     { transform: translateX(4px); color: var(--text-1); }
+.state-progress:hover .card-btn { color: var(--phase-color); }
+.is-next .card-btn             { color: var(--brass); }
+.is-next:hover .card-btn       { color: var(--brass-lit); }
+
+/* Start Here Badge */
+.start-badge {
+  position: absolute; top: 0; right: 32px;
+  background: var(--brass); color: #080604;
+  padding: 6px 14px; border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 16px var(--brass-dim);
+}
+
+/* FIX #7: z-index raised above grain overlay (body::after at 9999) so notif text is visible */
+#notifs {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  z-index: 10000;
+  display: flex; flex-direction: column; gap: 12px; pointer-events: none;
+}
+.notif {
+  background: var(--bg-overlay); border: 1px solid var(--border-medium); border-radius: 8px;
+  padding: 14px 28px; font-size: 12px; color: var(--text-1);
+  box-shadow: var(--shadow-md); backdrop-filter: blur(12px);
+  animation: fadeInUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .system-header { padding: 0 24px; }
+  .container { padding: 48px 16px 96px 16px; }
+  .meter-section { flex-direction: column; text-align: left; gap: 32px; padding: 32px 24px; align-items: flex-start; }
+  .meter-chart { width: 120px; height: 120px; align-self: center; }
+  .meter-percent { font-size: 36px; }
+  .phase-section { margin-bottom: 64px; }
+  .phase-section::before { inset: -16px; border-radius: 16px; }
+  .phase-grid { grid-template-columns: 1fr; }
+  .tool-card.is-next { transform: scale(1); }
+  .tool-card.is-next:hover { transform: translateY(-4px); }
+  .title-large { font-size: 32px; }
+  .title-medium { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="vignette-overlay"></div>
+<div class="main-wrapper" id="app"></div>
+<div id="notifs"></div>
+
+<!-- SVG Gradient Definitions for health meter ring -->
+<svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="meter-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="var(--patina)" />
+      <stop offset="100%" stop-color="var(--brass)" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<script>
+// ── QB OS: Supabase Access Check ──────────────────────────────────────────────
+
+// FIX #4 (part A): QB_HAS_ACCESS defined synchronously here so launchTool() always
+// has a callable reference even before the async Supabase IIFE resolves.
+window.QB_HAS_ACCESS = function(feature) {
+  const tier   = localStorage.getItem('qb_user_tier') || 'free';
+  const paid   = localStorage.getItem('qb_paid') === '1';
+  const status = localStorage.getItem('qb_sub_status') || 'inactive';
+  const isActive = paid || status === 'active';
+  if (feature === 'panel')  return isActive && (tier === 'pro' || tier === 'agency');
+  if (feature === 'agency') return isActive && tier === 'agency';
+  if (feature === 'free')   return true;
+  return isActive;
+};
+
+(async function(){
+  const SUPA_URL = 'https://yushbxjwfhuokaezoioe.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0';
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') === 'success') {
+    const plan = params.get('plan') || 'starter';
+    localStorage.setItem('qb_user_tier', plan);
+    localStorage.setItem('qb_paid', '1');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
+  const session = (() => {
+    try { return JSON.parse(localStorage.getItem('qb_session') || '{}'); }
+    catch(e) { return {}; }
+  })();
+
+  // FIX #4 (part B): localStorage override placed BEFORE the first await so it runs
+  // synchronously. load() (in the next script block) runs after this entire script tag
+  // executes but before the async fetch resolves — the override is active in time.
+  const _orig = localStorage.setItem.bind(localStorage);
+  localStorage.setItem = function(key, value) {
+    _orig(key, value);
+    if (key === 'qb_qbp' && session && session.token) {
+      // FIX #2: Guard against undefined supabaseId — was producing /profiles?id=eq.undefined
+      if (!session.supabaseId) return;
+      try {
+        const qbp = JSON.parse(value);
+        fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + session.supabaseId, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPA_KEY,
+            'Authorization': 'Bearer ' + session.token,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ qbp, updated_at: new Date().toISOString() })
+        }).catch(() => {});
+      } catch(e) {}
+    }
+  };
+
+  // ── Async: fetch verified Supabase profile ──
+  if (session && session.token) {
+    try {
+      const res = await fetch(SUPA_URL + '/rest/v1/profiles?select=tier,subscription_status,qbp', {
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': 'Bearer ' + session.token,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data[0]) {
+          const profile = data[0];
+          // Use _orig to bypass the qb_qbp sync loop for non-QBP keys
+          if (profile.tier)                _orig('qb_user_tier', profile.tier);
+          if (profile.subscription_status) _orig('qb_sub_status', profile.subscription_status);
+          if (profile.qbp && Object.keys(profile.qbp).length > 0) {
+            const localQBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
+            if (Object.keys(localQBP).length === 0) {
+              _orig('qb_qbp', JSON.stringify(profile.qbp));
+            }
+          }
+          // Refresh QB_HAS_ACCESS with verified Supabase data
+          window.QB_HAS_ACCESS = function(feature) {
+            const tier   = localStorage.getItem('qb_user_tier') || 'free';
+            const paid   = localStorage.getItem('qb_paid') === '1';
+            const status = localStorage.getItem('qb_sub_status') || 'inactive';
+            const isActive = paid || status === 'active';
+            if (feature === 'panel')  return isActive && (tier === 'pro' || tier === 'agency');
+            if (feature === 'agency') return isActive && tier === 'agency';
+            if (feature === 'free')   return true;
+            return isActive;
+          };
+        }
+      }
+    } catch(e) {}
+  }
+
+  window.QB_TIER     = localStorage.getItem('qb_user_tier') || 'free';
+  window.QB_SUPA_URL = SUPA_URL;
+  window.QB_SUPA_KEY = SUPA_KEY;
+})();
+// ── END QB OS Access Check ────────────────────────────────────────────────────
+</script>
+
+<script>
+// ── DATA & CONSTANTS ──────────────────────────────────────────────────────────
+
+// FIX #1 + #6: color now references var(--phase-N) defined in CSS.
+// RGB values correctly correspond to each phase's hex color.
+const PHASES = [
+  { n: 1, id: '01', label: 'Discovery',      color: 'var(--phase-1)', rgb: '74, 122, 94'  },
+  { n: 2, id: '02', label: 'Brand Creation', color: 'var(--phase-2)', rgb: '74, 122, 138' },
+  { n: 3, id: '03', label: 'Content',        color: 'var(--phase-3)', rgb: '138, 90, 90'  },
+  { n: 4, id: '04', label: 'Execution',      color: 'var(--phase-4)', rgb: '90, 122, 106' },
+  { n: 5, id: '05', label: 'Intelligence',   color: 'var(--phase-5)', rgb: '168, 144, 62' },
+];
+
+// FIX #11: Duplicate icons removed — ◈ (was on logo-dir + panel), ◫ (was on visual-dna + scheduler)
+// FIX #13: panel is ph:5 directly — phantom ph:6 + post-hoc remapping forEach removed
+const TOOLS = [
+  // Phase 01 — Discovery
+  { id: 'soul-map',    ph: 1, name: 'Brand Soul Map',              desc: 'Uncover your brand identity through 6 modules and 15 exercises.',        file: 'brand-soul-map.html',                icon: '◬' },
+  { id: 'sensescape',  ph: 1, name: 'Sensescape',                  desc: 'Map the sensory universe of your brand across 47 spectrums.',             file: 'sensescape.html',                    icon: '◌' },
+  { id: 'visual-dna',  ph: 1, name: 'Visual DNA',                  desc: 'Build your visual reference library through instinctive selection.',      file: 'visual-dna.html',                    icon: '◫' },
+  { id: 'war-table',   ph: 1, name: 'The War Table',               desc: 'Strategic prioritization tool. Score initiatives across 6 dimensions.',   file: 'war-table.html',                     icon: '◧' },
+  { id: 'brand-doc',   ph: 1, name: 'Brand Document',              desc: 'Compile all Phase 01 outputs into your master foundational document.',     file: 'brand-document.html',                icon: '■' },
+
+  // Phase 02 — Brand Creation
+  { id: 'logo-dir',    ph: 2, name: 'Logo Direction Agent',        desc: 'Complete logo brief and prompt generation derived from your QBP.',        file: 'logo-direction-agent.html',          icon: '◈' },
+  { id: 'logo-eval',   ph: 2, name: 'Logo Evaluation Agent',       desc: 'Upload concepts for AI scoring against your established identity.',       file: 'logo-evaluation-agent.html',         icon: '◎' },
+  { id: 'voice',       ph: 2, name: 'Voice Guide Agent',           desc: 'Complete verbal identity: tone modes, rules, and live copy generator.',   file: 'voice-guide-agent.html',             icon: '◉' },
+
+  // Phase 03 — Content
+  { id: 'instagram',   ph: 3, name: 'Instagram Seed Agent',        desc: 'First 12 posts: captions, briefs, hooks, and strategic sequence.',        file: 'instagram-seed-agent.html',          icon: '⬡' },
+  { id: 'linkedin',    ph: 3, name: 'LinkedIn Strategy Agent',     desc: 'Profile rewrites and 20 targeted posts scripted across 4 weeks.',         file: 'linkedin-strategy-agent.html',       icon: '⬢' },
+  { id: 'youtube',     ph: 3, name: 'YouTube Strategy Agent',      desc: 'Channel strategy, 6 full scripts, and short-form repurpose briefs.',      file: 'youtube-strategy-agent.html',        icon: '▷' },
+  { id: 'newsletter',  ph: 3, name: 'Newsletter Architecture',     desc: 'Structure your publishing platform: first 4 issues fully drafted.',       file: 'newsletter-architecture-agent.html', icon: '✉' },
+  { id: 'bridge',      ph: 3, name: 'Content Bridge',              desc: 'Translate scripts into production briefs for HeyGen, Canva, etc.',        file: 'content-bridge.html',                icon: '⇢' },
+
+  // Phase 04 — Execution
+  { id: 'repurpose',   ph: 4, name: 'Content Repurposing Engine',  desc: '1 long-form piece → 25 native pieces across 10 platforms.',               file: 'content-repurposing-engine.html',    icon: '⟳' },
+  { id: 'scheduler',   ph: 4, name: 'Content Scheduler',           desc: 'Organize, tag, and map your generated content to a timeline.',            file: 'content-scheduler.html',             icon: '◱' }, /* was ◫ — duplicate of visual-dna */
+
+  // Phase 05 — Intelligence
+  { id: 'performance', ph: 5, name: 'Brand Performance Dashboard', desc: 'Translate data into brand signals, health scores, and directions.',       file: 'brand-performance-dashboard.html',   icon: '◐' },
+  { id: 'quarterly',   ph: 5, name: 'Quarterly Brand Review',      desc: 'Update QBP, grade the quarter, and set the 90-day trajectory.',          file: 'quarterly-brand-review-agent.html',  icon: '↻' },
+  { id: 'panel',       ph: 5, name: 'Predictive Panel',            desc: 'Test before launch via synthetic persona panels and scenarios.',          file: 'predictive-panel.html',              icon: '◑' }, /* was ◈ (duplicate) + was ph:6 remapped */
+];
+// FIX #13: The TOOLS.forEach ph:6→ph:5 remapping line has been removed
+
+
+const QBP_FIELDS  = ['brandName','brandEssence','spark','naturalForce','archetype','manifesto','antiBrand','paradox','primaryPersona','offer','voiceNotes','alwaysNever','colorTerritory','exemplarWords'];
+const CORE_FIELDS = ['brandName','brandEssence','naturalForce','archetype','primaryPersona'];
+
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const S = { qbp: {}, theme: 'dark', completedTools: [] };
+
+function load() {
+  try { const q = localStorage.getItem('qb_qbp');             if (q)  S.qbp            = JSON.parse(q);  } catch(e) {}
+  try { const c = localStorage.getItem('qb_completed_tools'); if (c)  S.completedTools = JSON.parse(c);  } catch(e) {}
+  try { const t = localStorage.getItem('qb-theme');           if (t)  S.theme          = t;               } catch(e) {}
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('apikey'))   localStorage.setItem('qb_apikey', params.get('apikey'));
+  if (params.get('provider')) localStorage.setItem('qb_provider', params.get('provider'));
+  if (params.get('qbp')) {
+    try {
+      S.qbp = JSON.parse(atob(params.get('qbp')));
+      localStorage.setItem('qb_qbp', JSON.stringify(S.qbp));
+    } catch(e) {}
+  }
+}
+
+// FIX #10: toggleTheme no longer calls render(). CSS transitions on data-theme handle
+// all visual changes. render() was destroying + rebuilding the entire DOM on every toggle,
+// restarting all animations and causing a visible flash.
+function toggleTheme() {
+  S.theme = S.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', S.theme);
+  localStorage.setItem('qb-theme', S.theme);
+  const btn = document.querySelector('.theme-toggle');
+  if (btn) btn.textContent = S.theme === 'dark' ? '☀️' : '🌙';
+}
+
+// FIX #5: showNotif was referenced but never defined — would throw ReferenceError on any call
+function showNotif(msg, duration = 3000) {
+  const n = el('div', { class: 'notif' }, msg);
+  document.getElementById('notifs').appendChild(n);
+  setTimeout(() => n.remove(), duration);
+}
+
+function getHealth() {
+  const coreDone = CORE_FIELDS.filter(k => { const v = S.qbp[k]; return v && (typeof v === 'string' ? v.trim() : true); }).length;
+  const allDone  = QBP_FIELDS.filter( k => { const v = S.qbp[k]; return v && (typeof v === 'string' ? v.trim() : true); }).length;
+  return {
+    corePct:        Math.round((coreDone / CORE_FIELDS.length) * 100) || 0,
+    allPct:         Math.round((allDone  / QBP_FIELDS.length)  * 100) || 0,
+    isCoreComplete: coreDone === CORE_FIELDS.length
+  };
+}
+
+function computeToolStates() {
+  const health = getHealth();
+  let nextToStartFound = false;
+
+  const isPh1Unlocked = true;
+  const isPh2Unlocked = health.isCoreComplete;
+  const isPh3Unlocked = health.isCoreComplete;
+  const isPh4Unlocked = health.isCoreComplete && S.completedTools.includes('instagram');
+  const isPh5Unlocked = health.isCoreComplete;
+
+  TOOLS.forEach(tool => {
+    let isCompleted = S.completedTools.includes(tool.id);
+
+    if (tool.id === 'soul-map'   && S.qbp.brandEssence)     isCompleted = true;
+    if (tool.id === 'sensescape' && S.qbp.colorTerritory)   isCompleted = true;
+    // Consistent with Journey Guide: visual-dna completion reads qbp.visualReferences
+    if (tool.id === 'visual-dna' && S.qbp.visualReferences) isCompleted = true;
+
+    let isUnlocked =
+      tool.ph === 1 ? isPh1Unlocked :
+      tool.ph === 2 ? isPh2Unlocked :
+      tool.ph === 3 ? isPh3Unlocked :
+      tool.ph === 4 ? isPh4Unlocked :
+      tool.ph === 5 ? isPh5Unlocked : false;
+
+    if (isCompleted) {
+      tool.state = 'completed'; tool.isNext = false;
+    } else if (isUnlocked) {
+      tool.state = 'progress';
+      tool.isNext = !nextToStartFound;
+      if (!nextToStartFound) nextToStartFound = true;
+    } else {
+      tool.state = 'locked'; tool.isNext = false;
+    }
+  });
+}
+
+
+// ── DOM HELPERS ───────────────────────────────────────────────────────────────
+function el(tag, props={}, children=[]) {
+  const e = document.createElement(tag);
+  Object.entries(props).forEach(([k, v]) => {
+    if (k === 'style' && typeof v === 'object') Object.assign(e.style, v);
+    else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (k === 'class') e.className = v;
+    else if (k === 'html')  e.innerHTML = v;
+    else e.setAttribute(k, v);
+  });
+  [children].flat(Infinity).forEach(c => {
+    if (c == null) return;
+    if (c instanceof Node) e.appendChild(c);
+    else e.appendChild(document.createTextNode(String(c)));
+  });
+  return e;
+}
+
+
+// ── UI BUILDERS ───────────────────────────────────────────────────────────────
+
+function buildHeader() {
+  const header = el('header', { class: 'system-header' });
+
+  header.appendChild(el('div', { class: 'header-brand' }, [
+    el('span', { class: 'header-brand-name font-mono' }, 'QB_BRANDOS'),
+    el('span', { class: 'badge-mono' }, 'Entangled Time')
+  ]));
+
+  const right = el('div', { style: { display: 'flex', gap: '16px', alignItems: 'center' } });
+
+  const navLinks = el('div', { class: 'nav-links' });
+  ['Discovery', 'Creation', 'Content', 'Execution', 'Intelligence'].forEach((name, i) => {
+    navLinks.appendChild(el('a', { class: 'nav-link', href: `#phase-${i+1}` }, name));
+  });
+  right.appendChild(navLinks);
+
+  // FIX #10: button only updates its own text + data-theme; does not call render()
+  right.appendChild(el('button', {
+    class: 'theme-toggle',
+    type: 'button',
+    onClick: toggleTheme,
+    title: 'Toggle Theme'
+  }, [S.theme === 'dark' ? '☀️' : '🌙']));
+
+  header.appendChild(right);
+  return header;
+}
+
+function buildHealthMeter(health) {
+  const section = el('div', { class: 'meter-section glass-card animate-cascade', style: { '--idx': 0 } });
+
+  const radius = 80;
+  const circum = 2 * Math.PI * radius;
+  const offset = circum - (health.allPct / 100) * circum;
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', '0 0 180 180');
+
+  const bg = document.createElementNS(svgNS, 'circle');
+  bg.setAttribute('cx', '90'); bg.setAttribute('cy', '90'); bg.setAttribute('r', radius);
+  bg.setAttribute('class', 'meter-bg');
+
+  const fill = document.createElementNS(svgNS, 'circle');
+  fill.setAttribute('cx', '90'); fill.setAttribute('cy', '90'); fill.setAttribute('r', radius);
+  fill.setAttribute('class', 'meter-fill');
+  fill.setAttribute('stroke-dasharray', circum);
+  fill.setAttribute('stroke-dashoffset', circum);
+  setTimeout(() => fill.setAttribute('stroke-dashoffset', offset), 150);
+
+  svg.appendChild(bg);
+  svg.appendChild(fill);
+
+  const chart = el('div', { class: 'meter-chart' });
+  chart.appendChild(svg);
+  chart.appendChild(el('div', { class: 'meter-text' }, [
+    el('span', { class: 'meter-percent' }, `${health.allPct}%`),
+    el('span', { class: 'label-mono' }, 'Profile Health')
+  ]));
+  section.appendChild(chart);
+
+  const content    = el('div', { class: 'meter-content' });
+  const statusWrap = el('div', { class: 'meter-status' });
+
+  let headingText, bodyText;
+  if (health.allPct === 0) {
+    statusWrap.appendChild(el('div', { class: 'pulse-dot', style: { background: 'var(--error)', boxShadow: '0 0 8px var(--error)' } }));
+    statusWrap.appendChild(el('span', { class: 'label-mono' }, 'Awaiting Initialization'));
+    headingText = 'Brand Core Undefined';
+    bodyText    = 'The intelligence layer requires foundational identity data to power its agents. Begin with the Brand Soul Map to establish the core truth.';
+  } else if (!health.isCoreComplete) {
+    statusWrap.appendChild(el('div', { class: 'pulse-dot', style: { background: 'var(--warning)', boxShadow: '0 0 8px var(--warning)' } }));
+    statusWrap.appendChild(el('span', { class: 'label-mono' }, 'Core Incomplete'));
+    headingText = 'Synthesis Paused';
+    bodyText    = 'Identity mapping in progress. Complete Phase 01 to unlock downstream creation and content agents.';
+  } else {
+    statusWrap.appendChild(el('div', { class: 'pulse-dot' }));
+    statusWrap.appendChild(el('span', { class: 'label-mono' }, 'System Active'));
+    headingText = S.qbp.brandName || 'Unnamed Brand';
+    bodyText    = 'Core foundation established. All intelligence agents are unlocked and reading from your live QBP. Proceed with generation.';
+  }
+
+  content.appendChild(statusWrap);
+  content.appendChild(el('h1', { class: 'title-large font-serif' }, headingText));
+  // FIX #9: card-desc class removed — it carries flex:1 for tool-card flex columns,
+  // not applicable in this meter-content context; body-large alone is correct here.
+  content.appendChild(el('p', { class: 'body-large' }, bodyText));
+
+  const nextTool = TOOLS.find(t => t.isNext) || TOOLS.find(t => t.state === 'progress') || TOOLS[0];
+  content.appendChild(el('a', {
+    class: 'btn-primary',
+    href: '#',
+    onClick: e => { e.preventDefault(); launchTool(nextTool); }
+  }, [health.allPct === 0 ? 'Initialize Soul Map →' : `Resume: ${nextTool.name} →`]));
+
+  section.appendChild(content);
+  return section;
+}
+
+// FIX #12: startCardIdx passed in so animation delays are computed from a correct
+// running total — was hardcoded as (idx * 5) + tIdx which assumed 5 tools per phase.
+function buildPhaseSection(phaseDef, phaseTools, idx, startCardIdx) {
+  const section = el('div', {
+    id: `phase-${phaseDef.n}`,
+    class: 'phase-section animate-cascade',
+    style: { '--idx': idx + 1, '--phase-color': phaseDef.color, '--phase-rgb': phaseDef.rgb }
+  });
+
+  section.appendChild(el('div', { class: 'phase-header' }, [
+    el('div', { class: 'phase-header-left' }, [
+      el('span', { class: 'font-mono phase-num' }, phaseDef.id),
+      el('h2',  { class: 'title-medium font-serif', style: { color: 'var(--text-1)' } }, phaseDef.label)
+    ])
+  ]));
+
+  const grid = el('div', { class: 'phase-grid' });
+
+  phaseTools.forEach((tool, tIdx) => {
+    const cardIdx = startCardIdx + tIdx; // FIX #12
+
+    const card = el('div', {
+      class: `tool-card glass-card state-${tool.state} animate-cascade${tool.isNext ? ' is-next' : ''}`,
+      style: { '--idx': cardIdx }
+    });
+
+    if (tool.isNext) {
+      card.appendChild(el('div', { class: 'start-badge label-mono' }, 'Next Recommended'));
+    }
+
+    // FIX #15: card-title class added so CSS margin-bottom:8px applies to tool name
+    card.appendChild(el('div', { class: 'card-header' }, [
+      el('div', { class: 'card-icon font-serif' }, tool.icon),
+      el('div', { class: 'title-small font-serif card-title', style: { color: 'var(--text-1)' } }, tool.name)
+    ]));
+
+    card.appendChild(el('div', { class: 'body-regular card-desc' }, tool.desc));
+
+    const footer = el('div', { class: 'card-footer' });
+
+    const statusMap = { completed: ['✓', 'Completed'], progress: ['—', 'Ready'], locked: ['×', 'Locked'] };
+    const [icon, text] = statusMap[tool.state] || ['×', 'Locked'];
+    footer.appendChild(el('div', { class: `card-status status-${tool.state} label-mono` }, [
+      el('span', {}, icon + ' ' + text)
+    ]));
+
+    if (tool.state !== 'locked') {
+      footer.appendChild(el('span', { class: 'card-btn' },
+        tool.state === 'completed' ? 'Review →' : 'Launch →'
+      ));
+      // FIX #14: addEventListener used — was card.onclick = ... (direct assignment),
+      // inconsistent with the el() helper's onClick → addEventListener pattern
+      card.addEventListener('click', () => launchTool(tool));
+    } else {
+      footer.appendChild(el('div', { class: 'label-mono', style: { color: 'var(--text-4)' } }, 'Req: Core QBP'));
+    }
+
+    card.appendChild(footer);
+    grid.appendChild(card);
+  });
+
+  section.appendChild(grid);
+  return section;
+}
+
+function launchTool(tool) {
+  if (tool.state === 'locked') return;
+
+  // FIX #3: Access tier enforced for gated tools — was completely absent; any free user
+  // with a complete QBP could open the Predictive Panel
+  if (tool.id === 'panel' && !window.QB_HAS_ACCESS('panel')) {
+    showNotif('Predictive Panel requires a Pro or Agency plan.');
+    return;
+  }
+
+  const params = new URLSearchParams();
+  const provider = localStorage.getItem('qb_provider');
+  if (provider) params.set('provider', provider);
+
+  // Security: API key NOT passed via URL — visible in address bar, server logs, Referer headers.
+  // Tool pages on the same origin read qb_apikey from localStorage directly.
+
+  // FIX #8: QBP encoded and passed via URL so tools open with fresh context even in
+  // edge cases (private tabs, cross-session). The load() decode path exists in all tools.
+  const qbpStr = localStorage.getItem('qb_qbp');
+  if (qbpStr) {
+    try { params.set('qbp', btoa(qbpStr)); } catch(e) {}
+  }
+
+  const qs = params.toString();
+  // Security: noopener,noreferrer prevents reverse tabnapping via window.opener
+  window.open(qs ? `${tool.file}?${qs}` : tool.file, '_blank', 'noopener,noreferrer');
+}
+
+function render() {
+  computeToolStates();
+  const health = getHealth();
+
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  app.appendChild(buildHeader());
+
+  const main = el('main', { class: 'container' });
+  main.appendChild(buildHealthMeter(health));
+
+  // FIX #12: Running counter tracks true tool count across phases for correct animation delays
+  let toolRunningIdx = 2; // 0 = meter, 1 = first phase section header offset
+  PHASES.forEach((phaseDef, idx) => {
+    const phaseTools = TOOLS.filter(t => t.ph === phaseDef.n);
+    if (phaseTools.length > 0) {
+      main.appendChild(buildPhaseSection(phaseDef, phaseTools, idx, toolRunningIdx));
+      toolRunningIdx += phaseTools.length;
+    }
+  });
+
+  app.appendChild(main);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+load();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Instagram Seed Content Agent</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- QB BrandOS Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script>
+// Theme init & Flash Prevention
+(function() {
+  try {
+    var theme = localStorage.getItem('qb-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    window.toggleTheme = function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('qb-theme', next);
+    };
+  } catch(e) {}
+})();
+</script>
+
+<style>
+/* Flash prevention default */
+html:not([data-theme]) { background: #080604; color: #A89A88; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140,110,70,0.045);
+  --bg-elevated: rgba(140,110,70,0.07);
+  --bg-overlay: rgba(18,15,10,0.85);
+
+  --border-subtle: rgba(140,110,70,0.06);
+  --border-medium: rgba(140,110,70,0.11);
+  --border-strong: rgba(140,110,70,0.18);
+
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58,95,74,0.2);
+  --patina-faint: rgba(58,95,74,0.08);
+
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168,144,62,0.18);
+  --brass-faint: rgba(168,144,62,0.06);
+
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04);
+  --bg-elevated: rgba(100,80,50,0.07);
+  --bg-overlay: rgba(244,240,235,0.9);
+
+  --border-subtle: rgba(100,80,50,0.08);
+  --border-medium: rgba(100,80,50,0.14);
+  --border-strong: rgba(100,80,50,0.22);
+
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46,78,60,0.15);
+  --patina-faint: rgba(46,78,60,0.06);
+
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138,116,48,0.15);
+  --brass-faint: rgba(138,116,48,0.05);
+
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+}
+
+body {
+    background: var(--bg-void);
+    color: var(--text-2);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Film Grain */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+/* Warm Vignette */
+.main-vignette::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+}
+[data-theme="light"] .main-vignette::before {
+    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+/* Typography */
+h1, h2, h3, .font-serif {
+    font-family: var(--font-serif);
+    color: var(--text-1);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+}
+
+/* Forms */
+input, textarea, select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+    transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease, color .25s ease;
+}
+input::placeholder, textarea::placeholder, select::placeholder {
+    color: var(--text-3);
+    font-style: italic;
+    opacity: 0.7;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: var(--patina);
+    box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+}
+textarea { resize: vertical; line-height: 1.6; }
+select option { background: var(--bg-base); }
+button { cursor: pointer; font-family: var(--font-sans); border: none; outline: none; }
+
+/* Buttons */
+.btn-primary {
+    background: var(--patina);
+    color: #E6DDD0;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 13px 30px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.btn-primary:hover:not(:disabled) {
+    background: var(--patina-lit);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 24px -4px rgba(58,95,74,0.4), 0 0 0 1px rgba(168,144,62,0.15);
+}
+.btn-primary:disabled {
+    background: var(--bg-surface);
+    color: var(--text-3);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: 1px solid var(--border-medium);
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.btn-secondary:hover {
+    background: var(--bg-surface);
+    color: var(--text-1);
+    border-color: var(--border-strong);
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-3);
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    cursor: pointer;
+}
+.tab-btn:hover { color: var(--text-2); }
+.tab-btn.active {
+    background: var(--patina-faint);
+    border-color: var(--patina-dim);
+    color: var(--patina);
+}
+
+/* QB Signature Elements */
+.glass-card {
+    background: var(--bg-overlay);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+}
+[data-theme="dark"] .glass-card::before {
+    content: '';
+    position: absolute;
+    top: -30%; left: -10%;
+    width: 60%; height: 60%;
+    background: radial-gradient(ellipse at center, rgba(168,144,62,0.035) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.pulse-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--brass);
+    box-shadow: 0 0 8px rgba(168,144,62,0.7), 0 0 2px rgba(168,144,62,1);
+    animation: beat 3s ease infinite;
+}
+[data-theme="light"] .pulse-dot {
+    box-shadow: 0 0 8px rgba(138,116,48,0.7), 0 0 2px rgba(138,116,48,1);
+}
+
+.manifesto-block {
+    position: relative;
+    padding: 24px 0 24px 24px;
+}
+.manifesto-block::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--brass-dim);
+}
+
+/* Animations */
+@keyframes beat {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    12% { transform: scale(1.35); opacity: 1; }
+    24% { transform: scale(0.95); opacity: 0.6; }
+    36% { transform: scale(1.15); opacity: 1; }
+    48% { transform: scale(1); opacity: 0.7; }
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scanH { 0% { transform: translateX(-180%); } 100% { transform: translateX(320%); } }
+
+.fade-in { animation: fadeIn .4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.stagger-in > * { animation: fadeInUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.stagger-in > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-in > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-in > *:nth-child(8) { animation-delay: 0.4s; }
+.stagger-in > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger-in > *:nth-child(10) { animation-delay: 0.5s; }
+.stagger-in > *:nth-child(11) { animation-delay: 0.55s; }
+.stagger-in > *:nth-child(12) { animation-delay: 0.6s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+.scan-line { position: relative; overflow: hidden; }
+.scan-line::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, var(--patina-faint), transparent);
+    animation: scanH 3s linear infinite;
+}
+
+/* Component specifics */
+.post-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color .3s ease, border-color .3s ease, transform .3s ease, box-shadow .3s ease;
+}
+.post-card:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+}
+.post-card.selected {
+    background: var(--bg-base);
+    border-color: var(--patina);
+    box-shadow: 0 0 0 1px var(--patina-faint);
+}
+
+.grid-cell {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: all .2s ease;
+    border: 1px solid var(--border-medium);
+}
+.grid-cell:hover { border-color: var(--border-strong); }
+.grid-cell.active-cell {
+    border-color: var(--patina);
+    box-shadow: 0 0 0 1px var(--patina-faint), inset 0 0 12px rgba(58,95,74,0.1);
+}
+
+.pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    margin: 2px 4px 2px 0;
+    letter-spacing: 0.05em;
+}
+.pill-neutral {
+    background: var(--bg-surface);
+    color: var(--text-2);
+    border: 1px solid var(--border-medium);
+}
+</style>
+
+<script>
+// QB_SPINE v3 — hardened API adapter + base64url-safe QBP decoding
+(function(){
+  var params = new URLSearchParams(window.location.search);
+
+  function decodeQBP(value){
+    if(!value) return null;
+    try{
+      var normalized = value.replace(/-/g,'+').replace(/_/g,'/').replace(/\s/g,'+');
+      while(normalized.length % 4) normalized += '=';
+      return atob(normalized);
+    }catch(e){
+      return null;
+    }
+  }
+
+  var urlQBP = params.get('qbp');
+  if(urlQBP){
+    try{
+      var decoded = decodeQBP(urlQBP);
+      if(decoded) localStorage.setItem('qb_qbp', decoded);
+      else localStorage.setItem('qb_qbp_error', 'Invalid qbp payload');
+    }catch(e){
+      localStorage.setItem('qb_qbp_error', 'Invalid qbp payload');
+    }
+  }
+
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }
+  catch(e){ window.QB_QBP = {}; }
+
+  window.QB_API = async function(payload){
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    var raw = await res.text();
+    var data = {};
+    try { data = raw ? JSON.parse(raw) : {}; }
+    catch(e){
+      throw new Error('Invalid JSON response from /api/claude');
+    }
+
+    if(!res.ok){
+      var message = (data && data.error && data.error.message) || data.message || ('HTTP ' + res.status + ': ' + res.statusText);
+      throw new Error(message);
+    }
+
+    if(data.error){
+      throw new Error(data.error.message || data.error || 'Unknown API error');
+    }
+
+    return data;
+  };
+
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var data = await window.QB_API({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    });
+
+    var textBlock = data && data.content && data.content[0] && data.content[0].text;
+    if(!textBlock) throw new Error('No text returned from AI response');
+    return textBlock;
+  };
+})();</script>
+</head>
+<body class="main-vignette">
+<div id="root" style="position: relative; z-index: 2;"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+
+// ── CONSTANTS ──────────────────────────────────────────────────────────────────
+const CONTENT_ARCS = [
+  {id:'identity',label:'Identity arc',desc:'Posts 1-3 establish WHO you are — energy, philosophy, force'},
+  {id:'belief',label:'Belief arc',desc:'Posts 4-6 establish WHAT you stand for — manifesto, stance, conviction'},
+  {id:'work',label:'Work arc',desc:'Posts 7-9 introduce WHAT you do — method, transformation, offer'},
+  {id:'community',label:'Community arc',desc:'Posts 10-12 build belonging — proof, invitation, belonging signal'},
+];
+
+const POST_TYPES = ['Single image','Carousel','Reel script','Quote graphic','Behind the scenes','Case study reveal','Manifesto post','Question post','Before/After','Story series'];
+const ARCHETYPES = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
+const NATURAL_FORCES = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
+
+// Entangled Time Phase Color Mappings
+const ARC_COLORS = {
+    identity: '#4A7A5E', // Discovery/Patina
+    belief: '#4A7A8A',   // Creation/Teal
+    work: '#8A5A5A',     // Content/Rose
+    community: '#5A7A6A' // Execution/Sage
+};
+const ARC_BG = {
+    identity: 'rgba(74, 122, 94, 0.08)',
+    belief: 'rgba(74, 122, 138, 0.08)',
+    work: 'rgba(138, 90, 90, 0.08)',
+    community: 'rgba(90, 122, 106, 0.08)'
+};
+const ARC_BORDER = {
+    identity: 'rgba(74, 122, 94, 0.25)',
+    belief: 'rgba(74, 122, 138, 0.25)',
+    work: 'rgba(138, 90, 90, 0.25)',
+    community: 'rgba(90, 122, 106, 0.25)'
+};
+
+const normalizeArc = (arc, index) => {
+  if (arc && ARC_COLORS[arc]) return arc;
+  if (index < 3) return 'identity';
+  if (index < 6) return 'belief';
+  if (index < 9) return 'work';
+  return 'community';
+};
+
+const sectionNumber = (number) => String(number).padStart(2, '0');
+
+const stripCodeFence = (raw='') => raw
+  .replace(/^```json\s*/i,'')
+  .replace(/^```\s*/i,'')
+  .replace(/\s*```$/,'')
+  .trim();
+
+// ── SHARED UI ──────────────────────────────────────────────────────────────────
+const MonoLabel=({c,children,mb=8})=><div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'.15em',color:c||'var(--text-3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
+const Card=({children,accent,style={}})=><div className="glass-card" style={{border:`1px solid ${accent||'var(--border-subtle)'}`,padding:'24px',...style}}>{children}</div>;
+const TF=({label,value,onChange,placeholder,rows=1,hint})=>(
+  <div style={{marginBottom:16}}>
+    <MonoLabel>{label}</MonoLabel>
+    {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+    :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
+    {hint&&<div style={{fontSize:12,color:'var(--text-3)',marginTop:6,fontStyle:'italic'}}>{hint}</div>}
+  </div>
+);
+const SF=({label,options,value,onChange})=>(
+  <div style={{marginBottom:16}}>
+    <MonoLabel>{label}</MonoLabel>
+    <select value={value} onChange={e=>onChange(e.target.value)}>
+      <option value="">— select —</option>
+      {options.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
+const Section=({title,number,children,note})=>(
+  <div style={{marginBottom:40}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:16,marginBottom:20,paddingBottom:12,borderBottom:'1px solid var(--border-medium)'}}>
+      <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--patina)',letterSpacing:'.2em'}}>{sectionNumber(number)}</span>
+      <span style={{fontFamily:'var(--font-serif)',fontSize:24,fontWeight:400,color:'var(--text-1)'}}>{title}</span>
+      {note&&<span style={{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',marginLeft:'auto',textTransform:'uppercase',letterSpacing:'.1em'}}>{note}</span>}
+    </div>
+    {children}
+  </div>
+);
+
+// ── GRID VIEW ─────────────────────────────────────────────────────────────────
+const GridView=({posts,selected,onSelect})=>{
+  if(!posts?.length) return null;
+    return(
+    <div>
+      <MonoLabel c="var(--text-3)" mb={16}>Grid preview — 12-post sequence</MonoLabel>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:6,marginBottom:24}}>
+        {posts.map((p,i)=>{
+          const arc=normalizeArc(p.arc, i);
+          const isSelected=selected===i;
+          return(
+            <div key={i} className={`grid-cell${isSelected?' active-cell':''}`}
+              onClick={()=>onSelect(i)}
+              style={{background:isSelected?ARC_BG[arc]:'var(--bg-surface)',flexDirection:'column',gap:8,padding:8}}
+            >
+              <div style={{width:'100%',height:'70%',background:ARC_BG[arc],border:`1px solid ${ARC_BORDER[arc]}`,borderRadius:4,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:ARC_COLORS[arc],letterSpacing:'.1em'}}>{String(i+1).padStart(2,'0')}</span>
+              </div>
+              <div style={{fontSize:9,color:'var(--text-3)',textAlign:'center',lineHeight:1.3,overflow:'hidden',maxHeight:28,fontFamily:'var(--font-mono)'}}>
+                {p.postType}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Arc legend */}
+      <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+        {CONTENT_ARCS.map(a=>(
+          <div key={a.id} style={{display:'flex',alignItems:'center',gap:6,fontSize:11,color:'var(--text-3)',fontFamily:'var(--font-sans)'}}>
+            <div style={{width:8,height:8,borderRadius:2,background:ARC_COLORS[a.id]}}/>
+            {a.label}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ── POST DETAIL ───────────────────────────────────────────────────────────────
+const PostDetail=({post,index,onCopyCaption})=>{
+  const [tab,setTab]=useState('caption');
+  if(!post) return null;
+    const arc=normalizeArc(post.arc, index);
+  const arcColor=ARC_COLORS[arc];
+  const tabs=['caption','visual','hook','hashtags'];
+
+  return(
+    <div className="fade-in">
+      {/* Post header */}
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:20,gap:16}}>
+        <div>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+            <span style={{fontFamily:'var(--font-mono)',fontSize:10,color:arcColor,border:`1px solid ${ARC_BORDER[arc]}`,padding:'4px 10px',borderRadius:4}}>
+              {String(index+1).padStart(2,'0')} / {CONTENT_ARCS.find(a=>a.id===arc)?.label.toUpperCase()}
+            </span>
+            <span style={{fontSize:12,color:'var(--text-3)',fontFamily:'var(--font-mono)'}}>{post.postType}</span>
+          </div>
+          <div style={{fontFamily:'var(--font-serif)',fontSize:24,fontWeight:400,color:'var(--text-1)',lineHeight:1.3}}>{post.postTitle}</div>
+        </div>
+        <button onClick={()=>onCopyCaption(post.caption)} className="btn-secondary" style={{flexShrink:0}}>Copy</button>
+      </div>
+
+      {/* Tabs */}
+      <div style={{display:'flex',gap:6,marginBottom:20}}>
+        {tabs.map(t=><button key={t} className={`tab-btn${tab===t?' active':''}`} onClick={()=>setTab(t)}>{t}</button>)}
+      </div>
+
+      {/* Caption */}
+      {tab==='caption'&&(
+        <div className="fade-in stagger-in">
+          <div style={{background:'var(--bg-void)',border:`1px solid ${ARC_BORDER[arc]}`,borderRadius:10,padding:'24px',fontSize:14,lineHeight:1.8,color:'var(--text-1)',whiteSpace:'pre-wrap',marginBottom:16}}>
+            {post.caption}
+          </div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:12}}>
+            <span style={{fontSize:12,color:'var(--text-3)',marginTop:2}}>Goal:</span>
+            <span className="pill pill-neutral">{post.goal}</span>
+          </div>
+          {post.cta&&(
+            <div style={{background:'var(--bg-surface)',border:'1px solid var(--border-medium)',borderRadius:8,padding:'12px 16px'}}>
+              <span style={{fontSize:11,fontFamily:'var(--font-mono)',color:'var(--patina)',letterSpacing:'.15em'}}>CTA → </span>
+              <span style={{fontSize:13,color:'var(--text-2)'}}>{post.cta}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Visual Brief */}
+      {tab==='visual'&&(
+        <div className="fade-in stagger-in">
+          <Card accent={ARC_BORDER[arc]} style={{marginBottom:16}}>
+            <MonoLabel c={arcColor}>Visual direction</MonoLabel>
+            <p style={{fontSize:14,lineHeight:1.7,color:'var(--text-1)',marginBottom:16}}>{post.visualBrief}</p>
+            {post.colorMood&&(
+              <div style={{marginBottom:10}}>
+                <span style={{fontSize:12,color:'var(--text-3)'}}>Color mood: </span>
+                <span style={{fontSize:13,color:'var(--text-2)'}}>{post.colorMood}</span>
+              </div>
+            )}
+            {post.composition&&(
+              <div>
+                <span style={{fontSize:12,color:'var(--text-3)'}}>Composition: </span>
+                <span style={{fontSize:13,color:'var(--text-2)'}}>{post.composition}</span>
+              </div>
+            )}
+          </Card>
+          {post.midjourney&&(
+            <div>
+              <MonoLabel c="var(--brass)">Midjourney prompt</MonoLabel>
+              <div style={{background:'var(--bg-void)',border:'1px solid var(--border-medium)',borderRadius:8,padding:'16px',fontFamily:'var(--font-mono)',fontSize:12,lineHeight:1.7,color:'var(--text-2)',wordBreak:'break-word'}}>
+                {post.midjourney}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Hook analysis */}
+      {tab==='hook'&&(
+        <div className="fade-in stagger-in">
+          <div className="manifesto-block glass-card" style={{marginBottom:16}}>
+            <MonoLabel c={arcColor}>Opening hook</MonoLabel>
+            <p style={{fontFamily:'var(--font-serif)', fontSize:20, lineHeight:1.6, color:'var(--text-1)', fontStyle:'italic', marginBottom:12}}>"{post.hook}"</p>
+            <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7}}>{post.hookAnalysis}</p>
+          </div>
+          {post.psychologicalTrigger&&(
+            <Card>
+              <MonoLabel>Psychological mechanism</MonoLabel>
+              <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7}}>{post.psychologicalTrigger}</p>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* Hashtags */}
+      {tab==='hashtags'&&(
+        <div className="fade-in stagger-in">
+          <div style={{marginBottom:16}}>
+            <MonoLabel c="var(--text-3)" mb={12}>First comment hashtags</MonoLabel>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+              {post.hashtags?.map((h,i)=><span key={i} className="pill pill-neutral">#{h}</span>)}
+            </div>
+          </div>
+          {post.hashtagStrategy&&(
+            <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7,padding:'16px',background:'var(--bg-surface)',borderRadius:8, border:'1px solid var(--border-medium)'}}>
+              {post.hashtagStrategy}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── STRATEGY OVERVIEW ─────────────────────────────────────────────────────────
+const StrategyPanel=({data})=>{
+  if(!data?.strategy) return null;
+  return(
+    <div className="fade-in stagger-in" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{background:'var(--bg-surface)',border:'1px solid var(--border-medium)',borderLeft:'2px solid var(--patina)',borderRadius:10,padding:'24px 28px'}} className="scan-line">
+        <MonoLabel c="var(--patina)">Strategic intent</MonoLabel>
+        <p style={{fontFamily:'var(--font-serif)', fontSize:20, lineHeight:1.6, color:'var(--text-1)'}}>{data.strategy.intent}</p>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        {CONTENT_ARCS.map(arc=>(
+          <Card key={arc.id} accent={ARC_BORDER[arc.id]}>
+            <MonoLabel c={ARC_COLORS[arc.id]}>{arc.label}</MonoLabel>
+            <div style={{fontSize:12,color:'var(--text-3)',marginBottom:12,fontStyle:'italic'}}>{arc.desc}</div>
+            <p style={{fontSize:13,color:'var(--text-1)',lineHeight:1.7}}>{data.strategy.arcIntentions?.[arc.id]}</p>
+          </Card>
+        ))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Card>
+          <MonoLabel>Posting sequence logic</MonoLabel>
+          <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7}}>{data.strategy.sequenceLogic}</p>
+        </Card>
+        <Card>
+          <MonoLabel>Grid aesthetic intention</MonoLabel>
+          <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7}}>{data.strategy.gridAesthetic}</p>
+        </Card>
+      </div>
+      {data.strategy.profileOptimizations&&(
+        <div className="manifesto-block glass-card">
+          <MonoLabel c="var(--brass)">Profile optimizations before first post</MonoLabel>
+          <ul style={{listStyle:'none',padding:0}}>
+            {data.strategy.profileOptimizations.map((o,i)=>(
+              <li key={i} style={{display:'flex',gap:12,padding:'10px 0',borderBottom:i<data.strategy.profileOptimizations.length-1?'1px solid var(--border-subtle)':'',fontSize:13,color:'var(--text-1)',lineHeight:1.6}}>
+                <span style={{color:'var(--brass)',flexShrink:0}}>→</span>{o}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+const STEPS=['QBP Input','Generating','Content Pack'];
+
+function App(){
+  const [step,setStep]=useState(0);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState('');
+  const [result,setResult]=useState(null);
+  const [selectedPost,setSelectedPost]=useState(0);
+  const [mainTab,setMainTab]=useState('grid');
+  const [copied,setCopied]=useState(false);
+
+  // QBP
+  const [brandName,setBrandName]=useState('');
+  const [brandEssence,setBrandEssence]=useState('');
+  const [manifestoLine,setManifestoLine]=useState('');
+  const [spark,setSpark]=useState('');
+  const [naturalForce,setNaturalForce]=useState('');
+  const [archetype,setArchetype]=useState('');
+  const [antiBrand,setAntiBrand]=useState('');
+  const [primaryPersona,setPrimaryPersona]=useState('');
+  const [offer,setOffer]=useState('');
+  const [voiceNotes,setVoiceNotes]=useState('');
+  const [visualNotes,setVisualNotes]=useState('');
+  const [colorPalette,setColorPalette]=useState('');
+  const [alwaysNever,setAlwaysNever]=useState('');
+  const [profileBio,setProfileBio]=useState('');
+  const [accountGoal,setAccountGoal]=useState('');
+
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.manifesto) setManifestoLine(q.manifesto);
+    if (q.spark) setSpark(q.spark);
+    if (q.naturalForce) setNaturalForce(q.naturalForce);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.antiBrand) setAntiBrand(q.antiBrand);
+    if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
+    if (q.offer) setOffer(q.offer);
+    if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+    if (q.visualNotes) setVisualNotes(q.visualNotes);
+    if (q.alwaysNever) setAlwaysNever(q.alwaysNever);
+    if (q.colorPalette) setColorPalette(q.colorPalette);
+    else if (q.colorTerritory) setColorPalette(q.colorTerritory);
+    if (q.profileBio) setProfileBio(q.profileBio);
+    if (q.accountGoal) setAccountGoal(q.accountGoal);
+  }, []);
+
+  const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona;
+
+  const buildPrompt=()=>`QUANTUM BRAND PROFILE:
+Brand: ${brandName}
+Essence: ${brandEssence}
+Manifesto: ${manifestoLine||'not specified'}
+The Spark: ${spark||'not specified'}
+Natural Force: ${naturalForce}
+Archetype: ${archetype}
+Anti-Brand: ${antiBrand||'not specified'}
+Primary Persona: ${primaryPersona}
+Core Offer: ${offer||'not specified'}
+Voice Notes: ${voiceNotes||'not specified'}
+Visual / Color: ${visualNotes||'not specified'} — Palette: ${colorPalette||'not specified'}
+Always/Never: ${alwaysNever||'not specified'}
+Profile Bio: ${profileBio||'not specified'}
+Account Goal: ${accountGoal||'Establish brand presence and attract ideal clients'}
+
+Return a JSON object with this EXACT structure:
+{
+  "strategy": {
+    "intent": "2-3 sentence strategic intent for this 12-post sequence",
+    "arcIntentions": {
+      "identity": "what the identity arc establishes for this specific brand",
+      "belief": "what the belief arc establishes",
+      "work": "what the work arc establishes",
+      "community": "what the community arc establishes"
+    },
+    "sequenceLogic": "why posts are ordered this way — psychological reasoning",
+    "gridAesthetic": "visual coherence intention — what the 12-post grid should feel like",
+    "profileOptimizations": ["specific bio tweak", "highlight cover direction", "profile photo direction", "link in bio strategy"]
+  },
+  "posts": [
+    {
+      "postNumber": 1,
+      "arc": "identity",
+      "postTitle": "short descriptive title for this post",
+      "postType": "Single image | Carousel | Reel script | Quote graphic",
+      "goal": "what this specific post achieves",
+      "hook": "the exact first line — the opening hook that stops the scroll",
+      "hookAnalysis": "why this hook works for this brand and this persona",
+      "caption": "the full caption exactly as it would be posted — in the brand's voice, with line breaks, all elements included",
+      "cta": "the call to action",
+      "visualBrief": "specific visual direction — what is in the image, how it's shot, what it communicates",
+      "colorMood": "color mood for this specific post",
+      "composition": "composition direction",
+      "midjourney": "complete Midjourney v6 prompt for the visual",
+      "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5","hashtag6","hashtag7","hashtag8","hashtag9","hashtag10"],
+      "hashtagStrategy": "why these hashtags — mix of reach, niche, and brand",
+      "psychologicalTrigger": "the psychological mechanism this post activates in the ideal persona"
+    }
+  ]
+}
+
+CRITICAL REQUIREMENTS:
+- All 12 posts must be fully written — captions complete, ready to post
+- Posts 1-3 arc=identity, 4-6 arc=belief, 7-9 arc=work, 10-12 arc=community
+- Every caption must sound unmistakably like THIS brand's voice — not generic Instagram content
+- Hooks must be specific and scroll-stopping — no generic openers
+- Visual briefs must be specific enough to brief a photographer or AI
+- Each post must serve its arc purpose while building on the previous
+- The 12 posts together tell a complete brand introduction story`;
+
+  const systemPrompt = `You are the Instagram Seed Content Agent inside the Quantum Branding BrandOS ecosystem.
+Your function is to generate the first 12 Instagram posts for a brand — the posts that introduce the brand to the world, establish its identity, and invite its audience into its universe.
+These are not random posts. They follow a strategic 4-arc sequence: Identity (1-3), Belief (4-6), Work (7-9), Community (10-12).
+Every post must sound like this specific brand — on-voice, on-visual, strategically positioned.
+Return ONLY valid JSON — no markdown, no preamble.`;
+
+  const run=async()=>{
+    if(!isValid()){
+      setError('Complete the required fields (*).');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+    setStep(1);
+
+    try{
+      const raw = await window.QB_AI(systemPrompt, buildPrompt(), 8000);
+      const parsed = JSON.parse(stripCodeFence(raw));
+
+      if(!parsed || !Array.isArray(parsed.posts) || parsed.posts.length !== 12){
+        throw new Error('The agent returned an invalid post pack. Expected exactly 12 posts.');
+      }
+
+      const normalizedPosts = parsed.posts.map((post, index) => ({
+        ...post,
+        postNumber: post.postNumber || index + 1,
+        arc: normalizeArc(post.arc, index),
+        hashtags: Array.isArray(post.hashtags) ? post.hashtags : []
+      }));
+
+      setResult({ ...parsed, posts: normalizedPosts });
+      setSelectedPost(0);
+      setMainTab('grid');
+      setStep(2);
+    }catch(e){
+      setError('Agent error: ' + (e.message || 'Unknown error'));
+      setStep(0);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const copyCaption=async(text)=>{
+    try{await navigator.clipboard.writeText(text);setCopied(true);setTimeout(()=>setCopied(false),2000);}
+    catch(e){}
+  };
+
+  const exportPack=()=>{
+    const lines=['INSTAGRAM SEED CONTENT PACK','Generated by QB BrandOS — Instagram Seed Content Agent','',`Brand: ${brandName}`,'='.repeat(60),''];
+    result?.posts?.forEach(p=>{
+      lines.push(`POST ${String(p.postNumber).padStart(2,'0')} — ${p.arc.toUpperCase()} ARC`);
+      lines.push(`Type: ${p.postType} | Goal: ${p.goal}`);
+      lines.push('');
+      lines.push('CAPTION:');
+      lines.push(p.caption);
+      lines.push('');
+      lines.push(`CTA: ${p.cta||'—'}`);
+      lines.push('');
+      lines.push('VISUAL BRIEF:');
+      lines.push(p.visualBrief);
+      lines.push('');
+      lines.push('HASHTAGS:');
+      lines.push(p.hashtags?.map(h=>'#'+h).join(' ')||'');
+      lines.push('');
+      lines.push('-'.repeat(60));
+      lines.push('');
+    });
+    const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+    const a=document.createElement('a');
+    const url=URL.createObjectURL(blob);
+    a.href=url;
+    a.download=`${brandName.replace(/\s+/g,'-').toLowerCase()}-instagram-12-posts.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const posts=result?.posts||[];
+  
+  return(
+    <div style={{position:'relative', zIndex:2, display:'flex', flexDirection:'column', minHeight:'100vh'}}>
+
+      {/* HEADER */}
+      <div style={{padding:'16px 24px 0', position:'sticky', top:0, zIndex:50}}>
+        <header className="glass-card" style={{padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+            <div style={{display:'flex', alignItems:'center', gap:16}}>
+                <div className="pulse-dot"></div>
+                <div style={{fontFamily:'var(--font-serif)', fontSize:18, color:'var(--text-1)', letterSpacing:'-0.01em'}}>QB BrandOS</div>
+                <div style={{width:1, height:14, background:'var(--border-strong)'}}/>
+                <div style={{fontFamily:'var(--font-mono)', fontSize:10, letterSpacing:'.15em', color:'var(--text-3)', textTransform:'uppercase'}}>Instagram Seed Agent</div>
+            </div>
+            <div style={{display:'flex', gap:20, alignItems:'center'}}>
+            <div style={{display:'flex', gap:6, alignItems:'center'}} className="hide-mobile">
+                {STEPS.map((s,i)=>(
+                    <React.Fragment key={i}>
+                    <div style={{display:'flex',alignItems:'center',gap:6}}>
+                        <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--patina)':i===step?'var(--patina)':'var(--border-strong)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 8px var(--patina-dim)':''}}/>
+                        <span style={{fontSize:10,color:i<=step?'var(--text-2)':'var(--text-4)',fontFamily:'var(--font-mono)',letterSpacing:'.1em', textTransform:'uppercase'}}>{s}</span>
+                    </div>
+                    {i<STEPS.length-1&&<div style={{width:16,height:1,background:'var(--border-medium)',margin:'0 4px'}}/>}
+                    </React.Fragment>
+                ))}
+            </div>
+            <button onClick={()=>window.toggleTheme()} className="btn-secondary" style={{padding:'6px 12px'}}>Theme</button>
+            </div>
+        </header>
+      </div>
+
+      <main style={{flex:1,maxWidth:1100,margin:'0 auto',width:'100%',padding:'48px 24px'}}>
+
+        {/* ── STEP 0: INPUT ── */}
+        {step===0&&(
+          <div className="fade-in stagger-in">
+            <div style={{marginBottom:56}}>
+              <MonoLabel c="var(--patina)">// Phase 03 — Content Creation</MonoLabel>
+              <h1 style={{fontSize:46, lineHeight:1.1, marginBottom:16}}>Instagram Seed Content Agent</h1>
+              <p style={{color:'var(--text-2)',fontSize:16,lineHeight:1.7,maxWidth:600}}>Feed the QBP. The agent generates the first 12 posts — fully written captions, visual briefs, Midjourney prompts, hooks, hashtags — as a complete content pack ready to publish.</p>
+            </div>
+
+            <Section number={1} title="Brand Core" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand entering Instagram" rows={1}/>
+                <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
+              </div>
+              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth — one sentence" rows={2}/>
+              <TF label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The belief that drives everything" rows={1}/>
+              <TF label="The Spark — narrative synthesis" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what it is here to do" rows={3}/>
+            </Section>
+
+            <Section number={2} title="Identity + Audience" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
+                <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be" rows={1}/>
+              </div>
+              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who is following this account — their state, desire, what they carry. Be specific." rows={3}
+                hint="The more specific, the more precisely targeted every post will be"/>
+              <TF label="Core Offer" value={offer} onChange={setOffer} placeholder="What this brand sells or does — the transformation it provides" rows={2}/>
+              <TF label="Account Goal" value={accountGoal} onChange={setAccountGoal} placeholder="e.g. Build authority, attract discovery call bookings, grow waitlist, sell digital product" rows={1}/>
+            </Section>
+
+            <Section number={3} title="Voice + Visual System">
+              <TF label="Voice Notes — how this brand writes" value={voiceNotes} onChange={setVoiceNotes} placeholder="e.g. Short declarative sentences. Challenge-first. No filler. Sounds like Dieter Rams meets Virgil Abloh." rows={2}/>
+              <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="e.g. Always: direct, one idea per post. Never: motivational quotes, hashtag stuffing, generic captions." rows={2}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <TF label="Visual Direction" value={visualNotes} onChange={setVisualNotes} placeholder="e.g. Dark, editorial, architectural. Strong shadows. Minimal text on image." rows={2}/>
+                <TF label="Color Palette" value={colorPalette} onChange={setColorPalette} placeholder="e.g. Deep black, warm amber, aged bronze. No bright colors." rows={2}/>
+              </div>
+            </Section>
+
+            <Section number={4} title="Profile Context">
+              <TF label="Current or intended bio" value={profileBio} onChange={setProfileBio} placeholder="The bio text — the agent will suggest optimizations" rows={2}/>
+            </Section>
+
+            {error&&<div style={{background:'var(--bg-surface)',border:'1px solid #8A4A4A',borderRadius:8,padding:'14px 20px',marginBottom:24,fontSize:14,color:'#8A4A4A'}}>{error}</div>}
+
+            <div style={{display:'flex',justifyContent:'flex-end'}}>
+              <button onClick={run} disabled={!isValid() || loading} className="btn-primary">
+                {loading ? 'Generating…' : 'Generate 12 Posts →'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 1: GENERATING ── */}
+        {step===1&&(
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:460,gap:32,textAlign:'center'}}>
+            <div className="pulse-dot" style={{width: 12, height: 12}}></div>
+            <div>
+              <div style={{fontFamily:'var(--font-serif)', fontSize:28, color:'var(--text-1)', marginBottom: 16}}>Agent Processing</div>
+              <div style={{color:'var(--text-2)',fontSize:15,lineHeight:2.2,maxWidth:420, fontFamily:'var(--font-sans)'}}>
+                Reading Quantum Brand Profile<br/>
+                Mapping 12-post strategic arc sequence<br/>
+                Writing captions in brand voice<br/>
+                Building visual briefs from identity data<br/>
+                Generating Midjourney prompts<br/>
+                Analyzing hooks for persona resonance<br/>
+                Building hashtag architecture<br/>
+                Assembling content pack...
+              </div>
+            </div>
+            <div style={{fontSize:11,color:'var(--text-3)',fontFamily:'var(--font-mono)', letterSpacing:'.15em', textTransform:'uppercase'}}>12 posts · 4 arcs · complete pack</div>
+          </div>
+        )}
+
+        {/* ── STEP 2: CONTENT PACK ── */}
+        {step===2&&result&&(
+          <div className="fade-in stagger-in">
+            {/* Header */}
+            <div style={{marginBottom:32,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16}}>
+              <div>
+                <MonoLabel c="var(--patina)">// Content Pack — 12 Posts Complete</MonoLabel>
+                <h1 style={{fontSize:36,marginBottom:8}}>{brandName}</h1>
+                <p style={{color:'var(--text-2)',fontSize:14}}>First 12 posts · 4-arc sequence · ready to publish</p>
+              </div>
+              <div style={{display:'flex',gap:12,alignItems:'center', marginTop:16}}>
+                {copied&&<span style={{fontSize:11,color:'var(--patina)',fontFamily:'var(--font-mono)',textTransform:'uppercase'}}>Copied ✓</span>}
+                <button onClick={exportPack} className="btn-secondary">Export Pack</button>
+                <button onClick={()=>{setStep(0);setResult(null);}} className="btn-secondary">New Pack</button>
+              </div>
+            </div>
+
+            {/* Main tabs */}
+            <div style={{display:'flex',gap:8,marginBottom:32,paddingBottom:16,borderBottom:'1px solid var(--border-medium)'}}>
+              {['grid','list','strategy'].map(t=>(
+                <button key={t} className={`tab-btn${mainTab===t?' active':''}`} onClick={()=>setMainTab(t)}>
+                  {t==='grid'?'Grid View':t==='list'?'Post List':'Strategy'}
+                </button>
+              ))}
+            </div>
+
+            {/* Strategy tab */}
+            {mainTab==='strategy'&&<StrategyPanel data={result}/>}
+
+            {/* Grid + detail view */}
+            {mainTab==='grid'&&(
+              <div style={{display:'grid',gridTemplateColumns:'260px 1fr',gap:32,alignItems:'start'}}>
+                <GridView posts={posts} selected={selectedPost} onSelect={setSelectedPost}/>
+                <PostDetail post={posts[selectedPost]} index={selectedPost} onCopyCaption={copyCaption}/>
+              </div>
+            )}
+
+            {/* List view */}
+            {mainTab==='list'&&(
+              <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                {posts.map((p,i)=>{
+                  const arc=normalizeArc(p.arc, i);
+                  return(
+                    <div key={i} className={`post-card${selectedPost===i?' selected':''}`}
+                      onClick={()=>{setSelectedPost(i);setMainTab('grid');}}
+                      style={{padding:'20px 24px'}}
+                    >
+                      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:16}}>
+                        <div style={{display:'flex',alignItems:'center',gap:16,flex:1,minWidth:0}}>
+                          <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:ARC_COLORS[arc],border:`1px solid ${ARC_BORDER[arc]}`,padding:'4px 8px',borderRadius:4,flexShrink:0}}>
+                            {String(i+1).padStart(2,'0')}
+                          </span>
+                          <div style={{minWidth:0}}>
+                            <div style={{fontFamily:'var(--font-serif)',fontSize:18,color:'var(--text-1)',marginBottom:4,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{p.postTitle}</div>
+                            <div style={{fontSize:12,color:'var(--text-3)',fontFamily:'var(--font-mono)',textTransform:'uppercase'}}>{p.postType} · {CONTENT_ARCS.find(a=>a.id===arc)?.label}</div>
+                          </div>
+                        </div>
+                        <div style={{fontSize:13,color:'var(--text-2)',fontStyle:'italic',flexShrink:0,maxWidth:320,textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                          "{p.hook}"
+                        </div>
+                        <span style={{color:'var(--text-3)',fontSize:16,flexShrink:0}}>→</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+      </main>
+
+      <footer style={{borderTop:'1px solid var(--border-subtle)',padding:'24px',display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:'auto'}}>
+        <span style={{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',letterSpacing:'.15em'}}>Instagram Seed Agent / Phase 03</span>
+      </footer>
+    </div>
+  );
+}
+
+
+
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

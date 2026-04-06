@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Voice Guide Agent</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script>
+  /* FIX 6: theme init wrapped in try/catch — prevents crash in sandboxed iframe contexts */
+  (function(){
+    try {
+      var t = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch(e) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+
+<style>
+/* BASE & VARIABLES */
+html:not([data-theme]) { background:#080604; color:#A89A88; }
+
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140,110,70,0.045);
+  --bg-elevated: rgba(140,110,70,0.07);
+  --bg-overlay: rgba(18,15,10,0.85);
+  --border-subtle: rgba(140,110,70,0.06);
+  --border-medium: rgba(140,110,70,0.11);
+  --border-strong: rgba(140,110,70,0.18);
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58,95,74,0.2);
+  --patina-faint: rgba(58,95,74,0.08);
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168,144,62,0.18);
+  --brass-faint: rgba(168,144,62,0.06);
+  --phase-discovery: #4A7A5E;
+  --phase-creation: #4A7A8A;
+  --phase-content: #8A5A5A;
+  --phase-execution: #5A7A6A;
+  --phase-intel: #A8903E;
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+}
+
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04);
+  --bg-elevated: rgba(100,80,50,0.07);
+  --bg-overlay: rgba(244,240,235,0.9);
+  --border-subtle: rgba(100,80,50,0.08);
+  --border-medium: rgba(100,80,50,0.14);
+  --border-strong: rgba(100,80,50,0.22);
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46,78,60,0.15);
+  --patina-faint: rgba(46,78,60,0.06);
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138,116,48,0.15);
+  --brass-faint: rgba(138,116,48,0.05);
+  --phase-discovery: #2E5A42;
+  --phase-creation: #2E5A6A;
+  --phase-content: #6A3A3A;
+  --phase-execution: #3A5A4A;
+  --phase-intel: #8A7430;
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+}
+
+:root {
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg-void); color: var(--text-2); font-family: var(--font-sans); min-height: 100vh; overflow-x: hidden; }
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+.vignette { position: fixed; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(ellipse 80% 80% at 50% 20%, transparent 0%, var(--bg-deep) 100%); }
+[data-theme="light"] .vignette { background: radial-gradient(ellipse 80% 80% at 50% 20%, transparent 0%, rgba(200,190,175,0.15) 100%); }
+main { position: relative; z-index: 10; }
+
+.qb-input, .qb-select, .qb-textarea {
+  background: var(--bg-base); border: 1px solid var(--border-medium); color: var(--text-1);
+  font-family: var(--font-sans); border-radius: 8px; padding: 12px 16px; font-size: 14px;
+  width: 100%; outline: none; transition: all 0.25s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+.qb-textarea { resize: vertical; line-height: 1.7; }
+.qb-select option { background: var(--bg-base); color: var(--text-1); }
+.qb-input::placeholder, .qb-textarea::placeholder { color: var(--text-3); opacity: 0.7; font-style: italic; }
+.qb-input:focus, .qb-textarea:focus, .qb-select:focus { border-color: var(--patina); box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint); }
+
+button { cursor: pointer; font-family: var(--font-sans); border: none; outline: none; }
+
+.btn-primary {
+  background: var(--patina); color: #E6DDD0; font-weight: 600; font-size: 11px;
+  letter-spacing: 0.06em; text-transform: uppercase; padding: 13px 30px;
+  border-radius: 7px; transition: all 0.25s ease; border: 1px solid transparent;
+}
+.btn-primary:hover:not(:disabled) { background: var(--patina-lit); transform: translateY(-1px); box-shadow: 0 4px 24px -4px rgba(58,95,74,0.3), 0 0 0 1px var(--brass-faint); }
+.btn-primary:disabled { background: var(--bg-surface); color: var(--text-4); cursor: not-allowed; border: 1px solid var(--border-subtle); }
+
+.btn-secondary {
+  background: var(--bg-surface); border: 1px solid var(--border-medium); color: var(--text-2);
+  padding: 8px 16px; border-radius: 6px; font-size: 11px; font-family: var(--font-mono);
+  letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s ease;
+}
+.btn-secondary:hover { background: var(--bg-elevated); border-color: var(--border-strong); color: var(--text-1); }
+
+.glass-card {
+  background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-medium); border-radius: 12px; position: relative; overflow: hidden;
+}
+[data-theme="light"] .glass-card { background: var(--bg-overlay); }
+.glass-card::before {
+  content: ''; position: absolute; top: -30%; left: -10%; width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%); pointer-events: none;
+}
+
+.manifesto-block { position: relative; padding: 28px 0 28px 32px; }
+.manifesto-block::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px; box-shadow: 0 0 12px var(--brass-faint);
+}
+
+.tab-btn {
+  padding: 10px 20px; border-radius: 6px; font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; font-family: var(--font-mono); background: transparent;
+  border: 1px solid transparent; color: var(--text-3); transition: all 0.25s ease; white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text-1); }
+.tab-btn.active { background: var(--bg-elevated); border-color: var(--border-medium); color: var(--brass); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
+
+/* FIX 8: Slider — webkit + Firefox */
+.slider-thumb { -webkit-appearance: none; width: 100%; height: 4px; background: var(--border-strong); border-radius: 2px; outline: none; cursor: pointer; }
+.slider-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--bg-void); cursor: pointer; border: 2px solid var(--patina);
+  box-shadow: 0 0 8px var(--patina-faint); transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.slider-thumb::-webkit-slider-thumb:hover { transform: scale(1.15); border-color: var(--patina-lit); }
+.slider-thumb::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%; background: var(--bg-void);
+  cursor: pointer; border: 2px solid var(--patina); box-shadow: 0 0 8px var(--patina-faint);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.slider-thumb::-moz-range-thumb:hover { transform: scale(1.15); border-color: var(--patina-lit); }
+.slider-thumb::-moz-range-track { height: 4px; background: var(--border-strong); border-radius: 2px; }
+
+.pill { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-family: var(--font-mono); margin: 3px; letter-spacing: 0.05em; }
+.pill-patina { background: var(--patina-faint); color: var(--patina-lit); border: 1px solid var(--patina-dim); }
+.pill-rose   { background: rgba(138,90,90,0.1); color: var(--phase-content); border: 1px solid rgba(138,90,90,0.2); }
+.pill-brass  { background: var(--brass-faint); color: var(--brass); border: 1px solid var(--brass-dim); }
+.pill-teal   { background: rgba(74,122,138,0.1); color: var(--phase-creation); border: 1px solid rgba(74,122,138,0.2); }
+.pill-sage   { background: rgba(90,122,106,0.1); color: var(--phase-execution); border: 1px solid rgba(90,122,106,0.2); }
+
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brass); box-shadow: 0 0 12px var(--brass-dim), 0 0 2px var(--brass); animation: beat 3s ease infinite; }
+@keyframes beat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); opacity: 1; }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); opacity: 1; }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+.slide-in { animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
+
+.ba-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-family: var(--font-mono); padding: 8px 16px; border-bottom: 1px solid var(--border-medium); }
+.ba-text { padding: 20px 24px; font-size: 14px; line-height: 1.8; color: var(--text-1); }
+.rule-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px 20px; margin-bottom: 8px; transition: border-color 0.2s, background 0.2s; }
+.rule-card:hover { border-color: var(--border-strong); background: var(--bg-elevated); }
+</style>
+
+<script>
+// QB_SPINE v2
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  // FIX 6: atob failure logged + flagged for React UI warning
+  // FIX 10: consistent kebab-case localStorage keys
+  var urlQBP = params.get('qbp');
+  if(urlQBP){
+    try{
+      localStorage.setItem('qb-qbp', atob(urlQBP));
+    }catch(e){
+      console.warn('[QB] Invalid QBP token in URL:', e.message);
+      try{ sessionStorage.setItem('qb_token_error','1'); }catch(se){}
+    }
+  }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb-qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+
+  // FIX 1: res.ok guard before res.json()
+  // FIX 4: systemPrompt is now a static string; userPrompt carries dynamic QBP data
+  // FIX 12: model ID corrected
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-5',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok) throw new Error('API error ' + res.status + ': ' + res.statusText);
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    return d.content[0].text;
+  };
+})();
+</script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+// FIX 7: removed unused useRef and useCallback
+const { useState, useEffect } = React;
+
+const NATURAL_FORCES = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
+const ARCHETYPES     = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Lover','The Jester','The Everyman','The Innocent'];
+const MYTH_FIGURES   = ['The Alchemist','The Oracle','The Warrior','The Creator','The Sage','The Trickster','The Sovereign','The Healer'];
+const OUTPUT_TABS    = ['Voice DNA','Writing Rules','Tone Modes','Before & After','Content Templates','Copy Generator'];
+
+// SHARED UI
+const MonoLabel = ({children,color,mb=8})=>(
+  <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'.2em',color:color||'var(--text-3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>
+);
+const Card = ({children,accent,style={}})=>(
+  <div className="glass-card" style={{border:`1px solid ${accent||'var(--border-medium)'}`,padding:'24px',...style}}>{children}</div>
+);
+const Section = ({title,number,children,note})=>(
+  <div style={{marginBottom:56}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:16,marginBottom:24,paddingBottom:16,borderBottom:'1px solid var(--border-medium)'}}>
+      <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--brass)',letterSpacing:'.2em'}}>0{number}</span>
+      <span style={{fontFamily:'var(--font-serif)',fontSize:26,fontWeight:400,color:'var(--text-1)'}}>{title}</span>
+      {note&&<span style={{fontFamily:'var(--font-sans)',fontSize:13,color:'var(--text-3)',fontStyle:'italic',marginLeft:'auto'}}>{note}</span>}
+    </div>
+    {children}
+  </div>
+);
+const TF = ({label,value,onChange,placeholder,rows=2,hint})=>(
+  <div style={{marginBottom:24}}>
+    <MonoLabel>{label}</MonoLabel>
+    {rows>1
+      ? <textarea className="qb-textarea" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+      : <input className="qb-input" type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>
+    }
+    {hint&&<div style={{fontSize:12,color:'var(--text-3)',marginTop:6,fontStyle:'italic'}}>{hint}</div>}
+  </div>
+);
+const SF = ({label,options,value,onChange})=>(
+  <div style={{marginBottom:24}}>
+    <MonoLabel>{label}</MonoLabel>
+    <select className="qb-select" value={value} onChange={e=>onChange(e.target.value)}>
+      <option value="">&#8212; select &#8212;</option>
+      {options.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
+const SliderF = ({label,left,right,value,onChange})=>(
+  <div style={{marginBottom:28}}>
+    <div style={{display:'flex',justifyContent:'space-between',marginBottom:10}}>
+      <MonoLabel mb={0}>{label}</MonoLabel>
+      <span style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--brass)'}}>{value}/10</span>
+    </div>
+    <input type="range" min={1} max={10} value={value} onChange={e=>onChange(parseInt(e.target.value))} className="slider-thumb" style={{marginBottom:8}}/>
+    <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:'var(--text-3)'}}>
+      <span>{left}</span><span>{right}</span>
+    </div>
+  </div>
+);
+
+// VOICE DNA PANEL
+const VoiceDNAPanel = ({data})=>{
+  if(!data) return null;
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div className="manifesto-block">
+        <MonoLabel color="var(--brass)">Voice Identity Statement</MonoLabel>
+        <p style={{fontFamily:'var(--font-serif)',fontSize:28,lineHeight:1.4,color:'var(--text-1)'}}>{data.voiceIdentityStatement}</p>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:16}}>
+        <Card accent="var(--phase-creation)">
+          <MonoLabel color="var(--text-2)">Personality pillars</MonoLabel>
+          {data.personalityPillars&&data.personalityPillars.map((p,i)=>(
+            <div key={i} style={{padding:'12px 0',borderBottom:i<data.personalityPillars.length-1?'1px solid var(--border-subtle)':''}}>
+              <div style={{fontSize:14,fontWeight:500,color:'var(--text-1)',marginBottom:4}}>{p.pillar}</div>
+              <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6}}>{p.inPractice}</div>
+            </div>
+          ))}
+        </Card>
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+          <Card accent="var(--phase-execution)">
+            <MonoLabel color="var(--text-2)">Voice register</MonoLabel>
+            <p style={{fontSize:14,color:'var(--text-1)',lineHeight:1.7}}>{data.voiceRegister}</p>
+          </Card>
+          <Card accent="var(--phase-intel)">
+            <MonoLabel color="var(--text-2)">Rhythm + tempo</MonoLabel>
+            <p style={{fontSize:14,color:'var(--text-1)',lineHeight:1.7}}>{data.rhythmTempo}</p>
+          </Card>
+        </div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Card accent="var(--patina-dim)">
+          <MonoLabel color="var(--patina-lit)">Sounds aligned with</MonoLabel>
+          {data.alignedWith&&data.alignedWith.map((a,i)=>(
+            <div key={i} style={{padding:'10px 0',borderBottom:i<data.alignedWith.length-1?'1px solid var(--border-subtle)':''}}>
+              <div style={{fontSize:13,fontWeight:600,color:'var(--text-1)',marginBottom:2}}>{a.brand}</div>
+              <div style={{fontSize:12,color:'var(--text-3)'}}>{a.reason}</div>
+            </div>
+          ))}
+        </Card>
+        <Card accent="rgba(138,90,90,0.2)">
+          <MonoLabel color="var(--phase-content)">Refuses to sound like</MonoLabel>
+          {data.refuses&&data.refuses.map((r,i)=>(
+            <div key={i} style={{padding:'10px 0',borderBottom:i<data.refuses.length-1?'1px solid var(--border-subtle)':''}}>
+              <div style={{fontSize:13,fontWeight:600,color:'var(--text-1)',marginBottom:2}}>{r.brand}</div>
+              <div style={{fontSize:12,color:'var(--text-3)'}}>{r.reason}</div>
+            </div>
+          ))}
+        </Card>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Card>
+          <MonoLabel color="var(--patina-lit)">Always</MonoLabel>
+          {data.alwaysDoes&&data.alwaysDoes.map((a,i)=><span key={i} className="pill pill-patina">{a}</span>)}
+        </Card>
+        <Card>
+          <MonoLabel color="var(--phase-content)">Never</MonoLabel>
+          {data.neverDoes&&data.neverDoes.map((n,i)=><span key={i} className="pill pill-rose">{n}</span>)}
+        </Card>
+      </div>
+      <Card accent="var(--brass-dim)">
+        <MonoLabel color="var(--brass)">Sentence architecture</MonoLabel>
+        <p style={{fontSize:14,color:'var(--text-1)',lineHeight:1.7,marginBottom:16}}>{data.sentenceArchitecture&&data.sentenceArchitecture.description}</p>
+        <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+          {data.sentenceArchitecture&&data.sentenceArchitecture.characteristics&&data.sentenceArchitecture.characteristics.map((c,i)=><span key={i} className="pill pill-brass">{c}</span>)}
+        </div>
+      </Card>
+      {data.behavioralSynthesis&&(
+        <div className="manifesto-block" style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:12}}>
+          <MonoLabel color="var(--text-3)">Behavioral synthesis</MonoLabel>
+          <p style={{fontFamily:'var(--font-serif)',fontSize:20,lineHeight:1.5,color:'var(--text-1)',fontStyle:'italic'}}>{data.behavioralSynthesis}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// WRITING RULES PANEL
+const WritingRulesPanel = ({data})=>{
+  if(!data||!data.writingRules) return null;
+  const [open,setOpen]=useState(null);
+  return(
+    <div className="fade-in">
+      {data.writingRulesIntro&&<p style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7,marginBottom:24}}>{data.writingRulesIntro}</p>}
+      {data.writingRules.map((rule,i)=>(
+        <div key={i} className="rule-card" onClick={()=>setOpen(open===i?null:i)} style={{cursor:'pointer'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12}}>
+              <span style={{
+                fontFamily:'var(--font-mono)',fontSize:10,
+                color:rule.type==='do'?'var(--patina-lit)':rule.type==='never'?'var(--phase-content)':'var(--brass)',
+                border:'1px solid '+(rule.type==='do'?'var(--patina-dim)':rule.type==='never'?'rgba(138,90,90,0.3)':'var(--brass-dim)'),
+                background:rule.type==='do'?'var(--patina-faint)':rule.type==='never'?'rgba(138,90,90,0.1)':'var(--brass-faint)',
+                padding:'4px 10px',borderRadius:4
+              }}>
+                {rule.type==='do'?'DO':rule.type==='never'?'NEVER':'CAUTION'}
+              </span>
+              <span style={{fontSize:15,fontWeight:500,color:'var(--text-1)'}}>{rule.rule}</span>
+            </div>
+            <span style={{color:'var(--text-3)',fontSize:14}}>{open===i?'&#8593;':'&#8595;'}</span>
+          </div>
+          {open===i&&(
+            <div className="slide-in" style={{marginTop:16,paddingTop:16,borderTop:'1px solid var(--border-medium)'}}>
+              <p style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7,marginBottom:16}}>{rule.explanation}</p>
+              {rule.wrongExample&&(
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                  <div style={{background:'var(--bg-base)',border:'1px solid rgba(138,90,90,0.2)',borderRadius:8,padding:'16px'}}>
+                    <div style={{fontSize:10,color:'var(--phase-content)',fontFamily:'var(--font-mono)',letterSpacing:'.15em',marginBottom:8}}>WRONG</div>
+                    <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7,fontStyle:'italic'}}>"{rule.wrongExample}"</p>
+                  </div>
+                  <div style={{background:'var(--bg-base)',border:'1px solid var(--patina-dim)',borderRadius:8,padding:'16px'}}>
+                    <div style={{fontSize:10,color:'var(--patina-lit)',fontFamily:'var(--font-mono)',letterSpacing:'.15em',marginBottom:8}}>RIGHT</div>
+                    <p style={{fontSize:13,color:'var(--text-1)',lineHeight:1.7,fontStyle:'italic'}}>"{rule.rightExample}"</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// TONE MODES PANEL
+const ToneModesPanel = ({data})=>{
+  if(!data||!data.toneModes) return null;
+  const [active,setActive]=useState(0);
+  const mode = data.toneModes[active];
+  return(
+    <div className="fade-in">
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:32}}>
+        {data.toneModes.map((m,i)=>(
+          <button key={i} className={'tab-btn'+(active===i?' active':'')} onClick={()=>setActive(i)}>{m.context}</button>
+        ))}
+      </div>
+      {mode&&(
+        <div className="fade-in" key={active}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
+            <Card accent="var(--phase-creation)">
+              <MonoLabel color="var(--text-2)">Tone shift for {mode.context}</MonoLabel>
+              <p style={{fontSize:14,color:'var(--text-1)',lineHeight:1.7,marginBottom:16}}>{mode.toneShift}</p>
+              <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                {mode.toneWords&&mode.toneWords.map((w,i)=><span key={i} className="pill pill-teal">{w}</span>)}
+              </div>
+            </Card>
+            <Card>
+              <MonoLabel>What changes / what stays constant</MonoLabel>
+              <div style={{marginBottom:16}}>
+                <div style={{fontSize:11,fontFamily:'var(--font-mono)',textTransform:'uppercase',color:'var(--patina-lit)',marginBottom:6}}>Changes</div>
+                <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6}}>{mode.whatChanges}</p>
+              </div>
+              <div>
+                <div style={{fontSize:11,fontFamily:'var(--font-mono)',textTransform:'uppercase',color:'var(--brass)',marginBottom:6}}>Constant</div>
+                <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6}}>{mode.whatStaysConstant}</p>
+              </div>
+            </Card>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+            <div className="glass-card" style={{padding:0}}>
+              <div className="ba-label" style={{background:'rgba(138,90,90,0.05)',color:'var(--phase-content)',borderBottomColor:'rgba(138,90,90,0.1)'}}>Generic version</div>
+              <div className="ba-text" style={{color:'var(--text-3)'}}>{mode.genericExample}</div>
+            </div>
+            <div className="glass-card" style={{padding:0}}>
+              <div className="ba-label" style={{background:'var(--patina-faint)',color:'var(--patina-lit)',borderBottomColor:'var(--patina-dim)'}}>On-brand version</div>
+              <div className="ba-text">{mode.onBrandExample}</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// BEFORE/AFTER PANEL
+const BeforeAfterPanel = ({data})=>{
+  if(!data||!data.beforeAfter) return null;
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:24}}>
+      <div style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7}}>{data.beforeAfterIntro}</div>
+      {data.beforeAfter.map((item,i)=>(
+        <div key={i} style={{borderBottom:'1px solid var(--border-subtle)',paddingBottom:24}}>
+          <div style={{fontSize:12,color:'var(--brass)',fontFamily:'var(--font-mono)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:12}}>{item.scenario}</div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+            <div className="glass-card" style={{padding:0}}>
+              <div className="ba-label" style={{background:'rgba(138,90,90,0.05)',color:'var(--phase-content)',borderBottomColor:'rgba(138,90,90,0.1)'}}>Before &#8212; generic</div>
+              <div className="ba-text" style={{color:'var(--text-3)'}}>{item.before}</div>
+            </div>
+            <div className="glass-card" style={{padding:0}}>
+              <div className="ba-label" style={{background:'var(--patina-faint)',color:'var(--patina-lit)',borderBottomColor:'var(--patina-dim)'}}>After &#8212; on brand</div>
+              <div className="ba-text">{item.after}</div>
+            </div>
+          </div>
+          {item.whyItWorks&&(
+            <div style={{padding:'12px 16px',background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:8,marginTop:12,fontSize:13,color:'var(--text-2)',lineHeight:1.6}}>
+              <span style={{color:'var(--brass)',fontWeight:500}}>Why it works: </span>{item.whyItWorks}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// TEMPLATES PANEL
+const TemplatesPanel = ({data})=>{
+  if(!data||!data.contentTemplates) return null;
+  const [active,setActive]=useState(0);
+  const tpl = data.contentTemplates[active];
+  const copyText = t => navigator.clipboard.writeText(t).catch(function(){});
+  return(
+    <div className="fade-in">
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:32}}>
+        {data.contentTemplates.map((t,i)=>(
+          <button key={i} className={'tab-btn'+(active===i?' active':'')} onClick={()=>setActive(i)}>{t.name}</button>
+        ))}
+      </div>
+      {tpl&&(
+        <div className="fade-in" key={active}>
+          <div style={{marginBottom:16,fontSize:14,color:'var(--text-2)',lineHeight:1.7}}>{tpl.usage}</div>
+          <div style={{position:'relative'}}>
+            <div className="glass-card" style={{padding:'24px 32px',fontFamily:'var(--font-mono)',fontSize:13,lineHeight:2,color:'var(--text-1)',whiteSpace:'pre-wrap',border:'1px solid var(--patina-dim)'}}>
+              {tpl.template}
+            </div>
+            <button onClick={()=>copyText(tpl.template)} className="btn-secondary" style={{position:'absolute',top:16,right:16}}>Copy</button>
+          </div>
+          {tpl.example&&(
+            <div style={{marginTop:24}}>
+              <MonoLabel color="var(--text-3)">Example using this template</MonoLabel>
+              <div style={{background:'var(--bg-base)',border:'1px solid var(--border-medium)',borderRadius:10,padding:'20px 24px',fontSize:14,color:'var(--text-2)',lineHeight:1.8,fontStyle:'italic'}}>
+                "{tpl.example}"
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// COPY GENERATOR PANEL
+const CopyGeneratorPanel = ({voiceData,qbp})=>{
+  const [context,setContext]=useState('');
+  const [brief,setBrief]=useState('');
+  const [platform,setPlatform]=useState('');
+  const [generated,setGenerated]=useState('');
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState('');
+
+  const generate = async function(){
+    if(!context||!brief){ setError('Fill the context and brief fields.'); return; }
+    setError(''); setGenerated(''); setLoading(true);
+    var sysPrompt = 'You are the Quantum Branding Copy Agent. You write copy that sounds exactly like this specific brand\'s voice - no more, no less. The Voice Guide defines the brand\'s exact verbal identity. You apply it without deviation. Return ONLY the copy, nothing else - no explanation, no headline label, no preamble.';
+    var ts = qbp.toneSliders || {};
+    // FIX 13: full QBP context including all identity signals
+    var userPrompt = 'BRAND VOICE DNA:\n' + JSON.stringify(voiceData, null, 2) +
+      '\n\nFULL QBP CONTEXT:' +
+      '\nBrand: ' + qbp.brandName +
+      '\nEssence: ' + qbp.brandEssence +
+      '\nManifesto: ' + (qbp.manifestoLine||'not specified') +
+      '\nNatural Force: ' + qbp.naturalForce +
+      '\nArchetype: ' + qbp.archetype +
+      '\nMythological Figure: ' + (qbp.mythFigure||'not specified') +
+      '\nAnti-Brand: ' + (qbp.antiBrand||'not specified') +
+      '\nCentral Paradox: ' + (qbp.paradox||'not specified') +
+      '\nThe Spark: ' + (qbp.spark||'not specified') +
+      '\nCelebrity Synthesis: ' + (qbp.celebritySynth||'not specified') +
+      '\nTone - Formal/Casual: ' + (ts.formal||5) + '/10 | Sparse/Generous: ' + (ts.sparse||5) + '/10 | Rational/Emotional: ' + (ts.emotional||5) + '/10 | Indirect/Direct: ' + (ts.direct||5) + '/10 | Serious/Playful: ' + (ts.serious||5) + '/10' +
+      '\n\nCOPY REQUEST:' +
+      '\nContext / format: ' + context +
+      '\nPlatform: ' + (platform||'unspecified') +
+      '\nBrief: ' + brief +
+      '\n\nWrite this copy in the exact voice defined above. Apply the correct tone mode for the platform. Follow all writing rules. Do not break character.';
+    try{
+      var res = await window.QB_AI(sysPrompt, userPrompt, 800);
+      setGenerated(res.trim());
+    }catch(e){ setError(e.message); }
+    setLoading(false);
+  };
+
+  var copyOutput = function(){ navigator.clipboard.writeText(generated).catch(function(){}); };
+
+  return(
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:24}}>
+      <div style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7}}>The Voice Guide is active in system memory. Describe what you need, and the agent will write it exactly in this voice.</div>
+      <div className="glass-card" style={{padding:'24px 32px',border:'1px solid var(--border-strong)'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+          <TF label="Format / context" value={context} onChange={setContext} placeholder="e.g. Instagram caption, LinkedIn post, email" rows={1}/>
+          <TF label="Platform" value={platform} onChange={setPlatform} placeholder="e.g. Instagram, LinkedIn, email, website" rows={1}/>
+        </div>
+        <TF label="What to write" value={brief} onChange={setBrief} placeholder="e.g. Announce a new discovery session. Speak to founders who feel their brand has outgrown them. Drive toward booking." rows={3}/>
+        {error&&<div style={{background:'rgba(138,90,90,0.1)',border:'1px solid rgba(138,90,90,0.2)',borderRadius:8,padding:'12px 16px',fontSize:13,color:'var(--phase-content)',marginBottom:20}}>{error}</div>}
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <div style={{display:'flex',alignItems:'center',gap:12,color:'var(--brass)',fontSize:12,opacity:loading?1:0,transition:'opacity 0.3s'}}>
+            <div className="pulse-dot"/>
+            <span style={{fontFamily:'var(--font-mono)',textTransform:'uppercase',letterSpacing:'0.1em'}}>Applying voice rules...</span>
+          </div>
+          <button onClick={generate} disabled={loading||!context||!brief} className="btn-primary">{loading?'Writing...':'Generate Copy'}</button>
+        </div>
+      </div>
+      {generated&&(
+        <div className="fade-in" style={{marginTop:16}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+            <MonoLabel color="var(--patina-lit)">Generated copy</MonoLabel>
+            <button onClick={copyOutput} className="btn-secondary">Copy text</button>
+          </div>
+          <div className="manifesto-block" style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:12,padding:'32px 40px',fontSize:16,lineHeight:1.9,color:'var(--text-1)',whiteSpace:'pre-wrap',fontFamily:'var(--font-serif)'}}>
+            {generated}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// MAIN APP
+var STEPS = ['QBP Input','Generating','Voice Guide'];
+
+function App(){
+  const [step,setStep]         = useState(0);
+  const [loading,setLoading]   = useState(false);
+  const [error,setError]       = useState('');
+  const [result,setResult]     = useState(null);
+  const [activeTab,setActiveTab] = useState('Voice DNA');
+  const [theme,setTheme]       = useState(function(){ try{ return document.documentElement.getAttribute('data-theme')||'dark'; }catch(e){ return 'dark'; } });
+  // FIX 6: token error state
+  const [qbpTokenError,setQbpTokenError] = useState(false);
+
+  // QBP fields
+  const [brandName,setBrandName]       = useState('');
+  const [brandEssence,setBrandEssence] = useState('');
+  const [manifestoLine,setManifestoLine] = useState('');
+  const [naturalForce,setNaturalForce] = useState('');
+  const [archetype,setArchetype]       = useState('');
+  const [mythFigure,setMythFigure]     = useState('');
+  const [antiBrand,setAntiBrand]       = useState('');
+  const [paradox,setParadox]           = useState('');
+  const [fanLetter,setFanLetter]       = useState('');
+  // FIX 3: these 4 fields now also hydrate from QB_QBP
+  const [alignedBrands,setAlignedBrands]   = useState('');
+  const [refusedBrands,setRefusedBrands]   = useState('');
+  const [celebritySynth,setCelebritySynth] = useState('');
+  const [rhythm,setRhythm]                 = useState('');
+  const [alwaysNever,setAlwaysNever]       = useState('');
+  const [spark,setSpark]                   = useState('');
+  const [formal,setFormal]     = useState(5);
+  const [sparse,setSparse]     = useState(5);
+  const [emotional,setEmotional] = useState(5);
+  const [direct,setDirect]     = useState(5);
+  const [serious,setSerious]   = useState(5);
+  const [platforms,setPlatforms] = useState({instagram:true,linkedin:true,email:true,website:true,youtube:false,podcast:false});
+
+  // FIX 3 + FIX 6: hydrate all fields + handle invalid token
+  useEffect(function(){
+    try{
+      if(sessionStorage.getItem('qb_token_error')==='1'){
+        setQbpTokenError(true);
+        sessionStorage.removeItem('qb_token_error');
+      }
+    }catch(e){}
+    var q = window.QB_QBP || {};
+    if(q.brandName)      setBrandName(q.brandName);
+    if(q.brandEssence)   setBrandEssence(q.brandEssence);
+    if(q.manifesto)      setManifestoLine(q.manifesto);
+    if(q.naturalForce)   setNaturalForce(q.naturalForce);
+    if(q.archetype)      setArchetype(q.archetype);
+    if(q.mythFigure)     setMythFigure(q.mythFigure);
+    if(q.antiBrand)      setAntiBrand(q.antiBrand);
+    if(q.paradox)        setParadox(q.paradox);
+    if(q.spark)          setSpark(q.spark);
+    if(q.alwaysNever)    setAlwaysNever(q.alwaysNever);
+    if(q.primaryPersona) setFanLetter(q.primaryPersona);
+    if(q.alignedBrands)  setAlignedBrands(q.alignedBrands);
+    if(q.refusedBrands)  setRefusedBrands(q.refusedBrands);
+    if(q.celebritySynth) setCelebritySynth(q.celebritySynth);
+    if(q.rhythm)         setRhythm(q.rhythm);
+  },[]);
+
+  var qbp = {brandName,brandEssence,manifestoLine,naturalForce,archetype,mythFigure,antiBrand,paradox,fanLetter,alignedBrands,refusedBrands,celebritySynth,rhythm,alwaysNever,spark,toneSliders:{formal,sparse,emotional,direct,serious}};
+  var isValid = function(){ return brandName&&brandEssence&&naturalForce&&archetype; };
+  var togglePlatform = function(p){ setPlatforms(function(prev){ var n=Object.assign({},prev); n[p]=!n[p]; return n; }); };
+  var selectedPlatforms = Object.entries(platforms).filter(function(e){ return e[1]; }).map(function(e){ return e[0]; });
+
+  // FIX 9: accessible theme toggle; FIX 10: consistent key name
+  var toggleTheme = function(){
+    var next = theme==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    try{ localStorage.setItem('qb-theme',next); }catch(e){}
+    setTheme(next);
+  };
+
+  // FIX 4: buildPrompt is the USER message only (dynamic QBP data + JSON schema)
+  var buildPrompt = function(){
+    return 'QUANTUM BRAND PROFILE:\n' +
+      'Brand Name: ' + brandName + '\n' +
+      'Brand Essence: ' + brandEssence + '\n' +
+      'Manifesto Line: ' + (manifestoLine||'not specified') + '\n' +
+      'Natural Force: ' + naturalForce + '\n' +
+      'Primary Archetype: ' + archetype + '\n' +
+      'Mythological Figure: ' + (mythFigure||'not specified') + '\n' +
+      'Anti-Brand: ' + (antiBrand||'not specified') + '\n' +
+      'Central Paradox: ' + (paradox||'not specified') + '\n' +
+      'Fan Letter (ideal client): ' + (fanLetter||'not specified') + '\n' +
+      'Aligned brands: ' + (alignedBrands||'not specified') + '\n' +
+      'Refused brands: ' + (refusedBrands||'not specified') + '\n' +
+      'Celebrity synthesis: ' + (celebritySynth||'not specified') + '\n' +
+      'Rhythm/tempo notes: ' + (rhythm||'not specified') + '\n' +
+      'Always/Never notes: ' + (alwaysNever||'not specified') + '\n' +
+      'The Spark: ' + (spark||'not specified') + '\n\n' +
+      'TONE CALIBRATION (1=left pole, 10=right pole):\n' +
+      'Formal(1) to Casual(10): ' + formal + '\n' +
+      'Sparse(1) to Generous(10): ' + sparse + '\n' +
+      'Rational(1) to Emotional(10): ' + emotional + '\n' +
+      'Indirect(1) to Direct(10): ' + direct + '\n' +
+      'Serious(1) to Playful(10): ' + serious + '\n\n' +
+      'PLATFORMS TO COVER: ' + (selectedPlatforms.join(', ')||'Instagram, LinkedIn, Email, Website') + '\n\n' +
+      'Return a JSON object with EXACTLY this structure:\n' +
+      '{\n' +
+      '  "voiceIdentityStatement": "One sentence capturing the complete voice identity",\n' +
+      '  "personalityPillars": [{"pillar": "name", "inPractice": "what this means in actual writing"}],\n' +
+      '  "voiceRegister": "2-3 sentences on register",\n' +
+      '  "rhythmTempo": "2-3 sentences on sentence rhythm",\n' +
+      '  "alignedWith": [{"brand": "name", "reason": "specific shared quality"}],\n' +
+      '  "refuses": [{"brand": "name or type", "reason": "specific refused quality"}],\n' +
+      '  "alwaysDoes": ["behavior 1","behavior 2"],\n' +
+      '  "neverDoes": ["forbidden 1","forbidden 2"],\n' +
+      '  "sentenceArchitecture": {"description": "2-3 sentences", "characteristics": ["c1","c2","c3","c4"]},\n' +
+      '  "behavioralSynthesis": "The celebrity synthesis sentence",\n' +
+      '  "writingRulesIntro": "1-2 sentences framing the rules",\n' +
+      '  "writingRules": [{"rule": "title", "type": "do", "explanation": "why", "wrongExample": "wrong", "rightExample": "right"}],\n' +
+      '  "toneModes": [{"context": "platform", "toneShift": "shift", "toneWords": ["w1","w2","w3"], "whatChanges": "changes", "whatStaysConstant": "constant", "genericExample": "generic", "onBrandExample": "on-brand"}],\n' +
+      '  "beforeAfterIntro": "1 sentence framing",\n' +
+      '  "beforeAfter": [{"scenario": "name", "before": "generic", "after": "on-brand", "whyItWorks": "reason"}],\n' +
+      '  "contentTemplates": [{"name": "name", "usage": "when", "template": "template with [VARIABLES]", "example": "filled example"}]\n' +
+      '}\n\n' +
+      'Requirements: writingRules min 8 (type must be "do", "never", or "caution"), toneModes one per platform min 4, beforeAfter min 5, contentTemplates min 5 (Instagram caption, LinkedIn post, email subject, CTA, bio), personalityPillars exactly 4. ALL examples must sound like THIS specific brand. Return ONLY valid JSON with no markdown fences and no preamble.';
+  };
+
+  var run = async function(){
+    if(!isValid()){ setError('Complete the required fields (*).'); return; }
+    setError(''); setLoading(true); setStep(1);
+    try{
+      // FIX 4: static system prompt + dynamic user message (correct API usage, enables caching)
+      var res = await window.QB_AI(
+        'You are the Voice Guide Agent inside the Quantum Branding BrandOS ecosystem. Your function is to produce a complete, precise, executable Voice Guide from a Quantum Brand Profile. This is not a generic brand voice document. Every element must be traceable to the QBP. The output must be specific enough that any writer, AI agent, or content creator can produce on-brand copy after reading it once. Return ONLY valid JSON with no markdown fences and no preamble.',
+        buildPrompt(),
+        6000
+      );
+      // FIX 5: robust JSON extraction handles preamble before code block
+      var match = res.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      var clean = (match ? match[1] : res).trim();
+      setResult(JSON.parse(clean));
+      setActiveTab('Voice DNA');
+      setStep(2);
+    }catch(e){ setError('Agent error: '+e.message); setStep(0); }
+    setLoading(false);
+  };
+
+  // FIX 2: revokeObjectURL prevents memory leak
+  var exportGuide = function(){
+    var blob = new Blob([JSON.stringify({qbp:qbp,voiceGuide:result},null,2)],{type:'application/json'});
+    var a = document.createElement('a');
+    var _url = URL.createObjectURL(blob);
+    a.href = _url;
+    a.download = brandName.replace(/\s+/g,'-').toLowerCase()+'-voice-guide.json';
+    a.click();
+    URL.revokeObjectURL(_url);
+  };
+
+  return(
+    React.createElement(React.Fragment, null,
+      React.createElement('div', {className:'vignette'}),
+      React.createElement('div', {style:{minHeight:'100vh',display:'flex',flexDirection:'column',position:'relative',zIndex:10}},
+
+        /* HEADER */
+        React.createElement('header', {style:{borderBottom:'1px solid var(--border-medium)',padding:'20px 32px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg-overlay)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',position:'sticky',top:0,zIndex:50}},
+          React.createElement('div', {style:{display:'flex',alignItems:'center',gap:16}},
+            React.createElement('div', {style:{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'.3em',color:'var(--brass)',textTransform:'uppercase',fontWeight:700}}, 'BrandOS'),
+            React.createElement('div', {style:{width:1,height:16,background:'var(--border-strong)'}}),
+            React.createElement('div', {style:{fontFamily:'var(--font-serif)',fontSize:18,color:'var(--text-1)'}}, 'Voice Guide Agent')
+          ),
+          React.createElement('div', {style:{display:'flex',gap:24,alignItems:'center'}},
+            React.createElement('div', {style:{display:'flex',gap:8,alignItems:'center'}},
+              STEPS.map(function(s,i){
+                return React.createElement(React.Fragment, {key:i},
+                  React.createElement('div', {style:{display:'flex',alignItems:'center',gap:6}},
+                    React.createElement('div', {style:{width:6,height:6,borderRadius:'50%',background:i<step?'var(--patina)':i===step?'var(--brass)':'var(--bg-surface)',border:i>step?'1px solid var(--border-strong)':'none',boxShadow:i===step?'0 0 8px var(--brass-dim)':''}}),
+                    React.createElement('span', {style:{fontSize:10,color:i<=step?'var(--text-1)':'var(--text-4)',letterSpacing:'.12em',fontFamily:'var(--font-mono)',textTransform:'uppercase'}}, s)
+                  ),
+                  i<STEPS.length-1 && React.createElement('div', {style:{width:24,height:1,background:'var(--border-medium)',margin:'0 4px'}})
+                );
+              })
+            ),
+            /* FIX 9: aria-label for accessibility */
+            React.createElement('button', {
+              onClick:toggleTheme,
+              'aria-label': theme==='dark'?'Switch to light mode':'Switch to dark mode',
+              style:{background:'var(--bg-surface)',border:'1px solid var(--border-medium)',color:'var(--text-2)',width:28,height:28,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12}
+            }, theme==='dark'?'\u25D0':'\u25D1')
+          )
+        ),
+
+        /* MAIN */
+        React.createElement('main', {style:{flex:1,maxWidth:1040,margin:'0 auto',width:'100%',padding:'64px 32px'}},
+
+          /* STEP 0 */
+          step===0 && React.createElement('div', {className:'fade-in'},
+            React.createElement('div', {style:{marginBottom:64}},
+              React.createElement(MonoLabel, {color:'var(--brass)'}, '// QBP \u2014 Verbal Identity Input'),
+              React.createElement('h1', {style:{fontFamily:'var(--font-serif)',fontSize:48,fontWeight:400,letterSpacing:'-0.015em',lineHeight:1.1,marginBottom:16,color:'var(--text-1)'}}, 'Synthesize Voice Guide'),
+              React.createElement('p', {style:{color:'var(--text-2)',fontSize:16,lineHeight:1.7,maxWidth:680}}, 'Provide your Quantum Brand Profile. The system constructs a precise, executable verbal identity framework \u2014 from core DNA to living content templates.')
+            ),
+            /* FIX 6: invalid QBP token warning */
+            qbpTokenError && React.createElement('div', {style:{background:'rgba(168,144,62,0.08)',border:'1px solid var(--brass-dim)',borderRadius:8,padding:'12px 20px',marginBottom:24,fontSize:13,color:'var(--brass)',display:'flex',gap:10,alignItems:'center'}},
+              React.createElement('span', null, '\u26A0'),
+              React.createElement('span', null, 'The QBP token in the URL was invalid or corrupted. Please check the link or enter your brand data manually.')
+            ),
+            error && React.createElement('div', {style:{background:'rgba(138,90,90,0.1)',border:'1px solid rgba(138,90,90,0.2)',borderRadius:8,padding:'12px 20px',marginBottom:24,fontSize:13,color:'var(--phase-content)'}}, error),
+            React.createElement('div', {className:'glass-card',style:{padding:'48px 40px',marginBottom:40}},
+              React.createElement(Section, {number:1,title:'Brand Core',note:'* required'},
+                React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}},
+                  React.createElement(TF, {label:'Brand Name *',value:brandName,onChange:setBrandName,placeholder:'The brand this voice belongs to',rows:1}),
+                  React.createElement(SF, {label:'Natural Force *',options:NATURAL_FORCES,value:naturalForce,onChange:setNaturalForce})
+                ),
+                React.createElement(TF, {label:'Brand Essence *',value:brandEssence,onChange:setBrandEssence,placeholder:'The irreducible truth \u2014 a sentence carved in stone',rows:2}),
+                React.createElement(TF, {label:'Manifesto Line',value:manifestoLine,onChange:setManifestoLine,placeholder:'The one belief that drives everything',rows:1}),
+                React.createElement(TF, {label:'The Spark (Narrative Synthesis)',value:spark,onChange:setSpark,placeholder:'3-5 sentence synthesis of who this brand is, why it exists, what it is here to do',rows:3})
+              ),
+              React.createElement(Section, {number:2,title:'Soul Map Data'},
+                React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}},
+                  React.createElement(SF, {label:'Primary Archetype *',options:ARCHETYPES,value:archetype,onChange:setArchetype}),
+                  React.createElement(SF, {label:'Mythological Figure',options:MYTH_FIGURES,value:mythFigure,onChange:setMythFigure})
+                ),
+                React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}},
+                  React.createElement(TF, {label:'Aligned Brands',value:alignedBrands,onChange:setAlignedBrands,placeholder:'e.g. Patagonia, Bottega Veneta \u2014 with why',rows:2}),
+                  React.createElement(TF, {label:'Refused Brands',value:refusedBrands,onChange:setRefusedBrands,placeholder:'e.g. corporate consulting, startup growth hacking \u2014 with why',rows:2})
+                ),
+                React.createElement(TF, {label:'Celebrity Synthesis',value:celebritySynth,onChange:setCelebritySynth,placeholder:'e.g. Leads like Dieter Rams, creates like Virgil Abloh, endures like Coco Chanel',rows:2}),
+                React.createElement(TF, {label:'Rhythm / Tempo',value:rhythm,onChange:setRhythm,placeholder:'e.g. Short declarative sentences. Occasional long arcs. Never lists.',rows:2}),
+                React.createElement(TF, {label:'Always / Never',value:alwaysNever,onChange:setAlwaysNever,placeholder:'e.g. Always: direct, challenge-first. Never: jargon, passive voice.',rows:2}),
+                React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}},
+                  React.createElement(TF, {label:'Anti-Brand',value:antiBrand,onChange:setAntiBrand,placeholder:'What this brand refuses to be',rows:2}),
+                  React.createElement(TF, {label:'Fan Letter',value:fanLetter,onChange:setFanLetter,placeholder:'The person this brand was built for',rows:2})
+                ),
+                React.createElement(TF, {label:'Central Paradox',value:paradox,onChange:setParadox,placeholder:'The tension this brand holds \u2014 e.g. intimate yet authoritative',rows:2})
+              ),
+              React.createElement(Section, {number:3,title:'Tone Calibration'},
+                React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 48px'}},
+                  React.createElement(SliderF, {label:'Formal to Casual',left:'Formal',right:'Casual',value:formal,onChange:setFormal}),
+                  React.createElement(SliderF, {label:'Sparse to Generous',left:'Sparse',right:'Generous',value:sparse,onChange:setSparse}),
+                  React.createElement(SliderF, {label:'Rational to Emotional',left:'Rational',right:'Emotional',value:emotional,onChange:setEmotional}),
+                  React.createElement(SliderF, {label:'Indirect to Direct',left:'Indirect',right:'Direct',value:direct,onChange:setDirect}),
+                  React.createElement(SliderF, {label:'Serious to Playful',left:'Serious',right:'Playful',value:serious,onChange:setSerious})
+                )
+              ),
+              React.createElement(Section, {number:4,title:'Output Platforms',note:'Select all contexts required'},
+                React.createElement('div', {style:{display:'flex',gap:12,flexWrap:'wrap'}},
+                  Object.entries(platforms).map(function(entry){
+                    var p=entry[0], on=entry[1];
+                    return React.createElement('button', {
+                      key:p, onClick:function(){ togglePlatform(p); },
+                      style:{padding:'10px 20px',borderRadius:6,fontSize:12,fontFamily:'var(--font-mono)',letterSpacing:'.1em',textTransform:'uppercase',cursor:'pointer',transition:'all 0.2s',background:on?'var(--patina-faint)':'var(--bg-surface)',border:'1px solid '+(on?'var(--patina-dim)':'var(--border-medium)'),color:on?'var(--patina-lit)':'var(--text-3)'}
+                    }, p);
+                  })
+                )
+              ),
+              React.createElement('div', {style:{display:'flex',justifyContent:'flex-end',paddingTop:24,borderTop:'1px solid var(--border-subtle)'}},
+                React.createElement('button', {onClick:run,disabled:!isValid(),className:'btn-primary'}, 'Generate Identity System')
+              )
+            )
+          ),
+
+          /* STEP 1 */
+          step===1 && React.createElement('div', {className:'fade-in',style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:500,gap:32,textAlign:'center'}},
+            React.createElement('div', {className:'pulse-dot',style:{width:12,height:12}}),
+            React.createElement('div', null,
+              React.createElement(MonoLabel, {color:'var(--brass)'}, 'System Active'),
+              React.createElement('div', {style:{fontFamily:'var(--font-serif)',fontSize:32,color:'var(--text-1)',marginBottom:20}}, 'Synthesizing Voice Identity'),
+              React.createElement('div', {style:{color:'var(--text-2)',fontSize:14,lineHeight:2.2,maxWidth:400,fontFamily:'var(--font-sans)',margin:'0 auto'}},
+                'Reading Quantum Brand Profile', React.createElement('br',null),
+                'Extracting personality pillars & register', React.createElement('br',null),
+                'Calibrating tone modes per platform', React.createElement('br',null),
+                'Formulating writing rules...', React.createElement('br',null),
+                'Assembling Voice Guide'
+              )
+            )
+          ),
+
+          /* STEP 2 */
+          step===2 && result && React.createElement('div', {className:'fade-in'},
+            React.createElement('div', {style:{marginBottom:40,display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:16}},
+              React.createElement('div', null,
+                React.createElement(MonoLabel, {color:'var(--brass)'}, '// System Output'),
+                React.createElement('h1', {style:{fontFamily:'var(--font-serif)',fontSize:42,fontWeight:400,marginBottom:8,color:'var(--text-1)'}}, brandName),
+                React.createElement('p', {style:{color:'var(--text-2)',fontSize:15}}, 'Complete verbal identity system \u2014 traceable to Source DNA')
+              ),
+              React.createElement('div', {style:{display:'flex',gap:12}},
+                React.createElement('button', {onClick:exportGuide,className:'btn-secondary'}, 'Export JSON'),
+                React.createElement('button', {onClick:function(){setStep(0);setResult(null);},className:'btn-secondary'}, 'New Session')
+              )
+            ),
+            React.createElement('div', {style:{display:'flex',gap:8,flexWrap:'wrap',marginBottom:32,paddingBottom:20,borderBottom:'1px solid var(--border-medium)'}},
+              OUTPUT_TABS.map(function(t){
+                return React.createElement('button', {key:t,className:'tab-btn'+(activeTab===t?' active':''),onClick:function(){setActiveTab(t);}}, t);
+              })
+            ),
+            React.createElement('div', {style:{minHeight:400}},
+              activeTab==='Voice DNA'         && React.createElement(VoiceDNAPanel,       {data:result}),
+              activeTab==='Writing Rules'     && React.createElement(WritingRulesPanel,   {data:result}),
+              activeTab==='Tone Modes'        && React.createElement(ToneModesPanel,      {data:result}),
+              activeTab==='Before & After'    && React.createElement(BeforeAfterPanel,    {data:result}),
+              activeTab==='Content Templates' && React.createElement(TemplatesPanel,      {data:result}),
+              activeTab==='Copy Generator'    && React.createElement(CopyGeneratorPanel,  {voiceData:result,qbp:qbp})
+            )
+          )
+        ),
+
+        /* FOOTER */
+        React.createElement('footer', {style:{borderTop:'1px solid var(--border-medium)',padding:'24px 32px',display:'flex',justifyContent:'space-between',alignItems:'center',background:'var(--bg-deep)'}},
+          React.createElement('span', {style:{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-4)',letterSpacing:'.2em',textTransform:'uppercase'}}, 'BrandOS Platform'),
+          React.createElement('span', {style:{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',letterSpacing:'.15em',textTransform:'uppercase'}}, 'Voice Agent / Phase 02')
+        )
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
+</script>
+</body>
+</html>

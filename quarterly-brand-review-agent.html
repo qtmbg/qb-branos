@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Quarterly Brand Review Agent</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+  // Theme init — read from localStorage, default to dark
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch(e) {}
+  })();
+</script>
+
+<style>
+/* ── ENTANGLED TIME: CORE VARIABLES ──────────────────────────────────────── */
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140, 110, 70, 0.045);
+  --bg-elevated: rgba(140, 110, 70, 0.07);
+  --bg-overlay: rgba(18, 15, 10, 0.85);
+  
+  --border-subtle: rgba(140, 110, 70, 0.06);
+  --border-medium: rgba(140, 110, 70, 0.11);
+  --border-strong: rgba(140, 110, 70, 0.18);
+  
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58, 95, 74, 0.2);
+  --patina-faint: rgba(58, 95, 74, 0.08);
+  
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168, 144, 62, 0.18);
+  --brass-faint: rgba(168, 144, 62, 0.06);
+
+  --phase-discovery: #4A7A5E;
+  --phase-creation: #4A7A8A;
+  --phase-content: #8A5A5A;
+  --phase-execution: #5A7A6A;
+  --phase-intelligence: #A8903E;
+  
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+  
+  --error: #8A4A4A;
+  --error-dim: rgba(138, 74, 74, 0.15);
+  --info: #4A7A8A;
+  --info-dim: rgba(74, 122, 138, 0.15);
+
+  --content: #8A5A5A;
+  --content-dim: rgba(138, 90, 90, 0.15);
+
+  --grain-opacity: 0.035;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+}
+
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100, 80, 50, 0.04);
+  --bg-elevated: rgba(100, 80, 50, 0.07);
+  --bg-overlay: rgba(244, 240, 235, 0.9);
+  
+  --border-subtle: rgba(100, 80, 50, 0.08);
+  --border-medium: rgba(100, 80, 50, 0.14);
+  --border-strong: rgba(100, 80, 50, 0.22);
+  
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46, 78, 60, 0.15);
+  --patina-faint: rgba(46, 78, 60, 0.06);
+  
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138, 116, 48, 0.15);
+  --brass-faint: rgba(138, 116, 48, 0.05);
+
+  --phase-discovery: #2E5A42;
+  --phase-creation: #2E5A6A;
+  --phase-content: #6A3A3A;
+  --phase-execution: #3A5A4A;
+  --phase-intelligence: #8A7430;
+  
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+  
+  --error: #8A3A3A;
+  --error-dim: rgba(138, 58, 58, 0.1);
+  --info: #2E5A6A;
+  --info-dim: rgba(46, 90, 106, 0.1);
+
+  --content: #6A3A3A;
+  --content-dim: rgba(106, 58, 58, 0.1);
+
+  --grain-opacity: 0.02;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+}
+
+html:not([data-theme]){background:#080604;color:#A89A88}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-2);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Film Grain Overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+/* Warm Vignette */
+.vignette-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse 80% 80% at 50% 30%, transparent 0%, rgba(8,6,4,0.3) 100%);
+}
+[data-theme="light"] .vignette-layer {
+  background: radial-gradient(ellipse 80% 80% at 50% 30%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* Typography */
+h1, h2, h3, .font-display { font-family: 'DM Serif Display', Georgia, serif; color: var(--text-1); font-weight: 400; letter-spacing: -0.015em; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Form Elements */
+input, textarea, select {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-1);
+  font-family: 'Inter', sans-serif;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: all 0.3s ease;
+  line-height: 1.6;
+}
+input:hover, textarea:hover, select:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-elevated);
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--patina);
+  background: var(--bg-deep);
+  box-shadow: 0 0 0 3px rgba(58,95,74,0.08), 0 0 24px -4px rgba(168,144,62,0.08);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-3);
+  font-style: italic;
+  opacity: 0.8;
+}
+select option { background: var(--bg-deep); color: var(--text-1); }
+
+/* Buttons */
+button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outline: none; background: transparent; }
+
+.btn-primary {
+  background: var(--patina);
+  color: #E6DDD0; /* Always cream for primary button */
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--patina-lit);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px -4px rgba(58,95,74,0.4), 0 0 0 1px rgba(168,144,62,0.15);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn-primary:disabled {
+  background: var(--bg-surface);
+  color: var(--text-4);
+  border-color: var(--border-subtle);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-2);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover {
+  border-color: var(--brass-dim);
+  color: var(--text-1);
+  background: var(--bg-elevated);
+}
+
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-3);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+.tab-btn:hover {
+  color: var(--text-2);
+  background: var(--bg-surface);
+}
+.tab-btn.active {
+  background: var(--patina-faint);
+  border-color: var(--patina-dim);
+  color: var(--patina);
+}
+
+/* Glass Cards */
+.glass-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -40%; left: -20%;
+  width: 80%; height: 80%;
+  background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0.5;
+  transition: opacity 0.5s ease;
+}
+.glass-card:hover::before { opacity: 1; }
+.glass-card:hover {
+  border-color: var(--border-medium);
+  background: var(--bg-elevated);
+}
+
+/* Manifesto Block */
+.manifesto-block {
+  position: relative;
+  padding: 32px 0 32px 32px;
+}
+.manifesto-block::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 3px;
+  box-shadow: 0 0 12px var(--brass-faint);
+}
+
+/* Pulse / Indicators */
+.pulse-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px var(--brass-dim), 0 0 2px var(--brass);
+  animation: beat 3s ease-in-out infinite;
+}
+.status-dot-patina {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--patina);
+  box-shadow: 0 0 6px var(--patina-dim);
+}
+.status-dot-empty {
+  width: 6px; height: 6px; border-radius: 50%;
+  border: 1px solid var(--border-strong);
+}
+
+@keyframes beat {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  15% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+  30% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
+  45% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  60% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+}
+
+/* Non-centered pulse dots (header stepper) should not use translate */
+.pulse-dot:not(.center-pulse) {
+  animation: beat-simple 3s ease-in-out infinite;
+}
+@keyframes beat-simple {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  15% { transform: scale(1.4); opacity: 1; }
+  30% { transform: scale(0.9); opacity: 0.6; }
+  45% { transform: scale(1.15); opacity: 1; }
+  60% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes reveal { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+.fade-in { animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.reveal { animation: reveal 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+/* Custom Loader */
+.brass-ring {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  position: relative;
+}
+.brass-ring::before {
+  content: ''; position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-medium);
+  border-top-color: var(--brass);
+  border-right-color: var(--patina);
+  animation: spin 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.brass-ring::after {
+  content: ''; position: absolute; inset: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  border-bottom-color: var(--text-3);
+  animation: spin 3s linear infinite reverse;
+}
+.center-pulse {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Diff Styles */
+.diff-old {
+  background: var(--error-dim);
+  border-radius: 6px; padding: 12px 16px;
+  font-size: 13px; color: var(--text-2); line-height: 1.6;
+  margin-bottom: 6px; border-left: 3px solid var(--error);
+}
+.diff-new {
+  background: var(--patina-faint);
+  border-radius: 6px; padding: 12px 16px;
+  font-size: 13px; color: var(--text-1); line-height: 1.6;
+  border-left: 3px solid var(--patina);
+}
+
+/* Pills */
+.pill {
+  display: inline-block; padding: 4px 10px; border-radius: 4px;
+  font-size: 10px; font-family: 'JetBrains Mono', monospace;
+  margin: 0 6px 6px 0; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.pill-patina { background: var(--patina-faint); color: var(--patina-lit); border: 1px solid var(--patina-dim); }
+.pill-brass { background: var(--brass-faint); color: var(--brass-lit); border: 1px solid var(--brass-dim); }
+.pill-info { background: var(--info-dim); color: var(--info); border: 1px solid rgba(74, 122, 138, 0.2); }
+.pill-content { background: var(--content-dim); color: var(--content); border: 1px solid rgba(138, 90, 90, 0.2); }
+.pill-neutral { background: var(--bg-elevated); color: var(--text-2); border: 1px solid var(--border-medium); }
+
+/* Layout Wrappers */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+}
+.header-glass {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.main-wrapper {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 24px 100px;
+}
+
+.step-indicator {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+@media (max-width: 600px) {
+  .step-indicator { display: none; }
+}
+</style>
+
+<script>
+// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message || 'API error');
+    if(!d.content?.[0]?.text) throw new Error('Empty or unexpected API response');
+    return d.content[0].text;
+  };
+})();
+</script>
+</head>
+<body>
+<div class="vignette-layer"></div>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const ARCHETYPES = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
+const NATURAL_FORCES = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
+const QUARTERS = ['Q1 (Jan–Mar)','Q2 (Apr–Jun)','Q3 (Jul–Sep)','Q4 (Oct–Dec)'];
+
+// ── REUSABLE UI COMPONENTS ────────────────────────────────────────────────────
+const Label = ({ children, color, mb = 8 }) => (
+  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.15em', color: color || 'var(--text-3)', textTransform: 'uppercase', marginBottom: mb, fontWeight: 500 }}>
+    {children}
+  </div>
+);
+
+const Card = ({ children, style = {} }) => (
+  <div className="glass-card" style={{ padding: '24px 28px', ...style }}>
+    {children}
+  </div>
+);
+
+const TF = ({ label, value, onChange, placeholder, rows = 1, hint }) => (
+  <div style={{ marginBottom: 20 }}>
+    <Label>{label}</Label>
+    {rows > 1 ? (
+      <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows} />
+    ) : (
+      <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} />
+    )}
+    {hint && <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 6, fontStyle: 'italic' }}>{hint}</div>}
+  </div>
+);
+
+const SF = ({ label, options, value, onChange }) => (
+  <div style={{ marginBottom: 20 }}>
+    <Label>{label}</Label>
+    <select value={value} onChange={e => onChange(e.target.value)}>
+      <option value="">— select —</option>
+      {options.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
+
+const Section = ({ n, title, children, note }) => (
+  <div style={{ marginBottom: 48 }} className="fade-in">
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid var(--border-subtle)' }}>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--brass)', letterSpacing: '0.15em' }}>{String(n).padStart(2, '0')}</span>
+      <h2 style={{ fontSize: 22, margin: 0, color: 'var(--text-1)' }}>{title}</h2>
+      {note && <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 'auto', fontFamily: 'var(--font-body)' }}>{note}</span>}
+    </div>
+    {children}
+  </div>
+);
+
+const ThemeToggle = () => {
+  const toggle = () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('qb-theme', next); } catch(e) {}
+  };
+  return (
+    <button onClick={toggle} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', padding: '6px 12px', borderRadius: 20, color: 'var(--text-2)' }}>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em' }}>THEME</span>
+      <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'linear-gradient(135deg, var(--brass), var(--patina))' }} />
+    </button>
+  );
+};
+
+// ── QBP DIFF VIEW ─────────────────────────────────────────────────────────────
+const QBPDiffPanel = ({ updates }) => {
+  if (!updates?.length) return <div style={{ color: 'var(--text-3)', fontSize: 14, padding: '40px 0', textAlign: 'center', fontStyle: 'italic' }}>The profile holds strong. No structural updates required this quarter.</div>;
+  return (
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 8, padding: '16px 20px', background: 'var(--bg-surface)', borderRadius: 8, borderLeft: '2px solid var(--brass)' }}>
+        The QBP evolves based on what has been learned. These updates reflect what the brand has become — not what it was designed to be. Accept changes that feel true. Reject those that feel reactive.
+      </div>
+      {updates.map((u, i) => {
+        let typeColor = 'var(--brass)';
+        let typeBg = 'var(--brass-faint)';
+        let typeBorder = 'var(--brass-dim)';
+        if (u.changeType === 'strengthen') { typeColor = 'var(--patina)'; typeBg = 'var(--patina-faint)'; typeBorder = 'var(--patina-dim)'; }
+        else if (u.changeType === 'evolve') { typeColor = 'var(--info)'; typeBg = 'var(--info-dim)'; typeBorder = 'rgba(74, 122, 138, 0.2)'; }
+        else if (u.changeType === 'add') { typeColor = 'var(--content)'; typeBg = 'var(--content-dim)'; typeBorder = 'rgba(138, 90, 90, 0.2)'; }
+        else if (u.changeType === 'recalibrate') { typeColor = 'var(--error)'; typeBg = 'var(--error-dim)'; typeBorder = 'rgba(138, 74, 74, 0.25)'; }
+
+        return (
+          <div key={i} className="glass-card" style={{ padding: '20px 24px', borderLeft: `2px solid ${typeColor}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, padding: '3px 8px', borderRadius: 4, background: typeBg, color: typeColor, border: `1px solid ${typeBorder}`, letterSpacing: '0.1em' }}>
+                {u.changeType?.toUpperCase()}
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)' }}>{u.field}</span>
+            </div>
+            
+            {u.currentValue && (
+              <div className="diff-old">
+                <span style={{ fontSize: 9, color: 'var(--error)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>PRIOR STATE</span>
+                {u.currentValue}
+              </div>
+            )}
+            <div className="diff-new">
+              <span style={{ fontSize: 9, color: 'var(--patina)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>EVOLVED STATE</span>
+              {u.proposedValue}
+            </div>
+            
+            <div style={{ marginTop: 12, fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6 }}>
+              <span style={{ color: 'var(--text-2)' }}>Intelligence trace: </span>{u.reasoning}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// ── INITIATIVES PANEL ─────────────────────────────────────────────────────────
+const InitiativesPanel = ({ initiatives }) => {
+  if (!initiatives?.length) return null;
+  const bands = ['now', 'next', 'later', 'park'];
+  
+  const getBandStyles = (band) => {
+    switch(band) {
+      case 'now': return { color: 'var(--patina)', bg: 'var(--patina-faint)' };
+      case 'next': return { color: 'var(--info)', bg: 'var(--info-dim)' };
+      case 'later': return { color: 'var(--brass)', bg: 'var(--brass-faint)' };
+      default: return { color: 'var(--text-3)', bg: 'var(--bg-surface)' };
+    }
+  };
+
+  return (
+    <div className="fade-in">
+      {bands.map(band => {
+        const bItems = initiatives.filter(ini => ini.band?.toLowerCase() === band);
+        if (!bItems.length) return null;
+        const styles = getBandStyles(band);
+        
+        return (
+          <div key={band} style={{ marginBottom: 40 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+              <div style={{ padding: '4px 12px', borderRadius: 4, background: styles.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: styles.color, letterSpacing: '0.15em', fontWeight: 600 }}>{band.toUpperCase()}</span>
+              </div>
+              <div style={{ flex: 1, height: 1, background: 'var(--border-subtle)' }} />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {bItems.map((ini, i) => (
+                <div key={i} className="glass-card" style={{ padding: '20px 24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 12 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 16, fontWeight: 500, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--font-display)' }}>{ini.name}</div>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        {ini.platform && <span className="pill pill-neutral">{ini.platform}</span>}
+                        {ini.pillar && <span className="pill pill-neutral">{ini.pillar}</span>}
+                        {ini.effort && <span className="pill pill-neutral">{ini.effort} effort</span>}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 18, fontWeight: 700, color: styles.color }}>{ini.score || '—'}</div>
+                      <div style={{ fontSize: 9, color: 'var(--text-3)', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 2 }}>conviction</div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 12 }}>{ini.rationale}</p>
+                  {ini.successMetric && (
+                    <div style={{ fontSize: 12, color: 'var(--text-3)', borderTop: '1px solid var(--border-subtle)', paddingTop: 12 }}>
+                      <span style={{ color: 'var(--text-2)' }}>Metric: </span>{ini.successMetric}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+const STEPS = ['Input Data', 'Intelligence', 'War Table'];
+
+const QB_SYSTEM_PROMPT = `You are the Quarterly Brand Review Agent inside the Quantum Branding BrandOS ecosystem.
+Your function is to run a full quarterly review that does three things:
+1. Read what happened this quarter through the brand lens — what the data says, what it means for identity
+2. Update the Quantum Brand Profile based on what was learned — the brand is not static
+3. Produce the strategic direction for the next 90 days — the War Table for Q+1
+
+This is the tool that makes the system self-evolving. The brand gets smarter each quarter.
+Return ONLY valid JSON — no markdown, no preamble.`;
+
+const LOADING_MESSAGES = [
+  "Reading quarter's data through brand lens...",
+  "Evaluating brand performance & coherence...",
+  "Extracting core intelligence traces...",
+  "Re-calibrating Quantum Brand Profile...",
+  "Constructing Q+1 strategic directives...",
+  "Assembling War Table initiatives..."
+];
+
+function App() {
+  const [step, setStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState(null);
+  const [activeTab, setActiveTab] = useState('narrative');
+
+  // Current QBP
+  const [brandName, setBrandName] = useState('');
+  const [brandEssence, setBrandEssence] = useState('');
+  const [spark, setSpark] = useState('');
+  const [naturalForce, setNaturalForce] = useState('');
+  const [archetype, setArchetype] = useState('');
+  const [manifesto, setManifesto] = useState('');
+  const [antiBrand, setAntiBrand] = useState('');
+  const [primaryPersona, setPrimaryPersona] = useState('');
+  const [offer, setOffer] = useState('');
+  const [voiceNotes, setVoiceNotes] = useState('');
+
+  // Quarter data
+  const [quarter, setQuarter] = useState('');
+  const [year, setYear] = useState(new Date().getFullYear().toString());
+  const [contentProduced, setContentProduced] = useState('');
+  const [topPerformers, setTopPerformers] = useState('');
+  const [lowestPerformers, setLowestPerformers] = useState('');
+  const [keyMetrics, setKeyMetrics] = useState('');
+  const [businessOutcomes, setBusinessOutcomes] = useState('');
+  const [audienceEvolution, setAudienceEvolution] = useState('');
+  const [whatWorked, setWhatWorked] = useState('');
+  const [whatDidnt, setWhatDidnt] = useState('');
+  const [biggestLesson, setBiggestLesson] = useState('');
+  const [brandFeeling, setBrandFeeling] = useState('');
+  const [identityDrift, setIdentityDrift] = useState('');
+  const [emergingOpportunities, setEmergingOpportunities] = useState('');
+  const [nextQGoal, setNextQGoal] = useState('');
+
+
+
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.spark) setSpark(q.spark);
+    if (q.naturalForce) setNaturalForce(q.naturalForce);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.manifesto) setManifesto(q.manifesto);
+    if (q.antiBrand) setAntiBrand(q.antiBrand);
+    if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
+    if (q.offer) setOffer(q.offer);
+    if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+  }, []);
+
+  useEffect(() => {
+    let interval;
+    if (loading) {
+      interval = setInterval(() => {
+        setLoadingMsgIndex(prev => (prev + 1) % LOADING_MESSAGES.length);
+      }, 2500);
+    }
+    return () => clearInterval(interval);
+  }, [loading]);
+
+  const isValid = () => brandName.trim() && brandEssence.trim() && quarter && (whatWorked.trim() || topPerformers.trim() || keyMetrics.trim());
+
+  const buildUserData = () => `CURRENT QUANTUM BRAND PROFILE:
+Brand: ${brandName}
+Essence: ${brandEssence}
+The Spark: ${spark||'not specified'}
+Natural Force: ${naturalForce||'not specified'}
+Archetype: ${archetype||'not specified'}
+Manifesto: ${manifesto||'not specified'}
+Anti-Brand: ${antiBrand||'not specified'}
+Primary Persona: ${primaryPersona||'not specified'}
+Core Offer: ${offer||'not specified'}
+Voice Notes: ${voiceNotes||'not specified'}
+
+QUARTER UNDER REVIEW: ${quarter} ${year}
+
+QUARTERLY DATA:
+Content produced: ${contentProduced||'not specified'}
+Top performing content: ${topPerformers||'not specified'}
+Lowest performing content: ${lowestPerformers||'not specified'}
+Key metrics: ${keyMetrics||'not specified'}
+Business outcomes: ${businessOutcomes||'not specified'}
+Audience evolution: ${audienceEvolution||'not specified'}
+What worked: ${whatWorked||'not specified'}
+What didn't work: ${whatDidnt||'not specified'}
+Biggest lesson: ${biggestLesson||'not specified'}
+How the brand felt this quarter: ${brandFeeling||'not specified'}
+Identity drift noticed: ${identityDrift||'not specified'}
+Emerging opportunities: ${emergingOpportunities||'not specified'}
+Goal for next quarter: ${nextQGoal||'not specified'}
+
+Return this exact JSON structure:
+{
+  "quarterNarrative": "4-6 sentences. The honest story of this quarter — what the brand became, what it learned, what it proved, and what it must leave behind. Written with the authority of a strategist who has seen the full picture.",
+  "quarterGrade": {
+    "overall": "A | B | C | D",
+    "brandCoherence": "A | B | C | D",
+    "contentQuality": "A | B | C | D",
+    "audienceAlignment": "A | B | C | D",
+    "commercialProgress": "A | B | C | D",
+    "gradeExplanation": "2-3 sentences on the grade — honest, not harsh, not soft"
+  },
+  "keyLearnings": [
+    {
+      "learning": "specific insight — not generic",
+      "evidence": "what in the data supports this",
+      "implication": "what this changes going forward"
+    }
+  ],
+  "whatToCarryForward": ["specific asset, content type, angle, behavior to double down on"],
+  "whatToLeave": ["specific thing to stop or retire — with honest reason"],
+  "qbpUpdates": [
+    {
+      "field": "QBP field name — e.g. Brand Essence, Voice Notes, Primary Persona, Archetype, Anti-Brand",
+      "changeType": "strengthen | evolve | add | recalibrate",
+      "currentValue": "what it currently says",
+      "proposedValue": "what it should say now — after this quarter's learnings",
+      "reasoning": "why this update — specific evidence from the quarter"
+    }
+  ],
+  "nextQuarterTheme": "One sentence. The single overarching theme for Q+1 — what this quarter is fundamentally about",
+  "nextQuarterNorthStar": "The one metric / outcome that would make Q+1 a success. Specific.",
+  "initiatives": [
+    {
+      "name": "initiative name",
+      "band": "now | next | later | park",
+      "platform": "which platform(s)",
+      "pillar": "content pillar it serves",
+      "rationale": "why this initiative, why now — traced to quarter learnings",
+      "effort": "low | medium | high",
+      "score": number 40-100,
+      "successMetric": "how to know if this worked"
+    }
+  ],
+  "contentFocus": {
+    "primaryFormat": "the format to lead with next quarter",
+    "primaryAngle": "the content angle / territory to own",
+    "voiceEvolution": "how the voice should evolve — if at all",
+    "platformPriority": ["platform 1 — reason", "platform 2 — reason", "platform 3 — reason"]
+  },
+  "offerSignals": "What the quarter's data says about the offer — is it landing, is it being understood, does it need repositioning?",
+  "identityCheck": {
+    "driftAssessment": "Did the brand drift from its identity this quarter? Where and why?",
+    "recalibration": "Specific moves to re-anchor or strengthen identity heading into Q+1",
+    "coreToProtect": "The single most important identity element to protect next quarter"
+  },
+  "warTableSummary": {
+    "constraint": "Time | Money | Clarity | Team | Trust — the binding constraint for Q+1",
+    "nowList": ["top 3 initiatives — name only"],
+    "nextList": ["next 2-3 — name only"],
+    "parkList": ["what to park — name only"]
+  },
+  "closingDirective": "One paragraph. The strategic directive for Q+1 — written directly to the founder. What the brand is doing, why, and what it is betting on. The document that runs the next 90 days."
+}
+
+Requirements:
+- keyLearnings: minimum 4, maximum 6
+- qbpUpdates: only include genuine updates — if the QBP holds, return empty array
+- initiatives: minimum 8, across all bands
+- All analysis must be specific to THIS brand and THIS quarter's data — no generic advice
+- The quarterNarrative and closingDirective must be written with real strategic authority — the kind a founder reads once and acts on`;
+
+  const run = async () => {
+    if (!isValid()) { setError('Complete required fields: brand name, essence, quarter, and at least one data field.'); return; }
+    setError(''); setLoading(true); setStep(1); setLoadingMsgIndex(0);
+    try {
+      const raw = await window.QB_AI(QB_SYSTEM_PROMPT, buildUserData(), 8000);
+      if (!raw) throw new Error('Empty response from API');
+      const clean = raw.replace(/^```json\s*/, '').replace(/\s*```$/, '').replace(/^```\s*/, '').trim();
+      setResult(JSON.parse(clean));
+      setActiveTab('narrative');
+      setStep(2);
+    } catch (e) { setError('Agent anomaly: ' + e.message); setStep(0); }
+    finally { setLoading(false); }
+  };
+
+  const exportReview = () => {
+    if (!result) return;
+    const lines = [`QUARTERLY BRAND REVIEW — ${quarter} ${year}`, 'Generated by QB BrandOS — Quarterly Brand Review Agent', `Brand: ${brandName}`, ''];
+    lines.push('QUARTER NARRATIVE:', result.quarterNarrative, '');
+    if (result.quarterGrade) {
+      lines.push('GRADES:');
+      Object.entries(result.quarterGrade).forEach(([k, v]) => k !== 'gradeExplanation' && lines.push(`  ${k}: ${v}`));
+      lines.push(result.quarterGrade.gradeExplanation, '');
+    }
+    lines.push('KEY LEARNINGS:');
+    result.keyLearnings?.forEach((l, i) => lines.push(`${i + 1}. ${l.learning}`, `   Evidence: ${l.evidence}`, `   Implication: ${l.implication}`, ''));
+    lines.push('CARRY FORWARD:');
+    result.whatToCarryForward?.forEach(w => lines.push(`+ ${w}`));
+    lines.push('', 'LEAVE BEHIND:');
+    result.whatToLeave?.forEach(w => lines.push(`- ${w}`));
+    lines.push('', 'QBP UPDATES:');
+    result.qbpUpdates?.forEach(u => { lines.push(`${u.field} (${u.changeType}):`, `  Current: ${u.currentValue || '—'}`, `  Proposed: ${u.proposedValue}`, `  Why: ${u.reasoning}`, ''); });
+    lines.push('', 'NEXT QUARTER:');
+    lines.push(`Theme: ${result.nextQuarterTheme}`);
+    lines.push(`North Star: ${result.nextQuarterNorthStar}`, '');
+    if (result.warTableSummary) {
+      lines.push('WAR TABLE:');
+      lines.push(`Constraint: ${result.warTableSummary.constraint}`);
+      lines.push('NOW:', result.warTableSummary.nowList?.join(', '));
+      lines.push('NEXT:', result.warTableSummary.nextList?.join(', '));
+      lines.push('PARK:', result.warTableSummary.parkList?.join(', '), '');
+    }
+    lines.push('CLOSING DIRECTIVE:', result.closingDirective);
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${brandName.replace(/\s+/g, '-').toLowerCase()}-${quarter.replace(/\s+/g, '-')}-${year}-review.txt`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 100);
+  };
+
+  const getGradeColor = (g) => {
+    if (!g) return 'var(--text-3)';
+    if (g === 'A') return 'var(--patina)';
+    if (g === 'B') return 'var(--info)';
+    if (g === 'C') return 'var(--brass)';
+    return 'var(--error)';
+  };
+
+  return (
+    <div className="app-container">
+      <header className="header-glass">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--text-1)', lineHeight: 1 }}>BrandOS</div>
+          <div style={{ width: 1, height: 16, background: 'var(--border-medium)' }} />
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.15em', color: 'var(--text-3)', textTransform: 'uppercase' }}>Quarterly Review Phase</div>
+        </div>
+        <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+          <div className="step-indicator">
+            {STEPS.map((s, i) => (
+              <React.Fragment key={i}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {i === step ? <div className="pulse-dot" /> : <div className={i < step ? "status-dot-patina" : "status-dot-empty"} />}
+                  <span style={{ fontSize: 10, color: i <= step ? 'var(--text-2)' : 'var(--text-4)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s}</span>
+                </div>
+                {i < STEPS.length - 1 && <div style={{ width: 16, height: 1, background: 'var(--border-subtle)' }} />}
+              </React.Fragment>
+            ))}
+          </div>
+          <ThemeToggle />
+        </div>
+      </header>
+
+      <main className="main-wrapper">
+        {step === 0 && (
+          <div className="fade-in">
+            <div style={{ marginBottom: 56 }}>
+              <Label color="var(--brass)" mb={16}>Phase 05 — Intelligence + Pivot</Label>
+              <h1 style={{ fontSize: 44, lineHeight: 1.1, marginBottom: 16, maxWidth: 600 }}>Quarterly Brand Review</h1>
+              <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.8, maxWidth: 620 }}>
+                The tool that makes the system self-evolving. Feed the quarter's data, let the agent read it through your brand identity, update the QBP with learned reality, and produce the strategic direction for the next 90 days.
+              </p>
+            </div>
+
+            <Section n={1} title="Current Brand Profile" note="* Required base context">
+              <div className="glass-card" style={{ padding: '32px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                  <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand under review" />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                    <SF label="Natural Force" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce} />
+                    <SF label="Archetype" options={ARCHETYPES} value={archetype} onChange={setArchetype} />
+                  </div>
+                </div>
+                <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="Current irreducible truth — one sentence" rows={2} />
+                <TF label="The Spark (Narrative)" value={spark} onChange={setSpark} placeholder="Current synthesis of who the brand is and why it exists" rows={3} />
+                <TF label="Manifesto Line" value={manifesto} onChange={setManifesto} placeholder="Current core belief" />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                  <TF label="Primary Persona" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who the brand currently serves" rows={2} />
+                  <TF label="Core Offer" value={offer} onChange={setOffer} placeholder="What the brand currently sells" rows={2} />
+                </div>
+                <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What the brand refuses to be" />
+                <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How the brand currently writes and speaks" rows={2} />
+              </div>
+            </Section>
+
+            <Section n={2} title="Quarter Under Review" note="* Required timeframe">
+              <div className="glass-card" style={{ padding: '32px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                <SF label="Quarter *" options={QUARTERS} value={quarter} onChange={setQuarter} />
+                <TF label="Year" value={year} onChange={setYear} placeholder="e.g. 2026" />
+              </div>
+            </Section>
+
+            <Section n={3} title="Performance Data" note="Quantitative reality">
+              <div className="glass-card" style={{ padding: '32px' }}>
+                <TF label="Content Produced" value={contentProduced} onChange={setContentProduced} placeholder="e.g. 24 IG posts, 12 LinkedIn posts, 3 YouTube videos, 6 newsletter issues" rows={2} />
+                <TF label="Top Performers" value={topPerformers} onChange={setTopPerformers} placeholder="Describe what performed best — which posts, topics, formats, and rough numbers" rows={3} />
+                <TF label="Lowest Performers" value={lowestPerformers} onChange={setLowestPerformers} placeholder="What underperformed — and any patterns" rows={2} />
+                <TF label="Key Metrics" value={keyMetrics} onChange={setKeyMetrics} placeholder="Follower growth, engagement rates, reach, email list, website traffic — whatever you track" rows={2} />
+                <TF label="Business Outcomes" value={businessOutcomes} onChange={setBusinessOutcomes} placeholder="Leads, calls booked, sales, revenue attributable to content and brand activity" rows={2} />
+              </div>
+            </Section>
+
+            <Section n={4} title="Reflection & Qualitative Data" note="Founder intuition">
+              <div className="glass-card" style={{ padding: '32px' }}>
+                <TF label="Audience Evolution" value={audienceEvolution} onChange={setAudienceEvolution} placeholder="Who started showing up? Did the persona match? Any new segments?" rows={2} />
+                <TF label="What Worked (Honest Read)" value={whatWorked} onChange={setWhatWorked} placeholder="What genuinely worked this quarter — in content, strategy, offer, or brand" rows={3} />
+                <TF label="What Didn't (Honest Read)" value={whatDidnt} onChange={setWhatDidnt} placeholder="What failed, underperformed, or felt wrong — even if the numbers didn't reflect it yet" rows={3} />
+                <TF label="Biggest Lesson" value={biggestLesson} onChange={setBiggestLesson} placeholder="The single most important thing you learned this quarter — about your brand, your audience, or yourself" rows={2} />
+                <TF label="Brand Feeling" value={brandFeeling} onChange={setBrandFeeling} placeholder="Honest gut check — did it feel like you? Did it feel coherent? Or did something feel off?" rows={2} />
+                <TF label="Identity Drift" value={identityDrift} onChange={setIdentityDrift} placeholder="Any moments where the brand drifted from its identity — in content, offers, or communication" rows={2} />
+                <TF label="Emerging Opportunities" value={emergingOpportunities} onChange={setEmergingOpportunities} placeholder="What became visible this quarter that didn't exist before — new angles, audiences, formats, or moves" rows={2} />
+                <TF label="Goal for Q+1" value={nextQGoal} onChange={setNextQGoal} placeholder="What does success look like at the end of next quarter? Be specific." rows={2} />
+              </div>
+            </Section>
+
+            {error && <div style={{ background: 'var(--error-dim)', border: '1px solid rgba(138, 74, 74, 0.3)', borderRadius: 8, padding: '16px 20px', marginBottom: 24, fontSize: 13, color: 'var(--error)' }}>{error}</div>}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 40 }}>
+              <button onClick={run} disabled={!isValid()} className="btn-primary">
+                Initialize Intelligence Run
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 500, gap: 40, textAlign: 'center' }}>
+            <div className="brass-ring">
+              <div className="pulse-dot center-pulse" style={{ width: 12, height: 12 }} />
+            </div>
+            <div>
+              <Label color="var(--brass)" mb={16}>Processing Intelligence</Label>
+              <div style={{ color: 'var(--text-1)', fontSize: 16, height: 24, fontFamily: 'var(--font-display)', fontStyle: 'italic' }}>
+                {LOADING_MESSAGES[loadingMsgIndex]}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && result && (
+          <div className="fade-in">
+            <div style={{ marginBottom: 48, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }}>
+              <div>
+                <Label color="var(--brass)" mb={12}>// Phase 05 Intelligence Complete</Label>
+                <h1 style={{ fontSize: 32, marginBottom: 8, color: 'var(--text-1)' }}>{brandName} — {quarter}</h1>
+                <p style={{ color: 'var(--text-3)', fontSize: 14 }}>Brand analyzed · QBP evolved · Directives set</p>
+              </div>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button onClick={exportReview} className="btn-secondary">Export Text</button>
+                <button onClick={() => { setStep(0); setResult(null); }} className="btn-secondary">New Run</button>
+              </div>
+            </div>
+
+            {result.quarterGrade && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 32 }}>
+                {[
+                  { label: 'Overall', key: 'overall' },
+                  { label: 'Coherence', key: 'brandCoherence' },
+                  { label: 'Content', key: 'contentQuality' },
+                  { label: 'Audience', key: 'audienceAlignment' },
+                  { label: 'Commercial', key: 'commercialProgress' },
+                ].map(g => (
+                  <div key={g.key} className="glass-card" style={{ padding: '20px 16px', textAlign: 'center' }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 36, color: getGradeColor(result.quarterGrade[g.key]), lineHeight: 1 }}>{result.quarterGrade[g.key] || '—'}</div>
+                    <div style={{ fontSize: 9, color: 'var(--text-3)', marginTop: 8, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>{g.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 32, paddingBottom: 16, borderBottom: '1px solid var(--border-subtle)' }}>
+              {[
+                { key: 'narrative', label: 'Narrative' },
+                { key: 'learnings', label: 'Learnings' },
+                { key: 'qbp', label: `QBP Updates (${result.qbpUpdates?.length || 0})` },
+                { key: 'q1', label: 'Q+1 Direction' },
+                { key: 'initiatives', label: 'War Table' },
+                { key: 'directive', label: 'Directive' },
+              ].map(t => (
+                <button key={t.key} className={`tab-btn ${activeTab === t.key ? 'active' : ''}`} onClick={() => setActiveTab(t.key)}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'narrative' && (
+              <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <div className="glass-card manifesto-block" style={{ padding: '32px' }}>
+                  <Label color="var(--brass)" mb={16}>Quarter Narrative</Label>
+                  <p style={{ fontSize: 16, lineHeight: 1.8, color: 'var(--text-1)', fontFamily: 'var(--font-body)' }}>{result.quarterNarrative}</p>
+                </div>
+                
+                {result.quarterGrade?.gradeExplanation && (
+                  <Card>
+                    <Label>Grade Rationale</Label>
+                    <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.7 }}>{result.quarterGrade.gradeExplanation}</p>
+                  </Card>
+                )}
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                  {result.whatToCarryForward?.length > 0 && (
+                    <div className="glass-card" style={{ padding: '24px', borderTop: '2px solid var(--patina)' }}>
+                      <Label color="var(--patina)">Carry Forward</Label>
+                      {result.whatToCarryForward.map((w, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 12, padding: '8px 0', borderBottom: i < result.whatToCarryForward.length - 1 ? '1px solid var(--border-subtle)' : '', fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>
+                          <span style={{ color: 'var(--patina)', flexShrink: 0 }}>+</span>{w}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {result.whatToLeave?.length > 0 && (
+                    <div className="glass-card" style={{ padding: '24px', borderTop: '2px solid var(--error)' }}>
+                      <Label color="var(--error)">Leave Behind</Label>
+                      {result.whatToLeave.map((w, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 12, padding: '8px 0', borderBottom: i < result.whatToLeave.length - 1 ? '1px solid var(--border-subtle)' : '', fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>
+                          <span style={{ color: 'var(--error)', flexShrink: 0 }}>×</span>{w}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'learnings' && (
+              <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {result.keyLearnings?.map((l, i) => (
+                  <div key={i} className="reveal" style={{ animationDelay: `${i * 80}ms` }}>
+                    <Card>
+                      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--brass)', border: '1px solid var(--brass-faint)', padding: '4px 10px', borderRadius: 4, flexShrink: 0, marginTop: 2 }}>{String(i + 1).padStart(2, '0')}</span>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-1)', lineHeight: 1.6, marginBottom: 16 }}>{l.learning}</p>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                            <div style={{ background: 'var(--bg-deep)', borderRadius: 6, padding: '12px 16px', border: '1px solid var(--border-subtle)' }}>
+                              <Label mb={6}>Evidence</Label>
+                              <p style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6 }}>{l.evidence}</p>
+                            </div>
+                            <div style={{ background: 'var(--bg-deep)', borderRadius: 6, padding: '12px 16px', border: '1px solid var(--border-subtle)', borderTop: '2px solid var(--info)' }}>
+                              <Label color="var(--info)" mb={6}>Implication</Label>
+                              <p style={{ fontSize: 12, color: 'var(--text-1)', lineHeight: 1.6 }}>{l.implication}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'qbp' && <QBPDiffPanel updates={result.qbpUpdates} />}
+
+            {activeTab === 'q1' && (
+              <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <div className="glass-card manifesto-block" style={{ padding: '28px 32px' }}>
+                  <Label color="var(--brass)" mb={12}>Next Quarter Theme</Label>
+                  <p style={{ fontSize: 20, color: 'var(--text-1)', lineHeight: 1.4, marginBottom: 12, fontFamily: 'var(--font-display)' }}>{result.nextQuarterTheme}</p>
+                  <p style={{ fontSize: 13, color: 'var(--text-2)' }}>North Star Metric: <span style={{ color: 'var(--patina)', fontWeight: 500 }}>{result.nextQuarterNorthStar}</span></p>
+                </div>
+
+                {result.contentFocus && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                    <Card style={{ borderTop: '2px solid var(--info)' }}>
+                      <Label color="var(--info)">Content Focus</Label>
+                      <div style={{ marginBottom: 12 }}>
+                        <span style={{ fontSize: 12, color: 'var(--text-3)', display: 'block', marginBottom: 4 }}>Primary format</span>
+                        <span style={{ fontSize: 13, color: 'var(--text-1)' }}>{result.contentFocus.primaryFormat}</span>
+                      </div>
+                      <div style={{ marginBottom: 12 }}>
+                        <span style={{ fontSize: 12, color: 'var(--text-3)', display: 'block', marginBottom: 4 }}>Primary angle</span>
+                        <span style={{ fontSize: 13, color: 'var(--text-1)' }}>{result.contentFocus.primaryAngle}</span>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: 12, color: 'var(--text-3)', display: 'block', marginBottom: 4 }}>Voice evolution</span>
+                        <span style={{ fontSize: 13, color: 'var(--text-1)' }}>{result.contentFocus.voiceEvolution}</span>
+                      </div>
+                    </Card>
+                    <Card>
+                      <Label>Platform Priority</Label>
+                      {result.contentFocus.platformPriority?.map((p, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < result.contentFocus.platformPriority.length - 1 ? '1px solid var(--border-subtle)' : '', fontSize: 13, color: 'var(--text-2)', lineHeight: 1.5 }}>
+                          <span style={{ color: 'var(--text-3)', flexShrink: 0, fontFamily: 'var(--font-mono)' }}>{String(i + 1).padStart(2, '0')}.</span>{p}
+                        </div>
+                      ))}
+                    </Card>
+                  </div>
+                )}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                  {result.offerSignals && (
+                    <Card style={{ borderTop: '2px solid var(--brass)' }}>
+                      <Label color="var(--brass)">Offer Signals</Label>
+                      <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7 }}>{result.offerSignals}</p>
+                    </Card>
+                  )}
+                  {result.identityCheck && (
+                    <Card style={{ borderTop: '2px solid var(--patina)' }}>
+                      <Label color="var(--patina)">Identity Check</Label>
+                      <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 12 }}>{result.identityCheck.driftAssessment}</p>
+                      <p style={{ fontSize: 13, color: 'var(--text-1)', lineHeight: 1.7, marginBottom: 16 }}>{result.identityCheck.recalibration}</p>
+                      <div style={{ fontSize: 12, color: 'var(--text-3)', padding: '10px 14px', background: 'var(--bg-deep)', borderRadius: 6, border: '1px solid var(--border-subtle)' }}>
+                        <span style={{ color: 'var(--patina)', display: 'block', marginBottom: 4, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', fontSize: 10 }}>Core To Protect</span>
+                        {result.identityCheck.coreToProtect}
+                      </div>
+                    </Card>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'initiatives' && (
+              <div className="fade-in">
+                {result.warTableSummary && (
+                  <Card style={{ marginBottom: 32, background: 'var(--bg-deep)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <Label mb={4}>Primary Constraint</Label>
+                      <div style={{ fontSize: 13, color: 'var(--text-2)' }}>The binding resource for Q+1 execution</div>
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, padding: '6px 16px', borderRadius: 4, background: 'var(--brass-faint)', color: 'var(--brass)', border: '1px solid var(--brass-dim)' }}>
+                      {result.warTableSummary.constraint}
+                    </span>
+                  </Card>
+                )}
+                <InitiativesPanel initiatives={result.initiatives} />
+              </div>
+            )}
+
+            {activeTab === 'directive' && (
+              <div className="fade-in">
+                <div className="glass-card manifesto-block" style={{ padding: '40px 48px' }}>
+                  <Label color="var(--brass)" mb={16}>Strategic Directive — Execute The Following</Label>
+                  <p style={{ fontSize: 16, lineHeight: 1.9, color: 'var(--text-1)' }}>{result.closingDirective}</p>
+                </div>
+                <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end' }}>
+                  <button onClick={() => navigator.clipboard.writeText(result.closingDirective).catch(()=>{})} className="btn-secondary">Copy Directive</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+
+      <footer style={{ borderTop: '1px solid var(--border-subtle)', padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-deep)', position: 'relative', zIndex: 10 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>QB BrandOS</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-4)', letterSpacing: '0.15em' }}>Entangled Time Edition</span>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

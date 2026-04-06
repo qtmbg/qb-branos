@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB Sensescape</title>
+<!-- FIX S6: production.min.js for performance -->
+<!-- FIX M2: crossorigin=anonymous -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<!-- Prevent FOUC: reads theme before React hydrates -->
+<!-- FIX THEME-1: Unified key qb_theme (underscore). Legacy qb-theme migrated automatically. -->
+<script>
+(function(){
+  var legacy = localStorage.getItem('qb-theme');
+  if (legacy) { localStorage.setItem('qb_theme', legacy); localStorage.removeItem('qb-theme'); }
+  var t = localStorage.getItem('qb_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+:root, [data-theme="dark"] {
+  --bg-void: #080604; --bg-deep: #0A0806; --bg-base: #0E0C09;
+  --bg-surface: rgba(140,110,70,0.045); --bg-elevated: rgba(140,110,70,0.07); --bg-overlay: rgba(18,15,10,0.85);
+  --border-subtle: rgba(140,110,70,0.06); --border-medium: rgba(140,110,70,0.11); --border-strong: rgba(140,110,70,0.18);
+  --patina: #3A5F4A; --patina-lit: #4A7A5E; --patina-dim: rgba(58,95,74,0.2); --patina-faint: rgba(58,95,74,0.08);
+  --brass: #A8903E; --brass-lit: #C4A84E; --brass-dim: rgba(168,144,62,0.18); --brass-faint: rgba(168,144,62,0.06);
+  --text-1: #F4F0EB; --text-2: #CDBEAA; --text-3: #A09382; --text-4: #605649;
+}
+[data-theme="light"] {
+  --bg-void: #F4F0EB; --bg-deep: #EDE8E2; --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04); --bg-elevated: rgba(100,80,50,0.07); --bg-overlay: rgba(244,240,235,0.9);
+  --border-subtle: rgba(100,80,50,0.08); --border-medium: rgba(100,80,50,0.14); --border-strong: rgba(100,80,50,0.22);
+  --patina: #2E4E3C; --patina-lit: #3A6A4E; --patina-dim: rgba(46,78,60,0.15); --patina-faint: rgba(46,78,60,0.06);
+  --brass: #8A7430; --brass-lit: #A08A3A; --brass-dim: rgba(138,116,48,0.15); --brass-faint: rgba(138,116,48,0.05);
+  --text-1: #110E0A; --text-2: #2A241B; --text-3: #5C5245; --text-4: #A89A88;
+}
+html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: ['class', '[data-theme="dark"]'],
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', '-apple-system', 'sans-serif'],
+          serif: ['DM Serif Display', 'Georgia', 'serif'],
+          mono: ['JetBrains Mono', 'Courier New', 'monospace'],
+        },
+        colors: {
+          void: 'var(--bg-void)', deep: 'var(--bg-deep)', base: 'var(--bg-base)',
+          surface: 'var(--bg-surface)', elevated: 'var(--bg-elevated)', overlay: 'var(--bg-overlay)',
+          border: { subtle: 'var(--border-subtle)', medium: 'var(--border-medium)', strong: 'var(--border-strong)' },
+          patina: { DEFAULT: 'var(--patina)', lit: 'var(--patina-lit)', dim: 'var(--patina-dim)', faint: 'var(--patina-faint)' },
+          brass: { DEFAULT: 'var(--brass)', lit: 'var(--brass-lit)', dim: 'var(--brass-dim)', faint: 'var(--brass-faint)' },
+          t1: 'var(--text-1)', t2: 'var(--text-2)', t3: 'var(--text-3)', t4: 'var(--text-4)',
+        },
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-void text-t2 min-h-screen antialiased selection:bg-patina-dim selection:text-t1 overflow-x-hidden">
+<div id="root"></div>
+<script type="text/babel">
+  const { useState, useEffect, useMemo, useCallback } = React;
+
+  const ArrowRight = ({ size = 16, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+    </svg>
+  );
+  const ArrowLeft = ({ size = 16, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+    </svg>
+  );
+  const Square = ({ size = 16, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+    </svg>
+  );
+  const Sun = ({ size = 16, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  );
+  const Moon = ({ size = 16, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  );
+  const Loader2 = ({ size = 16, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} style={{animation:'spin 1s linear infinite'}}>
+      <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+      <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+    </svg>
+  );
+  const AlertCircle = ({ size = 16, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+  );
+
+  const SENSESCAPE_DATA = [
+    {
+      chapter: 'I', title: 'Emotional Frequency',
+      subtitle: 'The feeling the brand creates before a single word is read.',
+      time: '9 min',
+      questions: [
+        { id: 'eboldsubtle', type: 'slider', left: 'Bold', right: 'Subtle', leftDesc: 'Commanding, aggressive in its beauty, demanding to be seen.', rightDesc: 'Power through restraint. The brand that trusts you to find it.', previewType: 'weight', anchorLeft: 'Balenciaga', anchorRight: 'Jil Sander' },
+        { id: 'eluxappr', type: 'slider', left: 'Luxurious', right: 'Approachable', leftDesc: 'Not everything is for everyone. Exclusivity is a form of respect.', rightDesc: 'You belong here. Come as you are.', previewType: 'elevation', anchorLeft: 'Bottega Veneta', anchorRight: 'Glossier' },
+        { id: 'eclassavant', type: 'slider', left: 'Classic', right: 'Avant-Garde', leftDesc: 'Timeless not by accident but by rigorous refusal of trend.', rightDesc: 'Breaks the rules because it understands them. Visual language as provocation.', previewType: 'font-family', anchorLeft: 'Chanel', anchorRight: 'Comme des Gar\u00e7ons' },
+        { id: 'eminmax', type: 'slider', left: 'Minimalist', right: 'Maximalist', leftDesc: 'We trust silence. Every element earns its presence.', rightDesc: 'Abundance is itself a statement. More is a philosophy.', previewType: 'density', anchorLeft: 'Dieter Rams', anchorRight: 'Gucci' },
+        { id: 'ecorpplay', type: 'slider', left: 'Corporate', right: 'Playful', leftDesc: 'Authority, structure, institutional permanence.', rightDesc: 'Humor as intelligence. Makes you smile before it makes you buy.', previewType: 'color-pop', anchorLeft: 'IBM', anchorRight: 'Oatly' },
+      ]
+    },
+    {
+      chapter: 'II', title: 'The Color World',
+      subtitle: 'Color is not decoration. It is emotion made visible.',
+      time: '9 min',
+      questions: [
+        { id: 'cvibmut', type: 'slider', left: 'Vibrant', right: 'Muted', leftDesc: 'Announces itself. Participates in the room before you look.', rightDesc: 'Colors allowed to age. Quiet confidence.', previewType: 'saturation', anchorLeft: 'Wes Anderson', anchorRight: 'The Row' },
+        { id: 'cdarklight', type: 'slider', left: 'Dark', right: 'Light', leftDesc: 'Secrecy, depth. Night as a brand environment.', rightDesc: 'Airy, optimistic, clean. The visual language of morning.', previewType: 'luminosity', anchorLeft: 'ST Laurent', anchorRight: 'Jacquemus' },
+        { id: 'cwarmcool', type: 'slider', left: 'Warm', right: 'Cool', leftDesc: 'Skin, fire, earth. Warmth as a form of intimacy.', rightDesc: 'Water, steel, glass. Coolness as a form of intelligence.', previewType: 'temperature', anchorLeft: 'Herm\u00e8s', anchorRight: 'Apple' },
+        { id: 'cmonochrom', type: 'slider', left: 'Monochrome', right: 'Chromatic', leftDesc: 'Color is noise. Built from tension between black and white.', rightDesc: 'Speaks in multiple colors simultaneously.', previewType: 'palette', anchorLeft: 'Helmut Newton', anchorRight: 'Matisse' },
+        { id: 'cstorydom', type: 'text', title: 'The Dominant Color', prompt: 'The first color someone encounters when they enter our brand\u2019s world makes them feel ___. Describe the emotion, not the hex code.' },
+        { id: 'cstorynever', type: 'text', title: 'The Forbidden Color', prompt: 'The color that would immediately signal something is wrong is ___ because ___.' },
+      ]
+    },
+    {
+      chapter: 'III', title: 'Type Architecture',
+      subtitle: 'Typography is the brand\u2019s voice made visible.',
+      time: '8 min',
+      questions: [
+        { id: 'tserifsans', type: 'slider', left: 'Serif', right: 'Sans-Serif', leftDesc: 'Carries authority, history. Someone built something that lasted.', rightDesc: 'Present tense. Clean, functional, democratic.', previewType: 'font-family', anchorLeft: 'Vogue', anchorRight: 'Helvetica' },
+        { id: 'tthickthin', type: 'slider', left: 'Thick', right: 'Thin', leftDesc: 'A firm handshake. Confident, impossible to overlook.', rightDesc: 'A whisper that carries. Confidence through restraint.', previewType: 'weight', anchorLeft: 'Impact', anchorRight: 'Cartier' },
+        { id: 'tcompext', type: 'slider', left: 'Compact', right: 'Extended', leftDesc: 'Concentrated energy. Words that press against each other.', rightDesc: 'Breath, luxury, unhurried confidence.', previewType: 'tracking', anchorLeft: 'Compressed Type', anchorRight: 'Wide Tracking' },
+        { id: 'tvoice', type: 'text', title: 'The Speaking Voice', prompt: 'If our typography were a speaking voice, it would sound like... (pitch, pace, accent)' },
+      ]
+    },
+    {
+      chapter: 'IV', title: 'Visual Language',
+      subtitle: 'What the brand shows and how it shows it.',
+      time: '8 min',
+      questions: [
+        { id: 'vphotoill', type: 'slider', left: 'Photography', right: 'Illustration', leftDesc: 'This happened. This is real. Committed to the actual world.', rightDesc: 'This is interpreted. A world only we can make.', previewType: 'image-style', anchorLeft: 'Annie Leibovitz', anchorRight: 'Jean Jullien' },
+        { id: 'vcontgrad', type: 'slider', left: 'High-Contrast', right: 'Soft Gradient', leftDesc: 'Certainty. Hard edges, clear separations.', rightDesc: 'Transition, transformation. Suggests more than it states.', previewType: 'contrast', anchorLeft: 'Avedon', anchorRight: 'Loewe' },
+        { id: 'vfutnost', type: 'slider', left: 'Futuristic', right: 'Nostalgic', leftDesc: 'We live in a future not widely inhabited yet.', rightDesc: 'Something essential existed before the speed of now.', previewType: 'era', anchorLeft: 'Space-Age', anchorRight: 'Kodak Film' },
+      ]
+    },
+    {
+      chapter: 'V', title: 'Shape & Form',
+      subtitle: 'The geometry of the brand\u2019s physical existence.',
+      time: '7 min',
+      questions: [
+        { id: 'sangcurv', type: 'slider', left: 'Angular', right: 'Curved', leftDesc: 'The world has edges. We are made of decisions.', rightDesc: 'The world moves in flows. Nothing cuts here.', previewType: 'radius', anchorLeft: 'Brutalism', anchorRight: 'Zaha Hadid' },
+        { id: 'sdensespac', type: 'slider', left: 'Dense', right: 'Spacious', leftDesc: 'Energy through compression. Every pixel occupied.', rightDesc: 'We can afford to leave things out.', previewType: 'layout-density', anchorLeft: 'Supreme', anchorRight: 'The NYT Mag' },
+        { id: 'ssharpround', type: 'slider', left: 'Sharp', right: 'Rounded', leftDesc: 'The blade. The surgical. Refusal of softness.', rightDesc: 'Accessibility, warmth. The deliberate removal of threat.', previewType: 'corners', anchorLeft: 'Zero Radius', anchorRight: 'Apple Radius' },
+      ]
+    },
+    {
+      chapter: 'VI', title: 'Motion & Rhythm',
+      subtitle: 'How the brand moves through time.',
+      time: '6 min',
+      questions: [
+        { id: 'mstatkin', type: 'slider', left: 'Static', right: 'Kinetic', leftDesc: 'Communicates entirely through stillness.', rightDesc: 'Fundamentally alive. The still frame is incomplete.', previewType: 'animation-state', anchorLeft: 'Print', anchorRight: 'Digital Native' },
+        { id: 'msmoothstac', type: 'slider', left: 'Smooth', right: 'Staccato', leftDesc: 'Fluid transitions. Everything flows.', rightDesc: 'The snap. The cut. Rhythm through interruption.', previewType: 'easing', anchorLeft: 'Spring', anchorRight: 'Hard Cut' },
+      ]
+    },
+    {
+      chapter: 'VII', title: 'The Sensory World',
+      subtitle: 'What the brand feels, sounds, weighs, and smells like.',
+      time: '7 min',
+      questions: [
+        { id: 'swcoldhot', type: 'slider', left: 'Cold', right: 'Hot', leftDesc: 'Aluminum, glass, marble. Clinical precision.', rightDesc: 'Fire, skin, terracotta. Biologically inviting.', previewType: 'temperature', anchorLeft: 'Ice', anchorRight: 'Amber' },
+        { id: 'swroughsmooth', type: 'slider', left: 'Rough', right: 'Smooth', leftDesc: 'Raw concrete. Retains texture as evidence of process.', rightDesc: 'Perfectly coated. Refinement is the message.', previewType: 'texture', anchorLeft: 'Wabi-Sabi', anchorRight: 'Frictionless' },
+        { id: 'swobj', type: 'text', title: 'The Brand Object', prompt: 'If your brand were a specific physical object you could hold (not a product you sell), what is it? e.g., \u201cA heavy brass compass, a thin sheet of glass\u201d' },
+        { id: 'swmoment', type: 'text', title: 'The Brand Moment', prompt: 'What time of day does your brand belong to? e.g., \u201c6am first light, 2am honest+raw\u201d. Describe the light.' },
+      ]
+    },
+  ];
+
+  const SensoryVisualizer = ({ type, value }) => {
+    const n = value / 10;
+    const inv = 1 - n;
+    const densityItems = useMemo(() => {
+      const count = Math.max(1, Math.floor(n * 50));
+      return Array.from({ length: count }, (_, i) => ({
+        id: i, width: Math.random() * 100 + 20, height: Math.random() * 100 + 20,
+        left: Math.random() * 100, top: Math.random() * 100,
+      }));
+    }, [Math.max(1, Math.floor(n * 50))]);
+
+    const renderVisuals = () => {
+      switch (type) {
+        case 'weight':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent text-t1 overflow-hidden relative transition-colors duration-500">
+              <span style={{ fontWeight: 900 - n * 800, fontSize: '12rem', letterSpacing: '-0.05em', transition: 'font-weight 0.3s ease' }}>A</span>
+              <div className="absolute bottom-6 text-t3 text-[10px] font-mono tracking-[0.3em] uppercase">WEIGHT {Math.round(900 - n * 800)}</div>
+            </div>
+          );
+        case 'font-family':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent text-t1 transition-colors duration-500">
+              <span style={{ fontFamily: n < 0.5 ? 'Georgia, serif' : 'Inter, sans-serif', fontSize: '10rem', transition: 'all 0.3s ease' }}>{n < 0.5 ? 'Serif' : 'Sans'}</span>
+            </div>
+          );
+        case 'temperature': {
+          const r = Math.round(255 * inv + 40 * n);
+          const g = Math.round(100 * inv + 150 * n);
+          const b = Math.round(50 * inv + 255 * n);
+          return (
+            <div className="flex items-center justify-center h-full w-full transition-colors duration-500" style={{ backgroundColor: `rgb(${r},${g},${b})` }}>
+              <div className="w-36 h-36 rounded-full border border-border-strong backdrop-blur-md flex items-center justify-center text-t1 font-mono text-[10px] tracking-[0.3em] uppercase shadow-xl">TEMP</div>
+            </div>
+          );
+        }
+        case 'saturation':
+          return (
+            <div className="flex items-center justify-center h-full w-full overflow-hidden relative bg-transparent transition-colors duration-500">
+              <div className="absolute inset-0 opacity-80 mix-blend-screen" style={{ background: 'radial-gradient(circle at center, var(--brass), var(--patina))', filter: `saturate(${(1 - n) * 90})`, transition: 'filter 0.3s ease' }} />
+            </div>
+          );
+        case 'luminosity': {
+          const lum = n * 255;
+          return (
+            <div className="flex items-center justify-center h-full w-full transition-colors duration-500" style={{ backgroundColor: `rgb(${lum},${lum},${lum})` }}>
+              <div className="w-28 h-28 border border-current opacity-50 transition-colors duration-500" style={{ color: n < 0.5 ? 'var(--bg-void)' : 'var(--text-1)' }} />
+            </div>
+          );
+        }
+        case 'radius':
+        case 'corners':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent transition-colors duration-500">
+              <div className="w-48 h-48 bg-patina transition-all duration-300 shadow-2xl" style={{ borderRadius: `${n * 50}%` }} />
+            </div>
+          );
+        case 'tracking':
+          return (
+            <div className="flex flex-col items-center justify-center h-full w-full bg-transparent text-patina transition-colors duration-500">
+              <span className="text-4xl uppercase font-black" style={{ letterSpacing: `${n * 2 - 0.1}em`, transition: 'letter-spacing 0.3s ease' }}>Presence</span>
+            </div>
+          );
+        case 'density':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent p-8 overflow-hidden relative transition-colors duration-500">
+              {densityItems.map(item => (
+                <div key={item.id} className="absolute border border-patina-dim bg-patina-faint transition-all duration-500 backdrop-blur-sm"
+                  style={{ width: `${item.width}px`, height: `${item.height}px`, left: `${item.left}%`, top: `${item.top}%`, transform: 'translate(-50%, -50%)' }} />
+              ))}
+              <div className="z-10 bg-overlay backdrop-blur-md px-6 py-3 border border-border-subtle text-patina font-mono text-[10px] tracking-[0.3em] uppercase">NOISE LEVEL</div>
+            </div>
+          );
+        case 'contrast':
+          return (
+            <div className="flex items-center justify-center h-full w-full relative"
+              style={{ background: n < 0.5 ? 'linear-gradient(135deg, var(--bg-void) 50%, var(--text-1) 50%)' : 'linear-gradient(135deg, var(--border-strong), var(--border-medium))', transition: 'background 0.5s ease' }} />
+          );
+        case 'image-style':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent text-t1 transition-colors duration-500">
+              <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-t3">{n < 0.5 ? 'Documentary' : 'Constructed'}</div>
+            </div>
+          );
+        case 'era':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent text-t1 transition-colors duration-500">
+              <div className="font-serif text-6xl">{n < 0.5 ? '2049' : '1974'}</div>
+            </div>
+          );
+        case 'animation-state':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent text-t1 transition-colors duration-500">
+              <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-t3">{n < 0.5 ? 'Still' : 'In Motion'}</div>
+            </div>
+          );
+        case 'easing':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent text-t1 transition-colors duration-500">
+              <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-t3">{n < 0.5 ? 'Fluid' : 'Staccato'}</div>
+            </div>
+          );
+        case 'texture':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent text-t1 transition-colors duration-500">
+              <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-t3">{n < 0.5 ? 'Rough' : 'Smooth'}</div>
+            </div>
+          );
+        case 'elevation':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent transition-colors duration-500">
+              <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-t3">{n < 0.3 ? 'Exclusive' : n > 0.7 ? 'For Everyone' : 'Selective'}</div>
+            </div>
+          );
+        case 'palette':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent transition-colors duration-500">
+              <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-t3">{n < 0.5 ? 'Monochrome' : 'Chromatic'}</div>
+            </div>
+          );
+        case 'color-pop':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent transition-colors duration-500">
+              <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-t3">{n < 0.5 ? 'Corporate' : 'Expressive'}</div>
+            </div>
+          );
+        case 'layout-density':
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent transition-colors duration-500">
+              <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-t3">{n < 0.5 ? 'Dense' : 'Spacious'}</div>
+            </div>
+          );
+        default:
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-transparent text-t3 font-mono text-[10px] tracking-[0.3em] uppercase transition-colors duration-500">System Ready</div>
+          );
+      }
+    };
+
+    return (
+      <div className="w-full h-80 md:h-full min-h-[400px] rounded-[18px] overflow-hidden shadow-2xl border border-border-medium relative group transition-all duration-700 bg-surface backdrop-blur-[24px]">
+        {renderVisuals()}
+        <div className="absolute top-6 left-6 flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="inline-flex items-center space-x-3 px-4 py-2 rounded-full border border-border-subtle bg-overlay shadow-lg text-t2 font-mono text-[9px] uppercase tracking-[0.2em]">
+            <div className="pulse-dot"></div>
+            <span>Live Preview</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  function App() {
+    const [theme, setTheme] = useState(() => {
+      try { return localStorage.getItem('qb_theme') || 'dark'; } catch(e) { return 'dark'; }
+    });
+    const [started, setStarted] = useState(false);
+    const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
+    const [answers, setAnswers] = useState({});
+    const [showCodex, setShowCodex] = useState(false);
+    const [showLeadForm, setShowLeadForm] = useState(false);
+    const [leadData, setLeadData] = useState({ name: '', company: '', email: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
+    const [validationError, setValidationError] = useState('');
+
+    const toggleTheme = useCallback(() => setTheme(t => {
+      const next = t === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('qb_theme', next);
+      return next;
+    }), []);
+
+    useEffect(() => {
+      document.documentElement.setAttribute('data-theme', theme);
+    }, [theme]);
+
+    useEffect(() => {
+      const init = {};
+      SENSESCAPE_DATA.forEach(ch => ch.questions.forEach(q => { init[q.id] = q.type === 'slider' ? 5 : ''; }));
+      setAnswers(init);
+    }, []);
+
+    const handleSliderChange = useCallback((id, value) => {
+      setAnswers(prev => ({ ...prev, [id]: parseInt(value, 10) }));
+    }, []);
+
+    const handleTextChange = useCallback((id, value) => {
+      setAnswers(prev => ({ ...prev, [id]: value }));
+      setValidationError('');
+    }, []);
+
+    const isChapterComplete = useCallback(() => {
+      const questions = SENSESCAPE_DATA[currentChapterIndex].questions;
+      for (let q of questions) {
+        if (q.type === 'text' && (!answers[q.id] || !answers[q.id].trim())) return false;
+      }
+      return true;
+    }, [currentChapterIndex, answers]);
+
+    const nextChapter = useCallback(() => {
+      if (!isChapterComplete()) { setValidationError('Complete all prompts to continue.'); return; }
+      setValidationError('');
+      if (currentChapterIndex < SENSESCAPE_DATA.length - 1) {
+        setCurrentChapterIndex(prev => prev + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setShowLeadForm(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, [currentChapterIndex, isChapterComplete]);
+
+    const prevChapter = useCallback(() => {
+      setValidationError('');
+      if (currentChapterIndex > 0) {
+        setCurrentChapterIndex(prev => prev - 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, [currentChapterIndex]);
+
+    const paradoxes = useMemo(() => {
+      if (!showCodex) return [];
+      const result = [];
+      if (answers.eboldsubtle < 4 && answers.eminmax < 4)
+        result.push({ title: 'Bold Silence', desc: 'Attention through conviction. High impact, zero clutter.' });
+      if (answers.cdarklight < 4 && answers.eluxappr > 6)
+        result.push({ title: 'Deep Intimacy', desc: 'Shadows create a private sanctuary. Warmth within depth.' });
+      if (answers.tserifsans < 4 && answers.ecorpplay > 6)
+        result.push({ title: 'Winking Heritage', desc: 'Institution clothes with a modern heart. Serifs used with irony.' });
+      if (result.length === 0) {
+        result.push({ title: 'Human Systems', desc: 'Rigorous structures populated with organic warmth.' });
+        result.push({ title: 'Moving Anchors', desc: 'Timeless visual weight brought into kinetic motion.' });
+      }
+      return result.slice(0, 3);
+    }, [answers, showCodex]);
+
+    // CRITICAL FIX: Save Sensescape results to qb_qbp for Brand Document
+    const saveToQBP = useCallback((currentAnswers) => {
+      try {
+        const existing = {};
+        try { Object.assign(existing, JSON.parse(localStorage.getItem('qb_qbp') || '{}')); } catch(e) {}
+        const photoScore    = currentAnswers.vphotoill  ?? 5;
+        const contrastScore = currentAnswers.vcontgrad  ?? 5;
+        const timeScore     = currentAnswers.vfutnost   ?? 5;
+        const visualParts   = [];
+        if      (photoScore < 4)    visualParts.push('Photography-led');
+        else if (photoScore > 6)    visualParts.push('Illustration-led');
+        else                        visualParts.push('Mixed photography & illustration');
+        if      (contrastScore < 4) visualParts.push('high contrast');
+        else if (contrastScore > 6) visualParts.push('soft gradients');
+        if      (timeScore < 4)     visualParts.push('futuristic visual language');
+        else if (timeScore > 6)     visualParts.push('nostalgic visual language');
+        const updated = {
+          ...existing,
+          colorTerritory:       currentAnswers.cstorydom  || '',
+          typographyNote:       currentAnswers.tvoice     || '',
+          brandObject:          currentAnswers.swobj      || '',
+          brandMoment:          currentAnswers.swmoment   || '',
+          visualTerritoryNote:  visualParts.join(', '),
+          sensescapeRawAnswers: currentAnswers,
+          sensescapeCompletedAt: new Date().toISOString(),
+        };
+        localStorage.setItem('qb_qbp', JSON.stringify(updated));
+        try {
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: 'qb_qbp', newValue: JSON.stringify(updated), storageArea: localStorage,
+          }));
+        } catch(e) {}
+      } catch(err) {
+        console.warn('Sensescape: failed to save to qb_qbp', err);
+      }
+    }, []);
+
+    const handleLeadSubmit = async (e) => {
+      e.preventDefault();
+      const emailRegex = /.+@.+\..+/;
+      if (!emailRegex.test(leadData.email)) { setValidationError('Enter a valid email address.'); return; }
+      if (!leadData.name.trim()) { setValidationError('Name is required.'); return; }
+      if (!leadData.company.trim()) { setValidationError('Company is required.'); return; }
+      setValidationError(''); setSubmitError(''); setIsSubmitting(true);
+      const WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/YOURHOOKID';
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: leadData.name, company: leadData.company, email: leadData.email, answers, submittedAt: new Date().toISOString() }),
+        });
+        saveToQBP(answers);
+        setIsSubmitting(false); setShowLeadForm(false); setShowCodex(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        setIsSubmitting(false);
+        setSubmitError('Submission failed. Please try again.');
+      }
+    };
+
+    if (!started) return (
+      <div className="relative">
+        <div className="fixed inset-0 z-0 pointer-events-none bg-void transition-colors duration-1000" />
+        <div className="ambient-glow transition-colors duration-1000" />
+        <div className="main-vignette transition-colors duration-1000" />
+        <div className="fixed inset-0 z-10 pointer-events-none film-grain" />
+        <div className="relative z-20 min-h-screen text-t1 flex flex-col items-center justify-center p-6 md:p-12 transition-colors duration-700">
+          <button onClick={toggleTheme} className="absolute top-8 right-8 z-50 inline-flex items-center space-x-3 px-5 py-2.5 rounded-full border border-border-medium bg-surface backdrop-blur-md hover:bg-elevated transition-all duration-300 cursor-pointer text-t2 hover:text-t1 shadow-lg">
+            {theme === 'dark' ? <Sun size={15} className="text-brass" /> : <Moon size={15} className="text-patina" />}
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </button>
+          <div className="max-w-5xl w-full space-y-16 animate-fade-in-up">
+            <div className="space-y-8 max-w-3xl">
+              <div className="inline-flex items-center space-x-3 mb-4">
+                <div className="pulse-dot"></div>
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-t3">System Initialization</span>
+              </div>
+              <h1 className="font-serif text-6xl md:text-8xl font-normal text-transparent bg-clip-text bg-gradient-to-r from-t1 to-t3 tracking-[-0.02em] leading-[1.05]">
+                SENSESCAPE<span className="text-brass font-sans text-4xl md:text-6xl align-top ml-1">2.0</span>
+              </h1>
+              <p className="text-xl md:text-2xl text-t2 font-sans font-normal leading-[1.8] max-w-2xl">
+                Before a brand speaks, it is felt. Before it is understood, it is sensed.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-10 pt-20 border-t border-border-medium">
+              {[
+                { n: '01', title: 'Instinct Over Logic.', body: 'Answer in the first five seconds. Your score is not a preference. It is a pure recognition.' },
+                { n: '02', title: 'Cultural Mirrors.', body: 'Every spectrum anchors to a real brand, era, or feeling. Truth is recognized much faster.' },
+                { n: '03', title: 'Embrace Paradox.', body: 'The most powerful brands score in ways that defy logic. Contradiction is your signature.' },
+              ].map(p => (
+                <div key={p.n} className="manifesto-block group hover:pl-8 transition-all duration-500 flex flex-col min-h-[220px]">
+                  <div className="font-mono text-[9px] text-t3 uppercase tracking-[0.2em] mb-4">Protocol {p.n}</div>
+                  <h3 className="font-serif text-2xl text-t1 mb-4 group-hover:text-brass transition-colors duration-300">{p.title}</h3>
+                  <p className="text-t2 font-sans text-[15px] leading-[1.7] block opacity-90">{p.body}</p>
+                </div>
+              ))}
+            </div>
+            <div className="pt-12">
+              <button onClick={() => setStarted(true)} className="btn-primary group text-[12px] py-4 px-10">
+                <span>Initialize Diagnostics</span>
+                <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    if (showCodex) return (
+      <div className="relative">
+        <div className="fixed inset-0 z-0 pointer-events-none bg-void transition-colors duration-1000" />
+        <div className="ambient-glow" /><div className="main-vignette" />
+        <div className="relative z-20 min-h-screen text-t1 p-6 md:p-20 transition-colors duration-700">
+          <div className="max-w-6xl mx-auto space-y-20">
+            <header className="space-y-8 border-b border-border-medium pb-16">
+              <h1 className="font-serif text-6xl md:text-8xl font-normal text-t1 tracking-[-0.02em] leading-[1.05]">The Codex.</h1>
+              <p className="text-xl md:text-2xl text-t2 font-sans font-normal leading-[1.8] max-w-3xl">Physical and sensory blueprint generated.</p>
+              <button onClick={() => { setShowCodex(false); setStarted(false); setCurrentChapterIndex(0); }} className="btn-primary">Execute New Scan</button>
+            </header>
+            <div className="glass-card p-12 space-y-6">
+              <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-t3 mb-4">Brand Essence</div>
+              <p className="font-serif text-4xl text-t1 leading-relaxed italic">
+                The brand reaches for <span className="text-brass">{answers.swobj || '___'}</span> a clear vision in the light of <span className="text-brass">{answers.swmoment || '___'}</span> infinite possibility.
+              </p>
+              {answers.cstorydom && (
+                <p className="text-t2 font-sans text-lg leading-relaxed border-t border-border-subtle pt-6">
+                  <span className="text-t3 font-mono text-[10px] uppercase tracking-widest block mb-2">Dominant Color Emotion</span>
+                  {answers.cstorydom}
+                </p>
+              )}
+              {answers.tvoice && (
+                <p className="text-t2 font-sans text-lg leading-relaxed border-t border-border-subtle pt-6">
+                  <span className="text-t3 font-mono text-[10px] uppercase tracking-widest block mb-2">The Speaking Voice</span>
+                  {answers.tvoice}
+                </p>
+              )}
+            </div>
+            {paradoxes.length > 0 && (
+              <div className="space-y-6">
+                <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-t3">Brand Paradoxes Detected</div>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {paradoxes.map((p, i) => (
+                    <div key={i} className="glass-card p-8 space-y-3">
+                      <h3 className="font-serif text-2xl text-brass">{p.title}</h3>
+                      <p className="text-t2 font-sans text-[15px] leading-[1.7]">{p.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+
+    if (showLeadForm) return (
+      <div className="relative">
+        <div className="fixed inset-0 z-0 pointer-events-none bg-void" />
+        <div className="relative z-20 min-h-screen text-t1 flex flex-col items-center justify-center p-6">
+          <form onSubmit={handleLeadSubmit} className="glass-card p-14 w-full max-w-2xl space-y-10">
+            <h1 className="font-serif text-5xl text-center">Identity Lock.</h1>
+            <div className="space-y-6">
+              <input className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Full Name" value={leadData.name} onChange={e => { setLeadData(prev => ({ ...prev, name: e.target.value })); setValidationError(''); }} />
+              <input className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Company / Brand" value={leadData.company} onChange={e => { setLeadData(prev => ({ ...prev, company: e.target.value })); setValidationError(''); }} />
+              <input className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Email" type="email" value={leadData.email} onChange={e => { setLeadData(prev => ({ ...prev, email: e.target.value })); setValidationError(''); }} />
+            </div>
+            {(validationError || submitError) && (
+              <div className="flex items-center space-x-2 text-[#C0714A] font-mono text-[11px] uppercase tracking-[0.15em]">
+                <AlertCircle size={13} /><span>{validationError || submitError}</span>
+              </div>
+            )}
+            <button type="submit" disabled={isSubmitting} className="btn-primary w-full py-5 text-[14px] disabled:opacity-60 disabled:cursor-not-allowed">
+              {isSubmitting ? <><Loader2 size={15} /> Transmitting...</> : 'Generate Final Codex'}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+
+    const currentChapter = SENSESCAPE_DATA[currentChapterIndex];
+    return (
+      <div className="relative">
+        <div className="fixed inset-0 z-0 pointer-events-none bg-void transition-colors duration-1000" />
+        <div className="ambient-glow transition-colors duration-1000" />
+        <div className="main-vignette transition-colors duration-1000" />
+        <div className="fixed inset-0 z-10 pointer-events-none film-grain" />
+        <div className="relative z-20 min-h-screen text-t1 font-sans selection:bg-patina-dim selection:text-t1 pb-32 transition-colors duration-700">
+          <div className="sticky top-0 z-50 glass-card rounded-none border-t-0 border-l-0 border-r-0 border-b border-border-medium px-8 py-5 flex items-center justify-between transition-colors duration-500 shadow-md backdrop-blur-[30px]">
+            <div className="flex items-center space-x-8">
+              <div className="inline-flex items-center space-x-3 px-5 py-2 rounded-full border border-border-medium bg-surface text-t1 font-mono text-[10px] uppercase tracking-[0.2em]">
+                <span className="text-patina mr-1">CH.</span>{currentChapter.chapter}
+              </div>
+              <div className="hidden md:block">
+                <h2 className="font-mono text-[9px] tracking-[0.25em] uppercase text-t3 mb-2.5">{currentChapter.title}</h2>
+                <div className="flex space-x-2.5">
+                  {SENSESCAPE_DATA.map((chap, i) => (
+                    <div key={chap.chapter} className={`h-[2px] w-6 transition-all duration-700 rounded-full ${i <= currentChapterIndex ? 'bg-brass' : 'bg-border-strong'}`} />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-6">
+              <button onClick={toggleTheme} className="p-2 text-t2 hover:text-t1 transition-colors">
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+              <div className="flex space-x-4 border-l border-border-medium pl-6">
+                <button onClick={prevChapter} disabled={currentChapterIndex === 0} className="p-2 text-t1 disabled:opacity-20 transition-opacity">
+                  <ArrowLeft size={18} />
+                </button>
+                <button onClick={nextChapter} className="btn-primary px-8 py-2.5 text-[11px]">
+                  <span>{currentChapterIndex === SENSESCAPE_DATA.length - 1 ? 'Execute' : 'Proceed'}</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            </div>
+          </div>
+          <main className="max-w-6xl mx-auto px-6 py-24 md:py-32 space-y-48">
+            <header className="space-y-8 animate-fade-in text-center max-w-4xl mx-auto">
+              <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-t3">SECTION {currentChapter.chapter}</h4>
+              <h1 className="font-serif text-6xl md:text-8xl font-normal text-t1 tracking-[-0.02em] leading-[1.05]">{currentChapter.title}.</h1>
+              <p className="text-xl md:text-2xl text-t2 font-sans font-normal leading-[1.8]">{currentChapter.subtitle}</p>
+            </header>
+            <div className="space-y-64">
+              {currentChapter.questions.map((q, idx) => {
+                const val = answers[q.id] !== undefined ? answers[q.id] : 5;
+                const activeLabel = val < 5 ? q.left : val > 5 ? q.right : 'Neutral';
+                return (
+                  <div key={q.id} className="animate-fade-in-up" style={{ animationDelay: `${idx * 150}ms` }}>
+                    {q.type === 'slider' ? (
+                      <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-stretch">
+                        <div className="flex flex-col justify-between py-2">
+                          <div className="flex justify-between items-baseline border-b border-border-medium pb-8">
+                            <div className="space-y-4">
+                              <span className="inline-block px-3 py-1.5 bg-surface font-mono text-[9px] uppercase tracking-[0.2em] text-t3 rounded border border-border-subtle">Spectrum</span>
+                              <h3 className="font-serif text-4xl text-t1 leading-none">{q.left} <span className="text-t3 font-sans italic text-2xl mx-2 font-light">vs</span> {q.right}</h3>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-t3 mb-1">{activeLabel}</div>
+                              <div className="font-serif text-6xl text-brass leading-none">{Math.abs(val - 5)}</div>
+                            </div>
+                          </div>
+                          <div className="relative py-12">
+                            <div className="absolute top-12 left-0 right-0 h-[2px] bg-border-strong -translate-y-12 rounded-full overflow-hidden">
+                              <div className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-brass to-patina transition-all duration-300" style={{ width: `${val * 10}%` }} />
+                            </div>
+                            <div className="absolute top-12 left-[25%] w-[1px] h-3 bg-border-medium -translate-y-12" />
+                            <div className="absolute top-12 left-[50%] w-[1px] h-6 bg-border-strong -translate-y-12" />
+                            <div className="absolute top-12 left-[75%] w-[1px] h-3 bg-border-medium -translate-y-12" />
+                            <input type="range" min="0" max="10" step="1" value={val}
+                              onChange={e => handleSliderChange(q.id, e.target.value)}
+                              className="w-full absolute top-12 -translate-y-12 opacity-0 cursor-pointer z-20" style={{ height: '50px' }}
+                            />
+                            <div className="absolute top-12 w-2 h-10 bg-white shadow-xl pointer-events-none transition-all duration-100 rounded-sm z-10"
+                              style={{ left: `${val * 10}%`, transform: 'translate(-50%, -50%)' }} />
+                          </div>
+                          <div className="flex justify-between text-base">
+                            <div className="w-1/2 pr-6 flex flex-col justify-between border-r border-border-subtle">
+                              <p className="font-sans text-[15px] text-t2 leading-[1.7] mb-8 pr-4">{q.leftDesc}</p>
+                              <div className="flex items-center space-x-3 font-mono text-[9px] uppercase tracking-[0.2em] bg-surface py-2.5 px-4 rounded-md border border-border-subtle w-fit mt-auto">
+                                <span className="text-t3">REF</span><span className="text-t1 font-bold">{q.anchorLeft}</span>
+                              </div>
+                            </div>
+                            <div className="w-1/2 pl-6 flex flex-col justify-between text-right">
+                              <p className="font-sans text-[15px] text-t2 leading-[1.7] mb-8 pl-4">{q.rightDesc}</p>
+                              <div className="flex items-center space-x-3 font-mono text-[9px] uppercase tracking-[0.2em] bg-surface py-2.5 px-4 rounded-md border border-border-subtle w-fit ml-auto mt-auto">
+                                <span className="text-t3">REF</span><span className="text-t1 font-bold">{q.anchorRight}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="h-full min-h-[400px]">
+                          <SensoryVisualizer type={q.previewType} value={val} />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="glass-card p-12 md:p-20 space-y-10 group relative border-border-medium">
+                        <h3 className="font-mono text-[9px] uppercase tracking-[0.3em] text-brass flex items-center space-x-3">
+                          <Square size={12} /><span>{q.title}</span>
+                        </h3>
+                        <label className="block font-serif text-4xl md:text-5xl text-t1 leading-[1.3] tracking-tight">{q.prompt}</label>
+                        <textarea value={answers[q.id] || ''} onChange={e => handleTextChange(q.id, e.target.value)}
+                          placeholder="Type your response..."
+                          className="w-full bg-transparent border-b-2 border-border-medium focus:border-patina outline-none py-6 text-2xl md:text-3xl font-sans transition-colors resize-none placeholder:italic placeholder:text-t4/30"
+                          rows={2}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </main>
+          {validationError && (
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 inline-flex items-center space-x-3 px-6 py-3 rounded-full bg-overlay border border-border-medium shadow-2xl backdrop-blur-md text-t2 font-mono text-[11px] uppercase tracking-[0.15em]">
+              <AlertCircle size={13} className="text-brass flex-shrink-0" /><span>{validationError}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const GlobalStyles = () => (
+    <style dangerouslySetInnerHTML={{ __html: `
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      .animate-fade-in-up { animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+      .animate-fade-in { animation: fadeIn 1.5s ease forwards; }
+      .glass-card { background: var(--bg-overlay); backdrop-filter: blur(40px); border: 1px solid var(--border-medium); border-radius: 18px; position: relative; overflow: hidden; }
+      .btn-primary { background: var(--patina); color: #FFF; font-family: Inter, sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 28px; border-radius: 6px; transition: all 0.4s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border: none; }
+      .btn-primary:hover { background: var(--patina-lit); transform: translateY(-1px); box-shadow: 0 10px 30px -10px var(--patina-dim); }
+      .btn-primary:disabled { cursor: not-allowed; opacity: 0.6; transform: none; }
+      .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brass); animation: beat 3s infinite; display: inline-block; }
+      @keyframes beat { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } }
+      .manifesto-block { position: relative; padding-left: 28px; }
+      .manifesto-block::before { content: \'\'; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--brass); border-radius: 4px; }
+      .film-grain { opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox=\'0 0 512 512\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E"); pointer-events: none; position: fixed; inset: 0; }
+      .main-vignette { position: fixed; inset: 0; background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.3) 100%); pointer-events: none; z-index: 5; }
+      .ambient-glow { position: fixed; inset: 0; background: radial-gradient(circle at 50% 0%, var(--brass-faint) 0%, transparent 70%); pointer-events: none; z-index: 1; }
+    `}} />
+  );
+
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<><GlobalStyles /><App /></>);
+</script>
+</body>
+</html>

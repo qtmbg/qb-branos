@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Your Brand Document</title>
+
+<!-- Flash Prevention & Theme Init -->
+<script>
+(function(){
+  var legacy = localStorage.getItem('qb-theme');
+  if (legacy) { localStorage.setItem('qb_theme', legacy); localStorage.removeItem('qb-theme'); }
+  var t = localStorage.getItem('qb_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<style>
+  html:not([data-theme]) { background: #080604; color: #A89A88; }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Entangled Time — Dark Theme (Default) */
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140, 110, 70, 0.045);
+  --bg-elevated: rgba(140, 110, 70, 0.07);
+  --bg-overlay: rgba(18, 15, 10, 0.85);
+
+  --border-subtle: rgba(140, 110, 70, 0.06);
+  --border-medium: rgba(140, 110, 70, 0.11);
+  --border-strong: rgba(140, 110, 70, 0.18);
+
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58, 95, 74, 0.2);
+  --patina-faint: rgba(58, 95, 74, 0.08);
+
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168, 144, 62, 0.18);
+  --brass-faint: rgba(168, 144, 62, 0.06);
+
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+
+  --btn-primary-text: #E6DDD0;
+
+  --font: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'DM Serif Display', Georgia, serif;
+}
+
+/* Entangled Time — Light Theme */
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100, 80, 50, 0.04);
+  --bg-elevated: rgba(100, 80, 50, 0.07);
+  --bg-overlay: rgba(244, 240, 235, 0.9);
+
+  --border-subtle: rgba(100, 80, 50, 0.08);
+  --border-medium: rgba(100, 80, 50, 0.14);
+  --border-strong: rgba(100, 80, 50, 0.22);
+
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46, 78, 60, 0.15);
+  --patina-faint: rgba(46, 78, 60, 0.06);
+
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138, 116, 48, 0.15);
+  --brass-faint: rgba(138, 116, 48, 0.05);
+
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+
+  --btn-primary-text: #F0EBE3;
+}
+
+body {
+  background: var(--bg-void);
+  color: var(--text-2);
+  font-family: var(--font);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+/* Film Grain Overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+/* Warm Vignette Overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+}
+[data-theme="light"] body::before {
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+button { cursor: pointer; font-family: var(--font); border: none; background: none; color: inherit; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn 0.35s ease forwards; }
+
+/* FIX A1: Respect user's reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none !important; opacity: 1; }
+  .pulse-dot { animation: none !important; }
+}
+
+/* Layout */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 64px;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.header-inner { max-width: 900px; margin: 0 auto; width: 100%; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo-text { font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em; color: var(--brass); text-transform: uppercase; }
+.header-actions { display: flex; gap: 12px; align-items: center; }
+main { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 2; }
+
+/* Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--patina);
+  color: var(--btn-primary-text);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: var(--font);
+}
+.btn-primary:hover {
+  background: var(--patina-lit);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px -4px var(--patina-dim), 0 0 0 1px var(--brass-faint);
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 7px;
+  border: 1px solid var(--border-medium);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: var(--mono);
+}
+.btn-ghost:hover {
+  color: var(--text-1);
+  border-color: var(--brass);
+  background: var(--bg-surface);
+}
+
+/* Warm Glass Cards */
+.glass-card {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, var(--brass-dim) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* FIX P-01: PDF render mode — removes backdrop-filter unsupported by html2canvas */
+.pdf-render,
+.pdf-render .glass-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: var(--bg-base) !important;
+}
+.pdf-render .doc-cover { background: var(--bg-deep) !important; }
+
+/* Completion meter */
+.completion-meter { padding: 24px 28px; margin-bottom: 36px; }
+.meter-bar-bg { height: 6px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 3px; overflow: hidden; margin: 16px 0 12px; }
+.meter-bar-fill { height: 100%; background: linear-gradient(90deg, var(--patina), var(--brass)); border-radius: 3px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+.meter-sections { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Document Sections */
+.doc-cover { background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-base) 100%); padding: 56px; border-bottom: 1px solid var(--border-subtle); position: relative; }
+.doc-cover-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em; color: var(--brass); text-transform: uppercase; margin-bottom: 24px; }
+.doc-cover-brand { font-family: var(--serif); font-size: 54px; font-weight: 400; letter-spacing: -0.015em; color: var(--text-1); line-height: 1.1; margin-bottom: 12px; }
+.doc-cover-sub { font-size: 15px; color: var(--text-2); letter-spacing: 0.02em; }
+.doc-cover-date { font-family: var(--mono); font-size: 10px; color: var(--text-3); margin-top: 40px; letter-spacing: 0.1em; }
+
+.doc-section { padding: 40px 48px; border-bottom: 1px solid var(--border-subtle); transition: border-color 0.3s ease; }
+.doc-section:last-child { border-bottom: none; }
+.doc-section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.doc-section-num { font-family: var(--mono); font-size: 10px; color: var(--brass); letter-spacing: 0.15em; width: 28px; }
+.doc-section-title { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--text-1); letter-spacing: -0.01em; }
+.doc-section-phase { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 4px; background: var(--patina-faint); color: var(--patina-lit); border: 1px solid var(--patina-dim); text-transform: uppercase; }
+
+/* Field display */
+.doc-field { margin-bottom: 24px; }
+.doc-field-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; color: var(--text-3); text-transform: uppercase; margin-bottom: 8px; }
+.doc-field-value { font-size: 14px; color: var(--text-2); line-height: 1.75; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px 20px; transition: background 0.3s ease, border-color 0.3s ease; }
+.doc-field-value.empty { color: var(--text-3); font-style: italic; border-style: dashed; opacity: 0.8; }
+.doc-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+@media(max-width:640px){ .doc-fields-grid { grid-template-columns: 1fr; } }
+
+/* Manifesto Block (Large Field) */
+.doc-field-value.large {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  position: relative;
+  padding: 24px 0 24px 28px;
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--text-1);
+}
+.doc-field-value.large::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2.5px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--brass-dim);
+}
+
+/* Tag grid */
+.tag-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.doc-tag { font-family: var(--mono); font-size: 10px; padding: 6px 14px; border-radius: 6px; background: var(--bg-elevated); color: var(--text-2); border: 1px solid var(--border-medium); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Empty state */
+.empty-section { padding: 32px 24px; text-align: center; border: 1px dashed var(--border-medium); border-radius: 12px; background: var(--bg-surface); }
+.empty-section-text { font-size: 14px; color: var(--text-2); margin-bottom: 16px; }
+
+/* Status badge & Pulse */
+.status-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 5px; }
+.status-done { background: var(--patina-faint); color: var(--patina-lit); border: 1px solid var(--patina-dim); }
+.status-pending { background: var(--brass-faint); color: var(--brass-lit); border: 1px solid var(--brass-dim); }
+
+.pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px var(--brass-dim), 0 0 2px var(--brass);
+  animation: beat 3s ease infinite;
+  display: inline-block;
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); opacity: 1; }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); opacity: 1; }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+
+/* Input Focus override */
+input:focus, textarea:focus {
+  border-color: var(--patina);
+  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+  outline: none;
+}
+
+/* Mobile padding fix */
+@media(max-width:640px) {
+  .doc-cover, .doc-section { padding: 32px 24px; }
+  .doc-cover-brand { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-text">QB BrandOS</div>
+    <div class="header-actions">
+      <button class="btn-ghost" onclick="toggleTheme()" id="theme-toggle" aria-label="Toggle theme">☼ Theme</button>
+      <!-- FIX M-03: Guard history.back() — avoids blank page when opened directly -->
+      <button class="btn-ghost" onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'index.html'" aria-label="Go back">← Back</button>
+      <button class="btn-primary" onclick="downloadDoc()" id="dl-btn" aria-label="Download brand document as PDF">↓ Download PDF</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Completion meter -->
+  <div class="completion-meter glass-card fade-in" aria-live="polite" aria-atomic="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div style="font-family:var(--serif);font-size:20px;color:var(--text-1)">Brand Document</div>
+      <div id="completion-pct" style="font-family:var(--mono);font-size:12px;color:var(--patina-lit);letter-spacing:0.05em">0% complete</div>
+    </div>
+    <div id="completion-sub" style="font-size:13px;color:var(--text-2);margin-bottom:16px">Complete Phase 01 tools to fill your brand document</div>
+    <div class="meter-bar-bg" id="meter-container" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="meter-bar-fill" id="meter-bar" style="width:0%"></div>
+    </div>
+    <div class="meter-sections" id="section-dots"></div>
+  </div>
+
+  <!-- Document preview -->
+  <div id="doc-preview" class="glass-card fade-in">
+
+    <!-- Cover -->
+    <div class="doc-cover">
+      <div class="doc-cover-label">Entangled Time — Brand Operating System</div>
+      <div class="doc-cover-brand" id="cover-brand">Your Brand</div>
+      <div class="doc-cover-sub">Quantum Brand Profile — Complete Identity Document</div>
+      <div class="doc-cover-date" id="cover-date"></div>
+    </div>
+
+    <!-- Section 01: Identity Core (from Soul Map) -->
+    <div class="doc-section" id="section-identity">
+      <div class="doc-section-header">
+        <div class="doc-section-num">01</div>
+        <div class="doc-section-title">Identity Core</div>
+        <div class="doc-section-phase">Brand Soul Map</div>
+        <div class="status-badge" id="identity-status" role="status">Status</div>
+      </div>
+      <div id="identity-content"></div>
+    </div>
+
+    <!-- Section 02: Sensory Universe (from Sensescape) -->
+    <div class="doc-section" id="section-sensory">
+      <div class="doc-section-header">
+        <div class="doc-section-num">02</div>
+        <div class="doc-section-title">Sensory Universe</div>
+        <div class="doc-section-phase">Sensescape</div>
+        <div class="status-badge" id="sensory-status" role="status">Status</div>
+      </div>
+      <div id="sensory-content"></div>
+    </div>
+
+    <!-- Section 03: Visual DNA (from Visual DNA) -->
+    <div class="doc-section" id="section-visual">
+      <div class="doc-section-header">
+        <div class="doc-section-num">03</div>
+        <div class="doc-section-title">Visual DNA</div>
+        <div class="doc-section-phase">Visual DNA</div>
+        <div class="status-badge" id="visual-status" role="status">Status</div>
+      </div>
+      <div id="visual-content"></div>
+    </div>
+
+    <!-- Section 04: Strategic Direction (from War Table) -->
+    <div class="doc-section" id="section-strategy">
+      <div class="doc-section-header">
+        <div class="doc-section-num">04</div>
+        <div class="doc-section-title">Strategic Direction</div>
+        <div class="doc-section-phase">War Table</div>
+        <div class="status-badge" id="strategy-status" role="status">Status</div>
+      </div>
+      <div id="strategy-content"></div>
+    </div>
+
+    <!-- Section 05: QBP Summary -->
+    <div class="doc-section" id="section-summary">
+      <div class="doc-section-header">
+        <div class="doc-section-num">05</div>
+        <div class="doc-section-title">Complete QBP Summary</div>
+        <div class="doc-section-phase">Auto-generated</div>
+      </div>
+      <div id="summary-content"></div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('qb_theme', next);
+}
+
+function getQBP() {
+  try { return JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) { return {}; }
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// FIX M-01: escHtml() applied to label parameter for consistent XSS hygiene
+function field(label, value, large) {
+  const isEmpty = !value || value.toString().trim() === '';
+  return '<div class="doc-field">' +
+    '<div class="doc-field-label">' + escHtml(label) + '</div>' +
+    '<div class="doc-field-value' + (large && !isEmpty ? ' large' : '') + (isEmpty ? ' empty' : '') + '">' +
+    (isEmpty ? 'Complete ' + escHtml(label).toLowerCase() + ' in the tool to fill this field' : escHtml(value)) +
+    '</div></div>';
+}
+
+function fieldGrid(fields) {
+  return '<div class="doc-fields-grid">' + fields.map(([l, v, large]) => field(l, v, large)).join('') + '</div>';
+}
+
+function emptySection(toolName, file) {
+  const safeName = escHtml(toolName);
+  const safeFile = escHtml(file);
+  return '<div class="empty-section">' +
+    '<div class="empty-section-text">Complete <span style="color:var(--text-1)">' + safeName + '</span> to populate this section</div>' +
+    '<button onclick="openTool(\'' + safeFile + '\')" class="btn-primary">' +
+    'Open ' + safeName + ' \u2192</button></div>';
+}
+
+// FIX B-02: unescape() replaced with TextEncoder — modern, spec-compliant Unicode encoding
+function openTool(file) {
+  const qbpStr = localStorage.getItem('qb_qbp') || '';
+  let url = file;
+  try {
+    if (qbpStr) {
+      const bytes = new TextEncoder().encode(qbpStr);
+      let binary = '';
+      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+      url += '?qbp=' + btoa(binary);
+    }
+  } catch(e) {
+    console.warn('openTool: failed to encode QBP for URL param', e);
+  }
+  window.open(url, '_blank');
+}
+
+function render() {
+  const qbp = getQBP();
+  const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+  // Cover
+  document.getElementById('cover-brand').textContent = qbp.brandName || 'Your Brand';
+  document.getElementById('cover-date').textContent = 'Generated: ' + now + ' · QB BrandOS v3';
+
+  const pendingBadge = '<div class="pulse-dot" aria-hidden="true"></div> Pending';
+  const completeBadge = '\u2713 Complete';
+
+  // ── SECTION 01: Identity Core ──────────────────────────────────────────────
+  const idDone = !!(qbp.brandEssence);
+  const idHasData = !!(qbp.brandEssence || qbp.spark);
+  document.getElementById('identity-status').className = 'status-badge ' + (idDone ? 'status-done' : 'status-pending');
+  document.getElementById('identity-status').innerHTML = idDone ? completeBadge : pendingBadge;
+
+  if (idHasData) {
+    document.getElementById('identity-content').innerHTML =
+      field('Brand Essence', qbp.brandEssence, true) +
+      field('The Spark', qbp.spark) +
+      fieldGrid([
+        ['Primary Archetype', qbp.archetype],
+        ['Manifesto Line', qbp.manifesto],
+      ]) +
+      fieldGrid([
+        ['Anti-Brand', qbp.antiBrand],
+        ['Central Paradox', qbp.paradox],
+      ]) +
+      field('Always / Never', qbp.alwaysNever) +
+      field('Primary Persona', qbp.primaryPersona);
+  } else {
+    document.getElementById('identity-content').innerHTML = emptySection('Brand Soul Map', 'brand-soul-map.html');
+  }
+
+  // ── SECTION 02: Sensory Universe ──────────────────────────────────────────
+  const sensDone = !!(qbp.colorTerritory);
+  document.getElementById('sensory-status').className = 'status-badge ' + (sensDone ? 'status-done' : 'status-pending');
+  document.getElementById('sensory-status').innerHTML = sensDone ? completeBadge : pendingBadge;
+
+  if (sensDone) {
+    document.getElementById('sensory-content').innerHTML =
+      field('Color Territory', qbp.colorTerritory, true) +
+      fieldGrid([
+        ['Visual Territory', qbp.visualTerritoryNote],
+        ['Typography Direction', qbp.typographyNote],
+      ]) +
+      field('Brand Object + Moment', qbp.exemplarWords);
+  } else {
+    document.getElementById('sensory-content').innerHTML = emptySection('Sensescape', 'sensescape.html');
+  }
+
+  // ── SECTION 03: Visual DNA ──────────────────────────────────────────────
+  const visDone = !!(qbp.visualDnaCompletedAt);
+  document.getElementById('visual-status').className = 'status-badge ' + (visDone ? 'status-done' : 'status-pending');
+  document.getElementById('visual-status').innerHTML = visDone ? completeBadge : pendingBadge;
+
+  if (visDone) {
+    const keepCount = qbp.visualDnaKeepCount || 0;
+    const discardRate = qbp.visualDnaDiscardRate || 0;
+    document.getElementById('visual-content').innerHTML =
+      fieldGrid([
+        ['Images Kept', keepCount + ' reference images selected'],
+        ['Discard Rate', discardRate + '% \u2014 indicates visual selectivity'],
+      ]) +
+      (qbp.visualDnaFastDiscards && qbp.visualDnaFastDiscards.length ?
+        '<div class="doc-field"><div class="doc-field-label">Fast Discards \u2014 Your Visual Blocklist</div><div class="doc-field-value">Images rejected in under 3 seconds \u2014 these define what the brand is NOT. Provide this list to your designer as a negative reference.</div></div>' : '') +
+      '<div class="doc-field"><div class="doc-field-label">Designer Note</div><div class="doc-field-value">Your Visual DNA Brief is complete. The kept images define your visual world. The fast discards define your visual blocklist. Share both sets with your designer or use them as Midjourney reference images.</div></div>';
+  } else {
+    document.getElementById('visual-content').innerHTML = emptySection('Visual DNA', 'visual-dna.html');
+  }
+
+  // ── SECTION 04: Strategic Direction ──────────────────────────────────────
+  const warDone = !!(qbp.warTableCompletedAt);
+  document.getElementById('strategy-status').className = 'status-badge ' + (warDone ? 'status-done' : 'status-pending');
+  document.getElementById('strategy-status').innerHTML = warDone ? completeBadge : pendingBadge;
+
+  if (warDone) {
+    const initiatives = qbp.warTableTopInitiatives || [];
+    const brief = qbp.warTableBrief || {};
+    document.getElementById('strategy-content').innerHTML =
+      (brief.challenge ? field('Strategic Challenge', brief.challenge) : '') +
+      (brief.goal ? field('Primary Goal', brief.goal) : '') +
+      (initiatives.length ? '<div class="doc-field"><div class="doc-field-label">Top Initiatives (by score)</div><div class="tag-grid">' +
+        initiatives.map(i => '<div class="doc-tag">' + escHtml(i) + '</div>').join('') +
+        '</div></div>' : '') +
+      '<div class="doc-field"><div class="doc-field-label">Status</div><div class="doc-field-value">War Table complete. Your full 60-day field plan and Strategic Command Document are available in the War Table tool.</div></div>';
+  } else {
+    document.getElementById('strategy-content').innerHTML = emptySection('War Table', 'war-table.html');
+  }
+
+  // ── SECTION 05: QBP Summary — FIX M-02: now uses fieldGrid() like all other sections ──
+  document.getElementById('summary-content').innerHTML =
+    fieldGrid([
+      ['Brand Name',      qbp.brandName],
+      ['Natural Force',   qbp.naturalForce],
+      ['Archetype',       qbp.archetype],
+      ['Core Offer',      qbp.offer],
+      ['Voice Notes',     qbp.voiceNotes],
+      ['Color Territory', qbp.colorTerritory],
+    ]);
+
+  // ── COMPLETION METER ──────────────────────────────────────────────────────
+  const sections = [
+    { label: 'Soul Map',   done: idDone },
+    { label: 'Sensescape', done: sensDone },
+    { label: 'Visual DNA', done: visDone },
+    { label: 'War Table',  done: warDone },
+  ];
+  const doneCt = sections.filter(s => s.done).length;
+  const pct = Math.round((doneCt / sections.length) * 100);
+  document.getElementById('completion-pct').textContent = pct + '% complete';
+  document.getElementById('meter-bar').style.width = pct + '%';
+  document.getElementById('meter-container').setAttribute('aria-valuenow', pct);
+  document.getElementById('completion-sub').textContent =
+    doneCt === 0 ? 'Complete Phase 01 tools to fill your brand document' :
+    doneCt === sections.length ? 'All Phase 01 tools complete. Your brand document is ready to download.' :
+    doneCt + ' of ' + sections.length + ' Phase 01 tools complete';
+
+  document.getElementById('section-dots').innerHTML = sections.map(s =>
+    '<div style="display:flex;align-items:center;gap:6px">' +
+    '<div style="width:8px;height:8px;border-radius:50%;background:' + (s.done ? 'var(--patina)' : 'var(--border-strong)') + '" aria-hidden="true"></div>' +
+    '<span style="font-family:var(--mono);font-size:9px;color:' + (s.done ? 'var(--patina-lit)' : 'var(--text-3)') + ';letter-spacing:0.08em;text-transform:uppercase;">' + escHtml(s.label) + '</span>' +
+    '</div>'
+  ).join('');
+}
+
+// ── PDF DOWNLOAD ──────────────────────────────────────────────────────────────
+// FIX B-01: /\s+/g — was /\\s+/g which matched literal backslash+s, not whitespace
+// FIX P-01: pdf-render class strips backdrop-filter before snapshot (unsupported by html2canvas)
+// FIX P-02: await document.fonts.ready ensures Google Fonts render correctly in PDF
+// FIX A-01: aria-label updated on button during generation for screen reader accuracy
+async function downloadDoc() {
+  const btn = document.getElementById('dl-btn');
+  btn.textContent = 'Generating\u2026';
+  btn.setAttribute('aria-label', 'Generating PDF, please wait');
+  btn.disabled = true;
+
+  const qbp = getQBP();
+  // FIX B-01: /\s+/g correctly replaces whitespace (was /\\s+/g — broken)
+  const brandName = (qbp.brandName || 'Brand').replace(/\s+/g, '-').toLowerCase();
+
+  const bgColor = getComputedStyle(document.documentElement)
+    .getPropertyValue('--bg-void').trim() || '#080604';
+
+  const opt = {
+    margin: [8, 8, 8, 8],
+    filename: brandName + '-quantum-brand-profile.pdf',
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: bgColor,
+      logging: false,
+      windowWidth: 900
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  const preview = document.getElementById('doc-preview');
+
+  try {
+    // FIX P-01: Apply pdf-render class to flatten backdrop-filter before snapshot
+    preview.classList.add('pdf-render');
+    // FIX P-02: Ensure Google Fonts are fully loaded before html2canvas captures
+    await document.fonts.ready;
+    await html2pdf().set(opt).from(preview).save();
+  } catch (err) {
+    console.error('PDF generation failed:', err);
+    alert('PDF generation failed. Use Ctrl+P / Cmd+P to print as PDF instead.');
+  } finally {
+    // Always restore — whether success or failure
+    preview.classList.remove('pdf-render');
+    btn.textContent = '\u2193 Download PDF';
+    btn.setAttribute('aria-label', 'Download brand document as PDF');
+    btn.disabled = false;
+  }
+}
+
+render();
+
+window.addEventListener('storage', function(e) {
+  if (e.key === 'qb_qbp') render();
+});
+
+// FIX S-01: Origin check prevents untrusted windows from triggering re-renders
+window.addEventListener('message', function(e) {
+  if (!e.origin.startsWith(window.location.origin)) return;
+  if (e.data && e.data.type === 'QB_PHASE_COMPLETE') render();
+});
+</script>
+</body>
+</html>

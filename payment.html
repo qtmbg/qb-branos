@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB BrandOS — Access</title>
+<script src="https://js.stripe.com/v3/"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch(e) {}
+  })();
+</script>
+<style>
+/* ─────────────────────────────────────────────────────────────────────────────
+   ENTANGLED TIME — DESIGN SYSTEM
+───────────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140, 110, 70, 0.045);
+  --bg-elevated: rgba(140, 110, 70, 0.07);
+  --bg-overlay: rgba(18, 15, 10, 0.85);
+
+  --border-subtle: rgba(140, 110, 70, 0.06);
+  --border-medium: rgba(140, 110, 70, 0.11);
+  --border-strong: rgba(140, 110, 70, 0.18);
+
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58, 95, 74, 0.2);
+  --patina-faint: rgba(58, 95, 74, 0.08);
+
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168, 144, 62, 0.18);
+  --brass-faint: rgba(168, 144, 62, 0.06);
+
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+
+  --error-color: #8A4A4A;
+  --error-bg: rgba(138, 74, 74, 0.08);
+  --error-border: rgba(138, 74, 74, 0.2);
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100, 80, 50, 0.04);
+  --bg-elevated: rgba(100, 80, 50, 0.07);
+  --bg-overlay: rgba(244, 240, 235, 0.9);
+
+  --border-subtle: rgba(100, 80, 50, 0.08);
+  --border-medium: rgba(100, 80, 50, 0.14);
+  --border-strong: rgba(100, 80, 50, 0.22);
+
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46, 78, 60, 0.15);
+  --patina-faint: rgba(46, 78, 60, 0.06);
+
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138, 116, 48, 0.15);
+  --brass-faint: rgba(138, 116, 48, 0.05);
+
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+}
+
+html { background: var(--bg-void); color: var(--text-2); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-2);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.45) 100%);
+}
+[data-theme="light"] .vignette {
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.2) 100%);
+}
+
+#app {
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  z-index: 10;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--text-1);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+p { line-height: 1.7; font-size: 15px; }
+.system-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+input {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-medium);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+input::placeholder {
+  color: var(--text-3);
+  font-style: italic;
+  opacity: 0.7;
+}
+input:focus {
+  border-color: var(--patina);
+  background: var(--bg-base);
+  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+}
+
+button { cursor: pointer; font-family: var(--font-body); border: none; outline: none; background: none; }
+
+.btn-primary {
+  background: var(--patina);
+  color: #E6DDD0;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 16px;
+  border-radius: 8px;
+  width: 100%;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px var(--patina-faint);
+}
+[data-theme="light"] .btn-primary { color: #FFF; }
+.btn-primary:hover {
+  background: var(--patina-lit);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px -4px var(--patina-dim), 0 0 0 1px var(--brass-faint);
+  color: #FFF;
+}
+
+.glass-card {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.glass-card:hover,
+.glass-card:focus {
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.4);
+  outline: none;
+}
+[data-theme="light"] .glass-card:hover,
+[data-theme="light"] .glass-card:focus { box-shadow: 0 12px 32px -8px rgba(100,80,50,0.1); }
+.glass-card:hover::before,
+.glass-card:focus::before { opacity: 1; }
+
+.glass-card.is-popular {
+  background: var(--bg-base);
+  border-color: var(--border-medium);
+}
+.glass-card.is-popular::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2.5px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px 0 0 2px;
+  box-shadow: 0 0 8px var(--brass-faint);
+}
+
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px var(--brass-dim), 0 0 2px var(--brass);
+  animation: beat 3s ease infinite;
+  flex-shrink: 0;
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); opacity: 1; }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); opacity: 1; }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+
+.spinner {
+  width: 48px; height: 48px;
+  border: 2px solid var(--border-medium);
+  border-top: 2px solid var(--patina);
+  border-left: 2px solid var(--brass);
+  border-radius: 50%;
+  animation: spin 0.8s cubic-bezier(0.6, 0.1, 0.4, 0.9) infinite;
+  margin: 0 auto 24px;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+.logo-container { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 40px; }
+.logo-text { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-1); }
+
+.plan-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.plan-name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.plan-name { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-2); }
+.plan-badge { font-family: var(--font-mono); font-size: 9px; padding: 3px 8px; border-radius: 4px; background: var(--brass-faint); color: var(--brass); border: 1px solid var(--brass-dim); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.plan-price-row { display: flex; align-items: baseline; gap: 4px; }
+.plan-price { font-family: var(--font-display); font-size: 42px; color: var(--text-1); line-height: 1; }
+.plan-per { font-size: 13px; color: var(--text-3); font-style: italic; }
+.plan-arrow { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-surface); border: 1px solid var(--border-medium); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text-2); flex-shrink: 0; transition: all 0.3s ease; }
+.glass-card:hover .plan-arrow,
+.glass-card:focus .plan-arrow { background: var(--patina-faint); border-color: var(--patina-dim); color: var(--patina); transform: translateX(2px); }
+
+.plan-desc { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle); }
+.feature-list { display: flex; flex-direction: column; gap: 10px; }
+.feature-row { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.feature-icon { width: 14px; height: 14px; fill: none; stroke: var(--patina); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; margin-top: 2px; }
+
+.free-note { text-align: center; margin-top: 24px; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.free-note-text { font-size: 13px; color: var(--text-2); }
+
+.text-link { font-size: 13px; color: var(--brass); background: none; border: none; cursor: pointer; border-bottom: 1px solid var(--brass-dim); padding-bottom: 1px; transition: all 0.2s ease; }
+.text-link:hover { color: var(--brass-lit); border-color: var(--brass); }
+
+.back-btn { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-bottom: 32px; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s ease; }
+.back-btn:hover { color: var(--text-1); }
+
+.auth-badge { font-family: var(--font-mono); font-size: 10px; padding: 6px 12px; border-radius: 6px; background: var(--patina-faint); color: var(--patina); border: 1px solid var(--patina-dim); display: inline-block; margin-bottom: 24px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.error-msg { background: var(--error-bg); border: 1px solid var(--error-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--error-color); line-height: 1.5; }
+.warn-msg { background: var(--brass-faint); border: 1px solid var(--brass-dim); border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; font-size: 12px; color: var(--brass); line-height: 1.6; text-align: center; font-family: var(--font-mono); }
+
+.auth-title { font-size: 28px; margin-bottom: 8px; }
+.auth-sub { font-size: 15px; color: var(--text-2); margin-bottom: 32px; }
+
+.input-group { margin-bottom: 16px; }
+.input-group:last-of-type { margin-bottom: 24px; }
+
+.theme-toggle {
+  position: fixed; top: 24px; right: 24px; z-index: 100;
+  background: var(--bg-overlay); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-medium); border-radius: 50%;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-2);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.theme-toggle:hover { background: var(--bg-elevated); color: var(--text-1); border-color: var(--border-strong); transform: scale(1.05); }
+.theme-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+[data-theme="light"] .icon-moon { display: none; }
+[data-theme="dark"] .icon-sun { display: none; }
+
+.center-view { text-align: center; padding: 40px 0; }
+.success-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--patina-faint); border: 1px solid var(--patina-dim); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: var(--patina); font-size: 28px; }
+.error-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--error-bg); border: 1px solid var(--error-border); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: var(--error-color); font-size: 28px; font-family: var(--font-display); }
+
+.info-note { margin-top: 20px; padding: 14px 16px; background: var(--patina-faint); border: 1px solid var(--patina-dim); border-radius: 8px; font-size: 13px; color: var(--patina); line-height: 1.6; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="vignette"></div>
+
+<button type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+  <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+</button>
+
+<div id="app"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// THEME TOGGLE
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('qb-theme', next);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// QB BrandOS — PAYMENT GATE
+// ─────────────────────────────────────────────────────────────────────────────
+const CONFIG = {
+  STRIPE_PUBLISHABLE_KEY: 'pk_live_51T4LrnEHEAcWrG55GLqBVJyczc4WGgSQEKaZOOLE0lr8lZSlvpeyfxN1YgtXoOtbTHF97qB5C0D2MC48lrOVhVJ005iEJWgbZ',
+
+  PRICES: {
+    starter: 'price_1TGZtpEHEAcWrG55WWEgeFAv',
+    pro:     'price_1TGZtsEHEAcWrG55IaXsFRd9',
+    agency:  'price_1TGZtvEHEAcWrG55Ti8Db9mX',
+  },
+
+  // ⚠ VERIFY: Re-copy each link verbatim from Stripe Dashboard → Payment Links.
+  // Do NOT manually edit the URL after copying.
+  PAYMENT_LINKS: {
+    starter: 'https://buy.stripe.com/fZuaEX0js5z02CR7pQ2Ry01',
+    pro:     'https://buy.stripe.com/14AeVdgiq8Lc1yNcKa2Ry02',
+    agency:  'https://buy.stripe.com/7sYeVd2rAf9AfpD11s2Ry03',
+  },
+
+  // SUCCESS_URL points back to THIS page so the URL param handler fires correctly
+  // and sets qb_user_tier after a successful Stripe checkout.
+  SUCCESS_URL: 'https://app.quantumbranding.ai/payment.html?payment=success',
+  CANCEL_URL:  'https://app.quantumbranding.ai/payment.html',
+
+  SUPABASE_URL:      'https://yushbxjwfhuokaezoioe.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0',
+};
+
+// XSS sanitizer — applied to all API-sourced strings injected into innerHTML
+function encodeHTML(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+const isConfigured = !CONFIG.STRIPE_PUBLISHABLE_KEY.includes('REPLACE');
+let stripe = null;
+try {
+  if (isConfigured && typeof Stripe !== 'undefined') {
+    stripe = Stripe(CONFIG.STRIPE_PUBLISHABLE_KEY);
+  }
+} catch(e) {
+  console.warn('Stripe.js init failed:', e.message);
+}
+
+const PLANS = [
+  {
+    id: 'starter',
+    name: 'Starter',
+    price: '€97',
+    per: '/month',
+    desc: 'Full access to all 18 tools. Unlimited runs. Your complete brand OS.',
+    features: ['All 18 agent tools', 'Unlimited runs', 'QBP saved and connected', 'Gemini free tier compatible', 'Email support'],
+    popular: false,
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    price: '€297',
+    per: '/month',
+    desc: 'Everything in Starter plus Predictive Panel and quarterly strategy access.',
+    features: ['Everything in Starter', '5 Predictive Panel runs/month', 'Priority support', 'Quarterly strategy access', 'Early access to new tools'],
+    popular: true,
+  },
+  {
+    id: 'agency',
+    name: 'Agency',
+    price: '€997',
+    per: '/month',
+    desc: '8 white-label client portals. Unlimited panels. Your brand on every output.',
+    features: ['8 white-label client portals', 'Unlimited Predictive Panel runs', 'Agency brand on all outputs', 'Dedicated support', 'Custom onboarding'],
+    popular: false,
+  },
+];
+
+// view: 'plans' | 'auth' | 'confirm-email' | 'processing' | 'success' | 'error'
+let view         = 'plans';
+let selectedPlan = null;
+let errorMsg     = '';
+let authMode     = 'signup';
+let prevView     = 'plans';
+
+const app = document.getElementById('app');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDERERS
+// ─────────────────────────────────────────────────────────────────────────────
+function render() {
+  app.innerHTML = '';
+  app.className = 'fade-in';
+  void app.offsetWidth;
+
+  if      (view === 'plans')         renderPlans();
+  else if (view === 'auth')          renderAuth();
+  else if (view === 'confirm-email') renderConfirmEmail();
+  else if (view === 'processing')    renderProcessing();
+  else if (view === 'success')       renderSuccess();
+  else if (view === 'error')         renderError();
+}
+
+function createCheckIcon() {
+  return '<svg class="feature-icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>';
+}
+
+function renderPlans() {
+  let html = `
+    <div class="logo-container">
+      <div class="pulse-dot"></div>
+      <div class="logo-text">[QB_OS]</div>
+    </div>
+    <div style="text-align:center; margin-bottom: 40px;">
+      <h1>Choose your plan</h1>
+      <p style="margin-top:12px;">Cancel any time. Signal Scan is always free.</p>
+    </div>
+  `;
+
+  if (!isConfigured) {
+    html += '<div class="warn-msg">⚠ Payment gate not configured. Add your Stripe keys to payment.html CONFIG object.</div>';
+  }
+
+  PLANS.forEach(plan => {
+    html += `
+      <div
+        class="glass-card plan-card ${plan.popular ? 'is-popular' : ''}"
+        role="button"
+        tabindex="0"
+        aria-label="Select ${plan.name} plan at ${plan.price} per month"
+        onclick="selectPlan('${plan.id}')"
+        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPlan('${plan.id}')}"
+      >
+        <div class="plan-header">
+          <div>
+            <div class="plan-name-row">
+              <span class="plan-name">${plan.name}</span>
+              ${plan.popular ? '<span class="plan-badge">Most Popular</span>' : ''}
+            </div>
+            <div class="plan-price-row">
+              <span class="plan-price">${plan.price}</span>
+              <span class="plan-per">${plan.per}</span>
+            </div>
+          </div>
+          <div class="plan-arrow" aria-hidden="true">→</div>
+        </div>
+        <div class="plan-desc">${plan.desc}</div>
+        <div class="feature-list">
+          ${plan.features.map(f => `
+            <div class="feature-row">
+              ${createCheckIcon()}
+              <span>${f}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+    <div class="free-note">
+      <div class="pulse-dot" style="animation-duration: 4s;"></div>
+      <span class="free-note-text">Free: Signal Scan + Brand Soul Map + Sensescape</span>
+    </div>
+    <div style="text-align:center; margin-top: 24px;">
+      <span style="font-size:13px; color:var(--text-3);">Already subscribed? </span>
+      <button type="button" class="text-link" onclick="showLogin()">Sign in →</button>
+    </div>
+  `;
+
+  app.innerHTML = html;
+}
+
+function renderAuth() {
+  const plan = PLANS.find(p => p.id === selectedPlan);
+
+  const passAutocomplete = authMode === 'signup' ? 'new-password' : 'current-password';
+  const passPlaceholder  = authMode === 'signup' ? 'Password (min 8 characters)' : 'Password';
+
+  let html = `
+    <button type="button" class="back-btn" onclick="goBack()">← Back to plans</button>
+  `;
+
+  if (plan) {
+    html += `<div class="auth-badge">${plan.name} · ${plan.price}/month</div>`;
+  }
+
+  html += `
+    <h2 class="auth-title">${authMode === 'signup' ? 'Create your account' : 'Sign in'}</h2>
+    <p class="auth-sub">${authMode === 'signup' ? 'Your account stores your QBP and unlocks your tools.' : 'Welcome back to your Brand OS.'}</p>
+  `;
+
+  if (errorMsg) {
+    html += `<div class="error-msg" role="alert">${encodeHTML(errorMsg)}</div>`;
+  }
+
+  html += `
+    <div class="input-group">
+      <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="input-group">
+      <input type="password" id="auth-pass" placeholder="${passPlaceholder}" autocomplete="${passAutocomplete}">
+    </div>
+    <button type="button" class="btn-primary" id="auth-submit">
+      ${authMode === 'signup' ? 'Continue to Payment →' : 'Sign In →'}
+    </button>
+    <div style="text-align:center; margin-top: 24px; font-size: 13px; color: var(--text-3);">
+      ${authMode === 'signup'
+        ? 'Already have an account? <button type="button" class="text-link" onclick="toggleAuthMode()">Sign in</button>'
+        : 'New here? <button type="button" class="text-link" onclick="toggleAuthMode()">Create account</button>'}
+    </div>
+  `;
+
+  app.innerHTML = html;
+
+  document.getElementById('auth-submit').onclick = async () => {
+    const email    = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-pass').value;
+    if (!email || !password) { errorMsg = 'Please fill in all fields.'; render(); return; }
+    if (password.length < 8) { errorMsg = 'Password must be at least 8 characters.'; render(); return; }
+    await handleAuth(email, password);
+  };
+}
+
+function renderConfirmEmail() {
+  app.innerHTML = `
+    <div class="center-view">
+      <div class="success-icon">✉</div>
+      <h2 style="font-size: 28px; margin-bottom: 12px;">Check your inbox</h2>
+      <p style="margin-bottom: 24px;">We sent a confirmation link to your email address. Click it, then return here to sign in and complete your checkout.</p>
+      <div class="info-note">After confirming your email, use <strong>Sign In</strong> below to proceed to payment.</div>
+      <button type="button" class="btn-primary" style="margin-top: 32px;" onclick="switchToLogin()">Sign In After Confirming →</button>
+    </div>
+  `;
+}
+
+function renderProcessing() {
+  app.innerHTML = `
+    <div class="center-view">
+      <div class="spinner"></div>
+      <h2 style="font-size:22px; margin-bottom:12px;">Redirecting to checkout</h2>
+      <p>You will complete payment securely on Stripe.</p>
+    </div>
+  `;
+}
+
+function renderSuccess() {
+  app.innerHTML = `
+    <div class="center-view">
+      <div class="success-icon">✓</div>
+      <h2 style="font-size: 36px; margin-bottom: 16px;">You're in.</h2>
+      <p style="margin-bottom: 32px;">Your account is active. Your API key and QBP are waiting in the system.</p>
+      <button type="button" class="btn-primary" onclick="window.location.href='/qb-branidos-hub.html'">Enter QB BrandOS →</button>
+    </div>
+  `;
+}
+
+function renderError() {
+  app.innerHTML = `
+    <div class="center-view">
+      <div class="error-icon">!</div>
+      <h2 style="font-size: 24px; margin-bottom: 12px; color: var(--text-1);">Something went wrong</h2>
+      <p style="margin-bottom: 32px; color: var(--text-2);">${encodeHTML(errorMsg || 'Please try again or contact support.')}</p>
+      <button type="button" class="btn-primary" onclick="goBack()">← Try Again</button>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ACTIONS & LOGIC
+// ─────────────────────────────────────────────────────────────────────────────
+window.goBack = function() {
+  view = prevView || 'plans';
+  errorMsg = '';
+  render();
+};
+
+window.switchToLogin = function() {
+  authMode = 'login';
+  errorMsg = '';
+  view = 'auth';
+  render();
+};
+
+window.toggleAuthMode = function() {
+  authMode = authMode === 'signup' ? 'login' : 'signup';
+  errorMsg = '';
+  render();
+};
+
+window.selectPlan = function(planId) {
+  selectedPlan = planId;
+  authMode = 'signup';
+  errorMsg = '';
+  prevView = 'plans';
+  const session = getSession();
+  if (session) {
+    redirectToStripe(session.email);
+  } else {
+    view = 'auth';
+    render();
+  }
+};
+
+window.showLogin = function() {
+  selectedPlan = null;
+  authMode = 'login';
+  errorMsg = '';
+  prevView = 'plans';
+  view = 'auth';
+  render();
+};
+
+async function handleAuth(email, password) {
+  view = 'processing';
+  render();
+
+  if (!isConfigured) {
+    saveSession({ email, tier: selectedPlan || 'starter', demo: true });
+    localStorage.setItem('qb_user_email', email);
+    localStorage.setItem('qb_user_tier', selectedPlan || 'starter');
+    view = 'success';
+    render();
+    return;
+  }
+
+  try {
+    const endpoint = authMode === 'signup'
+      ? CONFIG.SUPABASE_URL + '/auth/v1/signup'
+      : CONFIG.SUPABASE_URL + '/auth/v1/token?grant_type=password';
+
+    const res  = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SUPABASE_ANON_KEY },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (data.error || (!data.access_token && !data.user)) {
+      errorMsg = data.error?.message || data.msg || 'Authentication failed';
+      prevView = 'auth';
+      view = 'auth';
+      render();
+      return;
+    }
+
+    // Handle Supabase email confirmation pending: signup returns { user, session: null }
+    if (authMode === 'signup' && data.user && !data.session) {
+      view = 'confirm-email';
+      render();
+      return;
+    }
+
+    const session = authMode === 'signup' ? data.session : data;
+    saveSession({ email, token: session?.access_token, supabaseId: data.user?.id });
+    localStorage.setItem('qb_user_email', email);
+
+    // Login: go to checkout if a plan is selected, otherwise go straight to hub
+    if (authMode === 'login') {
+      if (selectedPlan) {
+        await redirectToStripe(email);
+      } else {
+        window.location.href = '/qb-branidos-hub.html';
+      }
+      return;
+    }
+
+    // Signup: proceed to checkout or success
+    if (selectedPlan) {
+      await redirectToStripe(email);
+    } else {
+      view = 'success';
+      render();
+    }
+
+  } catch(e) {
+    errorMsg = 'Connection error: ' + e.message;
+    prevView = 'auth';
+    view = 'auth';
+    render();
+  }
+}
+
+// PAYMENT_LINKS are the primary path — no server required.
+// stripe.redirectToCheckout({ lineItems }) is deprecated; kept as last resort only.
+// Future migration: create a server-side Checkout Session and redirect to session.url.
+async function redirectToStripe(email) {
+  if (!selectedPlan) { view = 'plans'; render(); return; }
+
+  view = 'processing'; render();
+
+  // Primary: Stripe Payment Links with email prefill
+  const link = CONFIG.PAYMENT_LINKS[selectedPlan];
+  if (link) {
+    const url = link + (email ? '?prefilled_email=' + encodeURIComponent(email) : '');
+    window.location.href = url;
+    return;
+  }
+
+  // Last resort: legacy Stripe.js (deprecated)
+  if (!isConfigured || !stripe) {
+    errorMsg = 'Payment system unavailable. Please contact support.';
+    prevView = 'plans';
+    view = 'error';
+    render();
+    return;
+  }
+
+  try {
+    const result = await stripe.redirectToCheckout({
+      lineItems: [{ price: CONFIG.PRICES[selectedPlan], quantity: 1 }],
+      mode: 'subscription',
+      successUrl: CONFIG.SUCCESS_URL + '&plan=' + selectedPlan,
+      cancelUrl: CONFIG.CANCEL_URL,
+      customerEmail: email,
+    });
+    if (result.error) throw new Error(result.error.message);
+  } catch(e) {
+    errorMsg = e.message;
+    prevView = 'plans';
+    view = 'error';
+    render();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SESSION & UTILS
+// ─────────────────────────────────────────────────────────────────────────────
+function saveSession(data) {
+  try { localStorage.setItem('qb_session', JSON.stringify(data)); } catch(e) {}
+}
+function getSession() {
+  try { const s = localStorage.getItem('qb_session'); return s ? JSON.parse(s) : null; } catch(e) { return null; }
+}
+
+// Fires after Stripe redirects back to payment.html?payment=success
+// Sets qb_user_tier and merges plan into the session object
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('payment') === 'success') {
+  const plan = urlParams.get('plan');
+  if (plan) {
+    localStorage.setItem('qb_user_tier', plan);
+    const existing = getSession();
+    if (existing) saveSession({ ...existing, tier: plan });
+  }
+  view = 'success';
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', render);
+} else {
+  render();
+}
+</script>
+</body>
+</html>

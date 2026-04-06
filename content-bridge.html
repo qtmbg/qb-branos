@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Content Bridge</title>
+
+<!-- Flash Prevention & Theme Init -->
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch(e) {}
+  })();
+</script>
+
+<script>
+(function(){
+  try { window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) { window.QB_QBP = {}; }
+
+  // FIX (CRITICAL): was calling /api/claude — a non-existent backend route.
+  // Now calls Anthropic API directly with proper headers and API key from localStorage.
+  window.QB_AI = async function(sys, usr, max) {
+    max = max || 2000;
+    var apiKey = '';
+    try { apiKey = localStorage.getItem('qb-api-key') || ''; } catch(e) {}
+    if (!apiKey) throw new Error('API key not configured — click the key icon in the header to add your Anthropic API key.');
+    var r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: max,
+        system: sys,
+        messages: [{ role: 'user', content: usr }]
+      })
+    });
+    if (!r.ok) {
+      var errBody = '';
+      try { var ed = await r.json(); errBody = ed.error?.message || ''; } catch(e2) {}
+      throw new Error('API error ' + r.status + (errBody ? ': ' + errBody : ' ' + r.statusText));
+    }
+    var d = await r.json();
+    if (d.error) throw new Error(typeof d.error === 'string' ? d.error : (d.error.message || 'Unknown API error'));
+    if (!d.content || !d.content[0] || !d.content[0].text) throw new Error('Empty or malformed response from API');
+    return d.content[0].text;
+  };
+})();
+</script>
+
+<!-- React 18 production builds -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<!-- Babel for single-file JSX support -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Entangled Time Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Entangled Time Theme System */
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140,110,70,0.045);
+  --bg-elevated: rgba(140,110,70,0.07);
+  --bg-overlay: rgba(18,15,10,0.85);
+
+  --border-subtle: rgba(140,110,70,0.06);
+  --border-medium: rgba(140,110,70,0.11);
+  --border-strong: rgba(140,110,70,0.18);
+
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58,95,74,0.2);
+  --patina-faint: rgba(58,95,74,0.08);
+
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168,144,62,0.18);
+  --brass-faint: rgba(168,144,62,0.06);
+
+  --phase-discovery: #4A7A5E;
+  --phase-creation: #4A7A8A;
+  --phase-content: #8A5A5A;
+  --phase-execution: #5A7A6A;
+  --phase-intelligence: #A8903E;
+
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+
+  --status-success: #4A7A5E;
+  --status-warning: #A8903E;
+  --status-error: #8A4A4A;
+  --status-info: #4A7A8A;
+
+  --grain-opacity: 0.03;
+  --vignette-bg: rgba(8,6,4,0.4);
+
+  --font: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04);
+  --bg-elevated: rgba(100,80,50,0.07);
+  --bg-overlay: rgba(244,240,235,0.9);
+
+  --border-subtle: rgba(100,80,50,0.08);
+  --border-medium: rgba(100,80,50,0.14);
+  --border-strong: rgba(100,80,50,0.22);
+
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46,78,60,0.15);
+  --patina-faint: rgba(46,78,60,0.06);
+
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138,116,48,0.15);
+  --brass-faint: rgba(138,116,48,0.05);
+
+  --phase-discovery: #2E5A42;
+  --phase-creation: #2E5A6A;
+  --phase-content: #6A3A3A;
+  --phase-execution: #3A5A4A;
+  --phase-intelligence: #8A7430;
+
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+
+  --status-success: #2E4E3C;
+  --status-warning: #8A7430;
+  --status-error: #6A3A3A;
+  --status-info: #2E5A6A;
+
+  --grain-opacity: 0.02;
+  --vignette-bg: rgba(200,190,175,0.15);
+
+  --font: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+/* Base Styles */
+body {
+  background: var(--bg-void);
+  color: var(--text-2);
+  font-family: var(--font);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+.font-serif { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; letter-spacing: -0.015em; }
+.font-sans  { font-family: var(--font); }
+.font-mono  { font-family: var(--mono); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+/* Film Grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+/* Vignette */
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, var(--vignette-bg) 100%);
+}
+
+.main-content {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Glass Cards */
+.glass-card {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, rgba(168,144,62,0.035) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Manifesto Block — MUST NOT share element with .glass-card (both use ::before) */
+.manifesto-block {
+  position: relative;
+  padding: 24px 0 24px 26px;
+}
+.manifesto-block::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2.5px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--brass-faint);
+}
+
+/* Brass Pulse */
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px var(--brass-dim), 0 0 2px var(--brass);
+  animation: beat 3s ease infinite;
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); opacity: 1; }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); opacity: 1; }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+
+/* Form Inputs */
+input, textarea, select {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-1);
+  font-family: var(--font);
+  border-radius: 7px;
+  padding: 12px 16px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: all 0.25s ease;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-3);
+  opacity: 0.7;
+  font-style: italic;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--patina);
+  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+  outline: none;
+}
+textarea { resize: vertical; line-height: 1.7; }
+select option { background: var(--bg-deep); color: var(--text-1); }
+button { cursor: pointer; font-family: var(--font); border: none; outline: none; }
+
+button:focus-visible {
+  outline: 2px solid var(--patina);
+  outline-offset: 3px;
+  border-radius: 7px;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: var(--patina);
+  color: #E6DDD0;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 13px 30px;
+  border-radius: 7px;
+  border: none;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--patina-lit);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px -4px var(--patina-dim), 0 0 0 1px var(--brass-faint);
+}
+.btn-primary:disabled {
+  background: var(--bg-surface);
+  color: var(--text-3);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.fade-in { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.spin     { animation: spin 0.8s linear infinite; }
+
+/* Layer Cards */
+.layer-card {
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-left-width: 3px;
+  border-left-color: transparent;
+}
+.layer-card:hover {
+  border-color: var(--border-medium);
+  transform: translateY(-1px);
+  background: var(--bg-elevated);
+}
+.layer-card.selected {
+  border-color: var(--border-medium);
+  border-left-color: var(--layer-color);
+  background: var(--bg-elevated);
+  box-shadow: -4px 0 24px -10px var(--layer-color);
+}
+
+.platform-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 14px 20px;
+  text-align: left;
+  transition: all 0.2s;
+  cursor: pointer;
+  width: 100%;
+}
+.platform-btn:hover  { border-color: var(--brass-dim); background: var(--bg-elevated); }
+.platform-btn.active { border-color: var(--patina); background: var(--patina-faint); }
+
+.consent-box {
+  background: rgba(138, 74, 74, 0.05);
+  border: 1px solid rgba(138, 74, 74, 0.15);
+  border-radius: 10px;
+  padding: 20px 24px;
+}
+
+.copy-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-2);
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.copy-btn:hover {
+  color: var(--patina-lit);
+  border-color: var(--patina-dim);
+  background: var(--patina-faint);
+}
+
+.quality-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+.quality-item:last-child { border-bottom: none; }
+
+.theme-toggle {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-2);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.theme-toggle:hover { border-color: var(--brass-dim); color: var(--brass); }
+
+/* Nav Tabs */
+.nav-tab {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-3);
+}
+.nav-tab.active {
+  background: var(--patina-faint);
+  border-color: var(--patina-dim);
+  color: var(--patina-lit);
+}
+
+/* Step Circle */
+.step-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .hide-mobile { display: none; }
+}
+
+/* API Key Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,6,4,0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeUp 0.25s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+/* API Key Banner */
+.api-banner {
+  background: rgba(168,144,62,0.07);
+  border: 1px solid rgba(168,144,62,0.2);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* Icon Button (key icon in header) */
+.icon-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-2);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.icon-btn:hover { border-color: var(--brass-dim); color: var(--brass); }
+.icon-btn.active { border-color: var(--patina-dim); color: var(--patina-lit); background: var(--patina-faint); }
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+/* ── Micro-components ───────────────────────────────────────────────────── */
+
+const ML = ({ c, children, mb = 8 }) => (
+  <div className="font-mono" style={{ fontSize: 10, letterSpacing: '.2em', color: c || 'var(--text-3)', textTransform: 'uppercase', marginBottom: mb }}>
+    {children}
+  </div>
+);
+
+const Card = ({ children, accent, style = {} }) => (
+  <div className="glass-card" style={{ border: `1px solid ${accent || 'var(--border-subtle)'}`, padding: '24px 28px', ...style }}>
+    {children}
+  </div>
+);
+
+const TF = ({ label, value, onChange, placeholder, rows = 1, hint }) => (
+  <div style={{ marginBottom: 16 }}>
+    {label && <ML>{label}</ML>}
+    {rows > 1
+      ? <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows} />
+      : <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} />
+    }
+    {hint && <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 6, fontStyle: 'italic' }}>{hint}</div>}
+  </div>
+);
+
+/* ── API Key Modal ──────────────────────────────────────────────────────── */
+
+function ApiKeyModal({ onSave, onClose, currentKey }) {
+  const [val, setVal] = useState(currentKey || '');
+  const [show, setShow] = useState(false);
+
+  const handleSave = () => {
+    const trimmed = val.trim();
+    if (!trimmed) return;
+    onSave(trimmed);
+  };
+
+  return (
+    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="glass-card" style={{ width: '100%', maxWidth: 480, padding: '36px 40px' }}>
+        <ML c="var(--brass)" mb={16}>Anthropic API Key</ML>
+        <h2 className="font-serif" style={{ fontSize: 26, color: 'var(--text-1)', marginBottom: 12 }}>Connect your account</h2>
+        <p className="font-sans" style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 28 }}>
+          Content Bridge calls the Claude API directly from your browser. Your key is stored only in <code style={{ fontFamily: 'var(--mono)', fontSize: 12, background: 'var(--bg-surface)', padding: '2px 6px', borderRadius: 4 }}>localStorage</code> and never transmitted anywhere else.
+        </p>
+
+        <div style={{ position: 'relative', marginBottom: 24 }}>
+          <ML mb={8}>Your API key</ML>
+          <div style={{ position: 'relative' }}>
+            <input
+              type={show ? 'text' : 'password'}
+              value={val}
+              onChange={e => setVal(e.target.value)}
+              placeholder="sk-ant-api03-..."
+              onKeyDown={e => { if (e.key === 'Enter') handleSave(); }}
+              autoFocus
+              style={{ paddingRight: 48 }}
+            />
+            <button
+              onClick={() => setShow(s => !s)}
+              style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-3)', cursor: 'pointer', padding: 4 }}
+              aria-label={show ? 'Hide key' : 'Show key'}
+            >
+              {show
+                ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              }
+            </button>
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8, fontStyle: 'italic' }}>
+            Get your key at <a href="https://console.anthropic.com/keys" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brass)', textDecoration: 'none' }}>console.anthropic.com/keys</a>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button
+            onClick={handleSave}
+            disabled={!val.trim()}
+            className="btn-primary"
+            style={{ flex: 1, justifyContent: 'center' }}
+          >
+            Save &amp; Connect
+          </button>
+          {currentKey && (
+            <button
+              onClick={onClose}
+              style={{ padding: '13px 20px', borderRadius: 7, background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', color: 'var(--text-2)', fontSize: 12, cursor: 'pointer' }}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+
+        {currentKey && (
+          <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-success)', flexShrink: 0 }} />
+            <span className="font-mono" style={{ fontSize: 10, color: 'var(--status-success)', letterSpacing: '.1em' }}>KEY ACTIVE — ENDS IN …{currentKey.slice(-6)}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Platform / Layer Data ──────────────────────────────────────────────── */
+
+const LAYERS = [
+  {
+    id: 'static',
+    n: '01',
+    label: 'Branded Static Content',
+    sub: 'Posts, ads, lifestyle imagery — your brand identity baked in',
+    color: 'var(--phase-creation)',
+    icon: '◧',
+    useCase: 'Product photos, brand posts, LinkedIn banners, Instagram grid, ad creatives',
+    platforms: [
+      { id: 'canva',   name: 'Canva',         url: 'https://canva.com',          color: 'var(--phase-creation)', tier: 'Free / Pro', best: 'Brand posts, LinkedIn graphics, carousels, pitch decks',          apiAvailable: true  },
+      { id: 'firefly', name: 'Adobe Firefly', url: 'https://firefly.adobe.com',  color: 'var(--brass)',          tier: 'Free / CC',  best: 'AI-generated product lifestyle photography',                      apiAvailable: false },
+      { id: 'glorify', name: 'Glorify',       url: 'https://glorifyapp.com',     color: 'var(--phase-content)',  tier: 'Paid',       best: 'E-commerce product posts, D2C brand visuals',                     apiAvailable: false },
+    ],
+    sourceQuality: [
+      { icon: '✓', text: 'Product photos: minimum 1000×1000px, white or neutral background, sharp focus, good lighting' },
+      { icon: '✓', text: 'Brand colors: export your hex codes from the QBP / Sensescape before starting' },
+      { icon: '✓', text: 'Logo: provide as SVG or PNG with transparent background — minimum 500px wide' },
+      { icon: '✓', text: 'Reference images: 3–5 examples of the visual style you want. Pull from your Visual DNA outputs.' },
+      { icon: '✗', text: 'Do not provide: blurry photos, screenshots, photos with other brand logos visible' },
+    ],
+    briefFields: ['contentType', 'dimensions', 'brandColors', 'keyMessage', 'ctaText'],
+  },
+  {
+    id: 'ugc',
+    n: '02',
+    label: 'UGC Video & Face Clone',
+    sub: 'Your face, your voice — without filming again',
+    color: 'var(--phase-content)',
+    icon: '◎',
+    useCase: 'Instagram Reels, TikTok, YouTube Shorts, LinkedIn video, testimonial-style ads',
+    platforms: [
+      { id: 'heygen',    name: 'HeyGen',   url: 'https://heygen.com',   color: 'var(--phase-content)',  tier: 'Paid', best: 'Face clone + voice clone from a 2-min sample. Market leader. Most realistic.',      apiAvailable: true },
+      { id: 'creatify',  name: 'Creatify', url: 'https://creatify.ai',  color: 'var(--phase-creation)', tier: 'Paid', best: 'UGC-style ads from script + product images. Fast, e-commerce native.',               apiAvailable: true },
+      { id: 'synthesia', name: 'Synthesia',url: 'https://synthesia.io', color: 'var(--phase-execution)',tier: 'Paid', best: 'Clean, corporate avatar. Best for training, explainer, or professional formats.',    apiAvailable: true },
+    ],
+    sourceQuality: [
+      { icon: '✓', text: 'Face video: record 2–5 minutes of yourself speaking naturally to camera. Well lit, quiet room.' },
+      { icon: '✓', text: 'Background: plain wall or simple environment. Avoid patterned clothing.' },
+      { icon: '✓', text: 'Camera: eye level, stable. Modern smartphone is sufficient. 1080p minimum.' },
+      { icon: '✓', text: 'Script delivery: speak at your natural pace. Include pauses. Do not rush.' },
+      { icon: '✗', text: 'Do not provide: shaky footage, heavy background noise, sunglasses, multiple people in frame' },
+      { icon: '!', text: 'Legal: you are cloning your own likeness. You must provide explicit consent within the platform during setup.' },
+    ],
+    briefFields: ['scriptSource', 'videoFormat', 'duration', 'tone', 'ctaText'],
+    requiresConsent: true,
+  },
+  {
+    id: 'avatar',
+    n: '03',
+    label: 'AI Avatar / Digital Twin',
+    sub: 'A permanent digital version of you that creates content on demand',
+    color: 'var(--phase-execution)',
+    icon: '◐',
+    useCase: 'Scalable personal brand content, personalized outreach video, multilingual delivery',
+    platforms: [
+      { id: 'heygen2', name: 'HeyGen Avatar', url: 'https://heygen.com/avatar', color: 'var(--phase-content)',  tier: 'Paid',     best: 'Most realistic. Photorealistic avatar speaks any script. Best for personal brand at scale.',  apiAvailable: true },
+      { id: 'tavus',   name: 'Tavus',          url: 'https://tavus.io',          color: 'var(--phase-creation)', tier: 'Paid',     best: 'Personalized video at scale. Each output feels individually recorded. Strong for outreach.',  apiAvailable: true },
+      { id: 'd-id',    name: 'D-ID',           url: 'https://d-id.com',          color: 'var(--phase-execution)',tier: 'Free/Paid',best: 'Photo → talking avatar. Lower barrier to entry, slightly less realistic.',                    apiAvailable: true },
+    ],
+    sourceQuality: [
+      { icon: '✓', text: 'Photos: 10–20 high-quality portrait photos from different angles, lighting conditions, and expressions.' },
+      { icon: '✓', text: 'Video: 5–10 minutes of talking head footage across multiple sessions for best avatar quality.' },
+      { icon: '✓', text: 'Voice: record 30+ minutes of natural speech for highest-quality voice clone.' },
+      { icon: '✓', text: 'Consistency: consistent clothing and background across source material improves avatar quality.' },
+      { icon: '!', text: 'Legal: digital likeness rights vary by jurisdiction. Consult local regulations for commercial use.' },
+      { icon: '!', text: 'Platform terms: each platform has specific policies on avatar usage and distribution. Read them.' },
+    ],
+    briefFields: ['scriptSource', 'targetPlatform', 'tone', 'language', 'personalizationLevel'],
+    requiresConsent: true,
+  },
+];
+
+const BRIEF_FIELD_CONFIG = {
+  contentType:         { label: 'Content type',          placeholder: 'e.g. Instagram carousel, LinkedIn banner, Facebook ad' },
+  dimensions:          { label: 'Dimensions / format',   placeholder: 'e.g. 1080×1080px, 1200×628px, 9:16 vertical' },
+  brandColors:         { label: 'Brand colors',          placeholder: 'e.g. Primary: #4A7A5E, Secondary: #0E0C09' },
+  keyMessage:          { label: 'Key message',           placeholder: 'The one thing this piece of content must communicate' },
+  ctaText:             { label: 'Call to action',        placeholder: 'e.g. Book a call, Download free' },
+  scriptSource:        { label: 'Script source',         placeholder: 'Paste your script here or describe which QB agent produced it' },
+  videoFormat:         { label: 'Video format',          placeholder: 'e.g. Instagram Reel 9:16, LinkedIn 16:9' },
+  duration:            { label: 'Target duration',       placeholder: 'e.g. 30 seconds, 60 seconds' },
+  tone:                { label: 'Delivery tone',         placeholder: 'e.g. Direct and authoritative, warm and conversational' },
+  targetPlatform:      { label: 'Target platform',       placeholder: 'e.g. LinkedIn, Instagram, YouTube' },
+  language:            { label: 'Language',              placeholder: 'e.g. English, French, Arabic' },
+  personalizationLevel:{ label: 'Personalization level', placeholder: 'e.g. One video for all, or personalized per recipient' },
+};
+
+/* ── Main App ───────────────────────────────────────────────────────────── */
+
+function App() {
+  const qbp = window.QB_QBP || {};
+
+  // API Key state — persisted to localStorage
+  const [apiKey, setApiKey] = useState(() => {
+    try { return localStorage.getItem('qb-api-key') || ''; } catch(e) { return ''; }
+  });
+  const [showApiModal, setShowApiModal] = useState(false);
+
+  const saveApiKey = useCallback((key) => {
+    try { localStorage.setItem('qb-api-key', key); } catch(e) {}
+    setApiKey(key);
+    setShowApiModal(false);
+  }, []);
+
+  // App state
+  const [selectedLayer, setSelectedLayer]     = useState(null);
+  const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [consentGiven, setConsentGiven]        = useState(false);
+  const [script, setScript]                    = useState('');
+  const [briefFields, setBriefFields]          = useState({});
+  const [generatedBrief, setGeneratedBrief]    = useState(null);
+  const [loading, setLoading]                  = useState(false);
+  const [error, setError]                      = useState('');
+  const [activeTab, setActiveTab]              = useState('brief');
+  const [copied, setCopied]                    = useState('');
+
+  const layer    = selectedLayer    ? LAYERS.find(l  => l.id  === selectedLayer)    : null;
+  const platform = layer && selectedPlatform ? layer.platforms.find(pl => pl.id === selectedPlatform) : null;
+
+  const updateField = (k, v) => setBriefFields(prev => ({ ...prev, [k]: v }));
+
+  const copy = (text, key) => {
+    navigator.clipboard.writeText(text)
+      .then(() => { setCopied(key); setTimeout(() => setCopied(''), 1800); })
+      .catch(() => setError('Clipboard access denied. Please copy the text manually.'));
+  };
+
+  const toggleTheme = () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('qb-theme', next); } catch(e) {}
+  };
+
+  const generateBrief = async () => {
+    if (!apiKey) { setError('API key required — click the key icon in the header.'); setShowApiModal(true); return; }
+    if (!script.trim()) { setError('Paste your script or content before generating the brief.'); return; }
+    if (!layer || !platform) { setError('Select a layer and platform first.'); return; }
+    setError(''); setLoading(true);
+
+    const sys = `You are the QB Content Bridge inside the Quantum Branding BrandOS ecosystem.
+Your role is to translate QB OS agent outputs (scripts, strategies, brand profiles) into precise production briefs for third-party content platforms.
+You produce briefs that are specific, actionable, and formatted to match the exact requirements of the target platform.
+Return ONLY valid JSON. No markdown, no preamble.`;
+
+    const usr = `QUANTUM BRAND PROFILE:
+Brand: ${qbp.brandName || 'not specified'}
+Essence: ${qbp.brandEssence || 'not specified'}
+Voice: ${qbp.voiceNotes || 'not specified'}
+Archetype: ${qbp.archetype || 'not specified'}
+Color territory: ${qbp.colorTerritory || 'not specified'}
+Always/Never: ${qbp.alwaysNever || 'not specified'}
+
+PRODUCTION LAYER: ${layer.label}
+TARGET PLATFORM: ${platform.name}
+BEST USE CASE: ${platform.best}
+
+SCRIPT / CONTENT INPUT:
+${script}
+
+ADDITIONAL BRIEF FIELDS:
+${Object.entries(briefFields).filter(([,v]) => v).map(([k,v]) => `${k}: ${v}`).join('\n') || 'None provided'}
+
+Generate a complete production brief for ${platform.name} and return:
+{
+  "platformReadyTitle": "a 5-7 word title for this content piece",
+  "executiveSummary": "2 sentences. What this content is, what it should achieve.",
+  "productionInstructions": [
+    {"step": number, "action": "what to do", "detail": "specific detail, settings, or guidance for this step in ${platform.name}"}
+  ],
+  "scriptFormatted": "the script reformatted and optimized for ${platform.name} delivery — correct pacing, emphasis markers, pause indicators where relevant",
+  "platformSettings": {
+    "format": "exact format/resolution/aspect ratio for this platform",
+    "duration": "recommended duration",
+    "style": "visual or delivery style recommendation specific to ${platform.name}",
+    "exportSettings": "how to export from ${platform.name} for the target channel"
+  },
+  "brandApplication": {
+    "colors": "how to apply the brand colors in ${platform.name}",
+    "typography": "font guidance if applicable",
+    "voiceGuidance": "how the brand voice should translate to this format"
+  },
+  "qualityChecklist": [
+    {"check": "what to verify before downloading/exporting", "why": "why this matters"}
+  ],
+  "nextStep": "exactly where to go in ${platform.name} to start — which menu, which feature, which template category"
+}
+
+Requirements: productionInstructions must be step-by-step for someone who has never used ${platform.name}. All guidance must be specific to this brand and this script — nothing generic.`;
+
+    try {
+      const raw = await window.QB_AI(sys, usr, 3000);
+      const clean = raw.replace(/^```json\s*/, '').replace(/\s*```$/, '').replace(/^```\s*/, '').trim();
+      setGeneratedBrief(JSON.parse(clean));
+      setActiveTab('brief');
+    } catch(e) {
+      setError('Brief generation error: ' + e.message);
+    }
+    setLoading(false);
+  };
+
+  /* ── Key icon SVG ─────────────────────────────────────────────────────── */
+  const KeyIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+    </svg>
+  );
+
+  /* ── Render ───────────────────────────────────────────────────────────── */
+  return (
+    <div className="main-content">
+      {/* API Key Modal */}
+      {showApiModal && (
+        <ApiKeyModal
+          currentKey={apiKey}
+          onSave={saveApiKey}
+          onClose={() => setShowApiModal(false)}
+        />
+      )}
+
+      {/* HEADER */}
+      <header style={{ borderBottom: '1px solid var(--border-subtle)', padding: '0 28px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'transparent', position: 'sticky', top: 0, zIndex: 50, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="pulse-dot" />
+            <div className="font-mono" style={{ fontSize: 11, letterSpacing: '.3em', color: 'var(--text-1)', textTransform: 'uppercase' }}>QB_BRANDOS</div>
+          </div>
+          <div style={{ width: 1, height: 16, background: 'var(--border-strong)' }} />
+          <div className="font-mono" style={{ fontSize: 11, letterSpacing: '.2em', color: 'var(--text-3)', textTransform: 'uppercase' }}>Content Bridge v1.0</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="font-mono hide-mobile" style={{ fontSize: 10, color: 'var(--brass)', letterSpacing: '.1em', textTransform: 'uppercase' }}>Phase 03 · Execution</div>
+          {/* API Key toggle */}
+          <button
+            className={`icon-btn ${apiKey ? 'active' : ''}`}
+            onClick={() => setShowApiModal(true)}
+            aria-label="Configure API key"
+            title={apiKey ? `API key configured (…${apiKey.slice(-6)})` : 'Add Anthropic API key'}
+          >
+            <KeyIcon />
+          </button>
+          {/* Theme toggle */}
+          <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle light/dark theme" title="Toggle Theme">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main style={{ flex: 1, maxWidth: 960, margin: '0 auto', width: '100%', padding: '48px 24px' }}>
+
+        {/* INTRO */}
+        <div style={{ marginBottom: 48 }} className="fade-in">
+          <ML c="var(--brass)" mb={16}>Phase 03 — Production Layer</ML>
+          <h1 className="font-serif" style={{ fontSize: 44, color: 'var(--text-1)', lineHeight: 1.1, marginBottom: 16 }}>Content Bridge</h1>
+          <p className="font-sans" style={{ fontSize: 16, color: 'var(--text-2)', lineHeight: 1.7, maxWidth: 600 }}>
+            Take any QB agent output — script, strategy, brand profile — and transform it into a precise, platform-ready production brief. Select your layer, choose your platform, paste your content.
+          </p>
+        </div>
+
+        {/* API KEY BANNER — shown if key is not set */}
+        {!apiKey && (
+          <div className="api-banner fade-in">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brass)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+            </svg>
+            <div style={{ flex: 1 }}>
+              <div className="font-sans" style={{ fontSize: 14, color: 'var(--text-1)', marginBottom: 2 }}>API key required to generate briefs</div>
+              <div className="font-sans" style={{ fontSize: 13, color: 'var(--text-3)' }}>Add your Anthropic API key to enable the AI brief engine.</div>
+            </div>
+            <button className="btn-primary" style={{ flexShrink: 0 }} onClick={() => setShowApiModal(true)}>
+              Add key
+            </button>
+          </div>
+        )}
+
+        {/* LAYER SELECTION */}
+        <div style={{ marginBottom: 40 }} className="fade-in">
+          <ML c="var(--text-3)" mb={16}>01 — Select production layer</ML>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {LAYERS.map((l, i) => (
+              <div
+                key={l.id}
+                className={`glass-card layer-card ${selectedLayer === l.id ? 'selected' : ''}`}
+                style={{ '--layer-color': l.color, display: 'flex', alignItems: 'center', padding: '24px 28px', gap: 24, animationDelay: `${i * 0.1}s` }}
+                onClick={() => { setSelectedLayer(l.id); setSelectedPlatform(null); setGeneratedBrief(null); setConsentGiven(false); setError(''); }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setSelectedLayer(l.id); setSelectedPlatform(null); setGeneratedBrief(null); setConsentGiven(false); setError(''); }}}
+              >
+                <div style={{ width: 52, height: 52, borderRadius: 10, background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: l.color, flexShrink: 0 }}>
+                  {l.icon}
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="font-mono" style={{ fontSize: 11, color: l.color, opacity: 0.8 }}>{l.n}</div>
+                    <div className="font-serif" style={{ fontSize: 22, color: 'var(--text-1)' }}>{l.label}</div>
+                  </div>
+                  <div className="font-sans" style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.5 }}>{l.sub}</div>
+                </div>
+                <div style={{ color: selectedLayer === l.id ? l.color : 'var(--text-4)', transform: selectedLayer === l.id ? 'translateX(0)' : 'translateX(-8px)', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', opacity: selectedLayer === l.id ? 1 : 0.4 }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* PLATFORM SELECTION */}
+        {layer && (
+          <div style={{ marginBottom: 40 }} className="fade-in">
+            <ML c="var(--text-3)" mb={16}>02 — Select platform</ML>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {layer.platforms.map(pl => (
+                <button
+                  key={pl.id}
+                  className={`platform-btn ${selectedPlatform === pl.id ? 'active' : ''}`}
+                  onClick={() => { setSelectedPlatform(pl.id); setGeneratedBrief(null); setError(''); }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: pl.color, flexShrink: 0, boxShadow: `0 0 8px ${pl.color}40` }} />
+                      <div style={{ textAlign: 'left' }}>
+                        <div className="font-sans" style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-1)', marginBottom: 4 }}>{pl.name}</div>
+                        <div className="font-sans" style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.5 }}>{pl.best}</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+                      {pl.apiAvailable && (
+                        <span className="font-mono" style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, background: 'var(--patina-faint)', color: 'var(--patina-lit)', border: '1px solid var(--patina-dim)' }}>API</span>
+                      )}
+                      <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-3)', padding: '3px 8px', borderRadius: 4, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>{pl.tier}</span>
+                      <a
+                        href={pl.url} target="_blank" rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-2)', padding: '4px 10px', borderRadius: 4, background: 'transparent', border: '1px solid var(--border-medium)', textDecoration: 'none', transition: 'all 0.2s' }}
+                        onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--brass)'; e.currentTarget.style.color = 'var(--brass-lit)'; }}
+                        onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border-medium)'; e.currentTarget.style.color = 'var(--text-2)'; }}
+                      >
+                        Open ↗
+                      </a>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* CONSENT GATE */}
+        {layer?.requiresConsent && selectedPlatform && (
+          <div className="consent-box fade-in" style={{ marginBottom: 40 }}>
+            <ML c="var(--status-error)" mb={12}>Consent required — face &amp; likeness</ML>
+            <p className="font-sans" style={{ fontSize: 14, color: 'var(--text-1)', lineHeight: 1.7, marginBottom: 20 }}>
+              This production layer involves cloning your face, voice, or creating a digital likeness. You must confirm the following before proceeding:
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+              {[
+                'I am uploading my own face and voice. I am not uploading another person\'s likeness.',
+                'I have read and agree to the terms of service of the platform I am using.',
+                'I understand my digital likeness will be processed by a third-party AI platform.',
+                'I take full responsibility for how this content is distributed and used commercially.',
+              ].map((item, i) => (
+                <div key={i} className="font-sans" style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, display: 'flex', gap: 12 }}>
+                  <span style={{ color: 'var(--status-error)', flexShrink: 0 }}>—</span>{item}
+                </div>
+              ))}
+            </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+              <input type="checkbox" checked={consentGiven} onChange={e => setConsentGiven(e.target.checked)}
+                style={{ width: 18, height: 18, accentColor: 'var(--patina)', cursor: 'pointer', margin: 0 }} />
+              <span className="font-sans" style={{ fontSize: 14, color: consentGiven ? 'var(--patina-lit)' : 'var(--text-1)', fontWeight: consentGiven ? 500 : 400, transition: 'color 0.2s' }}>
+                I confirm the above. I am consenting to use of my own likeness.
+              </span>
+            </label>
+          </div>
+        )}
+
+        {/* SOURCE QUALITY GUIDE */}
+        {layer && selectedPlatform && (!layer.requiresConsent || consentGiven) && (
+          <div style={{ marginBottom: 40 }} className="fade-in">
+            <Card accent="var(--brass-dim)">
+              <ML c="var(--brass)" mb={16}>Source quality guide — read before uploading</ML>
+              <div>
+                {layer.sourceQuality.map((item, i) => (
+                  <div key={i} className="quality-item">
+                    <span style={{ color: item.icon === '✓' ? 'var(--patina-lit)' : item.icon === '!' ? 'var(--brass)' : 'var(--status-error)', flexShrink: 0, fontWeight: 700 }}>{item.icon}</span>
+                    <span>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* SCRIPT INPUT + BRIEF FIELDS */}
+        {layer && selectedPlatform && (!layer.requiresConsent || consentGiven) && (
+          <div style={{ marginBottom: 40 }} className="fade-in">
+            <ML c="var(--text-3)" mb={16}>03 — Paste your QB agent output</ML>
+            <TF
+              label="Script or content from QB agent"
+              value={script}
+              onChange={setScript}
+              placeholder={`Paste the script, caption, or strategy output from your QB Content agent here. The Bridge will format it precisely for ${platform?.name || 'the selected platform'}.`}
+              rows={6}
+              hint="This comes directly from LinkedIn Strategy Agent, Instagram Seed Agent, YouTube Strategy Agent, or the Repurposing Engine."
+            />
+
+            <div style={{ height: 24 }} />
+
+            <ML c="var(--text-3)" mb={16}>04 — Brief details (optional but improves precision)</ML>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+              {layer.briefFields.map(fk => (
+                <TF
+                  key={fk}
+                  label={BRIEF_FIELD_CONFIG[fk]?.label || fk}
+                  value={briefFields[fk] || ''}
+                  onChange={v => updateField(fk, v)}
+                  placeholder={BRIEF_FIELD_CONFIG[fk]?.placeholder || ''}
+                  rows={1}
+                />
+              ))}
+            </div>
+
+            {error && (
+              <div style={{ background: 'rgba(138,74,74,0.1)', border: '1px solid rgba(138,74,74,0.3)', borderRadius: 8, padding: '14px 18px', marginTop: 12, marginBottom: 8, fontSize: 14, color: 'var(--status-error)' }}>
+                {error}
+              </div>
+            )}
+            <div style={{ height: 24 }} />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 24, borderTop: '1px solid var(--border-subtle)' }}>
+              <div className="font-mono" style={{ fontSize: 11, color: 'var(--text-3)', letterSpacing: '0.05em' }}>
+                {layer.label} <span style={{ color: 'var(--brass)' }}>→</span> {platform?.name} <span style={{ color: 'var(--brass)' }}>·</span> {qbp.brandName || 'Brand not set'}
+              </div>
+              <button onClick={generateBrief} disabled={loading || !script.trim()} className="btn-primary">
+                {loading && (
+                  <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.2)', borderTop: '2px solid #fff', borderRadius: '50%' }} className="spin" />
+                )}
+                {loading ? 'Processing…' : 'Generate Precision Brief'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* GENERATED BRIEF */}
+        {generatedBrief && (
+          <div style={{ marginTop: 24 }} className="fade-in">
+            <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+              <div>
+                <ML c="var(--patina)" mb={8}>Production brief ready</ML>
+                <div className="font-serif" style={{ fontSize: 28, color: 'var(--text-1)' }}>{generatedBrief.platformReadyTitle}</div>
+              </div>
+              <div className="font-mono" style={{ fontSize: 11, padding: '6px 12px', borderRadius: 6, background: 'var(--patina-faint)', color: 'var(--patina-lit)', border: '1px solid var(--patina-dim)' }}>
+                {platform?.name} Ready
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 28, paddingBottom: 20, borderBottom: '1px solid var(--border-subtle)' }}>
+              {['brief', 'script', 'brand', 'checklist'].map(t => (
+                <button key={t} className={`nav-tab ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
+                  {t === 'brief' ? 'Production Steps' : t === 'script' ? 'Formatted Script' : t === 'brand' ? 'Brand Application' : 'Quality Checklist'}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'brief' && (
+              <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                {/* Executive Summary — glass-card wraps manifesto-block so both ::before work correctly */}
+                <div className="glass-card">
+                  <div className="manifesto-block" style={{ padding: '24px 32px' }}>
+                    <ML c="var(--text-3)" mb={8}>Executive Summary</ML>
+                    <p className="font-sans" style={{ fontSize: 15, color: 'var(--text-1)', lineHeight: 1.7 }}>{generatedBrief.executiveSummary}</p>
+                  </div>
+                </div>
+
+                {generatedBrief.platformSettings && (
+                  <Card accent="var(--phase-creation)">
+                    <ML c="var(--phase-creation)" mb={16}>Platform specifications</ML>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+                      {Object.entries(generatedBrief.platformSettings).map(([k, v]) => (
+                        <div key={k} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: '14px 16px' }}>
+                          <div className="font-mono" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 6 }}>{k.replace(/([A-Z])/g, ' $1').trim()}</div>
+                          <div className="font-sans" style={{ fontSize: 14, color: 'var(--text-1)', lineHeight: 1.5 }}>{v}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
+
+                {generatedBrief.productionInstructions?.length > 0 && (
+                  <Card>
+                    <ML c="var(--patina)" mb={20}>Step-by-step execution in {platform?.name}</ML>
+                    {generatedBrief.productionInstructions.map((step, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 20, marginBottom: i < generatedBrief.productionInstructions.length - 1 ? 20 : 0, paddingBottom: i < generatedBrief.productionInstructions.length - 1 ? 20 : 0, borderBottom: i < generatedBrief.productionInstructions.length - 1 ? '1px solid var(--border-subtle)' : '' }}>
+                        <div className="step-circle" style={{ background: 'var(--bg-surface)', color: 'var(--text-1)', border: '1px solid var(--border-medium)' }}>
+                          {String(step.step).padStart(2, '0')}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div className="font-sans" style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-1)', marginBottom: 6 }}>{step.action}</div>
+                          <div className="font-sans" style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6 }}>{step.detail}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </Card>
+                )}
+
+                {generatedBrief.nextStep && (
+                  <div style={{ background: 'var(--patina-faint)', border: '1px solid var(--patina-dim)', borderRadius: 10, padding: '20px 24px', display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+                    <div className="font-mono" style={{ fontSize: 14, color: 'var(--patina-lit)', flexShrink: 0 }}>→</div>
+                    <div style={{ flex: 1 }}>
+                      <ML c="var(--patina-lit)" mb={6}>Start here in {platform?.name}</ML>
+                      <p className="font-sans" style={{ fontSize: 14, color: 'var(--text-1)', lineHeight: 1.6 }}>{generatedBrief.nextStep}</p>
+                    </div>
+                    <a href={platform?.url} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ flexShrink: 0, textDecoration: 'none' }}>
+                      Open {platform?.name} ↗
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'script' && generatedBrief.scriptFormatted && (
+              <div className="fade-in">
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+                  <button className="copy-btn" onClick={() => copy(generatedBrief.scriptFormatted, 'script')}>
+                    {copied === 'script' ? 'Copied ✓' : 'Copy formatted script'}
+                  </button>
+                </div>
+                <div className="glass-card" style={{ padding: '32px 40px', fontFamily: 'var(--mono)', fontSize: 14, lineHeight: 2, color: 'var(--text-1)', whiteSpace: 'pre-wrap' }}>
+                  {generatedBrief.scriptFormatted}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'brand' && generatedBrief.brandApplication && (
+              <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {Object.entries(generatedBrief.brandApplication).map(([k, v]) => (
+                  <Card key={k} accent="var(--brass-dim)">
+                    <ML c="var(--brass)" mb={10}>{k.replace(/([A-Z])/g, ' $1').trim()}</ML>
+                    <p className="font-sans" style={{ fontSize: 15, color: 'var(--text-1)', lineHeight: 1.7 }}>{v}</p>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'checklist' && generatedBrief.qualityChecklist && (
+              <div className="fade-in">
+                <Card>
+                  <ML c="var(--text-3)" mb={20}>Pre-export verification</ML>
+                  {generatedBrief.qualityChecklist.map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 16, padding: '14px 0', borderBottom: i < generatedBrief.qualityChecklist.length - 1 ? '1px solid var(--border-subtle)' : '', alignItems: 'flex-start' }}>
+                      <div style={{ width: 18, height: 18, borderRadius: 4, border: '1px solid var(--border-strong)', flexShrink: 0, marginTop: 2, background: 'var(--bg-surface)' }} />
+                      <div style={{ flex: 1 }}>
+                        <div className="font-sans" style={{ fontSize: 15, color: 'var(--text-1)', marginBottom: 4 }}>{item.check}</div>
+                        <div className="font-sans" style={{ fontSize: 13, color: 'var(--text-3)', fontStyle: 'italic' }}>{item.why}</div>
+                      </div>
+                    </div>
+                  ))}
+                </Card>
+              </div>
+            )}
+          </div>
+        )}
+
+      </main>
+
+      <footer style={{ borderTop: '1px solid var(--border-subtle)', padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-deep)', zIndex: 10 }}>
+        <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '.2em', textTransform: 'uppercase' }}>Quantum Branding BrandOS</span>
+        <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-4)', letterSpacing: '.15em' }}>v1.0 · System Operational</span>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

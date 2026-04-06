@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum Branding — Answer questions. Get a brand.</title>
+<meta name="description" content="QB BrandOS. 18 AI tools build your brand identity, look, voice, content, and strategy. Step by step. Start free.">
+<script>(function(){var t=localStorage.getItem('qb-theme')||'dark';document.documentElement.setAttribute('data-theme',t)})();</script>
+<style>html:not([data-theme]){background:#080604;color:#A89A88}</style>
+<style>
+/* ===========================
+   VARIABLES
+   =========================== */
+:root,[data-theme="dark"]{
+  --bg-void:#080604;--bg-deep:#0A0806;--bg-base:#0E0C09;
+  --bg-surface:rgba(140,110,70,0.045);--bg-elevated:rgba(140,110,70,0.07);
+  --bg-overlay:rgba(18,15,10,0.85);
+  --border-subtle:rgba(140,110,70,0.06);--border-medium:rgba(140,110,70,0.11);--border-strong:rgba(140,110,70,0.18);
+  --patina:#3A5F4A;--patina-lit:#4A7A5E;--patina-dim:rgba(58,95,74,0.2);--patina-faint:rgba(58,95,74,0.08);
+  --brass:#A8903E;--brass-lit:#C4A84E;--brass-dim:rgba(168,144,62,0.18);--brass-faint:rgba(168,144,62,0.06);
+  --text-1:#DDD4C4;--text-2:#A89A88;--text-3:#6A5E50;--text-4:#3E3830;
+  --glass-bg:rgba(18,15,10,0.85);--glass-border:rgba(140,110,70,0.06);
+  --font-display:'DM Serif Display',Georgia,serif;
+  --font-body:'Inter',-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --nav-h:64px;--container:1200px;--radius:16px;--radius-sm:10px;--radius-xs:6px;
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+}
+[data-theme="light"]{
+  --bg-void:#F4F0EB;--bg-deep:#EDE8E2;--bg-base:#E6E0D8;
+  --bg-surface:rgba(100,80,50,0.04);--bg-elevated:rgba(100,80,50,0.07);
+  --bg-overlay:rgba(244,240,235,0.9);
+  --border-subtle:rgba(100,80,50,0.08);--border-medium:rgba(100,80,50,0.14);--border-strong:rgba(100,80,50,0.22);
+  --patina:#2E4E3C;--patina-lit:#3A6A4E;--patina-dim:rgba(46,78,60,0.15);--patina-faint:rgba(46,78,60,0.06);
+  --brass:#8A7430;--brass-lit:#A08A3A;--brass-dim:rgba(138,116,48,0.15);--brass-faint:rgba(138,116,48,0.05);
+  --text-1:#1A1610;--text-2:#5A5040;--text-3:#8A7E70;--text-4:#B8AEA0;
+  --glass-bg:rgba(244,240,235,0.9);--glass-border:rgba(100,80,50,0.08);
+}
+
+/* ===========================
+   RESET & BASE
+   =========================== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:var(--font-body);background:var(--bg-void);color:var(--text-2);font-size:15px;line-height:1.65;overflow-x:hidden;transition:background 0.4s ease,color 0.3s ease}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:var(--font-body);background:none;border:none;padding:0;color:inherit}
+
+/* Film grain */
+body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px 256px}
+[data-theme="light"] body::after{opacity:0.015}
+
+/* Warm vignette */
+body::before{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 50% 35%,transparent 0%,var(--bg-void) 100%);opacity:0.4}
+
+/* ===========================
+   UTILITIES
+   =========================== */
+.container{width:100%;max-width:var(--container);margin:0 auto;padding:0 24px}
+@media(max-width:640px){.container{padding:0 20px}}
+section{position:relative;z-index:2}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s var(--ease-out),transform 0.7s var(--ease-out)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}.rd4{transition-delay:.4s}.rd5{transition-delay:.5s}.rd6{transition-delay:.6s}
+
+/* Shimmer gradient text */
+.shimmer{
+  background:linear-gradient(120deg,var(--patina-lit),var(--brass),var(--patina-lit));
+  background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer 3s ease-in-out infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Placeholder shimmer */
+.placeholder-shimmer{
+  background:linear-gradient(90deg,var(--bg-surface) 25%,var(--bg-elevated) 50%,var(--bg-surface) 75%);
+  background-size:200% 100%;
+  animation:placeholderShimmer 8s ease-in-out infinite}
+@keyframes placeholderShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ===========================
+   SHARED COMPONENTS
+   =========================== */
+
+/* Labels */
+.label{font-family:var(--font-mono);font-size:0.68rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--patina-lit)}
+.label-brass{color:var(--brass)}
+
+/* Headings */
+.h1{font-family:var(--font-display);font-weight:400;font-size:clamp(2.6rem,5vw,4rem);line-height:1.08;letter-spacing:-0.015em;color:var(--text-1)}
+.h2{font-family:var(--font-display);font-weight:400;font-size:clamp(1.8rem,3.5vw,2.8rem);line-height:1.12;color:var(--text-1)}
+.h3{font-family:var(--font-display);font-weight:400;font-size:clamp(1.2rem,2vw,1.6rem);line-height:1.2;color:var(--text-1)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-body);font-weight:600;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;padding:14px 32px;border-radius:8px;transition:all 0.3s var(--ease-out);white-space:nowrap;cursor:pointer}
+.btn-primary{background:var(--patina);color:#E6DDD0;border:none}
+.btn-primary:hover{background:var(--patina-lit);transform:translateY(-2px);box-shadow:0 8px 28px -4px var(--patina-dim)}
+.btn-secondary{background:transparent;color:var(--text-2);border:1px solid var(--border-medium)}
+.btn-secondary:hover{border-color:var(--border-strong);color:var(--text-1);transform:translateY(-2px)}
+.btn-ghost{background:transparent;border:none;color:var(--text-2);padding:14px 16px}
+.btn-ghost:hover{color:var(--text-1)}
+.btn-sm{padding:11px 22px;font-size:0.68rem}
+
+/* Pulse dot */
+.pulse-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--brass);flex-shrink:0;
+  box-shadow:0 0 8px rgba(168,144,62,0.7);animation:beat 3s ease infinite}
+@keyframes beat{0%,100%{transform:scale(1);opacity:1}12%{transform:scale(1.35)}24%{transform:scale(0.95);opacity:0.6}36%{transform:scale(1.15)}48%{transform:scale(1);opacity:0.7}}
+
+/* Glass cards */
+.glass{background:var(--glass-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);border-radius:var(--radius);position:relative;overflow:hidden;
+  transition:border-color 0.35s,box-shadow 0.35s,transform 0.35s}
+.glass::before{content:'';position:absolute;top:-30%;left:-10%;width:60%;height:60%;
+  background:radial-gradient(ellipse at center,rgba(168,144,62,0.03),transparent 70%);pointer-events:none;transition:opacity 0.4s}
+.glass:hover::before{opacity:0.7}
+.glass-hover:hover{border-color:var(--border-strong);transform:translateY(-4px);box-shadow:0 20px 60px -15px rgba(0,0,0,0.4)}
+
+/* ===========================
+   NAV
+   =========================== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);transition:background 0.3s,border-color 0.3s}
+.nav.scrolled{background:var(--glass-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border-subtle)}
+.nav-inner{max-width:var(--container);margin:0 auto;padding:0 24px;height:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--font-display);font-size:1rem;color:var(--text-1);letter-spacing:0.02em;transition:color 0.2s}
+.nav-logo:hover .pulse-dot{transform:scale(1.5)}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-family:var(--font-mono);font-size:0.72rem;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text-3);transition:color 0.2s}
+.nav-links a:hover{color:var(--text-1)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.theme-toggle{width:34px;height:34px;border-radius:6px;border:1px solid var(--border-subtle);
+  display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:var(--text-3);transition:all 0.2s;cursor:pointer}
+.theme-toggle:hover{border-color:var(--border-strong);color:var(--text-1)}
+.hamburger{display:none;width:36px;height:36px;border:1px solid var(--border-subtle);border-radius:8px;
+  flex-direction:column;gap:4px;align-items:center;justify-content:center;cursor:pointer}
+.hamburger span{display:block;width:16px;height:1.5px;background:var(--text-2);border-radius:2px;transition:all 0.3s}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
+@media(max-width:900px){.nav-links{display:none!important}.nav-actions .btn-ghost,.nav-actions .btn-primary{display:none!important}.hamburger{display:flex}}
+.nav .btn-primary{padding:10px 20px;font-size:0.68rem}
+
+/* Mobile menu */
+.mobile-menu{display:none;position:fixed;inset:0;z-index:200;background:var(--bg-void);flex-direction:column;padding:0 24px}
+.mobile-menu.open{display:flex}
+.mm-header{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle)}
+.mm-close{width:36px;height:36px;border:1px solid var(--border-subtle);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--text-3);cursor:pointer}
+.mm-body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:24px 0}
+.mm-link{font-family:var(--font-display);font-size:1.6rem;color:var(--text-3);cursor:pointer;padding:8px 0;transition:color 0.15s;background:none;border:none;text-align:left}
+.mm-link:hover{color:var(--patina-lit)}
+.mm-footer{padding-bottom:36px}
+
+/* ===========================
+   HERO
+   =========================== */
+.hero{padding:160px 0 120px;position:relative;overflow:hidden}
+@media(max-width:900px){.hero{padding:120px 0 80px}}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+
+/* Hero left */
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 12px;
+  border:1px solid var(--brass-dim);background:var(--brass-faint);border-radius:50px;margin-bottom:24px}
+.hero-badge-text{font-family:var(--font-mono);font-size:0.68rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--brass)}
+.hero-subtitle{font-size:1.1rem;color:var(--text-2);line-height:1.75;max-width:480px;margin:20px 0 28px}
+.hero-buttons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:40px}
+.hero-stats{display:flex;gap:32px;flex-wrap:wrap}
+.hero-stat-value{font-family:var(--font-display);font-size:1.8rem;color:var(--text-1);line-height:1}
+.hero-stat-label{font-family:var(--font-mono);font-size:0.62rem;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-top:6px}
+
+/* Hero demo card */
+.demo-card{border-radius:18px;overflow:hidden;background:var(--bg-base);border:1px solid var(--border-subtle);
+  box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 60px -10px rgba(58,95,74,0.05);position:relative}
+/* .glow replaced by .glow-pulse keyframe animation — see bottom of CSS */
+.demo-titlebar{height:36px;background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;padding:0 14px;gap:6px}
+.demo-dot{width:8px;height:8px;border-radius:50%;background:var(--border-medium)}
+.demo-dot.r{background:#8A4A4A}.demo-dot.y{background:var(--brass)}.demo-dot.g{background:var(--patina)}
+.demo-titlebar-text{margin-left:auto;font-family:var(--font-mono);font-size:0.62rem;letter-spacing:1.5px;color:var(--text-4);text-transform:uppercase}
+.demo-body{padding:24px 22px}
+.demo-body-label{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;color:var(--patina-lit);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.demo-field{margin-bottom:14px}
+.demo-field-key{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:1px;color:var(--text-4);text-transform:uppercase;margin-bottom:3px}
+.demo-field-val{font-family:var(--font-display);font-size:1.05rem;color:var(--text-1);min-height:1.3em}
+.demo-field-val.sm{font-size:0.9rem;color:var(--text-2);font-family:var(--font-body);font-style:italic}
+.demo-field-val.italic{font-style:italic}
+.demo-sep{height:1px;background:var(--border-subtle);margin:14px 0}
+.demo-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.demo-status{display:flex;align-items:center;gap:8px;margin-top:16px;font-family:var(--font-mono);font-size:0.62rem;color:var(--patina-lit);letter-spacing:0.5px}
+.cursor-blink{display:inline-block;width:1.5px;height:0.9em;background:var(--brass);animation:blink 1s step-end infinite;vertical-align:text-bottom;margin-left:1px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Hero load cascade */
+.hero-cascade{opacity:0;transform:translateY(20px);animation:cascadeIn 0.7s var(--ease-out) forwards}
+.hero-cascade-card{opacity:0;transform:translateX(30px);animation:cascadeInX 0.8s var(--ease-out) forwards}
+@keyframes cascadeIn{to{opacity:1;transform:translateY(0)}}
+@keyframes cascadeInX{to{opacity:1;transform:translateX(0)}}
+
+/* ===========================
+   MARQUEE
+   =========================== */
+.marquee-section{padding:28px 0;border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);overflow:hidden}
+.marquee-wrap{overflow:hidden;position:relative}
+.marquee-wrap::before,.marquee-wrap::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.marquee-wrap::before{left:0;background:linear-gradient(90deg,var(--bg-void),transparent)}
+.marquee-wrap::after{right:0;background:linear-gradient(270deg,var(--bg-void),transparent)}
+.marquee-track{display:flex;gap:12px;animation:marqueeScroll 40s linear infinite;width:max-content}
+.marquee-section:hover .marquee-track{animation-play-state:paused}
+@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-tag{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:8px 16px;
+  border:1px solid var(--border-subtle);border-radius:50px;background:var(--bg-surface);
+  font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.5px;color:var(--text-3);white-space:nowrap;transition:border-color 0.2s,color 0.2s}
+.marquee-tag:hover{border-color:var(--patina-dim);color:var(--patina-lit)}
+.mtag-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--patina-lit)}.dot-blue{background:#4A7A8A}.dot-warm{background:var(--brass)}
+
+/* ===========================
+   HOW IT WORKS
+   =========================== */
+.how-section{padding:120px 0}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+@media(max-width:900px){.how-grid{grid-template-columns:1fr;max-width:480px;margin-left:auto;margin-right:auto}}
+.how-card{padding:28px;border-radius:var(--radius)}
+.how-icon{width:56px;height:56px;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);
+  display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.how-icon svg{width:24px;height:24px;stroke:var(--patina-lit);stroke-width:1.5;fill:none}
+.how-step{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:8px}
+.how-name{font-family:var(--font-display);font-size:1.3rem;color:var(--text-1);margin-bottom:8px}
+.how-desc{font-size:0.88rem;color:var(--text-2);line-height:1.7;margin-bottom:10px}
+.how-output{font-family:var(--font-mono);font-size:0.68rem;color:var(--patina-lit);letter-spacing:0.5px}
+
+/* ===========================
+   BRAND PROFILE DIFFERENTIATOR
+   =========================== */
+.differ-section{padding:120px 0}
+.differ-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+@media(max-width:900px){.differ-grid{grid-template-columns:1fr;gap:36px}}
+.differ-text .label{margin-bottom:12px}
+.differ-text .h2{margin-bottom:16px}
+.differ-text p{font-size:1rem;color:var(--text-2);line-height:1.75;margin-bottom:24px;max-width:480px}
+.profile-card{padding:28px}
+.profile-row{margin-bottom:16px}
+.profile-row:last-child{margin-bottom:0}
+.profile-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.profile-label{font-size:0.82rem;color:var(--text-2)}
+.profile-value{font-family:var(--font-display);font-size:0.9rem;color:var(--text-1)}
+.profile-pct{font-family:var(--font-mono);font-size:0.72rem;color:var(--text-3)}
+.profile-track{height:4px;background:var(--bg-elevated);border-radius:2px;overflow:hidden}
+.profile-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--patina),var(--brass));width:0;transition:width 0.8s var(--ease-out)}
+
+/* ===========================
+   TIMELINE (What You Get)
+   =========================== */
+.timeline-section{padding:120px 0;background:var(--bg-deep)}
+.timeline{position:relative;margin-top:48px;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:1px;background:var(--border-medium)}
+.timeline-item{position:relative;padding-bottom:48px}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{position:absolute;left:-40px;top:4px;width:22px;height:22px;border-radius:50%;
+  border:2px solid var(--border-medium);background:var(--bg-void);display:flex;align-items:center;justify-content:center;z-index:2;transition:transform 0.6s var(--ease-out)}
+.timeline-dot-inner{width:8px;height:8px;border-radius:50%}
+.timeline-dot.pulsed{animation:dotPulse 0.6s var(--ease-out)}
+@keyframes dotPulse{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+.timeline-phase{display:inline-block;font-family:var(--font-mono);font-size:0.62rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.phase-green{color:var(--patina-lit)}.phase-blue{color:#4A7A8A}.phase-warm{color:var(--brass)}
+.timeline-name{font-family:var(--font-display);font-size:1.25rem;color:var(--text-1);margin-bottom:6px}
+.timeline-desc{font-size:0.88rem;color:var(--text-2);line-height:1.7;max-width:520px;margin-bottom:12px}
+.timeline-placeholder{height:120px;border-radius:var(--radius-sm);border:1px solid var(--border-subtle);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;max-width:400px;position:relative}
+.timeline-placeholder-num{font-family:var(--font-display);font-size:3rem;color:var(--text-4);line-height:1;opacity:0.5;position:absolute;top:50%;left:50%;transform:translate(-50%,-55%)}
+.timeline-placeholder span{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-4);letter-spacing:1px;text-transform:uppercase;position:relative;z-index:1}
+
+/* Alternating timeline on desktop */
+@media(min-width:768px){
+  .timeline{padding-left:0}
+  .timeline::before{left:50%;transform:translateX(-50%)}
+  .timeline-item{width:50%}
+  .timeline-item:nth-child(odd){margin-left:50%;padding-left:40px;text-align:left}
+  .timeline-item:nth-child(even){padding-right:40px;text-align:right}
+  .timeline-item:nth-child(odd) .timeline-dot{left:-11px}
+  .timeline-item:nth-child(even) .timeline-dot{left:auto;right:-11px}
+  .timeline-item:nth-child(even) .timeline-placeholder{margin-left:auto}
+  .timeline-item:nth-child(even) .timeline-desc{margin-left:auto}
+}
+
+/* ===========================
+   PERSONAS
+   =========================== */
+.persona-section{padding:120px 0}
+.persona-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:40px 0 28px}
+.persona-tab{padding:9px 20px;border:1px solid var(--border-subtle);border-radius:50px;
+  font-family:var(--font-mono);font-size:0.72rem;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;
+  color:var(--text-3);background:transparent;cursor:pointer;transition:all 0.25s ease}
+.persona-tab.active,.persona-tab:hover{color:var(--patina-lit);border-color:var(--patina);background:var(--patina-faint)}
+.persona-stage{position:relative;min-height:360px}
+.persona-panel{opacity:0;pointer-events:none;position:absolute;top:0;left:0;right:0;transition:opacity 0.35s ease;
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.persona-panel.active{opacity:1;pointer-events:auto;position:relative}
+@media(max-width:900px){.persona-panel{grid-template-columns:1fr}}
+.persona-image{height:320px;border-radius:var(--radius);border:1px solid var(--border-subtle);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.persona-numeral{font-family:var(--font-display);font-size:4rem;color:var(--text-4);line-height:1}
+.persona-image-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-4);letter-spacing:1px;text-transform:uppercase;text-align:center;padding:0 20px}
+.persona-title{font-family:var(--font-display);font-size:1.6rem;color:var(--text-1);margin-bottom:12px}
+.persona-desc{font-size:1rem;color:var(--text-2);line-height:1.75;margin-bottom:24px}
+
+/* ===========================
+   PROOF STRIP
+   =========================== */
+.proof-section{padding:36px 0;border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle)}
+.proof-label{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-4);margin-bottom:18px;text-align:center}
+.proof-row{display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:center;align-items:center}
+.proof-name{font-family:var(--font-display);font-size:1.05rem;color:var(--text-4);letter-spacing:0.02em;transition:color 0.2s;white-space:nowrap}
+.proof-name:hover{color:var(--text-3)}
+
+/* ===========================
+   PREDICTIVE PANEL
+   =========================== */
+.panel-section{padding:120px 0}
+.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+@media(max-width:900px){.panel-grid{grid-template-columns:1fr;gap:36px}}
+.panel-text .label{margin-bottom:12px}
+.panel-text .h2{margin-bottom:16px}
+.panel-text p{font-size:1rem;color:var(--text-2);line-height:1.75;margin-bottom:24px;max-width:480px}
+.panel-card{padding:28px}
+.panel-card-label{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:20px}
+.panel-confidence-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.panel-confidence-label{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-3)}
+.panel-confidence-num{font-family:var(--font-display);font-size:2.2rem;color:var(--brass)}
+.panel-main-track{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;margin-bottom:20px}
+.panel-main-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--patina),var(--brass));width:0;transition:width 1s var(--ease-out)}
+.panel-scenario{margin-bottom:10px}
+.panel-scenario-head{display:flex;justify-content:space-between;margin-bottom:4px}
+.panel-scenario-name{font-size:0.82rem;color:var(--text-2)}
+.panel-scenario-pct{font-family:var(--font-mono);font-size:0.72rem}
+.panel-scenario-track{height:3px;background:var(--bg-elevated);border-radius:2px;overflow:hidden}
+.panel-scenario-fill{height:100%;border-radius:2px;width:0;transition:width 1s var(--ease-out)}
+.panel-verdict{margin-top:20px;padding:16px;border-radius:var(--radius-sm);background:var(--patina-faint);border:1px solid var(--patina-dim)}
+.panel-verdict-label{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--patina-lit);margin-bottom:4px}
+.panel-verdict-title{font-family:var(--font-display);font-size:1.1rem;color:var(--patina-lit)}
+.panel-verdict-text{font-size:0.82rem;color:var(--text-2);margin-top:4px}
+
+/* ===========================
+   PRICING
+   =========================== */
+.pricing-section{padding:120px 0;background:var(--bg-deep)}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+@media(max-width:1000px){.pricing-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.pricing-grid{grid-template-columns:1fr}}
+.pricing-card{padding:28px;display:flex;flex-direction:column;border-radius:var(--radius)}
+.pricing-card.featured{border-color:var(--patina);box-shadow:0 0 40px -12px var(--patina-dim)}
+.pricing-name{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.pricing-badge{font-family:var(--font-mono);font-size:0.58rem;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;background:var(--patina-faint);color:var(--patina-lit);border:1px solid var(--patina-dim)}
+.pricing-price{font-family:var(--font-display);font-size:2.2rem;color:var(--text-1);margin-bottom:4px}
+.pricing-price span{font-size:0.88rem;font-weight:400;color:var(--text-3)}
+.pricing-desc{font-size:0.85rem;color:var(--text-2);line-height:1.6;margin-bottom:20px;flex:1}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:24px}
+.pricing-feature{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--text-2)}
+.pricing-feature::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--patina-lit);flex-shrink:0}
+.pricing-card .btn{width:100%;justify-content:center}
+.pricing-note{text-align:center;margin-top:24px;display:flex;justify-content:center}
+.pricing-note-inner{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:50px;background:var(--bg-elevated);border:1px solid var(--border-subtle);font-size:0.82rem;color:var(--text-2)}
+.pricing-anchor{text-align:center;margin-top:20px;font-family:var(--font-display);font-style:italic;font-size:1rem;color:var(--text-3)}
+
+/* ===========================
+   FOUNDER STATEMENT
+   =========================== */
+.founder-section{padding:100px 0}
+.founder-card{max-width:720px;margin:0 auto;text-align:center}
+.founder-label{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:24px}
+.founder-quote{font-family:var(--font-display);font-size:clamp(1.2rem,2.5vw,1.6rem);font-style:italic;color:var(--text-1);line-height:1.5;margin-bottom:28px;position:relative;padding:0 20px}
+.founder-avatar{width:56px;height:56px;border-radius:50%;background:var(--patina);color:#E6DDD0;
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.1rem;margin:0 auto 12px}
+.founder-name{font-family:var(--font-display);font-size:1.1rem;color:var(--text-1)}
+.founder-role{font-size:0.85rem;color:var(--text-3);margin-top:2px}
+.founder-creds{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+
+/* ===========================
+   FAQ
+   =========================== */
+.faq-section{padding:120px 0}
+.faq-container{max-width:720px;margin:48px auto 0}
+.faq-card{padding:0;overflow:hidden}
+.faq-item{border-bottom:1px solid var(--border-subtle)}
+.faq-item:last-child{border-bottom:none}
+.faq-question{width:100%;text-align:left;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  font-family:var(--font-display);font-size:1.05rem;color:var(--text-1);cursor:pointer;background:none;border:none;transition:color 0.2s}
+.faq-question:hover{color:var(--patina-lit)}
+.faq-icon{font-size:1.2rem;color:var(--text-3);transition:transform 0.25s ease;flex-shrink:0}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
+.faq-item.open .faq-answer{max-height:800px}
+.faq-answer-inner{padding:0 24px 20px;font-size:0.9rem;color:var(--text-2);line-height:1.7}
+
+/* ===========================
+   CTA
+   =========================== */
+.cta-section{padding:100px 0}
+.cta-card{text-align:center;padding:64px 48px;max-width:700px;margin:0 auto;border-radius:20px;
+  background:var(--patina-faint);border:1px solid var(--patina-dim);position:relative;overflow:hidden}
+.cta-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,var(--patina-dim),transparent 60%);opacity:0.5;pointer-events:none}
+.cta-card>*{position:relative;z-index:1}
+.cta-title{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.6rem);color:var(--text-1);margin-bottom:12px}
+.cta-subtitle{font-size:1rem;color:var(--text-2);line-height:1.7;margin-bottom:28px}
+.cta-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+@media(max-width:640px){.cta-card{padding:48px 24px}}
+
+/* ===========================
+   FOOTER
+   =========================== */
+.site-footer{padding:48px 0 32px;border-top:1px solid var(--border-subtle)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px}
+@media(max-width:640px){.footer-grid{grid-template-columns:1fr;gap:24px}}
+.footer-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-family:var(--font-display);font-size:1rem;color:var(--text-1)}
+.footer-desc{font-size:0.85rem;color:var(--text-3);max-width:320px;line-height:1.6}
+.footer-col-title{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
+.footer-link{display:block;font-size:0.85rem;color:var(--text-3);margin-bottom:8px;transition:color 0.15s}
+.footer-link:hover{color:var(--patina-lit)}
+.footer-bottom{margin-top:36px;padding-top:20px;border-top:1px solid var(--border-subtle);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-copy{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-4);letter-spacing:0.5px}
+@media(max-width:640px){.footer-bottom{flex-direction:column;align-items:center;text-align:center}}
+
+/* ===========================
+   INTERACTIVE SCANNER
+   =========================== */
+.scanner-section{padding:100px 0}
+.scanner-card{max-width:680px;margin:0 auto;padding:44px;position:relative;overflow:hidden}
+.scanner-card .h2{margin-bottom:8px}
+.scanner-card>p{font-size:1rem;color:var(--text-2);margin-bottom:24px}
+.scan-input-row{display:flex;gap:10px;margin-bottom:12px}
+@media(max-width:640px){.scan-input-row{flex-direction:column}}
+.scan-input{flex:1;padding:14px 18px;border-radius:var(--radius-sm);border:1px solid var(--border-medium);background:var(--bg-surface);
+  color:var(--text-1);font-family:var(--font-body);font-size:0.9rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+.scan-input::placeholder{color:var(--text-3);font-style:italic;opacity:0.7}
+.scan-input:focus{border-color:var(--patina);box-shadow:0 0 0 3px var(--patina-faint)}
+.scan-btn{white-space:nowrap}
+.scan-btn.scanning{opacity:0.7;pointer-events:none;animation:btnPulse 1s ease infinite}
+@keyframes btnPulse{0%,100%{opacity:0.7}50%{opacity:1}}
+.scan-line{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--patina-lit),var(--brass),transparent);
+  transform:translateY(-4px);opacity:0;z-index:10;pointer-events:none}
+.scan-line.active{opacity:1;animation:scanSweep 0.8s ease-out forwards}
+@keyframes scanSweep{0%{transform:translateY(0)}100%{transform:translateY(500px);opacity:0}}
+.scan-results{display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border-subtle)}
+.scan-results.show{display:block}
+.scan-bars{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-bottom:20px}
+@media(max-width:640px){.scan-bars{grid-template-columns:1fr}}
+.scan-bar-item{}
+.scan-bar-head{display:flex;justify-content:space-between;margin-bottom:4px}
+.scan-bar-label{font-family:var(--font-mono);font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-3)}
+.scan-bar-score{font-family:var(--font-mono);font-size:0.72rem;color:var(--patina-lit)}
+.scan-bar-track{height:5px;background:var(--bg-elevated);border-radius:3px;overflow:hidden}
+.scan-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--patina),var(--brass));width:0;transition:width 1s var(--ease-out)}
+.scan-verdict{padding:18px;border-radius:var(--radius-sm);background:var(--patina-faint);border:1px solid var(--patina-dim);
+  opacity:0;transition:opacity 0.4s ease;margin-bottom:20px}
+.scan-verdict.show{opacity:1}
+.scan-verdict-label{font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--patina-lit);margin-bottom:4px}
+.scan-verdict-title{font-family:var(--font-display);font-size:1.1rem;color:var(--text-1);margin-bottom:4px}
+.scan-verdict-text{font-size:0.85rem;color:var(--text-2)}
+.scan-ctas{display:flex;gap:10px;flex-wrap:wrap}
+.scan-note{font-family:var(--font-mono);font-size:0.6rem;color:var(--text-4);letter-spacing:1.5px;text-transform:uppercase;margin-top:16px;text-align:center}
+
+/* ===========================
+   VIDEO PLACEHOLDER
+   =========================== */
+.video-section{padding:80px 0}
+.video-card{position:relative;width:100%;padding-top:56.25%;border-radius:var(--radius);overflow:hidden;cursor:pointer}
+.video-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--patina-faint),var(--bg-surface));z-index:0}
+.video-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:1}
+.video-play{width:64px;height:64px;border-radius:50%;border:2px solid var(--border-strong);background:var(--glass-bg);
+  display:flex;align-items:center;justify-content:center;transition:all 0.3s ease}
+.video-card:hover .video-play{border-color:var(--patina-lit);transform:scale(1.08);box-shadow:0 0 30px var(--patina-dim)}
+.video-play svg{width:20px;height:20px;fill:var(--text-1);margin-left:3px}
+.video-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-3);letter-spacing:1px;text-transform:uppercase}
+
+/* ===========================
+   AMBIENT PARTICLES
+   =========================== */
+#ambientCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+[data-theme="light"] #ambientCanvas{opacity:0.5}
+
+/* ===========================
+   GLOW PULSE (demo card)
+   =========================== */
+@keyframes glowPulse{
+  0%{border-color:var(--border-subtle);box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 0 transparent}
+  30%{border-color:var(--patina-lit);box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 40px -8px var(--patina-dim),0 0 20px -4px var(--brass-dim)}
+  70%{border-color:var(--patina-lit);box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 40px -8px var(--patina-dim),0 0 20px -4px var(--brass-dim)}
+  100%{border-color:var(--border-subtle);box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 0 transparent}
+}
+.demo-card.glow-pulse{animation:glowPulse 1.5s ease forwards}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ========== AMBIENT PARTICLES ========== -->
+<canvas id="ambientCanvas"></canvas>
+
+<!-- ========== NAV ========== -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo"><span class="pulse-dot"></span>Quantum Branding</a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#use-cases">What you get</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#about">About Nizzar</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><span id="themeIcon">&#9790;</span></button>
+      <a href="https://app.quantumbranding.ai" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="#scanner" class="btn btn-primary btn-sm">Start free</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== MOBILE MENU ========== -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mm-header">
+    <div class="nav-logo"><span class="pulse-dot"></span>Quantum Branding</div>
+    <button class="mm-close" id="mmClose">&#x2715;</button>
+  </div>
+  <nav class="mm-body">
+    <button class="mm-link" onclick="goTo('how-it-works')">How it works</button>
+    <button class="mm-link" onclick="goTo('use-cases')">What you get</button>
+    <button class="mm-link" onclick="goTo('pricing')">Pricing</button>
+    <button class="mm-link" onclick="goTo('about')">About Nizzar</button>
+    <button class="mm-link" onclick="goTo('scanner')">Free scan</button>
+  </nav>
+  <div class="mm-footer">
+    <a href="https://app.quantumbranding.ai" class="btn btn-primary" style="width:100%">Enter QB BrandOS</a>
+  </div>
+</div>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge hero-cascade" style="animation-delay:0.1s">
+          <span class="pulse-dot"></span>
+          <span class="hero-badge-text">The Brand Operating System</span>
+        </div>
+        <h1 class="h1 hero-cascade" style="animation-delay:0.2s">Answer questions.<br><span class="shimmer">Get a brand.</span></h1>
+        <p class="hero-subtitle hero-cascade" style="animation-delay:0.3s">Tell us who you are and what you're building. AI builds your identity, look, voice, content, and strategy. Step by step. All connected.</p>
+        <div class="hero-buttons hero-cascade" style="animation-delay:0.4s">
+          <a href="#scanner" class="btn btn-primary">&#x2726; Start free</a>
+          <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
+        </div>
+        <div class="hero-stats hero-cascade" style="animation-delay:0.5s">
+          <div><div class="hero-stat-value">5 min</div><div class="hero-stat-label">To your first result</div></div>
+          <div><div class="hero-stat-value">18</div><div class="hero-stat-label">Connected AI tools</div></div>
+          <div><div class="hero-stat-value">&euro;0</div><div class="hero-stat-label">To start. Free forever.</div></div>
+        </div>
+      </div>
+      <div class="hero-cascade-card" style="animation-delay:0.6s">
+        <div class="demo-card" id="demoCard">
+          <div class="demo-titlebar">
+            <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+            <span class="demo-titlebar-text">brand soul map</span>
+          </div>
+          <div class="demo-body">
+            <div class="demo-body-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--patina-lit)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Your Brand Profile
+            </div>
+            <div class="demo-field"><div class="demo-field-key">Brand Name</div><div class="demo-field-val" id="demoName"><span class="cursor-blink"></span></div></div>
+            <div class="demo-field"><div class="demo-field-key">Who You Are</div><div class="demo-field-val sm" id="demoEssence"></div></div>
+            <div class="demo-sep"></div>
+            <div class="demo-row">
+              <div class="demo-field"><div class="demo-field-key">Your Energy</div><div class="demo-field-val" id="demoEnergy"></div></div>
+              <div class="demo-field"><div class="demo-field-key">Archetype</div><div class="demo-field-val" id="demoArchetype"></div></div>
+            </div>
+            <div class="demo-sep"></div>
+            <div class="demo-field"><div class="demo-field-key">Your One Line</div><div class="demo-field-val italic" id="demoLine"></div></div>
+            <div class="demo-status"><span class="pulse-dot" style="width:6px;height:6px;"></span>Brand Profile building...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== MARQUEE ========== -->
+<section class="marquee-section">
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+</section>
+
+<!-- ========== INTERACTIVE SCANNER ========== -->
+<section class="scanner-section" id="scanner">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:32px" class="reveal">
+      <div class="label">Free &middot; 30 seconds &middot; Instant</div>
+      <h2 class="h2" style="margin-top:10px">Try it now.</h2>
+      <p style="color:var(--text-2);font-size:1rem;max-width:420px;margin:10px auto 0">Type your brand name and what you do. Get an instant brand signal read.</p>
+    </div>
+    <div class="scanner-card glass reveal rd1" id="scannerCard">
+      <div class="scan-line" id="scanLine"></div>
+      <div class="scan-input-row">
+        <input type="text" class="scan-input" id="scanInput" placeholder="e.g. Sunrise Bakery &mdash; a neighborhood bakery in Boston">
+        <button type="button" class="btn btn-primary scan-btn" id="scanBtn">Scan my brand</button>
+      </div>
+      <div class="scan-results" id="scanResults">
+        <div class="scan-bars" id="scanBars"></div>
+        <div class="scan-verdict" id="scanVerdict">
+          <div class="scan-verdict-label">Your biggest gap</div>
+          <div class="scan-verdict-title" id="scanVerdictTitle"></div>
+          <div class="scan-verdict-text" id="scanVerdictText"></div>
+        </div>
+        <div class="scan-ctas">
+          <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-sm">Full diagnostic (free)</a>
+          <a href="https://app.quantumbranding.ai" class="btn btn-secondary btn-sm">Start building</a>
+        </div>
+      </div>
+      <div class="scan-note">No account &middot; No credit card &middot; Instant results</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== VIDEO PLACEHOLDER ========== -->
+<section class="video-section">
+  <div class="container">
+    <div class="video-card glass reveal" data-placeholder="Video: QB BrandOS 60-second overview">
+      <div class="video-inner">
+        <div class="video-play"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        <span class="video-label">See QB BrandOS in action &mdash; 60 seconds</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HOW IT WORKS ========== -->
+<section class="how-section" id="how-it-works">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="label">How it works</div>
+      <h2 class="h2">Three steps. That's it.</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-card glass glass-hover reveal rd1">
+        <div class="how-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="how-step">Step 01</div>
+        <div class="how-name">Answer</div>
+        <p class="how-desc">You answer questions about your brand. Who you are, what you believe, who you serve. No wrong answers. The system guides you.</p>
+        <div class="how-output">Result: Your Brand Profile</div>
+      </div>
+      <div class="how-card glass glass-hover reveal rd2">
+        <div class="how-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><line x1="6" y1="7" x2="10" y2="10"/><line x1="14" y1="10" x2="18" y2="7"/><line x1="6" y1="17" x2="10" y2="14"/><line x1="14" y1="14" x2="18" y2="17"/></svg>
+        </div>
+        <div class="how-step">Step 02</div>
+        <div class="how-name">Build</div>
+        <p class="how-desc">AI turns your answers into a complete brand: identity, visual direction, voice, content, strategy. Everything stays connected through your Brand Profile.</p>
+        <div class="how-output">Result: Logo direction, voice guide, 30+ content pieces</div>
+      </div>
+      <div class="how-card glass glass-hover reveal rd3">
+        <div class="how-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="how-step">Step 03</div>
+        <div class="how-name">Launch</div>
+        <p class="how-desc">Your content is written. Your visual direction is set. Your voice is defined. Your strategy is mapped. You go live with a brand that holds.</p>
+        <div class="how-output">Result: A brand ready to publish</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BRAND PROFILE DIFFERENTIATOR ========== -->
+<section class="differ-section" id="brand-profile">
+  <div class="container">
+    <div class="differ-grid">
+      <div class="differ-text reveal">
+        <div class="label label-brass">The secret</div>
+        <h2 class="h2">One profile. Every tool reads it.</h2>
+        <p>You answer questions once. Your Brand Profile stores who you are, what you stand for, how you sound, and who you serve. All 18 tools read from it. Nothing is disconnected. Everything compounds.</p>
+        <a href="#scanner" class="btn btn-primary">Start building yours</a>
+      </div>
+      <div class="reveal rd2">
+        <div class="profile-card glass">
+          <div class="profile-row">
+            <div class="profile-meta"><span class="profile-label">Brand essence</span><span class="profile-pct">95%</span></div>
+            <div class="profile-value" style="margin-bottom:6px">"The intersection of craft and ambition"</div>
+            <div class="profile-track"><div class="profile-fill" data-width="95%"></div></div>
+          </div>
+          <div class="profile-row">
+            <div class="profile-meta"><span class="profile-label">Natural force</span><span class="profile-pct">82%</span></div>
+            <div class="profile-value" style="margin-bottom:6px">Wildfire</div>
+            <div class="profile-track"><div class="profile-fill" data-width="82%"></div></div>
+          </div>
+          <div class="profile-row">
+            <div class="profile-meta"><span class="profile-label">Archetype</span><span class="profile-pct">88%</span></div>
+            <div class="profile-value" style="margin-bottom:6px">The Alchemist</div>
+            <div class="profile-track"><div class="profile-fill" data-width="88%"></div></div>
+          </div>
+          <div class="profile-row">
+            <div class="profile-meta"><span class="profile-label">Primary persona</span><span class="profile-pct">76%</span></div>
+            <div class="profile-value" style="margin-bottom:6px">"Founders who outgrew their brand"</div>
+            <div class="profile-track"><div class="profile-fill" data-width="76%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== WHAT YOU GET — TIMELINE ========== -->
+<section class="timeline-section" id="use-cases">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="label">What you get</div>
+      <h2 class="h2">Everything your brand needs.</h2>
+      <p style="color:var(--text-2);font-size:1rem;margin-top:8px">Built step by step.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-green"></div></div>
+        <div class="timeline-phase phase-green">Phase 01 &middot; Discovery</div>
+        <div class="timeline-name">Your identity</div>
+        <p class="timeline-desc">Answer questions about who you are and what you believe. You get a complete brand profile: your personality, your energy, your one-liner, and the truth your brand is built on.</p>
+        <div class="timeline-placeholder placeholder-shimmer" data-placeholder="Screenshot: Brand Soul Map"><div class="timeline-placeholder-num">01</div><span>[ Screenshot: Brand Soul Map ]</span></div>
+      </div>
+      <div class="timeline-item reveal rd1">
+        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-blue"></div></div>
+        <div class="timeline-phase phase-blue">Phase 02 &middot; Creation</div>
+        <div class="timeline-name">Your logo + voice</div>
+        <p class="timeline-desc">Get a complete logo brief with AI-generated direction. Then build your brand voice with writing rules, tone guidelines, and ready-to-use templates.</p>
+        <div class="timeline-placeholder placeholder-shimmer" data-placeholder="Screenshot: Logo Direction Agent"><div class="timeline-placeholder-num">02</div><span>[ Screenshot: Logo Direction Agent ]</span></div>
+      </div>
+      <div class="timeline-item reveal rd2">
+        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-warm"></div></div>
+        <div class="timeline-phase phase-warm">Validation Gate</div>
+        <div class="timeline-name">Test before you spend</div>
+        <p class="timeline-desc">The Predictive Panel runs your concept through thousands of simulated customers. You see who responds, what works, and whether to go or wait.</p>
+        <div class="timeline-placeholder placeholder-shimmer" data-placeholder="Screenshot: Predictive Panel"><div class="timeline-placeholder-num">&#x2713;</div><span>[ Screenshot: Predictive Panel ]</span></div>
+      </div>
+      <div class="timeline-item reveal rd3">
+        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-green"></div></div>
+        <div class="timeline-phase phase-green">Phase 03 &middot; Content</div>
+        <div class="timeline-name">Your first month of content</div>
+        <p class="timeline-desc">Get your first 12 Instagram posts, 20 LinkedIn posts, 6 YouTube scripts, and a full newsletter plan. All written in your voice. All on brand.</p>
+        <div class="timeline-placeholder placeholder-shimmer" data-placeholder="Screenshot: Instagram Seed Agent"><div class="timeline-placeholder-num">03</div><span>[ Screenshot: Instagram Seed Agent ]</span></div>
+      </div>
+      <div class="timeline-item reveal rd4">
+        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-blue"></div></div>
+        <div class="timeline-phase phase-blue">Phase 04 &middot; Execution</div>
+        <div class="timeline-name">Multiply everything</div>
+        <p class="timeline-desc">One piece of content becomes up to 25 pieces across 10 platforms. All rebuilt natively. All on-brand. Nothing copy-pasted.</p>
+        <div class="timeline-placeholder placeholder-shimmer" data-placeholder="Screenshot: Content Repurposing Engine"><div class="timeline-placeholder-num">04</div><span>[ Screenshot: Content Repurposing Engine ]</span></div>
+      </div>
+      <div class="timeline-item reveal rd5">
+        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-warm"></div></div>
+        <div class="timeline-phase phase-warm">Phase 05 &middot; Intelligence</div>
+        <div class="timeline-name">Know what is working</div>
+        <p class="timeline-desc">See how your brand is performing. Get a quarterly review that updates your profile and tells you what to do next. Your brand gets smarter every 90 days.</p>
+        <div class="timeline-placeholder placeholder-shimmer" data-placeholder="Screenshot: Brand Performance Dashboard"><div class="timeline-placeholder-num">05</div><span>[ Screenshot: Brand Performance Dashboard ]</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PERSONAS ========== -->
+<section class="persona-section" id="personas">
+  <div class="container">
+    <div class="reveal">
+      <div class="label">Who it is for</div>
+      <h2 class="h2">If you need a brand, this is for you.</h2>
+    </div>
+    <div class="persona-tabs reveal rd1" id="personaTabs">
+      <button class="persona-tab active" data-tab="0">Starting from zero</button>
+      <button class="persona-tab" data-tab="1">Fixing a brand</button>
+      <button class="persona-tab" data-tab="2">Growing a business</button>
+      <button class="persona-tab" data-tab="3">Running an agency</button>
+    </div>
+    <div class="persona-stage reveal rd2">
+      <div class="persona-panel active" data-panel="0">
+        <div class="persona-image placeholder-shimmer" data-placeholder="Image: founder sketching ideas">
+          <div class="persona-numeral">01</div>
+          <span class="persona-image-label">[ Image: founder sketching ideas ]</span>
+        </div>
+        <div>
+          <div class="persona-title">I have an idea. No brand yet.</div>
+          <p class="persona-desc">You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.</p>
+          <a href="https://app.quantumbranding.ai" class="btn btn-primary btn-sm">Start from zero</a>
+        </div>
+      </div>
+      <div class="persona-panel" data-panel="1">
+        <div class="persona-image placeholder-shimmer" data-placeholder="Image: designer reviewing concepts">
+          <div class="persona-numeral">02</div>
+          <span class="persona-image-label">[ Image: designer reviewing concepts ]</span>
+        </div>
+        <div>
+          <div class="persona-title">I have a brand. Something feels off.</div>
+          <p class="persona-desc">The tools audit what you have and tell you what to keep, fix, or rebuild. Logo evaluation, voice analysis, performance review. Precise verdict, clear path forward.</p>
+          <a href="https://app.quantumbranding.ai" class="btn btn-primary btn-sm">Audit your brand</a>
+        </div>
+      </div>
+      <div class="persona-panel" data-panel="2">
+        <div class="persona-image placeholder-shimmer" data-placeholder="Image: entrepreneur at desk">
+          <div class="persona-numeral">03</div>
+          <span class="persona-image-label">[ Image: entrepreneur at desk ]</span>
+        </div>
+        <div>
+          <div class="persona-title">Competition is coming.</div>
+          <p class="persona-desc">Skip to strategy and intelligence. The War Table pressure-tests your next move. The Predictive Panel simulates market response before you spend.</p>
+          <a href="https://app.quantumbranding.ai" class="btn btn-primary btn-sm">Enter strategic mode</a>
+        </div>
+      </div>
+      <div class="persona-panel" data-panel="3">
+        <div class="persona-image placeholder-shimmer" data-placeholder="Image: agency team working">
+          <div class="persona-numeral">04</div>
+          <span class="persona-image-label">[ Image: agency team working ]</span>
+        </div>
+        <div>
+          <div class="persona-title">I build brands for clients.</div>
+          <p class="persona-desc">Up to 8 client portals. Your brand on every output. White-label delivery. Run clients through the same journey with your logo on the result.</p>
+          <a href="mailto:nizzar@quantumbranding.ai" class="btn btn-primary btn-sm">Talk to us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROOF STRIP ========== -->
+<section class="proof-section">
+  <div class="container reveal">
+    <div class="proof-label">Nizzar's work has been featured by</div>
+    <div class="proof-row">
+      <span class="proof-name" data-logo="nyt">New York Times</span>
+      <span class="proof-name" data-logo="time">Time Magazine</span>
+      <span class="proof-name" data-logo="google-arts">Google Arts &amp; Culture</span>
+      <span class="proof-name" data-logo="un">The United Nations</span>
+      <span class="proof-name" data-logo="usaid">USAID</span>
+      <span class="proof-name" data-logo="tv5">TV5 Monde</span>
+      <span class="proof-name" data-logo="lakers">LA Lakers</span>
+      <span class="proof-name" data-logo="um6p">UM6P</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PREDICTIVE PANEL ========== -->
+<section class="panel-section" id="predictive-panel">
+  <div class="container">
+    <div class="panel-grid">
+      <div class="panel-text reveal">
+        <div class="label label-brass">Before you spend a euro</div>
+        <h2 class="h2">Test your idea before you launch it.</h2>
+        <p>The Predictive Panel runs your concept through thousands of simulated customers. You see who responds, what works, and whether to go or wait.</p>
+        <a href="https://app.quantumbranding.ai" class="btn btn-primary">Try the panel</a>
+      </div>
+      <div class="reveal rd2">
+        <div class="panel-card glass" id="panelCard">
+          <div class="panel-card-label">Panel simulation</div>
+          <div class="panel-confidence-row">
+            <span class="panel-confidence-label">Overall confidence</span>
+            <span class="panel-confidence-num">74</span>
+          </div>
+          <div class="panel-main-track"><div class="panel-main-fill" data-width="74%"></div></div>
+          <div class="panel-scenario">
+            <div class="panel-scenario-head"><span class="panel-scenario-name">Strong launch</span><span class="panel-scenario-pct" style="color:var(--patina-lit)">62%</span></div>
+            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:var(--patina-lit)" data-width="62%"></div></div>
+          </div>
+          <div class="panel-scenario">
+            <div class="panel-scenario-head"><span class="panel-scenario-name">Needs price adjustment</span><span class="panel-scenario-pct" style="color:#4A7A8A">22%</span></div>
+            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:#4A7A8A" data-width="22%"></div></div>
+          </div>
+          <div class="panel-scenario">
+            <div class="panel-scenario-head"><span class="panel-scenario-name">Channel misfit</span><span class="panel-scenario-pct" style="color:var(--brass)">11%</span></div>
+            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:var(--brass)" data-width="11%"></div></div>
+          </div>
+          <div class="panel-scenario">
+            <div class="panel-scenario-head"><span class="panel-scenario-name">Positioning unclear</span><span class="panel-scenario-pct" style="color:#8A4A4A">5%</span></div>
+            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:#8A4A4A" data-width="5%"></div></div>
+          </div>
+          <div class="panel-verdict">
+            <div class="panel-verdict-label">Verdict</div>
+            <div class="panel-verdict-title">GO &mdash; Launch Ready</div>
+            <div class="panel-verdict-text">Strong market fit. Tighten price anchor before launch.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PRICING ========== -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="label">Pricing</div>
+      <h2 class="h2">Start free. Upgrade when ready.</h2>
+      <p style="color:var(--text-2);font-size:0.95rem;margin-top:8px">Three tools free forever. No credit card. No account to start.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card glass glass-hover reveal rd1">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-price">&euro;0 <span>/forever</span></div>
+        <div class="pricing-desc">Signal Scan, Brand Soul Map, and Sensescape. Unlimited runs. Your brand profile starts here.</div>
+        <ul class="pricing-features">
+          <li class="pricing-feature">Signal Scan diagnostic</li>
+          <li class="pricing-feature">Brand Soul Map (full)</li>
+          <li class="pricing-feature">Sensescape (full)</li>
+          <li class="pricing-feature">Unlimited runs</li>
+          <li class="pricing-feature">No account needed</li>
+        </ul>
+        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-secondary">Start free</a>
+      </div>
+      <div class="pricing-card glass glass-hover reveal rd2">
+        <div class="pricing-name">Starter</div>
+        <div class="pricing-price">&euro;97 <span>/month</span></div>
+        <div class="pricing-desc">All 18 tools. Unlimited runs. Your complete brand system, activated.</div>
+        <ul class="pricing-features">
+          <li class="pricing-feature">All 18 agent tools</li>
+          <li class="pricing-feature">Brand Profile saved &amp; connected</li>
+          <li class="pricing-feature">Unlimited runs</li>
+          <li class="pricing-feature">Brand Document export</li>
+          <li class="pricing-feature">Email support</li>
+        </ul>
+        <a href="https://app.quantumbranding.ai" class="btn btn-secondary">Get started</a>
+      </div>
+      <div class="pricing-card glass glass-hover featured reveal rd3">
+        <div class="pricing-name">Pro <span class="pricing-badge">Most popular</span></div>
+        <div class="pricing-price">&euro;297 <span>/month</span></div>
+        <div class="pricing-desc">Everything in Starter plus Predictive Panel and quarterly strategy.</div>
+        <ul class="pricing-features">
+          <li class="pricing-feature">Everything in Starter</li>
+          <li class="pricing-feature">Predictive Panel (5 runs/mo)</li>
+          <li class="pricing-feature">Priority support</li>
+          <li class="pricing-feature">Quarterly strategy session</li>
+          <li class="pricing-feature">Early access to new tools</li>
+        </ul>
+        <a href="https://app.quantumbranding.ai" class="btn btn-primary">Go Pro</a>
+      </div>
+      <div class="pricing-card glass glass-hover reveal rd4">
+        <div class="pricing-name">Agency</div>
+        <div class="pricing-price">&euro;997 <span>/month</span></div>
+        <div class="pricing-desc">Up to 8 client portals. White-label delivery. Your brand on every output.</div>
+        <ul class="pricing-features">
+          <li class="pricing-feature">8 white-label client portals</li>
+          <li class="pricing-feature">Unlimited Predictive Panel</li>
+          <li class="pricing-feature">Agency branding on outputs</li>
+          <li class="pricing-feature">Dedicated support</li>
+          <li class="pricing-feature">Custom onboarding</li>
+        </ul>
+        <a href="mailto:nizzar@quantumbranding.ai" class="btn btn-secondary">Talk to us</a>
+      </div>
+    </div>
+    <div class="pricing-note reveal">
+      <span class="pricing-note-inner"><span class="pulse-dot" style="width:6px;height:6px;"></span>Free: Signal Scan + Brand Soul Map + Sensescape &mdash; no account needed</span>
+    </div>
+    <div class="pricing-anchor reveal">What would an agency charge for this? &euro;5,000&ndash;20,000. Minimum.</div>
+  </div>
+</section>
+
+<!-- ========== FOUNDER STATEMENT ========== -->
+<section class="founder-section" id="about">
+  <div class="container">
+    <div class="founder-card reveal">
+      <div class="founder-label">From the founder</div>
+      <p class="founder-quote">&ldquo;I spent 20 years watching brands fail. Not because the work was bad. Because the identity was missing. QB BrandOS is that lesson turned into software.&rdquo;</p>
+      <div class="founder-avatar">NB</div>
+      <div class="founder-name">Nizzar Ben Chekroune</div>
+      <div class="founder-role">Founder, Quantum Branding</div>
+      <div class="founder-creds">
+        <span class="marquee-tag">United Nations Vienna</span>
+        <span class="marquee-tag">UNIDO</span>
+        <span class="marquee-tag">Google Arts &amp; Culture</span>
+        <span class="marquee-tag">20+ years</span>
+        <span class="marquee-tag">3 continents</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FAQ ========== -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="label">Questions</div>
+      <h2 class="h2">Before you decide.</h2>
+    </div>
+    <div class="faq-container">
+      <div class="faq-card glass reveal">
+        <div class="faq-item">
+          <button class="faq-question">Is this real AI or a template?<span class="faq-icon">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Every output is generated fresh by AI, informed by your Brand Profile. No templates. No recycled content. Your answers shape everything.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">Do I need design skills?<span class="faq-icon">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">No. The system guides you with questions, not blank canvases. You bring the knowledge of your brand. The system handles the structure.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">What do I get that I can actually use?<span class="faq-icon">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Logo direction briefs, voice guides, Instagram posts with captions, LinkedIn content, YouTube scripts, newsletter series, strategy maps. All exportable.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">How is this different from Canva or Looka?<span class="faq-icon">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Those tools make assets. QB BrandOS builds the thinking underneath. Identity, positioning, voice, strategy. The assets come from that foundation, which is why they hold.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">Can I cancel anytime?<span class="faq-icon">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes. Monthly billing, cancel anytime. No contracts. The free tier stays free forever.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">How long does the full journey take?<span class="faq-icon">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Your first result in 5 minutes. A complete brand foundation in 2&ndash;3 hours across multiple sessions. Content and strategy build from there.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FINAL CTA ========== -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card reveal">
+      <h2 class="cta-title">Start with what you have.</h2>
+      <p class="cta-subtitle">Even if that is just an idea. Three tools. Free forever. Five minutes.</p>
+      <div class="cta-buttons">
+        <a href="#scanner" class="btn btn-primary">&#x2726; Start free</a>
+        <a href="https://app.quantumbranding.ai" class="btn btn-secondary">Enter QB BrandOS</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><span class="pulse-dot"></span>Quantum Branding</div>
+        <p class="footer-desc">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Product</div>
+        <a href="#how-it-works" class="footer-link">How it works</a>
+        <a href="#use-cases" class="footer-link">The 18 tools</a>
+        <a href="#pricing" class="footer-link">Pricing</a>
+        <a href="#scanner" class="footer-link">Free Signal Scan</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <a href="mailto:nizzar@quantumbranding.ai" class="footer-link">nizzar@quantumbranding.ai</a>
+        <a href="https://nizzar.com" class="footer-link">nizzar.com</a>
+        <a href="https://www.linkedin.com/in/nizzar" class="footer-link">LinkedIn</a>
+        <a href="https://instagram.com/thequantumbranding" class="footer-link">Instagram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 Quantum Branding &middot; quantumbranding.ai</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+
+/* ===== THEME TOGGLE ===== */
+var html=document.documentElement,toggle=document.getElementById('themeToggle'),icon=document.getElementById('themeIcon');
+function updateIcon(){icon.innerHTML=html.getAttribute('data-theme')==='dark'?'&#9790;':'&#9728;'}
+updateIcon();
+toggle.addEventListener('click',function(){
+  var n=html.getAttribute('data-theme')==='dark'?'light':'dark';
+  html.setAttribute('data-theme',n);localStorage.setItem('qb-theme',n);updateIcon();
+});
+
+/* ===== NAV SCROLL ===== */
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+
+/* ===== MOBILE MENU ===== */
+var hamburger=document.getElementById('hamburger'),mm=document.getElementById('mobileMenu'),mmClose=document.getElementById('mmClose');
+hamburger.addEventListener('click',function(){mm.classList.add('open');document.body.style.overflow='hidden'});
+mmClose.addEventListener('click',closeMM);
+function closeMM(){mm.classList.remove('open');document.body.style.overflow=''}
+window.goTo=function(id){closeMM();var el=document.getElementById(id);if(el)window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-72,behavior:'smooth'})};
+
+/* ===== SCROLL REVEAL ===== */
+var reveals=document.querySelectorAll('.reveal');
+var revObs=new IntersectionObserver(function(entries){entries.forEach(function(e){
+  if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target)}
+})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+reveals.forEach(function(el){revObs.observe(el)});
+
+/* ===== PROGRESS BARS (profile + panel) ===== */
+var bars=document.querySelectorAll('[data-width]');
+var barObs=new IntersectionObserver(function(entries){entries.forEach(function(e){
+  if(e.isIntersecting){
+    var fills=e.target.querySelectorAll?e.target.querySelectorAll('[data-width]'):[];
+    if(e.target.hasAttribute('data-width'))fills=[e.target];
+    fills.forEach(function(f,i){setTimeout(function(){f.style.width=f.getAttribute('data-width')+'%'},120*i)});
+    barObs.unobserve(e.target);
+  }
+})},{threshold:0.2});
+var panelCard=document.getElementById('panelCard');
+if(panelCard)barObs.observe(panelCard);
+document.querySelectorAll('.profile-card').forEach(function(c){barObs.observe(c)});
+bars.forEach(function(b){barObs.observe(b)});
+
+/* ===== TIMELINE DOT PULSE ===== */
+var dots=document.querySelectorAll('[data-dot]');
+var dotObs=new IntersectionObserver(function(entries){entries.forEach(function(e){
+  if(e.isIntersecting){e.target.classList.add('pulsed');dotObs.unobserve(e.target)}
+})},{threshold:0.3});
+dots.forEach(function(d){dotObs.observe(d)});
+
+/* ===== MARQUEE ===== */
+(function(){
+  var tools=[
+    {n:'Signal Scan',c:'dot-green'},{n:'Brand Soul Map',c:'dot-green'},{n:'Sensescape',c:'dot-green'},
+    {n:'Visual DNA',c:'dot-green'},{n:'War Table',c:'dot-green'},
+    {n:'Logo Direction',c:'dot-blue'},{n:'Logo Evaluation',c:'dot-blue'},{n:'Voice Guide',c:'dot-blue'},
+    {n:'Instagram Agent',c:'dot-warm'},{n:'LinkedIn Agent',c:'dot-warm'},{n:'YouTube Agent',c:'dot-warm'},
+    {n:'Newsletter',c:'dot-warm'},{n:'Content Bridge',c:'dot-warm'},
+    {n:'Repurposing Engine',c:'dot-green'},
+    {n:'Dashboard',c:'dot-blue'},{n:'Quarterly Review',c:'dot-blue'},
+    {n:'Predictive Panel',c:'dot-warm'},{n:'BrandOS Hub',c:'dot-warm'}
+  ];
+  var track=document.getElementById('marqueeTrack'),h='';
+  for(var r=0;r<2;r++)tools.forEach(function(t){h+='<span class="marquee-tag"><span class="mtag-dot '+t.c+'"></span>'+t.n+'</span>'});
+  track.innerHTML=h;
+})();
+
+/* ===== PERSONA TABS ===== */
+(function(){
+  var tabs=document.querySelectorAll('.persona-tab'),panels=document.querySelectorAll('.persona-panel');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click',function(){
+      tabs.forEach(function(t){t.classList.remove('active')});
+      tab.classList.add('active');
+      var idx=tab.getAttribute('data-tab');
+      panels.forEach(function(p){p.classList.remove('active')});
+      var target=document.querySelector('[data-panel="'+idx+'"]');
+      if(target)target.classList.add('active');
+    });
+  });
+})();
+
+/* ===== FAQ ACCORDION ===== */
+document.querySelectorAll('.faq-question').forEach(function(q){
+  q.addEventListener('click',function(){
+    var item=q.parentElement;
+    var wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(i){i.classList.remove('open')});
+    if(!wasOpen)item.classList.add('open');
+  });
+});
+
+/* ===== INTERACTIVE SCANNER ===== */
+(function(){
+  var btn=document.getElementById('scanBtn'),input=document.getElementById('scanInput');
+  var resultsEl=document.getElementById('scanResults'),barsEl=document.getElementById('scanBars');
+  var verdictEl=document.getElementById('scanVerdict'),lineEl=document.getElementById('scanLine');
+  var dims=[
+    {id:'identity',label:'Identity',min:40,max:75},
+    {id:'clarity',label:'Clarity',min:50,max:80},
+    {id:'voice',label:'Voice',min:15,max:55},
+    {id:'visual',label:'Visual',min:10,max:45},
+    {id:'strategy',label:'Strategy',min:10,max:35},
+    {id:'content',label:'Content',min:5,max:25}
+  ];
+
+  btn.addEventListener('click',function(){
+    var v=input.value.trim();
+    if(!v){input.focus();return}
+
+    /* Reset state */
+    btn.textContent='Scanning...';btn.classList.add('scanning');
+    resultsEl.classList.remove('show');verdictEl.classList.remove('show');
+
+    /* Scan line sweep */
+    lineEl.classList.remove('active');
+    void lineEl.offsetWidth;
+    lineEl.classList.add('active');
+
+    /* Generate scores and build bars */
+    var scores=dims.map(function(d){return{label:d.label,score:d.min+Math.floor(Math.random()*(d.max-d.min+1))}});
+
+    setTimeout(function(){
+      /* Build bar HTML */
+      barsEl.innerHTML='';
+      scores.forEach(function(s){
+        var item=document.createElement('div');item.className='scan-bar-item';
+        item.innerHTML='<div class="scan-bar-head"><span class="scan-bar-label">'+s.label+'</span><span class="scan-bar-score">'+s.score+'</span></div><div class="scan-bar-track"><div class="scan-bar-fill" style="width:0"></div></div>';
+        barsEl.appendChild(item);
+      });
+
+      resultsEl.classList.add('show');
+
+      /* Animate bars with 80ms stagger */
+      var fills=barsEl.querySelectorAll('.scan-bar-fill');
+      fills.forEach(function(f,i){
+        setTimeout(function(){f.style.width=scores[i].score+'%'},80*i);
+      });
+
+      /* Show verdict after last bar */
+      var lowest=scores.reduce(function(a,b){return a.score<b.score?a:b});
+      document.getElementById('scanVerdictTitle').textContent=lowest.label+'.';
+      document.getElementById('scanVerdictText').textContent='This is where your brand needs the most attention first. Start with the tools that build this layer.';
+      setTimeout(function(){verdictEl.classList.add('show')},80*scores.length+400);
+
+      btn.textContent='Scan my brand';btn.classList.remove('scanning');
+    },900);
+  });
+})();
+
+/* ===== HERO TYPING DEMO ===== */
+var demoExamples=[
+  {name:'Sunrise Bakery',essence:'A neighborhood bakery that makes people feel like Sunday morning',energy:'Warm, golden, unhurried',archetype:'The Caregiver',line:'Every loaf is a love letter to slow mornings.'},
+  {name:'Noor Studio',essence:'A design practice that finds beauty in restraint',energy:'Precise, luminous, deliberate',archetype:'The Creator',line:'Less noise. More signal.'},
+  {name:'Fithra',essence:'Fitness coaching that honors what your body already knows',energy:'Grounded, fierce, ancestral',archetype:'The Sage',line:'Your body remembers. We help it speak.'}
+];
+var dIdx=0,dAnim=false;
+var dCard=document.getElementById('demoCard');
+var dFields={name:document.getElementById('demoName'),essence:document.getElementById('demoEssence'),energy:document.getElementById('demoEnergy'),archetype:document.getElementById('demoArchetype'),line:document.getElementById('demoLine')};
+
+function typeField(el,text,speed,cb){
+  var i=0;el.textContent='';
+  function step(){
+    if(i<text.length){el.textContent=text.substring(0,i+1);i++;setTimeout(step,speed)}
+    else{el.innerHTML=text+'<span class="cursor-blink"></span>';if(cb)setTimeout(cb,100)}
+  }step();
+}
+
+function clearFields(){Object.values(dFields).forEach(function(f){f.innerHTML=''})}
+
+function runDemo(){
+  if(dAnim)return;dAnim=true;
+  var ex=demoExamples[dIdx%demoExamples.length];dIdx++;
+  clearFields();
+  dFields.name.innerHTML='<span class="cursor-blink"></span>';
+
+  typeField(dFields.name,ex.name,50,function(){
+    typeField(dFields.essence,ex.essence,30,function(){
+      typeField(dFields.energy,ex.energy,40,function(){
+        typeField(dFields.archetype,ex.archetype,45,function(){
+          typeField(dFields.line,'\u201C'+ex.line+'\u201D',35,function(){
+            /* FIX 3: proper glow pulse animation */
+            dCard.classList.remove('glow-pulse');
+            void dCard.offsetWidth;
+            dCard.classList.add('glow-pulse');
+            setTimeout(function(){dCard.classList.remove('glow-pulse')},1500);
+            dAnim=false;
+            setTimeout(runDemo,4000);
+          });
+        });
+      });
+    });
+  });
+}
+setTimeout(runDemo,1400);
+
+/* ===== FIX 2: AMBIENT PARTICLES ===== */
+(function(){
+  var canvas=document.getElementById('ambientCanvas');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var particles=[];
+  var isDark=function(){return html.getAttribute('data-theme')!=='light'};
+
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+  resize();
+  window.addEventListener('resize',resize);
+
+  var colors=['#3A5F4A','#4A7A5E','#A8903E','#C4A84E'];
+  for(var i=0;i<18;i++){
+    particles.push({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight,
+      r:1.5+Math.random()*1.5,
+      vx:(Math.random()-0.5)*0.3,
+      vy:(Math.random()-0.5)*0.3,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      alpha:0.06+Math.random()*0.04
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var baseAlpha=isDark()?1:0.5;
+    particles.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+      if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;
+      ctx.globalAlpha=p.alpha*baseAlpha;
+      ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+
+  /* Video placeholder click handler */
+  var videoCard = document.getElementById('videoCard');
+  if(videoCard){
+    videoCard.addEventListener('click',function(){
+      /* Replace this URL with your actual video URL when ready */
+      var videoUrl = 'https://www.youtube.com/@thequantumbranding';
+      window.open(videoUrl,'_blank','noopener,noreferrer');
+    });
+  }
+})();
+</script>
+</body>
+</html>

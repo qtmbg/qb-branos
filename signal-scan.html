@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Brand Signal Scan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch(e) {}
+  })();
+</script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140,110,70,0.045);
+  --bg-elevated: rgba(140,110,70,0.07);
+  --bg-overlay: rgba(18,15,10,0.85);
+  --border-subtle: rgba(140,110,70,0.06);
+  --border-medium: rgba(140,110,70,0.11);
+  --border-strong: rgba(140,110,70,0.18);
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58,95,74,0.2);
+  --patina-faint: rgba(58,95,74,0.08);
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168,144,62,0.18);
+  --brass-faint: rgba(168,144,62,0.06);
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+  --success: var(--patina);
+  --warning: var(--brass);
+  --error: #8A4A4A;
+  --info: #4A7A8A;
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'DM Serif Display', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04);
+  --bg-elevated: rgba(100,80,50,0.07);
+  --bg-overlay: rgba(244,240,235,0.9);
+  --border-subtle: rgba(100,80,50,0.08);
+  --border-medium: rgba(100,80,50,0.14);
+  --border-strong: rgba(100,80,50,0.22);
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46,78,60,0.15);
+  --patina-faint: rgba(46,78,60,0.06);
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138,116,48,0.15);
+  --brass-faint: rgba(138,116,48,0.05);
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+  --success: var(--patina);
+  --warning: var(--brass);
+  --error: #6A3A3A;
+  --info: #2E5A6A;
+}
+body {
+  background: var(--bg-void);
+  color: var(--text-2);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.015; }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+}
+[data-theme="light"] body::before {
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+#app {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 640px;
+  padding: 64px 24px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+button { cursor: pointer; font-family: var(--font-body); border: none; outline: none; }
+input, textarea {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 15px;
+  width: 100%;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+input:focus, textarea:focus {
+  background: var(--bg-base);
+  border-color: var(--patina);
+  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-3);
+  opacity: 0.7;
+  font-style: italic;
+}
+textarea { resize: none; line-height: 1.6; }
+.email-input { font-size: 16px; }
+.glass-card {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%);
+  pointer-events: none;
+}
+.manifesto-block {
+  position: relative;
+  padding: 24px 28px 24px 32px;
+}
+.manifesto-block::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2.5px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--brass-dim);
+}
+.pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px rgba(168,144,62,0.7), 0 0 2px rgba(168,144,62,1);
+  animation: beat 3s ease infinite;
+}
+[data-theme="light"] .pulse-dot { box-shadow: 0 0 6px rgba(138,116,48,0.5); }
+@keyframes beat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); opacity: 1; }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); opacity: 1; }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.fade-in { animation: fadeIn .6s cubic-bezier(.2,0,0,1) forwards; }
+.option-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 16px 20px;
+  text-align: left;
+  color: var(--text-2);
+  font-size: 14.5px;
+  transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+  width: 100%;
+  line-height: 1.5;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.option-btn:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-medium);
+  color: var(--text-1);
+}
+.option-btn.selected {
+  background: var(--bg-overlay);
+  border-color: var(--patina);
+  color: var(--text-1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05), inset 0 0 0 1px var(--patina-faint);
+}
+.opt-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border-strong);
+  flex-shrink: 0; margin-top: 6px;
+  transition: all 0.25s;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+}
+[data-theme="light"] .opt-dot { box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+.option-btn.selected .opt-dot {
+  background: var(--patina);
+  box-shadow: 0 0 8px var(--patina-dim), inset 0 1px 2px rgba(255,255,255,0.2);
+}
+.progress-bar { height: 2px; background: var(--border-subtle); border-radius: 1px; overflow: hidden; margin-bottom: 32px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--patina), var(--brass)); border-radius: 1px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+.score-ring-bg { fill: none; stroke: var(--border-subtle); stroke-width: 8; }
+.score-ring-fg { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1); transform: rotate(-90deg); transform-origin: 50% 50%; }
+.gap-bar-bg { height: 6px; background: var(--border-subtle); border-radius: 3px; overflow: hidden; flex: 1; }
+.gap-bar-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(.4,0,.2,1) var(--delay,0s); }
+.cta-primary {
+  background: var(--patina);
+  color: #E6DDD0;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  padding: 16px 32px;
+  border-radius: 7px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+.cta-primary:hover {
+  background: var(--patina-lit);
+  color: #FFF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px -4px rgba(58,95,74,0.3), 0 0 0 1px var(--brass-faint);
+}
+.cta-secondary {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-3);
+  padding: 12px 24px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+.cta-secondary:hover {
+  border-color: var(--text-2);
+  color: var(--text-1);
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('qb-theme', next);
+}
+const themeBtn = document.createElement('button');
+themeBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+Object.assign(themeBtn.style, {
+  position: 'fixed', top: '24px', right: '24px', background: 'var(--bg-surface)',
+  color: 'var(--text-3)', border: '1px solid var(--border-subtle)', cursor: 'pointer',
+  zIndex: 10000,
+  width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+  transition: 'all 0.3s ease'
+});
+themeBtn.onmouseover = () => { themeBtn.style.color = 'var(--text-1)'; themeBtn.style.borderColor = 'var(--border-medium)'; };
+themeBtn.onmouseout = () => { themeBtn.style.color = 'var(--text-3)'; themeBtn.style.borderColor = 'var(--border-subtle)'; };
+themeBtn.onclick = toggleTheme;
+document.body.appendChild(themeBtn);
+(function(){
+  var p=new URLSearchParams(window.location.search);
+  var kpk=p.get('kpk');var kli=p.get('kli');
+  if(kpk) window.QB_KLAVIYO_KEY=kpk;
+  if(kli) window.QB_KLAVIYO_LIST_ID=kli;
+})();
+const QUESTIONS = [
+  {
+    id:'moment',
+    q:'Where are you right now?',
+    sub:'Be honest. The scan only works if you are.',
+    type:'single',
+    options:[
+      {v:'blank',  l:'Building from zero — I have an idea but no brand yet'},
+      {v:'doubt',  l:'I have a brand but something feels off or unclear'},
+      {v:'scale',  l:'I am making money but competition is arriving'},
+      {v:'pivot',  l:'Something fundamental needs to change in my direction'},
+    ]
+  },
+  {
+    id:'identity',
+    q:'Can you say what your brand stands for in one sentence?',
+    sub:'Not what you do. What you stand for.',
+    type:'single',
+    options:[
+      {v:0, l:'Yes — clearly and without hesitation'},
+      {v:1, l:'Roughly yes, but I struggle to phrase it consistently'},
+      {v:2, l:'I know it internally but cannot articulate it'},
+      {v:3, l:'No — this is exactly the problem'},
+    ]
+  },
+  {
+    id:'visual',
+    q:'When someone sees your brand visually, what do they feel?',
+    sub:'Think logo, colors, fonts, overall look.',
+    type:'single',
+    options:[
+      {v:0, l:'Exactly what I intend them to feel'},
+      {v:1, l:'Something close but not quite right'},
+      {v:2, l:'I am not sure — I never tested this'},
+      {v:3, l:'Probably nothing distinctive'},
+    ]
+  },
+  {
+    id:'voice',
+    q:'How consistent is your brand voice across platforms?',
+    sub:'LinkedIn, Instagram, email, website — does it sound like the same brand?',
+    type:'single',
+    options:[
+      {v:0, l:'Very consistent — unmistakably the same voice everywhere'},
+      {v:1, l:'Mostly consistent with some drift'},
+      {v:2, l:'Each platform sounds different — no real coherence'},
+      {v:3, l:'I have no defined voice — I write differently every time'},
+    ]
+  },
+  {
+    id:'positioning',
+    q:'Can your ideal client immediately understand why you and not someone else?',
+    sub:'Does your positioning create a clear reason to choose you specifically?',
+    type:'single',
+    options:[
+      {v:0, l:'Yes — my differentiation is clear and specific'},
+      {v:1, l:'Somewhat — but I could be confused with competitors'},
+      {v:2, l:'No — I struggle to articulate what makes me different'},
+      {v:3, l:'I compete mostly on price because the difference is unclear'},
+    ]
+  },
+  {
+    id:'content',
+    q:'Does your content attract the right people?',
+    sub:'Not just engagement — do the right clients find you through what you publish?',
+    type:'single',
+    options:[
+      {v:0, l:'Yes — my content consistently brings in qualified leads'},
+      {v:1, l:'Sometimes — hits and misses'},
+      {v:2, l:'I get engagement but not the right clients'},
+      {v:3, l:'My content does not generate leads at all'},
+    ]
+  },
+  {
+    id:'price',
+    q:'Does your brand support the price you want to charge?',
+    sub:'Do clients pay without negotiating, or do you constantly justify your rates?',
+    type:'single',
+    options:[
+      {v:0, l:'Yes — clients rarely question my pricing'},
+      {v:1, l:'Sometimes — depends on the client'},
+      {v:2, l:'I regularly have to justify or discount'},
+      {v:3, l:'I undercharge because I do not trust my brand to hold the price'},
+    ]
+  },
+  {
+    id:'describe',
+    q:'In your own words — what is the single biggest problem your brand has right now?',
+    sub:'One sentence. Do not overthink it.',
+    type:'text',
+    placeholder:'Type here…'
+  }
+];
+const DIMENSIONS = [
+  {id:'identity',    label:'Identity Clarity',   qIds:['identity'],   weight:20},
+  {id:'visual',      label:'Visual Coherence',    qIds:['visual'],     weight:18},
+  {id:'voice',       label:'Voice Consistency',   qIds:['voice'],      weight:17},
+  {id:'positioning', label:'Market Positioning',  qIds:['positioning'],weight:22},
+  {id:'content',     label:'Content Performance', qIds:['content'],    weight:13},
+  {id:'price',       label:'Brand Authority',     qIds:['price'],      weight:10},
+];
+function calcScores(answers){
+  let total = 0;
+  const dims = DIMENSIONS.map(d=>{
+    const vals = d.qIds.map(id=>answers[id]??2);
+    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+    const score = Math.round(((3-avg)/3)*100);
+    total += score * (d.weight/100);
+    return {...d, score};
+  });
+  return {overall: Math.round(total), dims};
+}
+function getVerdict(score, moment){
+  if(score>=80) return {grade:'A',label:'Strong Foundation',color:'var(--patina)',desc:'Your brand has real coherence. The system helps you sharpen and scale what is already working.'};
+  if(score>=60) return {grade:'B',label:'Clear Gaps',color:'var(--info)',desc:'The bones are right but key elements are misaligned. Targeted work produces rapid improvement.'};
+  if(score>=40) return {grade:'C',label:'Structural Issues',color:'var(--warning)',desc:'Your brand is working against you. The gaps are costing you clients and price authority.'};
+  return {grade:'D',label:'Foundation Needed',color:'var(--error)',desc:'The brand is not doing its job. Before more content or campaigns — rebuild from identity.'};
+}
+function getTopGap(dims){
+  return [...dims].sort((a,b)=>a.score-b.score)[0];
+}
+function getRecommendedPath(moment, topGap){
+  const tools = {
+    soulMap:  {tool:'Brand Soul Map',    file:'brand-soul-map.html',            desc:'Start at identity. Everything else is built from here.'},
+    logo:     {tool:'Logo Evaluation',   file:'logo-evaluation-agent.html',     desc:'Audit what you have against identity standards before rebuilding.'},
+    warTable: {tool:'War Table',         file:'war-table.html',                 desc:'Pressure-test your next move with strategic prioritization.'},
+  };
+  if(moment==='blank' || moment==='pivot') return tools.soulMap;
+  if(moment==='doubt'){
+    if(topGap.id==='identity') return {...tools.soulMap, desc:'The identity is the root problem. Resolve this before any visual or voice work.'};
+    if(topGap.id==='visual')   return {...tools.logo,    desc:'The visual system is your primary gap. Audit it against identity standards first.'};
+    return tools.logo;
+  }
+  if(moment==='scale'){
+    if(topGap.id==='identity')    return {...tools.soulMap,  desc:'Scale without a clear identity compounds confusion. Fix the foundation first.'};
+    if(topGap.id==='positioning') return {...tools.warTable, desc:'Sharpen your positioning before scaling — the gap is actively costing you market share.'};
+    return tools.warTable;
+  }
+  return tools.soulMap;
+}
+const VERDICT_RGBA = {
+  'var(--patina)':  [58,  95,  74],
+  'var(--info)':    [74,  122, 138],
+  'var(--warning)': [168, 144, 62],
+  'var(--error)':   [138, 74,  74],
+};
+let step = 0;
+let answers = {};
+let result = null;
+let email = '';
+let emailSubmitted = false;
+let analyzing = false;
+const app = document.getElementById('app');
+function render(){ app.innerHTML=''; app.appendChild(build()); }
+function monoLabel(text, color='var(--text-3)', extra={}){
+  const e = document.createElement('div');
+  Object.assign(e.style,{fontFamily:'var(--font-mono)',fontSize:'10px',letterSpacing:'.15em',color,textTransform:'uppercase',marginBottom:'12px',...extra});
+  e.textContent=text; return e;
+}
+function h1(html, style={}){
+  const e=document.createElement('h1');
+  Object.assign(e.style,{fontFamily:'var(--font-display)',fontSize:'34px',fontWeight:'400',lineHeight:'1.15',marginBottom:'16px',color:'var(--text-1)',letterSpacing:'-.015em',...style});
+  e.innerHTML=html; return e;
+}
+function p(text, style={}){
+  const e=document.createElement('p');
+  Object.assign(e.style,{fontFamily:'var(--font-body)',color:'var(--text-2)',fontSize:'15px',lineHeight:'1.75',...style});
+  e.textContent=text; return e;
+}
+function div(style={}, children=[]){
+  const e=document.createElement('div');
+  const {class: cls, ...inlineStyles} = style;
+  if(cls) e.className = cls;
+  Object.assign(e.style, inlineStyles);
+  if (!Array.isArray(children)) children = [children];
+  children.filter(Boolean).forEach(c=>{
+    if(c instanceof Node) e.appendChild(c);
+    else if(typeof c==='string' || typeof c==='number') e.appendChild(document.createTextNode(c));
+  });
+  return e;
+}
+function build(){
+  if(step===0) return buildIntro();
+  if(step>=1&&step<=8) return buildQuestion();
+  if(step===9) return analyzing ? buildAnalyzing() : buildEmail();
+  if(step===10) return buildResults();
+  return buildIntro();
+}
+function buildIntro(){
+  const wrap=div({flex:'1',display:'flex',flexDirection:'column',justifyContent:'center',animation:'fadeIn .6s cubic-bezier(.2,0,0,1)'});
+  wrap.appendChild(div({marginBottom:'56px'},[
+    div({display:'flex',alignItems:'center',gap:'10px',marginBottom:'24px'},[
+      div({class:'pulse-dot'}),
+      monoLabel('QB BrandOS — Intelligence', 'var(--brass)', {marginBottom:'0px'})
+    ]),
+    h1('Brand Signal Scan', {fontSize: '42px'}),
+    p('8 questions. 5 minutes. A precise read on where your brand is strong, where it is losing you money, and exactly what to do first.'),
+    div({marginTop:'32px',display:'flex',gap:'24px',flexWrap:'wrap'},[
+      div({display:'flex',alignItems:'center',gap:'8px'},[
+        div({width:'6px',height:'6px',borderRadius:'50%',background:'var(--text-4)',flexShrink:'0'}),
+        div({fontSize:'13px',color:'var(--text-3)'},'5 minutes'),
+      ]),
+      div({display:'flex',alignItems:'center',gap:'8px'},[
+        div({width:'6px',height:'6px',borderRadius:'50%',background:'var(--text-4)',flexShrink:'0'}),
+        div({fontSize:'13px',color:'var(--text-3)'},'Instant score'),
+      ]),
+      div({display:'flex',alignItems:'center',gap:'8px'},[
+        div({width:'6px',height:'6px',borderRadius:'50%',background:'var(--text-4)',flexShrink:'0'}),
+        div({fontSize:'13px',color:'var(--text-3)'},'No credit card'),
+      ]),
+    ]),
+  ]));
+  const btn=document.createElement('button');
+  btn.className='cta-primary';btn.textContent='Start the Scan →';
+  btn.style.width='auto'; btn.style.alignSelf='flex-start'; btn.style.padding='18px 36px'; btn.style.fontSize='12px';
+  btn.onclick=()=>{step=1;render();};
+  wrap.appendChild(btn);
+  wrap.appendChild(div({marginTop:'40px'},[
+    p('Used by 1,000+ founders and brand builders.',{fontSize:'13px',color:'var(--text-3)'})
+  ]));
+  return wrap;
+}
+function buildQuestion(){
+  const qIdx = step-1;
+  const q = QUESTIONS[qIdx];
+  const pct = (step/8)*100;
+  const wrap=div({flex:'1',display:'flex',flexDirection:'column',animation:'fadeIn .5s cubic-bezier(.2,0,0,1)'});
+  const progWrap=div({marginBottom:'40px'},[]);
+  const progBar=div({class:'progress-bar'},[]);
+  const progFill=document.createElement('div');
+  progFill.className='progress-fill';
+  progFill.style.width=`${pct}%`;
+  progBar.appendChild(progFill);
+  progWrap.appendChild(progBar);
+  progWrap.appendChild(div({display:'flex',justifyContent:'space-between'},[
+    div({fontFamily:'var(--font-mono)',fontSize:'10px',color:'var(--text-3)',letterSpacing:'.15em',textTransform:'uppercase'},`Step ${step} of 8`),
+    div({fontFamily:'var(--font-mono)',fontSize:'10px',color:'var(--brass)',letterSpacing:'.15em'},`${Math.round(pct)}%`),
+  ]));
+  wrap.appendChild(progWrap);
+  wrap.appendChild(div({marginBottom:'32px'},[
+    h1(q.q,{fontSize:'28px',marginBottom:'12px'}),
+    p(q.sub,{fontSize:'14px'}),
+  ]));
+  if(q.type==='single'){
+    const optWrap=div({display:'flex',flexDirection:'column',gap:'12px',flex:'1'},[]);
+    q.options.forEach(opt=>{
+      const btn=document.createElement('button');
+      btn.className=`option-btn${answers[q.id]===opt.v?' selected':''}`;
+      btn.innerHTML=`<div class="opt-dot"></div><span style="padding-top:1px">${opt.l}</span>`;
+      btn.onclick=()=>{
+        answers[q.id]=opt.v;
+        if(step<8){setTimeout(()=>{step++;render();},250);}
+        else{render();}
+      };
+      optWrap.appendChild(btn);
+    });
+    wrap.appendChild(optWrap);
+  } else {
+    const ta=document.createElement('textarea');
+    ta.placeholder=q.placeholder||'Type here…';
+    ta.rows=4;ta.value=answers[q.id]||'';
+    ta.addEventListener('input',e=>{answers[q.id]=e.target.value;});
+    wrap.appendChild(ta);
+    wrap.appendChild(div({height:'20px'}));
+    const next=document.createElement('button');
+    next.className='cta-primary';next.textContent='Continue →';
+    next.style.width='auto'; next.style.alignSelf='flex-start';
+    next.onclick=()=>{
+      if(!answers[q.id]?.trim()){answers[q.id]='Not specified';}
+      step++;render();
+    };
+    wrap.appendChild(next);
+  }
+  if(step>1){
+    wrap.appendChild(div({marginTop:'32px'},[
+      (()=>{const b=document.createElement('button');b.className='cta-secondary';b.textContent='← Back';b.onclick=()=>{step--;render();};return b;})()
+    ]));
+  }
+  return wrap;
+}
+function buildEmail(){
+  const wrap=div({flex:'1',display:'flex',flexDirection:'column',justifyContent:'center',animation:'fadeIn .5s cubic-bezier(.2,0,0,1)'});
+  wrap.appendChild(div({marginBottom:'40px'},[
+    div({display:'flex',alignItems:'center',gap:'10px',marginBottom:'20px'},[
+      div({class:'pulse-dot'}),
+      monoLabel('Almost there', 'var(--brass)', {marginBottom:'0px'})
+    ]),
+    h1('Your scan is ready.',{fontSize:'32px'}),
+    p('Enter your email to receive your complete Brand Signal Report — your score, the gaps, and the exact first move.'),
+    div({marginTop:'16px',fontSize:'13px',color:'var(--text-3)',lineHeight:'1.7'},'No spam. No sales sequences. Just your intelligence report.'),
+  ]));
+  const emailEl=document.createElement('input');
+  emailEl.type='email';emailEl.placeholder='your@email.com';emailEl.className='email-input';
+  emailEl.value=email;emailEl.addEventListener('input',e=>{email=e.target.value;});
+  wrap.appendChild(emailEl);
+  wrap.appendChild(div({height:'16px'}));
+  const btn=document.createElement('button');
+  btn.className='cta-primary';btn.textContent='Send My Report →';
+  btn.onclick=async()=>{
+    if(!email.includes('@')){emailEl.style.borderColor='var(--error)';return;}
+    emailSubmitted=true;
+    analyzing=true;
+    step=9;render();
+    result = calcScores(answers);
+    const topGap = getTopGap(result.dims);
+    const verdict = getVerdict(result.overall, answers.moment);
+    const QB_KLAVIYO_KEY = window.QB_KLAVIYO_KEY || '';
+    const QB_KLAVIYO_LIST_ID = window.QB_KLAVIYO_LIST_ID || '';
+    if(QB_KLAVIYO_KEY && QB_KLAVIYO_LIST_ID){
+      try{
+        const profileRes = await fetch('https://a.klaviyo.com/client/profiles/?company_id='+QB_KLAVIYO_KEY,{
+          method:'POST',
+          headers:{'Content-Type':'application/json','revision':'2026-01-15'},
+          body:JSON.stringify({
+            data:{
+              type:'profile',
+              attributes:{
+                email:email,
+                properties:{
+                  signal_scan_score:   result.overall,
+                  signal_scan_grade:   verdict.grade,
+                  signal_scan_verdict: verdict.label,
+                  signal_scan_top_gap: topGap.label,
+                  signal_scan_moment:  answers.moment,
+                  signal_scan_describe:answers.describe||'',
+                  signal_scan_date:    new Date().toISOString().split('T')[0],
+                }
+              }
+            }
+          })
+        });
+        if(profileRes.ok||profileRes.status===409){
+          await fetch('https://a.klaviyo.com/client/subscriptions/?company_id='+QB_KLAVIYO_KEY,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','revision':'2026-01-15'},
+            body:JSON.stringify({
+              data:{
+                type:'subscription',
+                attributes:{
+                  profile:{data:{type:'profile',attributes:{email:email}}},
+                  custom_source:'Signal Scan'
+                },
+                relationships:{list:{data:{type:'list',id:QB_KLAVIYO_LIST_ID}}}
+              }
+            })
+          });
+        }
+      }catch(err){
+        console.warn('Klaviyo sync failed silently:',err);
+      }
+    }
+    setTimeout(()=>{analyzing=false;step=10;render();},3200);
+  };
+  wrap.appendChild(btn);
+  return wrap;
+}
+function buildAnalyzing(){
+  const wrap=div({flex:'1',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'32px',textAlign:'center'});
+  const spinner=div({width:'56px',height:'56px',border:'2px solid var(--border-subtle)',borderTop:'2px solid var(--brass)',borderRight:'2px solid var(--patina)',borderRadius:'50%'});
+  spinner.style.animation='spin 1s linear infinite';
+  wrap.appendChild(spinner);
+  wrap.appendChild(div({textAlign:'center'},[
+    monoLabel('Compiling intelligence','var(--brass)',{marginBottom:'12px',textAlign:'center'}),
+    div({fontSize:'14px',color:'var(--text-2)',fontFamily:'var(--font-display)',letterSpacing:'0.02em'},[
+      document.createTextNode('Reading answers through the brand lens…'),
+    ]),
+  ]));
+  return wrap;
+}
+function buildResults(){
+  if(!result) return buildIntro();
+  const {overall, dims} = result;
+  const verdict = getVerdict(overall, answers.moment);
+  const topGap = getTopGap(dims);
+  const path = getRecommendedPath(answers.moment, topGap);
+  const circumference = 2*Math.PI*54;
+  const offset = circumference - (overall/100)*circumference;
+  const wrap=div({flex:'1',display:'flex',flexDirection:'column',animation:'fadeIn .6s cubic-bezier(.2,0,0,1)'});
+  wrap.appendChild(div({marginBottom:'40px'},[
+    monoLabel('Brand Signal Report','var(--text-3)',{marginBottom:'12px'}),
+    h1('Your intelligence brief.',{fontSize:'32px',marginBottom:'8px'}),
+    div({fontSize:'14px',color:'var(--text-3)'},'Based on 6 brand health dimensions'),
+  ]));
+  const scoreRow=div({display:'flex',gap:'24px',alignItems:'flex-start',marginBottom:'36px',flexWrap:'wrap'},[]);
+  const svgNS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(svgNS,'svg');
+  svg.setAttribute('width','120');svg.setAttribute('height','120');svg.setAttribute('viewBox','0 0 120 120');
+  svg.style.flexShrink='0';
+  const bgCircle=document.createElementNS(svgNS,'circle');
+  bgCircle.setAttribute('cx','60');bgCircle.setAttribute('cy','60');bgCircle.setAttribute('r','54');
+  bgCircle.setAttribute('class','score-ring-bg');svg.appendChild(bgCircle);
+  const fgCircle=document.createElementNS(svgNS,'circle');
+  fgCircle.setAttribute('cx','60');fgCircle.setAttribute('cy','60');fgCircle.setAttribute('r','54');
+  fgCircle.setAttribute('class','score-ring-fg');
+  fgCircle.setAttribute('stroke',verdict.color);
+  fgCircle.setAttribute('stroke-dasharray',circumference);
+  fgCircle.setAttribute('stroke-dashoffset',circumference);
+  svg.appendChild(fgCircle);
+  const scoreText=document.createElementNS(svgNS,'text');
+  scoreText.setAttribute('x','60');scoreText.setAttribute('y','60');
+  scoreText.setAttribute('text-anchor','middle');scoreText.setAttribute('dominant-baseline','central');
+  scoreText.setAttribute('font-family','var(--font-mono)');scoreText.setAttribute('font-size','28');
+  scoreText.setAttribute('font-weight','400');scoreText.setAttribute('fill',verdict.color);
+  scoreText.textContent=overall;svg.appendChild(scoreText);
+  const gradeText=document.createElementNS(svgNS,'text');
+  gradeText.setAttribute('x','60');gradeText.setAttribute('y','82');
+  gradeText.setAttribute('text-anchor','middle');gradeText.setAttribute('font-family','var(--font-body)');
+  gradeText.setAttribute('font-size','11');gradeText.setAttribute('fill','var(--text-3)');
+  gradeText.textContent='/100';svg.appendChild(gradeText);
+  scoreRow.appendChild(svg);
+  setTimeout(()=>{fgCircle.style.strokeDashoffset=offset;},100);
+  const verdictBlock=div({flex:'1',minWidth:'180px',paddingTop:'8px'},[]);
+  const gradePill=div({display:'inline-flex',alignItems:'center',gap:'10px',padding:'6px 14px',borderRadius:'6px',marginBottom:'16px'},[]);
+  const [r,g,b] = VERDICT_RGBA[verdict.color] || [58,95,74];
+  gradePill.style.background = `rgba(${r},${g},${b},0.15)`;
+  gradePill.style.border = `1px solid rgba(${r},${g},${b},0.30)`;
+  gradePill.appendChild(div({fontFamily:'var(--font-display)',fontSize:'18px',color:verdict.color,lineHeight:'1'},verdict.grade));
+  gradePill.appendChild(div({fontFamily:'var(--font-mono)',fontSize:'10px',color:verdict.color,letterSpacing:'.1em',textTransform:'uppercase',lineHeight:'1'},verdict.label));
+  verdictBlock.appendChild(gradePill);
+  verdictBlock.appendChild(div({fontSize:'14px',color:'var(--text-2)',lineHeight:'1.75'},verdict.desc));
+  scoreRow.appendChild(verdictBlock);
+  wrap.appendChild(scoreRow);
+  wrap.appendChild(div({class:'glass-card', padding:'24px 28px', marginBottom:'24px'},[
+    monoLabel('Dimension breakdown','var(--text-3)',{marginBottom:'24px'}),
+    ...dims.map((d,i)=>{
+      const barColor = d.score>=70?'var(--patina)':d.score>=45?'var(--warning)':'var(--error)';
+      const row=div({marginBottom:i<dims.length-1?'16px':'0'},[]);
+      row.appendChild(div({display:'flex',justifyContent:'space-between',marginBottom:'8px'},[
+        div({fontSize:'13px',color:d.id===topGap.id?'var(--text-1)':'var(--text-2)',fontWeight:d.id===topGap.id?'600':'400'},d.label+(d.id===topGap.id?' ← primary gap':'')),
+        div({fontFamily:'var(--font-mono)',fontSize:'11px',color:barColor},d.score+'%'),
+      ]));
+      const barBg=div({class:'gap-bar-bg'},[]);
+      const barFill=document.createElement('div');
+      barFill.className='gap-bar-fill';
+      barFill.style.cssText=`background:${barColor};width:0;--delay:${i*0.1}s`;
+      barBg.appendChild(barFill);
+      row.appendChild(barBg);
+      setTimeout(()=>{barFill.style.width=d.score+'%';},200+i*80);
+      return row;
+    }),
+  ]));
+  wrap.appendChild(div({class:'manifesto-block glass-card', marginBottom:'24px'},[
+    monoLabel(`Structural Gap: ${topGap.label}`,verdict.color,{marginBottom:'12px'}),
+    div({fontSize:'15px',color:'var(--text-1)',fontFamily:'var(--font-display)',lineHeight:'1.6'},
+      topGap.id==='identity'?'You cannot scale what you cannot define. The brand will keep losing authority until the identity is precise — not approximate.':
+      topGap.id==='visual'?'Visual incoherence signals a lack of conviction. Clients read uncertainty in design before they read your words.':
+      topGap.id==='voice'?'A brand that sounds different everywhere has no presence. Consistency is the primary driver of trust in a crowded market.':
+      topGap.id==='positioning'?'If clients cannot immediately understand why you specifically, they default to price comparison. Positioning is the most commercially expensive gap.':
+      topGap.id==='content'?'Content that does not attract the right clients is not content strategy — it is noise production. The brief is wrong before the content is written.':
+      'Your brand is not holding the prices you should charge. This is an authority gap — not a pricing problem.'
+    ),
+  ]));
+  wrap.appendChild(div({background:'var(--bg-surface)', border:'1px solid var(--border-medium)', borderRadius:'14px', padding:'24px 28px', marginBottom:'32px'},[
+    monoLabel('Recommended first move','var(--patina)',{marginBottom:'12px'}),
+    div({fontSize:'18px',fontFamily:'var(--font-display)',color:'var(--text-1)',marginBottom:'6px'},path.tool),
+    div({fontSize:'14px',color:'var(--text-2)',lineHeight:'1.6',marginBottom:'20px'},path.desc),
+    (()=>{
+      const btn=document.createElement('button');
+      btn.className='cta-primary';btn.style.width='auto';
+      btn.textContent=`Open ${path.tool} →`;
+      btn.onclick=()=>{ window.open(path.file,'_blank'); };
+      return btn;
+    })(),
+  ]));
+  wrap.appendChild(div({textAlign:'center', padding:'32px 0', borderTop:'1px solid var(--border-subtle)'},[
+    div({fontSize:'14px',color:'var(--text-2)',lineHeight:'1.7',marginBottom:'20px'},'Want the full system? QB BrandOS takes you from this scan through every phase — identity, visual system, voice, content, and execution. All connected.'),
+    (()=>{
+      const btn=document.createElement('button');
+      btn.className='cta-secondary';
+      btn.textContent='Explore BrandOS →';
+      btn.onclick=()=>{window.open('qb-brandos-hub.html','_blank');};
+      return btn;
+    })(),
+    div({marginTop:'24px'},[
+      (()=>{
+        const b=document.createElement('button');
+        b.style.background='transparent'; b.style.border='none'; b.style.color='var(--text-4)';
+        b.style.fontFamily='var(--font-body)'; b.style.fontSize='12px'; b.style.textDecoration='underline';
+        b.style.cursor='pointer'; b.textContent='Run another scan';
+        b.onmouseover=()=>b.style.color='var(--text-3)'; b.onmouseout=()=>b.style.color='var(--text-4)';
+        b.onclick=()=>{step=0;answers={};result=null;email='';emailSubmitted=false;render();};
+        return b;
+      })()
+    ])
+  ]));
+  return wrap;
+}
+render();
+</script>
+</body>
+</html>

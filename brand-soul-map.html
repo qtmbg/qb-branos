@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QB BrandOS: Brand Soul Map</title>
+
+    <!-- React & Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Flash Prevention for Theme -->
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('qb-theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch(e) {}
+      })();
+    </script>
+    <style>html:not([data-theme]){background:#080604;color:#A89A88}</style>
+
+    <!-- Tailwind Setup -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'sans-serif'],
+                        serif: ['"DM Serif Display"', 'Georgia', 'serif'],
+                        mono: ['"JetBrains Mono"', 'Courier New', 'monospace'],
+                    },
+                    colors: {
+                        void: 'var(--bg-void)',
+                        deep: 'var(--bg-deep)',
+                        base: 'var(--bg-base)',
+                        surface: 'var(--bg-surface)',
+                        elevated: 'var(--bg-elevated)',
+                        overlay: 'var(--bg-overlay)',
+                        patina: 'var(--patina)',
+                        'patina-lit': 'var(--patina-lit)',
+                        'patina-dim': 'var(--patina-dim)',
+                        'patina-faint': 'var(--patina-faint)',
+                        brass: 'var(--brass)',
+                        'brass-lit': 'var(--brass-lit)',
+                        'brass-dim': 'var(--brass-dim)',
+                        'brass-faint': 'var(--brass-faint)',
+                        text1: 'var(--text-1)',
+                        text2: 'var(--text-2)',
+                        text3: 'var(--text-3)',
+                        text4: 'var(--text-4)',
+                        error: '#8A4A4A',
+                        'error-faint': 'rgba(138, 74, 74, 0.1)',
+                    },
+                    borderColor: {
+                        subtle: 'var(--border-subtle)',
+                        medium: 'var(--border-medium)',
+                        strong: 'var(--border-strong)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* QB BrandOS Design System: Entangled Time */
+        :root, [data-theme="dark"] {
+            --bg-void: #080604;
+            --bg-deep: #0A0806;
+            --bg-base: #0E0C09;
+            --bg-surface: rgba(140,110,70,0.045);
+            --bg-elevated: rgba(140,110,70,0.07);
+            --bg-overlay: rgba(18,15,10,0.85);
+            --border-subtle: rgba(140,110,70,0.06);
+            --border-medium: rgba(140,110,70,0.11);
+            --border-strong: rgba(140,110,70,0.18);
+            --patina: #3A5F4A;
+            --patina-lit: #4A7A5E;
+            --patina-dim: rgba(58,95,74,0.2);
+            --patina-faint: rgba(58,95,74,0.08);
+            --brass: #A8903E;
+            --brass-lit: #C4A84E;
+            --brass-dim: rgba(168,144,62,0.18);
+            --brass-faint: rgba(168,144,62,0.06);
+            --text-1: #DDD4C4;
+            --text-2: #A89A88;
+            --text-3: #6A5E50;
+            --text-4: #3E3830;
+        }
+
+        [data-theme="light"] {
+            --bg-void: #F4F0EB;
+            --bg-deep: #EDE8E2;
+            --bg-base: #E6E0D8;
+            --bg-surface: rgba(100,80,50,0.04);
+            --bg-elevated: rgba(100,80,50,0.07);
+            --bg-overlay: rgba(244,240,235,0.9);
+            --border-subtle: rgba(100,80,50,0.08);
+            --border-medium: rgba(100,80,50,0.14);
+            --border-strong: rgba(100,80,50,0.22);
+            --patina: #2E4E3C;
+            --patina-lit: #3A6A4E;
+            --patina-dim: rgba(46,78,60,0.15);
+            --patina-faint: rgba(46,78,60,0.06);
+            --brass: #8A7430;
+            --brass-lit: #A08A3A;
+            --brass-dim: rgba(138,116,48,0.15);
+            --brass-faint: rgba(138,116,48,0.05);
+            --text-1: #1A1610;
+            --text-2: #5A5040;
+            --text-3: #8A7E70;
+            --text-4: #B8AEA0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-void);
+            color: var(--text-2);
+            overflow: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Vignette effect */
+        .main-content::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+            transition: background 0.4s ease;
+        }
+        [data-theme="light"] .main-content::before {
+            background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+        }
+
+        /* Film Grain */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            mix-blend-mode: normal;
+        }
+        [data-theme="light"] .noise-overlay { opacity: 0.02; mix-blend-mode: multiply; }
+
+        /* Typography Defaults */
+        h1, h2, h3, h4 {
+            font-family: 'DM Serif Display', Georgia, serif !important;
+            font-weight: 400 !important;
+            letter-spacing: -0.015em !important;
+            text-transform: none !important;
+            color: var(--text-1) !important;
+        }
+
+        p, div, span {
+            line-height: 1.7;
+        }
+
+        /* Glass Cards */
+        .glass-card, .glass-panel, .glass-dock {
+            background: var(--bg-overlay);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-medium);
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .glass-dock { border-radius: 40px; }
+
+        /* Warm light leak */
+        .glass-card::before, .glass-panel::before, .glass-dock::before {
+            content: '';
+            position: absolute;
+            top: -30%; left: -10%;
+            width: 60%; height: 60%;
+            background: radial-gradient(ellipse at center, var(--brass-dim) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        /* Ensure content inside glass elements sits above the pseudo-element */
+        .glass-card > *, .glass-panel > *, .glass-dock > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Form Inputs */
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--patina) !important;
+            box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-dim) !important;
+            outline: none !important;
+        }
+        input, textarea, select {
+            background: var(--bg-surface) !important;
+            border: 1px solid var(--border-medium) !important;
+            color: var(--text-1) !important;
+            transition: all 0.2s ease;
+        }
+        input::placeholder, textarea::placeholder {
+            font-style: italic;
+            color: var(--text-3) !important;
+            opacity: 0.7;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--patina) !important;
+            color: #E6DDD0 !important;
+            font-weight: 600 !important;
+            font-size: 11px !important;
+            letter-spacing: 0.06em !important;
+            text-transform: uppercase !important;
+            padding: 13px 30px !important;
+            border-radius: 7px !important;
+            border: none !important;
+            transition: all 0.25s ease !important;
+            font-family: 'Inter', sans-serif !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--patina-lit) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 24px -4px rgba(58,95,74,0.3), 0 0 0 1px var(--brass-faint) !important;
+        }
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: var(--bg-surface) !important;
+            color: var(--text-3) !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        .qb-send-results-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--patina) !important;
+            color: #E6DDD0 !important;
+            border: none !important;
+            border-radius: 7px !important;
+            padding: 13px 30px !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.06em !important;
+            text-transform: uppercase !important;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            margin-top: 24px;
+            transition: all 0.25s ease;
+        }
+        .qb-send-results-btn:hover {
+            background: var(--patina-lit) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 24px -4px rgba(58,95,74,0.3), 0 0 0 1px var(--brass-faint) !important;
+        }
+
+        /* Manifesto Block */
+        .manifesto-block {
+            position: relative;
+            padding: 28px 0 28px 26px;
+        }
+        .manifesto-block::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 2.5px;
+            background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--brass-faint);
+        }
+
+        /* Indicators */
+        .pulse-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--brass);
+            box-shadow: 0 0 8px var(--brass-dim), 0 0 2px var(--brass);
+            animation: beat 3s ease infinite;
+            display: inline-block;
+        }
+        @keyframes beat {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            12% { transform: scale(1.35); opacity: 1; }
+            24% { transform: scale(0.95); opacity: 0.6; }
+            36% { transform: scale(1.15); opacity: 1; }
+            48% { transform: scale(1); opacity: 0.7; }
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--patina), var(--brass));
+            border-radius: 2px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--patina); }
+
+        /* Grayscale & Warm Contrast for Visual Headers */
+        .quantum-img {
+            filter: grayscale(100%) contrast(110%) sepia(20%) hue-rotate(15deg);
+            opacity: 0.4;
+            mix-blend-mode: luminosity;
+            transition: opacity 0.4s ease;
+        }
+        [data-theme="light"] .quantum-img {
+            opacity: 0.25;
+        }
+
+        /* Image overlay text fix */
+        .image-overlay-text {
+            text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+        }
+
+        /* Physics & Motion */
+        .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Fix for select dropdown styling */
+        select option {
+            background: #0E0C09;
+            color: #DDD4C4;
+        }
+        [data-theme="light"] select option {
+            background: #E6E0D8;
+            color: #1A1610;
+        }
+    </style>
+
+    <!-- Firebase — loaded as module, sets a ready flag -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+        window.FirebaseCore = {
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken,
+            onAuthStateChanged, GoogleAuthProvider, signInWithPopup,
+            getFirestore, collection, doc, setDoc, onSnapshot
+        };
+        // Signal that Firebase SDK is loaded and ready
+        window._firebaseReady = true;
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useMemo } = React;
+
+        // --- ICONS (Safe Inline SVG) ---
+        const SvgIcon = ({ children, className = "w-5 h-5", onClick, style }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className} onClick={onClick} style={style}>
+                {children}
+            </svg>
+        );
+
+        const IconCheck = (props) => <SvgIcon className={props.className || "w-4 h-4"} {...props}><polyline points="20 6 9 17 4 12"/></SvgIcon>;
+        const IconChevronRight = (props) => <SvgIcon {...props}><polyline points="9 18 15 12 9 6"/></SvgIcon>;
+        const IconChevronLeft = (props) => <SvgIcon {...props}><polyline points="15 18 9 12 15 6"/></SvgIcon>;
+        const IconLock = (props) => <SvgIcon className={props.className || "w-4 h-4"} {...props}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></SvgIcon>;
+        const IconMenu = (props) => <SvgIcon {...props}><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></SvgIcon>;
+        const IconX = (props) => <SvgIcon className={props.className || "w-4 h-4"} {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></SvgIcon>;
+        const IconCopy = (props) => <SvgIcon {...props}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></SvgIcon>;
+        const IconDownload = (props) => <SvgIcon {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></SvgIcon>;
+        const IconSun = (props) => <SvgIcon {...props}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></SvgIcon>;
+        const IconMoon = (props) => <SvgIcon {...props}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></SvgIcon>;
+        const IconTerminal = (props) => <SvgIcon {...props}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></SvgIcon>;
+        const IconGlobe = (props) => <SvgIcon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></SvgIcon>;
+        const IconCheckCircle = (props) => <SvgIcon className={props.className || "w-4 h-4"} {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></SvgIcon>;
+        const IconXCircle = (props) => <SvgIcon className={props.className || "w-4 h-4"} {...props}><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></SvgIcon>;
+
+        // --- DATA DEFAULTS ---
+        const IMAGES = {
+            intro: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200&auto=format&fit=crop",
+            identity: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+            purpose: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?q=80&w=1200&auto=format&fit=crop",
+            craft: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
+            tribe: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200&auto=format&fit=crop",
+            signal: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop",
+            world: "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?q=80&w=1200&auto=format&fit=crop",
+            synthesis: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200&auto=format&fit=crop"
+        };
+
+        const INITIAL_DATA = {
+            brandName: '',
+            mod1Force: '', mod1Room: '', mod1Myth: '', mod1Portrait: '',
+            docTitle: '', docImage: '', docArgument: '', docVoices: '', docFinalLine: '', docReflection: '',
+            manifestoQuoteId: null, manifestoBelief: '', manifestoProof: '', manifestoOpposite: '', originalManifesto: '',
+            primaryArch: null, secondaryArch: null, tensionArch: null, archFusion: '', archShadow: '',
+            abName: '', abPromise: '', abBelief: '', abSells: '', abNever: '',
+            bBelief: '', bSells: '', bNever: '', posAdj1: '', posAdj2: '', posAdj3: '', posFor: '', posNotFor: '',
+            cWords: [], cEss: '', cuWords: [], cuEss: '', vWords: [], vEss: '', lWords: [], lEss: '', valWords: [], valEss: '',
+            cEssReason: '', cuEssReason: '', vEssReason: '', lEssReason: '', valEssReason: '',
+            fanLetter: '', fanSurprise: '', fanNeeds: '', fanTarget: '',
+            a1: '', a1Q: '', a2: '', a2Q: '', na1: '', na1C: '', na2: '', na2C: '', alignPrinciple: '', alignAlways: '', alignNever: '',
+            leadChoice: '', infChoice: '', innChoice: '', creChoice: '', endChoice: '', behTheme: '',
+            songs: [{n:'', a:''}, {n:'', a:''}, {n:'', a:''}, {n:'', a:''}, {n:'', a:''}],
+            rhythmTempo: '', rhythmEmotion: '', voiceSynthesis: '',
+            always: ['', '', '', '', ''], nevers: ['', '', '', '', ''],
+            coreAlwaysIdx: null, coreNeverIdx: null, coreConviction: '', decFramework: '',
+            movementId: null, movBelief: '', movStance: '', movRefusal: '',
+            firstName: '', lastName: '', companyName: '', email: '',
+            aiSpark: '', aiEssence: ''
+        };
+
+        const BINARIES = [
+            { id: "lead", options: [{ name: "Gandhi", desc: "Moral authority, patience. Long game." }, { name: "Malcolm X", desc: "Urgency, confrontation. Truth." }] },
+            { id: "influence", options: [{ name: "Oprah", desc: "Intimacy at scale. Vulnerability." }, { name: "Anna Wintour", desc: "Authority through curation. Standard." }] },
+            { id: "innovate", options: [{ name: "Elon Musk", desc: "Moonshots. Changing physics." }, { name: "Steve Jobs", desc: "Obsession with 3mm. Experience." }] },
+            { id: "create", options: [{ name: "Picasso", desc: "Prolific, form-breaking. Expansive." }, { name: "Frida Kahlo", desc: "Autobiographical, interior. Intensive." }] },
+            { id: "endure", options: [{ name: "Muhammad Ali", desc: "Conviction and professional identity." }, { name: "Michael Jordan", desc: "Standard set and refused to lower." }] }
+        ];
+
+        const BINARY_KEYS = { lead: 'leadChoice', influence: 'infChoice', innovate: 'innChoice', create: 'creChoice', endure: 'endChoice' };
+
+        const ARCHETYPES = [
+            { id: "hero", name: "The Hero", brand: "Nike" }, { id: "rebel", name: "The Rebel", brand: "Harley" },
+            { id: "magician", name: "The Magician", brand: "Disney" }, { id: "explorer", name: "The Explorer", brand: "Patagonia" },
+            { id: "sage", name: "The Sage", brand: "TED" }, { id: "innocent", name: "The Innocent", brand: "Dove" },
+            { id: "everyman", name: "The Everyman", brand: "IKEA" }, { id: "jester", name: "The Jester", brand: "Old Spice" },
+            { id: "lover", name: "The Lover", brand: "Gucci" }, { id: "caregiver", name: "The Caregiver", brand: "TOMS" },
+            { id: "creator", name: "The Creator", brand: "LEGO" }, { id: "ruler", name: "The Ruler", brand: "Microsoft" }
+        ];
+
+        const WORD_BANKS = {
+            culture: ["Visionary", "Grounded", "Rebellious", "Sacred", "Electric", "Intimate", "Rigorous", "Warm", "Sovereign", "Expansive", "Devoted", "Radical", "Elegant", "Raw", "Structured", "Wild", "Generous", "Precise", "Playful", "Ancient", "Progressive", "Still", "Fierce"],
+            customers: ["Seeker", "Builder", "Inheritor", "Questioner", "Transformer", "Leader", "Visionary", "Wounded healer", "Disruptor", "Awakened", "Outlier", "Devotee", "Pioneer", "Overcomer", "Architect", "Alchemist", "Observer", "Catalyst", "Lover", "Warrior"],
+            voice: ["Direct", "Poetic", "Warm", "Sharp", "Playful", "Authoritative", "Intimate", "Honest", "Ceremonial", "Conversational", "Provocative", "Gentle", "Urgent", "Philosophical", "Precise", "Irreverent", "Compassionate", "Intellectual", "Mythic", "Grounded", "Passionate", "Calm"],
+            look: ["Cinematic", "Tactile", "Luminous", "Minimal", "Lush", "Industrial", "Sacred", "Futuristic", "Handcrafted", "Architectural", "Organic", "Electric", "Timeless", "Avant-garde", "Earthy", "Sleek", "Layered", "Raw", "Curated", "Ancient", "Monumental"],
+            value: ["Clarity", "Momentum", "Belonging", "Permission", "Authority", "Courage", "Mastery", "Peace", "Identity", "Direction", "Power", "Confidence", "Wholeness", "Voice", "Legacy", "Freedom", "Precision", "Visibility", "Purpose", "Wealth", "Dignity"]
+        };
+
+        const MOVEMENTS = [
+            { id: "renaissance", name: "The Renaissance", desc: "Human capability and beauty as an organizing principle." },
+            { id: "enlightenment", name: "The Enlightenment", desc: "Reason, transparency, and dignity through information." },
+            { id: "harlem", name: "The Harlem Renaissance", desc: "Art as resistance, identity as revolution from the margins." },
+            { id: "civil", name: "The Civil Rights Movement", desc: "Dignity is non-negotiable. Stated value must be practiced." },
+            { id: "punk", name: "Punk", desc: "Bypass gatekeepers. DIY as philosophy, conviction over permission." },
+            { id: "modernism", name: "Modernism", desc: "Refusing the existing form entirely to build a new category." },
+            { id: "romantic", name: "The Romantic Movement", desc: "Emotion, sublime, and deeply human at the center." },
+            { id: "futurism", name: "Futurism", desc: "Burn boats, bet on the future, rejection of nostalgia." },
+            { id: "environmental", name: "The Environmental Movement", desc: "Long-term view. What we leave behind > what we accumulate." }
+        ];
+
+        const QUOTES = [
+            { id: 1, quote: "I am large, I contain multitudes.", author: "Walt Whitman" },
+            { id: 2, quote: "The most common way people give up their power is by thinking they don't have any.", author: "Alice Walker" },
+            { id: 3, quote: "To exist is to resist.", author: "Frantz Fanon" },
+            { id: 4, quote: "Everything you can imagine is real.", author: "Pablo Picasso" },
+            { id: 5, quote: "The wound is the place where the light enters you.", author: "Rumi" }
+        ];
+
+        // --- HELPER FUNCTIONS (outside component) ---
+
+        const generateDefaultMap = (data) => {
+            const primA = ARCHETYPES.find(a => a.id === data.primaryArch)?.name || '[Primary]';
+            const secA = ARCHETYPES.find(a => a.id === data.secondaryArch)?.name || '[Secondary]';
+            const mov = MOVEMENTS.find(m => m.id === data.movementId)?.name || '[Movement]';
+            const alwaysText = data.coreAlwaysIdx !== null && data.always?.[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : '[core always]';
+            const neverText = data.coreNeverIdx !== null && data.nevers?.[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : '[core never]';
+
+            const spark = `${data.brandName} is not just a business. Moving through the world like ${data.leadChoice || '[Lead Figure]'} and innovating like ${data.innChoice || '[Innovator]'}, we are the only brand that can be ${primA} and ${secA} simultaneously. We exist to prove that ${data.manifestoBelief || '[belief]'}. We are definitively ${data.posAdj1 || '[adj]'}, ${data.posAdj2 || '[adj]'}, ${data.posAdj3 || '[adj]'}, built exclusively for the ${data.cuEss || '[audience]'} who arrives carrying ${data.fanSurprise || '[baggage]'}. We will always ${alwaysText}, and we absolutely refuse to ${neverText}, because we are the contemporary heirs to ${mov}. This is not a market position. It is a place in history.`;
+
+            const essence = `${data.brandName} \u2014 The brand that transforms ${data.docArgument || '[argument]'} into ${data.originalManifesto || '[manifesto]'}.`;
+
+            return { spark, essence, primA, secA, mov, alwaysText, neverText };
+        };
+
+        const generateAI = async (data) => {
+            const primA = ARCHETYPES.find(a => a.id === data.primaryArch)?.name || '';
+            const secA = ARCHETYPES.find(a => a.id === data.secondaryArch)?.name || '';
+            const mov = MOVEMENTS.find(m => m.id === data.movementId)?.name || '';
+            const tenA = ARCHETYPES.find(a => a.id === data.tensionArch)?.name || '';
+            const alwaysText = data.coreAlwaysIdx !== null && data.always?.[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : '';
+            const neverText = data.coreNeverIdx !== null && data.nevers?.[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : '';
+
+            try {
+                const response = await fetch('/api/claude', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1200,
+                        system: `You are a master brand strategist. Synthesize brand inputs into precise, emotionally resonant brand intelligence. Respond with valid JSON only: {"spark":"...","essence":"..."}`,
+                        messages: [{ role: 'user', content: `Brand: ${data.brandName}, Primary: ${primA}, Secondary: ${secA}, Movement: ${mov}, Tension: ${tenA}, Belief: ${data.manifestoBelief}, Adjectives: ${data.posAdj1}, ${data.posAdj2}, ${data.posAdj3}, Audience: ${data.cuEss}, Force: ${data.mod1Force}, Always: ${alwaysText}, Never: ${neverText}. Generate spark (200-350 words) and essence (one sentence). JSON only.` }]
+                    })
+                });
+
+                if (!response.ok) throw new Error('API response not ok: ' + response.status);
+
+                const result = await response.json();
+                if (result.error) throw new Error(result.error.message || 'API error');
+
+                const text = result.content?.[0]?.text || '';
+                const clean = text.replace(/```json|```/g, '').trim();
+                return JSON.parse(clean);
+            } catch (e) {
+                console.warn("AI Generation unavailable (standalone mode):", e.message);
+                return null;
+            }
+        };
+
+        // --- UI PRIMITIVES ---
+
+        const VisualHeader = ({ title, subtitle, imageUrl }) => (
+            <div className="relative w-full h-56 md:h-72 rounded-[14px] overflow-hidden mb-12 border border-subtle fade-in glass-card">
+                <img src={imageUrl} alt={title} className="quantum-img absolute inset-0 w-full h-full object-cover" style={{zIndex: 0}} />
+                <div className="absolute inset-0 bg-gradient-to-t from-void via-void/80 to-transparent flex flex-col items-center justify-end text-center p-8" style={{zIndex: 2}}>
+                    <span className="inline-block rounded-full border border-brass-dim bg-brass-faint text-brass font-mono text-[9px] tracking-[0.2em] px-3 py-1 uppercase mb-4">
+                        {subtitle}
+                    </span>
+                    <h2 className="text-4xl md:text-[42px] leading-[1.1] image-overlay-text mb-2">{title}</h2>
+                </div>
+            </div>
+        );
+
+        const FormField = ({ label, helper, children }) => (
+            <div className="mb-8">
+                <label className="block font-mono text-[9px] tracking-[0.2em] text-text3 uppercase mb-2">{label}</label>
+                {helper && <p className="font-light italic text-text3 text-sm mb-3 opacity-80">{helper}</p>}
+                {children}
+            </div>
+        );
+
+        const TextInput = ({ value, onChange, placeholder, rows = 3 }) => (
+            <textarea className="w-full rounded-[14px] p-5 text-sm resize-none" rows={rows} placeholder={placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} />
+        );
+
+        const InputLine = ({ value, onChange, placeholder, type = "text" }) => (
+            <input type={type} className="w-full rounded-[14px] p-4 text-sm" placeholder={placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} />
+        );
+
+        const CheckpointPanel = ({ title, subtitle, children }) => (
+            <div className="max-w-3xl mx-auto py-8">
+                <div className="text-center mb-8">
+                    <span className="inline-block rounded-full border border-brass-dim bg-brass-faint text-brass font-mono text-[9px] tracking-[0.2em] px-3 py-1 uppercase mb-4">
+                        {subtitle}
+                    </span>
+                    <h2 className="text-4xl leading-[1.1]">{title}</h2>
+                </div>
+                <div className="glass-panel p-10 md:p-14 text-lg text-text2 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-[2.5px] bg-gradient-to-r from-brass via-patina to-brass opacity-50" style={{zIndex: 2}}></div>
+                    {children}
+                </div>
+                <div className="text-center mt-8 flex justify-center items-center gap-2">
+                    <div className="pulse-dot"></div>
+                    <span className="font-mono text-text3 text-[9px] uppercase tracking-[0.2em]">SYS.SYNCED</span>
+                </div>
+            </div>
+        );
+
+        const WordSelector = ({ dimension, words, selectedWords, essentialWord, onToggleWord, onSetEssential }) => (
+            <div className="mb-8 p-8 bg-surface rounded-[14px] border border-medium">
+                <h4 className="font-mono text-[9px] tracking-[0.2em] text-text1 uppercase mb-6 flex items-center gap-3" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--text-1)'}}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-patina"></span>{dimension}
+                </h4>
+                <div className="flex flex-wrap gap-2 mb-6">
+                    {words.map(w => {
+                        const isSelected = selectedWords.includes(w);
+                        const isEssential = essentialWord === w;
+                        return (
+                            <button key={w} onClick={() => onToggleWord(w)}
+                                className={`px-4 py-2 text-sm rounded-full border transition-all duration-200 uppercase font-mono ${isEssential ? 'bg-brass border-brass text-void font-bold shadow-[0_0_15px_var(--brass-dim)]' : isSelected ? 'bg-patina border-patina text-[#E6DDD0] shadow-none' : 'bg-transparent border-strong text-text3 hover:border-medium hover:text-text1'}`}>
+                                {w}
+                            </button>
+                        );
+                    })}
+                </div>
+                {selectedWords.length > 0 && (
+                    <div className="mt-6 pt-6 border-t border-medium fade-in">
+                        <label className="font-mono text-[9px] tracking-[0.2em] text-text3 uppercase block mb-4">Mark 1 as Essential:</label>
+                        <div className="flex flex-wrap gap-2">
+                            {selectedWords.map(w => (
+                                <button key={`ess-${w}`} onClick={() => onSetEssential(w)} className={`px-4 py-1.5 text-xs rounded-full border transition-all uppercase font-mono ${essentialWord === w ? 'bg-brass-faint border-brass text-brass font-bold' : 'bg-transparent border-strong text-text3 hover:border-medium'}`}>
+                                    {w}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+
+        // --- MAIN APP ---
+        const App = () => {
+            const [user, setUser] = useState(null);
+            const [db, setDb] = useState(null);
+            const [authInstance, setAuthInstance] = useState(null);
+            const [isLoaded, setIsLoaded] = useState(false);
+            const [firebaseAvailable, setFirebaseAvailable] = useState(false);
+            const [isSaving, setIsSaving] = useState(false);
+            const [currentStep, setCurrentStep] = useState(0);
+            const [maxStepReached, setMaxStepReached] = useState(0);
+            const [data, setData] = useState(INITIAL_DATA);
+            const [isGenerating, setIsGenerating] = useState(false);
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+            const [isDarkMode, setIsDarkMode] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('qb-theme');
+                    if (saved) return saved === 'dark';
+                } catch(e) {}
+                return true;
+            });
+
+            useEffect(() => {
+                const theme = isDarkMode ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                try { localStorage.setItem('qb-theme', theme); } catch(e) {}
+            }, [isDarkMode]);
+
+            const toggleTheme = useCallback(() => setIsDarkMode(p => !p), []);
+
+            const updateData = useCallback((key, value) => {
+                setData(prev => ({ ...prev, [key]: value }));
+            }, []);
+
+            const isStepValid = useCallback((idx) => {
+                switch(idx) {
+                    case 0: return data.brandName.trim() !== '';
+                    case 1: return data.mod1Force.trim() !== '' && data.mod1Portrait.trim() !== '';
+                    case 2: return true;
+                    case 3: return data.docArgument.trim() !== '' && data.originalManifesto.trim() !== '';
+                    case 4: return true;
+                    case 5: return data.primaryArch !== null && data.secondaryArch !== null && data.posAdj1.trim() !== '';
+                    case 6: return true;
+                    case 7: return data.cEss !== '' && data.cuEss !== '' && data.fanTarget.trim() !== '';
+                    case 8: return true;
+                    case 9: return data.a1.trim() !== '' && data.na1.trim() !== '' && data.leadChoice !== '';
+                    case 10: return true;
+                    case 11: return data.coreAlwaysIdx !== null && data.coreNeverIdx !== null && data.always[data.coreAlwaysIdx]?.trim() !== '' && data.movementId !== null;
+                    case 12: return true;
+                    case 13: {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        return emailRegex.test(data.email.trim()) && (
+                            (data.firstName.trim() !== '' && data.lastName.trim() !== '') || data.companyName.trim() !== ''
+                        );
+                    }
+                    case 14: return true;
+                    default: return false;
+                }
+            }, [data]);
+
+            // Firebase init: wait for the module to signal readiness
+            useEffect(() => {
+                const tryInit = () => {
+                    if (!window.FirebaseCore) return false;
+                    try {
+                        const { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore } = window.FirebaseCore;
+
+                        // Check if config globals exist
+                        const hasConfig = typeof __firebase_config !== 'undefined' && __firebase_config;
+                        if (!hasConfig) {
+                            console.warn("No Firebase config found — running in standalone/local mode.");
+                            setFirebaseAvailable(false);
+                            setIsLoaded(true);
+                            return true;
+                        }
+
+                        const firebaseConfig = JSON.parse(__firebase_config);
+                        const app = initializeApp(firebaseConfig);
+                        const auth = getAuth(app);
+                        const firestoreDb = getFirestore(app);
+                        setDb(firestoreDb);
+                        setAuthInstance(auth);
+                        setFirebaseAvailable(true);
+
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            signInWithCustomToken(auth, __initial_auth_token).catch(e => console.warn('Custom token auth failed:', e));
+                        } else {
+                            signInAnonymously(auth).catch(e => console.warn('Anonymous auth failed:', e));
+                        }
+
+                        onAuthStateChanged(auth, (usr) => { if (usr) setUser(usr); });
+                        return true;
+                    } catch (err) {
+                        console.warn("Firebase init failed:", err.message);
+                        setFirebaseAvailable(false);
+                        setIsLoaded(true);
+                        return true;
+                    }
+                };
+
+                // Try immediately (module may already be loaded)
+                if (tryInit()) return;
+
+                // Otherwise listen for the ready event
+                const handler = () => tryInit();
+                window.addEventListener('firebase-ready', handler);
+
+                // Safety fallback: if Firebase never loads, just start the app
+                const timeout = setTimeout(() => {
+                    console.warn("Firebase SDK load timeout — starting in standalone mode.");
+                    setFirebaseAvailable(false);
+                    setIsLoaded(true);
+                }, 3000);
+
+                return () => {
+                    window.removeEventListener('firebase-ready', handler);
+                    clearTimeout(timeout);
+                };
+            }, []);
+
+            // Load saved data from Firestore
+            useEffect(() => {
+                if (!user || !db || !firebaseAvailable) return;
+                const { doc, onSnapshot } = window.FirebaseCore;
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'brandMap', 'progress');
+
+                const unsubscribe = onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const savedData = docSnap.data();
+                        if (savedData.answers) setData(prev => ({...prev, ...savedData.answers}));
+                        if (savedData.maxStep !== undefined && !isLoaded) {
+                            setMaxStepReached(savedData.maxStep);
+                            setCurrentStep(savedData.currentStep || 0);
+                        }
+                    }
+                    if (!isLoaded) setIsLoaded(true);
+                }, (err) => {
+                    console.error("Firestore fetch error:", err);
+                    if (!isLoaded) setIsLoaded(true);
+                });
+
+                return () => unsubscribe();
+            }, [user, db, firebaseAvailable]);
+
+            // If no firebase, load from localStorage
+            useEffect(() => {
+                if (!firebaseAvailable && isLoaded) {
+                    try {
+                        const saved = localStorage.getItem('qb-soul-map-local');
+                        if (saved) {
+                            const parsed = JSON.parse(saved);
+                            if (parsed.answers) setData(prev => ({...prev, ...parsed.answers}));
+                            if (parsed.maxStep !== undefined) setMaxStepReached(parsed.maxStep);
+                            if (parsed.currentStep !== undefined) setCurrentStep(parsed.currentStep);
+                        }
+                    } catch(e) { console.warn('Local restore failed:', e); }
+                }
+            }, [firebaseAvailable, isLoaded]);
+
+            // Save to Firestore or localStorage
+            useEffect(() => {
+                if (!isLoaded) return;
+
+                const saveData = async () => {
+                    setIsSaving(true);
+                    try {
+                        if (firebaseAvailable && user && db) {
+                            const { doc, setDoc } = window.FirebaseCore;
+                            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                            const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'brandMap', 'progress');
+                            await setDoc(docRef, { answers: data, currentStep, maxStep: maxStepReached }, { merge: true });
+                        } else {
+                            // Fallback: save to localStorage
+                            localStorage.setItem('qb-soul-map-local', JSON.stringify({
+                                answers: data, currentStep, maxStep: maxStepReached
+                            }));
+                        }
+                    } catch(err) {
+                        console.error("Save error:", err);
+                        // Fallback to localStorage on Firestore error
+                        try {
+                            localStorage.setItem('qb-soul-map-local', JSON.stringify({
+                                answers: data, currentStep, maxStep: maxStepReached
+                            }));
+                        } catch(e) {}
+                    } finally {
+                        setTimeout(() => setIsSaving(false), 500);
+                    }
+                };
+
+                const timeout = setTimeout(saveData, 1500);
+                return () => clearTimeout(timeout);
+            }, [data, currentStep, maxStepReached, user, db, isLoaded, firebaseAvailable]);
+
+            const handleGoogleSignIn = async () => {
+                if (!authInstance) return;
+                try {
+                    const { GoogleAuthProvider, signInWithPopup } = window.FirebaseCore;
+                    const provider = new GoogleAuthProvider();
+                    await signInWithPopup(authInstance, provider);
+                } catch(e) { console.error("Google sign in error", e); }
+            };
+
+            // --- MODULE COMPONENTS (using useCallback-bound updateData) ---
+
+            const IntroModule = () => (
+                <div className="max-w-3xl mx-auto">
+                    <VisualHeader title="The Brand Soul Map" subtitle="SYSTEM INITIALIZATION" imageUrl={IMAGES.intro} />
+                    <div className="glass-panel p-10 md:p-14">
+                        <h2 className="text-3xl mb-4">A Diagnostic Instrument.</h2>
+                        <p className="text-text2 mb-10 font-light italic text-lg">
+                            The brand isn't being invented here. It's being uncovered. Over the next 6 modules, you will define the core convictions, positioning, and cultural stance of your brand. You cannot skip ahead. We will guide you step by step.
+                        </p>
+                        <FormField label="Input Designation: Brand Name">
+                            <InputLine value={data.brandName} onChange={(v) => updateData('brandName', v)} placeholder="e.g. Acme Corp" />
+                        </FormField>
+                    </div>
+                </div>
+            );
+
+            const Module1 = () => (
+                <div className="max-w-4xl mx-auto">
+                    <VisualHeader title="Module I: Identity" subtitle="Exercises 1\u20134" imageUrl={IMAGES.identity} />
+                    <div className="space-y-12">
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4">01. Natural Force</h3>
+                            <FormField label="The Energy" helper="What force of nature most accurately represents the energy of your brand?">
+                                <TextInput value={data.mod1Force} onChange={(v) => updateData('mod1Force', v)} placeholder="Describe the force..." rows={2} />
+                            </FormField>
+
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4 mt-12">02. The Museum Room</h3>
+                            <FormField label="The Artifacts" helper="If your brand were a room in a museum, what objects are in it?">
+                                <TextInput value={data.mod1Room} onChange={(v) => updateData('mod1Room', v)} placeholder="Describe the aesthetic and artifacts..." rows={2} />
+                            </FormField>
+
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4 mt-12">03. Mythological Figure</h3>
+                            <FormField label="The Archetype" helper="Which mythic figure or historical legend embodies your brand?">
+                                <TextInput value={data.mod1Myth} onChange={(v) => updateData('mod1Myth', v)} placeholder="e.g. Prometheus bringing fire..." rows={2} />
+                            </FormField>
+
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4 mt-12">04. The Identity Portrait</h3>
+                            <FormField label="The Synthesis" helper="Synthesize the force, the artifacts, and the myth into your brand's portrait.">
+                                <TextInput value={data.mod1Portrait} onChange={(v) => updateData('mod1Portrait', v)} placeholder="Combine them into a cohesive identity..." rows={3} />
+                            </FormField>
+                        </section>
+                    </div>
+                </div>
+            );
+
+            const Module1Recap = () => (
+                <CheckpointPanel title="Identity Portrait" subtitle="Checkpoint I">
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">Energy</span>
+                    <span className="text-text1 font-medium">{data.mod1Force || '[Natural Force]'}</span></p>
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">Aesthetic</span>
+                    <span className="text-text1 font-medium">{data.mod1Room || '[Museum Room]'}</span></p>
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">Archetype</span>
+                    <span className="text-text1 font-medium">{data.mod1Myth || '[Mythological Figure]'}</span></p>
+                    <div className="mt-8 pt-6 border-t border-medium">
+                        <div className="manifesto-block font-serif text-xl text-text1">"{data.mod1Portrait || '[Synthesized Portrait]'}"</div>
+                    </div>
+                </CheckpointPanel>
+            );
+
+            const Module2 = () => (
+                <div className="max-w-4xl mx-auto">
+                    <VisualHeader title="Module II: Purpose" subtitle="Exercise 5 & 6" imageUrl={IMAGES.purpose} />
+                    <div className="space-y-12">
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-6 border-b border-subtle pb-4">05. The Documentary Legacy</h3>
+                            <FormField label="The Title" helper="What is the documentary called?">
+                                <InputLine value={data.docTitle} onChange={(v) => updateData('docTitle', v)} placeholder="Title here..." />
+                            </FormField>
+                            <FormField label="The Opening Image" helper="The film opens on a single image. What is that image?">
+                                <TextInput value={data.docImage} onChange={(v) => updateData('docImage', v)} placeholder="Describe the opening shot..." rows={2} />
+                            </FormField>
+                            <FormField label="The Central Argument" helper="Complete: 'This is the story of a brand that proved ____.'" >
+                                <TextInput value={data.docArgument} onChange={(v) => updateData('docArgument', v)} placeholder="..." rows={2} />
+                            </FormField>
+                            <FormField label="The Three Voices" helper="Describe the three real people interviewed.">
+                                <TextInput value={data.docVoices} onChange={(v) => updateData('docVoices', v)} placeholder="Who they were before, what happened, who they became..." />
+                            </FormField>
+                            <FormField label="The Final Line" helper="The last words spoken in the film.">
+                                <TextInput value={data.docFinalLine} onChange={(v) => updateData('docFinalLine', v)} placeholder="Quote..." rows={2} />
+                            </FormField>
+                        </section>
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-6 border-b border-subtle pb-4">06. The Manifesto Line</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                                {QUOTES.map(q => (
+                                    <div key={q.id} onClick={() => updateData('manifestoQuoteId', q.id)}
+                                        className={`p-6 rounded-[14px] cursor-pointer transition-all duration-300 border ${data.manifestoQuoteId === q.id ? 'bg-brass-faint border-brass ring-1 ring-brass' : 'bg-surface border-subtle hover:border-medium'}`}>
+                                        <p className="font-light italic text-text2 text-lg mb-4">"{q.quote}"</p>
+                                        <p className="font-mono text-[9px] text-brass uppercase tracking-[0.2em]">\u2014 {q.author}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            {data.manifestoQuoteId && (
+                                <div className="space-y-8 fade-in bg-surface p-8 rounded-[14px] border border-medium">
+                                    <FormField label="What is the specific belief encoded in this line?">
+                                        <TextInput value={data.manifestoBelief} onChange={(v) => updateData('manifestoBelief', v)} rows={2} />
+                                    </FormField>
+                                    <FormField label="Write Your Own Manifesto Line">
+                                        <InputLine value={data.originalManifesto} onChange={(v) => updateData('originalManifesto', v)} placeholder="We believe that..." />
+                                    </FormField>
+                                </div>
+                            )}
+                        </section>
+                    </div>
+                </div>
+            );
+
+            const Module2Recap = () => (
+                <CheckpointPanel title="Purpose Declaration" subtitle="Checkpoint II">
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">Transformation</span>
+                    We help people go from where they are to where they need to be, because {data.brandName || 'this brand'} exists to prove that <span className="text-text1 font-bold">{data.docArgument || '[Argument]'}</span>.</p>
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">Legacy</span>
+                    The story begins with <span className="text-text1 font-medium">{data.docImage || '[Image]'}</span> and ends with the final words: <span className="font-light italic text-text2">"{data.docFinalLine || '[Final Line]'}"</span>.</p>
+                    <div className="mt-8 pt-6 border-t border-medium">
+                        <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-4">Belief</span>
+                        <div className="manifesto-block font-serif text-2xl text-text1">"{data.originalManifesto || '[Your Original Manifesto]'}"</div>
+                    </div>
+                </CheckpointPanel>
+            );
+
+            const Module3 = () => (
+                <div className="max-w-4xl mx-auto">
+                    <VisualHeader title="Module III: Craft" subtitle="Exercise 7 & 8" imageUrl={IMAGES.craft} />
+                    <div className="space-y-12">
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-6 border-b border-subtle pb-4">07. Brand DNA</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                {['primaryArch', 'secondaryArch', 'tensionArch'].map((role, idx) => (
+                                    <div key={role} className="flex flex-col bg-surface p-5 rounded-[14px] border border-medium">
+                                        <label className="font-mono text-[9px] tracking-[0.2em] text-text3 uppercase mb-3">
+                                            {idx === 0 ? '1. Primary' : idx === 1 ? '2. Secondary' : '3. Tension'}
+                                        </label>
+                                        <select className="rounded-lg p-3 outline-none font-mono text-sm shadow-none"
+                                            value={data[role] || ''} onChange={(e) => updateData(role, e.target.value || null)}>
+                                            <option value="">SELECT...</option>
+                                            {ARCHETYPES.map(a => <option key={a.id} value={a.id}>{a.name} ({a.brand})</option>)}
+                                        </select>
+                                    </div>
+                                ))}
+                            </div>
+                            {data.primaryArch && data.secondaryArch && data.tensionArch && (
+                                <div className="space-y-6 fade-in pt-4">
+                                    <FormField label="The Fusion" helper={`Complete: Only we can be ${ARCHETYPES.find(a=>a.id===data.primaryArch)?.name || '___'} and ${ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name || '___'} at the same time because...`}>
+                                        <TextInput value={data.archFusion} onChange={(v) => updateData('archFusion', v)} rows={2} />
+                                    </FormField>
+                                </div>
+                            )}
+                        </section>
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4">08. Anti-Brand Mirror</h3>
+                            <div className="grid md:grid-cols-2 gap-8 mb-12">
+                                <div className="bg-error-faint border border-error p-6 rounded-[14px]">
+                                    <h4 className="text-error font-mono text-[9px] tracking-[0.2em] uppercase mb-6 flex items-center gap-2" style={{fontFamily: '"JetBrains Mono", monospace', color: '#8A4A4A'}}><IconXCircle className="w-4 h-4" /> THE ANTI-BRAND</h4>
+                                    <input className="w-full bg-surface border border-error rounded-lg mb-4 p-4 text-sm outline-none font-mono shadow-none" placeholder="NAME..." value={data.abName} onChange={(e) => updateData('abName', e.target.value)} />
+                                    <textarea className="w-full bg-surface border border-error rounded-lg p-4 text-sm outline-none font-mono shadow-none resize-none" placeholder="BELIEFS ABOUT PEOPLE..." value={data.abBelief} onChange={(e) => updateData('abBelief', e.target.value)} rows="3"></textarea>
+                                </div>
+                                <div className="bg-patina-faint border border-patina-dim p-6 rounded-[14px]">
+                                    <h4 className="text-patina font-mono text-[9px] tracking-[0.2em] uppercase mb-6 flex items-center gap-2" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--patina)'}}><IconCheckCircle className="w-4 h-4" /> YOUR BRAND</h4>
+                                    <div className="bg-surface border border-patina-dim rounded-lg mb-4 p-4 text-sm font-semibold text-text1 shadow-none uppercase">{data.brandName || '[BRAND NAME]'}</div>
+                                    <textarea className="w-full bg-surface border border-patina-dim rounded-lg p-4 text-sm outline-none font-mono shadow-none resize-none" placeholder="BELIEFS ABOUT PEOPLE..." value={data.bBelief} onChange={(e) => updateData('bBelief', e.target.value)} rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <div className="bg-surface p-8 rounded-[14px] border border-medium">
+                                <h4 className="font-mono text-[9px] tracking-[0.2em] text-text3 uppercase mb-6" style={{fontFamily: '"JetBrains Mono", monospace'}}>POSITIONING SPINE</h4>
+                                <div className="flex flex-wrap gap-3 mb-6 items-center">
+                                    <span className="text-text2 font-mono text-sm uppercase">"We are definitively</span>
+                                    <input className="w-32 p-3 rounded-lg text-center font-bold uppercase" placeholder="ADJ 1" value={data.posAdj1} onChange={(e)=>updateData('posAdj1',e.target.value)} />
+                                    <span className="text-text2">,</span>
+                                    <input className="w-32 p-3 rounded-lg text-center font-bold uppercase" placeholder="ADJ 2" value={data.posAdj2} onChange={(e)=>updateData('posAdj2',e.target.value)} />
+                                    <span className="text-text2">,</span>
+                                    <input className="w-32 p-3 rounded-lg text-center font-bold uppercase" placeholder="ADJ 3" value={data.posAdj3} onChange={(e)=>updateData('posAdj3',e.target.value)} />
+                                    <span className="text-text2 font-mono text-sm">."</span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            );
+
+            const Module3Recap = () => {
+                const pA = ARCHETYPES.find(a=>a.id===data.primaryArch)?.name || '[Primary]';
+                const sA = ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name || '[Secondary]';
+                return (
+                    <CheckpointPanel title="Positioning Spine" subtitle="Checkpoint III">
+                        <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">DNA</span>
+                        {data.brandName} operates with the core architecture of <span className="text-text1 font-bold">{pA}</span> and the texture of <span className="text-text1 font-bold">{sA}</span>.</p>
+                        <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">The Moat</span>
+                        We believe <span className="font-light italic text-text2">{data.bBelief || '[Your Belief]'}</span>. {data.abName || 'Our opposite'} believes <span className="font-light italic text-text2">{data.abBelief || '[Their Belief]'}</span>. These cannot coexist.</p>
+                        <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">The Claim</span>
+                        We are <span className="text-patina font-bold uppercase tracking-widest">{data.posAdj1 || '___'}, {data.posAdj2 || '___'}, {data.posAdj3 || '___'}</span>.</p>
+                    </CheckpointPanel>
+                );
+            };
+
+            const Module4 = () => {
+                const toggleWord = (listKey, word) => {
+                    const current = data[listKey] || [];
+                    if (current.includes(word)) updateData(listKey, current.filter(w => w !== word));
+                    else if (current.length < 5) updateData(listKey, [...current, word]);
+                };
+
+                return (
+                    <div className="max-w-4xl mx-auto">
+                        <VisualHeader title="Module IV: Tribe" subtitle="Exercise 9 & 10" imageUrl={IMAGES.tribe} />
+                        <div className="space-y-12">
+                            <section className="glass-panel p-8 md:p-12">
+                                <h3 className="text-2xl mb-8 border-b border-subtle pb-4">09. Brand Attributes</h3>
+                                <WordSelector dimension="Culture" words={WORD_BANKS.culture} selectedWords={data.cWords} essentialWord={data.cEss} onToggleWord={(w)=>toggleWord('cWords',w)} onSetEssential={(w)=>updateData('cEss',w)} />
+                                <WordSelector dimension="Customers" words={WORD_BANKS.customers} selectedWords={data.cuWords} essentialWord={data.cuEss} onToggleWord={(w)=>toggleWord('cuWords',w)} onSetEssential={(w)=>updateData('cuEss',w)} />
+                                <WordSelector dimension="Voice" words={WORD_BANKS.voice} selectedWords={data.vWords} essentialWord={data.vEss} onToggleWord={(w)=>toggleWord('vWords',w)} onSetEssential={(w)=>updateData('vEss',w)} />
+                                <WordSelector dimension="Look/Feel" words={WORD_BANKS.look} selectedWords={data.lWords} essentialWord={data.lEss} onToggleWord={(w)=>toggleWord('lWords',w)} onSetEssential={(w)=>updateData('lEss',w)} />
+                                <WordSelector dimension="Value Prop" words={WORD_BANKS.value} selectedWords={data.valWords} essentialWord={data.valEss} onToggleWord={(w)=>toggleWord('valWords',w)} onSetEssential={(w)=>updateData('valEss',w)} />
+                            </section>
+                            <section className="glass-panel p-8 md:p-12">
+                                <h3 className="text-2xl mb-8 border-b border-subtle pb-4">10. The Fan Letter</h3>
+                                <div className="mb-10">
+                                    <textarea className="w-full h-80 bg-surface border border-medium rounded-[14px] p-8 font-serif text-lg resize-none leading-relaxed" placeholder="Dear team, Ten years ago..." value={data.fanLetter} onChange={(e) => updateData('fanLetter', e.target.value)} style={{background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', color: 'var(--text-1)'}} />
+                                </div>
+                                <div className="space-y-8 bg-transparent border border-medium p-8 md:p-10 rounded-[14px]">
+                                    <FormField label="What detail surprised you?">
+                                        <TextInput value={data.fanSurprise} onChange={(v)=>updateData('fanSurprise',v)} rows={2} />
+                                    </FormField>
+                                    <FormField label="One sentence describing their inner life:">
+                                        <TextInput value={data.fanTarget} onChange={(v)=>updateData('fanTarget',v)} rows={2} />
+                                    </FormField>
+                                    <FormField label="What does this person need?">
+                                        <TextInput value={data.fanNeeds} onChange={(v)=>updateData('fanNeeds',v)} rows={2} />
+                                    </FormField>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                );
+            };
+
+            const Module4Recap = () => (
+                <CheckpointPanel title="Community Soul" subtitle="Checkpoint IV">
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">Vocabulary</span>
+                    <span className="text-patina font-mono uppercase tracking-[0.2em]">{data.cEss||'_'} \u00b7 {data.cuEss||'_'} \u00b7 {data.vEss||'_'} \u00b7 {data.lEss||'_'} \u00b7 {data.valEss||'_'}</span></p>
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">The Person</span>
+                    <span className="text-text1 font-medium">{data.fanTarget || '[Description]'}</span></p>
+                </CheckpointPanel>
+            );
+
+            const Module5 = () => (
+                <div className="max-w-4xl mx-auto">
+                    <VisualHeader title="Module V: Signal" subtitle="Exercise 11, 12 & 13" imageUrl={IMAGES.signal} />
+                    <div className="space-y-12">
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4">11. Aligned / Non-Aligned</h3>
+                            <div className="grid md:grid-cols-2 gap-8 mb-8">
+                                <div className="bg-patina-faint border border-patina-dim p-8 rounded-[14px]">
+                                    <h4 className="text-patina font-mono text-[9px] tracking-[0.2em] uppercase mb-6 flex items-center gap-2" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--patina)'}}><IconCheckCircle className="w-4 h-4"/> ALIGNED WITH</h4>
+                                    <input className="w-full bg-surface border border-patina-dim rounded-lg p-4 mb-4 font-bold uppercase font-mono shadow-none" placeholder="BRAND A..." value={data.a1} onChange={(e)=>updateData('a1',e.target.value)} />
+                                </div>
+                                <div className="bg-error-faint border border-error p-8 rounded-[14px]">
+                                    <h4 className="text-error font-mono text-[9px] tracking-[0.2em] uppercase mb-6 flex items-center gap-2" style={{fontFamily: '"JetBrains Mono", monospace', color: '#8A4A4A'}}><IconXCircle className="w-4 h-4"/> NON-ALIGNED WITH</h4>
+                                    <input className="w-full bg-surface border border-error rounded-lg p-4 mb-4 font-bold uppercase font-mono shadow-none" placeholder="BRAND C..." value={data.na1} onChange={(e)=>updateData('na1',e.target.value)} />
+                                </div>
+                            </div>
+                        </section>
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4">12. Celebrity Personification</h3>
+                            <div className="space-y-8">
+                                {BINARIES.map((bin) => {
+                                    const stateKey = BINARY_KEYS[bin.id];
+                                    return (
+                                    <div key={bin.id} className="bg-surface p-8 rounded-[14px] border border-medium">
+                                        <h4 className="font-mono text-[9px] tracking-[0.2em] text-text1 uppercase mb-6 flex items-center gap-3" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--text-1)'}}>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-patina"></span> HOW YOUR BRAND {bin.id.toUpperCase()}S
+                                        </h4>
+                                        <div className="flex flex-col md:flex-row gap-4">
+                                            {bin.options.map(opt => (
+                                                <div key={opt.name} onClick={() => updateData(stateKey, opt.name)}
+                                                    className={`flex-1 p-6 rounded-[14px] cursor-pointer border transition-all duration-200 ${data[stateKey] === opt.name ? 'bg-base border-patina ring-1 ring-patina shadow-[0_0_20px_var(--patina-dim)]' : 'bg-transparent border-strong hover:border-medium'}`}>
+                                                    <div className="font-serif text-text1 text-xl mb-2 tracking-tight">{opt.name}</div>
+                                                    <div className="font-light italic text-text3 text-sm leading-relaxed">{opt.desc}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )})}
+                            </div>
+                        </section>
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4">13. The Soundtrack</h3>
+                            <div className="space-y-4">
+                                {data.songs.map((song, i) => (
+                                    <div key={i} className="flex flex-col md:flex-row gap-4 bg-surface p-4 rounded-[14px] border border-medium items-center">
+                                        <span className="text-patina font-mono text-[9px] w-8 text-center">0{i+1}.</span>
+                                        <input className="flex-1 bg-transparent border-none p-2 text-sm outline-none w-full md:w-auto font-mono uppercase" placeholder="SONG NAME..." value={song.n} onChange={(e)=>{let s=[...data.songs]; s[i] = {...s[i], n: e.target.value}; updateData('songs',s)}} style={{background: 'transparent', border: 'none'}} />
+                                        <input className="w-36 bg-transparent border-none p-2 text-sm outline-none font-mono opacity-60" placeholder="ARTIST..." value={song.a||''} onChange={(e)=>{let s=[...data.songs]; s[i]={...s[i], a: e.target.value}; updateData('songs',s)}} style={{background: 'transparent', border: 'none'}} />
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            );
+
+            const Module5Recap = () => (
+                <CheckpointPanel title="Voice & Tone" subtitle="Checkpoint V">
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">Alignment</span>
+                    We align with {data.a1||'_'}. We refuse {data.na1||'_'}.</p>
+                    <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">Behavioral DNA</span>
+                    {data.brandName} leads like <span className="text-text1 font-bold">{data.leadChoice||'_'}</span> and endures like <span className="text-text1 font-bold">{data.endChoice||'_'}</span>.</p>
+                </CheckpointPanel>
+            );
+
+            const Module6 = () => (
+                <div className="max-w-4xl mx-auto">
+                    <VisualHeader title="Module VI: World" subtitle="Exercise 14 & 15" imageUrl={IMAGES.world} />
+                    <div className="space-y-12">
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4">14. Never / Always Manifesto</h3>
+                            <div className="grid md:grid-cols-2 gap-10">
+                                <div className="bg-patina-faint p-8 rounded-[14px] border border-patina-dim">
+                                    <h4 className="text-patina font-mono text-[9px] tracking-[0.2em] uppercase mb-6 flex items-center gap-2" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--patina)'}}><IconCheck className="w-4 h-4" /> THE ALWAYS</h4>
+                                    {data.always.map((a, i) => (
+                                        <div key={`a-${i}`} className="flex gap-4 mb-4 items-center">
+                                            <input type="radio" name="coreAlways" checked={data.coreAlwaysIdx === i} onChange={()=>updateData('coreAlwaysIdx', i)} className="w-4 h-4 accent-[#3A5F4A] cursor-pointer" />
+                                            <input className="w-full bg-surface border border-patina-dim rounded-lg p-3 text-sm font-mono shadow-none" placeholder="We always..." value={a} onChange={(e)=>{let arr=[...data.always]; arr[i]=e.target.value; updateData('always',arr)}} />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="bg-error-faint p-8 rounded-[14px] border border-error">
+                                    <h4 className="text-error font-mono text-[9px] tracking-[0.2em] uppercase mb-6 flex items-center gap-2" style={{fontFamily: '"JetBrains Mono", monospace', color: '#8A4A4A'}}><IconX className="w-4 h-4" /> THE NEVER</h4>
+                                    {data.nevers.map((n, i) => (
+                                        <div key={`n-${i}`} className="flex gap-4 mb-4 items-center">
+                                            <input type="radio" name="coreNever" checked={data.coreNeverIdx === i} onChange={()=>updateData('coreNeverIdx', i)} className="w-4 h-4 accent-[#8A4A4A] cursor-pointer" />
+                                            <input className="w-full bg-surface border border-error rounded-lg p-3 text-sm font-mono shadow-none" placeholder="We never..." value={n} onChange={(e)=>{let arr=[...data.nevers]; arr[i]=e.target.value; updateData('nevers',arr)}} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+                        <section className="glass-panel p-8 md:p-12">
+                            <h3 className="text-2xl mb-8 border-b border-subtle pb-4">15. Cultural Movement</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {MOVEMENTS.map(m => (
+                                    <div key={m.id} onClick={() => updateData('movementId', m.id)}
+                                        className={`p-6 rounded-[14px] cursor-pointer border transition-all duration-200 ${data.movementId === m.id ? 'bg-brass-faint border-brass ring-1 ring-brass shadow-[0_0_15px_var(--brass-faint)]' : 'bg-surface border-strong hover:border-medium'}`}>
+                                        <h4 className="font-serif text-xl tracking-tight mb-2">{m.name}</h4>
+                                        <p className="font-light italic text-text3 text-sm leading-relaxed">{m.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            );
+
+            const Module6Recap = () => {
+                const mov = MOVEMENTS.find(m=>m.id===data.movementId)?.name || '[Movement]';
+                const alwaysText = data.coreAlwaysIdx !== null && data.always?.[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : 'Not yet selected';
+                const neverText = data.coreNeverIdx !== null && data.nevers?.[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : 'Not yet selected';
+                return (
+                    <CheckpointPanel title="Cultural Position" subtitle="Checkpoint VI">
+                        <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">The Code</span>
+                        Always <span className="text-text1 font-bold">{alwaysText}</span>. Never <span className="text-text1 font-bold">{neverText}</span>.</p>
+                        <p className="mb-6"><span className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3 block mb-2">The Stance</span>
+                        {data.brandName} is the contemporary heir to <span className="text-patina font-bold uppercase tracking-wider">{mov}</span>.</p>
+                    </CheckpointPanel>
+                );
+            };
+
+            const LeadCaptureModule = () => (
+                <div className="max-w-3xl mx-auto py-12 fade-in">
+                    <div className="text-center mb-12">
+                        <span className="inline-block rounded-full border border-brass-dim bg-brass-faint text-brass font-mono text-[9px] tracking-[0.2em] px-3 py-1 uppercase mb-4">
+                            FINAL PROTOCOL
+                        </span>
+                        <h2 className="text-4xl md:text-[54px] leading-[1.1]">Authorization Required</h2>
+                    </div>
+                    <div className="glass-panel p-10 md:p-14">
+                        <p className="font-light italic text-text3 mb-10 text-center">Provide your identity and email to secure your final Brand Soul Map.</p>
+                        <div className="space-y-6">
+                            <FormField label="Email Address (Required)">
+                                <InputLine type="email" value={data.email} onChange={(v) => updateData('email', v)} placeholder="you@example.com" />
+                            </FormField>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <InputLine value={data.firstName} onChange={(v) => updateData('firstName', v)} placeholder="First Name" />
+                                <InputLine value={data.lastName} onChange={(v) => updateData('lastName', v)} placeholder="Last Name" />
+                            </div>
+                            <div className="flex items-center gap-4 my-8 opacity-30">
+                                <div className="h-px flex-1" style={{background: 'var(--text-2)'}}></div>
+                                <span className="font-mono text-[9px] tracking-[0.2em] uppercase">OR</span>
+                                <div className="h-px flex-1" style={{background: 'var(--text-2)'}}></div>
+                            </div>
+                            <InputLine value={data.companyName} onChange={(v) => updateData('companyName', v)} placeholder="Company Name" />
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const SynthesisPanel = () => {
+                const mapData = generateDefaultMap(data);
+
+                const copyToClipboard = () => {
+                    const el = document.getElementById('soul-map-content');
+                    if (!el) return;
+                    const text = el.innerText;
+                    navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard.')).catch(e => alert('Copy failed: ' + e));
+                };
+
+                const downloadPDF = async () => {
+                    try {
+                        const el = document.getElementById('soul-map-content');
+                        if (!el) return;
+                        el.style.padding = "40px";
+                        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                        const canvas = await html2canvas(el, { scale: 2, backgroundColor: isDark ? '#080604' : '#F4F0EB', useCORS: true });
+                        el.style.padding = "";
+                        const imgData = canvas.toDataURL('image/png');
+                        const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+                        const imgHeightMM = (canvas.height * pdfWidth) / canvas.width;
+                        let heightLeft = imgHeightMM - pdfHeight;
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeightMM);
+                        while (heightLeft > 0) {
+                            pdf.addPage();
+                            pdf.addImage(imgData, 'PNG', 0, -(imgHeightMM - heightLeft), pdfWidth, imgHeightMM);
+                            heightLeft -= pdfHeight;
+                        }
+                        pdf.save((data.brandName || 'Brand') + '_SOULMAP.pdf');
+                    } catch(e) {
+                        console.error('PDF generation failed:', e);
+                        alert('PDF generation failed. Try the Copy option instead.');
+                    }
+                };
+
+                if (isGenerating) {
+                    return (
+                        <div className="max-w-5xl mx-auto py-32 fade-in flex flex-col items-center justify-center text-center min-h-[60vh]">
+                            <div className="relative w-16 h-16 mb-8 flex items-center justify-center">
+                                <div className="pulse-dot" style={{width: '24px', height: '24px'}}></div>
+                            </div>
+                            <h2 className="text-3xl font-mono text-patina tracking-[0.2em] uppercase mb-4" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--patina)'}}>Processing Synthesis...</h2>
+                            <p className="font-light italic text-text3 text-lg">Distilling your strategy and preparing output.</p>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="max-w-5xl mx-auto pb-20 fade-in">
+                        <VisualHeader title="The Synthesis" subtitle="FINAL OUTPUT" imageUrl={IMAGES.synthesis} />
+                        <div className="flex flex-col sm:flex-row justify-between items-end mb-12 px-4 gap-4">
+                            <div>
+                                <h2 className="text-3xl mb-2">The Brand Soul Map</h2>
+                                <p className="font-mono text-[9px] text-brass uppercase tracking-[0.2em]">SYS.TRANSMITTED TO {data.email}</p>
+                            </div>
+                            <div className="flex gap-3">
+                                <button onClick={copyToClipboard} className="btn-primary" style={{background: 'var(--bg-surface)', color: 'var(--text-1)', border: '1px solid var(--border-medium)'}}>
+                                    <IconCopy className="mr-2 w-4 h-4" /> COPY
+                                </button>
+                                <button onClick={downloadPDF} className="btn-primary">
+                                    <IconDownload className="mr-2 w-4 h-4" /> PDF
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="soul-map-content" className="bg-base border border-medium rounded-[14px] p-10 md:p-20 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-[2.5px] bg-gradient-to-r from-brass via-patina to-brass opacity-50"></div>
+
+                            <div className="text-center mb-20 pb-12 border-b border-medium">
+                                <h1 className="text-4xl md:text-[54px] mb-4 leading-[1.1]">{data.brandName}</h1>
+                                <p className="font-mono text-[9px] text-brass uppercase tracking-[0.2em]">THE SOUL MAP</p>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-x-16 gap-y-12 mb-16 font-sans">
+                                <div>
+                                    <h3 className="font-mono text-[9px] text-text3 uppercase tracking-[0.2em] mb-6 border-l-2 pl-4" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--text-3)', borderColor: 'var(--patina-dim)'}}>I. The Purpose</h3>
+                                    <div className="space-y-4 text-sm text-text1">
+                                        <p><span className="font-mono text-[9px] tracking-[0.2em] text-text4 block mb-1">LEGACY</span> "{data.brandName} will prove {data.docArgument || '___'}"</p>
+                                        <p><span className="font-mono text-[9px] tracking-[0.2em] text-text4 block mb-1">BELIEF</span> "{data.originalManifesto || '___'}"</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className="font-mono text-[9px] text-text3 uppercase tracking-[0.2em] mb-6 border-l-2 pl-4" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--text-3)', borderColor: 'var(--patina-dim)'}}>II. The Positioning</h3>
+                                    <div className="space-y-4 text-sm text-text1">
+                                        <p><span className="font-mono text-[9px] tracking-[0.2em] text-text4 block mb-1">DNA</span> {mapData.primA} + {mapData.secA}</p>
+                                        <p><span className="font-mono text-[9px] tracking-[0.2em] text-text4 block mb-1">MOAT</span> We believe {data.bBelief || '___'}.</p>
+                                        <p><span className="font-mono text-[9px] tracking-[0.2em] text-text4 block mb-1">CLAIM</span> We are {data.posAdj1||'___'}, {data.posAdj2||'___'}, {data.posAdj3||'___'}.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="text-center mb-20 mt-16 font-light italic text-2xl text-text2 leading-relaxed px-4 md:px-12">
+                                <h3 className="font-mono text-[9px] text-patina uppercase tracking-[0.2em] mb-8 border-t border-medium pt-16 mx-auto w-1/2" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--patina)'}}>THE SPARK</h3>
+                                <div className="manifesto-block mx-auto text-left w-full max-w-2xl font-serif text-xl text-text1">
+                                    "{data.aiSpark || mapData.spark}"
+                                </div>
+                            </div>
+
+                            <div className="text-center pt-16 border-t border-medium mt-20">
+                                <h3 className="font-mono text-[9px] text-text3 uppercase tracking-[0.2em] mb-8" style={{fontFamily: '"JetBrains Mono", monospace', color: 'var(--text-3)'}}>THE ESSENCE</h3>
+                                <p className="text-3xl md:text-[42px] text-text1 leading-[1.1]">{data.aiEssence || mapData.essence}</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            const STEPS = [
+                { title: 'INITIALIZE', isCheckpoint: false, component: <IntroModule /> },
+                { title: 'IDENTITY', isCheckpoint: false, component: <Module1 /> },
+                { title: 'SYS.SYNC 01', isCheckpoint: true, component: <Module1Recap /> },
+                { title: 'PURPOSE', isCheckpoint: false, component: <Module2 /> },
+                { title: 'SYS.SYNC 02', isCheckpoint: true, component: <Module2Recap /> },
+                { title: 'CRAFT', isCheckpoint: false, component: <Module3 /> },
+                { title: 'SYS.SYNC 03', isCheckpoint: true, component: <Module3Recap /> },
+                { title: 'TRIBE', isCheckpoint: false, component: <Module4 /> },
+                { title: 'SYS.SYNC 04', isCheckpoint: true, component: <Module4Recap /> },
+                { title: 'SIGNAL', isCheckpoint: false, component: <Module5 /> },
+                { title: 'SYS.SYNC 05', isCheckpoint: true, component: <Module5Recap /> },
+                { title: 'WORLD', isCheckpoint: false, component: <Module6 /> },
+                { title: 'SYS.SYNC 06', isCheckpoint: true, component: <Module6Recap /> },
+                { title: 'AUTH', isCheckpoint: false, component: <LeadCaptureModule /> },
+                { title: 'SYNTHESIS', isCheckpoint: false, component: <SynthesisPanel /> }
+            ];
+
+            const handleNext = async () => {
+                if (currentStep === STEPS.length - 2) {
+                    // Heading to Synthesis
+                    setIsGenerating(true);
+                    setCurrentStep(currentStep + 1);
+                    setMaxStepReached(Math.max(maxStepReached, currentStep + 1));
+                    const sc = document.getElementById('main-scroll-container');
+                    if(sc) sc.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    try {
+                        const ai = await generateAI(data);
+                        const dm = generateDefaultMap(data);
+                        let s = dm.spark, e = dm.essence;
+                        if (ai?.spark && ai?.essence) {
+                            s = ai.spark; e = ai.essence;
+                        }
+                        setData(prev => ({ ...prev, aiSpark: s, aiEssence: e }));
+
+                        // Sync to QBP localStorage
+                        try {
+                            const primA = ARCHETYPES.find(a=>a.id===data.primaryArch)?.name || '';
+                            const secA = ARCHETYPES.find(a=>a.id===data.secondaryArch)?.name || '';
+                            const alwaysText = data.coreAlwaysIdx !== null && data.always?.[data.coreAlwaysIdx] ? data.always[data.coreAlwaysIdx] : '';
+                            const neverText = data.coreNeverIdx !== null && data.nevers?.[data.coreNeverIdx] ? data.nevers[data.coreNeverIdx] : '';
+
+                            const existing = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
+                            const updated = Object.assign({}, existing, {
+                                brandName: data.brandName || existing.brandName || '',
+                                brandEssence: (e || '').substring(0, 300),
+                                spark: (s || '').substring(0, 800),
+                                archetype: primA ? (primA + (secA ? ' + ' + secA : '')) : (existing.archetype || ''),
+                                manifesto: data.originalManifesto || existing.manifesto || '',
+                                antiBrand: neverText ? ('We refuse to: ' + neverText) : (existing.antiBrand || ''),
+                                alwaysNever: ((alwaysText ? 'Always: ' + alwaysText : '') + (neverText ? ' | Never: ' + neverText : '')) || existing.alwaysNever || '',
+                                primaryPersona: data.cuEss ? ('The ' + data.cuEss + ' who ' + (data.fanTarget || '')) : (existing.primaryPersona || ''),
+                                naturalForce: data.mod1Force || existing.naturalForce || '',
+                                paradox: data.posAdj1 && data.posAdj2 ? (data.posAdj1 + ' yet ' + data.posAdj2) : (existing.paradox || ''),
+                                soulMapCompletedAt: new Date().toISOString()
+                            });
+                            localStorage.setItem('qb_qbp', JSON.stringify(updated));
+                            localStorage.setItem('qb_soul_map_done', '1');
+
+                            // Signal parent Hub if in iframe context
+                            if (window.parent && window.parent !== window) {
+                                const _pmOrigin = (typeof QB_PARENT_ORIGIN !== 'undefined' && QB_PARENT_ORIGIN) ? QB_PARENT_ORIGIN : '*';
+                                window.parent.postMessage({ type: 'QB_PHASE_COMPLETE', phase: 1, tool: 'soul-map', qbp: updated }, _pmOrigin);
+                            }
+                        } catch(qbErr) { console.warn('QB QBP sync:', qbErr); }
+                    } catch (err) {
+                        console.error('Synthesis error:', err);
+                    } finally {
+                        setIsGenerating(false);
+                    }
+                } else {
+                    const ns = Math.min(STEPS.length - 1, currentStep + 1);
+                    setCurrentStep(ns);
+                    setMaxStepReached(Math.max(maxStepReached, ns));
+                    const sc = document.getElementById('main-scroll-container');
+                    if(sc) sc.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            // Loading screen
+            if (!isLoaded) {
+                return (
+                    <div className="min-h-screen flex flex-col items-center justify-center main-content" style={{background: 'var(--bg-void)'}}>
+                        <div className="noise-overlay"></div>
+                        <div className="relative w-16 h-16 mb-4 flex items-center justify-center">
+                            <div className="pulse-dot" style={{width: '16px', height: '16px'}}></div>
+                        </div>
+                        <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-text3">BOOTING SEQUENCE...</p>
+                    </div>
+                );
+            }
+
+            const isNextDisabled = isGenerating || !isStepValid(currentStep);
+            const progress = (currentStep / (STEPS.length - 1)) * 100;
+
+            const ThemeToggle = () => (
+                <button onClick={toggleTheme} className="p-2 rounded-full bg-surface text-text2 hover:bg-elevated transition-colors border border-medium">
+                    {isDarkMode ? <IconSun className="w-4 h-4"/> : <IconMoon className="w-4 h-4"/>}
+                </button>
+            );
+
+            return (
+                <div className="flex h-screen w-full font-sans overflow-hidden main-content">
+                    <div className="noise-overlay"></div>
+
+                    {/* Mobile Header */}
+                    <div className="md:hidden fixed top-0 left-0 right-0 flex items-center justify-between p-4 bg-overlay border-b border-subtle z-50" style={{backdropFilter: 'blur(16px)'}}>
+                        <h1 className="font-serif text-xl text-text1 flex items-center gap-2"><IconTerminal className="w-4 h-4 text-brass" /> SOUL MAP</h1>
+                        <div className="flex items-center gap-3"><ThemeToggle /><button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 bg-surface text-text1 rounded border border-medium"><IconMenu /></button></div>
+                    </div>
+
+                    {/* Mobile overlay */}
+                    {isMobileMenuOpen && <div className="fixed inset-0 bg-void/80 backdrop-blur-sm z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)}></div>}
+
+                    {/* Sidebar */}
+                    <div className={`fixed inset-y-0 left-0 w-72 md:w-[280px] border-r border-subtle flex-shrink-0 flex flex-col p-8 z-50 transform transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 h-screen overflow-y-auto`} style={{background: 'var(--bg-deep)'}}>
+                        <div className="mb-12 hidden md:flex items-start justify-between">
+                            <div>
+                                <h1 className="text-[22px] font-serif text-text1 flex items-center gap-2"><IconTerminal className="w-5 h-5 text-brass" /> SOUL MAP</h1>
+                                <p className="font-mono text-[9px] text-text3 uppercase mt-2 tracking-[0.2em]">STRATEGY TERMINAL</p>
+                            </div>
+                            <ThemeToggle />
+                        </div>
+
+                        <nav className="flex-1">
+                            <ul className="relative space-y-1">
+                                {STEPS.map((step, idx) => {
+                                    const isLocked = idx > maxStepReached;
+                                    const isActive = currentStep === idx;
+                                    const isComp = isStepValid(idx);
+                                    return (
+                                        <li key={idx} className="relative z-10">
+                                            <button onClick={() => { if(!isLocked) { setCurrentStep(idx); setIsMobileMenuOpen(false); const sc = document.getElementById('main-scroll-container'); if(sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); } }}
+                                                disabled={isLocked} className={`w-full text-left flex items-center gap-4 py-3 px-3 border-l-[2.5px] transition-all font-mono text-[9px] tracking-[0.2em] uppercase ${isActive ? 'text-patina border-patina bg-patina-faint' : isLocked ? 'text-text4 border-transparent cursor-not-allowed' : 'text-text3 border-transparent hover:border-medium hover:text-text1'}`}>
+                                                <span className="w-4 flex justify-center">{(isComp && idx < currentStep && !isActive) ? <IconCheck className="w-3 h-3 text-patina" /> : (isLocked ? <IconLock className="w-3 h-3 opacity-50" /> : (idx < 10 ? `0${idx}` : idx))}</span>
+                                                <span className="flex-1 truncate">{step.title}</span>
+                                            </button>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </nav>
+
+                        <div className="mt-8 pt-6 border-t border-subtle flex flex-col gap-4">
+                            {firebaseAvailable && user?.isAnonymous && <button onClick={handleGoogleSignIn} className="btn-primary w-full"><IconGlobe className="w-4 h-4 mr-2" /> LINK ACCOUNT</button>}
+                            <div className="flex items-center gap-2 font-mono text-[9px] text-text3 uppercase tracking-[0.2em] justify-center mt-2">
+                                {isSaving ? <span className="text-brass flex items-center gap-2"><div className="pulse-dot"></div> SYNCING...</span> : <span><IconCheck className="w-3 h-3 inline mr-1 text-patina"/> {firebaseAvailable ? 'SYS.SYNCED' : 'LOCAL.SAVED'}</span>}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div id="main-scroll-container" className="flex-1 h-full overflow-y-auto relative bg-transparent pt-16 md:pt-0" style={{zIndex: 2}}>
+                        <div className="w-full max-w-5xl mx-auto px-4 md:px-12 pt-8 md:pt-16 pb-32">
+                            <div key={currentStep} className="animate-fade-in-up">
+                                {STEPS[currentStep].component}
+                            </div>
+                        </div>
+
+                        {/* Bottom Dock */}
+                        <div className="sticky bottom-8 w-full px-4 md:px-12 pointer-events-none flex justify-center z-40">
+                            <div className="pointer-events-auto w-full max-w-3xl glass-dock p-3 flex justify-between items-center relative overflow-hidden">
+                                <div className="absolute top-0 left-0 h-[2px] w-full" style={{background: 'var(--bg-surface)', zIndex: 2}}>
+                                    <div className="h-full progress-fill transition-all duration-500" style={{ width: `${progress}%` }}></div>
+                                </div>
+
+                                <button onClick={() => { setCurrentStep(Math.max(0, currentStep - 1)); const sc = document.getElementById('main-scroll-container'); if(sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    disabled={currentStep === 0 || isGenerating} className={`flex items-center gap-2 px-6 py-3 rounded-full font-mono font-bold text-[9px] tracking-[0.2em] uppercase transition-all border border-transparent ${currentStep === 0 || isGenerating ? 'text-text4 cursor-not-allowed opacity-50' : 'text-text1 hover:border-medium active:scale-95'}`}>
+                                    <IconChevronLeft className="w-4 h-4" /> PREV
+                                </button>
+
+                                <div className="flex items-center gap-4">
+                                    {isNextDisabled && !isGenerating && currentStep !== STEPS.length - 1 && (
+                                        <span className="hidden sm:block font-mono text-[9px] text-brass uppercase tracking-[0.2em] border border-brass-dim bg-brass-faint px-3 py-1.5 rounded-full">REQUIREMENTS NOT MET</span>
+                                    )}
+                                    <button onClick={handleNext} disabled={isNextDisabled || currentStep === STEPS.length - 1}
+                                        className={`btn-primary ${isNextDisabled || currentStep === STEPS.length - 1 ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                                        {currentStep === STEPS.length - 2 ? 'INITIATE SYNTHESIS' : (STEPS[currentStep + 1]?.isCheckpoint ? 'VIEW DIAGNOSTIC' : 'NEXT MODULE')}
+                                        <IconChevronRight className="w-4 h-4 ml-2" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

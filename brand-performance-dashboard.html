@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Brand Performance Dashboard</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Typography: DM Serif Display, Inter, JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script>
+  // Theme init — read from localStorage, default to dark. Prevents flash.
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch(e) {}
+  })();
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Dark theme (default) - Walnut, Brass, Patina */
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140, 110, 70, 0.045);
+  --bg-elevated: rgba(140, 110, 70, 0.07);
+  --bg-overlay: rgba(18, 15, 10, 0.85);
+
+  --border-subtle: rgba(140, 110, 70, 0.06);
+  --border-medium: rgba(140, 110, 70, 0.11);
+  --border-strong: rgba(140, 110, 70, 0.18);
+
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58, 95, 74, 0.2);
+  --patina-faint: rgba(58, 95, 74, 0.08);
+
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168, 144, 62, 0.18);
+  --brass-faint: rgba(168, 144, 62, 0.06);
+
+  --error: #8A4A4A;
+  --error-dim: rgba(138, 74, 74, 0.15);
+
+  --creation: #4A7A8A;
+  --content: #8A5A5A;
+  --execution: #5A7A6A;
+
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Light theme override - Warm Parchment */
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100, 80, 50, 0.04);
+  --bg-elevated: rgba(100, 80, 50, 0.07);
+  --bg-overlay: rgba(244, 240, 235, 0.9);
+
+  --border-subtle: rgba(100, 80, 50, 0.08);
+  --border-medium: rgba(100, 80, 50, 0.14);
+  --border-strong: rgba(100, 80, 50, 0.22);
+
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46, 78, 60, 0.15);
+  --patina-faint: rgba(46, 78, 60, 0.06);
+
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138, 116, 48, 0.15);
+  --brass-faint: rgba(138, 116, 48, 0.05);
+
+  --error: #8A3A3A;
+  --error-dim: rgba(138, 58, 58, 0.1);
+
+  --creation: #2E5A6A;
+  --content: #6A3A3A;
+  --execution: #3A5A4A;
+
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+}
+
+html:not([data-theme]) { background: #080604; color: #A89A88; }
+
+body { 
+  background: var(--bg-base); 
+  color: var(--text-2); 
+  font-family: var(--font-body); 
+  min-height: 100vh; 
+  overflow-x: hidden; 
+  position: relative;
+  line-height: 1.6;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+/* Signature: Film Grain Overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+/* Signature: Warm Vignette */
+.main-content::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+}
+[data-theme="light"] .main-content::before {
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+
+/* Ensure content sits above vignette */
+.main-content > * { position: relative; z-index: 10; }
+
+/* Signature: Warm Glass Cards */
+.glass-card {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Signature: Brass Heartbeat Pulse */
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px var(--brass-dim), 0 0 2px var(--brass);
+  animation: beat 3s ease infinite;
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); opacity: 1; }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); opacity: 1; }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+
+/* Signature: Manifesto Block */
+.manifesto-block {
+  position: relative;
+  padding: 28px 32px 28px 36px;
+}
+.manifesto-block::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 12px var(--brass-faint);
+}
+
+/* Signature: Input Focus */
+input, textarea, select {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: all 0.25s ease;
+  appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--patina);
+  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+  background: var(--bg-elevated);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-3);
+  opacity: 0.7;
+  font-style: italic;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23A89A88'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; }
+select option { background: var(--bg-deep); color: var(--text-1); }
+
+/* Signature: Primary Button */
+.btn-primary {
+  background: var(--patina);
+  color: #E6DDD0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 13px 32px;
+  border-radius: 7px;
+  border: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--patina-lit);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px -4px var(--patina-dim), 0 0 0 1px var(--brass-faint);
+}
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); transform: none; box-shadow: none; }
+
+/* Signature: Progress & Meters */
+.progress-fill {
+  background: linear-gradient(90deg, var(--patina), var(--brass));
+  border-radius: 2px;
+  height: 100%;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn 0.45s ease forwards; }
+
+/* Tabs */
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-3);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tab-btn:hover { border-color: var(--border-strong); color: var(--text-2); }
+.tab-btn.active {
+  background: var(--patina-faint);
+  border-color: var(--patina-dim);
+  color: var(--patina);
+}
+
+/* Pills */
+.pill { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 9px; font-family: var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.pill-patina { background: var(--patina-faint); color: var(--patina-lit); border: 1px solid var(--patina-dim); }
+.pill-brass { background: var(--brass-faint); color: var(--brass-lit); border: 1px solid var(--brass-dim); }
+.pill-error { background: var(--error-dim); color: var(--error); border: 1px solid rgba(138, 74, 74, 0.25); }
+.pill-neutral { background: var(--bg-elevated); color: var(--text-2); border: 1px solid var(--border-medium); }
+
+.bar-container { height: 4px; background: var(--bg-elevated); border-radius: 2px; flex: 1; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.2); }
+.signal-card { border: 1px solid var(--border-subtle); transition: border-color 0.2s, background 0.2s; }
+.signal-card:hover { border-color: var(--border-medium); background: var(--bg-elevated); }
+
+@media (max-width: 768px) { .hide-tablet { display: none !important; } }
+
+.btn-remove-platform {
+  background: var(--bg-elevated);
+  color: var(--text-3);
+  font-size: 16px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: none; cursor: pointer;
+  transition: all .2s;
+}
+.btn-remove-platform:hover { background: var(--error-dim); color: var(--error); }
+
+.btn-add-platform {
+  background: transparent;
+  border: 1px dashed var(--border-strong);
+  color: var(--text-2);
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  width: 100%;
+  transition: all .2s;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.btn-add-platform:hover { border-color: var(--brass); color: var(--text-1); }
+</style>
+<script>
+// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  // QBP
+  var urlQBP = params.get('qbp');
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  // Universal AI call — works with Anthropic or Gemini
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok) throw new Error('API error ' + res.status + ': ' + res.statusText);
+    var d = await res.json();
+    if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    return d.content[0].text;
+  };
+
+})();
+</script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useRef, useEffect} = React;
+
+// ── THEME TOGGLE ──────────────────────────────────────────────────────────────
+const toggleTheme = () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('qb-theme', next); } catch(e) {}
+};
+
+// ── PLATFORM OPTIONS ──────────────────────────────────────────────────────────
+const PLATFORMS_LIST=['Instagram','LinkedIn Personal','LinkedIn Company','YouTube','Newsletter','X/Twitter','Podcast','Website'];
+const PERIODS=['Last 7 days','Last 30 days','Last 90 days','Last 6 months','Custom period'];
+const ARCHETYPES=['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
+
+// ── SHARED UI ─────────────────────────────────────────────────────────────────
+const ML = ({c, children, mb=10}) => (
+  <div style={{fontFamily:'var(--font-mono)', fontSize:9, letterSpacing:'.15em', color: c || 'var(--text-3)', textTransform:'uppercase', marginBottom: mb}}>
+    {children}
+  </div>
+);
+
+const Card = ({children, accent, style={}}) => (
+  <div className="glass-card" style={{padding: '24px 28px', borderTop: accent ? `2px solid ${accent}` : '1px solid var(--border-subtle)', ...style}}>
+    {children}
+  </div>
+);
+
+const TF = ({label, value, onChange, placeholder, rows=1, hint}) => (
+  <div style={{marginBottom: 24}}>
+    <ML mb={10}>{label}</ML>
+    {rows > 1 ? (
+      <textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
+    ) : (
+      <input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>
+    )}
+    {hint && <div style={{fontFamily:'var(--font-body)', fontSize:12, color:'var(--text-3)', marginTop:6}}>{hint}</div>}
+  </div>
+);
+
+const SF = ({label, options, value, onChange}) => (
+  <div style={{marginBottom: 24}}>
+    <ML mb={10}>{label}</ML>
+    <select value={value} onChange={e=>onChange(e.target.value)}>
+      <option value="">— select —</option>
+      {options.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
+
+const Sec = ({n, title, children, note}) => (
+  <div style={{marginBottom: 48}}>
+    <div style={{display:'flex', alignItems:'baseline', gap:16, marginBottom:24, paddingBottom:12, borderBottom:'1px solid var(--border-subtle)'}}>
+      <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--brass)', letterSpacing:'.15em'}}>{String(n).padStart(2,'0')}</span>
+      <span style={{fontFamily:'var(--font-display)', fontSize:22, color:'var(--text-1)'}}>{title}</span>
+      {note && <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', marginLeft:'auto', letterSpacing:'.05em'}}>{note}</span>}
+    </div>
+    {children}
+  </div>
+);
+
+// ── ANIMATED BAR ──────────────────────────────────────────────────────────────
+const AnimBar = ({value, max, delay=0}) => {
+  const [w, setW] = useState(0);
+  useEffect(() => {
+    const t = setTimeout(() => setW((value/Math.max(max, 1))*100), delay + 100);
+    return () => clearTimeout(t);
+  }, [value, max]);
+  return (
+    <div className="bar-container">
+      <div className="progress-fill" style={{width: `${w}%`, transitionDelay: `${delay}ms`}}/>
+    </div>
+  );
+};
+
+// ── SIGNAL DISPLAY ────────────────────────────────────────────────────────────
+const SignalCard = ({signal, i}) => {
+  const [open, setOpen] = useState(i === 0);
+  const urgency = signal.urgency?.toLowerCase() || 'low';
+  
+  // Mapping urgency to Entangled Time system
+  let urgColor = 'var(--patina)';
+  let urgBg = 'var(--patina-faint)';
+  let urgPill = 'pill-patina';
+  
+  if (urgency.includes('high')) { urgColor = 'var(--error)'; urgBg = 'var(--error-dim)'; urgPill = 'pill-error'; }
+  else if (urgency.includes('medium')) { urgColor = 'var(--brass)'; urgBg = 'var(--brass-dim)'; urgPill = 'pill-brass'; }
+
+  return (
+    <div className="glass-card signal-card" style={{marginBottom: 12, padding: '20px 24px', borderLeft: `3px solid ${urgColor}`}}>
+      <div style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between', cursor:'pointer', gap:16}} onClick={()=>setOpen(!open)}>
+        <div style={{flex:1}}>
+          <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:8, flexWrap:'wrap'}}>
+            <span className={`pill ${urgPill}`}>{signal.urgency?.toUpperCase()}</span>
+            <span className="pill pill-neutral">{signal.type}</span>
+          </div>
+          <div style={{fontFamily:'var(--font-display)', fontSize:18, color:'var(--text-1)', lineHeight:1.4}}>{signal.title}</div>
+        </div>
+        <span style={{color:'var(--text-3)', fontSize:12, transform: open ? 'rotate(180deg)' : 'none', transition:'transform .3s', flexShrink:0, marginTop: 4}}>▼</span>
+      </div>
+      {open && (
+        <div className="fade-in" style={{marginTop: 16, paddingTop: 16, borderTop:'1px solid var(--border-subtle)'}}>
+          <p style={{fontSize:14, color:'var(--text-2)', lineHeight:1.7, marginBottom:16}}>{signal.finding}</p>
+          {signal.evidence && (
+            <div style={{background:'var(--bg-elevated)', borderRadius:8, padding:'14px 16px', marginBottom:12}}>
+              <ML c="var(--text-4)">Evidence from data</ML>
+              <p style={{fontSize:13, color:'var(--text-2)', lineHeight:1.6, fontStyle:'italic'}}>{signal.evidence}</p>
+            </div>
+          )}
+          {signal.brandInterpretation && (
+            <div style={{background:'var(--patina-faint)', border:'1px solid var(--patina-dim)', borderRadius:8, padding:'14px 16px', marginBottom:12}}>
+              <ML c="var(--patina)">Brand interpretation</ML>
+              <p style={{fontSize:13, color:'var(--text-1)', lineHeight:1.6}}>{signal.brandInterpretation}</p>
+            </div>
+          )}
+          {signal.recommendation && (
+            <div>
+              <ML c="var(--brass)" mb={6}>Recommended action</ML>
+              <p style={{fontSize:14, color:'var(--text-1)', lineHeight:1.6}}>{signal.recommendation}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── SCORE GAUGE ───────────────────────────────────────────────────────────────
+const Gauge = ({score, label, color, delay=0}) => {
+  const [displayed, setDisplayed] = useState(0);
+  const intervalRef = useRef(null);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      let n = 0; const step = score / 40;
+      intervalRef.current = setInterval(() => {
+        n = Math.min(n + step, score);
+        setDisplayed(Math.round(n));
+        if (n >= score) clearInterval(intervalRef.current);
+      }, 18);
+    }, delay);
+    return () => { clearTimeout(t); clearInterval(intervalRef.current); };
+  }, [score, delay]);
+
+  const r = 36, cx = 44, cy = 44, circ = 2 * Math.PI * r;
+  const [stroke, setStroke] = useState(circ);
+  useEffect(() => { const t = setTimeout(() => setStroke(circ - (score/100)*circ), delay + 100); return () => clearTimeout(t); }, [score, delay]);
+  
+  return (
+    <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:10}}>
+      <svg width="88" height="88" viewBox="0 0 88 88" style={{filter: 'drop-shadow(0 0 4px rgba(18,15,10,0.5))'}}>
+        <circle cx={cx} cy={cy} r={r} fill="var(--bg-elevated)" stroke="var(--border-subtle)" strokeWidth="3"/>
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="3"
+          strokeDasharray={circ} strokeDashoffset={stroke}
+          strokeLinecap="round" transform={`rotate(-90 ${cx} ${cy})`}
+          style={{transition:`stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1) ${delay}ms`}}/>
+        <text x={cx} y={cy+1} textAnchor="middle" dominantBaseline="middle" style={{fontFamily:'var(--font-mono)', fontSize:18, fontWeight:400, fill:'var(--text-1)'}}>{displayed}</text>
+      </svg>
+      <div style={{fontFamily:'var(--font-mono)', fontSize:9, color:'var(--text-3)', textAlign:'center', letterSpacing:'.12em', textTransform:'uppercase', lineHeight:1.4, maxWidth:80}}>{label}</div>
+    </div>
+  );
+};
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+const STEPS = ['Data Input', 'Intelligence', 'Dashboard'];
+
+function App() {
+  const [step, setStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState(null);
+  const [activeTab, setActiveTab] = useState('signals');
+
+  // Brand
+  const [brandName, setBrandName] = useState('');
+  const [brandEssence, setBrandEssence] = useState('');
+  const [archetype, setArchetype] = useState('');
+  const [naturalForce, setNaturalForce] = useState('');
+  const [primaryPersona, setPrimaryPersona] = useState('');
+  const [offer, setOffer] = useState('');
+  const [voiceNotes, setVoiceNotes] = useState('');
+  const [alwaysNever, setAlwaysNever] = useState('');
+  const [contentGoal, setContentGoal] = useState('');
+
+  // Performance data
+  const [period, setPeriod] = useState('');
+  const [platforms, setPlatforms] = useState([{platform:'', topPosts:'', lowPosts:'', metrics:'', observations:''}]);
+  const [overallObservations, setOverallObservations] = useState('');
+  const [unexpectedFindings, setUnexpectedFindings] = useState('');
+  const [audienceFeedback, setAudienceFeedback] = useState('');
+  const [conversionData, setConversionData] = useState('');
+
+  useEffect(() => {
+    const q = window.QB_QBP || {};
+    if (q.brandName) setBrandName(q.brandName);
+    if (q.brandEssence) setBrandEssence(q.brandEssence);
+    if (q.archetype) setArchetype(q.archetype);
+    if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+    if (q.alwaysNever) setAlwaysNever(q.alwaysNever);
+    if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
+    if (q.offer) setOffer(q.offer);
+    if (q.naturalForce) setNaturalForce(q.naturalForce);
+    if (q.contentGoal) setContentGoal(q.contentGoal);
+  }, []);
+
+  const addPlatform = () => setPlatforms(prev => [...prev, {platform:'', topPosts:'', lowPosts:'', metrics:'', observations:''}]);
+  const updatePlatform = (i, field, val) => setPlatforms(prev => prev.map((p, idx) => idx === i ? {...p, [field]: val} : p));
+  const removePlatform = (i) => setPlatforms(prev => prev.filter((_, idx) => idx !== i));
+
+  const isValid = () => brandName && brandEssence && platforms.some(p => p.platform && (p.topPosts || p.metrics));
+
+  const buildSystemPrompt = () => `You are the Brand Performance Intelligence Agent inside the Quantum Branding BrandOS ecosystem.
+Your function is to read performance data through the lens of the Quantum Brand Profile — not as a metrics analyst, but as a brand strategist.
+Numbers are not your output. Brand signals are.
+You interpret what the data means for brand identity, positioning, voice coherence, and strategic direction.
+Return ONLY valid JSON — no markdown, no preamble.`;
+
+  const buildUserPrompt = () => `QUANTUM BRAND PROFILE:
+Brand: ${brandName}
+Essence: ${brandEssence}
+Archetype: ${archetype||'not specified'}
+Natural Force: ${naturalForce||'not specified'}
+Primary Persona: ${primaryPersona||'not specified'}
+Core Offer: ${offer||'not specified'}
+Voice Notes: ${voiceNotes||'not specified'}
+Always/Never: ${alwaysNever||'not specified'}
+Content Goal: ${contentGoal||'Build authority and attract ideal clients'}
+
+PERFORMANCE PERIOD: ${period||'recent period'}
+
+PLATFORM DATA:
+${platforms.filter(p=>p.platform).map((p,i)=>`
+Platform ${i+1}: ${p.platform}
+Top performing posts/content: ${p.topPosts||'not specified'}
+Low performing posts/content: ${p.lowPosts||'not specified'}
+Key metrics: ${p.metrics||'not specified'}
+Observations: ${p.observations||'not specified'}
+`).join('\n')}
+
+OVERALL DATA:
+General observations: ${overallObservations||'not specified'}
+Unexpected findings: ${unexpectedFindings||'not specified'}
+Audience feedback/comments: ${audienceFeedback||'not specified'}
+Conversion/business data: ${conversionData||'not specified'}
+
+Analyze this performance data through the brand lens and return:
+{
+  "overallHealthScore": number 0-100,
+  "brandCoherenceScore": number 0-100,
+  "voiceConsistencyScore": number 0-100,
+  "audienceAlignmentScore": number 0-100,
+  "momentumScore": number 0-100,
+  "executiveSummary": "3-4 sentences. The real story this data tells about the brand — not metrics, brand health.",
+  "signals": [
+    {
+      "title": "signal name — specific, named phenomenon",
+      "type": "On-identity resonance | Off-identity engagement | Audience drift | Offer signal | Authority building | Voice drift warning | Persona mismatch | Breakthrough moment",
+      "urgency": "High | Medium | Low",
+      "finding": "2-3 sentences. What is actually happening. Specific to this brand's data.",
+      "evidence": "specific data points from the input that support this signal",
+      "brandInterpretation": "what this means in brand identity terms — traced to QBP",
+      "recommendation": "the specific action to take. Concrete, not vague."
+    }
+  ],
+  "platformReadings": [
+    {
+      "platform": "platform name",
+      "healthScore": 0-100,
+      "primarySignal": "one sentence on the dominant pattern",
+      "onBrandPerformers": "what is working and why it is on-identity",
+      "offBrandPerformers": "what is getting engagement but drifting from identity",
+      "recommendation": "specific next move for this platform"
+    }
+  ],
+  "contentPatterns": {
+    "whatIsWorking": "specific content types/angles/formats performing well — with brand explanation",
+    "whatIsDrifting": "content that gets engagement but pulls away from the brand's true identity",
+    "unexploredTension": "the brand's most powerful unexplored territory — what is the biggest content opportunity not yet tapped",
+    "voiceFindings": "observations about voice consistency or drift across the period"
+  },
+  "audienceSignals": {
+    "whoIsActuallyEngaging": "who is responding — does it match the primary persona?",
+    "personaAlignment": "high | medium | low",
+    "personaAlignmentExplanation": "why and what to do about it",
+    "emergingAudience": "any unexpected audience segment showing up in the data"
+  },
+  "strategicDirections": [
+    {
+      "direction": "direction name",
+      "rationale": "why this direction — traced to performance signals",
+      "implementation": "how to execute it in the next 30 days",
+      "risk": "what this direction risks if taken"
+    }
+  ],
+  "next30Days": {
+    "singleBiggestMove": "the one highest-leverage action for the next 30 days",
+    "contentFocus": "what content direction to double down on",
+    "platformFocus": "which platform deserves most attention and why",
+    "whatToStop": "what to stop doing — specifically",
+    "whatToTest": "one new experiment to run"
+  },
+  "qbpUpdateFlags": [
+    "any finding that suggests the QBP itself needs updating — e.g. audience has shifted, new persona is emerging, voice has evolved"
+  ]
+}
+
+Requirements:
+- signals: minimum 4, maximum 8 — each specific and actionable
+- platformReadings: one per platform in input data
+- strategicDirections: exactly 3 — different risk/reward profiles
+- All findings must be traced to specific data from the input OR to the QBP identity
+- Do not give generic marketing advice. Every insight must be specific to THIS brand.`;
+
+  const run = async () => {
+    if(!isValid()){setError('Please add a brand name, brand essence, and at least one platform with data.'); return;}
+    setError(''); setLoading(true); setStep(1);
+    try{
+      const raw = await window.QB_AI(buildSystemPrompt(), buildUserPrompt(), 6000);
+      const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+      const match = clean.match(/(\{[\s\S]*\})/);
+      if(!match) throw new Error('No valid JSON returned from agent. Please try again.');
+      setResult(JSON.parse(match[1]));
+      setActiveTab('signals');
+      setStep(2);
+    }catch(e){ setError('Agent error: ' + e.message); setStep(0); }
+    setLoading(false);
+  };
+
+  const healthColor = (s) => s >= 75 ? 'var(--patina)' : s >= 50 ? 'var(--brass)' : 'var(--error)';
+
+  return (
+    <div className="main-content">
+      <header style={{borderBottom:'1px solid var(--border-subtle)', padding:'18px 32px', display:'flex', alignItems:'center', justifyContent:'space-between', background:'var(--bg-overlay)', backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)', position:'sticky', top:0, zIndex:50}}>
+        <div style={{display:'flex', alignItems:'center', gap:20}}>
+          <div style={{fontFamily:'var(--font-display)', fontSize:18, letterSpacing:'0.02em', color:'var(--text-1)'}}>QB_BrandOS</div>
+          <div style={{width:1, height:16, background:'var(--border-strong)'}}/>
+          <div style={{fontFamily:'var(--font-mono)', fontSize:10, letterSpacing:'.15em', color:'var(--text-3)', textTransform:'uppercase'}}>Phase 05 · Intelligence</div>
+        </div>
+        <div style={{display:'flex', gap:24, alignItems:'center'}}>
+          <div className="hide-tablet" style={{display:'flex', alignItems:'center', gap:8}}>
+            {STEPS.map((s, i) => (
+              <React.Fragment key={i}>
+                <div style={{display:'flex', alignItems:'center', gap:6}}>
+                  <div style={{width:6, height:6, borderRadius:'50%', background: i <= step ? 'var(--patina)' : 'var(--bg-elevated)', border: i > step ? '1px solid var(--border-strong)' : 'none', boxShadow: i === step ? '0 0 10px var(--patina-dim)' : 'none'}}/>
+                  <span style={{fontSize:10, color: i <= step ? 'var(--text-2)' : 'var(--text-4)', fontFamily:'var(--font-mono)', letterSpacing:'.1em', textTransform:'uppercase'}}>{s}</span>
+                </div>
+                {i < STEPS.length - 1 && <div style={{width:16, height:1, background:'var(--border-subtle)', margin:'0 4px'}}/>}
+              </React.Fragment>
+            ))}
+          </div>
+          <button onClick={toggleTheme} className="tab-btn" style={{padding: '6px 12px'}}>Toggle Theme</button>
+        </div>
+      </header>
+
+      <main style={{flex:1, maxWidth:860, margin:'0 auto', width:'100%', padding:'56px 24px'}}>
+
+        {step === 0 && (
+          <div className="fade-in">
+            <div style={{marginBottom: 56, textAlign:'center'}}>
+              <div style={{display:'inline-flex', alignItems:'center', gap:8, marginBottom: 20}}>
+                <div className="pulse-dot"></div>
+                <ML mb={0} c="var(--brass)">Intelligence Agent Ready</ML>
+              </div>
+              <h1 style={{fontSize:48, marginBottom:16}}>Brand Performance Dashboard</h1>
+              <p style={{color:'var(--text-2)', fontSize:16, maxWidth:600, margin:'0 auto', lineHeight: 1.7}}>Feed your performance data. The agent reads it through the brand lens — not as a metrics report, but as human intelligence.</p>
+            </div>
+
+            <Sec n={1} title="Brand Context" note="* required">
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand under review" rows={1}/>
+                <SF label="Archetype" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
+              </div>
+              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth — one sentence" rows={2}/>
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+                <TF label="Primary Persona" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who this brand serves" rows={2}/>
+                <TF label="Core Offer" value={offer} onChange={setOffer} placeholder="What this brand sells" rows={2}/>
+              </div>
+              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand writes and speaks" rows={2}/>
+              <TF label="Content Goal" value={contentGoal} onChange={setContentGoal} placeholder="e.g. Book discovery calls, grow email list, establish authority" rows={1}/>
+            </Sec>
+
+            <Sec n={2} title="Performance Period">
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+                <SF label="Period" options={PERIODS} value={period} onChange={setPeriod}/>
+                <div/>
+              </div>
+            </Sec>
+
+            <Sec n={3} title="Platform Data" note="* at least one required">
+              {platforms.map((p, i) => (
+                <Card key={i} style={{marginBottom: 16, padding: '24px 28px'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
+                    <SF label={`Platform ${i+1}`} options={PLATFORMS_LIST} value={p.platform} onChange={v=>updatePlatform(i,'platform',v)}/>
+                    {platforms.length > 1 && (
+                      <button onClick={()=>removePlatform(i)} className="btn-remove-platform">×</button>
+                    )}
+                  </div>
+                  <TF label="Top performing posts / content" value={p.topPosts} onChange={v=>updatePlatform(i,'topPosts',v)} placeholder="Describe the posts that performed best — topic, format, angle, and rough numbers" rows={2}/>
+                  <TF label="Low performing posts / content" value={p.lowPosts} onChange={v=>updatePlatform(i,'lowPosts',v)} placeholder="What underperformed and any patterns you noticed" rows={2}/>
+                  <TF label="Key metrics" value={p.metrics} onChange={v=>updatePlatform(i,'metrics',v)} placeholder="e.g. Avg reach: 2.4K, Engagement rate: 4.2%, Followers gained: +180" rows={1}/>
+                  <TF label="Your own observations" value={p.observations} onChange={v=>updatePlatform(i,'observations',v)} placeholder="What felt right? What felt off? Any patterns you noticed beyond the numbers?" rows={2}/>
+                </Card>
+              ))}
+              <button onClick={addPlatform} className="btn-add-platform">
+                + Add Platform
+              </button>
+            </Sec>
+
+            <Sec n={4} title="Additional Context">
+              <TF label="Overall observations" value={overallObservations} onChange={setOverallObservations} placeholder="Anything that stood out across all platforms this period" rows={3}/>
+              <TF label="Unexpected findings" value={unexpectedFindings} onChange={setUnexpectedFindings} placeholder="Surprises — positive or negative — that the numbers don't fully explain" rows={2}/>
+              <TF label="Audience feedback / notable comments" value={audienceFeedback} onChange={setAudienceFeedback} placeholder="What people said — DMs, comments, replies that gave you signal about what landed" rows={2}/>
+              <TF label="Conversion / business data" value={conversionData} onChange={setConversionData} placeholder="Leads, calls booked, sales, email signups — connect content to commercial outcomes where possible" rows={2}/>
+            </Sec>
+
+            {error && <div style={{background:'var(--error-dim)', border:'1px solid rgba(138,74,74,.3)', borderRadius:8, padding:'16px 20px', marginBottom:24, fontSize:14, color:'var(--error)'}}>{error}</div>}
+
+            <div style={{display:'flex', justifyContent:'flex-end', marginTop: 16}}>
+              <button onClick={run} disabled={!isValid()} className="btn-primary">
+                Analyze Performance →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="fade-in" style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:480, gap:36, textAlign:'center'}}>
+            <div className="pulse-dot" style={{transform: 'scale(1.5)'}}></div>
+            <div>
+              <ML c="var(--brass)" mb={16}>Intelligence Agent Processing</ML>
+              <div style={{fontFamily:'var(--font-display)', color:'var(--text-2)', fontSize:22, lineHeight:1.8, maxWidth:420}}>
+                Reading performance data...<br/>
+                Cross-referencing identity...<br/>
+                Identifying signals...<br/>
+                Scoring health dimensions...
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && result && (
+          <div className="fade-in">
+            <div style={{marginBottom: 40, display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap', gap:16}}>
+              <div>
+                <div style={{display:'flex', alignItems:'center', gap:8, marginBottom: 12}}>
+                  <div className="pulse-dot" style={{width: 5, height: 5}}></div>
+                  <ML c="var(--brass)" mb={0}>Analysis Complete</ML>
+                </div>
+                <h1 style={{fontSize:36, marginBottom:8}}>{brandName}</h1>
+                <p style={{color:'var(--text-3)', fontSize:14, fontFamily:'var(--font-mono)'}}>{period || 'Performance period'} · Interpreted through QBP</p>
+              </div>
+              <button onClick={() => {setStep(0); setResult(null);}} className="tab-btn" style={{padding:'10px 16px'}}>New Analysis</button>
+            </div>
+
+            {/* Score gauges */}
+            <Card style={{marginBottom: 32}}>
+              <ML c="var(--text-4)" mb={24}>Brand health scores</ML>
+              <div style={{display:'flex', justifyContent:'space-around', flexWrap:'wrap', gap:20}}>
+                {[
+                  {label:'Overall Health', score: result.overallHealthScore, color: healthColor(result.overallHealthScore)},
+                  {label:'Brand Coherence', score: result.brandCoherenceScore, color: healthColor(result.brandCoherenceScore)},
+                  {label:'Voice Consistency', score: result.voiceConsistencyScore, color: healthColor(result.voiceConsistencyScore)},
+                  {label:'Audience Alignment', score: result.audienceAlignmentScore, color: healthColor(result.audienceAlignmentScore)},
+                  {label:'Momentum', score: result.momentumScore, color: healthColor(result.momentumScore)},
+                ].map((g, i) => <Gauge key={i} score={g.score||0} label={g.label} color={g.color} delay={i*120}/>)}
+              </div>
+            </Card>
+
+            {/* Executive summary - Manifesto Block */}
+            <div className="manifesto-block glass-card fade-in" style={{marginBottom: 32}}>
+              <ML c="var(--brass)" mb={16}>Executive summary</ML>
+              <p style={{fontFamily:'var(--font-display)', fontSize:22, lineHeight:1.6, color:'var(--text-1)'}}>{result.executiveSummary}</p>
+            </div>
+
+            {/* Tabs */}
+            <div style={{display:'flex', gap:8, flexWrap:'wrap', marginBottom:32, paddingBottom:20, borderBottom:'1px solid var(--border-subtle)'}}>
+              {['signals','platforms','patterns','audience','directions','next30'].map(t => (
+                <button key={t} className={`tab-btn ${activeTab===t ? 'active' : ''}`} onClick={()=>setActiveTab(t)}>
+                  {t==='signals' ? `Signals (${result.signals?.length||0})` : t==='platforms' ? 'Platforms' : t==='patterns' ? 'Content Patterns' : t==='audience' ? 'Audience' : t==='directions' ? 'Strategic Dirs' : 'Next 30 Days'}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'signals' && (
+              <div className="fade-in">
+                {result.signals?.map((s, i) => <SignalCard key={i} signal={s} i={i}/>)}
+              </div>
+            )}
+
+            {activeTab === 'platforms' && (
+              <div className="fade-in" style={{display:'flex', flexDirection:'column', gap:16}}>
+                {result.platformReadings?.map((p, i) => (
+                  <Card key={i}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20, gap:16}}>
+                      <div>
+                        <div style={{fontFamily:'var(--font-display)', fontSize:24, color:'var(--text-1)', marginBottom:8}}>{p.platform}</div>
+                        <p style={{fontSize:14, color:'var(--text-2)', fontStyle:'italic'}}>{p.primarySignal}</p>
+                      </div>
+                      <div style={{textAlign:'center', flexShrink:0, padding:'10px 16px', background:'var(--bg-elevated)', borderRadius:8, border:'1px solid var(--border-subtle)'}}>
+                        <div style={{fontSize:24, fontWeight:400, color: healthColor(p.healthScore||50), fontFamily:'var(--font-mono)'}}>{p.healthScore||'—'}</div>
+                        <div style={{fontSize:9, color:'var(--text-3)', letterSpacing:'.1em', textTransform:'uppercase', fontFamily:'var(--font-mono)', marginTop:4}}>health</div>
+                      </div>
+                    </div>
+                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16}}>
+                      {p.onBrandPerformers && (
+                        <div style={{background:'var(--patina-faint)', border:'1px solid var(--patina-dim)', borderRadius:8, padding:'16px'}}>
+                          <ML c="var(--patina)" mb={8}>On-brand performers</ML>
+                          <p style={{fontSize:13, color:'var(--text-1)', lineHeight:1.6}}>{p.onBrandPerformers}</p>
+                        </div>
+                      )}
+                      {p.offBrandPerformers && (
+                        <div style={{background:'var(--brass-faint)', border:'1px solid var(--brass-dim)', borderRadius:8, padding:'16px'}}>
+                          <ML c="var(--brass)" mb={8}>Off-brand performers</ML>
+                          <p style={{fontSize:13, color:'var(--text-1)', lineHeight:1.6}}>{p.offBrandPerformers}</p>
+                        </div>
+                      )}
+                    </div>
+                    {p.recommendation && (
+                      <div style={{padding:'16px', background:'var(--bg-elevated)', borderRadius:8, border:'1px solid var(--border-subtle)'}}>
+                        <ML c="var(--text-3)" mb={8}>Recommended next move</ML>
+                        <p style={{fontSize:14, color:'var(--text-2)', lineHeight:1.6}}>{p.recommendation}</p>
+                      </div>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'patterns' && result.contentPatterns && (
+              <div className="fade-in" style={{display:'flex', flexDirection:'column', gap:16}}>
+                {[
+                  {label:'What is working', key:'whatIsWorking', color:'var(--patina)', accent:'var(--patina)'},
+                  {label:'What is drifting', key:'whatIsDrifting', color:'var(--brass)', accent:'var(--brass)'},
+                  {label:'Unexplored territory — biggest opportunity', key:'unexploredTension', color:'var(--creation)', accent:'var(--creation)'},
+                  {label:'Voice findings', key:'voiceFindings', color:'var(--content)', accent:'var(--content)'},
+                ].map(item => (
+                  <Card key={item.key} accent={item.accent}>
+                    <ML c={item.color} mb={12}>{item.label}</ML>
+                    <p style={{fontSize:15, color:'var(--text-1)', lineHeight:1.7}}>{result.contentPatterns[item.key]}</p>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'audience' && result.audienceSignals && (
+              <div className="fade-in" style={{display:'flex', flexDirection:'column', gap:16}}>
+                <Card accent="var(--creation)">
+                  <ML c="var(--creation)" mb={12}>Who is actually engaging</ML>
+                  <p style={{fontSize:15, color:'var(--text-1)', lineHeight:1.7, marginBottom:16}}>{result.audienceSignals.whoIsActuallyEngaging}</p>
+                  <div style={{display:'flex', gap:12, alignItems:'center', background:'var(--bg-elevated)', padding:'10px 16px', borderRadius:6, width:'fit-content'}}>
+                    <span style={{fontSize:11, color:'var(--text-3)', fontFamily:'var(--font-mono)', textTransform:'uppercase', letterSpacing:'.1em'}}>Persona alignment:</span>
+                    <span className={`pill pill-${result.audienceSignals.personaAlignment==='high' ? 'patina' : result.audienceSignals.personaAlignment==='medium' ? 'brass' : 'error'}`}>{result.audienceSignals.personaAlignment?.toUpperCase()}</span>
+                  </div>
+                </Card>
+                {result.audienceSignals.personaAlignmentExplanation && (
+                  <Card>
+                    <ML mb={12}>Alignment explanation + action</ML>
+                    <p style={{fontSize:15, color:'var(--text-2)', lineHeight:1.7}}>{result.audienceSignals.personaAlignmentExplanation}</p>
+                  </Card>
+                )}
+                {result.audienceSignals.emergingAudience && (
+                  <Card accent="var(--brass)">
+                    <ML c="var(--brass)" mb={12}>Emerging audience segment</ML>
+                    <p style={{fontSize:15, color:'var(--text-1)', lineHeight:1.7}}>{result.audienceSignals.emergingAudience}</p>
+                  </Card>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'directions' && (
+              <div className="fade-in" style={{display:'flex', flexDirection:'column', gap:16}}>
+                {result.strategicDirections?.map((d, i) => (
+                  <Card key={i} accent={i===0 ? 'var(--patina)' : i===1 ? 'var(--creation)' : 'var(--brass)'}>
+                    <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:16}}>
+                      <span style={{fontFamily:'var(--font-mono)', fontSize:10, padding:'4px 10px', borderRadius:4, background:'var(--bg-elevated)', color:'var(--text-3)', border:'1px solid var(--border-medium)'}}>DIR {String(i+1).padStart(2,'0')}</span>
+                      <span style={{fontFamily:'var(--font-display)', fontSize:20, color:'var(--text-1)'}}>{d.direction}</span>
+                    </div>
+                    <p style={{fontSize:15, color:'var(--text-2)', lineHeight:1.7, marginBottom:20}}>{d.rationale}</p>
+                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+                      <div style={{background:'var(--bg-elevated)', borderRadius:8, padding:'16px', border:'1px solid var(--border-subtle)'}}>
+                        <ML c="var(--patina)" mb={8}>Implementation</ML>
+                        <p style={{fontSize:13, color:'var(--text-2)', lineHeight:1.6}}>{d.implementation}</p>
+                      </div>
+                      <div style={{background:'var(--bg-elevated)', borderRadius:8, padding:'16px', border:'1px solid var(--border-subtle)'}}>
+                        <ML c="var(--brass)" mb={8}>Risk</ML>
+                        <p style={{fontSize:13, color:'var(--text-2)', lineHeight:1.6}}>{d.risk}</p>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'next30' && result.next30Days && (
+              <div className="fade-in" style={{display:'flex', flexDirection:'column', gap:16}}>
+                <div className="manifesto-block glass-card" style={{padding: '28px 32px'}}>
+                  <ML c="var(--brass)" mb={12}>Single biggest move — next 30 days</ML>
+                  <p style={{fontFamily:'var(--font-display)', fontSize:24, color:'var(--text-1)', lineHeight:1.5}}>{result.next30Days.singleBiggestMove}</p>
+                </div>
+                <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+                  {[
+                    {label:'Content focus', key:'contentFocus', color:'var(--creation)'},
+                    {label:'Platform focus', key:'platformFocus', color:'var(--patina)'},
+                    {label:'What to stop', key:'whatToStop', color:'var(--error)'},
+                    {label:'What to test', key:'whatToTest', color:'var(--brass)'},
+                  ].map(item => (
+                    <Card key={item.key}>
+                      <ML c={item.color} mb={10}>{item.label}</ML>
+                      <p style={{fontSize:14, color:'var(--text-2)', lineHeight:1.6}}>{result.next30Days[item.key]}</p>
+                    </Card>
+                  ))}
+                </div>
+                {result.qbpUpdateFlags?.length > 0 && (
+                  <Card accent="var(--brass)">
+                    <ML c="var(--brass)" mb={16}>QBP Update Flags — Profile Evolution</ML>
+                    {result.qbpUpdateFlags.map((f, i) => (
+                      <div key={i} style={{display:'flex', gap:12, padding:'12px 0', borderBottom: i < result.qbpUpdateFlags.length-1 ? '1px solid var(--border-subtle)' : '', fontSize:14, color:'var(--text-2)', lineHeight:1.6}}>
+                        <span style={{color:'var(--brass)', flexShrink:0, fontFamily:'var(--font-mono)', marginTop:2}}>→</span>
+                        <span>{f}</span>
+                      </div>
+                    ))}
+                  </Card>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+
+      <footer style={{borderTop:'1px solid var(--border-strong)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center', background:'var(--bg-deep)'}}>
+        <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', letterSpacing:'.2em', textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', letterSpacing:'.15em'}}>Brand Performance Dashboard / Phase 05</span>
+      </footer>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
