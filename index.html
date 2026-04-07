@@ -94,7 +94,7 @@ section{position:relative;z-index:2}
 .label-brass{color:var(--brass)}
 
 /* Headings */
-.h1{font-family:var(--font-display);font-weight:400;font-size:clamp(2.6rem,5vw,4rem);line-height:1.08;letter-spacing:-0.015em;color:var(--text-1)}
+.h1{font-family:var(--font-display);font-weight:400;font-size:clamp(2.6rem,5vw,4rem);line-height:1.08;letter-spacing:-0.015em;color:var(--text-1);max-width:540px}
 .h2{font-family:var(--font-display);font-weight:400;font-size:clamp(1.8rem,3.5vw,2.8rem);line-height:1.12;color:var(--text-1)}
 .h3{font-family:var(--font-display);font-weight:400;font-size:clamp(1.2rem,2vw,1.6rem);line-height:1.2;color:var(--text-1)}
 
@@ -177,7 +177,7 @@ section{position:relative;z-index:2}
 /* Hero demo card */
 .demo-card{border-radius:18px;overflow:hidden;background:var(--bg-base);border:1px solid var(--border-subtle);
   box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 60px -10px rgba(58,95,74,0.05);position:relative}
-/* .glow replaced by .glow-pulse keyframe animation — see bottom of CSS */
+.demo-card.glow{border-color:var(--patina-lit);box-shadow:0 0 40px -10px var(--patina-dim),0 40px 80px -20px rgba(0,0,0,0.5)}
 .demo-titlebar{height:36px;background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;padding:0 14px;gap:6px}
 .demo-dot{width:8px;height:8px;border-radius:50%;background:var(--border-medium)}
 .demo-dot.r{background:#8A4A4A}.demo-dot.y{background:var(--brass)}.demo-dot.g{background:var(--patina)}
@@ -395,7 +395,7 @@ section{position:relative;z-index:2}
 .faq-icon{font-size:1.2rem;color:var(--text-3);transition:transform 0.25s ease;flex-shrink:0}
 .faq-item.open .faq-icon{transform:rotate(45deg)}
 .faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
-.faq-item.open .faq-answer{max-height:800px}
+.faq-item.open .faq-answer{max-height:400px}
 .faq-answer-inner{padding:0 24px 20px;font-size:0.9rem;color:var(--text-2);line-height:1.7}
 
 /* ===========================
@@ -559,7 +559,7 @@ section{position:relative;z-index:2}
         <div class="hero-stats hero-cascade" style="animation-delay:0.5s">
           <div><div class="hero-stat-value">5 min</div><div class="hero-stat-label">To your first result</div></div>
           <div><div class="hero-stat-value">18</div><div class="hero-stat-label">Connected AI tools</div></div>
-          <div><div class="hero-stat-value">&euro;0</div><div class="hero-stat-label">To start. Free forever.</div></div>
+          <div><div class="hero-stat-value">$0</div><div class="hero-stat-label">To start. Free forever.</div></div>
         </div>
       </div>
       <div class="hero-cascade-card" style="animation-delay:0.6s">
@@ -620,7 +620,7 @@ section{position:relative;z-index:2}
         </div>
         <div class="scan-ctas">
           <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-sm">Full diagnostic (free)</a>
-          <a href="https://app.quantumbranding.ai" class="btn btn-secondary btn-sm">Start building</a>
+          <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-secondary btn-sm">Start building</a>
         </div>
       </div>
       <div class="scan-note">No account &middot; No credit card &middot; Instant results</div>
@@ -694,22 +694,22 @@ section{position:relative;z-index:2}
           <div class="profile-row">
             <div class="profile-meta"><span class="profile-label">Brand essence</span><span class="profile-pct">95%</span></div>
             <div class="profile-value" style="margin-bottom:6px">"The intersection of craft and ambition"</div>
-            <div class="profile-track"><div class="profile-fill" data-width="95%"></div></div>
+            <div class="profile-track"><div class="profile-fill" data-width="95"></div></div>
           </div>
           <div class="profile-row">
             <div class="profile-meta"><span class="profile-label">Natural force</span><span class="profile-pct">82%</span></div>
             <div class="profile-value" style="margin-bottom:6px">Wildfire</div>
-            <div class="profile-track"><div class="profile-fill" data-width="82%"></div></div>
+            <div class="profile-track"><div class="profile-fill" data-width="82"></div></div>
           </div>
           <div class="profile-row">
             <div class="profile-meta"><span class="profile-label">Archetype</span><span class="profile-pct">88%</span></div>
             <div class="profile-value" style="margin-bottom:6px">The Alchemist</div>
-            <div class="profile-track"><div class="profile-fill" data-width="88%"></div></div>
+            <div class="profile-track"><div class="profile-fill" data-width="88"></div></div>
           </div>
           <div class="profile-row">
             <div class="profile-meta"><span class="profile-label">Primary persona</span><span class="profile-pct">76%</span></div>
             <div class="profile-value" style="margin-bottom:6px">"Founders who outgrew their brand"</div>
-            <div class="profile-track"><div class="profile-fill" data-width="76%"></div></div>
+            <div class="profile-track"><div class="profile-fill" data-width="76"></div></div>
           </div>
         </div>
       </div>
@@ -794,7 +794,7 @@ section{position:relative;z-index:2}
         <div>
           <div class="persona-title">I have an idea. No brand yet.</div>
           <p class="persona-desc">You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.</p>
-          <a href="https://app.quantumbranding.ai" class="btn btn-primary btn-sm">Start from zero</a>
+          <a href="https://app.quantumbranding.ai/signal-scan.html?door=blank" class="btn btn-primary btn-sm">Start from zero</a>
         </div>
       </div>
       <div class="persona-panel" data-panel="1">
@@ -805,7 +805,7 @@ section{position:relative;z-index:2}
         <div>
           <div class="persona-title">I have a brand. Something feels off.</div>
           <p class="persona-desc">The tools audit what you have and tell you what to keep, fix, or rebuild. Logo evaluation, voice analysis, performance review. Precise verdict, clear path forward.</p>
-          <a href="https://app.quantumbranding.ai" class="btn btn-primary btn-sm">Audit your brand</a>
+          <a href="https://app.quantumbranding.ai/signal-scan.html?door=doubt" class="btn btn-primary btn-sm">Audit your brand</a>
         </div>
       </div>
       <div class="persona-panel" data-panel="2">
@@ -816,7 +816,7 @@ section{position:relative;z-index:2}
         <div>
           <div class="persona-title">Competition is coming.</div>
           <p class="persona-desc">Skip to strategy and intelligence. The War Table pressure-tests your next move. The Predictive Panel simulates market response before you spend.</p>
-          <a href="https://app.quantumbranding.ai" class="btn btn-primary btn-sm">Enter strategic mode</a>
+          <a href="https://app.quantumbranding.ai/signal-scan.html?door=scale" class="btn btn-primary btn-sm">Enter strategic mode</a>
         </div>
       </div>
       <div class="persona-panel" data-panel="3">
@@ -856,10 +856,10 @@ section{position:relative;z-index:2}
   <div class="container">
     <div class="panel-grid">
       <div class="panel-text reveal">
-        <div class="label label-brass">Before you spend a euro</div>
+        <div class="label label-brass">Before you spend a dollar</div>
         <h2 class="h2">Test your idea before you launch it.</h2>
         <p>The Predictive Panel runs your concept through thousands of simulated customers. You see who responds, what works, and whether to go or wait.</p>
-        <a href="https://app.quantumbranding.ai" class="btn btn-primary">Try the panel</a>
+        <a href="https://app.quantumbranding.ai/predictive-panel.html" class="btn btn-primary">Try the panel</a>
       </div>
       <div class="reveal rd2">
         <div class="panel-card glass" id="panelCard">
@@ -868,22 +868,22 @@ section{position:relative;z-index:2}
             <span class="panel-confidence-label">Overall confidence</span>
             <span class="panel-confidence-num">74</span>
           </div>
-          <div class="panel-main-track"><div class="panel-main-fill" data-width="74%"></div></div>
+          <div class="panel-main-track"><div class="panel-main-fill" data-width="74"></div></div>
           <div class="panel-scenario">
             <div class="panel-scenario-head"><span class="panel-scenario-name">Strong launch</span><span class="panel-scenario-pct" style="color:var(--patina-lit)">62%</span></div>
-            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:var(--patina-lit)" data-width="62%"></div></div>
+            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:var(--patina-lit)" data-width="62"></div></div>
           </div>
           <div class="panel-scenario">
             <div class="panel-scenario-head"><span class="panel-scenario-name">Needs price adjustment</span><span class="panel-scenario-pct" style="color:#4A7A8A">22%</span></div>
-            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:#4A7A8A" data-width="22%"></div></div>
+            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:#4A7A8A" data-width="22"></div></div>
           </div>
           <div class="panel-scenario">
             <div class="panel-scenario-head"><span class="panel-scenario-name">Channel misfit</span><span class="panel-scenario-pct" style="color:var(--brass)">11%</span></div>
-            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:var(--brass)" data-width="11%"></div></div>
+            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:var(--brass)" data-width="11"></div></div>
           </div>
           <div class="panel-scenario">
             <div class="panel-scenario-head"><span class="panel-scenario-name">Positioning unclear</span><span class="panel-scenario-pct" style="color:#8A4A4A">5%</span></div>
-            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:#8A4A4A" data-width="5%"></div></div>
+            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:#8A4A4A" data-width="5"></div></div>
           </div>
           <div class="panel-verdict">
             <div class="panel-verdict-label">Verdict</div>
@@ -907,7 +907,7 @@ section{position:relative;z-index:2}
     <div class="pricing-grid">
       <div class="pricing-card glass glass-hover reveal rd1">
         <div class="pricing-name">Free</div>
-        <div class="pricing-price">&euro;0 <span>/forever</span></div>
+        <div class="pricing-price">$0 <span>/forever</span></div>
         <div class="pricing-desc">Signal Scan, Brand Soul Map, and Sensescape. Unlimited runs. Your brand profile starts here.</div>
         <ul class="pricing-features">
           <li class="pricing-feature">Signal Scan diagnostic</li>
@@ -920,7 +920,7 @@ section{position:relative;z-index:2}
       </div>
       <div class="pricing-card glass glass-hover reveal rd2">
         <div class="pricing-name">Starter</div>
-        <div class="pricing-price">&euro;97 <span>/month</span></div>
+        <div class="pricing-price">$97 <span>/month</span></div>
         <div class="pricing-desc">All 18 tools. Unlimited runs. Your complete brand system, activated.</div>
         <ul class="pricing-features">
           <li class="pricing-feature">All 18 agent tools</li>
@@ -929,11 +929,11 @@ section{position:relative;z-index:2}
           <li class="pricing-feature">Brand Document export</li>
           <li class="pricing-feature">Email support</li>
         </ul>
-        <a href="https://app.quantumbranding.ai" class="btn btn-secondary">Get started</a>
+        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-secondary">Get started</a>
       </div>
       <div class="pricing-card glass glass-hover featured reveal rd3">
         <div class="pricing-name">Pro <span class="pricing-badge">Most popular</span></div>
-        <div class="pricing-price">&euro;297 <span>/month</span></div>
+        <div class="pricing-price">$297 <span>/month</span></div>
         <div class="pricing-desc">Everything in Starter plus Predictive Panel and quarterly strategy.</div>
         <ul class="pricing-features">
           <li class="pricing-feature">Everything in Starter</li>
@@ -942,11 +942,11 @@ section{position:relative;z-index:2}
           <li class="pricing-feature">Quarterly strategy session</li>
           <li class="pricing-feature">Early access to new tools</li>
         </ul>
-        <a href="https://app.quantumbranding.ai" class="btn btn-primary">Go Pro</a>
+        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary">Go Pro</a>
       </div>
       <div class="pricing-card glass glass-hover reveal rd4">
         <div class="pricing-name">Agency</div>
-        <div class="pricing-price">&euro;997 <span>/month</span></div>
+        <div class="pricing-price">$997 <span>/month</span></div>
         <div class="pricing-desc">Up to 8 client portals. White-label delivery. Your brand on every output.</div>
         <ul class="pricing-features">
           <li class="pricing-feature">8 white-label client portals</li>
@@ -961,7 +961,7 @@ section{position:relative;z-index:2}
     <div class="pricing-note reveal">
       <span class="pricing-note-inner"><span class="pulse-dot" style="width:6px;height:6px;"></span>Free: Signal Scan + Brand Soul Map + Sensescape &mdash; no account needed</span>
     </div>
-    <div class="pricing-anchor reveal">What would an agency charge for this? &euro;5,000&ndash;20,000. Minimum.</div>
+    <div class="pricing-anchor reveal">What would an agency charge for this? $5,000&ndash;20,000. Minimum.</div>
   </div>
 </section>
 
@@ -974,6 +974,7 @@ section{position:relative;z-index:2}
       <div class="founder-avatar">NB</div>
       <div class="founder-name">Nizzar Ben Chekroune</div>
       <div class="founder-role">Founder, Quantum Branding</div>
+      <div class="founder-creds-label" style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-top:20px;margin-bottom:8px">Work featured in</div>
       <div class="founder-creds">
         <span class="marquee-tag">United Nations Vienna</span>
         <span class="marquee-tag">UNIDO</span>
@@ -1056,7 +1057,7 @@ section{position:relative;z-index:2}
         <div class="footer-col-title">Company</div>
         <a href="mailto:nizzar@quantumbranding.ai" class="footer-link">nizzar@quantumbranding.ai</a>
         <a href="https://nizzar.com" class="footer-link">nizzar.com</a>
-        <a href="https://www.linkedin.com/in/nizzar" class="footer-link">LinkedIn</a>
+        <a href="https://linkedin.com/in/nizzar" class="footer-link">LinkedIn</a>
         <a href="https://instagram.com/thequantumbranding" class="footer-link">Instagram</a>
       </div>
     </div>
@@ -1088,7 +1089,7 @@ var hamburger=document.getElementById('hamburger'),mm=document.getElementById('m
 hamburger.addEventListener('click',function(){mm.classList.add('open');document.body.style.overflow='hidden'});
 mmClose.addEventListener('click',closeMM);
 function closeMM(){mm.classList.remove('open');document.body.style.overflow=''}
-window.goTo=function(id){closeMM();var el=document.getElementById(id);if(el)window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-72,behavior:'smooth'})};
+window.goTo=function(id){closeMM();var el=document.getElementById(id);if(el)window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-72,behavior:'smooth'})};
 
 /* ===== SCROLL REVEAL ===== */
 var reveals=document.querySelectorAll('.reveal');
@@ -1295,31 +1296,4 @@ setTimeout(runDemo,1400);
     var baseAlpha=isDark()?1:0.5;
     particles.forEach(function(p){
       p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
-      if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=p.color;
-      ctx.globalAlpha=p.alpha*baseAlpha;
-      ctx.fill();
-    });
-    ctx.globalAlpha=1;
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-
-
-  /* Video placeholder click handler */
-  var videoCard = document.getElementById('videoCard');
-  if(videoCard){
-    videoCard.addEventListener('click',function(){
-      /* Replace this URL with your actual video URL when ready */
-      var videoUrl = 'https://www.youtube.com/@thequantumbranding';
-      window.open(videoUrl,'_blank','noopener,noreferrer');
-    });
-  }
-})();
-</script>
-</body>
-</html>
+      if(p.x<0)p.x=canvas.width;if(p.
