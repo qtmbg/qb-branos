@@ -625,45 +625,22 @@ function buildEmail(){
     const authorityScore   = dimScore('price');
     const topGapLabel      = topGap.label;
     const verdictText      = verdict.label;
-    console.log('Klaviyo call firing for:', userEmail);
-    fetch('https://a.klaviyo.com/client/subscriptions/?company_id=XnAGuL', {
+    try {
+      console.log('Klaviyo call firing for:', userEmail);
+      var klaviyoBody = new URLSearchParams();
+      klaviyoBody.append('g', 'Rh3gvy');
+      klaviyoBody.append('email', userEmail);
+      klaviyoBody.append('$fields', 'email');
+      klaviyoBody.append('$source', 'Signal Scan');
+      fetch('https://manage.kmail-lists.com/ajax/subscriptions/subscribe', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'revision': '2024-10-15'
-        },
-        body: JSON.stringify({
-          data: {
-            type: 'subscription',
-            attributes: {
-              custom_source: 'Signal Scan',
-              profile: {
-                data: {
-                  type: 'profile',
-                  attributes: {
-                    email: userEmail,
-                    properties: {
-                      signal_scan_overall: overallScore,
-                      signal_scan_identity: identityScore,
-                      signal_scan_visual: visualScore,
-                      signal_scan_voice: voiceScore,
-                      signal_scan_positioning: positioningScore,
-                      signal_scan_content: contentScore,
-                      signal_scan_authority: authorityScore,
-                      signal_scan_top_gap: topGapLabel,
-                      signal_scan_verdict: verdictText,
-                      signal_scan_date: new Date().toISOString()
-                    }
-                  }
-                }
-              }
-            },
-            relationships: {
-              list: { data: { type: 'list', id: 'Rh3gvy' } }
-            }
-          }
-        })
-      });
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: klaviyoBody.toString()
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ console.log('Klaviyo response:', d); })
+      .catch(function(e){ console.warn('Klaviyo network error:', e); });
+    } catch(err) { console.warn('Klaviyo signal-scan sync failed:', err); }
     } catch(err) {
       console.error('Signal scan submit error:', err);
     }
