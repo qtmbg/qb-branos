@@ -3,406 +3,762 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Content Scheduler</title>
-<script>
-  (function() {
-    try {
-      var theme = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-      if (theme === 'dark') document.documentElement.classList.add('dark');
-    } catch(e) {}
-  })();
-</script>
+<title>QB BrandOS — Content Scheduler</title>
 <script>
 (function(){
-  var p=new URLSearchParams(window.location.search);
-  try{window.QB_QBP=JSON.parse(localStorage.getItem('qb_qbp')||'{}');}catch(e){window.QB_QBP={};}
+  try{var t=localStorage.getItem('qb-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}
 })();
 </script>
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>html:not([data-theme]){background:#080604;color:#A89A88}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
-  --border:#2a2a2a;--border2:#333;
-  --text:#e8e8e8;--text2:#888;--text3:#555;
-  --green:#4ade80;--green2:rgba(74,222,128,0.12);
-  --red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;
-  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+:root,[data-theme="dark"]{
+  --bg-void:#080604;--bg-deep:#0A0806;--bg-overlay:rgba(18,15,10,0.9);
+  --bg-surface:rgba(140,110,70,0.045);--bg-elevated:rgba(140,110,70,0.07);
+  --border-subtle:rgba(140,110,70,0.06);--border-medium:rgba(140,110,70,0.11);--border-strong:rgba(140,110,70,0.18);
+  --patina:#3A5F4A;--patina-lit:#4A7A5E;--patina-dim:rgba(58,95,74,0.2);--patina-faint:rgba(58,95,74,0.08);
+  --brass:#A8903E;--brass-lit:#C4A84E;--brass-dim:rgba(168,144,62,0.18);--brass-faint:rgba(168,144,62,0.06);
+  --creation:#4A7A8A;--error:#8A4A4A;
+  --text-1:#DDD4C4;--text-2:#A89A88;--text-3:#6A5E50;--text-4:#3E3830;
+  --font-display:'DM Serif Display',Georgia,serif;
+  --font-body:'Inter',-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
 }
-body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
-input:focus,textarea:focus,select:focus{border-color:var(--green)}
-textarea{resize:vertical;line-height:1.6}
-select option{background:var(--bg3)}
-button{cursor:pointer;font-family:var(--font);border:none;outline:none}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+[data-theme="light"]{
+  --bg-void:#F4F0EB;--bg-deep:#EDE8E2;--bg-overlay:rgba(244,240,235,0.95);
+  --bg-surface:rgba(100,80,50,0.04);--bg-elevated:rgba(100,80,50,0.07);
+  --border-subtle:rgba(100,80,50,0.08);--border-medium:rgba(100,80,50,0.14);--border-strong:rgba(100,80,50,0.22);
+  --patina:#2E4E3C;--patina-lit:#3A6A4E;--patina-dim:rgba(46,78,60,0.15);--patina-faint:rgba(46,78,60,0.06);
+  --brass:#8A7430;--brass-lit:#A08A3A;--brass-dim:rgba(138,116,48,0.15);--brass-faint:rgba(138,116,48,0.05);
+  --creation:#2E5A6A;--error:#8A4A4A;
+  --text-1:#1A1610;--text-2:#5A5040;--text-3:#8A7E70;--text-4:#B8AEA0;
+}
+body{background:var(--bg-void);color:var(--text-2);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse 70% 60% at 50% 35%,transparent 0%,rgba(8,6,4,0.35) 100%);}
+[data-theme="light"] body::before{background:radial-gradient(ellipse 70% 60% at 50% 35%,transparent 0%,rgba(200,190,175,0.12) 100%);}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg-void)}::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
+#app{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column}
+
+/* Header */
+.header{border-bottom:1px solid var(--border-subtle);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:rgba(10,8,6,0.55);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+[data-theme="light"] .header{background:rgba(244,240,235,0.8)}
+.header-left{display:flex;align-items:center;gap:16px}
+.header-brand{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--brass);text-transform:uppercase}
+.header-divider{width:1px;height:16px;background:var(--border-strong)}
+.header-title{font-family:var(--font-display);font-size:20px;color:var(--text-1);letter-spacing:-.015em;transform:translateY(1px)}
+.header-right{display:flex;align-items:center;gap:20px}
+.header-stats{font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:.1em}
+.btn-theme{background:var(--bg-surface);border:1px solid var(--border-medium);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text-2);cursor:pointer;font-size:14px;transition:all .2s}
+
+/* Main */
+.main{flex:1;max-width:900px;margin:0 auto;width:100%;padding:48px 24px}
+
+/* Cards */
+.card{background:var(--bg-overlay);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border-subtle);border-radius:14px;padding:24px;position:relative;overflow:hidden;margin-bottom:16px}
+.card::before{content:'';position:absolute;top:-30%;left:-10%;width:60%;height:60%;background:radial-gradient(ellipse at center,rgba(168,144,62,0.03) 0%,transparent 70%);pointer-events:none}
+.card-accent-brass{border-color:var(--brass-dim)}
+.card-accent-patina{border-color:var(--patina-dim)}
+.card-accent-error{border-color:var(--error)}
+
+/* Typography */
+.mono-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text-4);text-transform:uppercase;font-weight:500;display:block;margin-bottom:8px}
+.display-h2{font-family:var(--font-display);font-size:24px;font-weight:400;color:var(--text-1);letter-spacing:-.015em;margin-bottom:16px}
+
+/* Manifesto block */
+.manifesto{position:relative;padding:16px 0 16px 24px;background:var(--bg-surface);border-radius:8px;margin-bottom:24px}
+.manifesto::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:linear-gradient(180deg,var(--brass) 0%,var(--patina) 100%);border-radius:2px}
+
+/* Pulse dot */
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--patina);box-shadow:0 0 8px rgba(58,95,74,0.7);animation:beat 3s ease infinite;display:inline-block}
+@keyframes beat{0%,100%{transform:scale(1);opacity:1}12%{transform:scale(1.35)}24%{transform:scale(.95);opacity:.6}36%{transform:scale(1.15)}48%{transform:scale(1);opacity:.7}}
+
+/* Inputs */
+input,textarea,select{background:var(--bg-surface);border:1px solid var(--border-medium);color:var(--text-1);font-family:var(--font-body);border-radius:6px;padding:12px 14px;font-size:14px;width:100%;outline:none;transition:all .25s ease}
+input:focus,textarea:focus,select:focus{border-color:var(--patina);box-shadow:0 0 0 3px var(--patina-faint);background:var(--bg-elevated)}
+input::placeholder,textarea::placeholder{color:var(--text-3);opacity:.7;font-style:italic}
+textarea{resize:vertical;line-height:1.7}
+select option{background:var(--bg-deep);color:var(--text-1)}
+
+/* Buttons */
+.btn{cursor:pointer;font-family:var(--font-body);border:none;outline:none;transition:all .2s ease}
+.btn-primary{background:var(--patina);color:#E6DDD0;font-weight:600;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:13px 24px;border-radius:7px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn-primary:hover{background:var(--patina-lit);transform:translateY(-1px);box-shadow:0 4px 20px -4px var(--patina-dim)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;background:var(--bg-surface);color:var(--text-3);transform:none;box-shadow:none}
+.btn-primary.brass{background:var(--brass);color:#080604}
+.btn-primary.brass:hover{background:var(--brass-lit)}
+.btn-primary.creation{background:var(--creation);color:#E6DDD0}
+.btn-ghost{background:none;border:none;cursor:pointer;font-family:var(--font-mono);font-size:10px;color:var(--text-3);text-decoration:underline;text-underline-offset:4px;padding:0}
+.btn-ghost.creation{color:var(--creation)}
+
+/* Tabs */
+.tabs{display:flex;gap:8px;margin-bottom:32px;border-bottom:1px solid var(--border-subtle);padding-bottom:16px}
+.tab-btn{padding:10px 18px;border-radius:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-body);font-weight:600;cursor:pointer;border:1px solid transparent;background:transparent;color:var(--text-3);transition:all .2s ease}
+.tab-btn.active{background:var(--patina-faint);border-color:var(--patina);color:var(--patina-lit)}
+
+/* Status badges */
+.badge{font-family:var(--font-mono);font-size:9px;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.05em;display:inline-block}
+.badge-platform{background:var(--bg-surface);color:var(--text-2);border:1px solid var(--border-subtle)}
+.badge-queued{color:var(--brass)}
+.badge-scheduled{color:var(--patina-lit)}
+.badge-error{color:var(--error)}
+
+/* Connected bar */
+.connected-bar{margin-bottom:32px;display:flex;gap:16px;align-items:center}
+.connected-pill{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:10px;padding:6px 12px;border-radius:4px;background:var(--bg-surface);color:var(--text-1);border:1px solid var(--border-medium);text-transform:uppercase;letter-spacing:.05em}
+
+/* Error box */
+.error-box{background:var(--bg-surface);border:1px solid var(--error);border-radius:8px;padding:16px;margin-bottom:24px;font-size:13px;color:var(--text-2);line-height:1.7}
+
+/* Queue item */
+.queue-item{background:var(--bg-overlay);backdrop-filter:blur(24px);border:1px solid var(--border-subtle);border-radius:14px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden}
+.queue-item::before{content:'';position:absolute;top:-30%;left:-10%;width:60%;height:60%;background:radial-gradient(ellipse at center,rgba(168,144,62,0.025) 0%,transparent 70%);pointer-events:none}
+.queue-item-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px}
+.queue-item-body{font-size:14px;color:var(--text-1);line-height:1.7;margin-bottom:12px;white-space:pre-wrap;word-break:break-word}
+.queue-item-meta{display:flex;gap:20px;font-size:12px;color:var(--text-3);font-family:var(--font-mono)}
+.queue-item-warn{font-size:11px;color:var(--brass-lit);margin-top:8px;font-family:var(--font-mono)}
+.queue-item-err{font-size:11px;color:var(--error);margin-top:6px;font-family:var(--font-mono)}
+.queue-item-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding-top:16px;border-top:1px solid var(--border-subtle);margin-top:4px}
+.btn-remove{color:var(--text-3);font-size:18px;padding:4px 8px;border-radius:6px;border:1px solid var(--border-medium);background:var(--bg-surface);line-height:1;cursor:pointer;flex-shrink:0}
+.btn-remove:hover{color:var(--error);border-color:var(--error)}
+
+/* Grid layouts */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.field-group{display:flex;flex-direction:column}
+
+/* Empty state */
+.empty-state{text-align:center;padding:48px 0}
+.empty-title{font-family:var(--font-display);font-size:24px;color:var(--text-1);letter-spacing:-.015em;margin-bottom:12px}
+.empty-sub{font-size:14px;color:var(--text-3);margin-bottom:24px}
+
+/* Queue header row */
+.queue-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+
+/* Spinner */
+.spinner{width:12px;height:12px;border:2px solid rgba(230,221,208,0.3);border-top-color:#E6DDD0;border-radius:50%;animation:spin 1s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
-.fade-in{animation:fadeIn .35s ease forwards}
-.spin{animation:spin .8s linear infinite}
+
+/* Footer */
+.footer{border-top:1px solid var(--border-subtle);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;background:var(--bg-void)}
+.footer-text{font-family:var(--font-mono);font-size:9px;color:var(--text-4);letter-spacing:.2em;text-transform:uppercase}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .35s cubic-bezier(.4,0,.2,1) forwards}
+
+/* Section visibility */
+.section{display:none}.section.active{display:block}
+
+/* Token setup */
+.token-input-row{display:flex;gap:12px;margin-bottom:24px}
+.token-input-row input{flex:1}
+
+/* Responsive */
+@media(max-width:600px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .queue-item-fields{grid-template-columns:1fr}
+  .tabs{flex-wrap:wrap}
+  .header-stats{display:none}
+}
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const {useState,useEffect}=React;
+<div id="app">
 
-const ML=({c,children,mb=8})=><div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:c||'var(--text3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
-const Card=({children,accent,style={}})=><div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>{children}</div>;
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <span class="header-brand">QB_BrandOS</span>
+      <div class="header-divider"></div>
+      <span class="header-title">Content Scheduler</span>
+    </div>
+    <div class="header-right">
+      <span class="header-stats" id="header-stats">0 in queue &middot; 0 scheduled</span>
+      <button class="btn-theme btn" id="btn-theme" aria-label="Toggle theme"></button>
+    </div>
+  </header>
 
-const PLATFORMS=[
-  {id:'instagram',label:'Instagram',color:'#f472b6',icon:'⬡'},
-  {id:'linkedin_personal',label:'LinkedIn Personal',color:'#60a5fa',icon:'⬢'},
-  {id:'linkedin_company',label:'LinkedIn Company',color:'#60a5fa',icon:'⬢'},
-  {id:'twitter',label:'X / Twitter',color:'#fff',icon:'✕'},
-  {id:'facebook',label:'Facebook',color:'#60a5fa',icon:'◉'},
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOKEN SETUP (shown when not connected) -->
+    <div id="setup-block" class="fade-in" style="margin-bottom:36px;display:none">
+      <div class="card card-accent-brass">
+        <h2 class="display-h2" style="color:var(--brass)">Connect Buffer</h2>
+        <p style="font-size:14px;color:var(--text-2);line-height:1.7;margin-bottom:20px">
+          Buffer is a free social media scheduling tool. Connect it once and QB OS queues your content automatically across Instagram, LinkedIn, X, and Facebook.
+        </p>
+        <div class="token-input-row">
+          <input type="password" id="token-input" placeholder="Buffer Access Token — from buffer.com/developers/apps" autocomplete="off"/>
+          <button class="btn btn-primary brass" id="btn-connect">Connect</button>
+        </div>
+        <div class="manifesto">
+          <span class="mono-label" style="color:var(--text-1);margin-bottom:10px">How to get your Buffer token</span>
+          <p style="font-size:13px;color:var(--text-2);line-height:1.8">
+            1. Create a free account at buffer.com<br>
+            2. Go to buffer.com/developers/apps<br>
+            3. Create a new application (any name)<br>
+            4. Copy the Access Token and paste it above
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONNECTED BAR (shown when connected) -->
+    <div id="connected-bar" class="connected-bar" style="display:none">
+      <div class="connected-pill">
+        <span class="pulse-dot"></span>
+        Buffer connected
+      </div>
+      <button class="btn btn-ghost" id="btn-change-token">Change token</button>
+      <button class="btn btn-ghost creation" id="btn-load-profiles" style="display:none">Load profiles</button>
+    </div>
+
+    <!-- ERROR BOX -->
+    <div id="error-box" class="error-box" style="display:none">
+      <span id="error-msg" style="color:var(--error)"></span><br>
+      <span style="color:var(--text-3)">Note: Buffer API requires a server-side proxy for CORS. If blocked, copy your profile IDs from buffer.com/app/profile/[YOUR_ID]</span>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="queue" id="tab-queue">Queue (0)</button>
+      <button class="tab-btn" data-tab="add">Add Post</button>
+      <button class="tab-btn" data-tab="bulk">Bulk Import</button>
+      <button class="tab-btn" data-tab="scheduled" id="tab-scheduled">Scheduled (0)</button>
+    </div>
+
+    <!-- QUEUE SECTION -->
+    <div class="section active fade-in" id="section-queue">
+      <div id="queue-empty" class="card">
+        <div class="empty-state">
+          <div class="empty-title">The room is empty</div>
+          <div class="empty-sub">No posts have been prepared for scheduling yet.</div>
+          <button class="btn btn-primary" id="btn-go-add">Add First Post</button>
+        </div>
+      </div>
+      <div id="queue-content" style="display:none">
+        <div class="queue-header">
+          <span class="mono-label" id="queue-count-label" style="margin:0">0 posts ready</span>
+          <button class="btn btn-primary" id="btn-schedule-all">Schedule All</button>
+        </div>
+        <div id="queue-list"></div>
+      </div>
+    </div>
+
+    <!-- ADD POST SECTION -->
+    <div class="section fade-in" id="section-add">
+      <div class="card">
+        <h2 class="display-h2">Draft a Concept</h2>
+        <div style="margin-bottom:20px">
+          <label class="mono-label" for="add-text" style="color:var(--text-1)">Caption / Text</label>
+          <textarea id="add-text" placeholder="Paste your caption from the content agents here..." rows="5"></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="field-group">
+            <label class="mono-label" for="add-platform">Platform</label>
+            <select id="add-platform"></select>
+          </div>
+          <div class="field-group">
+            <label class="mono-label" for="add-profile-id">Buffer Profile ID</label>
+            <input type="text" id="add-profile-id" placeholder="e.g. 5b7d6..."/>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-bottom:32px">
+          <div class="field-group">
+            <label class="mono-label" for="add-date">Publish Date</label>
+            <input type="date" id="add-date"/>
+          </div>
+          <div class="field-group">
+            <label class="mono-label" for="add-time">Publish Time</label>
+            <select id="add-time"></select>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btn-add-post">Add to Queue</button>
+      </div>
+    </div>
+
+    <!-- BULK SECTION -->
+    <div class="section fade-in" id="section-bulk">
+      <div class="card">
+        <h2 class="display-h2">Bulk Import System</h2>
+        <p style="font-size:14px;color:var(--text-2);line-height:1.7;margin-bottom:24px">
+          Paste combined output from the Content Engine. The system automatically parses and spaces posts 3 days apart.
+        </p>
+        <div class="manifesto" style="margin-bottom:24px">
+          <label class="mono-label" for="bulk-text" style="color:var(--text-1);margin-bottom:10px">Paste Content Below</label>
+          <textarea id="bulk-text" rows="12" style="background:transparent;border:none;padding:0;margin-top:8px;box-shadow:none"
+            placeholder="POST 1:&#10;Your first caption here...&#10;&#10;POST 2:&#10;Your second caption here...&#10;&#10;Separate posts with blank lines or POST N: headings"></textarea>
+        </div>
+        <div class="grid-2" style="margin-bottom:24px">
+          <div class="field-group">
+            <label class="mono-label" for="bulk-platform">Default Platform</label>
+            <select id="bulk-platform"></select>
+          </div>
+          <div class="field-group">
+            <label class="mono-label" for="bulk-profile-id">Global Profile ID</label>
+            <input type="text" id="bulk-profile-id" placeholder="Applied to all imported posts"/>
+          </div>
+        </div>
+        <button class="btn btn-primary creation" id="btn-bulk-import">Parse &amp; Queue</button>
+      </div>
+    </div>
+
+    <!-- SCHEDULED SECTION -->
+    <div class="section fade-in" id="section-scheduled">
+      <div id="scheduled-empty" class="card">
+        <div class="empty-state">
+          <div class="empty-sub">Nothing out there yet. Schedule items from the Queue tab to see them here.</div>
+        </div>
+      </div>
+      <div id="scheduled-list" style="display:none"></div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer-text">Quantum Branding BrandOS</span>
+    <span class="footer-text" style="letter-spacing:.12em;text-transform:none">Intelligence from the Future</span>
+  </footer>
+</div>
+
+<script>
+// ─── Constants ────────────────────────────────────────────────────────────────
+var PLATFORMS = [
+  {id:'instagram',         label:'Instagram'},
+  {id:'linkedin_personal', label:'LinkedIn Personal'},
+  {id:'linkedin_company',  label:'LinkedIn Company'},
+  {id:'twitter',           label:'X / Twitter'},
+  {id:'facebook',          label:'Facebook'},
 ];
 
-const TIMES=[
-  '07:00','08:00','09:00','10:00','11:00','12:00',
-  '13:00','14:00','15:00','16:00','17:00','18:00',
-  '19:00','20:00','21:00',
+var TIMES = [
+  '07:00','07:30','08:00','09:00','10:00','11:00','12:00',
+  '13:00','14:00','15:00','16:00','17:00','17:30','18:00',
+  '19:00','20:00','21:00'
 ];
 
-const BEST_TIMES={
-  instagram:['08:00','12:00','17:00','20:00'],
-  linkedin_personal:['07:30','12:00','17:30'],
-  linkedin_company:['09:00','12:00','17:00'],
-  twitter:['08:00','12:00','16:00','20:00'],
-  facebook:['09:00','13:00','19:00'],
+var BEST_TIMES = {
+  instagram:         ['08:00','12:00','17:00','20:00'],
+  linkedin_personal: ['07:30','12:00','17:30'],
+  linkedin_company:  ['09:00','12:00','17:00'],
+  twitter:           ['08:00','12:00','16:00','20:00'],
+  facebook:          ['09:00','13:00','19:00']
 };
 
-function App(){
-  const [bufferToken,setBufferToken]=useState(localStorage.getItem('qb_buffer_token')||'');
-  const [tokenSaved,setTokenSaved]=useState(!!localStorage.getItem('qb_buffer_token'));
-  const [profiles,setProfiles]=useState([]);
-  const [loadingProfiles,setLoadingProfiles]=useState(false);
-  const [profilesError,setProfilesError]=useState('');
-  const [queue,setQueue]=useState([]);
-  const [newPost,setNewPost]=useState({text:'',platform:'instagram',profileId:'',date:'',time:'09:00'});
-  const [scheduling,setScheduling]=useState(false);
-  const [scheduled,setScheduled]=useState([]);
-  const [tab,setTab]=useState('queue');
-  const [pasteMode,setPasteMode]=useState(false);
-  const [bulkText,setBulkText]=useState('');
+// ─── State ────────────────────────────────────────────────────────────────────
+var state = {
+  token:     localStorage.getItem('qb_buffer_token') || '',
+  connected: !!localStorage.getItem('qb_buffer_token'),
+  queue:     [],
+  scheduled: [],
+  tab:       'queue',
+  theme:     document.documentElement.getAttribute('data-theme') || 'dark'
+};
 
-  const qbp=window.QB_QBP||{};
+try { state.queue     = JSON.parse(localStorage.getItem('qb_queue')     || '[]'); } catch(e) { state.queue = []; }
+try { state.scheduled = JSON.parse(localStorage.getItem('qb_scheduled') || '[]'); } catch(e) { state.scheduled = []; }
 
-  // Save token
-  const saveToken=()=>{
-    localStorage.setItem('qb_buffer_token',bufferToken);
-    setTokenSaved(true);
-    loadProfiles();
-  };
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function saveQueue()     { try { localStorage.setItem('qb_queue',     JSON.stringify(state.queue));     } catch(e) {} }
+function saveScheduled() { try { localStorage.setItem('qb_scheduled', JSON.stringify(state.scheduled)); } catch(e) {} }
 
-  // Load Buffer profiles via proxy-safe approach
-  // Buffer API requires server-side — we use a client-readable approach
-  const loadProfiles=async()=>{
-    if(!bufferToken){setProfilesError('Add your Buffer token first.');return;}
-    setLoadingProfiles(true);setProfilesError('');
-    try{
-      // Buffer's /profiles endpoint
-      const res=await fetch('https://api.bufferapp.com/1/profiles.json?access_token='+encodeURIComponent(bufferToken));
-      if(!res.ok)throw new Error('Buffer API error: '+res.status);
-      const data=await res.json();
-      if(Array.isArray(data)){
-        setProfiles(data.map(p=>({id:p.id,service:p.service,username:p.formatted_username||p.username,avatar:p.avatar_https})));
-        setProfilesError('');
-      } else {
-        throw new Error('Unexpected response from Buffer');
-      }
-    }catch(e){
-      setProfilesError(e.message);
-      // Show manual profile setup if API fails (CORS likely)
-      setProfiles([]);
-    }
-    setLoadingProfiles(false);
-  };
-
-  // Add to queue
-  const addToQueue=()=>{
-    if(!newPost.text.trim()){return;}
-    setQueue(prev=>[...prev,{...newPost,id:Date.now(),status:'queued'}]);
-    setNewPost({text:'',platform:'instagram',profileId:newPost.profileId,date:'',time:'09:00'});
-  };
-
-  // Bulk import from content agent output
-  const importBulk=()=>{
-    if(!bulkText.trim())return;
-    // Split by double newline or numbered list
-    const pieces=bulkText.split(/\n\n(?=\d+\.|POST \d+|Caption:|---)/i).filter(p=>p.trim().length>20);
-    const today=new Date();
-    const newItems=pieces.map((text,i)=>{
-      const d=new Date(today);d.setDate(d.getDate()+i*3);
-      return{
-        id:Date.now()+i,
-        text:text.replace(/^(\d+\.|POST \d+:|Caption:|---)/i,'').trim(),
-        platform:'instagram',
-        profileId:newPost.profileId||'',
-        date:d.toISOString().split('T')[0],
-        time:BEST_TIMES.instagram[i%BEST_TIMES.instagram.length],
-        status:'queued',
-      };
-    });
-    setQueue(prev=>[...prev,...newItems]);
-    setBulkText('');setPasteMode(false);
-  };
-
-  // Schedule all queued posts
-  const scheduleAll=async()=>{
-    if(!bufferToken){setProfilesError('Add your Buffer access token first.');return;}
-    setScheduling(true);
-    const results=[];
-    for(const post of queue.filter(p=>p.status==='queued'&&p.profileId)){
-      try{
-        const scheduledAt=new Date(post.date+'T'+post.time+':00').getTime()/1000;
-        const body=new URLSearchParams({
-          text:post.text,
-          'profile_ids[]':post.profileId,
-          scheduled_at:scheduledAt.toString(),
-          access_token:bufferToken,
-        });
-        const res=await fetch('https://api.bufferapp.com/1/updates/create.json',{method:'POST',body});
-        const data=await res.json();
-        if(data.success){
-          results.push({...post,status:'scheduled',bufferId:data.updates?.[0]?.id});
-        } else {
-          results.push({...post,status:'error',error:data.message||'Unknown error'});
-        }
-      }catch(e){
-        results.push({...post,status:'error',error:e.message});
-      }
-    }
-    const resultIds=new Set(results.map(r=>r.id));
-    setQueue(prev=>prev.map(p=>resultIds.has(p.id)?results.find(r=>r.id===p.id):p));
-    setScheduled(prev=>[...prev,...results.filter(r=>r.status==='scheduled')]);
-    setScheduling(false);
-  };
-
-  const removeFromQueue=(id)=>setQueue(prev=>prev.filter(p=>p.id!==id));
-
-  const todayStr=new Date().toISOString().split('T')[0];
-
-  return(
-    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
-      <header style={{borderBottom:'1px solid var(--border)',padding:'0 24px',height:52,display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
-        <div style={{display:'flex',alignItems:'center',gap:14}}>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
-          <div style={{width:1,height:14,background:'var(--border)'}}/>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>Content Scheduler</div>
-        </div>
-        <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.1em'}}>{queue.length} in queue · {scheduled.length} scheduled</div>
-      </header>
-
-      <main style={{flex:1,maxWidth:900,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
-
-        {/* BUFFER SETUP */}
-        {!tokenSaved&&(
-          <div className="fade-in" style={{marginBottom:28}}>
-            <Card accent="rgba(245,158,11,0.2)">
-              <ML c="var(--amber)" mb={10}>Connect Buffer</ML>
-              <p style={{fontSize:13,color:'var(--text2)',lineHeight:1.7,marginBottom:16}}>
-                Buffer is a free social media scheduling tool. Connect it once and QB OS queues your content automatically across Instagram, LinkedIn, X, and Facebook.
-              </p>
-              <div style={{display:'grid',gridTemplateColumns:'1fr auto',gap:10,marginBottom:12}}>
-                <input type="password" value={bufferToken} onChange={e=>setBufferToken(e.target.value)} placeholder="Buffer Access Token — from buffer.com/developers/apps"/>
-                <button onClick={saveToken} style={{background:'var(--amber)',color:'#000',padding:'10px 20px',borderRadius:6,fontWeight:700,fontSize:11,letterSpacing:'.08em',textTransform:'uppercase',fontFamily:'var(--mono)',whiteSpace:'nowrap'}}>Connect →</button>
-              </div>
-              <div style={{background:'var(--bg4)',borderRadius:6,padding:'10px 14px'}}>
-                <ML c="var(--text3)" mb={4}>How to get your Buffer token</ML>
-                <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.7}}>1. Create a free account at buffer.com<br/>2. Go to buffer.com/developers/apps<br/>3. Create a new application (any name)<br/>4. Copy the Access Token and paste it above</p>
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {tokenSaved&&(
-          <div style={{marginBottom:20,display:'flex',gap:10,alignItems:'center'}}>
-            <div style={{fontFamily:'var(--mono)',fontSize:10,padding:'4px 12px',borderRadius:4,background:'rgba(74,222,128,0.08)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)'}}>✓ Buffer connected</div>
-            <button onClick={()=>{setTokenSaved(false);}} style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',textDecoration:'underline',textUnderlineOffset:3}}>Change token</button>
-            {profiles.length===0&&<button onClick={loadProfiles} style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--blue)',textDecoration:'underline',textUnderlineOffset:3}}>{loadingProfiles?'Loading…':'Load profiles'}</button>}
-          </div>
-        )}
-
-        {profilesError&&<div style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,.2)',borderRadius:6,padding:'10px 14px',marginBottom:16,fontSize:12,color:'var(--red)',lineHeight:1.6}}>{profilesError}<br/><span style={{color:'var(--text3)'}}>Note: Buffer API may require server-side proxy for CORS. In that case, copy your profile IDs manually from buffer.com/app/profile/[YOUR_ID]</span></div>}
-
-        {/* TABS */}
-        <div style={{display:'flex',gap:5,marginBottom:24,borderBottom:'1px solid var(--border)',paddingBottom:14}}>
-          {['queue','add','bulk','scheduled'].map(t=>(
-            <button key={t} onClick={()=>setTab(t)}
-              style={{padding:'7px 14px',borderRadius:5,fontSize:11,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',background:tab===t?'var(--green2)':'transparent',border:`1px solid ${tab===t?'rgba(74,222,128,0.3)':'var(--border)'}`,color:tab===t?'var(--green)':'var(--text3)',cursor:'pointer'}}>
-              {t==='queue'?`Queue (${queue.length})`:t==='add'?'Add Post':t==='bulk'?'Bulk Import':`Scheduled (${scheduled.length})`}
-            </button>
-          ))}
-        </div>
-
-        {/* QUEUE TAB */}
-        {tab==='queue'&&(
-          <div className="fade-in">
-            {queue.length===0?(
-              <Card>
-                <div style={{textAlign:'center',padding:'24px 0'}}>
-                  <div style={{fontSize:13,color:'var(--text2)',marginBottom:12}}>No posts in queue yet</div>
-                  <button onClick={()=>setTab('add')} style={{background:'var(--green)',color:'#000',padding:'9px 20px',borderRadius:6,fontWeight:700,fontSize:11,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)'}}>Add First Post →</button>
-                </div>
-              </Card>
-            ):(
-              <>
-                <div style={{display:'flex',justifyContent:'space-between',marginBottom:16}}>
-                  <ML c="var(--text3)">{queue.filter(p=>p.status==='queued').length} posts ready to schedule</ML>
-                  <button onClick={scheduleAll} disabled={scheduling||queue.filter(p=>p.status==='queued'&&p.profileId).length===0}
-                    style={{background:scheduling?'var(--bg3)':'var(--green)',color:'#000',padding:'9px 20px',borderRadius:6,fontWeight:700,fontSize:11,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',display:'flex',alignItems:'center',gap:8,opacity:queue.filter(p=>p.status==='queued'&&p.profileId).length===0?0.4:1}}>
-                    {scheduling&&<div style={{width:12,height:12,border:'2px solid rgba(0,0,0,0.3)',borderTop:'2px solid #000',borderRadius:'50%'}} className="spin"/>}
-                    {scheduling?'Scheduling…':'Schedule All →'}
-                  </button>
-                </div>
-                {queue.map((post,i)=>(
-                  <div key={post.id} style={{background:'var(--bg3)',border:'1px solid '+(post.status==='scheduled'?'rgba(74,222,128,0.2)':post.status==='error'?'rgba(239,68,68,0.2)':'var(--border)'),borderRadius:10,padding:'16px 18px',marginBottom:10}}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:12,marginBottom:10}}>
-                      <div style={{flex:1}}>
-                        <div style={{display:'flex',gap:8,marginBottom:6}}>
-                          <span style={{fontFamily:'var(--mono)',fontSize:9,padding:'2px 8px',borderRadius:3,background:'rgba(255,255,255,0.04)',color:'var(--text3)',border:'1px solid var(--border)',textTransform:'uppercase'}}>{post.platform}</span>
-                          <span style={{fontFamily:'var(--mono)',fontSize:9,color:post.status==='scheduled'?'var(--green)':post.status==='error'?'var(--red)':'var(--text3)'}}>{post.status}</span>
-                        </div>
-                        <div style={{fontSize:13,color:'var(--text)',lineHeight:1.6,marginBottom:8}}>{post.text.substring(0,200)}{post.text.length>200?'…':''}</div>
-                        <div style={{display:'flex',gap:16,fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>
-                          {post.date&&<span>📅 {post.date}</span>}
-                          {post.time&&<span>⏰ {post.time}</span>}
-                        </div>
-                        {!post.profileId&&<div style={{fontSize:11,color:'var(--amber)',marginTop:6,fontFamily:'var(--mono)'}}>⚠ No profile ID — add before scheduling</div>}
-                      </div>
-                      {post.status!=='scheduled'&&<button onClick={()=>removeFromQueue(post.id)} style={{color:'var(--text3)',fontSize:18,padding:'2px 6px',borderRadius:4,border:'1px solid var(--border)',background:'none',lineHeight:1}}>×</button>}
-                    </div>
-                    {/* Quick edit fields */}
-                    {post.status==='queued'&&(
-                      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,paddingTop:10,borderTop:'1px solid var(--border)'}}>
-                        <input type="text" placeholder="Buffer Profile ID" value={post.profileId} onChange={e=>setQueue(prev=>prev.map(p=>p.id===post.id?{...p,profileId:e.target.value}:p))}/>
-                        <input type="date" value={post.date} min={todayStr} onChange={e=>setQueue(prev=>prev.map(p=>p.id===post.id?{...p,date:e.target.value}:p))}/>
-                        <select value={post.time} onChange={e=>setQueue(prev=>prev.map(p=>p.id===post.id?{...p,time:e.target.value}:p))}>
-                          {TIMES.map(t=><option key={t} value={t}>{t}</option>)}
-                        </select>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-        )}
-
-        {/* ADD POST TAB */}
-        {tab==='add'&&(
-          <div className="fade-in">
-            <Card>
-              <ML c="var(--green)" mb={16}>New Post</ML>
-              <div style={{marginBottom:14}}>
-                <ML>Caption / Text</ML>
-                <textarea value={newPost.text} onChange={e=>setNewPost(p=>({...p,text:e.target.value}))} placeholder="Paste your caption from the content agents here…" rows={4}/>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:14}}>
-                <div>
-                  <ML>Platform</ML>
-                  <select value={newPost.platform} onChange={e=>setNewPost(p=>({...p,platform:e.target.value}))}>
-                    {PLATFORMS.map(pl=><option key={pl.id} value={pl.id}>{pl.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <ML>Buffer Profile ID</ML>
-                  <input type="text" value={newPost.profileId} onChange={e=>setNewPost(p=>({...p,profileId:e.target.value}))} placeholder="e.g. 5b7d6..."/>
-                </div>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20}}>
-                <div>
-                  <ML>Publish Date</ML>
-                  <input type="date" value={newPost.date} min={todayStr} onChange={e=>setNewPost(p=>({...p,date:e.target.value}))}/>
-                </div>
-                <div>
-                  <ML>Publish Time</ML>
-                  <select value={newPost.time} onChange={e=>setNewPost(p=>({...p,time:e.target.value}))}>
-                    {TIMES.map(t=>{
-                      const best=BEST_TIMES[newPost.platform]||[];
-                      return<option key={t} value={t}>{t}{best.includes(t)?' ★ Best time':''}</option>;
-                    })}
-                  </select>
-                </div>
-              </div>
-              <button onClick={addToQueue} disabled={!newPost.text.trim()}
-                style={{background:newPost.text.trim()?'var(--green)':'var(--bg4)',color:newPost.text.trim()?'#000':'var(--text3)',padding:'11px 24px',borderRadius:6,fontWeight:700,fontSize:12,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)'}}>
-                Add to Queue →
-              </button>
-            </Card>
-          </div>
-        )}
-
-        {/* BULK IMPORT TAB */}
-        {tab==='bulk'&&(
-          <div className="fade-in">
-            <Card>
-              <ML c="var(--purple)" mb={10}>Bulk Import from Content Agents</ML>
-              <p style={{fontSize:13,color:'var(--text2)',lineHeight:1.7,marginBottom:16}}>
-                Copy all your approved captions from the Instagram Agent, LinkedIn Agent, or Repurposing Engine and paste them here. The scheduler will auto-space them 3 days apart starting today.
-              </p>
-              <div style={{marginBottom:14}}>
-                <ML>Paste Content Below</ML>
-                <textarea value={bulkText} onChange={e=>setBulkText(e.target.value)} placeholder="POST 1:&#10;Your first caption here...&#10;&#10;POST 2:&#10;Your second caption here...&#10;&#10;(Separate posts with blank lines or numbered headings)" rows={10}/>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:16}}>
-                <div>
-                  <ML>Default Platform</ML>
-                  <select value={newPost.platform} onChange={e=>setNewPost(p=>({...p,platform:e.target.value}))}>
-                    {PLATFORMS.map(pl=><option key={pl.id} value={pl.id}>{pl.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <ML>Buffer Profile ID</ML>
-                  <input type="text" value={newPost.profileId} onChange={e=>setNewPost(p=>({...p,profileId:e.target.value}))} placeholder="Applied to all imported posts"/>
-                </div>
-              </div>
-              <button onClick={importBulk} disabled={!bulkText.trim()}
-                style={{background:bulkText.trim()?'var(--purple)':'var(--bg4)',color:bulkText.trim()?'#000':'var(--text3)',padding:'11px 24px',borderRadius:6,fontWeight:700,fontSize:12,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)'}}>
-                Import and Queue →
-              </button>
-            </Card>
-          </div>
-        )}
-
-        {/* SCHEDULED TAB */}
-        {tab==='scheduled'&&(
-          <div className="fade-in">
-            {scheduled.length===0?(
-              <Card>
-                <div style={{textAlign:'center',padding:'24px 0',fontSize:13,color:'var(--text2)'}}>No posts scheduled yet. Schedule from the Queue tab.</div>
-              </Card>
-            ):(
-              scheduled.map((post,i)=>(
-                <div key={post.id} style={{background:'var(--bg3)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:10,padding:'14px 18px',marginBottom:10}}>
-                  <div style={{display:'flex',gap:8,marginBottom:6}}>
-                    <span style={{fontFamily:'var(--mono)',fontSize:9,padding:'2px 8px',borderRadius:3,background:'rgba(74,222,128,0.08)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.15)'}}>✓ SCHEDULED</span>
-                    <span style={{fontFamily:'var(--mono)',fontSize:9,color:'var(--text3)',textTransform:'uppercase'}}>{post.platform}</span>
-                  </div>
-                  <div style={{fontSize:13,color:'var(--text)',lineHeight:1.6,marginBottom:6}}>{post.text.substring(0,150)}{post.text.length>150?'…':''}</div>
-                  <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)'}}>{post.date} at {post.time} · Buffer ID: {post.bufferId||'–'}</div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-
-      </main>
-
-      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.12em'}}>Content Scheduler — Powered by Buffer</span>
-      </footer>
-    </div>
-  );
+function localDateStr(d) {
+  var y   = d.getFullYear();
+  var m   = String(d.getMonth() + 1).padStart('0', 2);
+  var day = String(d.getDate()).padStart('0', 2);
+  return y + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+
+function todayStr() { return localDateStr(new Date()); }
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showError(msg) {
+  var box = document.getElementById('error-box');
+  if (msg) {
+    document.getElementById('error-msg').textContent = msg;
+    box.style.display = 'block';
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+// ─── Populate Selects ─────────────────────────────────────────────────────────
+function populatePlatformSelect(id) {
+  var sel = document.getElementById(id);
+  sel.innerHTML = '';
+  PLATFORMS.forEach(function(p) {
+    var o = document.createElement('option');
+    o.value = p.id; o.textContent = p.label;
+    sel.appendChild(o);
+  });
+}
+
+function populateTimeSelect(id, platform) {
+  var sel = document.getElementById(id);
+  var cur = sel.value || '09:00';
+  sel.innerHTML = '';
+  TIMES.forEach(function(t) {
+    var o = document.createElement('option');
+    o.value = t;
+    var best = (BEST_TIMES[platform] || []).indexOf(t) !== -1;
+    o.textContent = t + (best ? '  ★ Best time' : '');
+    sel.appendChild(o);
+  });
+  sel.value = cur;
+}
+
+// ─── Header & Theme ──────────────────────────────────────────────────────────
+function updateHeaderStats() {
+  var q = state.queue.length;
+  var s = state.scheduled.length;
+  document.getElementById('header-stats').textContent = q + ' in queue · ' + s + ' scheduled';
+  document.getElementById('tab-queue').textContent     = 'Queue (' + q + ')';
+  document.getElementById('tab-scheduled').textContent = 'Scheduled (' + s + ')';
+}
+
+function updateThemeBtn() {
+  document.getElementById('btn-theme').textContent = state.theme === 'dark' ? '☀' : '☾';
+}
+
+document.getElementById('btn-theme').addEventListener('click', function() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', state.theme);
+  localStorage.setItem('qb-theme', state.theme);
+  updateThemeBtn();
+});
+
+// ─── Connection UI ────────────────────────────────────────────────────────────
+function renderConnectionUI() {
+  document.getElementById('setup-block').style.display    = state.connected ? 'none'  : 'block';
+  document.getElementById('connected-bar').style.display  = state.connected ? 'flex'  : 'none';
+}
+
+document.getElementById('btn-connect').addEventListener('click', function() {
+  var t = document.getElementById('token-input').value.trim();
+  if (!t) return;
+  state.token = t;
+  state.connected = true;
+  localStorage.setItem('qb_buffer_token', t);
+  renderConnectionUI();
+  showError('');
+});
+
+document.getElementById('token-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('btn-connect').click();
+});
+
+document.getElementById('btn-change-token').addEventListener('click', function() {
+  state.connected = false;
+  state.token = '';
+  localStorage.removeItem('qb_buffer_token');
+  document.getElementById('token-input').value = '';
+  renderConnectionUI();
+  showError('');
+});
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+document.getElementById('tabs').addEventListener('click', function(e) {
+  var btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  var t = btn.getAttribute('data-tab');
+  switchTab(t);
+});
+
+function switchTab(t) {
+  state.tab = t;
+  document.querySelectorAll('.tab-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-tab') === t);
+  });
+  document.querySelectorAll('.section').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  document.getElementById('section-' + t).classList.add('active');
+}
+
+document.getElementById('btn-go-add').addEventListener('click', function() { switchTab('add'); });
+
+// ─── Render Queue ─────────────────────────────────────────────────────────────
+function renderQueue() {
+  var queued = state.queue.filter(function(p) { return p.status === 'queued'; });
+  var today  = todayStr();
+
+  if (state.queue.length === 0) {
+    document.getElementById('queue-empty').style.display   = 'block';
+    document.getElementById('queue-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('queue-empty').style.display   = 'none';
+  document.getElementById('queue-content').style.display = 'block';
+
+  var readyCount = state.queue.filter(function(p) { return p.status === 'queued' && p.profileId && p.date; }).length;
+  document.getElementById('queue-count-label').textContent = queued.length + ' post' + (queued.length !== 1 ? 's' : '') + ' ready to schedule';
+  var btnSched = document.getElementById('btn-schedule-all');
+  btnSched.disabled = readyCount === 0;
+
+  var list = document.getElementById('queue-list');
+  list.innerHTML = '';
+
+  state.queue.forEach(function(post) {
+    var borderColor = post.status === 'scheduled' ? 'var(--patina-dim)' : post.status === 'error' ? 'var(--error)' : 'var(--border-subtle)';
+    var preview     = esc(post.text.substring(0, 200)) + (post.text.length > 200 ? '&hellip;' : '');
+
+    var warns = '';
+    if (!post.profileId && post.status === 'queued') warns += '<div class="queue-item-warn">&#9888; No profile ID — add before scheduling</div>';
+    if (!post.date     && post.status === 'queued') warns += '<div class="queue-item-warn">&#9888; No date selected — required before scheduling</div>';
+    if (post.status === 'error' && post.error)       warns += '<div class="queue-item-err">Error: ' + esc(post.error) + '</div>';
+
+    var removeBtn = post.status !== 'scheduled'
+      ? '<button class="btn-remove btn" data-id="' + post.id + '" aria-label="Remove post" title="Remove">&times;</button>'
+      : '';
+
+    var statusClass = post.status === 'scheduled' ? 'badge-scheduled' : post.status === 'error' ? 'badge-error' : 'badge-queued';
+
+    var editFields = '';
+    if (post.status === 'queued') {
+      var timeOpts = TIMES.map(function(t) {
+        return '<option value="' + t + '"' + (t === post.time ? ' selected' : '') + '>' + t + '</option>';
+      }).join('');
+      editFields = '<div class="queue-item-fields">'
+        + '<input type="text" class="q-profile" data-id="' + post.id + '" placeholder="Buffer Profile ID" value="' + esc(post.profileId) + '"/>'
+        + '<input type="date" class="q-date"    data-id="' + post.id + '" min="' + today + '" value="' + esc(post.date) + '"/>'
+        + '<select class="q-time" data-id="' + post.id + '">' + timeOpts + '</select>'
+        + '</div>';
+    }
+
+    var item = document.createElement('div');
+    item.className = 'queue-item';
+    item.style.borderColor = borderColor;
+    item.innerHTML = '<div class="queue-item-header">'
+      + '<div style="flex:1">'
+      + '<div style="display:flex;gap:12px;margin-bottom:12px;align-items:center">'
+      + '<span class="badge badge-platform">' + esc(post.platform) + '</span>'
+      + '<span class="badge ' + statusClass + '">' + esc(post.status) + '</span>'
+      + '</div>'
+      + '<div class="queue-item-body">' + preview + '</div>'
+      + '<div class="queue-item-meta">'
+      + (post.date ? '<span>Date: ' + esc(post.date) + '</span>' : '')
+      + (post.time ? '<span>Time: ' + esc(post.time) + '</span>' : '')
+      + '</div>'
+      + warns
+      + '</div>'
+      + removeBtn
+      + '</div>'
+      + editFields;
+
+    list.appendChild(item);
+  });
+
+  // Inline field event delegation
+  list.querySelectorAll('.q-profile').forEach(function(el) {
+    el.addEventListener('input', function() { updateQueueItem(this.dataset.id, 'profileId', this.value); });
+  });
+  list.querySelectorAll('.q-date').forEach(function(el) {
+    el.addEventListener('change', function() { updateQueueItem(this.dataset.id, 'date', this.value); });
+  });
+  list.querySelectorAll('.q-time').forEach(function(el) {
+    el.addEventListener('change', function() { updateQueueItem(this.dataset.id, 'time', this.value); });
+  });
+  list.querySelectorAll('.btn-remove').forEach(function(el) {
+    el.addEventListener('click', function() { removeFromQueue(this.dataset.id); });
+  });
+
+  updateHeaderStats();
+}
+
+function updateQueueItem(id, field, value) {
+  state.queue = state.queue.map(function(p) {
+    if (String(p.id) === String(id)) { var n = Object.assign({}, p); n[field] = value; return n; }
+    return p;
+  });
+  saveQueue();
+  document.getElementById('queue-count-label') && renderQueue();
+}
+
+function removeFromQueue(id) {
+  state.queue = state.queue.filter(function(p) { return String(p.id) !== String(id); });
+  saveQueue();
+  renderQueue();
+  updateHeaderStats();
+}
+
+// ─── Add Post ─────────────────────────────────────────────────────────────────
+document.getElementById('add-platform').addEventListener('change', function() {
+  populateTimeSelect('add-time', this.value);
+});
+
+document.getElementById('btn-add-post').addEventListener('click', function() {
+  var text      = document.getElementById('add-text').value.trim();
+  var platform  = document.getElementById('add-platform').value;
+  var profileId = document.getElementById('add-profile-id').value.trim();
+  var date      = document.getElementById('add-date').value;
+  var time      = document.getElementById('add-time').value;
+
+  if (!text) { document.getElementById('add-text').focus(); return; }
+
+  state.queue.push({ id: Date.now(), text: text, platform: platform, profileId: profileId, date: date, time: time, status: 'queued' });
+  saveQueue();
+  document.getElementById('add-text').value = '';
+  document.getElementById('add-date').value = '';
+  renderQueue();
+  updateHeaderStats();
+  switchTab('queue');
+});
+
+// ─── Bulk Import ──────────────────────────────────────────────────────────────
+document.getElementById('btn-bulk-import').addEventListener('click', function() {
+  var raw      = document.getElementById('bulk-text').value;
+  var platform = document.getElementById('bulk-platform').value;
+  var profileId= document.getElementById('bulk-profile-id').value.trim();
+  if (!raw.trim()) return;
+
+  var pieces = raw.split(/\n\n(?=\d+\.|POST \d+:?|Caption:|---)/i).filter(function(p) { return p.trim().length > 20; });
+  if (pieces.length === 0) pieces = raw.split(/\n---+\n/).filter(function(p) { return p.trim().length > 20; });
+  if (pieces.length === 0) pieces = [raw];
+
+  var today = new Date();
+  var best  = BEST_TIMES[platform] || ['09:00'];
+
+  pieces.forEach(function(text, i) {
+    var d = new Date(today);
+    d.setDate(d.getDate() + i * 3);
+    state.queue.push({
+      id:        Date.now() + i,
+      text:      text.replace(/^(\d+\.|POST \d+:?|Caption:|---)\s*/i, '').trim(),
+      platform:  platform,
+      profileId: profileId,
+      date:      localDateStr(d),
+      time:      best[i % best.length],
+      status:    'queued'
+    });
+  });
+
+  saveQueue();
+  document.getElementById('bulk-text').value = '';
+  renderQueue();
+  updateHeaderStats();
+  switchTab('queue');
+});
+
+// ─── Schedule All ─────────────────────────────────────────────────────────────
+document.getElementById('btn-schedule-all').addEventListener('click', async function() {
+  if (!state.token) { showError('Add your Buffer access token first.'); return; }
+  var btn = this;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Scheduling...';
+
+  var toSchedule = state.queue.filter(function(p) { return p.status === 'queued' && p.profileId && p.date; });
+
+  for (var i = 0; i < toSchedule.length; i++) {
+    var post = toSchedule[i];
+    var scheduledAt = new Date(post.date + 'T' + post.time + ':00').getTime() / 1000;
+    if (isNaN(scheduledAt)) {
+      updatePostStatus(post.id, 'error', 'Invalid date/time');
+      continue;
+    }
+    try {
+      var body = new URLSearchParams({
+        text: post.text,
+        'profile_ids[]': post.profileId,
+        scheduled_at: String(scheduledAt),
+        access_token: state.token
+      });
+      var res  = await fetch('https://api.bufferapp.com/1/updates/create.json', { method: 'POST', body: body });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var data = await res.json();
+      if (data.success) {
+        var bufferId = data.updates && data.updates[0] ? data.updates[0].id : null;
+        updatePostStatus(post.id, 'scheduled', null, bufferId);
+        state.scheduled.push(Object.assign({}, post, { status: 'scheduled', bufferId: bufferId }));
+      } else {
+        updatePostStatus(post.id, 'error', data.message || 'Unknown error');
+      }
+    } catch(e) {
+      updatePostStatus(post.id, 'error', e.message);
+    }
+  }
+
+  saveQueue();
+  saveScheduled();
+  renderQueue();
+  renderScheduled();
+  updateHeaderStats();
+  btn.disabled = false;
+  btn.textContent = 'Schedule All';
+});
+
+function updatePostStatus(id, status, error, bufferId) {
+  state.queue = state.queue.map(function(p) {
+    if (p.id === id) {
+      return Object.assign({}, p, { status: status, error: error || null, bufferId: bufferId || null });
+    }
+    return p;
+  });
+}
+
+// ─── Render Scheduled ─────────────────────────────────────────────────────────
+function renderScheduled() {
+  var list = document.getElementById('scheduled-list');
+  var empty = document.getElementById('scheduled-empty');
+  if (state.scheduled.length === 0) {
+    empty.style.display = 'block'; list.style.display = 'none'; return;
+  }
+  empty.style.display = 'none'; list.style.display = 'block';
+  list.innerHTML = '';
+  state.scheduled.forEach(function(post) {
+    var item = document.createElement('div');
+    item.className = 'queue-item card-accent-patina';
+    item.style.cssText = 'background:var(--bg-overlay);backdrop-filter:blur(24px);border:1px solid var(--patina-dim);border-radius:14px;padding:20px;margin-bottom:12px';
+    item.innerHTML = '<div style="display:flex;gap:12px;margin-bottom:12px;align-items:center">'
+      + '<span class="badge" style="background:var(--patina-faint);color:var(--patina-lit);border:1px solid var(--patina-dim)">✓ SENT TO BUFFER</span>'
+      + '<span class="badge badge-platform">' + esc(post.platform) + '</span>'
+      + '</div>'
+      + '<div class="queue-item-body">' + esc(post.text.substring(0, 150)) + (post.text.length > 150 ? '…' : '') + '</div>'
+      + '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:.05em">'
+      + 'Scheduled for ' + esc(post.date) + ' at ' + esc(post.time)
+      + (post.bufferId ? ' &middot; System ID: ' + esc(post.bufferId) : '')
+      + '</div>';
+    list.appendChild(item);
+  });
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+(function init() {
+  // Set today as min on date inputs
+  var today = todayStr();
+  document.getElementById('add-date').min = today;
+
+  // Populate platform/time selects
+  populatePlatformSelect('add-platform');
+  populatePlatformSelect('bulk-platform');
+  populateTimeSelect('add-time', 'instagram');
+
+  // Sync time select when platform changes (add tab)
+  document.getElementById('add-platform').addEventListener('change', function() {
+    populateTimeSelect('add-time', this.value);
+  });
+
+  // Theme button
+  updateThemeBtn();
+
+  // Connection UI
+  if (state.token) document.getElementById('token-input').value = state.token;
+  renderConnectionUI();
+
+  // Render data
+  renderQueue();
+  renderScheduled();
+  updateHeaderStats();
+})();
 </script>
 </body>
 </html>

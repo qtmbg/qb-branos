@@ -4,79 +4,374 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QB — YouTube Strategy Agent</title>
+
+<!-- Flash-free theme init -->
+<script>
+  (function(){
+      var t=localStorage.getItem('qb-theme')||'dark';
+      document.documentElement.setAttribute('data-theme',t);
+  })();
+  function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('qb-theme', next);
+  }
+</script>
+<style>html:not([data-theme]){background:#080604;color:#A89A88}</style>
+
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Google Fonts: Entangled Time Typography -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
-  --border:#2a2a2a;--border2:#333;
-  --text:#e8e8e8;--text2:#888;--text3:#555;--text4:#333;
-  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
-  --red:#ef4444;--red2:rgba(239,68,68,0.1);
-  --amber:#f59e0b;--amber2:rgba(245,158,11,0.12);
-  --blue:#60a5fa;--blue2:rgba(96,165,250,0.12);
-  --purple:#a78bfa;--purple2:rgba(167,139,250,0.12);
-  --rose:#fb7185;--rose2:rgba(251,113,133,0.1);
-  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140,110,70,0.045);
+  --bg-elevated: rgba(140,110,70,0.07);
+  --bg-overlay: rgba(18,15,10,0.85);
+
+  --border-subtle: rgba(140,110,70,0.06);
+  --border-medium: rgba(140,110,70,0.11);
+  --border-strong: rgba(140,110,70,0.18);
+
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58,95,74,0.2);
+  --patina-faint: rgba(58,95,74,0.08);
+
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168,144,62,0.18);
+  --brass-faint: rgba(168,144,62,0.06);
+
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+
+  /* Phase Colors */
+  --phase-discovery: #4A7A5E;
+  --phase-creation: #4A7A8A;
+  --phase-content: #8A5A5A;
+  --phase-execution: #5A7A6A;
+  --phase-intel: #A8903E;
+  
+  --status-error: #8A4A4A;
+
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
-body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
-input:focus,textarea:focus,select:focus{border-color:var(--green)}
-textarea{resize:vertical;line-height:1.6}
-select option{background:var(--bg3)}
-button{cursor:pointer;font-family:var(--font);border:none;outline:none}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes scanH{0%{left:-80%}100%{left:200%}}
-.fade-in{animation:fadeIn .35s ease forwards}
-.blink{animation:pulse 1.4s ease infinite}
-.spin{animation:spin .9s linear infinite}
-.scan-line{position:relative;overflow:hidden}
-.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.04),transparent);animation:scanH 3s linear infinite}
-.tab-btn{padding:8px 15px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer;white-space:nowrap}
-.tab-btn:hover{border-color:var(--border2);color:var(--text2)}
-.tab-btn.active{background:var(--rose2);border-color:rgba(251,113,133,0.3);color:var(--rose)}
-.script-sect{background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
-.script-sect-hd{padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .15s}
-.script-sect-hd:hover{background:var(--bg4)}
-.pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:10px;font-family:var(--mono);margin:2px;letter-spacing:.04em}
-.pill-rose{background:var(--rose2);color:var(--rose);border:1px solid rgba(251,113,133,0.2)}
-.pill-green{background:var(--green2);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
-.pill-amber{background:var(--amber2);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
-.pill-blue{background:var(--blue2);color:var(--blue);border:1px solid rgba(96,165,250,0.2)}
-.pill-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
-.pill-neutral{background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
-.ep-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 18px;cursor:pointer;transition:all .15s;margin-bottom:6px}
-.ep-card:hover{border-color:var(--border2)}
-.ep-card.active{border-color:rgba(251,113,133,0.35);background:var(--bg4)}
-.slider-thumb::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);cursor:pointer;border:2px solid var(--bg)}
-.slider-thumb::-webkit-slider-runnable-track{background:var(--border2);height:3px;border-radius:2px}
-.slider-thumb{-webkit-appearance:none;width:100%;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
+
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04);
+  --bg-elevated: rgba(100,80,50,0.07);
+  --bg-overlay: rgba(244,240,235,0.9);
+
+  --border-subtle: rgba(100,80,50,0.08);
+  --border-medium: rgba(100,80,50,0.14);
+  --border-strong: rgba(100,80,50,0.22);
+
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46,78,60,0.15);
+  --patina-faint: rgba(46,78,60,0.06);
+
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138,116,48,0.15);
+  --brass-faint: rgba(138,116,48,0.05);
+
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+
+  --phase-discovery: #2E5A42;
+  --phase-creation: #2E5A6A;
+  --phase-content: #6A3A3A;
+  --phase-execution: #3A5A4A;
+  --phase-intel: #8A7430;
+
+  --status-error: #7A2828;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* Film Grain Overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+/* Warm Vignette */
+.main-content {
+  position: relative;
+  isolation: isolate;
+}
+.main-content::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+}
+[data-theme="light"] .main-content::before {
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+/* Typography Classes */
+.font-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: var(--text-1);
+}
+.font-mono { font-family: var(--font-mono); }
+
+/* Inputs */
+input, textarea, select {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: all .2s ease;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--patina);
+  box-shadow: 0 0 0 3px rgba(58,95,74,0.08), 0 0 24px -4px rgba(168,144,62,0.08);
+}
+textarea { resize: vertical; line-height: 1.6; }
+select option { background: var(--bg-deep); }
+::placeholder {
+  color: var(--text-3);
+  opacity: 0.7;
+  font-style: italic;
+}
+
+button { cursor: pointer; font-family: var(--font-sans); border: none; outline: none; }
+
+/* Warm Glass Cards */
+.glass-card {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, rgba(168,144,62,0.035) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: var(--patina);
+  color: #E6DDD0; /* Always cream text per spec */
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 13px 30px;
+  border-radius: 7px;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--patina-lit);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px -4px rgba(58,95,74,0.3), 0 0 0 1px rgba(168,144,62,0.08);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  background: var(--bg-elevated);
+  color: var(--text-3);
+  border-color: var(--border-subtle);
+}
+
+/* Pulse Dot */
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px rgba(168,144,62,0.7), 0 0 2px rgba(168,144,62,1);
+  animation: beat 3s ease infinite;
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); opacity: 1; }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); opacity: 1; }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+
+/* Manifesto Block */
+.manifesto-block {
+  position: relative;
+  padding: 28px 0 28px 26px;
+  background: transparent;
+}
+.manifesto-block::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2.5px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(168,144,62,0.1);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 16px;
+  transition: all 0.2s ease;
+}
+.theme-toggle:hover {
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+/* Animations */
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.fade-in { animation: fadeIn .4s ease forwards; }
+.blink { animation: pulse 1.4s ease infinite; }
+.spin { animation: spin .9s linear infinite; }
+
+/* Tabs */
+.tab-btn {
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-3);
+  transition: all .2s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tab-btn:hover { border-color: var(--border-medium); color: var(--text-2); }
+.tab-btn.active {
+  background: var(--bg-elevated);
+  border-color: var(--patina);
+  color: var(--text-1);
+}
+
+/* Script Sect */
+.script-sect {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.script-sect-hd {
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background .15s;
+}
+.script-sect-hd:hover { background: var(--bg-elevated); }
+
+/* Pills */
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  margin: 2px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.pill-neutral { background: var(--bg-elevated); color: var(--text-2); border: 1px solid var(--border-subtle); }
+
+.ep-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all .2s ease;
+  margin-bottom: 8px;
+}
+.ep-card:hover { border-color: var(--border-medium); background: var(--bg-elevated); }
+.ep-card.active { border-color: var(--brass); background: var(--bg-overlay); box-shadow: 0 0 12px var(--brass-faint); }
 </style>
+
 <script>
-  (function() {
-    try {
-      var theme = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-      if (theme === 'dark') document.documentElement.classList.add('dark');
-    } catch(e) {}
-  })();
-</script>
-<script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+// ── QB SPINE v2 — API Key + QBP + Multi-provider adapter ───────────────────
 (function(){
   var params = new URLSearchParams(window.location.search);
-  // QBP
   var urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  if(urlQBP){
+    try{
+      var norm = urlQBP.replace(/-/g,'+').replace(/_/g,'/');
+      localStorage.setItem('qb_qbp', atob(norm));
+    }catch(e){ console.warn('QB qbp decode failed', e); }
+  }
   try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-  // Universal AI call — works with Anthropic or Gemini
+
   window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
     maxTokens = maxTokens || 4000;
     var body = {
@@ -91,17 +386,29 @@ button{cursor:pointer;font-family:var(--font);border:none;outline:none}
       body: JSON.stringify(body)
     });
     var d = await res.json();
-    if(d.error) throw new Error(d.error.message);
-    return d.content[0].text;
+    if(d && d.error) throw new Error(d.error.message || d.error || 'AI request failed');
+    var text = d && d.content && d.content[0] && d.content[0].text;
+    if(!text) throw new Error('Empty response from AI service');
+    return text;
   };
+
   window.QB_AUTOFILL = function(fieldMap){
-    if(!window.QB_QBP) return;
+    if(!window.QB_QBP || !fieldMap) return;
+    var inputSetter   = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,   'value') && Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,   'value').set;
+    var textAreaSetter= Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype,'value') && Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype,'value').set;
+    var selectSetter  = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype,  'value') && Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype,  'value').set;
     Object.entries(fieldMap).forEach(function(kv){
       var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
-      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
+      if(!el || el.value || window.QB_QBP[kv[1]] === undefined) return;
+      var setter = el.tagName==='TEXTAREA' ? textAreaSetter : el.tagName==='SELECT' ? selectSetter : inputSetter;
+      if(setter) setter.call(el, String(window.QB_QBP[kv[1]]));
+      else el.value = String(window.QB_QBP[kv[1]]);
+      el.dispatchEvent(new Event('input',  { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
     });
   };
 })();
+// ─────────────────────────────────────────────────────────────────────────────
 </script>
 </head>
 <body>
@@ -113,18 +420,20 @@ const ARCHETYPES=['The Rebel','The Sage','The Creator','The Ruler','The Magician
 const NATURAL_FORCES=['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
 const STEPS=['QBP Input','Generating','Strategy'];
 
-const ML=({c,children,mb=8})=><div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:c||'var(--text3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
-const Card=({children,accent,style={}})=><div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>{children}</div>;
+const ML=({c,children,mb=8})=><div className="font-mono" style={{fontSize:9,letterSpacing:'.15em',color:c||'var(--text-3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
+const Card=({children,accent,style={}})=><div className="glass-card" style={{padding:'20px 24px',borderColor:accent||'var(--border-subtle)',...style}}>{children}</div>;
+
 const TF=({label,value,onChange,placeholder,rows=1,hint})=>(
-  <div style={{marginBottom:14}}>
+  <div style={{marginBottom:18}}>
     <ML>{label}</ML>
     {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
     :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
-    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
+    {hint&&<div style={{fontSize:12,color:'var(--text-3)',marginTop:6,fontStyle:'italic'}}>{hint}</div>}
   </div>
 );
+
 const SF=({label,options,value,onChange})=>(
-  <div style={{marginBottom:14}}>
+  <div style={{marginBottom:18}}>
     <ML>{label}</ML>
     <select value={value} onChange={e=>onChange(e.target.value)}>
       <option value="">— select —</option>
@@ -132,12 +441,13 @@ const SF=({label,options,value,onChange})=>(
     </select>
   </div>
 );
+
 const Sec=({title,n,children,note})=>(
-  <div style={{marginBottom:28}}>
-    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
-      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{n}</span>
-      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
-      {note&&<span style={{fontSize:11,color:'var(--text3)',marginLeft:'auto'}}>{note}</span>}
+  <div style={{marginBottom:36}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:18,paddingBottom:12,borderBottom:'1px solid var(--border-subtle)'}}>
+      <span className="font-mono" style={{fontSize:10,color:'var(--patina)',letterSpacing:'.2em'}}>0{n}</span>
+      <span style={{fontSize:14,fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--text-1)'}}>{title}</span>
+      {note&&<span style={{fontSize:12,color:'var(--text-3)',marginLeft:'auto'}}>{note}</span>}
     </div>
     {children}
   </div>
@@ -145,26 +455,26 @@ const Sec=({title,n,children,note})=>(
 
 // ── SCRIPT VIEWER ─────────────────────────────────────────────────────────────
 const ScriptSection=({label,content,color,accent})=>{
-  const [open,setOpen]=useState(label==='Hook');
+  const [open,setOpen]=useState(label.includes('Hook'));
   const [copied,setCopied]=useState(false);
   const copy=async()=>{try{await navigator.clipboard.writeText(content);setCopied(true);setTimeout(()=>setCopied(false),1800);}catch(e){}};
   return(
     <div className="script-sect">
       <div className="script-sect-hd" onClick={()=>setOpen(!open)}>
-        <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
           <div style={{width:6,height:6,borderRadius:'50%',background:color}}/>
-          <span style={{fontSize:12,fontWeight:500,color:'var(--text)',letterSpacing:'.03em'}}>{label}</span>
+          <span style={{fontSize:13,fontWeight:500,color:'var(--text-1)',letterSpacing:'.02em'}}>{label}</span>
         </div>
-        <div style={{display:'flex',alignItems:'center',gap:8}}>
-          {open&&<button onClick={e=>{e.stopPropagation();copy();}} style={{background:'var(--bg5)',border:'1px solid var(--border)',color:copied?'var(--green)':'var(--text3)',padding:'3px 10px',borderRadius:3,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          {open&&<button onClick={e=>{e.stopPropagation();copy();}} style={{background:'var(--bg-elevated)',border:'1px solid var(--border-subtle)',color:copied?'var(--patina)':'var(--text-3)',padding:'4px 10px',borderRadius:4,fontSize:10,fontFamily:'var(--font-mono)',letterSpacing:'.08em',textTransform:'uppercase',transition:'all .2s'}}>
             {copied?'Copied ✓':'Copy'}
           </button>}
-          <span style={{color:'var(--text3)',fontSize:11,transform:open?'rotate(180deg)':'none',transition:'transform .2s'}}>↓</span>
+          <span style={{color:'var(--text-3)',fontSize:11,transform:open?'rotate(180deg)':'none',transition:'transform .2s'}}>↓</span>
         </div>
       </div>
       {open&&(
-        <div className="fade-in" style={{padding:'0 16px 16px',borderTop:'1px solid var(--border)'}}>
-          <div style={{background:'var(--bg)',borderRadius:6,padding:'14px 16px',fontSize:13,lineHeight:1.9,color:'var(--text)',whiteSpace:'pre-wrap',marginTop:12,maxHeight:400,overflowY:'auto'}}>
+        <div className="fade-in" style={{padding:'0 16px 16px',borderTop:'1px solid var(--border-subtle)'}}>
+          <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'16px 20px',fontSize:14,color:'var(--text-2)',whiteSpace:'pre-wrap',marginTop:12,maxHeight:400,overflowY:'auto'}}>
             {content}
           </div>
         </div>
@@ -176,24 +486,24 @@ const ScriptSection=({label,content,color,accent})=>{
 const ScriptDetail=({video,index})=>{
   const [tab,setTab]=useState('script');
   if(!video) return null;
-  const seriesColors=['var(--rose)','var(--amber)','var(--blue)'];
-  const seriesColor=seriesColors[Math.floor(index/2)%3]||'var(--rose)';
+  const seriesColors=['var(--phase-creation)','var(--phase-intel)','var(--phase-execution)'];
+  const seriesColor=seriesColors[Math.floor(index/2)%3]||'var(--phase-creation)';
 
   return(
-    <div className="fade-in">
-      <div style={{marginBottom:16}}>
-        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-          <span style={{fontFamily:'var(--mono)',fontSize:10,color:seriesColor,border:`1px solid ${seriesColor}33`,padding:'2px 8px',borderRadius:3,background:`${seriesColor}11`}}>
+    <div className="fade-in glass-card" style={{padding: '24px'}}>
+      <div style={{marginBottom:24}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
+          <span className="font-mono" style={{fontSize:10,color:seriesColor,border:`1px solid ${seriesColor}`,padding:'3px 8px',borderRadius:4,opacity:0.9}}>
             EP{String(index+1).padStart(2,'0')} · {video.series}
           </span>
           <span className="pill pill-neutral">{video.format}</span>
           <span className="pill pill-neutral">{video.duration}</span>
         </div>
-        <h3 style={{fontSize:16,fontWeight:600,color:'var(--text)',lineHeight:1.3,marginBottom:4}}>{video.title}</h3>
-        <p style={{fontSize:12,color:'var(--text3)',fontStyle:'italic'}}>{video.premise}</p>
+        <h3 className="font-serif" style={{fontSize:24,color:'var(--text-1)',lineHeight:1.3,marginBottom:8}}>{video.title}</h3>
+        <p style={{fontSize:14,color:'var(--text-3)',fontStyle:'italic'}}>{video.premise}</p>
       </div>
 
-      <div style={{display:'flex',gap:5,marginBottom:16}}>
+      <div style={{display:'flex',gap:6,marginBottom:20,borderBottom:'1px solid var(--border-subtle)',paddingBottom:12}}>
         {['script','thumbnail','repurpose','metadata'].map(t=>(
           <button key={t} className={`tab-btn${tab===t?' active':''}`} onClick={()=>setTab(t)}>
             {t==='repurpose'?'Repurpose':t}
@@ -203,31 +513,31 @@ const ScriptDetail=({video,index})=>{
 
       {tab==='script'&&(
         <div className="fade-in">
-          {video.hook&&<ScriptSection label="Hook — first 30 seconds" content={video.hook} color="var(--rose)" accent="rgba(251,113,133,0.2)"/>}
-          {video.intro&&<ScriptSection label="Intro — context + promise" content={video.intro} color="var(--amber)"/>}
+          {video.hook&&<ScriptSection label="Hook — first 30 seconds" content={video.hook} color="var(--phase-content)"/>}
+          {video.intro&&<ScriptSection label="Intro — context + promise" content={video.intro} color="var(--phase-intel)"/>}
           {video.body&&video.body.map((s,i)=>(
-            <ScriptSection key={i} label={`Act ${i+1} — ${s.title||'Body section'}`} content={s.content} color="var(--blue)"/>
+            <ScriptSection key={i} label={`Act ${i+1} — ${s.title||'Body section'}`} content={s.content} color="var(--phase-creation)"/>
           ))}
-          {video.transition&&<ScriptSection label="Transition / midpoint" content={video.transition} color="var(--purple)"/>}
-          {video.cta&&<ScriptSection label="CTA — end card" content={video.cta} color="var(--green)"/>}
+          {video.transition&&<ScriptSection label="Transition / midpoint" content={video.transition} color="var(--phase-execution)"/>}
+          {video.cta&&<ScriptSection label="CTA — end card" content={video.cta} color="var(--phase-discovery)"/>}
         </div>
       )}
 
       {tab==='thumbnail'&&(
         <div className="fade-in">
-          <Card accent="rgba(251,113,133,0.2)" style={{marginBottom:10}}>
-            <ML c="var(--rose)">Thumbnail concept</ML>
-            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7,marginBottom:10}}>{video.thumbnailConcept}</p>
+          <Card accent="var(--border-strong)" style={{marginBottom:12}}>
+            <ML c="var(--text-2)">Thumbnail concept</ML>
+            <p style={{fontSize:14,color:'var(--text-1)',lineHeight:1.7,marginBottom:16}}>{video.thumbnailConcept}</p>
             {video.thumbnailText&&(
-              <div style={{background:'var(--bg)',borderRadius:6,padding:'10px 12px',marginBottom:8}}>
-                <ML c="var(--text3)" mb={4}>On-image text</ML>
-                <p style={{fontSize:14,fontWeight:700,color:'var(--text)'}}>{video.thumbnailText}</p>
+              <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'12px 16px',marginBottom:12,border:'1px solid var(--border-subtle)'}}>
+                <ML c="var(--text-3)" mb={6}>On-image text</ML>
+                <p className="font-serif" style={{fontSize:18,color:'var(--text-1)'}}>{video.thumbnailText}</p>
               </div>
             )}
             {video.thumbnailMidjourney&&(
               <div>
-                <ML c="var(--text3)" mb={4}>Midjourney prompt</ML>
-                <div style={{fontFamily:'var(--mono)',fontSize:11,color:'var(--text)',background:'var(--bg)',borderRadius:5,padding:'10px 12px',lineHeight:1.7,wordBreak:'break-word'}}>
+                <ML c="var(--text-3)" mb={6}>Midjourney prompt</ML>
+                <div className="font-mono" style={{fontSize:11,color:'var(--text-2)',background:'var(--bg-deep)',borderRadius:6,padding:'12px 16px',lineHeight:1.7,wordBreak:'break-word',border:'1px solid var(--border-subtle)'}}>
                   {video.thumbnailMidjourney}
                 </div>
               </div>
@@ -235,9 +545,9 @@ const ScriptDetail=({video,index})=>{
           </Card>
           {video.titleVariants&&(
             <Card>
-              <ML>Title variants — A/B test these</ML>
+              <ML c="var(--text-2)">Title variants — A/B test these</ML>
               {video.titleVariants.map((t,i)=>(
-                <div key={i} style={{padding:'6px 0',borderBottom:i<video.titleVariants.length-1?'1px solid var(--border)':'',fontSize:13,color:'var(--text)'}}>{t}</div>
+                <div key={i} style={{padding:'10px 0',borderBottom:i<video.titleVariants.length-1?'1px solid var(--border-subtle)':'',fontSize:14,color:'var(--text-1)'}}>{t}</div>
               ))}
             </Card>
           )}
@@ -245,38 +555,44 @@ const ScriptDetail=({video,index})=>{
       )}
 
       {tab==='repurpose'&&(
-        <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:10}}>
-          <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,padding:'10px 14px',background:'var(--bg3)',borderRadius:6,border:'1px solid var(--border)'}}>
+        <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6,padding:'12px 16px',background:'var(--bg-surface)',borderRadius:8,border:'1px solid var(--border-subtle)'}}>
             One video → {(video.reels?.length||0) + (video.linkedinPost?1:0) + (video.tweetThread?1:0) + (video.newsletterAngle?1:0)} repurposed assets. Same intelligence, different surfaces.
           </div>
           {video.reels?.map((reel,i)=>(
-            <Card key={i} accent={i===0?'rgba(251,113,133,0.2)':i===1?'rgba(245,158,11,0.2)':'rgba(96,165,250,0.2)'}>
-              <ML c={i===0?'var(--rose)':i===1?'var(--amber)':'var(--blue)'}>Reel / Short {i+1} — {reel.angle}</ML>
-              <div style={{marginBottom:8}}>
+            <Card key={i} accent="var(--border-strong)">
+              <ML c="var(--text-1)">Reel / Short {i+1} — {reel.angle}</ML>
+              <div style={{marginBottom:12}}>
                 <span className="pill pill-neutral">{reel.duration}</span>
                 <span className="pill pill-neutral">{reel.platform}</span>
                 <span className="pill pill-neutral">{reel.hookType}</span>
               </div>
-              <div style={{marginBottom:8}}>
-                <ML c="var(--text3)" mb={4}>Hook</ML>
-                <p style={{fontSize:13,color:'var(--text)',fontStyle:'italic'}}>{reel.hook}</p>
+              <div style={{marginBottom:12}}>
+                <ML c="var(--text-3)" mb={4}>Hook</ML>
+                <p style={{fontSize:14,color:'var(--text-1)',fontStyle:'italic'}}>{reel.hook}</p>
               </div>
               <div>
-                <ML c="var(--text3)" mb={4}>Script</ML>
-                <div style={{background:'var(--bg)',borderRadius:5,padding:'10px 12px',fontSize:13,lineHeight:1.8,color:'var(--text)',whiteSpace:'pre-wrap',maxHeight:200,overflowY:'auto'}}>{reel.script}</div>
+                <ML c="var(--text-3)" mb={4}>Script</ML>
+                <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'12px 16px',fontSize:14,lineHeight:1.8,color:'var(--text-2)',whiteSpace:'pre-wrap',maxHeight:200,overflowY:'auto',border:'1px solid var(--border-subtle)'}}>{reel.script}</div>
               </div>
             </Card>
           ))}
           {video.linkedinPost&&(
-            <Card accent="rgba(96,165,250,0.2)">
-              <ML c="var(--blue)">LinkedIn post — from this video</ML>
-              <div style={{background:'var(--bg)',borderRadius:5,padding:'10px 12px',fontSize:13,lineHeight:1.8,color:'var(--text)',whiteSpace:'pre-wrap'}}>{video.linkedinPost}</div>
+            <Card accent="var(--border-strong)">
+              <ML c="var(--text-1)">LinkedIn post — from this video</ML>
+              <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'12px 16px',fontSize:14,lineHeight:1.8,color:'var(--text-2)',whiteSpace:'pre-wrap',border:'1px solid var(--border-subtle)'}}>{video.linkedinPost}</div>
+            </Card>
+          )}
+          {video.tweetThread&&(
+            <Card accent="var(--border-strong)">
+              <ML c="var(--text-1)">Tweet thread — from this video</ML>
+              <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'12px 16px',fontSize:14,lineHeight:1.8,color:'var(--text-2)',whiteSpace:'pre-wrap',border:'1px solid var(--border-subtle)'}}>{video.tweetThread}</div>
             </Card>
           )}
           {video.newsletterAngle&&(
-            <Card accent="rgba(74,222,128,0.15)">
-              <ML c="var(--green)">Newsletter angle</ML>
-              <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{video.newsletterAngle}</p>
+            <Card accent="var(--border-strong)">
+              <ML c="var(--text-1)">Newsletter angle</ML>
+              <p style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7}}>{video.newsletterAngle}</p>
             </Card>
           )}
         </div>
@@ -284,13 +600,13 @@ const ScriptDetail=({video,index})=>{
 
       {tab==='metadata'&&(
         <div className="fade-in">
-          <Card style={{marginBottom:10}}>
-            <ML>Video description (YouTube)</ML>
-            <div style={{background:'var(--bg)',borderRadius:5,padding:'12px',fontSize:13,lineHeight:1.8,color:'var(--text)',whiteSpace:'pre-wrap',maxHeight:250,overflowY:'auto'}}>{video.description||'—'}</div>
+          <Card style={{marginBottom:12}}>
+            <ML c="var(--text-2)">Video description (YouTube)</ML>
+            <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'16px',fontSize:14,lineHeight:1.8,color:'var(--text-2)',whiteSpace:'pre-wrap',maxHeight:250,overflowY:'auto',border:'1px solid var(--border-subtle)'}}>{video.description||'—'}</div>
           </Card>
           {video.tags&&(
             <Card>
-              <ML>Tags</ML>
+              <ML c="var(--text-2)">Tags</ML>
               <div>{video.tags.map((t,i)=><span key={i} className="pill pill-neutral">{t}</span>)}</div>
             </Card>
           )}
@@ -304,48 +620,52 @@ const ScriptDetail=({video,index})=>{
 const ChannelStrategy=({data})=>{
   if(!data?.channel) return null;
   return(
-    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
-      <div style={{background:'var(--bg)',border:'1px solid rgba(251,113,133,0.15)',borderRadius:8,padding:'18px 22px'}} className="scan-line">
-        <ML c="var(--rose)">Channel positioning statement</ML>
-        <p style={{fontSize:15,lineHeight:1.8,color:'var(--text)',fontStyle:'italic'}}>"{data.channel.positioningStatement}"</p>
+    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div className="manifesto-block">
+        <ML c="var(--brass)">Channel positioning statement</ML>
+        <p className="font-serif" style={{fontSize:20,lineHeight:1.6,color:'var(--text-1)',fontStyle:'italic'}}>"{data.channel.positioningStatement}"</p>
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-        <Card accent="rgba(251,113,133,0.2)">
-          <ML c="var(--rose)">Channel premise</ML>
-          <p style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{data.channel.premise}</p>
+      
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Card accent="var(--border-strong)">
+          <ML c="var(--text-1)">Channel premise</ML>
+          <p style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7}}>{data.channel.premise}</p>
         </Card>
         <Card>
           <ML>Target viewer</ML>
-          <p style={{fontSize:13,color:'var(--text2)',lineHeight:1.7}}>{data.channel.targetViewer}</p>
+          <p style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7}}>{data.channel.targetViewer}</p>
         </Card>
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
+      
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
         {data.channel.series?.map((s,i)=>(
-          <Card key={i} accent={['rgba(251,113,133,0.2)','rgba(245,158,11,0.2)','rgba(96,165,250,0.2)'][i]}>
-            <ML c={['var(--rose)','var(--amber)','var(--blue)'][i]}>Series {i+1}</ML>
-            <div style={{fontSize:13,fontWeight:500,color:'var(--text)',marginBottom:4}}>{s.name}</div>
-            <div style={{fontSize:11,color:'var(--text3)',marginBottom:8}}>{s.premise}</div>
-            <div style={{fontSize:11,color:'var(--text2)',lineHeight:1.5}}>{s.cadence}</div>
-            <div style={{marginTop:8}}>
+          <Card key={i} accent="var(--border-strong)">
+            <ML c={['var(--phase-creation)','var(--phase-intel)','var(--phase-execution)'][i%3]}>Series {i+1}</ML>
+            <div style={{fontSize:15,fontWeight:600,color:'var(--text-1)',marginBottom:6}}>{s.name}</div>
+            <div style={{fontSize:13,color:'var(--text-3)',marginBottom:12,lineHeight:1.6}}>{s.premise}</div>
+            <div className="font-mono" style={{fontSize:11,color:'var(--text-2)',marginBottom:12}}>{s.cadence}</div>
+            <div>
               {s.pillars?.map((p,j)=><span key={j} className="pill pill-neutral">{p}</span>)}
             </div>
           </Card>
         ))}
       </div>
+      
       {data.channel.channelOptimizations&&(
-        <Card accent="rgba(74,222,128,0.15)">
-          <ML c="var(--green)">Channel page optimizations</ML>
+        <Card accent="var(--border-strong)">
+          <ML c="var(--text-1)">Channel page optimizations</ML>
           {data.channel.channelOptimizations.map((o,i)=>(
-            <div key={i} style={{display:'flex',gap:10,padding:'6px 0',borderBottom:i<data.channel.channelOptimizations.length-1?'1px solid var(--border)':'',fontSize:12,color:'var(--text)',lineHeight:1.5}}>
-              <span style={{color:'var(--green)',flexShrink:0}}>→</span>{o}
+            <div key={i} style={{display:'flex',gap:12,padding:'10px 0',borderBottom:i<data.channel.channelOptimizations.length-1?'1px solid var(--border-subtle)':'',fontSize:14,color:'var(--text-2)',lineHeight:1.6}}>
+              <span style={{color:'var(--patina)',flexShrink:0}}>→</span>{o}
             </div>
           ))}
         </Card>
       )}
+      
       {data.channel.repurposeSystem&&(
         <Card>
           <ML>Repurpose flywheel</ML>
-          <p style={{fontSize:13,color:'var(--text2)',lineHeight:1.7}}>{data.channel.repurposeSystem}</p>
+          <p style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7}}>{data.channel.repurposeSystem}</p>
         </Card>
       )}
     </div>
@@ -380,26 +700,36 @@ function App(){
 
   useEffect(() => {
     const q = window.QB_QBP || {};
-    if (q.brandName) setBrandName(q.brandName);
-    if (q.brandEssence) setBrandEssence(q.brandEssence);
-    if (q.spark) setSpark(q.spark);
-    if (q.naturalForce) setNaturalForce(q.naturalForce);
-    if (q.archetype) setArchetype(q.archetype);
-    if (q.manifesto) setManifestoLine(q.manifesto);
-    if (q.antiBrand) setAntiBrand(q.antiBrand);
-    if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
-    if (q.offer) setOffer(q.offer);
-    if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+    const hy = (val, fn) => { if (val !== undefined && val !== null && val !== '') fn(String(val)); };
+    hy(q.brandName,          setBrandName);
+    hy(q.founderName || q.hostName, setFounderName);
+    hy(q.brandEssence,       setBrandEssence);
+    hy(q.spark,              setSpark);
+    hy(q.naturalForce,       setNaturalForce);
+    hy(q.archetype,          setArchetype);
+    hy(q.manifesto || q.manifestoLine, setManifestoLine);
+    hy(q.antiBrand,          setAntiBrand);
+    hy(q.primaryPersona,     setPrimaryPersona);
+    hy(q.offer,              setOffer);
+    hy(q.transformation,     setTransformation);
+    hy(q.methodName,         setMethodName);
+    hy(q.voiceNotes,         setVoiceNotes);
+    hy(q.channelGoal,        setChannelGoal);
+    hy(q.videoStyle,         setVideoStyle);
+    hy(q.existingContent,    setExistingContent);
   }, []);
 
   const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona&&offer;
 
-  const buildPrompt=()=>`You are the YouTube Strategy Agent inside the Quantum Branding BrandOS ecosystem.
+  const buildSystemPrompt=()=>`You are the YouTube Strategy Agent inside the Quantum Branding BrandOS ecosystem.
 Your function is to produce a complete YouTube channel strategy and 6 fully scripted videos from a Quantum Brand Profile.
 These are not outlines. Scripts must be complete, on-brand, ready to record. Each video also has a full repurpose pack.
-Return ONLY valid JSON — no markdown, no preamble.
+Return ONLY valid JSON. No markdown. No preamble. Honor the requested schema exactly.
+Every script section must be word-for-word spoken language, not bullet points or stage directions.
+Hooks must be exceptional and retention-aware.
+Each video must include exactly 3 reels: Instagram Reels, TikTok, and YouTube Shorts.`;
 
-QUANTUM BRAND PROFILE:
+  const buildUserPrompt=()=>`QUANTUM BRAND PROFILE:
 Brand: ${brandName}
 Founder / Host: ${founderName||'[Host]'}
 Brand Essence: ${brandEssence}
@@ -432,7 +762,7 @@ Return a JSON object with EXACTLY this structure:
       }
     ],
     "channelOptimizations": ["specific action to optimize channel page"],
-    "repurposeSystem": "2-3 sentences on the repurpose flywheel — how each video becomes multiple assets"
+    "repurposeSystem": "2-3 sentences on the repurpose flywheel"
   },
   "videos": [
     {
@@ -442,20 +772,20 @@ Return a JSON object with EXACTLY this structure:
       "premise": "one sentence on what this video is about",
       "format": "Talking head | Essay | Tutorial | Interview | Documentary | Manifesto",
       "duration": "estimated duration e.g. 8-12 min",
-      "hook": "the complete first 30 seconds — word for word — this is what keeps people watching. Start mid-action or mid-thought. No 'hey guys welcome back'.",
-      "intro": "the next 60-90 seconds — context, stakes, what the viewer will get. Build the promise.",
+      "hook": "the complete first 30 seconds — word for word",
+      "intro": "the next 60-90 seconds — context, stakes, what the viewer will get",
       "body": [
-        {"title": "act/section title", "content": "complete script for this section — word for word, natural spoken language, on-brand voice"},
-        {"title": "act/section title", "content": "complete script"},
-        {"title": "act/section title", "content": "complete script"}
+        {"title": "act/section title", "content": "complete word-for-word script"},
+        {"title": "act/section title", "content": "complete word-for-word script"},
+        {"title": "act/section title", "content": "complete word-for-word script"}
       ],
-      "transition": "midpoint transition or pivot moment — script",
-      "cta": "the end card — what to do next, in brand voice, not generic",
-      "thumbnailConcept": "visual concept for the thumbnail — what is in the image, expression, composition",
+      "transition": "midpoint transition — script",
+      "cta": "the end card — in brand voice",
+      "thumbnailConcept": "visual concept for the thumbnail",
       "thumbnailText": "the 2-5 word on-image text",
       "thumbnailMidjourney": "complete Midjourney v6 prompt for thumbnail visual",
       "titleVariants": ["variant A", "variant B", "variant C"],
-      "description": "full YouTube description — hook paragraph, what the video covers (3-5 bullets), links, CTA, hashtags",
+      "description": "full YouTube description — hook paragraph, bullets, CTA, hashtags",
       "tags": ["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8"],
       "reels": [
         {
@@ -464,25 +794,28 @@ Return a JSON object with EXACTLY this structure:
           "platform": "Instagram Reels | TikTok | YouTube Shorts",
           "hookType": "hook type",
           "hook": "the reel opening line",
-          "script": "complete word-for-word reel script — punchy, fast, complete thought"
+          "script": "complete word-for-word reel script"
         }
       ],
-      "linkedinPost": "complete LinkedIn post adapted from this video — different voice than the script, more reflective",
-      "newsletterAngle": "how this video becomes a newsletter issue — the angle to take"
+      "linkedinPost": "complete LinkedIn post adapted from this video",
+      "tweetThread": "complete X / Twitter thread adapted from this video",
+      "newsletterAngle": "how this video becomes a newsletter issue"
     }
   ]
 }
 
 REQUIREMENTS:
 - Exactly 6 videos — 2 per series
-- Every script section must be WORD FOR WORD — not bullet points, not directions, actual spoken words
+- Exactly 3 series
+- Every script section must be WORD FOR WORD — not bullet points, not directions
 - Hooks must be exceptional — the first 30 seconds determine 80% of retention. No generic intros.
 - Each video gets exactly 3 reels — one per platform (Instagram Reels, TikTok, YouTube Shorts)
-- Voice must match the QBP voice notes throughout — this sounds like a specific person, not a generic YouTube creator
+- Voice must match the QBP voice notes throughout
 - Body sections: 3 acts per video minimum, each fully scripted
 - Series: exactly 3 distinct series with 2 videos each`;
 
   const run=async()=>{
+    if(loading) return;
     if(!isValid()){setError('Complete required fields (*).');return;}
     setError('');setLoading(true);setStep(1);
     try{
@@ -492,17 +825,21 @@ REQUIREMENTS:
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:14000,
-          messages:[{role:'user',content:buildPrompt()}]
+          system:buildSystemPrompt(),
+          messages:[{role:'user',content:buildUserPrompt()}]
         })
       });
       const d=await res.json();
-      if(d.error) throw new Error(d.error.message);
-      const raw=d.content[0].text.trim();
-      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      setResult(JSON.parse(clean));
+      if(d && d.error) throw new Error(d.error.message || d.error || 'AI request failed');
+      const text = d && d.content && d.content[0] && d.content[0].text;
+      if(!text) throw new Error('Empty response from AI service');
+      const clean=text.trim().replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
+      const parsed=JSON.parse(clean);
+      if(!parsed.videos || !parsed.videos.length) throw new Error('AI returned no videos');
+      setResult(parsed);
       setActiveVideo(0);setMainTab('channel');setStep(2);
     }catch(e){setError('Agent error: '+e.message);setStep(0);}
-    setLoading(false);
+    finally{setLoading(false);}
   };
 
   const exportAll=()=>{
@@ -531,72 +868,75 @@ REQUIREMENTS:
   const videos=result?.videos||[];
 
   return(
-    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
-      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
-        <div style={{display:'flex',alignItems:'center',gap:14}}>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
-          <div style={{width:1,height:14,background:'var(--border)'}}/>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>YouTube Strategy Agent v1.0</div>
+    <div className="main-content" style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+      <header className="glass-card" style={{borderBottom:'1px solid var(--border-medium)',padding:'16px 28px',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:50,borderRadius:0,background:'var(--bg-overlay)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:16}}>
+          <div className="pulse-dot"></div>
+          <div className="font-mono" style={{fontSize:11,letterSpacing:'.3em',color:'var(--brass)',textTransform:'uppercase',fontWeight:700}}>QB_BRANDOS</div>
+          <div style={{width:1,height:14,background:'var(--border-strong)'}}/>
+          <div className="font-mono" style={{fontSize:10,letterSpacing:'.2em',color:'var(--text-3)',textTransform:'uppercase'}}>YouTube Strategy Agent</div>
         </div>
-        <div style={{display:'flex',gap:5,alignItems:'center'}}>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
           {STEPS.map((s,i)=>(
             <React.Fragment key={i}>
-              <div style={{display:'flex',alignItems:'center',gap:4}}>
-                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
-                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4)',fontFamily:'var(--mono)',letterSpacing:'.1em'}}>{s}</span>
+              <div style={{display:'flex',alignItems:'center',gap:6}}>
+                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--patina)':i===step?'var(--brass)':'var(--border-strong)',opacity:i===step?1:i<step?0.8:0.4,boxShadow:i===step?'0 0 8px rgba(168,144,62,0.7)':''}}/>
+                <span className="font-mono" style={{fontSize:10,color:i<=step?'var(--text-2)':'var(--text-4)',letterSpacing:'.1em'}}>{s}</span>
               </div>
-              {i<STEPS.length-1&&<div style={{width:12,height:1,background:'var(--border)',margin:'0 2px'}}/>}
+              {i<STEPS.length-1&&<div style={{width:16,height:1,background:'var(--border-medium)',margin:'0 2px'}}/>}
             </React.Fragment>
           ))}
+          <button onClick={toggleTheme} className="theme-toggle">Theme</button>
         </div>
       </header>
 
-      <main style={{flex:1,maxWidth:1100,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
+      <main style={{flex:1,maxWidth:1140,margin:'0 auto',width:'100%',padding:'48px 24px'}}>
 
         {step===0&&(
           <div className="fade-in">
-            <div style={{marginBottom:36}}>
-              <ML c="var(--green)">// Phase 03 — Content Creation</ML>
-              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:8}}>YouTube Strategy Agent</h1>
-              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:620}}>Channel positioning, 3 series architectures, 6 fully scripted videos, and a repurpose pack for each — Reels, LinkedIn posts, and newsletter angles. One brand, every platform.</p>
+            <div style={{marginBottom:48}}>
+              <ML c="var(--patina)">// Phase 03 — Content Creation</ML>
+              <h1 className="font-serif" style={{fontSize:42,fontWeight:400,lineHeight:1.1,marginBottom:12,color:'var(--text-1)'}}>YouTube Strategy Agent</h1>
+              <p style={{color:'var(--text-2)',fontSize:15,lineHeight:1.8,maxWidth:680}}>Channel positioning, 3 series architectures, 6 fully scripted videos, and a repurpose pack for each — Reels, LinkedIn posts, and newsletter angles. One brand, every platform.</p>
             </div>
 
-            <Sec n={1} title="Brand + Channel Core" note="* required">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+            <Sec n={1} title="Brand & Channel Core" note="* required">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
                 <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand behind the channel" rows={1}/>
                 <TF label="Host Name *" value={founderName} onChange={setFounderName} placeholder="Who appears on camera" rows={1}/>
               </div>
               <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="Irreducible truth" rows={2}/>
               <TF label="The Spark" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what transformation it creates" rows={3}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
                 <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
                 <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
               </div>
             </Sec>
 
-            <Sec n={2} title="Offer + Method">
+            <Sec n={2} title="Offer & Method">
               <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who watches — their role, struggle, desire. Specific." rows={3} hint="The more specific, the more precisely targeted every script will be"/>
               <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What you sell — format and transformation" rows={2}/>
               <TF label="Transformation" value={transformation} onChange={setTransformation} placeholder="Before → after" rows={1}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
                 <TF label="Method / Framework Name" value={methodName} onChange={setMethodName} placeholder="e.g. Quantum Branding, BrandOS" rows={1}/>
                 <TF label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The one belief" rows={1}/>
               </div>
             </Sec>
 
-            <Sec n={3} title="Voice + Production">
+            <Sec n={3} title="Voice & Production">
               <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand talks on video — rhythm, tone, what it refuses to sound like" rows={2}/>
               <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this channel refuses to be" rows={1}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
                 <TF label="Video Style Preference" value={videoStyle} onChange={setVideoStyle} placeholder="e.g. Talking head, B-roll heavy, essay style, documentary" rows={1}/>
                 <TF label="Channel Goal" value={channelGoal} onChange={setChannelGoal} placeholder="e.g. Build authority, drive discovery calls, grow audience" rows={1}/>
               </div>
               <TF label="Existing Content / What's been done" value={existingContent} onChange={setExistingContent} placeholder="Any existing videos or content directions to build on or avoid" rows={2}/>
             </Sec>
 
-            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'11px 15px',marginBottom:16,fontSize:13,color:'var(--red)'}}>{error}</div>}
-            <div style={{display:'flex',justifyContent:'flex-end'}}>
-              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
+            {error&&<div style={{background:'var(--bg-surface)',border:'1px solid var(--status-error)',borderRadius:8,padding:'14px 18px',marginBottom:24,fontSize:14,color:'var(--status-error)'}}>{error}</div>}
+            
+            <div style={{display:'flex',justifyContent:'flex-end',marginTop:24}}>
+              <button onClick={run} disabled={!isValid()} className="btn-primary">
                 Generate YouTube Strategy →
               </button>
             </div>
@@ -604,40 +944,33 @@ REQUIREMENTS:
         )}
 
         {step===1&&(
-          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:460,gap:24,textAlign:'center'}}>
-            <div style={{width:52,height:52,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:500,gap:32,textAlign:'center'}}>
+            <div style={{width:64,height:64,border:'2px solid var(--border-medium)',borderTop:'2px solid var(--brass)',borderRadius:'50%'}} className="spin"/>
             <div>
-              <ML c="var(--green)">Agent Processing</ML>
-              <div style={{color:'var(--text2)',fontSize:13,lineHeight:2.1,maxWidth:420}}>
-                Reading Quantum Brand Profile<br/>
-                Architecting channel positioning<br/>
-                Designing 3 content series<br/>
-                Writing 6 complete video scripts<br/>
-                Crafting 18 Reel/Short scripts<br/>
-                Building thumbnail concepts<br/>
-                Generating repurpose assets<br/>
-                Assembling complete YouTube pack...
+              <ML c="var(--brass)">Agent Processing</ML>
+              <div className="font-serif" style={{color:'var(--text-1)',fontSize:22,lineHeight:1.8,maxWidth:480,fontStyle:'italic'}}>
+                Weaving identity into narrative architecture...
               </div>
             </div>
-            <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>3 series · 6 scripts · 18 reels · full repurpose</div>
+            <div className="font-mono" style={{fontSize:11,color:'var(--text-3)'}}>3 series · 6 scripts · 18 reels · full repurpose</div>
           </div>
         )}
 
         {step===2&&result&&(
           <div className="fade-in">
-            <div style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+            <div style={{marginBottom:32,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16}}>
               <div>
-                <ML c="var(--green)">// YouTube Strategy — Complete</ML>
-                <h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>{brandName}</h1>
-                <p style={{color:'var(--text2)',fontSize:13}}>3 series · 6 videos · 18 reels · complete repurpose system</p>
+                <ML c="var(--patina)">// YouTube Strategy — Complete</ML>
+                <h1 className="font-serif" style={{fontSize:32,fontWeight:400,marginBottom:8,color:'var(--text-1)'}}>{brandName}</h1>
+                <p style={{color:'var(--text-3)',fontSize:14}}>3 series · 6 videos · 18 reels · complete repurpose system</p>
               </div>
-              <div style={{display:'flex',gap:8}}>
-                <button onClick={exportAll} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Export Scripts</button>
-                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Strategy</button>
+              <div style={{display:'flex',gap:12}}>
+                <button onClick={exportAll} style={{background:'var(--bg-surface)',border:'1px solid var(--border-medium)',color:'var(--text-2)',padding:'10px 18px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',letterSpacing:'.1em',textTransform:'uppercase',transition:'all 0.2s'}}>Export Scripts</button>
+                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg-surface)',border:'1px solid var(--border-medium)',color:'var(--text-2)',padding:'10px 18px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',letterSpacing:'.1em',textTransform:'uppercase',transition:'all 0.2s'}}>New Strategy</button>
               </div>
             </div>
 
-            <div style={{display:'flex',gap:6,marginBottom:20,paddingBottom:14,borderBottom:'1px solid var(--border)'}}>
+            <div style={{display:'flex',gap:8,marginBottom:28,paddingBottom:16,borderBottom:'1px solid var(--border-subtle)'}}>
               <button className={`tab-btn${mainTab==='channel'?' active':''}`} onClick={()=>setMainTab('channel')}>Channel Strategy</button>
               <button className={`tab-btn${mainTab==='videos'?' active':''}`} onClick={()=>setMainTab('videos')}>Scripts + Repurpose</button>
             </div>
@@ -645,19 +978,19 @@ REQUIREMENTS:
             {mainTab==='channel'&&<ChannelStrategy data={result}/>}
 
             {mainTab==='videos'&&(
-              <div style={{display:'grid',gridTemplateColumns:'260px 1fr',gap:24,alignItems:'start'}}>
+              <div style={{display:'grid',gridTemplateColumns:'280px 1fr',gap:32,alignItems:'start'}}>
                 <div>
-                  <ML c="var(--text3)" mb={10}>6 videos — select to view</ML>
+                  <ML c="var(--text-3)" mb={16}>6 videos — select to view</ML>
                   {videos.map((v,i)=>{
-                    const seriesColors=['var(--rose)','var(--rose)','var(--amber)','var(--amber)','var(--blue)','var(--blue)'];
-                    const sc=seriesColors[i]||'var(--rose)';
+                    const seriesColors=['var(--phase-creation)','var(--phase-creation)','var(--phase-intel)','var(--phase-intel)','var(--phase-execution)','var(--phase-execution)'];
+                    const sc=seriesColors[i]||'var(--phase-creation)';
                     return(
                       <div key={i} className={`ep-card${activeVideo===i?' active':''}`} onClick={()=>setActiveVideo(i)}>
-                        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
-                          <span style={{fontFamily:'var(--mono)',fontSize:9,color:sc,border:`1px solid ${sc}33`,padding:'1px 6px',borderRadius:2,background:`${sc}11`}}>EP{String(i+1).padStart(2,'0')}</span>
-                          <span style={{fontSize:10,color:'var(--text3)',fontFamily:'var(--mono)'}}>{v.series}</span>
+                        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
+                          <span className="font-mono" style={{fontSize:9,color:sc,border:`1px solid ${sc}`,padding:'2px 6px',borderRadius:3,opacity:0.8}}>EP{String(i+1).padStart(2,'0')}</span>
+                          <span className="font-mono" style={{fontSize:10,color:'var(--text-3)'}}>{v.series}</span>
                         </div>
-                        <div style={{fontSize:12,fontWeight:500,color:'var(--text)',lineHeight:1.3,marginBottom:4}}>{v.title}</div>
+                        <div className="font-serif" style={{fontSize:16,fontWeight:400,color:'var(--text-1)',lineHeight:1.3,marginBottom:8}}>{v.title}</div>
                         <div style={{display:'flex',gap:4}}>
                           <span className="pill pill-neutral">{v.format}</span>
                           <span className="pill pill-neutral">{v.duration}</span>
@@ -674,18 +1007,15 @@ REQUIREMENTS:
 
       </main>
 
-      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between'}}>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>YouTube Strategy Agent / Phase 03</span>
+      <footer style={{borderTop:'1px solid var(--border-subtle)',padding:'24px 32px',display:'flex',justifyContent:'space-between',background:'var(--bg-deep)'}}>
+        <span className="font-mono" style={{fontSize:10,color:'var(--text-3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span className="font-mono" style={{fontSize:10,color:'var(--text-3)',letterSpacing:'.15em'}}>YouTube Strategy Agent / Phase 03</span>
       </footer>
     </div>
   );
 }
 
 // ── QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────────
-// Injected by QB OS build system
-// Adds approve/revise/remove to each content piece, up to 3 rounds
-
 function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revisionField='content'}) {
   const [states, setStates] = React.useState(() => {
     const s = {};
@@ -709,7 +1039,6 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
     if (!feedback.trim()) return;
     setStates(prev => ({...prev, [i]: {...prev[i], status:'revising', round: prev[i].round + 1, feedback}}));
     setRevising(prev => ({...prev, [i]: false}));
-    // Trigger regeneration via QB_AI
     if (window.QB_AI && states[i].round < 3) {
       try {
         const original = JSON.stringify(states[i].item);
@@ -725,18 +1054,18 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
     }
   };
 
-  const statusColor = {pending:'var(--text3)', approved:'var(--green)', removed:'var(--red)', revising:'var(--amber)', revised:'var(--blue)'};
+  const statusColor = {pending:'var(--text-3)', approved:'var(--patina)', removed:'var(--status-error)', revising:'var(--brass)', revised:'var(--phase-creation)'};
   const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — review again'};
 
   return (
     <div>
-      <div style={{background:'rgba(74,222,128,0.05)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'12px 16px',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
+      <div style={{background:'var(--bg-surface)',border:'1px solid var(--border-medium)',borderRadius:8,padding:'16px 20px',marginBottom:24,display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
         <div>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:2}}>Content Review</div>
-          <div style={{fontSize:12,color:'var(--text2)'}}>{Object.values(states).filter(s=>s.status==='approved').length} approved · {Object.values(states).filter(s=>s.status==='pending'||s.status==='revised').length} pending · {Object.values(states).filter(s=>s.status==='removed').length} removed</div>
+          <div className="font-mono" style={{fontSize:10,color:'var(--patina)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:4}}>Content Review</div>
+          <div style={{fontSize:13,color:'var(--text-2)'}}>{Object.values(states).filter(s=>s.status==='approved').length} approved · {Object.values(states).filter(s=>s.status==='pending'||s.status==='revised').length} pending · {Object.values(states).filter(s=>s.status==='removed').length} removed</div>
         </div>
         {allApproved && approvedItems.length > 0 && (
-          <div style={{fontFamily:'var(--mono)',fontSize:10,padding:'6px 14px',borderRadius:5,background:'var(--green)',color:'#000',fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase'}}>All done ✓</div>
+          <div className="font-mono" style={{fontSize:11,padding:'8px 16px',borderRadius:6,background:'var(--patina)',color:'#E6DDD0',fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase'}}>All done ✓</div>
         )}
       </div>
       {items.map((item, i) => {
@@ -745,31 +1074,31 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
         const isRevising = revising[i];
         const maxRoundsReached = s.round >= 3;
         return (
-          <div key={i} style={{background:'var(--bg3)',border:'1px solid '+(s.status==='approved'?'rgba(74,222,128,0.2)':s.status==='removed'?'rgba(239,68,68,0.15)':'var(--border)'),borderRadius:10,marginBottom:12,overflow:'hidden',opacity:s.status==='removed'?0.4:1,transition:'all .2s'}}>
-            <div style={{padding:'14px 18px 0'}}>
+          <div key={i} className="glass-card" style={{borderColor:(s.status==='approved'?'var(--patina)':s.status==='removed'?'var(--status-error)':'var(--border-subtle)'),marginBottom:16,opacity:s.status==='removed'?0.4:1}}>
+            <div style={{padding:'20px 24px 0'}}>
               {renderItem(s.item, i)}
             </div>
-            <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 18px',borderTop:'1px solid var(--border)',background:'rgba(0,0,0,0.2)',flexWrap:'wrap'}}>
-              <div style={{fontFamily:'var(--mono)',fontSize:9,color:statusColor[s.status],letterSpacing:'.1em',flex:1}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,padding:'14px 24px',borderTop:'1px solid var(--border-subtle)',background:'var(--bg-deep)',flexWrap:'wrap'}}>
+              <div className="font-mono" style={{fontSize:10,color:statusColor[s.status],letterSpacing:'.1em',flex:1,textTransform:'uppercase'}}>
                 {statusLabel[s.status]} {s.round > 0 ? '(Round '+s.round+'/3)' : ''}
               </div>
               {(s.status==='pending'||s.status==='revised') && !isRevising && (
                 <>
-                  <button onClick={()=>approve(i)} style={{background:'rgba(74,222,128,0.12)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>✓ Approve</button>
-                  {!maxRoundsReached && <button onClick={()=>startRevise(i)} style={{background:'rgba(245,158,11,0.1)',color:'var(--amber)',border:'1px solid rgba(245,158,11,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>↻ Revise</button>}
-                  <button onClick={()=>remove(i)} style={{background:'rgba(239,68,68,0.08)',color:'var(--red)',border:'1px solid rgba(239,68,68,0.15)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>× Remove</button>
+                  <button onClick={()=>approve(i)} style={{background:'var(--patina-faint)',color:'var(--patina)',border:'1px solid var(--patina-dim)',padding:'6px 16px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',letterSpacing:'.08em',cursor:'pointer'}}>✓ Approve</button>
+                  {!maxRoundsReached && <button onClick={()=>startRevise(i)} style={{background:'var(--brass-faint)',color:'var(--brass)',border:'1px solid var(--brass-dim)',padding:'6px 16px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',letterSpacing:'.08em',cursor:'pointer'}}>↻ Revise</button>}
+                  <button onClick={()=>remove(i)} style={{background:'rgba(138,74,74,0.08)',color:'var(--status-error)',border:'1px solid rgba(138,74,74,0.15)',padding:'6px 16px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',letterSpacing:'.08em',cursor:'pointer'}}>× Remove</button>
                 </>
               )}
-              {s.status==='approved' && <button onClick={()=>setStates(prev=>({...prev,[i]:{...prev[i],status:'pending'}}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Undo</button>}
-              {s.status==='revising' && <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--amber)'}}>Generating revision…</div>}
+              {s.status==='approved' && <button onClick={()=>setStates(prev=>({...prev,[i]:{...prev[i],status:'pending'}}))} style={{background:'none',color:'var(--text-3)',border:'1px solid var(--border-subtle)',padding:'6px 16px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',cursor:'pointer'}}>Undo</button>}
+              {s.status==='revising' && <div className="font-mono" style={{fontSize:10,color:'var(--brass)'}}>Generating revision…</div>}
             </div>
             {isRevising && (
-              <div style={{padding:'12px 18px',background:'rgba(245,158,11,0.04)',borderTop:'1px solid rgba(245,158,11,0.1)'}}>
-                <div style={{fontFamily:'var(--mono)',fontSize:9,color:'var(--amber)',letterSpacing:'.1em',marginBottom:6}}>REVISION REQUEST {s.round+1}/3</div>
-                <textarea id={'revision-input-'+i} placeholder="What should change? Be specific: e.g. 'Make the hook more direct' or 'Remove the question format'" style={{width:'100%',background:'var(--bg3)',border:'1px solid rgba(245,158,11,0.2)',color:'var(--text)',borderRadius:6,padding:'10px 14px',fontSize:12,fontFamily:'var(--font)',resize:'vertical',minHeight:60,outline:'none'}} rows={2}/>
-                <div style={{display:'flex',gap:8,marginTop:8}}>
-                  <button onClick={()=>submitRevise(i)} style={{background:'var(--amber)',color:'#000',padding:'7px 16px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',fontWeight:700,letterSpacing:'.08em',cursor:'pointer'}}>Submit Revision →</button>
-                  <button onClick={()=>setRevising(prev=>({...prev,[i]:false}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'7px 12px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Cancel</button>
+              <div style={{padding:'16px 24px',background:'var(--bg-surface)',borderTop:'1px solid var(--border-subtle)'}}>
+                <div className="font-mono" style={{fontSize:10,color:'var(--brass)',letterSpacing:'.1em',marginBottom:8}}>REVISION REQUEST {s.round+1}/3</div>
+                <textarea id={'revision-input-'+i} placeholder="What should change? Be specific..." style={{width:'100%',background:'var(--bg-deep)',border:'1px solid var(--brass-dim)',color:'var(--text-1)',borderRadius:6,padding:'12px 16px',fontSize:14,fontFamily:'var(--font-sans)',resize:'vertical',minHeight:70,outline:'none'}} rows={2}/>
+                <div style={{display:'flex',gap:10,marginTop:12}}>
+                  <button onClick={()=>submitRevise(i)} style={{background:'var(--brass)',color:'#111',padding:'8px 20px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',fontWeight:700,letterSpacing:'.08em',cursor:'pointer',border:'none'}}>Submit Revision →</button>
+                  <button onClick={()=>setRevising(prev=>({...prev,[i]:false}))} style={{background:'none',color:'var(--text-3)',border:'1px solid var(--border-subtle)',padding:'8px 16px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',cursor:'pointer'}}>Cancel</button>
                 </div>
               </div>
             )}
@@ -779,7 +1108,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
     </div>
   );
 }
-// ── END QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>

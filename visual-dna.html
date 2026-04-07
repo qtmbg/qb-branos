@@ -1,50 +1,253 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Visual DNA</title>
+<title>QB BrandOS — Visual DNA</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script>
+  // Anti-flash: Read theme immediately and apply
   (function() {
     try {
-      var theme = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-      if (theme === 'dark') document.documentElement.classList.add('dark');
+      var t = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
     } catch(e) {}
   })();
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
-    darkMode: "class",
-    theme: { extend: { fontFamily: { sans: ["Inter","sans-serif"], mono: ["JetBrains Mono","monospace"] }, colors: { quantum: "#4ade80" } } }
+    darkMode: ["class", '[data-theme="dark"]'],
+    theme: { 
+      extend: { 
+        fontFamily: { 
+          sans: ["Inter", "-apple-system", "sans-serif"], 
+          mono: ["JetBrains Mono", "monospace"],
+          serif: ["DM Serif Display", "Georgia", "serif"]
+        }, 
+        colors: { 
+          patina: { DEFAULT: "#3A5F4A", lit: "#4A7A5E", dim: "rgba(58,95,74,0.2)", faint: "rgba(58,95,74,0.08)" },
+          brass: { DEFAULT: "#A8903E", lit: "#C4A84E", dim: "rgba(168,144,62,0.18)", faint: "rgba(168,144,62,0.06)" },
+          warmred: "#8A4A4A",
+          bg: { void: "var(--bg-void)", deep: "var(--bg-deep)", base: "var(--bg-base)", surface: "var(--bg-surface)", elevated: "var(--bg-elevated)", overlay: "var(--bg-overlay)" },
+          border: { subtle: "var(--border-subtle)", medium: "var(--border-medium)", strong: "var(--border-strong)" },
+          text: { 1: "var(--text-1)", 2: "var(--text-2)", 3: "var(--text-3)", 4: "var(--text-4)" }
+        } 
+      } 
+    }
   }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* DESIGN SYSTEM: Entangled Time - Base Variables */
+  :root, [data-theme="dark"] {
+    --bg-void: #080604;
+    --bg-deep: #0A0806;
+    --bg-base: #0E0C09;
+    --bg-surface: rgba(140,110,70,0.045);
+    --bg-elevated: rgba(140,110,70,0.07);
+    --bg-overlay: rgba(18,15,10,0.85);
+    --border-subtle: rgba(140,110,70,0.06);
+    --border-medium: rgba(140,110,70,0.11);
+    --border-strong: rgba(140,110,70,0.18);
+    --text-1: #DDD4C4;
+    --text-2: #A89A88;
+    --text-3: #6A5E50;
+    --text-4: #3E3830;
+
+    /* Brand colour tokens — used in plain CSS rules below */
+    --patina: #3A5F4A;
+    --patina-lit: #4A7A5E;
+    --patina-faint: rgba(58,95,74,0.08);
+    --brass: #A8903E;
+    --brass-faint: rgba(168,144,62,0.06);
+  }
+  
+  [data-theme="light"] {
+    --bg-void: #F4F0EB;
+    --bg-deep: #EDE8E2;
+    --bg-base: #E6E0D8;
+    --bg-surface: rgba(100,80,50,0.04);
+    --bg-elevated: rgba(100,80,50,0.07);
+    --bg-overlay: rgba(244,240,235,0.9);
+    --border-subtle: rgba(100,80,50,0.08);
+    --border-medium: rgba(100,80,50,0.14);
+    --border-strong: rgba(100,80,50,0.22);
+    --text-1: #1A1610;
+    --text-2: #5A5040;
+    --text-3: #8A7E70;
+    --text-4: #B8AEA0;
+
+    /* Brand colour tokens — light mode variants */
+    --patina: #2E4D3A;
+    --patina-lit: #3A5F4A;
+    --patina-faint: rgba(46,77,58,0.08);
+    --brass: #8A7430;
+    --brass-faint: rgba(138,116,48,0.06);
+  }
+
+  html:not([data-theme]) { background: #080604; color: #A89A88; }
+  
+  body {
+    background-color: var(--bg-void);
+    color: var(--text-2);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 1. Film Grain Overlay */
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+  [data-theme="light"] body::after { opacity: 0.02; }
+
+  /* 8. Warm Vignette */
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+  }
+  [data-theme="light"] .vignette {
+    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+  }
+
+  /* 2. Warm Glass Cards */
+  .glass-card {
+    background: var(--bg-overlay);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-medium);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .glass-card::before {
+    content: ''; position: absolute; top: -30%; left: -10%; width: 60%; height: 60%;
+    background: radial-gradient(ellipse at center, rgba(168,144,62,0.035) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* 3. Brass Heartbeat Pulse */
+  .pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #A8903E;
+    box-shadow: 0 0 8px rgba(168,144,62,0.7), 0 0 2px rgba(168,144,62,1);
+    animation: beat 3s ease infinite;
+  }
+  [data-theme="light"] .pulse-dot {
+    background: #8A7430; box-shadow: 0 0 8px rgba(138,116,48,0.7), 0 0 2px rgba(138,116,48,1);
+  }
+  @keyframes beat {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    12% { transform: scale(1.35); opacity: 1; }
+    24% { transform: scale(0.95); opacity: 0.6; }
+    36% { transform: scale(1.15); opacity: 1; }
+    48% { transform: scale(1); opacity: 0.7; }
+  }
+
+  /* 4. Manifesto Block */
+  .manifesto-block {
+    position: relative;
+    padding: 24px 0 24px 24px;
+  }
+  .manifesto-block::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--brass-faint);
+  }
+
+  /* 5. Input Focus */
+  input:focus, textarea:focus {
+    border-color: var(--patina) !important;
+    box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+    outline: none;
+  }
+
+  /* 6. Primary Button */
+  .btn-primary {
+    background: var(--patina);
+    color: #E6DDD0;
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 14px 32px; border-radius: 7px; border: none;
+    transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--patina-lit);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 24px -4px rgba(58,95,74,0.3), 0 0 0 1px var(--brass-faint);
+  }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(50%); }
+
+  /* 7. Progress/Image Filters */
+  .quantum-image {
+    filter: contrast(1.05) saturate(0.9) sepia(0.1);
+  }
+
+  /* Animations */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes fadeInSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in { animation: fadeInSlideUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  
+  /* Typography Overrides */
+  .heading-display {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--text-1);
+  }
+  .label-system {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-3);
+  }
+  .body-copy {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-2);
+  }
+</style>
 </head>
-<body class="bg-white dark:bg-[#050505] min-h-screen">
+<body class="min-h-screen transition-colors duration-700">
 <div id="root"></div>
 <script type="text/babel" data-presets="react,env">
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
-// Icon stubs
-const Settings = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>;
-const Play = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}><polygon points="5 3 19 12 5 21 5 3"/></svg>;
-const CheckCircle = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>;
-const Activity = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>;
-const ImageIcon = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>;
-const Download = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
-const ArrowRight = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>;
-const ArrowLeft = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>;
-const Sun = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>;
-const Moon = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
-const Mail = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>;
-const Loader2 = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} style={{animation:"spin 1s linear infinite"}}><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/></svg>;
-const Check = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><polyline points="20 6 9 17 4 12"/></svg>;
+// Icon stubs (softened, adapted)
+const Settings = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>;
+const Play = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}><polygon points="5 3 19 12 5 21 5 3"/></svg>;
+const CheckCircle = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>;
+const ImageIcon = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>;
+const Sun = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
+const Moon = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
+const Loader2 = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} style={{animation:"spin 1s linear infinite"}}><line x1="12" y1="2" x2="12" y2="6" strokeOpacity="1"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93" strokeOpacity="0.875"/><line x1="18" y1="12" x2="22" y2="12" strokeOpacity="0.75"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07" strokeOpacity="0.625"/><line x1="12" y1="18" x2="12" y2="22" strokeOpacity="0.5"/><line x1="7.76" y1="16.24" x2="4.93" y2="19.07" strokeOpacity="0.375"/><line x1="6" y1="12" x2="2" y2="12" strokeOpacity="0.25"/><line x1="7.76" y1="7.76" x2="4.93" y2="4.93" strokeOpacity="0.125"/></svg>;
+const Check = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><polyline points="20 6 9 17 4 12"/></svg>;
 
 // --- DATA & TAXONOMY ---
 const TAG_DIMENSIONS = {
@@ -58,7 +261,6 @@ const TAG_DIMENSIONS = {
   mood: ['Serene', 'Confident', 'Intense', 'Playful', 'Intimate', 'Monumental']
 };
 
-// Generate high-quality unsplash placeholders with deterministic tags
 const generateMockImages = (count = 200) => {
   const images = [];
   const baseUrls = [
@@ -92,89 +294,7 @@ const generateMockImages = (count = 200) => {
 
 // --- CORE COMPONENTS ---
 
-// Global Styles for Quantum Branding (Noise, Fonts, Animations)
-const QuantumStyles = () => (
-  <style dangerouslySetInnerHTML={{__html: `
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;900&family=JetBrains+Mono:wght@400;700&display=swap');
-
-    :root {
-      --quantum-green: #4ade80;
-      --quantum-red: #ef4444;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-    .font-mono {
-      font-family: 'JetBrains Mono', 'Courier New', monospace !important;
-    }
-    /* Global Noise Overlay */
-    .noise-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.03;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    }
-
-    .dark .noise-overlay {
-      opacity: 0.02;
-    }
-    /* Glassmorphic Cards */
-    .glass-card {
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 32px;
-      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-
-    .dark .glass-card {
-      background: rgba(10, 10, 10, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .light .glass-card {
-      background: rgba(240, 240, 240, 0.6);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-    /* Animations */
-    @keyframes fadeInSlideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-quantum-in {
-      animation: fadeInSlideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    }
-
-    /* Text Gradient Loop */
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .text-gradient-loop {
-      background-size: 200% auto;
-      animation: gradientShift 8s linear infinite;
-    }
-    .dark .text-gradient-loop {
-      background-image: linear-gradient(to right, #ffffff, #4ade80, #ffffff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .light .text-gradient-loop {
-      background-image: linear-gradient(to right, #000000, #16a34a, #000000);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    /* Custom Image Filters */
-    .quantum-image {
-      filter: contrast(1.1) saturate(0.8);
-    }
-  `}} />
-);
-
-// The physics engine for the cards
+// Physics Engine for Cards
 const SwipeCard = ({ image, onSwipe }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -187,7 +307,6 @@ const SwipeCard = ({ image, onSwipe }) => {
   const triggerExit = useCallback((action) => {
     if (isExiting.current) return;
     isExiting.current = true;
-
     const hesitation = Date.now() - mountTime.current;
     const direction = action === 'keep' ? window.innerWidth : -window.innerWidth;
     if (cardRef.current) cardRef.current.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease-out';
@@ -198,11 +317,8 @@ const SwipeCard = ({ image, onSwipe }) => {
   useEffect(() => {
     mountTime.current = Date.now();
     const handleKeyDown = (e) => {
-      if (e.key === 'ArrowLeft') {
-        triggerExit('discard');
-      } else if (e.key === 'ArrowRight') {
-        triggerExit('keep');
-      }
+      if (e.key === 'ArrowLeft') triggerExit('discard');
+      else if (e.key === 'ArrowRight') triggerExit('keep');
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -210,6 +326,7 @@ const SwipeCard = ({ image, onSwipe }) => {
 
   const handlePointerDown = (e) => {
     if (isExiting.current) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
     setIsDragging(true);
     startPos.current = { x: e.clientX - position.x, y: e.clientY - position.y };
     if (cardRef.current) cardRef.current.style.transition = 'none';
@@ -227,31 +344,24 @@ const SwipeCard = ({ image, onSwipe }) => {
     if (isExiting.current) return;
     if (cardRef.current) cardRef.current.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease-out';
     const dragDistance = Math.abs(position.x);
-    if (position.x > threshold) {
-      triggerExit('keep');
-    } else if (position.x < -threshold) {
-      triggerExit('discard');
-    } else if (dragDistance < 10) {
+    if (position.x > threshold) triggerExit('keep');
+    else if (position.x < -threshold) triggerExit('discard');
+    else if (dragDistance < 10) {
       const clickX = e.clientX;
-      const screenWidth = window.innerWidth;
-      if (clickX > screenWidth / 2) {
-        triggerExit('keep');
-      } else {
-        triggerExit('discard');
-      }
-    } else {
-      setPosition({ x: 0, y: 0 });
-    }
+      if (clickX > window.innerWidth / 2) triggerExit('keep');
+      else triggerExit('discard');
+    } else setPosition({ x: 0, y: 0 });
   };
 
   const rotation = position.x * 0.05;
   const opacity = 1 - Math.abs(position.x) / (window.innerWidth * 1.5);
   const glowRight = Math.max(0, position.x / threshold);
   const glowLeft = Math.max(0, -position.x / threshold);
+
   return (
     <div className="absolute inset-0 flex items-center justify-center touch-none overflow-hidden">
-      <div className="absolute inset-y-0 right-0 w-32 bg-[#4ade80] blur-[100px] transition-opacity duration-200 pointer-events-none" style={{ opacity: glowRight * 0.4 }} />
-      <div className="absolute inset-y-0 left-0 w-32 bg-[#ef4444] blur-[100px] transition-opacity duration-200 pointer-events-none" style={{ opacity: glowLeft * 0.4 }} />
+      <div className="absolute inset-y-0 right-0 w-48 bg-patina blur-[120px] transition-opacity duration-300 pointer-events-none mix-blend-screen" style={{ opacity: glowRight * 0.5 }} />
+      <div className="absolute inset-y-0 left-0 w-48 bg-warmred blur-[120px] transition-opacity duration-300 pointer-events-none mix-blend-screen" style={{ opacity: glowLeft * 0.5 }} />
 
       <div
         ref={cardRef}
@@ -259,7 +369,7 @@ const SwipeCard = ({ image, onSwipe }) => {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={isDragging ? handlePointerUp : undefined}
-        className="relative w-full h-full max-w-5xl max-h-[90vh] cursor-pointer active:cursor-grabbing will-change-transform"
+        className="relative w-full h-full max-w-[800px] max-h-[85vh] cursor-pointer active:cursor-grabbing will-change-transform"
         style={{
           transform: `translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
           opacity: opacity,
@@ -269,36 +379,32 @@ const SwipeCard = ({ image, onSwipe }) => {
           src={image.url}
           alt=""
           draggable="false"
-          className="quantum-image w-full h-full object-cover rounded-[32px] select-none pointer-events-none border border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+          className="quantum-image w-full h-full object-cover rounded-xl select-none pointer-events-none border border-border-strong shadow-2xl"
         />
       </div>
     </div>
   );
 };
 
-// --- THEME TOGGLE COMPONENT ---
+// Theme Toggle Component
 const ThemeToggle = ({ isDarkMode, onToggle }) => (
   <button
     onClick={onToggle}
-    className="flex items-center justify-center w-10 h-10 rounded-full border dark:border-white/10 border-black/10 dark:hover:bg-white/5 hover:bg-black/5 transition-all duration-300 active:scale-95"
+    className="flex items-center justify-center w-8 h-8 rounded border border-border-medium hover:bg-bg-surface transition-all duration-300 active:scale-95 text-text-3 hover:text-brass"
     title="Toggle Theme"
   >
-    {isDarkMode ?
-      <Sun className="w-4 h-4 text-[#71717a] hover:text-white transition-colors" /> :
-      <Moon className="w-4 h-4 text-zinc-500 hover:text-black transition-colors" />
-    }
+    {isDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
   </button>
 );
 
-// --- REPORT GENERATION ENGINE & VIEW (Moved above App to prevent TDZ issues) ---
+// Report Generation Engine & View
 const Pill = ({ children, variant = "default" }) => {
-  const base = "inline-block rounded-full px-3 py-1 font-mono text-[10px] tracking-[0.3em] uppercase border mr-2 mb-2";
   const variants = {
-    default: "border-black/20 dark:border-white/20 bg-black/5 dark:bg-white/5 text-zinc-600 dark:text-zinc-400",
-    green: "border-[#4ade80]/30 bg-[#4ade80]/10 text-[#4ade80]",
-    red: "border-[#ef4444]/30 bg-[#ef4444]/10 text-[#ef4444]"
+    default: "border border-border-strong bg-bg-surface text-text-2",
+    green: "border border-patina-dim bg-patina-faint text-patina-lit",
+    red: "border border-warmred/20 bg-warmred/10 text-warmred"
   };
-  return <span className={`${base} ${variants[variant]}`}>{children}</span>;
+  return <span className={`inline-flex items-center rounded-full px-2.5 py-1 label-system tracking-[0.1em] ${variants[variant]} mr-2 mb-2`}>{children}</span>;
 };
 
 const ReportView = ({ history, images, finalists, onRestart, isDarkMode, toggleTheme, leadData }) => {
@@ -316,139 +422,136 @@ const ReportView = ({ history, images, finalists, onRestart, isDarkMode, toggleT
       imageIds.forEach(id => {
         const img = images.find(i => i.id === id);
         if(!img) return;
-        Object.values(img.tags).forEach(tag => {
-          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-        });
+        Object.values(img.tags).forEach(tag => { tagCounts[tag] = (tagCounts[tag] || 0) + 1; });
       });
-      return Object.entries(tagCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 4)
-        .map(e => e[0]);
+      return Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 4).map(e => e[0]);
     };
+    
     const considered = r1History.filter(h => h.hesitation > 2500 && h.hesitation < 5000);
-    const biasTags = getDominantTagsArr(considered.map(c => c.imageId));
     const shadowImages = images.filter(i => i.isShadow).map(i => i.id);
     const keptShadows = keepsR1.filter(k => shadowImages.includes(k.imageId));
-    const shadowRate = shadowImages.length ? Math.round((keptShadows.length / shadowImages.length) * 100) : 0;
+    
     return {
       keepRate: Math.round((keepsR1.length / Math.max(1, r1History.length)) * 100),
       dominantKept: getDominantTagsArr(keepsR1.map(k => k.imageId)),
       dominantDiscarded: getDominantTagsArr(discardsR1.map(d => d.imageId)),
       coreKeepsCount: coreKeepsIds.length,
       signatureTags: getDominantTagsArr(coreKeepsIds),
-      biasTags: biasTags,
+      biasTags: getDominantTagsArr(considered.map(c => c.imageId)),
       fastDiscards: getDominantTagsArr(discardsR1.filter(d => d.hesitation < 1000).map(d=>d.imageId)),
-      shadowRate,
+      shadowRate: shadowImages.length ? Math.round((keptShadows.length / shadowImages.length) * 100) : 0,
       energeticSignature: getDominantTagsArr(finalists.map(f => f.id))
     };
   }, [history, images, finalists]);
 
   return (
-    <div className="min-h-screen bg-[#ffffff] dark:bg-[#000000] text-black dark:text-white font-sans p-8 md:p-16 overflow-y-auto selection:bg-[#4ade80] selection:text-black transition-colors duration-500 relative">
-      <div className="noise-overlay" />
-      {/* SUCCESS NOTIFICATION BANNER */}
+    <div className="min-h-screen bg-bg-void text-text-2 pt-24 pb-32 px-6 md:px-12 selection:bg-patina selection:text-white relative z-10">
+      
       <div className="fixed top-6 left-0 right-0 z-50 flex justify-center p-4 pointer-events-none">
-        <div className="bg-[#111] dark:bg-[#222] text-white px-6 py-4 rounded-full shadow-2xl flex items-center space-x-3 border border-[#4ade80]/50 font-mono text-[10px] tracking-[0.2em] uppercase animate-quantum-in pointer-events-auto">
-          <div className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse"></div>
-          <span>Report securely generated to <strong className="text-[#4ade80] font-bold">{leadData.email}</strong></span>
+        <div className="bg-bg-overlay backdrop-blur-md text-text-1 px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 border border-border-strong label-system animate-in pointer-events-auto">
+          <div className="pulse-dot"></div>
+          <span className="opacity-80">Report securely generated to <strong className="text-brass font-bold ml-1">{leadData.email}</strong></span>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto space-y-16 mt-16 relative z-10 animate-quantum-in">
-        <header className="border-b border-black/10 dark:border-white/10 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-          <div>
-            <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-[#4ade80] mb-3">Diagnostic Output</div>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter leading-[1.1] uppercase">Visual DNA.</h1>
-            {(leadData.firstName || leadData.company) && (
-              <p className="font-light italic text-zinc-500 mt-2 text-xl">
-                Client: {leadData.firstName} {leadData.lastName} {leadData.company ? `(${leadData.company})` : ''}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center space-x-6">
-            <ThemeToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
-            <button onClick={onRestart} className="font-mono text-[10px] tracking-[0.3em] uppercase border border-black/20 dark:border-white/20 px-6 py-3 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors rounded-full active:scale-95">
-              Reset Terminal
-            </button>
+      <div className="max-w-3xl mx-auto space-y-16 animate-in">
+        <header className="border-b border-border-medium pb-10 flex flex-col gap-6 relative">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="label-system text-brass mb-4">Diagnostic Output</div>
+              <h1 className="heading-display text-5xl md:text-6xl">Visual DNA</h1>
+              {(leadData.firstName || leadData.company) && (
+                <p className="body-copy mt-4 text-text-3 italic">
+                  Client: {leadData.firstName} {leadData.lastName} {leadData.company ? `(${leadData.company})` : ''}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center space-x-4">
+              <ThemeToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
+              <button onClick={onRestart} className="label-system px-4 py-2 border border-border-strong rounded hover:bg-bg-surface hover:text-text-1 transition-colors">
+                Reset
+              </button>
+            </div>
           </div>
         </header>
 
-        {/* SECTION 1 */}
+        {/* SEC 01 */}
         <section>
-          <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-zinc-500 mb-4">Sec 01. The Eye Chooses</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 glass-card p-10">
+          <div className="label-system mb-4 opacity-70">Sec 01. The Eye Chooses</div>
+          <div className="glass-card p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <div className="mb-8">
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-3">Acceptance Rate</span>
-                <span className="text-4xl font-black">{reportData.keepRate}%</span>
+                <span className="label-system block mb-3 opacity-60">Acceptance Rate</span>
+                <span className="heading-display text-4xl text-text-1">{reportData.keepRate}%</span>
               </div>
               <div className="mb-6">
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-3">Dominant Markers (Kept)</span>
+                <span className="label-system block mb-3 opacity-60">Dominant Markers (Kept)</span>
                 <div className="flex flex-wrap">{reportData.dominantKept.length ? reportData.dominantKept.map(t => <Pill key={t} variant="green">{t}</Pill>) : <Pill>Neutral</Pill>}</div>
               </div>
               <div>
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-3">Dominant Markers (Discarded)</span>
+                <span className="label-system block mb-3 opacity-60">Dominant Markers (Discarded)</span>
                 <div className="flex flex-wrap">{reportData.dominantDiscarded.length ? reportData.dominantDiscarded.map(t => <Pill key={t}>{t}</Pill>) : <Pill>Neutral</Pill>}</div>
               </div>
             </div>
-            <div className="bg-black/5 dark:bg-[#111] p-8 border-l-2 border-[#4ade80] rounded-[24px]">
-              <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-4">Generated Insight</span>
-              <p className="text-lg leading-relaxed text-[#71717a] dark:text-zinc-300">
-                The client's eye moves instinctively toward <strong className="font-bold text-black dark:text-white">{reportData.dominantKept[0] || 'neutrality'}</strong> and violently away from <strong className="font-bold text-black dark:text-white">{reportData.dominantDiscarded[0] || 'standard'}</strong>. The initial calibration strongly rejects historical/static norms.
+            <div className="manifesto-block bg-bg-deep rounded-r-lg">
+              <span className="label-system block mb-4 text-brass">Generated Insight</span>
+              <p className="body-copy">
+                The client's eye moves instinctively toward <strong className="text-text-1 font-medium">{reportData.dominantKept[0] || 'neutrality'}</strong> and violently away from <strong className="text-text-1 font-medium">{reportData.dominantDiscarded[0] || 'standard'}</strong>. The initial calibration strongly rejects historical/static norms.
               </p>
             </div>
           </div>
         </section>
 
-        {/* SECTION 2 */}
+        {/* SEC 02 */}
         <section>
-          <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-zinc-500 mb-4">Sec 02. The Visual Signature</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 glass-card p-10">
+          <div className="label-system mb-4 opacity-70">Sec 02. The Visual Signature</div>
+          <div className="glass-card p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <div className="mb-8">
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-3">Core Assets</span>
-                <span className="text-4xl font-black">{reportData.coreKeepsCount} <span className="text-xl font-normal text-zinc-500">survived all rounds</span></span>
+                <span className="label-system block mb-3 opacity-60">Core Assets</span>
+                <span className="heading-display text-4xl text-text-1">{reportData.coreKeepsCount} <span className="text-lg font-sans text-text-3 tracking-normal">survived all rounds</span></span>
               </div>
               <div>
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-3">The Signature</span>
+                <span className="label-system block mb-3 opacity-60">The Signature</span>
                 <div className="flex flex-wrap">{reportData.signatureTags.length ? reportData.signatureTags.map(t => <Pill key={t} variant="green">{t}</Pill>) : <Pill>Varied</Pill>}</div>
               </div>
             </div>
-            <div className="bg-black/5 dark:bg-[#111] p-8 border-l-2 border-[#4ade80] rounded-[24px]">
-              <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-4">Generated Insight</span>
-              <p className="text-lg leading-relaxed text-[#71717a] dark:text-zinc-300">
-                The brand's aesthetic nervous system is tuned to <strong className="font-bold text-black dark:text-white">{reportData.signatureTags[0] || 'variety'}</strong>. It establishes its presence through uncompromising <strong className="font-bold text-black dark:text-white">{reportData.signatureTags[1] || 'forms'}</strong>.
+            <div className="manifesto-block bg-bg-deep rounded-r-lg">
+              <span className="label-system block mb-4 text-brass">Generated Insight</span>
+              <p className="body-copy">
+                The brand's aesthetic nervous system is tuned to <strong className="text-text-1 font-medium">{reportData.signatureTags[0] || 'variety'}</strong>. It establishes its presence through uncompromising <strong className="text-text-1 font-medium">{reportData.signatureTags[1] || 'forms'}</strong>.
               </p>
             </div>
           </div>
         </section>
 
-        {/* SECTION 3 & 4 */}
+        {/* SEC 03 & 04 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <section>
-            <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-zinc-500 mb-4">Sec 03. Subconscious Bias</div>
-            <div className="glass-card p-10 h-full flex flex-col">
-              <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-3">Hesitation Clusters</span>
+            <div className="label-system mb-4 opacity-70">Sec 03. Subconscious Bias</div>
+            <div className="glass-card p-8 md:p-10 h-full flex flex-col">
+              <span className="label-system block mb-3 opacity-60">Hesitation Clusters</span>
               <div className="flex flex-wrap mb-6">{reportData.biasTags.length ? reportData.biasTags.map(t => <Pill key={t}>{t}</Pill>) : <Pill>None Distinct</Pill>}</div>
-              <p className="mt-auto text-lg leading-relaxed text-[#71717a] dark:text-zinc-300 border-t border-black/5 dark:border-white/5 pt-6">
+              <p className="mt-auto body-copy border-t border-border-subtle pt-6">
                 The client consistently paused at this imagery. This signals recognition, not ambivalence. The brand is drawn to this energy even when it doesn't yet fully claim it.
               </p>
             </div>
           </section>
+          
           <section>
-            <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-zinc-500 mb-4">Sec 04. Rejection Taxomony</div>
-            <div className="glass-card p-10 h-full flex flex-col">
+            <div className="label-system mb-4 opacity-70">Sec 04. Rejection Taxonomy</div>
+            <div className="glass-card p-8 md:p-10 h-full flex flex-col">
               <div className="mb-6">
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-3">Allergic (Fast Discards)</span>
+                <span className="label-system block mb-3 opacity-60">Allergic (Fast Discards)</span>
                 <div className="flex flex-wrap">{reportData.fastDiscards.length ? reportData.fastDiscards.map(t => <Pill key={t} variant="red">{t}</Pill>) : <Pill>None</Pill>}</div>
               </div>
               <div className="mb-4">
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] block mb-3">Shadow Deck Acceptance</span>
-                <span className="text-4xl font-black">{reportData.shadowRate}%</span>
+                <span className="label-system block mb-3 opacity-60">Shadow Deck Acceptance</span>
+                <span className="heading-display text-4xl text-text-1">{reportData.shadowRate}%</span>
               </div>
               {reportData.shadowRate > 30 && (
-                <div className="mt-auto border border-[#ef4444]/30 bg-[#ef4444]/10 text-[#ef4444] p-4 rounded-xl font-mono text-[10px] tracking-[0.2em] uppercase flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-[#ef4444] animate-pulse mr-3"></span>
+                <div className="mt-auto border border-warmred/30 bg-warmred/10 text-warmred p-4 rounded label-system flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-warmred animate-pulse mr-3"></span>
                   WARNING: Proximity to Shadow qualities.
                 </div>
               )}
@@ -456,42 +559,41 @@ const ReportView = ({ history, images, finalists, onRestart, isDarkMode, toggleT
           </section>
         </div>
 
-        {/* SECTION 5 */}
+        {/* SEC 05 */}
         <section>
-          <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-zinc-500 mb-4">Sec 05. Energetic Signature</div>
-          <div className="bg-[#000000] text-white p-12 rounded-[40px] border border-white/10 relative overflow-hidden">
-            <div className="noise-overlay" />
-            <h3 className="text-center text-2xl md:text-4xl font-light italic mb-12 relative z-10 text-white/90">
+          <div className="label-system mb-4 opacity-70">Sec 05. Energetic Synthesis</div>
+          <div className="bg-bg-deep p-10 md:p-12 rounded-xl border border-border-strong relative overflow-hidden">
+            <h3 className="text-center text-xl md:text-2xl font-serif italic mb-10 relative z-10 text-text-1 font-light opacity-90">
               "{reportData.energeticSignature.join(' · ') || 'Balanced Synthesis'}"
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 relative z-10">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 relative z-10">
               {finalists.slice(0, 5).map((img, i) => (
-                <div key={i} className="aspect-square bg-white/5 rounded-[16px] overflow-hidden border border-white/10">
-                  <img src={img.url} className="quantum-image w-full h-full object-cover grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500" alt="Finalist" />
+                <div key={i} className="aspect-[4/5] bg-bg-surface rounded-lg overflow-hidden border border-border-subtle">
+                  <img src={img.url} className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity duration-500" alt="Finalist" />
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* SECTION 6 */}
-        <section className="font-mono text-xs md:text-sm relative">
-          <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-[#4ade80] mb-4">Sec 06. Final Brief</div>
-          <div className="bg-black/5 dark:bg-[#111] p-8 md:p-12 border border-black/10 dark:border-white/10 rounded-[32px] overflow-x-auto text-[#71717a] dark:text-zinc-400 leading-[2.5] tracking-widest whitespace-pre">
+        {/* SEC 06 */}
+        <section className="relative">
+          <div className="label-system text-patina mb-4">Sec 06. Final Brief</div>
+          <div className="glass-card p-8 md:p-10 font-mono text-[11px] leading-[2.2] tracking-wider whitespace-pre-wrap text-text-2 border-border-medium">
 {`>> SYSTEM LOG: VISUAL DNA BRIEF
 >> CLIENT: ${leadData.company || leadData.firstName || 'UNDEFINED'}
-================================================================
+======================================================
 
 // VISUAL IDENTITY PARAMETERS
-Direction:      [ ${reportData.signatureTags.join(' / ').padEnd(40)} ]
-Temperature:    [ ${reportData.dominantKept.find(t=>['Warm','Neutral','Cool'].includes(t)) || 'Neutral'} ]
-Core Energy:    [ ${reportData.energeticSignature[0] || 'Balanced'} ]
+Direction:      [ ${reportData.signatureTags.join(' / ').padEnd(30)} ]
+Temperature:    [ ${(reportData.dominantKept.find(t=>['Warm','Neutral','Cool'].includes(t)) || 'Neutral').padEnd(30)} ]
+Core Energy:    [ ${(reportData.energeticSignature[0] || 'Balanced').padEnd(30)} ]
 
 // THE ANTI-PATTERN BLOCKLIST
-Allergic:       [ ${reportData.fastDiscards.join(' / ').padEnd(40)} ]
+Allergic:       [ ${reportData.fastDiscards.join(' / ').padEnd(30)} ]
 Shadow Warning: [ ${reportData.shadowRate > 30 ? 'HIGH PROXIMITY - ENFORCE GUARDRAILS' : 'NOMINAL'} ]
 
-================================================================
+======================================================
 >> END OF LOG`}
           </div>
         </section>
@@ -506,7 +608,6 @@ function App() {
   const [demoMode, setDemoMode] = useState(true);
   const [session, setSession] = useState({ client: '', code: 'DNA001' });
 
-  // Safely grab initial theme inside strict environments
   const [isDarkMode, setIsDarkMode] = useState(() => {
     try { return (localStorage.getItem('qb-theme') || 'dark') === 'dark'; } catch(e) { return true; }
   });
@@ -521,6 +622,9 @@ function App() {
   const [isSubmittingForm, setIsSubmittingForm] = useState(false);
 
   const startSession = () => {
+    // Remove any leftover float button from a previous session
+    const oldBtn = document.getElementById('qb-float-results');
+    if (oldBtn) oldBtn.remove();
     const imgCount = demoMode ? 15 : 200;
     const freshImages = generateMockImages(imgCount);
     setImages(freshImages);
@@ -535,42 +639,39 @@ function App() {
     if (phase.startsWith('t')) {
       const duration = demoMode ? 3000 : 30000;
       const nextPhase = phase === 't1' ? 'r2' : phase === 't2' ? 'r3' : 'finals';
-      const timer = setTimeout(() => {
-        setupNextRound(nextPhase);
-      }, duration);
+      const timer = setTimeout(() => { setupNextRound(nextPhase); }, duration);
       return () => clearTimeout(timer);
     }
-  }, [phase, demoMode]);
+  }, [phase, demoMode, setupNextRound]);
 
-  const setupNextRound = (nextPhase) => {
+  const setupNextRound = useCallback((nextPhase) => {
     setCurrentIndex(0);
     if (nextPhase === 'r2') {
       const r1Keeps = history.filter(h => h.round === 1 && h.action === 'keep').map(h => h.imageId);
       setCurrentRoundImages(images.filter(img => r1Keeps.includes(img.id)).sort(() => Math.random() - 0.5));
       setPhase('r2');
     } else if (nextPhase === 'r3') {
+      const r2Keeps = history.filter(h => h.round === 2 && h.action === 'keep').map(h => h.imageId);
+      setCurrentRoundImages(images.filter(img => r2Keeps.includes(img.id)).sort(() => Math.random() - 0.5));
       setPhase('r3');
     } else if (nextPhase === 'finals') {
       const r2Keeps = history.filter(h => h.round === 2 && h.action === 'keep').map(h => h.imageId);
       const r3Keeps = history.filter(h => h.round === 3 && h.action === 'keep').map(h => h.imageId);
       const coreKeeps = r3Keeps.filter(id => r2Keeps.includes(id));
-
       const toTournament = images.filter(img => coreKeeps.includes(img.id));
-
       const queue = [];
       for (let i = 0; i < toTournament.length; i += 2) {
-        if (toTournament[i+1]) {
-          queue.push([toTournament[i], toTournament[i+1]]);
-        } else {
-          setFinalists(prev => [...prev, toTournament[i]]);
-        }
+        if (toTournament[i+1]) queue.push([toTournament[i], toTournament[i+1]]);
+        else setFinalists(prev => [...prev, toTournament[i]]);
       }
-      setTournamentQueue(queue);
-      setPhase('finals');
-
-      if (queue.length === 0) setPhase('reveal');
+      if (queue.length === 0) {
+        setPhase('reveal');
+      } else {
+        setTournamentQueue(queue);
+        setPhase('finals');
+      }
     }
-  };
+  }, [history, images, setFinalists]);
 
   const recordSwipe = (action, hesitation) => {
     if (currentIndex >= currentRoundImages.length) return;
@@ -583,21 +684,17 @@ function App() {
       setCurrentIndex(prev => prev + 1);
     } else {
       if (phase === 'r1') setPhase('t1');
-      if (phase === 'r2') setPhase('t2');
-      if (phase === 'r3') setPhase('t3');
+      else if (phase === 'r2') setPhase('t2');
+      else if (phase === 'r3') setPhase('t3');
     }
   };
 
   const handleTournamentChoice = (winner) => {
     setFinalists(prev => [...prev, winner]);
-    if (tournamentQueue.length > 1) {
-      setTournamentQueue(prev => prev.slice(1));
-    } else {
-      setPhase('reveal');
-    }
+    if (tournamentQueue.length > 1) setTournamentQueue(prev => prev.slice(1));
+    else setPhase('reveal');
   };
 
-  // Safely toggle theme to prevent crashing in embedded environments
   const toggleTheme = () => setIsDarkMode(prev => {
     const next = !prev;
     const themeName = next ? 'dark' : 'light';
@@ -606,15 +703,10 @@ function App() {
     return next;
   });
 
+  const isFirstRender = useRef(true);
   useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
     const themeName = isDarkMode ? 'dark' : 'light';
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    }
     document.documentElement.setAttribute('data-theme', themeName);
     try { localStorage.setItem('qb-theme', themeName); } catch(e) {}
   }, [isDarkMode]);
@@ -628,23 +720,18 @@ function App() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (!isFormValid) return;
-
     setIsSubmittingForm(true);
 
     setTimeout(() => {
       setIsSubmittingForm(false);
       setPhase('report');
       
-      // ── QB OS: Auto-populate QBP from Visual DNA ────────────────────────────
       try {
         const keeps = history.filter(h => h.action === 'keep');
         const keepIds = keeps.map(h => h.imageId).slice(0, 10);
-        const exemplarRef = keepIds.join(', ');
         const keepCount = keeps.length;
         const discardCount = history.filter(h => h.action === 'discard').length;
         const discardRate = discardCount > 0 ? Math.round((discardCount / (keepCount + discardCount)) * 100) : 0;
-        
-        // Changed h.time to h.hesitation based on the state architecture
         const fastDiscardR1 = history.filter(h => h.round === 1 && h.action === 'discard' && h.hesitation < 3000).map(h=>h.imageId);
         
         const existing = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
@@ -654,30 +741,24 @@ function App() {
           visualDnaDiscardRate: discardRate,
           visualDnaKeptImages: keepIds,
           visualDnaFastDiscards: fastDiscardR1,
-          brandName: (leadData && leadData.firstName) ? existing.brandName || '' : existing.brandName || '',
+          brandName: existing.brandName || leadData.company || leadData.firstName || '',
         });
         
         localStorage.setItem('qb_qbp', JSON.stringify(updated));
         localStorage.setItem('qb_visual_dna_done', '1');
         
-        // Show results button on completion
         setTimeout(function() {
           if (!document.getElementById('qb-float-results')) {
             var btn = document.createElement('button');
             btn.id = 'qb-float-results';
-            btn.className = 'qb-send-results-btn';
-            btn.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:9000;box-shadow:0 8px 32px rgba(74,222,128,.25);';
-            btn.innerHTML = '&#128196; Send me my results';
+            btn.className = 'btn-primary';
+            btn.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:9000;box-shadow:0 8px 32px rgba(58,95,74,.3);';
+            btn.innerHTML = 'Send me my results';
             btn.addEventListener('click', function() {
               var qbp = {};
               try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) {}
               if (window.QB_showResultsModal) { 
-                window.QB_showResultsModal({
-                  toolId: 'visual-dna',
-                  qbp: qbp,
-                  results: {},
-                  pdfPage: '/visual-dna-pdf.html'
-                }); 
+                window.QB_showResultsModal({ toolId: 'visual-dna', qbp: qbp, results: {}, pdfPage: '/visual-dna-pdf.html' }); 
               }
             });
             document.body.appendChild(btn);
@@ -685,144 +766,123 @@ function App() {
         }, 600);
         
         if (window.parent && window.parent !== window) {
-          window.parent.postMessage({ type: 'QB_PHASE_COMPLETE', phase: 1, tool: 'visual-dna', qbp: updated }, '*');
+          window.parent.postMessage({ type: 'QB_PHASE_COMPLETE', phase: 1, tool: 'visual-dna', qbp: updated }, window.location.origin || '*');
         }
       } catch(e) { console.warn('QB Visual DNA sync:', e); }
-      // ── END QB OS ─────────────────────────────────────────────────────────
 
-    }, 2000);
+    }, 1500);
   };
 
   // --- VIEWS ---
   if (phase === 'studio') {
     return (
-      <div className={isDarkMode ? 'dark' : 'light'}>
-        <QuantumStyles />
-        <div className="noise-overlay" />
-        <div className="min-h-screen bg-[#ffffff] dark:bg-[#000000] text-black dark:text-white p-8 font-sans transition-colors duration-500 relative z-10">
-          <div className="max-w-5xl mx-auto space-y-12 animate-quantum-in">
-
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-black/10 dark:border-white/10 pb-6 gap-6">
-              <div>
-                <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-zinc-500 mb-2">System Ready</div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-[1.1] text-gradient-loop">VISUAL DNA.</h1>
+      <div className="relative min-h-screen flex flex-col items-center justify-center p-6 md:p-12 z-10">
+        <div className="vignette"></div>
+        <div className="w-full max-w-4xl space-y-12 animate-in relative z-10">
+          <header className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-border-medium pb-8 gap-6">
+            <div>
+              <div className="label-system mb-3 opacity-60">System Ready</div>
+              <h1 className="heading-display text-4xl md:text-5xl">Visual DNA</h1>
+            </div>
+            <div className="flex items-center space-x-6">
+              <div className="label-system flex items-center text-brass">
+                <div className="pulse-dot mr-3"></div> Facilitator Terminal
               </div>
-              <div className="flex items-center space-x-6">
-                <div className="font-mono text-[10px] tracking-[0.3em] uppercase text-zinc-500 flex items-center">
-                  <Activity className="w-3 h-3 mr-2" /> Facilitator Terminal
+              <ThemeToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
+            </div>
+          </header>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="glass-card p-8 space-y-8">
+              <h2 className="label-system flex items-center opacity-80">
+                <Settings className="w-3.5 h-3.5 mr-3" /> Session Config
+              </h2>
+              <div className="space-y-6">
+                <div>
+                  <label className="block label-system opacity-60 mb-2">Session Identifier</label>
+                  <input type="text"
+                    className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[15px] focus:border-patina transition-colors placeholder:text-text-3 placeholder:italic focus:outline-none focus:ring-0"
+                    value={session.code === "DNA001" ? "Verne Jewels — March 2026" : session.client}
+                    onChange={(e) => setSession(prev => ({...prev, client: e.target.value}))}
+                  />
                 </div>
-                <ThemeToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
-              </div>
-            </header>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Card 1 */}
-              <div className="glass-card p-8 space-y-8">
-                <h2 className="font-mono text-[11px] tracking-[0.3em] uppercase text-zinc-500 flex items-center">
-                  <Settings className="w-4 h-4 mr-3" /> Session Config
-                </h2>
-                <div className="space-y-6">
-                  <div>
-                    <label className="block font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] mb-2">Session Identifier</label>
-                    <input type="text"
-                      className="w-full bg-transparent border-b border-black/20 dark:border-white/20 pb-2 text-lg font-normal focus:outline-none focus:border-[#4ade80] dark:focus:border-[#4ade80] transition-colors placeholder-zinc-600"
-                      defaultValue="Verne Jewels — March 2026"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] mb-2">Access Code</label>
-                    <div className="text-3xl font-mono tracking-[0.2em] font-bold text-black dark:text-white">{session.code}</div>
-                  </div>
-                  <div className="flex items-center space-x-3 pt-4">
-                    <input
-                      type="checkbox"
-                      id="demo"
-                      checked={demoMode}
-                      onChange={(e) => setDemoMode(e.target.checked)}
-                      className="w-4 h-4 accent-[#4ade80] bg-transparent border-black/20 dark:border-white/20 cursor-pointer"
-                    />
-                    <label htmlFor="demo" className="font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-500 cursor-pointer">
-                      Demo Protocol (15 IMG / 3s)
-                    </label>
-                  </div>
+                <div>
+                  <label className="block label-system opacity-60 mb-2">Access Code</label>
+                  <div className="text-2xl font-mono tracking-widest font-normal text-text-1">{session.code}</div>
                 </div>
-              </div>
-              
-              {/* Card 2 */}
-              <div className="glass-card p-8 space-y-8">
-                <h2 className="font-mono text-[11px] tracking-[0.3em] uppercase text-zinc-500 flex items-center">
-                  <ImageIcon className="w-4 h-4 mr-3" /> Asset Status
-                </h2>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-2 border-b border-black/5 dark:border-white/5">
-                    <span className="font-normal text-lg">Standard Deck</span>
-                    <span className="inline-block rounded-full border border-[#4ade80]/30 bg-[#4ade80]/10 text-[#4ade80] px-3 py-1 font-mono text-[10px] tracking-[0.3em] uppercase flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2"/> Ready ({demoMode ? '13' : '170'})
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b border-black/5 dark:border-white/5">
-                    <span className="font-normal text-lg">Shadow Deck</span>
-                    <span className="inline-block rounded-full border border-[#4ade80]/30 bg-[#4ade80]/10 text-[#4ade80] px-3 py-1 font-mono text-[10px] tracking-[0.3em] uppercase flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2"/> Ready ({demoMode ? '2' : '30'})
-                    </span>
-                  </div>
-                  <p className="font-mono text-[10px] tracking-[0.1em] text-zinc-500 leading-relaxed pt-4">
-                    IMAGES PRE-TAGGED ACROSS 8 DIMENSIONS. TRANSITIONS PRE-CONFIGURED PER 30-MIN ARCHITECTURE.
-                  </p>
+                <div className="flex items-center space-x-3 pt-2">
+                  <input type="checkbox" id="demo" checked={demoMode} onChange={(e) => setDemoMode(e.target.checked)}
+                    className="w-3.5 h-3.5 accent-patina bg-transparent border-border-medium cursor-pointer"
+                  />
+                  <label htmlFor="demo" className="label-system cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+                    Demo Protocol (15 IMG / 3s)
+                  </label>
                 </div>
               </div>
             </div>
             
-            <div className="pt-12 flex justify-center">
-              <button
-                onClick={startSession}
-                className="bg-black text-white dark:bg-white dark:text-black font-black uppercase tracking-[0.2em] px-10 py-5 rounded-[40px] text-sm hover:bg-[#4ade80] dark:hover:bg-[#4ade80] dark:hover:text-black active:scale-95 transition-all duration-300 flex items-center"
-              >
-                <Play className="w-4 h-4 mr-3" fill="currentColor" />
-                Initiate Sequence
-              </button>
+            <div className="glass-card p-8 space-y-8">
+              <h2 className="label-system flex items-center opacity-80">
+                <ImageIcon className="w-3.5 h-3.5 mr-3" /> Asset Status
+              </h2>
+              <div className="space-y-5">
+                <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                  <span className="body-copy">Standard Deck</span>
+                  <span className="label-system text-patina flex items-center tracking-widest">
+                    <CheckCircle className="w-3 h-3 mr-2"/> Ready ({demoMode ? '13' : '175'})
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                  <span className="body-copy">Shadow Deck</span>
+                  <span className="label-system text-patina flex items-center tracking-widest">
+                    <CheckCircle className="w-3 h-3 mr-2"/> Ready ({demoMode ? '2' : '25'})
+                  </span>
+                </div>
+                <p className="label-system opacity-50 leading-relaxed pt-2 normal-case tracking-normal font-sans text-[12px]">
+                  Images pre-tagged across 8 psychological dimensions. Transitions pre-configured per 30-minute architecture.
+                </p>
+              </div>
             </div>
-            
+          </div>
+          
+          <div className="pt-8 flex justify-center">
+            <button onClick={startSession} className="btn-primary">
+              <Play className="w-3.5 h-3.5 mr-2" /> Initiate Sequence
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  // --- CLIENT EXPERIENCE ---
   if (phase === 'intro') {
     return (
-      <div className="h-screen w-screen bg-[#000000] text-white flex flex-col items-center justify-center overflow-hidden font-sans p-8 text-center relative">
-        <QuantumStyles />
-        <div className="noise-overlay" />
-
-        <div className="animate-quantum-in max-w-2xl flex flex-col items-center">
-          <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-[#4ade80] mb-6 border border-[#4ade80]/30 bg-[#4ade80]/10 rounded-full px-4 py-1">Calibration Phase</div>
-          <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.1] mb-4">TRUST YOUR EYE.</h2>
-          <p className="font-light italic text-xl md:text-2xl text-white/90 mb-16">
+      <div className="relative min-h-screen flex flex-col items-center justify-center p-8 text-center z-10">
+        <div className="vignette"></div>
+        <div className="animate-in max-w-2xl flex flex-col items-center relative z-10">
+          <div className="label-system text-brass mb-8 border border-brass-dim bg-brass-faint rounded-full px-3 py-1">Calibration Phase</div>
+          <h2 className="heading-display text-5xl md:text-7xl mb-6">Trust your eye.</h2>
+          <p className="font-serif italic text-xl md:text-2xl text-text-2 mb-12 opacity-80">
             Do not overthink. Let your instinct decide.
           </p>
 
-          <p className="text-[#71717a] text-lg font-normal leading-relaxed mb-16 max-w-md">
+          <p className="body-copy mb-16 max-w-md mx-auto">
             For each image, choose whether it belongs to your brand's future. Try to choose intuitively within 7 seconds.
           </p>
 
-          <div className="flex items-center justify-center space-x-16 mb-16 font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a]">
+          <div className="flex items-center justify-center space-x-16 mb-16 label-system opacity-60">
             <div className="flex flex-col items-center">
-              <span className="w-14 h-14 border border-white/20 rounded-full flex items-center justify-center mb-4 text-xl">←</span>
+              <span className="w-12 h-12 border border-border-strong rounded-full flex items-center justify-center mb-3 text-lg font-sans">←</span>
               DISCARD
             </div>
             <div className="flex flex-col items-center">
-              <span className="w-14 h-14 border border-white/20 rounded-full flex items-center justify-center mb-4 text-xl">→</span>
+              <span className="w-12 h-12 border border-border-strong rounded-full flex items-center justify-center mb-3 text-lg font-sans">→</span>
               KEEP
             </div>
           </div>
           
-          <button
-            onClick={() => setPhase('r1')}
-            className="bg-white text-black font-black uppercase tracking-[0.2em] px-12 py-5 rounded-[40px] text-sm hover:bg-[#4ade80] active:scale-95 transition-all duration-300"
-          >
-            BEGIN
+          <button onClick={() => setPhase('r1')} className="btn-primary px-12">
+            Begin
           </button>
         </div>
       </div>
@@ -830,39 +890,24 @@ function App() {
   }
 
   if (phase.startsWith('t')) {
-    const bgColor = phase === 't1' ? 'bg-[#b45309]' : phase === 't2' ? 'bg-[#0369a1]' : 'bg-white';
+    // Transition Colors mapping to Entangled Time phases
+    const bgColor = phase === 't1' ? 'bg-[#2E5A6A]' : phase === 't2' ? 'bg-[#6A3A3A]' : 'bg-[#A8903E]';
     return (
-      <div className={`h-screen w-screen ${bgColor} flex items-center justify-center overflow-hidden transition-colors duration-[3000ms] relative`}>
-        <QuantumStyles />
-        <div className="noise-overlay" />
-        <div className="w-full h-full animate-pulse opacity-10 mix-blend-overlay bg-gradient-to-tr from-transparent to-white/50" />
+      <div className={`h-screen w-screen ${bgColor} flex items-center justify-center overflow-hidden transition-colors duration-[3000ms] relative z-10`}>
+        <div className="w-full h-full animate-pulse opacity-10 mix-blend-overlay bg-gradient-to-tr from-transparent to-white/30" />
       </div>
     );
   }
 
   if (phase === 'r1' || phase === 'r2' || phase === 'r3') {
-    const bgClass = phase === 'r1' ? 'bg-[#000000]' : phase === 'r2' ? 'bg-[#050505]' : 'bg-[#0a0a0a]';
     const currentImg = currentRoundImages[currentIndex];
-
     return (
-      <div className={`h-screen w-screen ${bgClass} overflow-hidden relative transition-colors duration-1000`}>
-        <QuantumStyles />
-        <div className="noise-overlay" />
-
-        <div className="absolute bottom-6 left-10 w-2 h-2 rounded-full bg-[#ef4444]/20 shadow-[0_0_15px_rgba(239,68,68,0.3)]" />
-        <div className="absolute bottom-6 right-10 w-2 h-2 rounded-full bg-[#4ade80]/20 shadow-[0_0_15px_rgba(74,222,128,0.3)]" />
-
-        {currentIndex < currentRoundImages.length - 1 && (
-          <img src={currentRoundImages[currentIndex + 1].url} className="hidden" alt="preload" />
-        )}
-
-        {currentImg && (
-          <SwipeCard
-            key={currentImg.id + phase}
-            image={currentImg}
-            onSwipe={recordSwipe}
-          />
-        )}
+      <div className={`h-screen w-screen bg-bg-void overflow-hidden relative transition-colors duration-1000 z-10`}>
+        <div className="vignette"></div>
+        <div className="absolute bottom-8 left-12 w-1.5 h-1.5 rounded-full bg-warmred opacity-40 shadow-[0_0_12px_rgba(138,74,74,0.6)]" />
+        <div className="absolute bottom-8 right-12 w-1.5 h-1.5 rounded-full bg-patina opacity-40 shadow-[0_0_12px_rgba(58,95,74,0.6)]" />
+        {currentIndex < currentRoundImages.length - 1 && ( <img src={currentRoundImages[currentIndex + 1].url} className="hidden" alt="preload" /> )}
+        {currentImg && <SwipeCard key={currentImg.id + phase} image={currentImg} onSwipe={recordSwipe} />}
       </div>
     );
   }
@@ -870,24 +915,15 @@ function App() {
   if (phase === 'finals') {
     if (tournamentQueue.length === 0) return null;
     const [leftImg, rightImg] = tournamentQueue[0];
-    
     return (
-      <div className="h-screen w-screen bg-[#000000] flex overflow-hidden relative">
-        <QuantumStyles />
-        <div className="noise-overlay" />
-
-        <div
-          className="w-1/2 h-full relative cursor-pointer group"
-          onClick={() => handleTournamentChoice(leftImg)}
-        >
-          <img src={leftImg.url} className="quantum-image w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500" alt="" />
+      <div className="h-screen w-screen bg-bg-void flex overflow-hidden relative z-10">
+        <div className="vignette pointer-events-none z-20"></div>
+        <div className="w-1/2 h-full relative cursor-pointer group" onClick={() => handleTournamentChoice(leftImg)}>
+          <img src={leftImg.url} className="quantum-image w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity duration-500" alt="" />
         </div>
-        <div className="w-[1px] h-full bg-white/10 z-10" />
-        <div
-          className="w-1/2 h-full relative cursor-pointer group"
-          onClick={() => handleTournamentChoice(rightImg)}
-        >
-          <img src={rightImg.url} className="quantum-image w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500" alt="" />
+        <div className="w-[1px] h-full bg-border-strong z-30" />
+        <div className="w-1/2 h-full relative cursor-pointer group" onClick={() => handleTournamentChoice(rightImg)}>
+          <img src={rightImg.url} className="quantum-image w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity duration-500" alt="" />
         </div>
       </div>
     );
@@ -895,23 +931,23 @@ function App() {
 
   if (phase === 'reveal') {
     return (
-      <div className="min-h-screen bg-[#000000] text-white p-8 md:p-16 flex flex-col items-center justify-center relative">
-        <QuantumStyles />
-        <div className="noise-overlay" />
-
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 w-full max-w-6xl animate-quantum-in">
-          {finalists.map((img, i) => (
-            <div key={i} className="aspect-[4/5] rounded-[24px] overflow-hidden border border-white/10 relative">
-              <img src={img.url} className="quantum-image w-full h-full object-cover" alt="" />
-            </div>
-          ))}
-        </div>
-
-        <button
-          onClick={() => setPhase('capture')}
-          className="mt-20 font-mono text-[10px] tracking-[0.4em] uppercase text-zinc-500 hover:text-white transition-colors border-b border-zinc-500 hover:border-white pb-1"
-        >
-          PROCEED TO DIAGNOSTICS
+      <div className="min-h-screen bg-bg-void flex flex-col items-center justify-center p-8 z-10 relative">
+        <div className="vignette"></div>
+        {finalists.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 w-full max-w-5xl animate-in relative z-10">
+            {finalists.map((img, i) => (
+              <div key={i} className="aspect-[4/5] rounded-xl overflow-hidden border border-border-medium relative">
+                <img src={img.url} className="quantum-image w-full h-full object-cover opacity-80" alt="" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="animate-in text-center relative z-10 mb-8">
+            <p className="label-system opacity-60">No finalists — try a longer session</p>
+          </div>
+        )}
+        <button onClick={() => setPhase('capture')} className="mt-16 label-system text-text-3 hover:text-brass transition-colors border-b border-transparent hover:border-brass pb-1 relative z-10">
+          Proceed to Diagnostics
         </button>
       </div>
     );
@@ -919,77 +955,47 @@ function App() {
 
   if (phase === 'capture') {
     return (
-      <div className="min-h-screen bg-[#000000] text-white p-8 md:p-16 flex flex-col items-center justify-center relative">
-        <QuantumStyles />
-        <div className="noise-overlay" />
-
-        <div className="w-full max-w-md animate-quantum-in">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-black tracking-tighter leading-[1.1] mb-2 uppercase">Analysis Ready.</h2>
-            <p className="font-light italic text-white/90 text-lg">System compilation complete.</p>
+      <div className="min-h-screen bg-bg-void flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
+        <div className="vignette"></div>
+        <div className="w-full max-w-md animate-in relative z-10">
+          <div className="text-center mb-10">
+            <h2 className="heading-display text-4xl mb-3">Analysis Ready.</h2>
+            <p className="font-serif italic text-text-2 opacity-80 text-lg">System compilation complete.</p>
           </div>
 
-          <form onSubmit={handleFormSubmit} className="space-y-8 glass-card p-8">
+          <form onSubmit={handleFormSubmit} className="glass-card p-8 space-y-8">
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] mb-2">First Name</label>
-                  <input
-                    type="text"
-                    value={leadData.firstName}
-                    onChange={(e) => setLeadData({...leadData, firstName: e.target.value})}
-                    className="w-full bg-transparent border-b border-white/20 pb-2 text-white font-normal focus:outline-none focus:border-[#4ade80] transition-colors rounded-none"
+                  <label className="block label-system opacity-60 mb-2">First Name</label>
+                  <input type="text" value={leadData.firstName} onChange={(e) => setLeadData({...leadData, firstName: e.target.value})}
+                    className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
                   />
                 </div>
                 <div>
-                  <label className="block font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] mb-2">Last Name</label>
-                  <input
-                    type="text"
-                    value={leadData.lastName}
-                    onChange={(e) => setLeadData({...leadData, lastName: e.target.value})}
-                    className="w-full bg-transparent border-b border-white/20 pb-2 text-white font-normal focus:outline-none focus:border-[#4ade80] transition-colors rounded-none"
+                  <label className="block label-system opacity-60 mb-2">Last Name</label>
+                  <input type="text" value={leadData.lastName} onChange={(e) => setLeadData({...leadData, lastName: e.target.value})}
+                    className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
                   />
                 </div>
               </div>
-
               <div>
-                <label className="block font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] mb-2">Company</label>
-                <input
-                  type="text"
-                  value={leadData.company}
-                  onChange={(e) => setLeadData({...leadData, company: e.target.value})}
-                  className="w-full bg-transparent border-b border-white/20 pb-2 text-white font-normal focus:outline-none focus:border-[#4ade80] transition-colors rounded-none"
+                <label className="block label-system opacity-60 mb-2">Company</label>
+                <input type="text" value={leadData.company} onChange={(e) => setLeadData({...leadData, company: e.target.value})}
+                  className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
                 />
               </div>
               <div>
-                <label className="block font-mono text-[10px] tracking-[0.3em] uppercase text-[#71717a] mb-2">Email Address <span className="text-[#ef4444]">*</span></label>
-                <input
-                  type="email"
-                  required
-                  value={leadData.email}
-                  onChange={(e) => setLeadData({...leadData, email: e.target.value})}
-                  className="w-full bg-transparent border-b border-white/20 pb-2 text-white font-normal focus:outline-none focus:border-[#4ade80] transition-colors rounded-none placeholder-zinc-700"
+                <label className="block label-system opacity-60 mb-2">Email Address <span className="text-warmred">*</span></label>
+                <input type="email" required value={leadData.email} onChange={(e) => setLeadData({...leadData, email: e.target.value})}
+                  className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none placeholder:text-text-3 placeholder:italic outline-none focus:ring-0"
                   placeholder="name@company.com"
                 />
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={!isFormValid || isSubmittingForm}
-              className={`w-full py-5 rounded-[40px] font-black uppercase tracking-[0.2em] text-sm flex items-center justify-center transition-all duration-300
-                ${isFormValid && !isSubmittingForm
-                  ? 'bg-white text-black hover:bg-[#4ade80] cursor-pointer active:scale-95'
-                  : 'bg-white/10 text-white/30 cursor-not-allowed'}`}
-            >
-              {isSubmittingForm ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-3 animate-spin" />
-                  Processing
-                </>
-              ) : (
-                'Generate Report'
-              )}
+            <button type="submit" disabled={!isFormValid || isSubmittingForm} className="btn-primary w-full">
+              {isSubmittingForm ? <><Loader2 className="w-3.5 h-3.5 mr-2" /> Processing</> : 'Generate Report'}
             </button>
           </form>
         </div>
@@ -998,20 +1004,7 @@ function App() {
   }
 
   if (phase === 'report') {
-    return (
-      <div className={isDarkMode ? 'dark' : 'light'}>
-        <QuantumStyles />
-        <ReportView
-          history={history}
-          images={images}
-          finalists={finalists}
-          onRestart={() => setPhase('studio')}
-          isDarkMode={isDarkMode}
-          toggleTheme={toggleTheme}
-          leadData={leadData}
-        />
-      </div>
-    );
+    return <ReportView history={history} images={images} finalists={finalists} onRestart={() => setPhase('studio')} isDarkMode={isDarkMode} toggleTheme={toggleTheme} leadData={leadData} />;
   }
 
   return null;

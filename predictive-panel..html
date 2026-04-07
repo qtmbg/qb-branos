@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — Predictive Panel</title>
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch(e) {}
+  })();
+</script>
+<script>
+// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  // QBP
+  var urlQBP = params.get('qbp');
+  if(urlQBP){ try{ var _b64 = urlQBP.replace(/-/g,'+').replace(/_/g,'/'); localStorage.setItem('qb_qbp', atob(_b64)); }catch(e){} }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  // Universal AI call
+  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
+    maxTokens = maxTokens || 4000;
+    var body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{role: 'user', content: userPrompt}]
+    };
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error('API Error: ' + res.status + ' ' + res.statusText);
+    const d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d?.content?.[0]?.text ?? '';
+  };
+})();
+</script>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- SVG Icons (Lucide via unpkg for lightweight usage) -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+/* QB BRANDOS — "Entangled Time" Design System */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root, [data-theme="dark"] {
+    --bg-void: #080604;
+    --bg-deep: #0A0806;
+    --bg-base: #0E0C09;
+    --bg-surface: rgba(140,110,70,0.045);
+    --bg-elevated: rgba(140,110,70,0.07);
+    --bg-overlay: rgba(18,15,10,0.85);
+
+    --border-subtle: rgba(140,110,70,0.06);
+    --border-medium: rgba(140,110,70,0.11);
+    --border-strong: rgba(140,110,70,0.18);
+
+    --patina: #3A5F4A;
+    --patina-lit: #4A7A5E;
+    --patina-dim: rgba(58,95,74,0.2);
+    --patina-faint: rgba(58,95,74,0.08);
+
+    --brass: #A8903E;
+    --brass-lit: #C4A84E;
+    --brass-dim: rgba(168,144,62,0.18);
+    --brass-faint: rgba(168,144,62,0.06);
+
+    --error: #8A4A4A;
+    --error-dim: rgba(138,74,74,0.15);
+
+    --text-1: #DDD4C4;
+    --text-2: #A89A88;
+    --text-3: #6A5E50;
+    --text-4: #3E3830;
+
+    --font-serif: 'DM Serif Display', Georgia, serif;
+    --font-sans: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+    --bg-void: #F4F0EB;
+    --bg-deep: #EDE8E2;
+    --bg-base: #E6E0D8;
+    --bg-surface: rgba(100,80,50,0.04);
+    --bg-elevated: rgba(100,80,50,0.07);
+    --bg-overlay: rgba(244,240,235,0.9);
+
+    --border-subtle: rgba(100,80,50,0.08);
+    --border-medium: rgba(100,80,50,0.14);
+    --border-strong: rgba(100,80,50,0.22);
+
+    --patina: #2E4E3C;
+    --patina-lit: #3A6A4E;
+    --patina-dim: rgba(46,78,60,0.15);
+    --patina-faint: rgba(46,78,60,0.06);
+
+    --brass: #8A7430;
+    --brass-lit: #A08A3A;
+    --brass-dim: rgba(138,116,48,0.15);
+    --brass-faint: rgba(138,116,48,0.05);
+
+    --error: #A03A3A;
+    --error-dim: rgba(160,58,58,0.1);
+
+    --text-1: #1A1610;
+    --text-2: #5A5040;
+    --text-3: #8A7E70;
+    --text-4: #B8AEA0;
+}
+
+html:not([data-theme]) { background: #080604; color: #A89A88; }
+
+body {
+    background: var(--bg-void);
+    color: var(--text-2);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.7;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Film Grain & Vignette */
+body::after {
+    content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+.vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+    transition: background 0.3s ease;
+}
+[data-theme="light"] .vignette {
+    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+
+/* Typography Classes */
+.title-serif { font-family: var(--font-serif); font-weight: 400; color: var(--text-1); letter-spacing: -0.015em; }
+.mono-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-3); font-weight: 500; }
+.text-1 { color: var(--text-1); }
+.text-2 { color: var(--text-2); }
+.text-3 { color: var(--text-3); }
+
+/* Components */
+.glass-card {
+    background: var(--bg-overlay);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-medium);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.glass-card::before {
+    content: ''; position: absolute; top: -30%; left: -10%; width: 60%; height: 60%;
+    background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%);
+    pointer-events: none;
+}
+[data-theme="light"] .glass-card { background: rgba(244,240,235,0.9); }
+
+.pulse-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--brass);
+    box-shadow: 0 0 8px rgba(168,144,62,0.7), 0 0 2px rgba(168,144,62,1);
+    animation: beat 3s ease infinite;
+}
+[data-theme="light"] .pulse-dot {
+    box-shadow: 0 0 8px rgba(138,116,48,0.5), 0 0 2px rgba(138,116,48,0.8);
+}
+@keyframes beat {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    12% { transform: scale(1.35); opacity: 1; }
+    24% { transform: scale(0.95); opacity: 0.6; }
+    36% { transform: scale(1.15); opacity: 1; }
+    48% { transform: scale(1); opacity: 0.7; }
+}
+
+.manifesto-block {
+    position: relative;
+    padding: 24px 0 24px 28px;
+}
+.manifesto-block::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--brass-faint);
+}
+
+/* Forms */
+input, textarea, select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+    transition: all 0.25s ease;
+}
+input:focus, textarea:focus {
+    border-color: var(--patina);
+    box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+    background: var(--bg-void);
+}
+input::placeholder, textarea::placeholder {
+    color: var(--text-3);
+    opacity: 0.7;
+    font-style: italic;
+}
+textarea { resize: vertical; min-height: 80px; }
+
+/* Buttons */
+.btn-primary {
+    background: var(--patina);
+    color: #E6DDD0; /* Always cream */
+    font-weight: 600; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 14px 32px; border-radius: 8px; border: none;
+    transition: all 0.25s ease; cursor: pointer; font-family: var(--font-sans);
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.btn-primary:hover:not(:disabled) {
+    background: var(--patina-lit);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px -4px rgba(58,95,74,0.4), 0 0 0 1px var(--brass-faint);
+}
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(50%); }
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border-medium);
+    color: var(--text-2);
+    font-weight: 500; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 10px 20px; border-radius: 6px;
+    transition: all 0.2s ease; cursor: pointer; font-family: var(--font-mono);
+}
+.btn-secondary:hover {
+    border-color: var(--brass-dim);
+    color: var(--brass);
+    background: var(--bg-surface);
+}
+.btn-secondary.active {
+    border-color: var(--patina-dim);
+    color: var(--patina);
+    background: var(--patina-faint);
+}
+
+/* Animations */
+.fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.progress-fill {
+    background: linear-gradient(90deg, var(--patina), var(--brass));
+    border-radius: 2px;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.progress-fill.error { background: var(--error); }
+.progress-fill.patina { background: var(--patina); }
+
+.scan-line { position: relative; overflow: hidden; }
+.scan-line::after {
+    content:''; position: absolute; top: 0; left: -80%; width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, var(--brass-faint), transparent);
+    animation: scanH 3s linear infinite; pointer-events: none;
+}
+@keyframes scanH { 0% { left: -80%; } 100% { left: 200%; } }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+/* Layout Utilities */
+.app-container {
+    position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column;
+}
+.header {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-overlay); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 50;
+}
+.main-wrapper { flex: 1; max-width: 960px; margin: 0 auto; width: 100%; padding: 64px 24px; }
+.footer {
+    border-top: 1px solid var(--border-subtle);
+    padding: 24px 32px; display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg-deep);
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .header { padding: 0 16px; }
+    .main-wrapper { padding: 40px 16px; }
+    .footer { padding: 16px; flex-direction: column; gap: 12px; text-align: center; }
+    .grid-2col { grid-template-columns: 1fr !important; }
+}
+
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ── SHARED UI ─────────────────────────────────────────────────────────────────
+const ML = ({ children, mb = 8, active }) => (
+    <div className="mono-label" style={{ marginBottom: mb, color: active ? 'var(--brass)' : 'var(--text-3)' }}>
+        {children}
+    </div>
+);
+
+const GlassCard = ({ children, style = {} }) => (
+    <div className="glass-card" style={{ padding: '24px 32px', ...style }}>{children}</div>
+);
+
+const TF = ({ label, value, onChange, placeholder, rows = 1, hint }) => (
+    <div style={{ marginBottom: 20 }}>
+        <ML>{label}</ML>
+        {rows > 1 ? (
+            <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows} />
+        ) : (
+            <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} />
+        )}
+        {hint && <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8, fontStyle: 'italic' }}>{hint}</div>}
+    </div>
+);
+
+const Sec = ({ n, title, children, note }) => (
+    <div style={{ marginBottom: 48 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid var(--border-subtle)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--brass)', letterSpacing: '0.15em' }}>0{n}</span>
+            <h2 className="title-serif" style={{ fontSize: 24, margin: 0 }}>{title}</h2>
+            {note && <span style={{ fontSize: 12, color: 'var(--text-3)', marginLeft: 'auto', fontStyle: 'italic' }}>{note}</span>}
+        </div>
+        {children}
+    </div>
+);
+
+const ThemeToggle = () => {
+    const [theme, setTheme] = useState(
+        document.documentElement.getAttribute('data-theme') || 'dark'
+    );
+    const toggle = () => {
+        const next = theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('qb-theme', next);
+        setTheme(next);
+        window.dispatchEvent(new Event('themechange'));
+    };
+
+    return (
+        <button onClick={toggle} aria-label="Toggle theme" style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: '50%' }}>
+            <i data-lucide={theme === 'dark' ? 'moon' : 'sun'} style={{ width: 16, height: 16 }}></i>
+        </button>
+    );
+};
+
+// ── ANIMATED PROBABILITY BAR ──────────────────────────────────────────────────
+const ProbBar = ({ label, pct, delay = 0 }) => {
+    const [w, setW] = useState(0);
+    useEffect(() => { const t = setTimeout(() => setW(pct), delay + 200); return () => clearTimeout(t); }, [pct, delay]);
+    
+    // Color mapping unified: Patina >=70, Brass 45-69, Error <45
+    const isHigh = pct >= 70;
+    const isMed = pct >= 45 && pct < 70;
+    const barClass = isHigh ? 'patina' : isMed ? '' : 'error';
+    const numColor = isHigh ? 'var(--patina)' : isMed ? 'var(--brass)' : 'var(--error)';
+
+    return (
+        <div style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{label}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: numColor }}>{pct}%</span>
+            </div>
+            <div style={{ height: 4, background: 'var(--bg-surface)', borderRadius: 2, overflow: 'hidden' }}>
+                <div className={`progress-fill ${barClass}`} style={{ height: '100%', width: `${w}%`, transitionDelay: `${delay}ms` }} />
+            </div>
+        </div>
+    );
+};
+
+// ── ANIMATED COUNTER ──────────────────────────────────────────────────────────
+const AnimCount = ({ target, suffix = '', size = 36, delay = 0, type = 'default' }) => {
+    const [v, setV] = useState(0);
+    useEffect(() => {
+        let id;
+        const t = setTimeout(() => {
+            let n = 0; const step = Math.max(1, target / 40);
+            id = setInterval(() => { 
+                n += step; 
+                if (n >= target) { setV(target); clearInterval(id); } 
+                else { setV(Math.round(n)); }
+            }, 30);
+        }, delay);
+        return () => { clearTimeout(t); if (id) clearInterval(id); };
+    }, [target, delay]);
+
+    const color = type === 'patina' ? 'var(--patina)' : type === 'brass' ? 'var(--brass)' : type === 'error' ? 'var(--error)' : 'var(--text-1)';
+
+    return <span className="title-serif" style={{ fontSize: size, color, display: 'block', lineHeight: 1.1 }}>{v}{suffix}</span>;
+};
+
+// ── VERDICT DISPLAY ───────────────────────────────────────────────────────────
+const VerdictBadge = ({ verdict }) => {
+    const v = verdict?.toLowerCase() || '';
+    const isConditional = v.includes('conditional');
+    const isNoGo = v.includes('no-go') || v.includes('no go');
+    const isGo = v.includes('go') && !isNoGo && !isConditional;
+    
+    const color = isGo ? 'var(--patina)' : isNoGo ? 'var(--error)' : 'var(--brass)';
+    const bg = isGo ? 'var(--patina-faint)' : isNoGo ? 'var(--error-dim)' : 'var(--brass-faint)';
+    const label = isGo ? 'GO — Launch Ready' : isNoGo ? 'NO-GO — Do Not Launch' : 'CONDITIONAL — Pivot Required';
+    
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '20px 24px', borderRadius: 10, background: bg, border: `1px solid ${color}30` }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0, boxShadow: `0 0 12px ${color}` }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</span>
+        </div>
+    );
+};
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+const STEPS = ['Parameters', 'Simulating', 'Intelligence'];
+const PANEL_SIZES = [
+    { v: '1000', l: '1,000 agents / Fast' },
+    { v: '5000', l: '5,000 agents / Standard' },
+    { v: '10000', l: '10,000 agents / Deep' },
+];
+
+function App() {
+    const [step, setStep] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [result, setResult] = useState(null);
+    const [activeTab, setActiveTab] = useState('distribution');
+    const [loadingMsg, setLoadingMsg] = useState('');
+
+    // Load from QBP
+    const qbp = window.QB_QBP || {};
+
+    // Input fields
+    const [brandName, setBrandName] = useState(qbp.brandName || '');
+    const [brandEssence, setBrandEssence] = useState(qbp.brandEssence || '');
+    const [primaryPersona, setPrimaryPersona] = useState(qbp.primaryPersona || '');
+    const [naturalForce, setNaturalForce] = useState(qbp.naturalForce || '');
+    const [archetype, setArchetype] = useState(qbp.archetype || '');
+    const [productConcept, setProductConcept] = useState('');
+    const [pricePoint, setPricePoint] = useState('');
+    const [launchChannel, setLaunchChannel] = useState('');
+    const [competitorContext, setCompetitorContext] = useState('');
+    const [panelSize, setPanelSize] = useState('5000');
+    const [additionalContext, setAdditionalContext] = useState('');
+
+    const isValid = () => brandName && primaryPersona && productConcept && pricePoint;
+
+    useEffect(() => {
+        if (window.lucide) window.lucide.createIcons();
+    }, [step, result, activeTab]);
+
+    useEffect(() => {
+        const handleTheme = () => { if (window.lucide) window.lucide.createIcons(); };
+        window.addEventListener('themechange', handleTheme);
+        return () => window.removeEventListener('themechange', handleTheme);
+    }, []);
+
+    const LOADING_MSGS = [
+        'Instantiating synthetic persona architecture...',
+        `Seeding ${parseInt(panelSize).toLocaleString()} market agents from profile parameters...`,
+        'Running multi-variant scenario simulations...',
+        'Mapping probabilistic event distributions...',
+        'Identifying structural high-confidence zones...',
+        'Stress-testing for critical failure points...',
+        'Calculating brand-market entanglement vectors...',
+        'Compiling final panel intelligence...'
+    ];
+
+    const run = async () => {
+        if (!isValid()) { setError('Parameters incomplete. Please fill all required fields.'); return; }
+        setError(''); setLoading(true); setStep(1);
+        let mi = 0; setLoadingMsg(LOADING_MSGS[0]);
+        const iv = setInterval(() => { 
+            mi = Math.min(mi + 1, LOADING_MSGS.length - 1); 
+            setLoadingMsg(LOADING_MSGS[mi]); 
+        }, 2500);
+
+        const systemPrompt = `You are the Predictive Panel Engine inside the Quantum Branding BrandOS ecosystem.
+You operate as a probabilistic forecasting system for brand and product launches.
+You do NOT give opinions. You run structured scenario simulations and assign probabilities to outcomes.
+You think in probabilities, not predictions. In scenarios, not single outcomes. In combinations, not isolated variables.
+You identify: the most stable repeatable patterns, the highest-confidence zones, the critical failure points, and the exploitable advantages.
+Your output is a market intelligence document that tells a founder exactly what will happen and why — before they spend a dollar.
+Return ONLY valid JSON. No markdown, no preamble.`;
+
+        const userPrompt = `QUANTUM BRAND PROFILE:
+Brand: ${brandName}
+Brand Essence: ${brandEssence || 'not specified'}
+Primary Persona: ${primaryPersona}
+Natural Force: ${naturalForce || 'not specified'}
+Archetype: ${archetype || 'not specified'}
+
+PRODUCT / LAUNCH CONCEPT:
+What is being launched: ${productConcept}
+Price point: ${pricePoint}
+Primary launch channel: ${launchChannel || 'not specified'}
+Competitive context: ${competitorContext || 'not specified'}
+Additional context: ${additionalContext || 'not specified'}
+
+Panel size: ${panelSize} synthetic personas built from the primary persona profile above.
+
+Run a full Predictive Panel simulation and return:
+{
+  "overallConfidenceScore": number 0-100,
+  "verdict": "GO — Launch Ready" | "CONDITIONAL GO — Pivot Required" | "NO-GO — Fundamental Issues",
+  "verdictReason": "2-3 sentences. The core finding. Why this verdict.",
+  "panelSummary": "3-4 sentences. What the ${panelSize} synthetic personas showed overall. What surprised, what confirmed, what the aggregate pattern revealed.",
+  "scenarios": [
+    {
+      "name": "scenario name — specific, not generic",
+      "probability": number 0-100,
+      "description": "what happens in this scenario",
+      "conditions": "what must be true for this scenario to unfold",
+      "isHighConfidence": true|false
+    }
+  ],
+  "highConfidenceZones": [
+    {
+      "finding": "what is highly predictable across scenarios",
+      "probability": number 0-100,
+      "implication": "what this means commercially",
+      "exploitable": true|false
+    }
+  ],
+  "failurePoints": [
+    {
+      "risk": "specific risk — what breaks",
+      "probability": number 0-100,
+      "trigger": "what causes this failure",
+      "mitigation": "how to prevent or reduce it"
+    }
+  ],
+  "personaSegments": [
+    {
+      "segment": "segment name from the persona",
+      "size": "% of panel",
+      "response": "how this segment responds to the launch",
+      "conversionProbability": number 0-100,
+      "insight": "what this segment reveals about the offer"
+    }
+  ],
+  "brandFitScore": number 0-100,
+  "brandFitAnalysis": "Does this launch align with the brand identity? Is the price coherent with brand positioning? Traced to QBP.",
+  "pricingAnalysis": {
+    "priceResistanceProbability": number 0-100,
+    "optimalPriceDirection": "too high | too low | on target | slightly high | slightly low",
+    "priceInsight": "what the panel revealed about price tolerance in this persona at this brand level"
+  },
+  "channelAnalysis": "How the launch channel fits or misses the persona's discovery behavior. Specific recommendation.",
+  "pivotDirections": [
+    {
+      "direction": "specific pivot if needed",
+      "expectedConfidenceGain": "from X% to Y% on overall confidence",
+      "effort": "low | medium | high"
+    }
+  ],
+  "topExploitableAdvantage": "The single highest-probability, highest-impact edge this brand has in this launch. The thing to double down on.",
+  "launchReadinessChecklist": [
+    {"item": "specific readiness check", "status": "ready" | "needs work" | "critical gap"}
+  ],
+  "finalDirective": "One paragraph written directly to the founder. What the panel found, what to do with it, and what the single most important action is before launch."
+}
+
+Requirements:
+- scenarios: minimum 4, cover best case through worst case
+- highConfidenceZones: minimum 3 — things that appear consistently across all scenarios
+- failurePoints: minimum 3 — specific, not generic
+- personaSegments: minimum 3 — segment the persona into real behavioral sub-groups
+- launchReadinessChecklist: minimum 6 items
+- All probabilities must be internally consistent (scenario probabilities roughly sum to 100%)
+- Everything must be specific to THIS brand, THIS product, THIS persona — no generic market advice`;
+
+        try {
+            const res = await window.QB_AI(systemPrompt, userPrompt, 5000);
+            clearInterval(iv);
+            const clean = res.replace(/^```json\s*/, '').replace(/\s*```$/, '').replace(/^```\s*/, '').trim();
+            setResult(JSON.parse(clean));
+            setActiveTab('distribution');
+            setStep(2);
+        } catch(e) {
+            clearInterval(iv);
+            setError('Panel disruption: ' + e.message);
+            setStep(0);
+        }
+        setLoading(false);
+    };
+
+    const copy = t => navigator.clipboard.writeText(t).catch(()=>{});
+
+    return (
+        <div className="app-container">
+            {/* HEADER */}
+            <header className="header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.2em', color: 'var(--text-1)', fontWeight: 700 }}>BRAND<span style={{ color: 'var(--patina)' }}>OS</span></div>
+                    <div style={{ width: 1, height: 16, background: 'var(--border-strong)' }} />
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.15em', color: 'var(--text-3)', textTransform: 'uppercase' }}>Predictive Panel</div>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        {STEPS.map((s, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <div style={{ width: 6, height: 6, borderRadius: '50%', background: step === i ? 'var(--brass)' : step > i ? 'var(--patina)' : 'var(--border-strong)', transition: 'background 0.3s ease' }} />
+                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: step === i ? 'var(--brass)' : step > i ? 'var(--patina)' : 'var(--text-4)', transition: 'color 0.3s ease' }}>{s}</span>
+                                {i < STEPS.length - 1 && <div style={{ width: 16, height: 1, background: 'var(--border-medium)', marginLeft: 2 }} />}
+                            </div>
+                        ))}
+                    </div>
+                    <ThemeToggle />
+                </div>
+            </header>
+
+            <main className="main-wrapper">
+                
+                {/* ── STEP 0: INPUT ── */}
+                {step === 0 && (
+                    <div className="fade-in">
+                        <div style={{ marginBottom: 64 }}>
+                            <h1 className="title-serif" style={{ fontSize: 44, lineHeight: 1.1, marginBottom: 16 }}>
+                                Simulation Parameters
+                            </h1>
+                            <p style={{ color: 'var(--text-2)', fontSize: 16, maxWidth: 640 }}>
+                                Initialize a probabilistic market simulation. The engine will instantiate thousands of synthetic agents based on your persona parameters and test your product concept before capital is deployed.
+                            </p>
+                        </div>
+
+                        {/* Panel size selector */}
+                        <div style={{ marginBottom: 48 }}>
+                            <ML mb={12}>Simulation Scale</ML>
+                            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                                {PANEL_SIZES.map(ps => (
+                                    <button key={ps.v} onClick={() => setPanelSize(ps.v)} className={`btn-secondary ${panelSize === ps.v ? 'active' : ''}`}>
+                                        {ps.l}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <Sec n={1} title="Identity Vector" note="Sourced from QBP">
+                            <div className="grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                                <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="Entity executing the launch" rows={1} />
+                                <TF label="Natural Force" value={naturalForce} onChange={setNaturalForce} placeholder="e.g. Lightning, Gravity" rows={1} />
+                            </div>
+                            <TF label="Brand Essence" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible core truth of the brand" rows={2} />
+                            <TF label="Archetype" value={archetype} onChange={setArchetype} placeholder="e.g. The Architect, The Catalyst" rows={1} />
+                        </Sec>
+
+                        <Sec n={2} title="Launch Variables" note="* Required">
+                            <TF label="Target Persona *" value={primaryPersona} onChange={setPrimaryPersona} 
+                                placeholder="High specificity required. Define their role, immediate friction points, and latent desires." 
+                                rows={3} />
+                            <TF label="Product / Offer Concept *" value={productConcept} onChange={setProductConcept} 
+                                placeholder="Define the exact intervention. What is it, and what transformation does it enforce?" 
+                                rows={3} />
+                            <div className="grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                                <TF label="Price Structure *" value={pricePoint} onChange={setPricePoint} placeholder="e.g. $2k/mo retainer, $99 one-time" rows={1} />
+                                <TF label="Primary Channel" value={launchChannel} onChange={setLaunchChannel} placeholder="e.g. Owned email, LinkedIn organic" rows={1} />
+                            </div>
+                            <TF label="Competitive Environment" value={competitorContext} onChange={setCompetitorContext} 
+                                placeholder="What existing solutions must be displaced?" rows={2} />
+                            <TF label="Contextual Modifiers" value={additionalContext} onChange={setAdditionalContext} 
+                                placeholder="Macro factors, urgency drivers, existing brand equity." rows={2} />
+                        </Sec>
+
+                        {error && <div style={{ background: 'var(--error-dim)', border: '1px solid var(--error)', borderRadius: 8, padding: '16px 20px', marginBottom: 32, fontSize: 14, color: 'var(--error)' }}>{error}</div>}
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 24, borderTop: '1px solid var(--border-subtle)' }}>
+                            <div style={{ fontSize: 12, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>Requires ~45s computation</div>
+                            <button onClick={run} disabled={!isValid() || loading} className="btn-primary">
+                                Initialize Panel
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── STEP 1: RUNNING ── */}
+                {step === 1 && (
+                    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center' }}>
+                        <div className="pulse-dot" style={{ width: 12, height: 12, marginBottom: 40 }} />
+                        <h2 className="title-serif" style={{ fontSize: 28, marginBottom: 16 }}>Processing</h2>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--patina)', letterSpacing: '0.05em', marginBottom: 32, minHeight: 24 }}>
+                            {loadingMsg}
+                        </div>
+                        <div style={{ width: '100%', maxWidth: 320, height: 1, background: 'var(--border-medium)', position: 'relative', overflow: 'hidden' }}>
+                            <div style={{ position: 'absolute', top: 0, left: '-50%', width: '40%', height: '100%', background: 'var(--brass)', animation: 'scanH 2s ease-in-out infinite' }} />
+                        </div>
+                    </div>
+                )}
+
+                {/* ── STEP 2: RESULTS ── */}
+                {step === 2 && result && (
+                    <div className="fade-in">
+                        {/* Header */}
+                        <div style={{ marginBottom: 48, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 24 }}>
+                            <div>
+                                <ML mb={16} active>Simulation Complete / {parseInt(panelSize).toLocaleString()} Agents</ML>
+                                <h1 className="title-serif" style={{ fontSize: 36, marginBottom: 8, lineHeight: 1.2 }}>{brandName}</h1>
+                                <p style={{ color: 'var(--text-2)', fontSize: 15, maxWidth: 600 }}>{productConcept.slice(0,80)}{productConcept.length > 80 ? '...' : ''}</p>
+                            </div>
+                            <button onClick={() => { setStep(0); setResult(null); }} className="btn-secondary">Configure New</button>
+                        </div>
+
+                        {/* Top metrics */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, marginBottom: 40 }}>
+                            <GlassCard style={{ textAlign: 'center', padding: '32px 20px' }}>
+                                <AnimCount target={result.overallConfidenceScore} suffix="%" type={result.overallConfidenceScore >= 70 ? 'patina' : result.overallConfidenceScore >= 45 ? 'brass' : 'error'} size={48} />
+                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 12 }}>Overall Confidence</div>
+                            </GlassCard>
+                            <GlassCard style={{ textAlign: 'center', padding: '32px 20px' }}>
+                                <AnimCount target={result.brandFitScore} suffix="%" type={result.brandFitScore >= 70 ? 'patina' : result.brandFitScore >= 45 ? 'brass' : 'error'} size={48} />
+                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 12 }}>Brand Alignment</div>
+                            </GlassCard>
+                            <GlassCard style={{ textAlign: 'center', padding: '32px 20px' }}>
+                                <AnimCount target={result.pricingAnalysis?.priceResistanceProbability || 0} suffix="%" type={result.pricingAnalysis?.priceResistanceProbability < 30 ? 'patina' : result.pricingAnalysis?.priceResistanceProbability < 60 ? 'brass' : 'error'} size={48} />
+                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 12 }}>Price Resistance</div>
+                            </GlassCard>
+                        </div>
+
+                        {/* Verdict */}
+                        <div style={{ marginBottom: 48 }}>
+                            <VerdictBadge verdict={result.verdict} />
+                            {result.verdictReason && (
+                                <div style={{ marginTop: 16, fontSize: 15, color: 'var(--text-1)', lineHeight: 1.8, padding: '0 8px' }}>
+                                    {result.verdictReason}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Tabs */}
+                        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 40, borderBottom: '1px solid var(--border-subtle)', paddingBottom: 16 }}>
+                            {['distribution', 'confidence', 'personas', 'risks', 'pricing', 'directive'].map(t => {
+                                const isActive = activeTab === t;
+                                const labels = { distribution: 'Scenarios', confidence: 'High Confidence', personas: 'Segments', risks: 'Failure Points', pricing: 'Price & Channel', directive: 'Directive' };
+                                return (
+                                    <button key={t} className={`btn-secondary ${isActive ? 'active' : ''}`} onClick={() => setActiveTab(t)} style={{ border: 'none', background: 'transparent', padding: '8px 12px', borderBottom: isActive ? '2px solid var(--patina)' : '2px solid transparent', borderRadius: 0, color: isActive ? 'var(--text-1)' : 'var(--text-3)' }}>
+                                        {labels[t]}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* TAB CONTENT */}
+                        <div style={{ minHeight: 400 }}>
+                            {activeTab === 'distribution' && (
+                                <div className="fade-in">
+                                    <p style={{ marginBottom: 32, fontSize: 15, color: 'var(--text-2)', lineHeight: 1.7, maxWidth: 800 }}>{result.panelSummary}</p>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                        {result.scenarios?.map((s, i) => (
+                                            <GlassCard key={i}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                                                    <div>
+                                                        {s.isHighConfidence && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--brass)', letterSpacing: '0.1em', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}><div className="pulse-dot" style={{width: 4, height: 4}}/> PRIMARY VECTOR</div>}
+                                                        <h3 className="title-serif" style={{ fontSize: 20 }}>{s.name}</h3>
+                                                    </div>
+                                                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 700, color: s.probability >= 50 ? 'var(--patina)' : s.probability >= 25 ? 'var(--text-1)' : 'var(--text-3)' }}>{s.probability}%</span>
+                                                </div>
+                                                <ProbBar label="" pct={s.probability} delay={i * 100} />
+                                                <p style={{ fontSize: 14, color: 'var(--text-2)', marginTop: 16, marginBottom: 12 }}>{s.description}</p>
+                                                {s.conditions && <div style={{ fontSize: 13, color: 'var(--text-3)', borderTop: '1px solid var(--border-subtle)', paddingTop: 12, marginTop: 12 }}><strong>Conditions:</strong> {s.conditions}</div>}
+                                            </GlassCard>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'confidence' && (
+                                <div className="fade-in">
+                                    <p style={{ marginBottom: 32, fontSize: 15, color: 'var(--text-2)' }}>Structural invariants. These findings maintain stability across all tested scenarios.</p>
+                                    {result.highConfidenceZones?.map((z, i) => (
+                                        <div key={i} style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: 24, marginBottom: 24 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                                                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                                                    {z.exploitable && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, padding: '3px 8px', borderRadius: 4, background: 'var(--brass-faint)', color: 'var(--brass)', border: '1px solid var(--brass-dim)' }}>EXPLOITABLE</span>}
+                                                    <span style={{ fontSize: 16, fontWeight: 500, color: 'var(--text-1)' }}>{z.finding}</span>
+                                                </div>
+                                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: 'var(--patina)' }}>{z.probability}%</span>
+                                            </div>
+                                            <p style={{ fontSize: 14, color: 'var(--text-2)' }}>{z.implication}</p>
+                                        </div>
+                                    ))}
+                                    {result.topExploitableAdvantage && (
+                                        <div className="manifesto-block" style={{ marginTop: 40 }}>
+                                            <ML mb={12} active>Strategic Edge</ML>
+                                            <p style={{ fontSize: 18, color: 'var(--text-1)', lineHeight: 1.6 }} className="title-serif">{result.topExploitableAdvantage}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'personas' && (
+                                <div className="fade-in">
+                                    <p style={{ marginBottom: 32, fontSize: 15, color: 'var(--text-2)' }}>Behavioral divergence across the simulated population.</p>
+                                    <div style={{ display: 'grid', gap: 20 }}>
+                                        {result.personaSegments?.map((seg, i) => (
+                                            <GlassCard key={i}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                                                    <div>
+                                                        <h3 className="title-serif" style={{ fontSize: 20, marginBottom: 6 }}>{seg.segment}</h3>
+                                                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-3)' }}>Population Share: {seg.size}</div>
+                                                    </div>
+                                                    <div style={{ textAlign: 'right' }}>
+                                                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 700, color: seg.conversionProbability >= 50 ? 'var(--patina)' : 'var(--brass)' }}>{seg.conversionProbability}%</div>
+                                                        <div style={{ fontSize: 10, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Conversion</div>
+                                                    </div>
+                                                </div>
+                                                <p style={{ fontSize: 14, color: 'var(--text-2)', marginBottom: 12 }}>{seg.response}</p>
+                                                <div style={{ fontSize: 13, color: 'var(--brass)', fontStyle: 'italic', paddingLeft: 12, borderLeft: '2px solid var(--brass-dim)' }}>{seg.insight}</div>
+                                            </GlassCard>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'risks' && (
+                                <div className="fade-in">
+                                    <p style={{ marginBottom: 32, fontSize: 15, color: 'var(--text-2)' }}>Identified systemic vulnerabilities. Pre-solve these before execution.</p>
+                                    <div style={{ display: 'grid', gap: 24 }}>
+                                        {result.failurePoints?.map((fp, i) => (
+                                            <div key={i} style={{ padding: '24px', border: `1px solid ${fp.probability >= 50 ? 'var(--error-dim)' : 'var(--border-medium)'}`, borderRadius: 12, background: fp.probability >= 50 ? 'rgba(138,74,74,0.03)' : 'transparent' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                                                    <h3 className="title-serif" style={{ fontSize: 20, color: fp.probability >= 50 ? 'var(--error)' : 'var(--text-1)', maxWidth: '70%' }}>{fp.risk}</h3>
+                                                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, fontWeight: 700, color: fp.probability >= 50 ? 'var(--error)' : 'var(--brass)' }}>{fp.probability}% Risk</span>
+                                                </div>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
+                                                    <div>
+                                                        <ML mb={6}>Trigger Condition</ML>
+                                                        <p style={{ fontSize: 14, color: 'var(--text-2)' }}>{fp.trigger}</p>
+                                                    </div>
+                                                    <div>
+                                                        <ML mb={6} active>Required Mitigation</ML>
+                                                        <p style={{ fontSize: 14, color: 'var(--text-1)' }}>{fp.mitigation}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {result.pivotDirections?.length > 0 && (
+                                        <div style={{ marginTop: 48 }}>
+                                            <ML mb={16} active>Recommended Pivots</ML>
+                                            {result.pivotDirections.map((pd, i) => (
+                                                <div key={i} style={{ borderLeft: '2px solid var(--brass)', paddingLeft: 20, marginBottom: 20 }}>
+                                                    <div style={{ fontSize: 16, color: 'var(--text-1)', marginBottom: 8 }}>{pd.direction}</div>
+                                                    <div style={{ display: 'flex', gap: 24, fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--text-3)' }}>
+                                                        <span>Gain: <span style={{ color: 'var(--patina)' }}>{pd.expectedConfidenceGain}</span></span>
+                                                        <span>Friction: <span style={{ color: 'var(--text-2)' }}>{pd.effort}</span></span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'pricing' && (
+                                <div className="fade-in">
+                                    <div style={{ display: 'grid', gap: 24 }}>
+                                        {result.pricingAnalysis && (
+                                            <GlassCard>
+                                                <ML mb={16}>Economic Elasticity</ML>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                                                    <span style={{ fontSize: 14, color: 'var(--text-2)' }}>Vector:</span>
+                                                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, padding: '4px 12px', borderRadius: 4, background: result.pricingAnalysis.optimalPriceDirection === 'on target' ? 'var(--patina-faint)' : 'var(--brass-faint)', color: result.pricingAnalysis.optimalPriceDirection === 'on target' ? 'var(--patina)' : 'var(--brass)', border: `1px solid ${result.pricingAnalysis.optimalPriceDirection === 'on target' ? 'var(--patina-dim)' : 'var(--brass-dim)'}` }}>
+                                                        {result.pricingAnalysis.optimalPriceDirection?.toUpperCase()}
+                                                    </span>
+                                                </div>
+                                                <ProbBar label="Tolerance Threshold (Resistance)" pct={result.pricingAnalysis.priceResistanceProbability || 0} delay={100} />
+                                                <p style={{ fontSize: 15, color: 'var(--text-1)', marginTop: 24 }}>{result.pricingAnalysis.priceInsight}</p>
+                                            </GlassCard>
+                                        )}
+                                        {result.channelAnalysis && (
+                                            <GlassCard>
+                                                <ML mb={16}>Distribution Fit</ML>
+                                                <p style={{ fontSize: 15, color: 'var(--text-1)' }}>{result.channelAnalysis}</p>
+                                            </GlassCard>
+                                        )}
+                                        {result.brandFitAnalysis && (
+                                            <GlassCard>
+                                                <ML mb={16}>Brand Coherence</ML>
+                                                <p style={{ fontSize: 15, color: 'var(--text-1)' }}>{result.brandFitAnalysis}</p>
+                                            </GlassCard>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'directive' && (
+                                <div className="fade-in">
+                                    <div className="manifesto-block" style={{ padding: '32px 0 32px 32px' }}>
+                                        <ML mb={20} active>Executive Summary</ML>
+                                        <p className="title-serif" style={{ fontSize: 24, lineHeight: 1.6, color: 'var(--text-1)', maxWidth: 800 }}>
+                                            {result.finalDirective}
+                                        </p>
+                                        <div style={{ marginTop: 24 }}>
+                                            <button onClick={() => copy(result.finalDirective)} className="btn-secondary" style={{ padding: '6px 12px', fontSize: 10 }}>Copy Directive</button>
+                                        </div>
+                                    </div>
+
+                                    {result.launchReadinessChecklist && (
+                                        <div style={{ marginTop: 64 }}>
+                                            <ML mb={24}>Pre-Flight Protocol</ML>
+                                            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: 12, padding: 32 }}>
+                                                {result.launchReadinessChecklist.map((item, i) => {
+                                                    const isReady = item.status === 'ready';
+                                                    const isGap = item.status === 'critical gap';
+                                                    const c = isReady ? 'var(--patina)' : isGap ? 'var(--error)' : 'var(--brass)';
+                                                    return (
+                                                        <div key={i} style={{ display: 'flex', gap: 16, padding: '16px 0', borderBottom: i < result.launchReadinessChecklist.length - 1 ? '1px solid var(--border-subtle)' : '', alignItems: 'center' }}>
+                                                            <div style={{ width: 6, height: 6, borderRadius: '50%', background: c, flexShrink: 0, boxShadow: `0 0 8px ${c}` }} />
+                                                            <span style={{ fontSize: 15, color: 'var(--text-1)', flex: 1 }}>{item.item}</span>
+                                                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: c, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '4px 8px', background: `${c}15`, borderRadius: 4 }}>{item.status}</span>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </main>
+
+            <footer className="footer">
+                <span className="mono-label">Quantum Branding BrandOS</span>
+                <span className="mono-label" style={{ color: 'var(--patina)' }}>Predictive Panel / Active</span>
+            </footer>
+        </div>
+    );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

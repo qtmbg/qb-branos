@@ -1,661 +1,568 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Logo Direction Agent</title>
+<title>QB BrandOS — Logo Direction Agent</title>
+<script>
+  (function(){
+    try {
+      var t = localStorage.getItem('qb-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch(e) {}
+  })();
+</script>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
-    --border:#2a2a2a;--border2:#333;
-    --text:#e8e8e8;--text2:#888;--text3:#555;
-    --green:#4ade80;--green2:rgba(74,222,128,0.1);--green3:rgba(74,222,128,0.05);
-    --red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;
-    --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
-  }
-  body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
-  ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-  input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
-  input:focus,textarea:focus,select:focus{border-color:var(--green)}
-  textarea{resize:vertical;min-height:80px;line-height:1.6}
-  select option{background:var(--bg3)}
-  button{cursor:pointer;font-family:var(--font);border:none;outline:none}
-  .scan-line{position:relative;overflow:hidden}
-  .scan-line::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.06),transparent);animation:scan 3s linear infinite}
-  @keyframes scan{to{left:200%}}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .fade-in{animation:fadeIn .4s ease forwards}
-  .blink{animation:pulse 1.5s ease infinite}
-  .spin{animation:spin 1s linear infinite}
-  .slider-thumb::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--green);cursor:pointer;border:2px solid var(--bg)}
-  .slider-thumb::-webkit-slider-runnable-track{background:var(--border2);height:4px;border-radius:2px}
-  .slider-thumb{-webkit-appearance:none;width:100%;height:4px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root, [data-theme="dark"] {
+  --bg-void: #080604; --bg-deep: #0A0806; --bg-base: #0E0C09;
+  --bg-surface: rgba(140,110,70,0.045); --bg-elevated: rgba(140,110,70,0.07);
+  --bg-overlay: rgba(18,15,10,0.85);
+  --border-subtle: rgba(140,110,70,0.06); --border-medium: rgba(140,110,70,0.11); --border-strong: rgba(140,110,70,0.18);
+  --patina: #3A5F4A; --patina-lit: #4A7A5E; --patina-dim: rgba(58,95,74,0.2); --patina-faint: rgba(58,95,74,0.08);
+  --brass: #A8903E; --brass-lit: #C4A84E; --brass-dim: rgba(168,144,62,0.18); --brass-faint: rgba(168,144,62,0.06);
+  --text-1: #DDD4C4; --text-2: #A89A88; --text-3: #6A5E50; --text-4: #3E3830;
+  --error: #8A4A4A;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg-void: #F4F0EB; --bg-deep: #EDE8E2; --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04); --bg-elevated: rgba(100,80,50,0.07);
+  --bg-overlay: rgba(244,240,235,0.9);
+  --border-subtle: rgba(100,80,50,0.08); --border-medium: rgba(100,80,50,0.14); --border-strong: rgba(100,80,50,0.22);
+  --patina: #2E4E3C; --patina-lit: #3A6A4E; --patina-dim: rgba(46,78,60,0.15); --patina-faint: rgba(46,78,60,0.06);
+  --brass: #8A7430; --brass-lit: #A08A3A; --brass-dim: rgba(138,116,48,0.15); --brass-faint: rgba(138,116,48,0.05);
+  --text-1: #1A1610; --text-2: #5A5040; --text-3: #8A7E70; --text-4: #B8AEA0;
+  --error: #A83A3A;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-void); color: var(--text-2);
+  font-family: var(--font-body); min-height: 100vh;
+  overflow-x: hidden; line-height: 1.7;
+}
+
+.font-display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.015em; color: var(--text-1); }
+.font-mono { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.15em; }
+
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+.vignette-container::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.35) 100%);
+}
+[data-theme="light"] .vignette-container::before {
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.12) 100%);
+}
+
+.glass-card {
+  background: var(--bg-overlay); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle); border-radius: 14px;
+  position: relative; overflow: hidden;
+}
+.glass-card::before {
+  content: ''; position: absolute; top: -30%; left: -10%; width: 60%; height: 60%;
+  background: radial-gradient(ellipse at center, rgba(168,144,62,0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Inputs */
+input[type="text"], textarea, select {
+  background: var(--bg-surface); border: 1px solid var(--border-medium);
+  color: var(--text-1); font-family: var(--font-body); border-radius: 8px;
+  padding: 11px 15px; font-size: 14px; width: 100%; outline: none; transition: all 0.25s ease;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--patina);
+  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 20px -4px var(--brass-dim);
+}
+::placeholder { color: var(--text-3); opacity: 0.7; font-style: italic; }
+select option { background: var(--bg-deep); color: var(--text-1); }
+textarea { resize: vertical; }
+
+/* Range */
+input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+input[type=range]:focus { outline: none; box-shadow: none; }
+input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border-strong); border-radius: 2px; }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%;
+  background: var(--patina); cursor: pointer; margin-top: -7px;
+  border: 2px solid var(--bg-base); transition: transform 0.1s, box-shadow 0.2s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); box-shadow: 0 0 10px var(--patina-dim); }
+
+/* Buttons */
+.btn-primary {
+  background: var(--patina); color: #E6DDD0;
+  font-family: var(--font-body); font-weight: 600; font-size: 11px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 13px 30px; border-radius: 7px; border: none;
+  transition: all 0.25s ease; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--patina-lit); transform: translateY(-1px);
+  box-shadow: 0 4px 24px -4px rgba(58,95,74,0.3), 0 0 0 1px var(--brass-faint);
+}
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+  background: var(--bg-surface); color: var(--text-2);
+  border: 1px solid var(--border-medium); font-family: var(--font-body);
+  font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 13px 26px; border-radius: 7px; transition: all 0.25s ease; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-secondary:hover { background: var(--bg-elevated); color: var(--text-1); border-color: var(--brass); }
+
+/* Pills */
+.pill-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill {
+  padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  border: 1px solid var(--border-medium); background: var(--bg-surface);
+  color: var(--text-2); cursor: pointer; transition: all 0.18s ease; user-select: none;
+}
+.pill:hover { border-color: var(--brass); color: var(--text-1); }
+.pill.active { border-color: var(--patina); background: var(--patina-faint); color: var(--text-1); }
+
+/* Misc */
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--brass);
+  box-shadow: 0 0 8px var(--brass-dim), 0 0 2px var(--brass);
+  animation: beat 3s ease infinite; flex-shrink: 0;
+}
+@keyframes beat {
+  0%,100% { transform: scale(1); opacity: 1; }
+  12% { transform: scale(1.35); }
+  24% { transform: scale(0.95); opacity: 0.6; }
+  36% { transform: scale(1.15); }
+  48% { transform: scale(1); opacity: 0.7; }
+}
+
+.manifesto-block { position: relative; padding: 24px 0 24px 24px; }
+.manifesto-block::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2.5px;
+  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+  border-radius: 2px;
+}
+
+.divider { height: 1px; background: var(--border-subtle); margin: 28px 0; }
+.section-label { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-3); }
+
+.tag { font-size: 10px; font-family: var(--font-mono); letter-spacing: 0.1em; color: var(--brass); border: 1px solid var(--brass-dim); padding: 3px 10px; border-radius: 4px; background: var(--brass-faint); }
+
+.error-banner { background: rgba(138,74,74,0.1); border: 1px solid rgba(138,74,74,0.25); border-radius: 8px; padding: 14px 18px; color: #C48888; font-size: 13px; margin-top: 16px; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; }
+
+@media (max-width: 640px) {
+  .hide-mobile { display: none !important; }
+  .form-grid { grid-template-columns: 1fr !important; }
+  .form-group.full { grid-column: 1 !important; }
+}
+
+/* Result markdown */
+.result-section-header {
+  font-family: var(--font-mono); font-size: 9px; text-transform: uppercase;
+  letter-spacing: 0.2em; color: var(--brass); margin-top: 28px; margin-bottom: 10px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle);
+}
+.result-section-header:first-child { margin-top: 0; }
+.result-bullet { display: flex; gap: 10px; margin-bottom: 7px; padding-left: 2px; }
+.result-p { font-size: 14px; color: var(--text-2); line-height: 1.85; margin-bottom: 10px; }
 </style>
+
 <script>
-  (function() {
-    try {
-      var theme = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-      if (theme === 'dark') document.documentElement.classList.add('dark');
-    } catch(e) {}
-  })();
-</script>
-<script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
-  // QBP
   var urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
+  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){ console.warn('[QB_SPINE] QBP decode failed:', e); } }
   try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-  // Universal AI call — works with Anthropic or Gemini
-  window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
-    maxTokens = maxTokens || 4000;
-    var body = {
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: maxTokens,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }]
-    };
+
+  window.QB_AI = async function(sys, usr, maxTok){
+    maxTok = maxTok || 4000;
     var res = await fetch('/api/claude', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTok, system: sys, messages: [{ role: 'user', content: usr }] })
     });
     var d = await res.json();
-    if(d.error) throw new Error(d.error.message);
+    if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
     return d.content[0].text;
-  };
-  window.QB_AUTOFILL = function(fieldMap){
-    if(!window.QB_QBP) return;
-    Object.entries(fieldMap).forEach(function(kv){
-      var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
-      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
-    });
   };
 })();
 </script>
 </head>
 <body>
-<div id="root"></div>
+<div class="vignette-container"></div>
+<div id="root" style="position:relative;z-index:10;"></div>
 
 <script type="text/babel">
-const { useState, useEffect, useRef, useCallback } = React;
+const { useState, useRef } = React;
 
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
+const NATURAL_FORCES   = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
+const MUSEUM_ROOMS     = ['Impressionism','Surrealism','Bauhaus','Renaissance','Abstract Expressionism','Minimalism','Art Nouveau','Pop Art'];
+const MYTH_FIGURES     = ['The Alchemist','The Oracle','The Warrior','The Creator','The Sage','The Trickster','The Sovereign','The Healer'];
+const ARCHETYPES       = ['The Innocent','The Explorer','The Sage','The Hero','The Outlaw','The Magician','The Lover','The Jester','The Caregiver','The Ruler','The Creator','The Everyman'];
+const PARADOX_OPTIONS  = ['Timeless yet modern','Simple yet profound','Bold yet refined','Familiar yet surprising','Serious yet warm','Minimal yet expressive'];
+const INDUSTRIES       = ['Luxury Lifestyle','Technology','Finance & Wealth','Fashion','Health & Wellness','Architecture & Design','Food & Hospitality','Creative Agency','Legal & Professional','Education & Knowledge'];
 
-const NATURAL_FORCES = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
-const MUSEUM_ROOMS = ['Impressionism','Surrealism','Bauhaus','Renaissance','Abstract Expressionism','Minimalism','Art Nouveau','Pop Art'];
-const MYTHOLOGICAL_FIGURES = ['The Alchemist','The Oracle','The Warrior','The Creator','The Sage','The Trickster','The Sovereign','The Healer'];
-const ARCHETYPES = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Lover','The Jester','The Everyman','The Innocent'];
-const PARADOX_OPTIONS = ['Intimate yet Monumental','Ancient yet Newborn','Wild yet Restrained','Complex yet Essential','Sacred yet Irreverent','Bold yet Subtle','Warm yet Precise','Dark yet Luminous'];
-const MARK_TYPES = ['Symbol only','Wordmark only','Lettermark','Combination mark','Emblem'];
-const SYMMETRY_OPTIONS = ['Symmetric','Asymmetric','Radial symmetry','Dynamic balance'];
-const COMPLEXITY_OPTIONS = ['Essential — one irreducible form','Minimal — 2-3 elements','Structured — deliberate complexity','Rich — layered and rewarding'];
-const CORNER_OPTIONS = ['Zero — sharp, surgical edges','Tight — minimal softening','Medium — balanced','Generous — approachable curves'];
+// ── SYSTEM PROMPT ─────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are the QB BrandOS Logo Direction Agent — a senior brand identity strategist and creative director. Your role is to translate brand strategy inputs into precise, actionable logo creative directions that a world-class designer can execute immediately.
 
-// ─── QBP INPUT FORM ──────────────────────────────────────────────────────────
+You think in systems. A logo is not decoration — it is compressed meaning. Every curve, weight, spacing decision, and color choice must earn its place by serving the brand's strategic position.
 
-const SliderField = ({ label, leftLabel, rightLabel, value, onChange, hint }) => (
-  <div style={{marginBottom:20}}>
-    <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:8}}>
-      <label style={{fontSize:11,letterSpacing:'0.1em',color:'var(--text2)',textTransform:'uppercase'}}>{label}</label>
-      <span style={{fontSize:11,color:'var(--green)',fontFamily:'var(--mono)'}}>{value}/10</span>
-    </div>
-    <input type="range" min={1} max={10} value={value} onChange={e=>onChange(parseInt(e.target.value))} className="slider-thumb" style={{marginBottom:6}}/>
-    <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:'var(--text3)'}}>
-      <span>{leftLabel}</span><span>{rightLabel}</span>
-    </div>
-    {hint && <div style={{fontSize:10,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
-  </div>
-);
+OUTPUT FORMAT — respond with exactly these sections in order:
 
-const SelectField = ({ label, options, value, onChange }) => (
-  <div style={{marginBottom:16}}>
-    <label style={{display:'block',fontSize:11,letterSpacing:'0.1em',color:'var(--text2)',textTransform:'uppercase',marginBottom:8}}>{label}</label>
-    <select value={value} onChange={e=>onChange(e.target.value)} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text)',borderRadius:6,padding:'10px 14px',fontSize:13,width:'100%',outline:'none'}}>
-      <option value="">— select —</option>
-      {options.map(o=><option key={o} value={o}>{o}</option>)}
-    </select>
-  </div>
-);
+## STRATEGIC BRIEF
+2–3 sentences distilling the core brand tension and what the logo must resolve or embody.
 
-const TextField = ({ label, value, onChange, placeholder, multiline }) => (
-  <div style={{marginBottom:16}}>
-    <label style={{display:'block',fontSize:11,letterSpacing:'0.1em',color:'var(--text2)',textTransform:'uppercase',marginBottom:8}}>{label}</label>
-    {multiline
-      ? <textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={3}/>
-      : <input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>
-    }
-  </div>
-);
+## THE DIRECTION
+A poetic but precise name for this logo direction (e.g. "Tempered Sovereignty", "Dissolved Edge"). Follow with 3–4 sentences of directional prose.
 
-const Section = ({ title, number, children }) => (
-  <div style={{marginBottom:32}}>
-    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,paddingBottom:12,borderBottom:'1px solid var(--border)'}}>
-      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'0.2em'}}>0{number}</span>
-      <span style={{fontSize:13,fontWeight:500,letterSpacing:'0.05em',textTransform:'uppercase',color:'var(--text)'}}>{title}</span>
-    </div>
-    {children}
-  </div>
-);
+## FORM & MARK
+Specific guidance on mark type (wordmark / lettermark / symbol / combination), geometry, weight, construction logic. Be precise. Name reference points without copying them.
 
-// ─── BRIEF DISPLAY ───────────────────────────────────────────────────────────
+## TYPOGRAPHY
+Primary typeface direction: category, specific characteristics to seek. If custom lettering, describe the modification logic. Mention 2–3 reference typefaces as directional anchors only.
 
-const BriefCard = ({ title, children, accent }) => (
-  <div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',marginBottom:12}}>
-    <div style={{fontSize:10,letterSpacing:'0.15em',color:accent||'var(--text3)',textTransform:'uppercase',marginBottom:10,fontFamily:'var(--mono)'}}>{title}</div>
-    {children}
-  </div>
-);
+## COLOR ARCHITECTURE
+Primary palette with hex codes. Rationale for each. Usage hierarchy. One unexpected accent with careful deployment instructions.
 
-const SpecRow = ({ label, value }) => (
-  <div style={{display:'flex',justifyContent:'space-between',padding:'6px 0',borderBottom:'1px solid var(--border)',fontSize:12}}>
-    <span style={{color:'var(--text2)'}}>{label}</span>
-    <span style={{color:'var(--text)',fontWeight:500,textAlign:'right',maxWidth:'60%'}}>{value}</span>
-  </div>
-);
+## TEXTURE & FINISH
+Surface quality, application contexts — what the logo should feel like in print, screen, embossing, foil.
 
-const Tag = ({ text, type }) => {
-  const colors = {
-    good:{bg:'rgba(74,222,128,0.1)',color:'#4ade80',border:'rgba(74,222,128,0.2)'},
-    bad:{bg:'rgba(239,68,68,0.1)',color:'#ef4444',border:'rgba(239,68,68,0.2)'},
-    neutral:{bg:'var(--bg4)',color:'var(--text2)',border:'var(--border)'},
-    concept:{bg:'rgba(167,139,250,0.1)',color:'#a78bfa',border:'rgba(167,139,250,0.2)'},
-  };
-  const c = colors[type]||colors.neutral;
-  return <span style={{fontSize:11,padding:'3px 10px',borderRadius:4,background:c.bg,color:c.color,border:`1px solid ${c.border}`,display:'inline-block',margin:'3px 3px 3px 0'}}>{text}</span>;
-};
+## WHAT TO AVOID
+3–5 specific traps this brand must not fall into. Be blunt.
 
-const StreamingText = ({ text, speed=12 }) => {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
-  const idx = useRef(0);
-  useEffect(()=>{
-    setDisplayed(''); idx.current=0; setDone(false);
-    if(!text) return;
-    const id = setInterval(()=>{
-      idx.current++;
-      setDisplayed(text.slice(0,idx.current));
-      if(idx.current>=text.length){clearInterval(id);setDone(true);}
-    },speed);
-    return ()=>clearInterval(id);
-  },[text]);
-  return <span>{displayed}{!done&&<span className="blink" style={{color:'var(--green)'}}>▊</span>}</span>;
-};
+## THE PROVOCATION
+One sentence to pin above the designer's workspace.`;
 
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+// ── BUILD PROMPT ──────────────────────────────────────────────────────────────
+function buildPrompt(f) {
+  return `BRAND INPUTS:
 
-const STEPS = ['QBP Input','Analysis','Brief','Prompts'];
+Brand Name: ${f.brandName}
+Industry: ${f.industry || 'Not specified'}
+One-Line Positioning: ${f.positioning}
+Target Audience: ${f.targetAudience || 'Not specified'}
+Brand Essence: ${f.brandEssence || 'Not specified'}
 
-function App() {
-  const [step, setStep] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [brief, setBrief] = useState(null);
-  const [streamingSection, setStreamingSection] = useState(-1);
+Brand Archetype(s): ${f.archetypes.length ? f.archetypes.join(', ') : 'Not selected'}
+Natural Force Metaphor: ${f.naturalForce || 'Not selected'}
+If This Brand Were a Museum Room: ${f.museumRoom || 'Not selected'}
+Mythological Figure: ${f.mythFigure || 'Not selected'}
+Core Paradox to Hold: ${f.paradox || 'Not selected'}
 
-  // ── QBP fields ──
-  const [brandName, setBrandName] = useState('');
-  const [brandEssence, setBrandEssence] = useState('');
-  const [manifestoLine, setManifestoLine] = useState('');
-  const [naturalForce, setNaturalForce] = useState('');
-  const [museumRoom, setMuseumRoom] = useState('');
-  const [mythFigure, setMythFigure] = useState('');
-  const [primaryArchetype, setPrimaryArchetype] = useState('');
-  const [antiBrand, setAntiBrand] = useState('');
-  const [paradox, setParadox] = useState('');
-  // Sensescape scores
-  const [boldSubtle, setBoldSubtle] = useState(5);
-  const [luxAppr, setLuxAppr] = useState(5);
-  const [minMax, setMinMax] = useState(5);
-  const [angular, setAngular] = useState(5);
-  const [sharp, setSharp] = useState(5);
-  const [complex, setComplex] = useState(5);
-  const [symAsym, setSymAsym] = useState(5);
-  const [warmCool, setWarmCool] = useState(5);
-  const [darkLight, setDarkLight] = useState(5);
-  // Visual DNA
-  const [forbiddenMoods, setForbiddenMoods] = useState('');
-  const [exemplarWords, setExemplarWords] = useState('');
-  // Preferences
-  const [prefMarkType, setPrefMarkType] = useState('');
-  const [colorTerritory, setColorTerritory] = useState('');
+Visual Boldness (1=Restraint → 10=Impact): ${f.boldness}/10
+Visual Complexity (1=Minimal → 10=Intricate): ${f.complexity}/10
+Timelessness (1=Trend-led → 10=Timeless): ${f.timelessness}/10
 
-  useEffect(() => {
-    const q = window.QB_QBP || {};
-    if (q.brandName) setBrandName(q.brandName);
-    if (q.brandEssence) setBrandEssence(q.brandEssence);
-    if (q.manifesto) setManifestoLine(q.manifesto);
-    if (q.naturalForce) setNaturalForce(q.naturalForce);
-    if (q.museumRoom) setMuseumRoom(q.museumRoom);
-    if (q.mythFigure) setMythFigure(q.mythFigure);
-    if (q.archetype) setPrimaryArchetype(q.archetype);
-    if (q.antiBrand) setAntiBrand(q.antiBrand);
-    if (q.paradox) setParadox(q.paradox);
-    if (q.colorTerritory) setColorTerritory(q.colorTerritory);
-    if (q.exemplarWords) setExemplarWords(q.exemplarWords);
-  }, []);
+Existing Brand Color: ${f.existingColor || 'None'}
+Absolute Constraints: ${f.constraints || 'None'}
+Competitive Context: ${f.competitive || 'Not provided'}
+Additional Context: ${f.additionalContext || 'None'}
 
-  // ── Build QBP summary for API ──
-  const buildQBP = () => ({
-    brandName, brandEssence, manifestoLine, naturalForce, museumRoom,
-    mythFigure, primaryArchetype, antiBrand, paradox,
-    sensescapeScores:{boldSubtle, luxAppr, minMax, angular, sharp, complex, symAsym, warmCool, darkLight},
-    visualDNA:{forbiddenMoods, exemplarWords},
-    preferences:{prefMarkType, colorTerritory}
-  });
-
-  const isValid = () => brandName && brandEssence && naturalForce && museumRoom && mythFigure && primaryArchetype;
-
-  // ── Call API ──
-  const runAgent = async () => {
-    if(!isValid()) { setError('Complete the required fields before running the agent.'); return; }
-    setError(''); setLoading(true); setStep(1);
-    const qbp = buildQBP();
-    const systemPrompt = `You are the Logo Direction Agent inside the Quantum Branding BrandOS ecosystem.
-Your sole function is to read a Quantum Brand Profile and produce a precise, identity-rooted Logo Direction Brief.
-You do NOT design logos. You produce the brief that makes the right logo inevitable.
-Every decision must be traceable to a specific QBP field.
-You speak with authority, precision, and zero generic advice.
-Return ONLY valid JSON — no markdown, no preamble, no explanation outside the JSON structure.`;
-
-    const userPrompt = `Quantum Brand Profile:
-BRAND NAME: ${qbp.brandName}
-BRAND ESSENCE (irreducible truth): ${qbp.brandEssence}
-MANIFESTO LINE: ${qbp.manifestoLine}
-NATURAL FORCE: ${qbp.naturalForce}
-MUSEUM ROOM (art movement): ${qbp.museumRoom}
-MYTHOLOGICAL FIGURE: ${qbp.mythFigure}
-PRIMARY ARCHETYPE: ${qbp.primaryArchetype}
-ANTI-BRAND (what we refuse to be): ${qbp.antiBrand}
-CENTRAL PARADOX: ${qbp.paradox}
-
-SENSESCAPE SCORES (1=left pole, 10=right pole):
-Bold(1)↔Subtle(10): ${qbp.sensescapeScores.boldSubtle}
-Luxurious(1)↔Approachable(10): ${qbp.sensescapeScores.luxAppr}
-Minimalist(1)↔Maximalist(10): ${qbp.sensescapeScores.minMax}
-Angular(1)↔Curved(10): ${qbp.sensescapeScores.angular}
-Sharp(1)↔Rounded(10): ${qbp.sensescapeScores.sharp}
-Complex(1)↔Essential(10): ${qbp.sensescapeScores.complex}
-Symmetric(1)↔Asymmetric(10): ${qbp.sensescapeScores.symAsym}
-Warm(1)↔Cool(10): ${qbp.sensescapeScores.warmCool}
-Dark(1)↔Light(10): ${qbp.sensescapeScores.darkLight}
-
-VISUAL DNA:
-Forbidden visual moods/references: ${qbp.visualDNA.forbiddenMoods || 'not specified'}
-Exemplar image words (visual DNA library): ${qbp.visualDNA.exemplarWords || 'not specified'}
-Preferred mark type: ${qbp.preferences.prefMarkType || 'not specified'}
-Color territory notes: ${qbp.preferences.colorTerritory || 'not specified'}
-
-Based on this complete Quantum Brand Profile, produce a Logo Direction Brief as JSON with EXACTLY this structure:
-{
-  "centralTension": "2-3 sentences describing the core creative paradox this logo must embody, traced to specific QBP fields",
-  "geometrySpec": {
-    "markType": "derived from scores + archetype",
-    "cornerRadius": "zero/tight/medium/generous + reason traced to Sharp score",
-    "lineWeight": "hairline/thin/medium/bold + reason",
-    "symmetry": "symmetric/asymmetric/radial + reason traced to Symm score",
-    "complexity": "essential/minimal/structured/rich + reason traced to Complex score",
-    "spatialLogic": "dense/breathing/expansive + reason"
-  },
-  "conceptualDirections": [
-    {
-      "name": "short name for direction",
-      "concept": "2-3 sentences. What is the conceptual idea. How it embodies the paradox.",
-      "traceability": "which QBP fields generate this direction",
-      "formDescription": "specific visual description of what this mark looks like",
-      "avoidInThisDirection": "specific pitfall for this direction"
-    }
-  ],
-  "colorTerritory": {
-    "description": "2-3 sentence color territory with cultural anchors",
-    "palette": ["color description 1", "color description 2", "color description 3"],
-    "forbiddenColors": ["color/territory to avoid with reason"],
-    "traceability": "which Sensescape scores drive this"
-  },
-  "typographyDirection": {
-    "category": "typeface category",
-    "weight": "weight direction",
-    "tracking": "tight/normal/wide",
-    "personality": "2 sentences on typeface personality",
-    "referenceTypefaces": ["3 specific typeface names as reference territory"],
-    "avoid": ["what to avoid in typeface choice"]
-  },
-  "antiPatternList": ["specific things this logo must never look like — be precise, not generic — minimum 6 items"],
-  "qualityTest": "The single question every concept must answer yes to before it passes. Derived from the Brand Essence.",
-  "midjourneyPrompt": "A complete, precise Midjourney v6 prompt for exploring this logo direction. Include style references, --no parameters from anti-patterns, --style raw --ar 1:1",
-  "ideogramPrompt": "A complete Ideogram prompt optimized for logo concept exploration",
-  "designerHandoff": "One paragraph (4-6 sentences) synthesizing the full brief into a single deliverable statement a designer reads before touching software. Must reference the paradox, the geometry, the color territory, and the quality test."
+Generate a complete logo creative direction for this brand.`;
 }
-Produce 3 conceptual directions minimum.
-Every field must be populated with specific, traceable content — not generic advice.`;
 
-    try {
-      const res = await fetch('/api/claude',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:4000,
-          system: systemPrompt,
-          messages:[{role:'user',content:userPrompt}]
-        })
-      });
-      const data = await res.json();
-      if(data.error) throw new Error(data.error.message);
-      const raw = data.content[0].text.trim();
-      const jsonStr = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      const parsed = JSON.parse(jsonStr);
-      setBrief(parsed);
-      setStep(2);
-    } catch(e) {
-      setError('Agent error: '+e.message+'. Check your connection and try again.');
-      setStep(0);
-    }
-    setLoading(false);
-  };
-
-  const copyText = (text) => navigator.clipboard.writeText(text).catch(()=>{});
-
-  const progressPct = step === 0 ? 0 : step === 1 ? 33 : step === 2 ? 66 : 100;
-
+// ── COMPONENTS ────────────────────────────────────────────────────────────────
+function ThemeToggle({ theme, onToggle }) {
   return (
-    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+    <button onClick={onToggle} className="btn-secondary" style={{ padding:'8px 14px', fontSize:'11px' }}>
+      {theme === 'dark' ? '☀ Light' : '◑ Dark'}
+    </button>
+  );
+}
 
-      {/* ── HEADER ── */}
-      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
-        <div style={{display:'flex',alignItems:'center',gap:16}}>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
-          <div style={{width:1,height:16,background:'var(--border)'}}/>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.2em',color:'var(--text3)',textTransform:'uppercase'}}>Logo Direction Agent v1.0</div>
-        </div>
-        <div style={{display:'flex',gap:6}}>
-          {STEPS.map((s,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:6}}>
-              <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?0.7:0.3}}/>
-              <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text3)',letterSpacing:'0.1em',fontFamily:'var(--mono)'}}>{s}</span>
-              {i<STEPS.length-1&&<div style={{width:20,height:1,background:'var(--border)',margin:'0 4px'}}/>}
-            </div>
-          ))}
-        </div>
-      </header>
-
-      {/* ── BODY ── */}
-      <main style={{flex:1,maxWidth:900,margin:'0 auto',width:'100%',padding:'40px 24px'}}>
-
-        {/* ── STEP 0: INPUT ── */}
-        {step===0 && (
-          <div className="fade-in">
-            <div style={{marginBottom:40}}>
-              <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.3em',color:'var(--green)',marginBottom:12,textTransform:'uppercase'}}>// QBP — Quantum Brand Profile Input</div>
-              <h1 style={{fontSize:28,fontWeight:700,lineHeight:1.2,marginBottom:8}}>Logo Direction Agent</h1>
-              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:600}}>Feed your Quantum Brand Profile. The agent reads your identity, sensory, and visual data — then produces a precise brief that makes the right logo inevitable.</p>
-            </div>
-
-            <Section number={1} title="Brand Core">
-              <TextField label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The name this logo will carry"/>
-              <TextField label="Brand Essence — the irreducible truth *" value={brandEssence} onChange={setBrandEssence} placeholder="The one sentence the brand would carve in stone" multiline/>
-              <TextField label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The belief that drives everything"/>
-            </Section>
-
-            <Section number={2} title="Soul Map Data">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-                <SelectField label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
-                <SelectField label="Museum Room *" options={MUSEUM_ROOMS} value={museumRoom} onChange={setMuseumRoom}/>
-                <SelectField label="Mythological Figure *" options={MYTHOLOGICAL_FIGURES} value={mythFigure} onChange={setMythFigure}/>
-                <SelectField label="Primary Archetype *" options={ARCHETYPES} value={primaryArchetype} onChange={setPrimaryArchetype}/>
-              </div>
-              <TextField label="Anti-Brand — what we refuse to be" value={antiBrand} onChange={setAntiBrand} placeholder="e.g. Never corporate, never startup-cute, never trend-chasing"/>
-              <SelectField label="Central Paradox" options={PARADOX_OPTIONS} value={paradox} onChange={setParadox}/>
-            </Section>
-
-            <Section number={3} title="Sensescape Scores">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 32px'}}>
-                <SliderField label="Bold ↔ Subtle" leftLabel="Bold" rightLabel="Subtle" value={boldSubtle} onChange={setBoldSubtle}/>
-                <SliderField label="Luxurious ↔ Approachable" leftLabel="Luxurious" rightLabel="Approachable" value={luxAppr} onChange={setLuxAppr}/>
-                <SliderField label="Minimalist ↔ Maximalist" leftLabel="Minimalist" rightLabel="Maximalist" value={minMax} onChange={setMinMax}/>
-                <SliderField label="Angular ↔ Curved" leftLabel="Angular" rightLabel="Curved" value={angular} onChange={setAngular} hint="Directly drives corner radius and geometry"/>
-                <SliderField label="Sharp ↔ Rounded" leftLabel="Sharp" rightLabel="Rounded" value={sharp} onChange={setSharp} hint="Translates to exact corner radius direction"/>
-                <SliderField label="Complex ↔ Essential" leftLabel="Complex" rightLabel="Essential" value={complex} onChange={setComplex} hint="Determines mark complexity level"/>
-                <SliderField label="Symmetric ↔ Asymmetric" leftLabel="Symmetric" rightLabel="Asymmetric" value={symAsym} onChange={setSymAsym}/>
-                <SliderField label="Warm ↔ Cool" leftLabel="Warm" rightLabel="Cool" value={warmCool} onChange={setWarmCool}/>
-              </div>
-              <SliderField label="Dark ↔ Light" leftLabel="Dark" rightLabel="Light" value={darkLight} onChange={setDarkLight}/>
-            </Section>
-
-            <Section number={4} title="Visual DNA">
-              <TextField label="Forbidden Visual Moods / References" value={forbiddenMoods} onChange={setForbiddenMoods} placeholder="e.g. startup gradients, tech blue, corporate serif, anything that reads as 'innovation'" multiline/>
-              <TextField label="Exemplar Library Words — describe your 10 visual reference images" value={exemplarWords} onChange={setExemplarWords} placeholder="e.g. volcanic stone texture, night architecture, surgical tools, aged bronze, Japanese ink..." multiline/>
-            </Section>
-
-            <Section number={5} title="Preferences (optional)">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-                <SelectField label="Preferred Mark Type" options={MARK_TYPES} value={prefMarkType} onChange={setPrefMarkType}/>
-                <div/>
-              </div>
-              <TextField label="Color Territory Notes" value={colorTerritory} onChange={setColorTerritory} placeholder="Any specific color intuitions, territories, or hard constraints"/>
-            </Section>
-
-            {error && <div style={{background:'rgba(239,68,68,0.1)',border:'1px solid rgba(239,68,68,0.3)',borderRadius:6,padding:'12px 16px',marginBottom:20,fontSize:13,color:'var(--red)'}}>{error}</div>}
-
-            <div style={{display:'flex',justifyContent:'flex-end',paddingTop:8}}>
-              <button onClick={runAgent} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:'var(--mono)',border:'none',transition:'all .2s',cursor:isValid()?'pointer':'not-allowed'}}>
-                Run Agent →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── STEP 1: LOADING ── */}
-        {step===1 && (
-          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:400,gap:24,textAlign:'center'}}>
-            <div style={{width:48,height:48,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
-            <div>
-              <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.3em',color:'var(--green)',marginBottom:8,textTransform:'uppercase'}}>Agent Processing</div>
-              <div style={{color:'var(--text2)',fontSize:13,lineHeight:1.8,maxWidth:420}}>
-                Reading Quantum Brand Profile<br/>
-                Extracting paradoxes from Soul + Sensescape<br/>
-                Deriving geometry from score matrix<br/>
-                Translating archetypes into conceptual directions<br/>
-                Building anti-pattern blocklist<br/>
-                Assembling Logo Direction Brief...
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── STEP 2: BRIEF ── */}
-        {step===2 && brief && (
-          <div className="fade-in">
-            <div style={{marginBottom:32,display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
-              <div>
-                <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.3em',color:'var(--green)',marginBottom:8,textTransform:'uppercase'}}>// Output — Logo Direction Brief</div>
-                <h1 style={{fontSize:24,fontWeight:700}}>{brandName}</h1>
-                <p style={{color:'var(--text2)',fontSize:13,marginTop:4}}>All decisions traceable to your Quantum Brand Profile</p>
-              </div>
-              <button onClick={()=>setStep(3)} style={{background:'var(--green2)',border:'1px solid rgba(74,222,128,0.3)',color:'var(--green)',padding:'10px 20px',borderRadius:6,fontSize:12,fontFamily:'var(--mono)',letterSpacing:'0.1em',textTransform:'uppercase',cursor:'pointer'}}>
-                View AI Prompts →
-              </button>
-            </div>
-
-            {/* Central Tension */}
-            <div style={{background:'var(--bg3)',border:'1px solid rgba(74,222,128,0.2)',borderRadius:8,padding:'20px 24px',marginBottom:24}} className="scan-line">
-              <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.2em',color:'var(--green)',marginBottom:10,textTransform:'uppercase'}}>Central Creative Tension</div>
-              <p style={{fontSize:14,lineHeight:1.8,color:'var(--text)'}}>{brief.centralTension}</p>
-            </div>
-
-            {/* Geometry */}
-            <BriefCard title="Geometry Specification" accent="rgba(96,165,250,0.4)">
-              <SpecRow label="Mark type" value={brief.geometrySpec?.markType}/>
-              <SpecRow label="Corner radius" value={brief.geometrySpec?.cornerRadius}/>
-              <SpecRow label="Line weight" value={brief.geometrySpec?.lineWeight}/>
-              <SpecRow label="Symmetry" value={brief.geometrySpec?.symmetry}/>
-              <SpecRow label="Complexity" value={brief.geometrySpec?.complexity}/>
-              <SpecRow label="Spatial logic" value={brief.geometrySpec?.spatialLogic}/>
-            </BriefCard>
-
-            {/* Conceptual Directions */}
-            <div style={{marginBottom:12}}>
-              <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.15em',color:'var(--text3)',marginBottom:12,textTransform:'uppercase'}}>Conceptual Directions — {brief.conceptualDirections?.length} paths</div>
-              {brief.conceptualDirections?.map((d,i)=>(
-                <div key={i} style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px 20px',marginBottom:10}}>
-                  <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:10}}>
-                    <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',padding:'2px 8px',borderRadius:3}}>D{String(i+1).padStart(2,'0')}</span>
-                    <span style={{fontSize:14,fontWeight:600,color:'#a78bfa'}}>{d.name}</span>
-                  </div>
-                  <p style={{fontSize:13,lineHeight:1.7,color:'var(--text)',marginBottom:10}}>{d.concept}</p>
-                  <p style={{fontSize:12,lineHeight:1.6,color:'var(--text2)',marginBottom:10,fontStyle:'italic'}}>{d.formDescription}</p>
-                  <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-                    <Tag text={`From: ${d.traceability}`} type="good"/>
-                    <Tag text={`Avoid: ${d.avoidInThisDirection}`} type="bad"/>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Color */}
-            <BriefCard title="Color Territory" accent="rgba(245,158,11,0.4)">
-              <p style={{fontSize:13,lineHeight:1.7,color:'var(--text)',marginBottom:12}}>{brief.colorTerritory?.description}</p>
-              <div style={{marginBottom:10}}>
-                {brief.colorTerritory?.palette?.map((c,i)=><Tag key={i} text={c} type="neutral"/>)}
-              </div>
-              <div>
-                {brief.colorTerritory?.forbiddenColors?.map((c,i)=><Tag key={i} text={c} type="bad"/>)}
-              </div>
-              <div style={{marginTop:10,fontSize:11,color:'var(--text3)',fontStyle:'italic'}}>Traced to: {brief.colorTerritory?.traceability}</div>
-            </BriefCard>
-
-            {/* Typography */}
-            <BriefCard title="Typography Direction" accent="rgba(167,139,250,0.4)">
-              <SpecRow label="Category" value={brief.typographyDirection?.category}/>
-              <SpecRow label="Weight" value={brief.typographyDirection?.weight}/>
-              <SpecRow label="Tracking" value={brief.typographyDirection?.tracking}/>
-              <div style={{padding:'8px 0',borderBottom:'1px solid var(--border)',fontSize:12}}>
-                <span style={{color:'var(--text2)'}}>Personality</span>
-                <p style={{color:'var(--text)',marginTop:4,lineHeight:1.6}}>{brief.typographyDirection?.personality}</p>
-              </div>
-              <div style={{padding:'8px 0',fontSize:12}}>
-                <span style={{color:'var(--text2)',display:'block',marginBottom:6}}>Reference typefaces</span>
-                {brief.typographyDirection?.referenceTypefaces?.map((t,i)=><Tag key={i} text={t} type="good"/>)}
-              </div>
-            </BriefCard>
-
-            {/* Anti-patterns */}
-            <BriefCard title="Anti-Pattern Blocklist — what this logo must never be" accent="rgba(239,68,68,0.3)">
-              <div>{brief.antiPatternList?.map((a,i)=><Tag key={i} text={a} type="bad"/>)}</div>
-            </BriefCard>
-
-            {/* Quality Test */}
-            <div style={{background:'var(--bg)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'20px 24px',marginBottom:24}}>
-              <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.2em',color:'var(--text3)',marginBottom:10,textTransform:'uppercase'}}>Quality Test — every concept must answer yes</div>
-              <p style={{fontSize:15,lineHeight:1.7,color:'var(--green)',fontStyle:'italic'}}>"{brief.qualityTest}"</p>
-            </div>
-
-            {/* Designer Handoff */}
-            <BriefCard title="Designer Handoff — the one paragraph" accent="rgba(74,222,128,0.2)">
-              <p style={{fontSize:14,lineHeight:1.8,color:'var(--text)'}}>{brief.designerHandoff}</p>
-            </BriefCard>
-
-            <div style={{display:'flex',justifyContent:'center',marginTop:32}}>
-              <button onClick={()=>setStep(3)} style={{background:'var(--green)',color:'#000',padding:'14px 36px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:'var(--mono)'}}>
-                Generate AI Prompts →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── STEP 3: PROMPTS ── */}
-        {step===3 && brief && (
-          <div className="fade-in">
-            <div style={{marginBottom:32,display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
-              <div>
-                <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.3em',color:'var(--green)',marginBottom:8,textTransform:'uppercase'}}>// Execution — AI Generation Prompts</div>
-                <h1 style={{fontSize:24,fontWeight:700}}>{brandName}</h1>
-                <p style={{color:'var(--text2)',fontSize:13,marginTop:4}}>Ready to paste into Midjourney, Ideogram, or hand to a designer</p>
-              </div>
-              <button onClick={()=>setStep(2)} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'10px 20px',borderRadius:6,fontSize:12,fontFamily:'var(--mono)',letterSpacing:'0.1em',textTransform:'uppercase',cursor:'pointer'}}>
-                ← Back to Brief
-              </button>
-            </div>
-
-            {/* Midjourney */}
-            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'20px 24px',marginBottom:16}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-                <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.2em',color:'var(--blue)',textTransform:'uppercase'}}>Midjourney v6 Prompt</div>
-                <button onClick={()=>copyText(brief.midjourneyPrompt)} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:'var(--text2)',padding:'6px 14px',borderRadius:4,fontSize:11,fontFamily:'var(--mono)',cursor:'pointer',letterSpacing:'0.1em',textTransform:'uppercase'}}>Copy</button>
-              </div>
-              <div style={{background:'var(--bg)',border:'1px solid var(--border)',borderRadius:6,padding:'14px 16px',fontFamily:'var(--mono)',fontSize:12,lineHeight:1.7,color:'var(--text)',wordBreak:'break-word'}}>
-                {brief.midjourneyPrompt}
-              </div>
-            </div>
-
-            {/* Ideogram */}
-            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'20px 24px',marginBottom:24}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-                <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.2em',color:'var(--purple)',textTransform:'uppercase'}}>Ideogram Prompt</div>
-                <button onClick={()=>copyText(brief.ideogramPrompt)} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:'var(--text2)',padding:'6px 14px',borderRadius:4,fontSize:11,fontFamily:'var(--mono)',cursor:'pointer',letterSpacing:'0.1em',textTransform:'uppercase'}}>Copy</button>
-              </div>
-              <div style={{background:'var(--bg)',border:'1px solid var(--border)',borderRadius:6,padding:'14px 16px',fontFamily:'var(--mono)',fontSize:12,lineHeight:1.7,color:'var(--text)',wordBreak:'break-word'}}>
-                {brief.ideogramPrompt}
-              </div>
-            </div>
-
-            {/* Routing */}
-            <div style={{marginBottom:12}}>
-              <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.15em',color:'var(--text3)',marginBottom:12,textTransform:'uppercase'}}>Execution Routing — choose your path</div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
-                {[
-                  {title:'AI generation',desc:'Paste Midjourney or Ideogram prompt. Explore 4-8 concepts. Return with results for evaluation.',color:'var(--blue)'},
-                  {title:'Human designer',desc:'Send Designer Handoff paragraph + Geometry Spec. No briefing calls needed. Everything is in the brief.',color:'var(--green)'},
-                  {title:'Canva / Figma',desc:'Use Geometry Spec + Typography Direction to build wordmark or lettermark directly in design software.',color:'var(--purple)'},
-                ].map((r,i)=>(
-                  <div key={i} style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:8,padding:'16px'}}>
-                    <div style={{fontSize:11,fontWeight:600,color:r.color,marginBottom:8,textTransform:'uppercase',letterSpacing:'0.1em'}}>{r.title}</div>
-                    <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{r.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Evaluation reminder */}
-            <div style={{background:'var(--bg)',border:'1px solid rgba(245,158,11,0.2)',borderRadius:8,padding:'16px 20px',marginTop:24}}>
-              <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'0.2em',color:'var(--amber)',marginBottom:8,textTransform:'uppercase'}}>Logo Evaluation Agent — coming next</div>
-              <p style={{fontSize:13,color:'var(--text2)',lineHeight:1.7}}>Once concepts are generated, run them through the Logo Evaluation Agent. It scores each concept against this QBP — geometry match, archetype alignment, anti-pattern violations — and returns a pass/fail verdict with specific reasoning before any design goes live.</p>
-            </div>
-
-            <div style={{display:'flex',gap:12,justifyContent:'center',marginTop:32}}>
-              <button onClick={()=>{setStep(0);setBrief(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'12px 24px',borderRadius:6,fontWeight:500,fontSize:13,fontFamily:'var(--mono)',letterSpacing:'0.1em',textTransform:'uppercase',cursor:'pointer'}}>
-                New Brief
-              </button>
-              <button onClick={()=>setStep(2)} style={{background:'var(--green)',color:'#000',padding:'12px 24px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:'var(--mono)',cursor:'pointer'}}>
-                View Full Brief
-              </button>
-            </div>
-          </div>
-        )}
-
-      </main>
-
-      {/* ── FOOTER ── */}
-      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'0.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'0.15em'}}>Logo Direction Agent / Phase 02</span>
-      </footer>
-
+function SectionHeader({ step, title }) {
+  return (
+    <div style={{ marginBottom:'22px' }}>
+      <div className="section-label" style={{ marginBottom:'6px' }}>{step}</div>
+      <h2 className="font-display" style={{ fontSize:'20px', color:'var(--text-1)' }}>{title}</h2>
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+function Field({ label, hint, children }) {
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:'7px' }}>
+      <label style={{ fontSize:'11px', fontWeight:600, letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--text-3)' }}>
+        {label}{hint && <span style={{ color:'var(--text-4)', fontWeight:400, textTransform:'none', letterSpacing:0 }}> — {hint}</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function PillGroup({ items, value, onChange, multi }) {
+  const isActive = item => multi ? (value||[]).includes(item) : value === item;
+  const toggle = item => {
+    if (!multi) { onChange(value === item ? null : item); return; }
+    const arr = value || [];
+    if (arr.includes(item)) onChange(arr.filter(x => x !== item));
+    else if (arr.length < 3) onChange([...arr, item]);
+  };
+  return (
+    <div className="pill-grid">
+      {items.map(item => (
+        <button key={item} className={`pill${isActive(item) ? ' active' : ''}`} onClick={() => toggle(item)}>{item}</button>
+      ))}
+    </div>
+  );
+}
+
+function Slider({ label, value, onChange, leftLabel, rightLabel }) {
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <span style={{ fontSize:'11px', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em', color:'var(--text-3)' }}>{label}</span>
+        <span style={{ fontSize:'13px', color:'var(--brass)', fontFamily:'var(--font-mono)', fontWeight:700 }}>{value}</span>
+      </div>
+      <input type="range" min={1} max={10} value={value} onChange={e => onChange(Number(e.target.value))} />
+      <div style={{ display:'flex', justifyContent:'space-between' }}>
+        <span style={{ fontSize:'10px', color:'var(--text-4)', fontFamily:'var(--font-mono)' }}>{leftLabel}</span>
+        <span style={{ fontSize:'10px', color:'var(--text-4)', fontFamily:'var(--font-mono)' }}>{rightLabel}</span>
+      </div>
+    </div>
+  );
+}
+
+function MarkdownOutput({ text }) {
+  const elements = [];
+  const lines = text.split('\n');
+  lines.forEach((line, i) => {
+    const h2 = line.match(/^#{1,2} (.+)/);
+    const h3 = line.match(/^#{3} (.+)/);
+    const bullet = line.match(/^[-•*] (.+)/);
+    if (h2) {
+      elements.push(<div key={i} className="result-section-header">{h2[1]}</div>);
+    } else if (h3) {
+      elements.push(<div key={i} style={{ fontSize:'13px', color:'var(--patina-lit)', fontFamily:'var(--font-mono)', letterSpacing:'0.08em', textTransform:'uppercase', marginTop:'16px', marginBottom:'8px' }}>{h3[1]}</div>);
+    } else if (bullet) {
+      elements.push(
+        <div key={i} className="result-bullet">
+          <span style={{ color:'var(--brass)', flexShrink:0, marginTop:'3px' }}>◆</span>
+          <p className="result-p" style={{ margin:0 }}>{bullet[1]}</p>
+        </div>
+      );
+    } else if (line.trim()) {
+      elements.push(<p key={i} className="result-p">{line}</p>);
+    }
+  });
+  return <div>{elements}</div>;
+}
+
+// ── APP ───────────────────────────────────────────────────────────────────────
+function App() {
+  const [theme, setTheme] = useState(() => { try { return localStorage.getItem('qb-theme') || 'dark'; } catch(e) { return 'dark'; } });
+  const toggleTheme = () => {
+    const t = theme === 'dark' ? 'light' : 'dark';
+    setTheme(t); document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem('qb-theme', t); } catch(e) {}
+  };
+
+  const [f, setF] = useState({
+    brandName:'', industry:null, positioning:'', targetAudience:'', brandEssence:'',
+    archetypes:[], naturalForce:null, museumRoom:null, mythFigure:null, paradox:null,
+    boldness:6, complexity:5, timelessness:7,
+    existingColor:'', constraints:'', competitive:'', additionalContext:''
+  });
+  const set = (k, v) => setF(p => ({ ...p, [k]: v }));
+
+  const [loading, setLoading] = useState(false);
+  const [result, setResult]   = useState('');
+  const [error, setError]     = useState('');
+  const resultRef = useRef(null);
+
+  const canGenerate = f.brandName.trim().length > 0 && f.brandEssence.trim().length > 8;
+
+  const run = async () => {
+    if (!canGenerate || loading) return;
+    setLoading(true); setError(''); setResult('');
+    try {
+      const text = await window.QB_AI(SYSTEM_PROMPT, buildPrompt(f), 4000);
+      setResult(text);
+      setTimeout(() => resultRef.current?.scrollIntoView({ behavior:'smooth', block:'start' }), 120);
+    } catch(e) {
+      setError(e.message || 'Generation failed. Check your API connection.');
+    } finally { setLoading(false); }
+  };
+
+  const activeTags = [f.naturalForce, f.museumRoom, f.mythFigure, ...(f.archetypes||[])].filter(Boolean);
+
+  return (
+    <div style={{ maxWidth:'800px', margin:'0 auto', padding:'40px 24px 100px' }}>
+
+      {/* TOP BAR */}
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'52px' }}>
+        <div>
+          <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px' }}>
+            <div className="pulse-dot" />
+            <span className="font-mono" style={{ fontSize:'9px', color:'var(--brass)', letterSpacing:'0.2em' }}>QB BRANDOS · LOGO DIRECTION AGENT</span>
+          </div>
+          <h1 className="font-display" style={{ fontSize:'clamp(28px,5vw,46px)', lineHeight:1.12, marginBottom:'14px' }}>
+            Logo Creative<br/>Direction
+          </h1>
+          <p style={{ fontSize:'14px', color:'var(--text-3)', maxWidth:'460px', lineHeight:'1.75' }}>
+            Translate brand essence into precise visual language. No vague briefs. No wasted revisions.
+          </p>
+        </div>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
+
+      {/* MANIFESTO */}
+      <div className="manifesto-block" style={{ marginBottom:'44px' }}>
+        <p style={{ fontSize:'15px', color:'var(--text-2)', lineHeight:'1.85', fontStyle:'italic' }}>
+          "A logo is not what you see. It is what you feel when you see it — the compressed residue of every decision you've made about who this brand is and who it is not."
+        </p>
+      </div>
+
+      {/* ── CARD 1: BRAND CONTEXT ─────────────────────────────────────────── */}
+      <div className="glass-card" style={{ padding:'32px', marginBottom:'20px' }}>
+        <SectionHeader step="01 · Brand Context" title="Who is this brand?" />
+        <div className="form-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'18px' }}>
+          <Field label="Brand Name">
+            <input type="text" placeholder="e.g. Verne, Aurea, Nox Studio" value={f.brandName} onChange={e => set('brandName', e.target.value)} />
+          </Field>
+          <Field label="Industry">
+            <select value={f.industry || ''} onChange={e => set('industry', e.target.value || null)}>
+              <option value="">— Select industry —</option>
+              {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
+            </select>
+          </Field>
+          <div className="form-group full" style={{ gridColumn:'1 / -1' }}>
+            <Field label="Brand Essence" hint="one or two sentences that capture the soul of this brand">
+              <textarea rows={3} placeholder="e.g. A luxury jewellery house for those who collect moments, not things. Quiet confidence. Earned elegance." value={f.brandEssence} onChange={e => set('brandEssence', e.target.value)} />
+            </Field>
+          </div>
+          <div style={{ gridColumn:'1 / -1' }}>
+            <Field label="One-Line Positioning">
+              <input type="text" placeholder="e.g. The jeweller for women who have stopped performing femininity" value={f.positioning} onChange={e => set('positioning', e.target.value)} />
+            </Field>
+          </div>
+          <div style={{ gridColumn:'1 / -1' }}>
+            <Field label="Target Audience" hint="optional">
+              <input type="text" placeholder="e.g. Affluent 30–50 collectors, globally mobile, taste-driven" value={f.targetAudience} onChange={e => set('targetAudience', e.target.value)} />
+            </Field>
+          </div>
+        </div>
+      </div>
+
+      {/* ── CARD 2: MYTHOLOGY ─────────────────────────────────────────────── */}
+      <div className="glass-card" style={{ padding:'32px', marginBottom:'20px' }}>
+        <SectionHeader step="02 · Metaphoric Filters" title="What does this brand feel like?" />
+        <div style={{ display:'flex', flexDirection:'column', gap:'26px' }}>
+          <Field label="Natural Force">
+            <PillGroup items={NATURAL_FORCES} value={f.naturalForce} onChange={v => set('naturalForce', v)} />
+          </Field>
+          <div className="divider" style={{ margin:'0' }} />
+          <Field label="Museum Room">
+            <PillGroup items={MUSEUM_ROOMS} value={f.museumRoom} onChange={v => set('museumRoom', v)} />
+          </Field>
+          <div className="divider" style={{ margin:'0' }} />
+          <Field label="Mythological Figure">
+            <PillGroup items={MYTH_FIGURES} value={f.mythFigure} onChange={v => set('mythFigure', v)} />
+          </Field>
+          <div className="divider" style={{ margin:'0' }} />
+          <Field label="Brand Archetypes" hint="select up to 3">
+            <PillGroup items={ARCHETYPES} value={f.archetypes} onChange={v => set('archetypes', v)} multi />
+          </Field>
+          <div className="divider" style={{ margin:'0' }} />
+          <Field label="Core Paradox to Hold">
+            <PillGroup items={PARADOX_OPTIONS} value={f.paradox} onChange={v => set('paradox', v)} />
+          </Field>
+        </div>
+      </div>
+
+      {/* ── CARD 3: TONE DIALS ────────────────────────────────────────────── */}
+      <div className="glass-card" style={{ padding:'32px', marginBottom:'20px' }}>
+        <SectionHeader step="03 · Visual Tone" title="Calibrate the visual tension" />
+        <div style={{ display:'flex', flexDirection:'column', gap:'28px' }}>
+          <Slider label="Boldness" value={f.boldness} onChange={v => set('boldness', v)} leftLabel="Whisper" rightLabel="Command" />
+          <Slider label="Complexity" value={f.complexity} onChange={v => set('complexity', v)} leftLabel="Minimal" rightLabel="Intricate" />
+          <Slider label="Timelessness" value={f.timelessness} onChange={v => set('timelessness', v)} leftLabel="Trend-led" rightLabel="Timeless" />
+        </div>
+      </div>
+
+      {/* ── CARD 4: CONSTRAINTS ───────────────────────────────────────────── */}
+      <div className="glass-card" style={{ padding:'32px', marginBottom:'32px' }}>
+        <SectionHeader step="04 · Constraints & Context" title="What must we know?" />
+        <div style={{ display:'flex', flexDirection:'column', gap:'18px' }}>
+          <Field label="Existing Brand Color" hint="hex or name">
+            <input type="text" placeholder="e.g. #1A1A1A, deep forest green, warm ivory" value={f.existingColor} onChange={e => set('existingColor', e.target.value)} />
+          </Field>
+          <Field label="Absolute Constraints">
+            <textarea rows={2} placeholder="e.g. Must work in single color, no gradients, avoid serifs" value={f.constraints} onChange={e => set('constraints', e.target.value)} />
+          </Field>
+          <Field label="Competitive Landscape">
+            <textarea rows={2} placeholder="e.g. Competing with Cartier, Mejuri — must feel distinct from both" value={f.competitive} onChange={e => set('competitive', e.target.value)} />
+          </Field>
+          <Field label="Additional Context" hint="optional">
+            <textarea rows={2} placeholder="Brand history, nuances, founder story, application priorities..." value={f.additionalContext} onChange={e => set('additionalContext', e.target.value)} />
+          </Field>
+        </div>
+      </div>
+
+      {/* ── GENERATE ─────────────────────────────────────────────────────── */}
+      <div style={{ display:'flex', justifyContent:'flex-end', alignItems:'center', gap:'12px' }}>
+        {!canGenerate && <span style={{ fontSize:'12px', color:'var(--text-3)' }}>Brand name & essence required</span>}
+        {result && <button className="btn-secondary" onClick={() => { setResult(''); setError(''); }}>Reset</button>}
+        <button className="btn-primary" onClick={run} disabled={!canGenerate || loading}>
+          {loading
+            ? <><svg className="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>Generating…</>
+            : 'Generate Logo Direction →'}
+        </button>
+      </div>
+
+      {/* ── ERROR ─────────────────────────────────────────────────────────── */}
+      {error && <div className="error-banner">⚠ {error}</div>}
+
+      {/* ── RESULT ────────────────────────────────────────────────────────── */}
+      {result && (
+        <div ref={resultRef} style={{ marginTop:'44px' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'24px', flexWrap:'wrap', gap:'12px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+              <div className="pulse-dot" />
+              <span className="font-mono" style={{ fontSize:'9px', color:'var(--brass)', letterSpacing:'0.2em' }}>LOGO DIRECTION · GENERATED</span>
+            </div>
+            {activeTags.length > 0 && (
+              <div style={{ display:'flex', flexWrap:'wrap', gap:'6px' }}>
+                {activeTags.map(t => <span key={t} className="tag">{t}</span>)}
+              </div>
+            )}
+          </div>
+          <div className="glass-card" style={{ padding:'36px 40px' }}>
+            <MarkdownOutput text={result} />
+          </div>
+          <div style={{ marginTop:'18px', display:'flex', gap:'10px', flexWrap:'wrap', justifyContent:'flex-end' }}>
+            <button className="btn-secondary" onClick={() => navigator.clipboard?.writeText(result)}>Copy Brief</button>
+            <button className="btn-secondary" onClick={run}>Regenerate</button>
+            <button className="btn-secondary" onClick={() => { setResult(''); setError(''); }}>Start Over</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>

@@ -4,109 +4,452 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QB — Instagram Seed Content Agent</title>
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- QB BrandOS Typography -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;--bg5:#252525;
-  --border:#2a2a2a;--border2:#333;
-  --text:#e8e8e8;--text2:#888;--text3:#555;--text4:#333;
-  --green:#4ade80;--green2:rgba(74,222,128,0.12);--green3:rgba(74,222,128,0.05);
-  --red:#ef4444;--red2:rgba(239,68,68,0.1);
-  --amber:#f59e0b;--amber2:rgba(245,158,11,0.1);
-  --blue:#60a5fa;--blue2:rgba(96,165,250,0.1);
-  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);
-  --pink:#f472b6;--pink2:rgba(244,114,182,0.1);
-  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
-}
-body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);border-radius:6px;padding:10px 14px;font-size:13px;width:100%;outline:none;transition:border-color .2s}
-input:focus,textarea:focus,select:focus{border-color:var(--green)}
-textarea{resize:vertical;line-height:1.6}
-select option{background:var(--bg3)}
-button{cursor:pointer;font-family:var(--font);border:none;outline:none}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes scanH{0%{left:-80%}100%{left:200%}}
-.fade-in{animation:fadeIn .35s ease forwards}
-.blink{animation:pulse 1.4s ease infinite}
-.spin{animation:spin .9s linear infinite}
-.scan-line{position:relative;overflow:hidden}
-.scan-line::after{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(74,222,128,0.05),transparent);animation:scanH 3s linear infinite}
-.tab-btn{padding:7px 14px;border-radius:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);background:transparent;border:1px solid var(--border);color:var(--text3);transition:all .2s;cursor:pointer}
-.tab-btn.active{background:var(--green2);border-color:rgba(74,222,128,0.3);color:var(--green)}
-.post-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s}
-.post-card:hover{border-color:var(--border2)}
-.post-card.selected{border-color:rgba(74,222,128,0.4);background:var(--bg4)}
-.grid-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:all .15s;border:1px solid var(--border)}
-.grid-cell:hover{border-color:var(--border2)}
-.grid-cell.active-cell{border-color:var(--green);box-shadow:0 0 0 1px rgba(74,222,128,0.3)}
-.pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:10px;font-family:var(--mono);margin:2px 2px 2px 0;letter-spacing:.05em}
-.pill-green{background:var(--green2);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
-.pill-pink{background:var(--pink2);color:var(--pink);border:1px solid rgba(244,114,182,0.2)}
-.pill-blue{background:var(--blue2);color:var(--blue);border:1px solid rgba(96,165,250,0.2)}
-.pill-amber{background:var(--amber2);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
-.pill-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
-.pill-neutral{background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
-.slider-thumb::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);cursor:pointer;border:2px solid var(--bg)}
-.slider-thumb::-webkit-slider-runnable-track{background:var(--border2);height:3px;border-radius:2px}
-.slider-thumb{-webkit-appearance:none;width:100%;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
 <script>
-  (function() {
-    try {
-      var theme = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-      if (theme === 'dark') document.documentElement.classList.add('dark');
-    } catch(e) {}
-  })();
+// Theme init & Flash Prevention
+(function() {
+  try {
+    var theme = localStorage.getItem('qb-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    window.toggleTheme = function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('qb-theme', next);
+    };
+  } catch(e) {}
+})();
 </script>
+
+<style>
+/* Flash prevention default */
+html:not([data-theme]) { background: #080604; color: #A89A88; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root, [data-theme="dark"] {
+  --bg-void: #080604;
+  --bg-deep: #0A0806;
+  --bg-base: #0E0C09;
+  --bg-surface: rgba(140,110,70,0.045);
+  --bg-elevated: rgba(140,110,70,0.07);
+  --bg-overlay: rgba(18,15,10,0.85);
+
+  --border-subtle: rgba(140,110,70,0.06);
+  --border-medium: rgba(140,110,70,0.11);
+  --border-strong: rgba(140,110,70,0.18);
+
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58,95,74,0.2);
+  --patina-faint: rgba(58,95,74,0.08);
+
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168,144,62,0.18);
+  --brass-faint: rgba(168,144,62,0.06);
+
+  --text-1: #DDD4C4;
+  --text-2: #A89A88;
+  --text-3: #6A5E50;
+  --text-4: #3E3830;
+
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04);
+  --bg-elevated: rgba(100,80,50,0.07);
+  --bg-overlay: rgba(244,240,235,0.9);
+
+  --border-subtle: rgba(100,80,50,0.08);
+  --border-medium: rgba(100,80,50,0.14);
+  --border-strong: rgba(100,80,50,0.22);
+
+  --patina: #2E4E3C;
+  --patina-lit: #3A6A4E;
+  --patina-dim: rgba(46,78,60,0.15);
+  --patina-faint: rgba(46,78,60,0.06);
+
+  --brass: #8A7430;
+  --brass-lit: #A08A3A;
+  --brass-dim: rgba(138,116,48,0.15);
+  --brass-faint: rgba(138,116,48,0.05);
+
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+}
+
+body {
+    background: var(--bg-void);
+    color: var(--text-2);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Film Grain */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+}
+[data-theme="light"] body::after { opacity: 0.02; }
+
+/* Warm Vignette */
+.main-vignette::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+}
+[data-theme="light"] .main-vignette::before {
+    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+/* Typography */
+h1, h2, h3, .font-serif {
+    font-family: var(--font-serif);
+    color: var(--text-1);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+}
+
+/* Forms */
+input, textarea, select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+    transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease, color .25s ease;
+}
+input::placeholder, textarea::placeholder, select::placeholder {
+    color: var(--text-3);
+    font-style: italic;
+    opacity: 0.7;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: var(--patina);
+    box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+}
+textarea { resize: vertical; line-height: 1.6; }
+select option { background: var(--bg-base); }
+button { cursor: pointer; font-family: var(--font-sans); border: none; outline: none; }
+
+/* Buttons */
+.btn-primary {
+    background: var(--patina);
+    color: #E6DDD0;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 13px 30px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.btn-primary:hover:not(:disabled) {
+    background: var(--patina-lit);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 24px -4px rgba(58,95,74,0.4), 0 0 0 1px rgba(168,144,62,0.15);
+}
+.btn-primary:disabled {
+    background: var(--bg-surface);
+    color: var(--text-3);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: 1px solid var(--border-medium);
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.btn-secondary:hover {
+    background: var(--bg-surface);
+    color: var(--text-1);
+    border-color: var(--border-strong);
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-3);
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    cursor: pointer;
+}
+.tab-btn:hover { color: var(--text-2); }
+.tab-btn.active {
+    background: var(--patina-faint);
+    border-color: var(--patina-dim);
+    color: var(--patina);
+}
+
+/* QB Signature Elements */
+.glass-card {
+    background: var(--bg-overlay);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+}
+[data-theme="dark"] .glass-card::before {
+    content: '';
+    position: absolute;
+    top: -30%; left: -10%;
+    width: 60%; height: 60%;
+    background: radial-gradient(ellipse at center, rgba(168,144,62,0.035) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.pulse-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--brass);
+    box-shadow: 0 0 8px rgba(168,144,62,0.7), 0 0 2px rgba(168,144,62,1);
+    animation: beat 3s ease infinite;
+}
+[data-theme="light"] .pulse-dot {
+    box-shadow: 0 0 8px rgba(138,116,48,0.7), 0 0 2px rgba(138,116,48,1);
+}
+
+.manifesto-block {
+    position: relative;
+    padding: 24px 0 24px 24px;
+}
+.manifesto-block::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--brass-dim);
+}
+
+/* Animations */
+@keyframes beat {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    12% { transform: scale(1.35); opacity: 1; }
+    24% { transform: scale(0.95); opacity: 0.6; }
+    36% { transform: scale(1.15); opacity: 1; }
+    48% { transform: scale(1); opacity: 0.7; }
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scanH { 0% { transform: translateX(-180%); } 100% { transform: translateX(320%); } }
+
+.fade-in { animation: fadeIn .4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.stagger-in > * { animation: fadeInUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.stagger-in > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-in > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-in > *:nth-child(8) { animation-delay: 0.4s; }
+.stagger-in > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger-in > *:nth-child(10) { animation-delay: 0.5s; }
+.stagger-in > *:nth-child(11) { animation-delay: 0.55s; }
+.stagger-in > *:nth-child(12) { animation-delay: 0.6s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+.scan-line { position: relative; overflow: hidden; }
+.scan-line::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, var(--patina-faint), transparent);
+    animation: scanH 3s linear infinite;
+}
+
+/* Component specifics */
+.post-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color .3s ease, border-color .3s ease, transform .3s ease, box-shadow .3s ease;
+}
+.post-card:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+}
+.post-card.selected {
+    background: var(--bg-base);
+    border-color: var(--patina);
+    box-shadow: 0 0 0 1px var(--patina-faint);
+}
+
+.grid-cell {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: all .2s ease;
+    border: 1px solid var(--border-medium);
+}
+.grid-cell:hover { border-color: var(--border-strong); }
+.grid-cell.active-cell {
+    border-color: var(--patina);
+    box-shadow: 0 0 0 1px var(--patina-faint), inset 0 0 12px rgba(58,95,74,0.1);
+}
+
+.pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    margin: 2px 4px 2px 0;
+    letter-spacing: 0.05em;
+}
+.pill-neutral {
+    background: var(--bg-surface);
+    color: var(--text-2);
+    border: 1px solid var(--border-medium);
+}
+</style>
+
 <script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+// QB_SPINE v3 — hardened API adapter + base64url-safe QBP decoding
 (function(){
   var params = new URLSearchParams(window.location.search);
-  // QBP
+
+  function decodeQBP(value){
+    if(!value) return null;
+    try{
+      var normalized = value.replace(/-/g,'+').replace(/_/g,'/').replace(/\s/g,'+');
+      while(normalized.length % 4) normalized += '=';
+      return atob(normalized);
+    }catch(e){
+      return null;
+    }
+  }
+
   var urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-  // Universal AI call — works with Anthropic or Gemini
+  if(urlQBP){
+    try{
+      var decoded = decodeQBP(urlQBP);
+      if(decoded) localStorage.setItem('qb_qbp', decoded);
+      else localStorage.setItem('qb_qbp_error', 'Invalid qbp payload');
+    }catch(e){
+      localStorage.setItem('qb_qbp_error', 'Invalid qbp payload');
+    }
+  }
+
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }
+  catch(e){ window.QB_QBP = {}; }
+
+  window.QB_API = async function(payload){
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    var raw = await res.text();
+    var data = {};
+    try { data = raw ? JSON.parse(raw) : {}; }
+    catch(e){
+      throw new Error('Invalid JSON response from /api/claude');
+    }
+
+    if(!res.ok){
+      var message = (data && data.error && data.error.message) || data.message || ('HTTP ' + res.status + ': ' + res.statusText);
+      throw new Error(message);
+    }
+
+    if(data.error){
+      throw new Error(data.error.message || data.error || 'Unknown API error');
+    }
+
+    return data;
+  };
+
   window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
     maxTokens = maxTokens || 4000;
-    var body = {
+    var data = await window.QB_API({
       model: 'claude-sonnet-4-20250514',
       max_tokens: maxTokens,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }]
-    };
-    var res = await fetch('/api/claude', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
     });
-    var d = await res.json();
-    if(d.error) throw new Error(d.error.message);
-    return d.content[0].text;
+
+    var textBlock = data && data.content && data.content[0] && data.content[0].text;
+    if(!textBlock) throw new Error('No text returned from AI response');
+    return textBlock;
   };
-  window.QB_AUTOFILL = function(fieldMap){
-    if(!window.QB_QBP) return;
-    Object.entries(fieldMap).forEach(function(kv){
-      var el = document.getElementById(kv[0]) || document.querySelector('[data-qbp="'+kv[1]+'"]');
-      if(el && window.QB_QBP[kv[1]] && !el.value) el.value = window.QB_QBP[kv[1]];
-    });
-  };
-})();
-</script>
+})();</script>
 </head>
-<body>
-<div id="root"></div>
+<body class="main-vignette">
+<div id="root" style="position: relative; z-index: 2;"></div>
 <script type="text/babel">
-const {useState,useEffect,useRef,useCallback}=React;
+const {useState,useEffect}=React;
 
 // ── CONSTANTS ──────────────────────────────────────────────────────────────────
 const CONTENT_ARCS = [
@@ -120,23 +463,55 @@ const POST_TYPES = ['Single image','Carousel','Reel script','Quote graphic','Beh
 const ARCHETYPES = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
 const NATURAL_FORCES = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
 
-const ARC_COLORS = {identity:'var(--purple)',belief:'var(--amber)',work:'var(--blue)',community:'var(--green)'};
-const ARC_BG = {identity:'var(--purple2)',belief:'var(--amber2)',work:'var(--blue2)',community:'var(--green2)'};
-const ARC_BORDER = {identity:'rgba(167,139,250,0.25)',belief:'rgba(245,158,11,0.25)',work:'rgba(96,165,250,0.25)',community:'rgba(74,222,128,0.25)'};
+// Entangled Time Phase Color Mappings
+const ARC_COLORS = {
+    identity: '#4A7A5E', // Discovery/Patina
+    belief: '#4A7A8A',   // Creation/Teal
+    work: '#8A5A5A',     // Content/Rose
+    community: '#5A7A6A' // Execution/Sage
+};
+const ARC_BG = {
+    identity: 'rgba(74, 122, 94, 0.08)',
+    belief: 'rgba(74, 122, 138, 0.08)',
+    work: 'rgba(138, 90, 90, 0.08)',
+    community: 'rgba(90, 122, 106, 0.08)'
+};
+const ARC_BORDER = {
+    identity: 'rgba(74, 122, 94, 0.25)',
+    belief: 'rgba(74, 122, 138, 0.25)',
+    work: 'rgba(138, 90, 90, 0.25)',
+    community: 'rgba(90, 122, 106, 0.25)'
+};
+
+const normalizeArc = (arc, index) => {
+  if (arc && ARC_COLORS[arc]) return arc;
+  if (index < 3) return 'identity';
+  if (index < 6) return 'belief';
+  if (index < 9) return 'work';
+  return 'community';
+};
+
+const sectionNumber = (number) => String(number).padStart(2, '0');
+
+const stripCodeFence = (raw='') => raw
+  .replace(/^```json\s*/i,'')
+  .replace(/^```\s*/i,'')
+  .replace(/\s*```$/,'')
+  .trim();
 
 // ── SHARED UI ──────────────────────────────────────────────────────────────────
-const MonoLabel=({c,children,mb=8})=><div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:c||'var(--text3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
-const Card=({children,accent,style={}})=><div style={{background:'var(--bg3)',border:`1px solid ${accent||'var(--border)'}`,borderRadius:8,padding:'16px 20px',...style}}>{children}</div>;
+const MonoLabel=({c,children,mb=8})=><div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'.15em',color:c||'var(--text-3)',textTransform:'uppercase',marginBottom:mb}}>{children}</div>;
+const Card=({children,accent,style={}})=><div className="glass-card" style={{border:`1px solid ${accent||'var(--border-subtle)'}`,padding:'24px',...style}}>{children}</div>;
 const TF=({label,value,onChange,placeholder,rows=1,hint})=>(
-  <div style={{marginBottom:14}}>
+  <div style={{marginBottom:16}}>
     <MonoLabel>{label}</MonoLabel>
     {rows>1?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}/>
     :<input type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}
-    {hint&&<div style={{fontSize:11,color:'var(--text3)',marginTop:4,fontStyle:'italic'}}>{hint}</div>}
+    {hint&&<div style={{fontSize:12,color:'var(--text-3)',marginTop:6,fontStyle:'italic'}}>{hint}</div>}
   </div>
 );
 const SF=({label,options,value,onChange})=>(
-  <div style={{marginBottom:14}}>
+  <div style={{marginBottom:16}}>
     <MonoLabel>{label}</MonoLabel>
     <select value={value} onChange={e=>onChange(e.target.value)}>
       <option value="">— select —</option>
@@ -145,11 +520,11 @@ const SF=({label,options,value,onChange})=>(
   </div>
 );
 const Section=({title,number,children,note})=>(
-  <div style={{marginBottom:30}}>
-    <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:16,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
-      <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.2em'}}>0{number}</span>
-      <span style={{fontSize:13,fontWeight:500,letterSpacing:'.05em',textTransform:'uppercase'}}>{title}</span>
-      {note&&<span style={{fontSize:11,color:'var(--text3)',marginLeft:'auto'}}>{note}</span>}
+  <div style={{marginBottom:40}}>
+    <div style={{display:'flex',alignItems:'baseline',gap:16,marginBottom:20,paddingBottom:12,borderBottom:'1px solid var(--border-medium)'}}>
+      <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--patina)',letterSpacing:'.2em'}}>{sectionNumber(number)}</span>
+      <span style={{fontFamily:'var(--font-serif)',fontSize:24,fontWeight:400,color:'var(--text-1)'}}>{title}</span>
+      {note&&<span style={{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',marginLeft:'auto',textTransform:'uppercase',letterSpacing:'.1em'}}>{note}</span>}
     </div>
     {children}
   </div>
@@ -158,34 +533,32 @@ const Section=({title,number,children,note})=>(
 // ── GRID VIEW ─────────────────────────────────────────────────────────────────
 const GridView=({posts,selected,onSelect})=>{
   if(!posts?.length) return null;
-  const arcOf=i=>i<3?'identity':i<6?'belief':i<9?'work':'community';
-  return(
+    return(
     <div>
-      <MonoLabel c="var(--text3)" mb={12}>Grid preview — 12-post sequence</MonoLabel>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:3,marginBottom:20}}>
+      <MonoLabel c="var(--text-3)" mb={16}>Grid preview — 12-post sequence</MonoLabel>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:6,marginBottom:24}}>
         {posts.map((p,i)=>{
-          const arc=arcOf(i);
+          const arc=normalizeArc(p.arc, i);
           const isSelected=selected===i;
           return(
             <div key={i} className={`grid-cell${isSelected?' active-cell':''}`}
               onClick={()=>onSelect(i)}
-              style={{background:isSelected?ARC_BG[arc]:'var(--bg3)',aspectRatio:'1',flexDirection:'column',gap:4,padding:6}}
+              style={{background:isSelected?ARC_BG[arc]:'var(--bg-surface)',flexDirection:'column',gap:8,padding:8}}
             >
-              <div style={{width:'100%',height:'70%',background:ARC_BG[arc],borderRadius:3,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                <span style={{fontFamily:'var(--mono)',fontSize:9,color:ARC_COLORS[arc],letterSpacing:'.1em'}}>{String(i+1).padStart(2,'0')}</span>
+              <div style={{width:'100%',height:'70%',background:ARC_BG[arc],border:`1px solid ${ARC_BORDER[arc]}`,borderRadius:4,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:ARC_COLORS[arc],letterSpacing:'.1em'}}>{String(i+1).padStart(2,'0')}</span>
               </div>
-              <div style={{fontSize:9,color:'var(--text3)',textAlign:'center',lineHeight:1.3,overflow:'hidden',maxHeight:28,fontFamily:'var(--mono)'}}>
+              <div style={{fontSize:9,color:'var(--text-3)',textAlign:'center',lineHeight:1.3,overflow:'hidden',maxHeight:28,fontFamily:'var(--font-mono)'}}>
                 {p.postType}
               </div>
-              <div style={{width:'100%',height:2,background:ARC_COLORS[arc],borderRadius:1,opacity:.6}}/>
             </div>
           );
         })}
       </div>
       {/* Arc legend */}
-      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+      <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
         {CONTENT_ARCS.map(a=>(
-          <div key={a.id} style={{display:'flex',alignItems:'center',gap:5,fontSize:10,color:'var(--text3)'}}>
+          <div key={a.id} style={{display:'flex',alignItems:'center',gap:6,fontSize:11,color:'var(--text-3)',fontFamily:'var(--font-sans)'}}>
             <div style={{width:8,height:8,borderRadius:2,background:ARC_COLORS[a.id]}}/>
             {a.label}
           </div>
@@ -199,46 +572,45 @@ const GridView=({posts,selected,onSelect})=>{
 const PostDetail=({post,index,onCopyCaption})=>{
   const [tab,setTab]=useState('caption');
   if(!post) return null;
-  const arcOf=i=>i<3?'identity':i<6?'belief':i<9?'work':'community';
-  const arc=arcOf(index);
+    const arc=normalizeArc(post.arc, index);
   const arcColor=ARC_COLORS[arc];
   const tabs=['caption','visual','hook','hashtags'];
 
   return(
     <div className="fade-in">
       {/* Post header */}
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:14,gap:12}}>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:20,gap:16}}>
         <div>
-          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
-            <span style={{fontFamily:'var(--mono)',fontSize:10,color:arcColor,border:`1px solid ${ARC_BORDER[arc]}`,padding:'2px 8px',borderRadius:3}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+            <span style={{fontFamily:'var(--font-mono)',fontSize:10,color:arcColor,border:`1px solid ${ARC_BORDER[arc]}`,padding:'4px 10px',borderRadius:4}}>
               {String(index+1).padStart(2,'0')} / {CONTENT_ARCS.find(a=>a.id===arc)?.label.toUpperCase()}
             </span>
-            <span style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>{post.postType}</span>
+            <span style={{fontSize:12,color:'var(--text-3)',fontFamily:'var(--font-mono)'}}>{post.postType}</span>
           </div>
-          <div style={{fontSize:15,fontWeight:600,color:'var(--text)',lineHeight:1.3}}>{post.postTitle}</div>
+          <div style={{fontFamily:'var(--font-serif)',fontSize:24,fontWeight:400,color:'var(--text-1)',lineHeight:1.3}}>{post.postTitle}</div>
         </div>
-        <button onClick={()=>onCopyCaption(post.caption)} style={{background:'var(--bg4)',border:'1px solid var(--border)',color:'var(--text2)',padding:'6px 14px',borderRadius:4,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase',flexShrink:0}}>Copy</button>
+        <button onClick={()=>onCopyCaption(post.caption)} className="btn-secondary" style={{flexShrink:0}}>Copy</button>
       </div>
 
       {/* Tabs */}
-      <div style={{display:'flex',gap:5,marginBottom:14}}>
+      <div style={{display:'flex',gap:6,marginBottom:20}}>
         {tabs.map(t=><button key={t} className={`tab-btn${tab===t?' active':''}`} onClick={()=>setTab(t)}>{t}</button>)}
       </div>
 
       {/* Caption */}
       {tab==='caption'&&(
-        <div className="fade-in">
-          <div style={{background:'var(--bg)',border:`1px solid ${ARC_BORDER[arc]}`,borderRadius:8,padding:'16px 18px',fontSize:13,lineHeight:1.9,color:'var(--text)',whiteSpace:'pre-wrap',marginBottom:10}}>
+        <div className="fade-in stagger-in">
+          <div style={{background:'var(--bg-void)',border:`1px solid ${ARC_BORDER[arc]}`,borderRadius:10,padding:'24px',fontSize:14,lineHeight:1.8,color:'var(--text-1)',whiteSpace:'pre-wrap',marginBottom:16}}>
             {post.caption}
           </div>
-          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:8}}>
-            <span style={{fontSize:11,color:'var(--text3)'}}>Goal:</span>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:12}}>
+            <span style={{fontSize:12,color:'var(--text-3)',marginTop:2}}>Goal:</span>
             <span className="pill pill-neutral">{post.goal}</span>
           </div>
           {post.cta&&(
-            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:6,padding:'10px 14px'}}>
-              <span style={{fontSize:10,fontFamily:'var(--mono)',color:'var(--green)',letterSpacing:'.15em'}}>CTA → </span>
-              <span style={{fontSize:12,color:'var(--text)'}}>{post.cta}</span>
+            <div style={{background:'var(--bg-surface)',border:'1px solid var(--border-medium)',borderRadius:8,padding:'12px 16px'}}>
+              <span style={{fontSize:11,fontFamily:'var(--font-mono)',color:'var(--patina)',letterSpacing:'.15em'}}>CTA → </span>
+              <span style={{fontSize:13,color:'var(--text-2)'}}>{post.cta}</span>
             </div>
           )}
         </div>
@@ -246,27 +618,27 @@ const PostDetail=({post,index,onCopyCaption})=>{
 
       {/* Visual Brief */}
       {tab==='visual'&&(
-        <div className="fade-in">
-          <Card accent={ARC_BORDER[arc]} style={{marginBottom:10}}>
+        <div className="fade-in stagger-in">
+          <Card accent={ARC_BORDER[arc]} style={{marginBottom:16}}>
             <MonoLabel c={arcColor}>Visual direction</MonoLabel>
-            <p style={{fontSize:13,lineHeight:1.7,color:'var(--text)',marginBottom:12}}>{post.visualBrief}</p>
+            <p style={{fontSize:14,lineHeight:1.7,color:'var(--text-1)',marginBottom:16}}>{post.visualBrief}</p>
             {post.colorMood&&(
-              <div style={{marginBottom:8}}>
-                <span style={{fontSize:11,color:'var(--text3)'}}>Color mood: </span>
-                <span style={{fontSize:12,color:'var(--text)'}}>{post.colorMood}</span>
+              <div style={{marginBottom:10}}>
+                <span style={{fontSize:12,color:'var(--text-3)'}}>Color mood: </span>
+                <span style={{fontSize:13,color:'var(--text-2)'}}>{post.colorMood}</span>
               </div>
             )}
             {post.composition&&(
               <div>
-                <span style={{fontSize:11,color:'var(--text3)'}}>Composition: </span>
-                <span style={{fontSize:12,color:'var(--text)'}}>{post.composition}</span>
+                <span style={{fontSize:12,color:'var(--text-3)'}}>Composition: </span>
+                <span style={{fontSize:13,color:'var(--text-2)'}}>{post.composition}</span>
               </div>
             )}
           </Card>
           {post.midjourney&&(
             <div>
-              <MonoLabel c="var(--blue)">Midjourney prompt</MonoLabel>
-              <div style={{background:'var(--bg)',border:'1px solid var(--border)',borderRadius:6,padding:'12px 14px',fontFamily:'var(--mono)',fontSize:11,lineHeight:1.7,color:'var(--text)',wordBreak:'break-word'}}>
+              <MonoLabel c="var(--brass)">Midjourney prompt</MonoLabel>
+              <div style={{background:'var(--bg-void)',border:'1px solid var(--border-medium)',borderRadius:8,padding:'16px',fontFamily:'var(--font-mono)',fontSize:12,lineHeight:1.7,color:'var(--text-2)',wordBreak:'break-word'}}>
                 {post.midjourney}
               </div>
             </div>
@@ -276,16 +648,16 @@ const PostDetail=({post,index,onCopyCaption})=>{
 
       {/* Hook analysis */}
       {tab==='hook'&&(
-        <div className="fade-in">
-          <Card style={{marginBottom:10}}>
+        <div className="fade-in stagger-in">
+          <div className="manifesto-block glass-card" style={{marginBottom:16}}>
             <MonoLabel c={arcColor}>Opening hook</MonoLabel>
-            <p style={{fontSize:14,lineHeight:1.7,color:'var(--text)',fontStyle:'italic',marginBottom:10}}>"{post.hook}"</p>
-            <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{post.hookAnalysis}</p>
-          </Card>
+            <p style={{fontFamily:'var(--font-serif)', fontSize:20, lineHeight:1.6, color:'var(--text-1)', fontStyle:'italic', marginBottom:12}}>"{post.hook}"</p>
+            <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7}}>{post.hookAnalysis}</p>
+          </div>
           {post.psychologicalTrigger&&(
             <Card>
               <MonoLabel>Psychological mechanism</MonoLabel>
-              <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{post.psychologicalTrigger}</p>
+              <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7}}>{post.psychologicalTrigger}</p>
             </Card>
           )}
         </div>
@@ -293,15 +665,15 @@ const PostDetail=({post,index,onCopyCaption})=>{
 
       {/* Hashtags */}
       {tab==='hashtags'&&(
-        <div className="fade-in">
-          <div style={{marginBottom:12}}>
-            <MonoLabel c="var(--text3)" mb={10}>First comment hashtags</MonoLabel>
-            <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+        <div className="fade-in stagger-in">
+          <div style={{marginBottom:16}}>
+            <MonoLabel c="var(--text-3)" mb={12}>First comment hashtags</MonoLabel>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
               {post.hashtags?.map((h,i)=><span key={i} className="pill pill-neutral">#{h}</span>)}
             </div>
           </div>
           {post.hashtagStrategy&&(
-            <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.6,padding:'10px 14px',background:'var(--bg4)',borderRadius:6}}>
+            <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7,padding:'16px',background:'var(--bg-surface)',borderRadius:8, border:'1px solid var(--border-medium)'}}>
               {post.hashtagStrategy}
             </div>
           )}
@@ -315,41 +687,41 @@ const PostDetail=({post,index,onCopyCaption})=>{
 const StrategyPanel=({data})=>{
   if(!data?.strategy) return null;
   return(
-    <div className="fade-in" style={{display:'flex',flexDirection:'column',gap:12}}>
-      <div style={{background:'var(--bg)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'18px 22px'}} className="scan-line">
-        <MonoLabel c="var(--green)">Strategic intent</MonoLabel>
-        <p style={{fontSize:14,lineHeight:1.8,color:'var(--text)'}}>{data.strategy.intent}</p>
+    <div className="fade-in stagger-in" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{background:'var(--bg-surface)',border:'1px solid var(--border-medium)',borderLeft:'2px solid var(--patina)',borderRadius:10,padding:'24px 28px'}} className="scan-line">
+        <MonoLabel c="var(--patina)">Strategic intent</MonoLabel>
+        <p style={{fontFamily:'var(--font-serif)', fontSize:20, lineHeight:1.6, color:'var(--text-1)'}}>{data.strategy.intent}</p>
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
         {CONTENT_ARCS.map(arc=>(
           <Card key={arc.id} accent={ARC_BORDER[arc.id]}>
             <MonoLabel c={ARC_COLORS[arc.id]}>{arc.label}</MonoLabel>
-            <div style={{fontSize:11,color:'var(--text3)',marginBottom:8,fontStyle:'italic'}}>{arc.desc}</div>
-            <p style={{fontSize:12,color:'var(--text)',lineHeight:1.6}}>{data.strategy.arcIntentions?.[arc.id]}</p>
+            <div style={{fontSize:12,color:'var(--text-3)',marginBottom:12,fontStyle:'italic'}}>{arc.desc}</div>
+            <p style={{fontSize:13,color:'var(--text-1)',lineHeight:1.7}}>{data.strategy.arcIntentions?.[arc.id]}</p>
           </Card>
         ))}
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
         <Card>
           <MonoLabel>Posting sequence logic</MonoLabel>
-          <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{data.strategy.sequenceLogic}</p>
+          <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7}}>{data.strategy.sequenceLogic}</p>
         </Card>
         <Card>
           <MonoLabel>Grid aesthetic intention</MonoLabel>
-          <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>{data.strategy.gridAesthetic}</p>
+          <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7}}>{data.strategy.gridAesthetic}</p>
         </Card>
       </div>
       {data.strategy.profileOptimizations&&(
-        <Card accent="rgba(244,114,182,0.2)">
-          <MonoLabel c="var(--pink)">Profile optimizations before first post</MonoLabel>
+        <div className="manifesto-block glass-card">
+          <MonoLabel c="var(--brass)">Profile optimizations before first post</MonoLabel>
           <ul style={{listStyle:'none',padding:0}}>
             {data.strategy.profileOptimizations.map((o,i)=>(
-              <li key={i} style={{display:'flex',gap:10,padding:'6px 0',borderBottom:i<data.strategy.profileOptimizations.length-1?'1px solid var(--border)':'',fontSize:12,color:'var(--text)',lineHeight:1.5}}>
-                <span style={{color:'var(--pink)',flexShrink:0}}>→</span>{o}
+              <li key={i} style={{display:'flex',gap:12,padding:'10px 0',borderBottom:i<data.strategy.profileOptimizations.length-1?'1px solid var(--border-subtle)':'',fontSize:13,color:'var(--text-1)',lineHeight:1.6}}>
+                <span style={{color:'var(--brass)',flexShrink:0}}>→</span>{o}
               </li>
             ))}
           </ul>
-        </Card>
+        </div>
       )}
     </div>
   );
@@ -396,19 +768,17 @@ function App(){
     if (q.primaryPersona) setPrimaryPersona(q.primaryPersona);
     if (q.offer) setOffer(q.offer);
     if (q.voiceNotes) setVoiceNotes(q.voiceNotes);
+    if (q.visualNotes) setVisualNotes(q.visualNotes);
     if (q.alwaysNever) setAlwaysNever(q.alwaysNever);
-    if (q.colorTerritory) setColorPalette(q.colorTerritory);
+    if (q.colorPalette) setColorPalette(q.colorPalette);
+    else if (q.colorTerritory) setColorPalette(q.colorTerritory);
+    if (q.profileBio) setProfileBio(q.profileBio);
+    if (q.accountGoal) setAccountGoal(q.accountGoal);
   }, []);
 
   const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona;
 
-  const buildPrompt=()=>`You are the Instagram Seed Content Agent inside the Quantum Branding BrandOS ecosystem.
-Your function is to generate the first 12 Instagram posts for a brand — the posts that introduce the brand to the world, establish its identity, and invite its audience into its universe.
-These are not random posts. They follow a strategic 4-arc sequence: Identity (1-3), Belief (4-6), Work (7-9), Community (10-12).
-Every post must sound like this specific brand — on-voice, on-visual, strategically positioned.
-Return ONLY valid JSON — no markdown, no preamble.
-
-QUANTUM BRAND PROFILE:
+  const buildPrompt=()=>`QUANTUM BRAND PROFILE:
 Brand: ${brandName}
 Essence: ${brandEssence}
 Manifesto: ${manifestoLine||'not specified'}
@@ -469,30 +839,47 @@ CRITICAL REQUIREMENTS:
 - Each post must serve its arc purpose while building on the previous
 - The 12 posts together tell a complete brand introduction story`;
 
+  const systemPrompt = `You are the Instagram Seed Content Agent inside the Quantum Branding BrandOS ecosystem.
+Your function is to generate the first 12 Instagram posts for a brand — the posts that introduce the brand to the world, establish its identity, and invite its audience into its universe.
+These are not random posts. They follow a strategic 4-arc sequence: Identity (1-3), Belief (4-6), Work (7-9), Community (10-12).
+Every post must sound like this specific brand — on-voice, on-visual, strategically positioned.
+Return ONLY valid JSON — no markdown, no preamble.`;
+
   const run=async()=>{
-    if(!isValid()){setError('Complete the required fields (*).');return;}
-    setError('');setLoading(true);setStep(1);
+    if(!isValid()){
+      setError('Complete the required fields (*).');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+    setStep(1);
+
     try{
-      const res=await fetch('/api/claude',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:8000,
-          messages:[{role:'user',content:buildPrompt()}]
-        })
-      });
-      const d=await res.json();
-      if(d.error) throw new Error(d.error.message);
-      const raw=d.content[0].text.trim();
-      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      const parsed=JSON.parse(clean);
-      setResult(parsed);
+      const raw = await window.QB_AI(systemPrompt, buildPrompt(), 8000);
+      const parsed = JSON.parse(stripCodeFence(raw));
+
+      if(!parsed || !Array.isArray(parsed.posts) || parsed.posts.length !== 12){
+        throw new Error('The agent returned an invalid post pack. Expected exactly 12 posts.');
+      }
+
+      const normalizedPosts = parsed.posts.map((post, index) => ({
+        ...post,
+        postNumber: post.postNumber || index + 1,
+        arc: normalizeArc(post.arc, index),
+        hashtags: Array.isArray(post.hashtags) ? post.hashtags : []
+      }));
+
+      setResult({ ...parsed, posts: normalizedPosts });
       setSelectedPost(0);
       setMainTab('grid');
       setStep(2);
-    }catch(e){setError('Agent error: '+e.message);setStep(0);}
-    setLoading(false);
+    }catch(e){
+      setError('Agent error: ' + (e.message || 'Unknown error'));
+      setStep(0);
+    }finally{
+      setLoading(false);
+    }
   };
 
   const copyCaption=async(text)=>{
@@ -501,7 +888,7 @@ CRITICAL REQUIREMENTS:
   };
 
   const exportPack=()=>{
-    const lines=['INSTAGRAM SEED CONTENT PACK','Generated by QB BrandOS — Instagram Seed Content Agent','',`Brand: ${brandName}`,'='+'='.repeat(60),''];
+    const lines=['INSTAGRAM SEED CONTENT PACK','Generated by QB BrandOS — Instagram Seed Content Agent','',`Brand: ${brandName}`,'='.repeat(60),''];
     result?.posts?.forEach(p=>{
       lines.push(`POST ${String(p.postNumber).padStart(2,'0')} — ${p.arc.toUpperCase()} ARC`);
       lines.push(`Type: ${p.postType} | Goal: ${p.goal}`);
@@ -522,50 +909,57 @@ CRITICAL REQUIREMENTS:
     });
     const blob=new Blob([lines.join('\n')],{type:'text/plain'});
     const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
+    const url=URL.createObjectURL(blob);
+    a.href=url;
     a.download=`${brandName.replace(/\s+/g,'-').toLowerCase()}-instagram-12-posts.txt`;
     a.click();
+    URL.revokeObjectURL(url);
   };
 
   const posts=result?.posts||[];
-  const arcOf=i=>i<3?'identity':i<6?'belief':i<9?'work':'community';
-
+  
   return(
-    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+    <div style={{position:'relative', zIndex:2, display:'flex', flexDirection:'column', minHeight:'100vh'}}>
 
       {/* HEADER */}
-      <header style={{borderBottom:'1px solid var(--border)',padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'var(--bg)',position:'sticky',top:0,zIndex:50}}>
-        <div style={{display:'flex',alignItems:'center',gap:14}}>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.3em',color:'var(--green)',textTransform:'uppercase'}}>QB_BRANIDOS</div>
-          <div style={{width:1,height:14,background:'var(--border)'}}/>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.2em',color:'var(--text3)',textTransform:'uppercase'}}>Instagram Seed Agent v1.0</div>
-        </div>
-        <div style={{display:'flex',gap:5,alignItems:'center'}}>
-          {STEPS.map((s,i)=>(
-            <React.Fragment key={i}>
-              <div style={{display:'flex',alignItems:'center',gap:4}}>
-                <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--green)':i===step?'var(--green)':'var(--border)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 5px rgba(74,222,128,.5)':''}}/>
-                <span style={{fontSize:10,color:i<=step?'var(--text2)':'var(--text4)',fontFamily:'var(--mono)',letterSpacing:'.1em'}}>{s}</span>
-              </div>
-              {i<STEPS.length-1&&<div style={{width:12,height:1,background:'var(--border)',margin:'0 2px'}}/>}
-            </React.Fragment>
-          ))}
-        </div>
-      </header>
+      <div style={{padding:'16px 24px 0', position:'sticky', top:0, zIndex:50}}>
+        <header className="glass-card" style={{padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+            <div style={{display:'flex', alignItems:'center', gap:16}}>
+                <div className="pulse-dot"></div>
+                <div style={{fontFamily:'var(--font-serif)', fontSize:18, color:'var(--text-1)', letterSpacing:'-0.01em'}}>QB BrandOS</div>
+                <div style={{width:1, height:14, background:'var(--border-strong)'}}/>
+                <div style={{fontFamily:'var(--font-mono)', fontSize:10, letterSpacing:'.15em', color:'var(--text-3)', textTransform:'uppercase'}}>Instagram Seed Agent</div>
+            </div>
+            <div style={{display:'flex', gap:20, alignItems:'center'}}>
+            <div style={{display:'flex', gap:6, alignItems:'center'}} className="hide-mobile">
+                {STEPS.map((s,i)=>(
+                    <React.Fragment key={i}>
+                    <div style={{display:'flex',alignItems:'center',gap:6}}>
+                        <div style={{width:6,height:6,borderRadius:'50%',background:i<step?'var(--patina)':i===step?'var(--patina)':'var(--border-strong)',opacity:i===step?1:i<step?.6:.3,boxShadow:i===step?'0 0 8px var(--patina-dim)':''}}/>
+                        <span style={{fontSize:10,color:i<=step?'var(--text-2)':'var(--text-4)',fontFamily:'var(--font-mono)',letterSpacing:'.1em', textTransform:'uppercase'}}>{s}</span>
+                    </div>
+                    {i<STEPS.length-1&&<div style={{width:16,height:1,background:'var(--border-medium)',margin:'0 4px'}}/>}
+                    </React.Fragment>
+                ))}
+            </div>
+            <button onClick={()=>window.toggleTheme()} className="btn-secondary" style={{padding:'6px 12px'}}>Theme</button>
+            </div>
+        </header>
+      </div>
 
-      <main style={{flex:1,maxWidth:1100,margin:'0 auto',width:'100%',padding:'36px 24px'}}>
+      <main style={{flex:1,maxWidth:1100,margin:'0 auto',width:'100%',padding:'48px 24px'}}>
 
         {/* ── STEP 0: INPUT ── */}
         {step===0&&(
-          <div className="fade-in">
-            <div style={{marginBottom:36}}>
-              <MonoLabel c="var(--green)">// Phase 03 — Content Creation</MonoLabel>
-              <h1 style={{fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:8}}>Instagram Seed Content Agent</h1>
-              <p style={{color:'var(--text2)',fontSize:14,lineHeight:1.7,maxWidth:600}}>Feed the QBP. The agent generates the first 12 posts — fully written captions, visual briefs, Midjourney prompts, hooks, hashtags — as a complete content pack ready to publish.</p>
+          <div className="fade-in stagger-in">
+            <div style={{marginBottom:56}}>
+              <MonoLabel c="var(--patina)">// Phase 03 — Content Creation</MonoLabel>
+              <h1 style={{fontSize:46, lineHeight:1.1, marginBottom:16}}>Instagram Seed Content Agent</h1>
+              <p style={{color:'var(--text-2)',fontSize:16,lineHeight:1.7,maxWidth:600}}>Feed the QBP. The agent generates the first 12 posts — fully written captions, visual briefs, Midjourney prompts, hooks, hashtags — as a complete content pack ready to publish.</p>
             </div>
 
             <Section number={1} title="Brand Core" note="* required">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                 <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand entering Instagram" rows={1}/>
                 <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
               </div>
@@ -575,7 +969,7 @@ CRITICAL REQUIREMENTS:
             </Section>
 
             <Section number={2} title="Identity + Audience" note="* required">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                 <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
                 <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be" rows={1}/>
               </div>
@@ -588,7 +982,7 @@ CRITICAL REQUIREMENTS:
             <Section number={3} title="Voice + Visual System">
               <TF label="Voice Notes — how this brand writes" value={voiceNotes} onChange={setVoiceNotes} placeholder="e.g. Short declarative sentences. Challenge-first. No filler. Sounds like Dieter Rams meets Virgil Abloh." rows={2}/>
               <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="e.g. Always: direct, one idea per post. Never: motivational quotes, hashtag stuffing, generic captions." rows={2}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                 <TF label="Visual Direction" value={visualNotes} onChange={setVisualNotes} placeholder="e.g. Dark, editorial, architectural. Strong shadows. Minimal text on image." rows={2}/>
                 <TF label="Color Palette" value={colorPalette} onChange={setColorPalette} placeholder="e.g. Deep black, warm amber, aged bronze. No bright colors." rows={2}/>
               </div>
@@ -598,11 +992,11 @@ CRITICAL REQUIREMENTS:
               <TF label="Current or intended bio" value={profileBio} onChange={setProfileBio} placeholder="The bio text — the agent will suggest optimizations" rows={2}/>
             </Section>
 
-            {error&&<div style={{background:'var(--red2)',border:'1px solid rgba(239,68,68,.3)',borderRadius:6,padding:'11px 15px',marginBottom:16,fontSize:13,color:'var(--red)'}}>{error}</div>}
+            {error&&<div style={{background:'var(--bg-surface)',border:'1px solid #8A4A4A',borderRadius:8,padding:'14px 20px',marginBottom:24,fontSize:14,color:'#8A4A4A'}}>{error}</div>}
 
             <div style={{display:'flex',justifyContent:'flex-end'}}>
-              <button onClick={run} disabled={!isValid()} style={{background:isValid()?'var(--green)':'var(--bg3)',color:isValid()?'#000':'var(--text3)',padding:'12px 28px',borderRadius:6,fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',fontFamily:'var(--mono)',transition:'all .2s'}}>
-                Generate 12 Posts →
+              <button onClick={run} disabled={!isValid() || loading} className="btn-primary">
+                {loading ? 'Generating…' : 'Generate 12 Posts →'}
               </button>
             </div>
           </div>
@@ -610,11 +1004,11 @@ CRITICAL REQUIREMENTS:
 
         {/* ── STEP 1: GENERATING ── */}
         {step===1&&(
-          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:460,gap:24,textAlign:'center'}}>
-            <div style={{width:52,height:52,border:'2px solid var(--border)',borderTop:'2px solid var(--green)',borderRadius:'50%'}} className="spin"/>
+          <div className="fade-in" style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:460,gap:32,textAlign:'center'}}>
+            <div className="pulse-dot" style={{width: 12, height: 12}}></div>
             <div>
-              <MonoLabel c="var(--green)">Agent Processing</MonoLabel>
-              <div style={{color:'var(--text2)',fontSize:13,lineHeight:2.1,maxWidth:420}}>
+              <div style={{fontFamily:'var(--font-serif)', fontSize:28, color:'var(--text-1)', marginBottom: 16}}>Agent Processing</div>
+              <div style={{color:'var(--text-2)',fontSize:15,lineHeight:2.2,maxWidth:420, fontFamily:'var(--font-sans)'}}>
                 Reading Quantum Brand Profile<br/>
                 Mapping 12-post strategic arc sequence<br/>
                 Writing captions in brand voice<br/>
@@ -625,29 +1019,29 @@ CRITICAL REQUIREMENTS:
                 Assembling content pack...
               </div>
             </div>
-            <div style={{fontSize:11,color:'var(--text3)',fontFamily:'var(--mono)'}}>12 posts · 4 arcs · complete pack</div>
+            <div style={{fontSize:11,color:'var(--text-3)',fontFamily:'var(--font-mono)', letterSpacing:'.15em', textTransform:'uppercase'}}>12 posts · 4 arcs · complete pack</div>
           </div>
         )}
 
         {/* ── STEP 2: CONTENT PACK ── */}
         {step===2&&result&&(
-          <div className="fade-in">
+          <div className="fade-in stagger-in">
             {/* Header */}
-            <div style={{marginBottom:24,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+            <div style={{marginBottom:32,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16}}>
               <div>
-                <MonoLabel c="var(--green)">// Content Pack — 12 Posts Complete</MonoLabel>
-                <h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>{brandName}</h1>
-                <p style={{color:'var(--text2)',fontSize:13}}>First 12 posts · 4-arc sequence · ready to publish</p>
+                <MonoLabel c="var(--patina)">// Content Pack — 12 Posts Complete</MonoLabel>
+                <h1 style={{fontSize:36,marginBottom:8}}>{brandName}</h1>
+                <p style={{color:'var(--text-2)',fontSize:14}}>First 12 posts · 4-arc sequence · ready to publish</p>
               </div>
-              <div style={{display:'flex',gap:8,alignItems:'center'}}>
-                {copied&&<span style={{fontSize:11,color:'var(--green)',fontFamily:'var(--mono)'}}>Copied ✓</span>}
-                <button onClick={exportPack} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>Export Pack</button>
-                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'var(--bg3)',border:'1px solid var(--border)',color:'var(--text2)',padding:'8px 14px',borderRadius:5,fontSize:11,fontFamily:'var(--mono)',letterSpacing:'.1em',textTransform:'uppercase'}}>New Pack</button>
+              <div style={{display:'flex',gap:12,alignItems:'center', marginTop:16}}>
+                {copied&&<span style={{fontSize:11,color:'var(--patina)',fontFamily:'var(--font-mono)',textTransform:'uppercase'}}>Copied ✓</span>}
+                <button onClick={exportPack} className="btn-secondary">Export Pack</button>
+                <button onClick={()=>{setStep(0);setResult(null);}} className="btn-secondary">New Pack</button>
               </div>
             </div>
 
             {/* Main tabs */}
-            <div style={{display:'flex',gap:6,marginBottom:20,paddingBottom:14,borderBottom:'1px solid var(--border)'}}>
+            <div style={{display:'flex',gap:8,marginBottom:32,paddingBottom:16,borderBottom:'1px solid var(--border-medium)'}}>
               {['grid','list','strategy'].map(t=>(
                 <button key={t} className={`tab-btn${mainTab===t?' active':''}`} onClick={()=>setMainTab(t)}>
                   {t==='grid'?'Grid View':t==='list'?'Post List':'Strategy'}
@@ -660,7 +1054,7 @@ CRITICAL REQUIREMENTS:
 
             {/* Grid + detail view */}
             {mainTab==='grid'&&(
-              <div style={{display:'grid',gridTemplateColumns:'220px 1fr',gap:24,alignItems:'start'}}>
+              <div style={{display:'grid',gridTemplateColumns:'260px 1fr',gap:32,alignItems:'start'}}>
                 <GridView posts={posts} selected={selectedPost} onSelect={setSelectedPost}/>
                 <PostDetail post={posts[selectedPost]} index={selectedPost} onCopyCaption={copyCaption}/>
               </div>
@@ -668,28 +1062,28 @@ CRITICAL REQUIREMENTS:
 
             {/* List view */}
             {mainTab==='list'&&(
-              <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div style={{display:'flex',flexDirection:'column',gap:12}}>
                 {posts.map((p,i)=>{
-                  const arc=arcOf(i);
+                  const arc=normalizeArc(p.arc, i);
                   return(
                     <div key={i} className={`post-card${selectedPost===i?' selected':''}`}
                       onClick={()=>{setSelectedPost(i);setMainTab('grid');}}
-                      style={{padding:'14px 18px'}}
+                      style={{padding:'20px 24px'}}
                     >
-                      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
-                        <div style={{display:'flex',alignItems:'center',gap:10,flex:1,minWidth:0}}>
-                          <span style={{fontFamily:'var(--mono)',fontSize:10,color:ARC_COLORS[arc],border:`1px solid ${ARC_BORDER[arc]}`,padding:'2px 7px',borderRadius:3,flexShrink:0}}>
+                      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:16}}>
+                        <div style={{display:'flex',alignItems:'center',gap:16,flex:1,minWidth:0}}>
+                          <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:ARC_COLORS[arc],border:`1px solid ${ARC_BORDER[arc]}`,padding:'4px 8px',borderRadius:4,flexShrink:0}}>
                             {String(i+1).padStart(2,'0')}
                           </span>
                           <div style={{minWidth:0}}>
-                            <div style={{fontSize:13,fontWeight:500,color:'var(--text)',marginBottom:2,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{p.postTitle}</div>
-                            <div style={{fontSize:11,color:'var(--text3)'}}>{p.postType} · {CONTENT_ARCS.find(a=>a.id===arc)?.label}</div>
+                            <div style={{fontFamily:'var(--font-serif)',fontSize:18,color:'var(--text-1)',marginBottom:4,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{p.postTitle}</div>
+                            <div style={{fontSize:12,color:'var(--text-3)',fontFamily:'var(--font-mono)',textTransform:'uppercase'}}>{p.postType} · {CONTENT_ARCS.find(a=>a.id===arc)?.label}</div>
                           </div>
                         </div>
-                        <div style={{fontSize:11,color:'var(--text3)',flexShrink:0,maxWidth:280,textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
-                          {p.hook}
+                        <div style={{fontSize:13,color:'var(--text-2)',fontStyle:'italic',flexShrink:0,maxWidth:320,textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                          "{p.hook}"
                         </div>
-                        <span style={{color:'var(--text3)',fontSize:12,flexShrink:0}}>→</span>
+                        <span style={{color:'var(--text-3)',fontSize:16,flexShrink:0}}>→</span>
                       </div>
                     </div>
                   );
@@ -701,115 +1095,19 @@ CRITICAL REQUIREMENTS:
 
       </main>
 
-      <footer style={{borderTop:'1px solid var(--border)',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
-        <span style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--text3)',letterSpacing:'.15em'}}>Instagram Seed Agent / Phase 03</span>
+      <footer style={{borderTop:'1px solid var(--border-subtle)',padding:'24px',display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:'auto'}}>
+        <span style={{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',letterSpacing:'.2em',textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',letterSpacing:'.15em'}}>Instagram Seed Agent / Phase 03</span>
       </footer>
     </div>
   );
 }
 
 
-// ── QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────────
-// Injected by QB OS build system
-// Adds approve/revise/remove to each content piece, up to 3 rounds
 
-function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revisionField='content'}) {
-  const [states, setStates] = React.useState(() => {
-    const s = {};
-    items.forEach((item,i) => { s[i] = {status:'pending', round:0, feedback:'', item}; });
-    return s;
-  });
-  const [revising, setRevising] = React.useState({});
-
-  const allApproved = Object.values(states).every(s => s.status === 'approved' || s.status === 'removed');
-  const approvedItems = Object.values(states).filter(s => s.status === 'approved').map(s => s.item);
-
-  React.useEffect(() => {
-    if (allApproved && approvedItems.length > 0) onAllApproved && onAllApproved(approvedItems);
-  }, [allApproved]);
-
-  const approve = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'approved'}}));
-  const remove = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'removed'}}));
-  const startRevise = (i) => setRevising(prev => ({...prev, [i]: true}));
-  const submitRevise = async (i) => {
-    const feedback = document.getElementById('revision-input-' + i)?.value || '';
-    if (!feedback.trim()) return;
-    setStates(prev => ({...prev, [i]: {...prev[i], status:'revising', round: prev[i].round + 1, feedback}}));
-    setRevising(prev => ({...prev, [i]: false}));
-    // Trigger regeneration via QB_AI
-    if (window.QB_AI && states[i].round < 3) {
-      try {
-        const original = JSON.stringify(states[i].item);
-        const prompt = 'You produced this content piece: ' + original + '\n\nThe user requests this revision: ' + feedback + '\n\nReturn ONLY the revised version as a JSON object with the same structure. No markdown, no preamble.';
-        const sys = 'You are a content revision agent. Revise the content piece exactly as requested. Maintain brand voice and platform requirements. Return only valid JSON.';
-        const raw = await window.QB_AI(sys, prompt, 1000);
-        const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-        const revised = JSON.parse(clean);
-        setStates(prev => ({...prev, [i]: {...prev[i], status:'revised', item: revised}}));
-      } catch(e) {
-        setStates(prev => ({...prev, [i]: {...prev[i], status:'pending'}}));
-      }
-    }
-  };
-
-  const statusColor = {pending:'var(--text3)', approved:'var(--green)', removed:'var(--red)', revising:'var(--amber)', revised:'var(--blue)'};
-  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — review again'};
-
-  return (
-    <div>
-      <div style={{background:'rgba(74,222,128,0.05)',border:'1px solid rgba(74,222,128,0.15)',borderRadius:8,padding:'12px 16px',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
-        <div>
-          <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--green)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:2}}>Content Review</div>
-          <div style={{fontSize:12,color:'var(--text2)'}}>{Object.values(states).filter(s=>s.status==='approved').length} approved · {Object.values(states).filter(s=>s.status==='pending'||s.status==='revised').length} pending · {Object.values(states).filter(s=>s.status==='removed').length} removed</div>
-        </div>
-        {allApproved && approvedItems.length > 0 && (
-          <div style={{fontFamily:'var(--mono)',fontSize:10,padding:'6px 14px',borderRadius:5,background:'var(--green)',color:'#000',fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase'}}>All done ✓</div>
-        )}
-      </div>
-      {items.map((item, i) => {
-        const s = states[i];
-        if (!s) return null;
-        const isRevising = revising[i];
-        const maxRoundsReached = s.round >= 3;
-        return (
-          <div key={i} style={{background:'var(--bg3)',border:'1px solid '+(s.status==='approved'?'rgba(74,222,128,0.2)':s.status==='removed'?'rgba(239,68,68,0.15)':'var(--border)'),borderRadius:10,marginBottom:12,overflow:'hidden',opacity:s.status==='removed'?0.4:1,transition:'all .2s'}}>
-            <div style={{padding:'14px 18px 0'}}>
-              {renderItem(s.item, i)}
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 18px',borderTop:'1px solid var(--border)',background:'rgba(0,0,0,0.2)',flexWrap:'wrap'}}>
-              <div style={{fontFamily:'var(--mono)',fontSize:9,color:statusColor[s.status],letterSpacing:'.1em',flex:1}}>
-                {statusLabel[s.status]} {s.round > 0 ? '(Round '+s.round+'/3)' : ''}
-              </div>
-              {(s.status==='pending'||s.status==='revised') && !isRevising && (
-                <>
-                  <button onClick={()=>approve(i)} style={{background:'rgba(74,222,128,0.12)',color:'var(--green)',border:'1px solid rgba(74,222,128,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>✓ Approve</button>
-                  {!maxRoundsReached && <button onClick={()=>startRevise(i)} style={{background:'rgba(245,158,11,0.1)',color:'var(--amber)',border:'1px solid rgba(245,158,11,0.2)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>↻ Revise</button>}
-                  <button onClick={()=>remove(i)} style={{background:'rgba(239,68,68,0.08)',color:'var(--red)',border:'1px solid rgba(239,68,68,0.15)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',letterSpacing:'.08em',cursor:'pointer'}}>× Remove</button>
-                </>
-              )}
-              {s.status==='approved' && <button onClick={()=>setStates(prev=>({...prev,[i]:{...prev[i],status:'pending'}}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'5px 14px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Undo</button>}
-              {s.status==='revising' && <div style={{fontFamily:'var(--mono)',fontSize:10,color:'var(--amber)'}}>Generating revision…</div>}
-            </div>
-            {isRevising && (
-              <div style={{padding:'12px 18px',background:'rgba(245,158,11,0.04)',borderTop:'1px solid rgba(245,158,11,0.1)'}}>
-                <div style={{fontFamily:'var(--mono)',fontSize:9,color:'var(--amber)',letterSpacing:'.1em',marginBottom:6}}>REVISION REQUEST {s.round+1}/3</div>
-                <textarea id={'revision-input-'+i} placeholder="What should change? Be specific: e.g. 'Make the hook more direct' or 'Remove the question format'" style={{width:'100%',background:'var(--bg3)',border:'1px solid rgba(245,158,11,0.2)',color:'var(--text)',borderRadius:6,padding:'10px 14px',fontSize:12,fontFamily:'var(--font)',resize:'vertical',minHeight:60,outline:'none'}} rows={2}/>
-                <div style={{display:'flex',gap:8,marginTop:8}}>
-                  <button onClick={()=>submitRevise(i)} style={{background:'var(--amber)',color:'#000',padding:'7px 16px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',fontWeight:700,letterSpacing:'.08em',cursor:'pointer'}}>Submit Revision →</button>
-                  <button onClick={()=>setRevising(prev=>({...prev,[i]:false}))} style={{background:'none',color:'var(--text3)',border:'1px solid var(--border)',padding:'7px 12px',borderRadius:5,fontSize:10,fontFamily:'var(--mono)',cursor:'pointer'}}>Cancel</button>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-// ── END QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>
