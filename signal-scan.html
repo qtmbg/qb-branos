@@ -610,6 +610,7 @@ function buildEmail(){
     emailSubmitted=true;
     analyzing=true;
     step=9;render();
+    try {
     result = calcScores(answers);
     const topGap = getTopGap(result.dims);
     const verdict = getVerdict(result.overall, answers.moment);
@@ -624,8 +625,8 @@ function buildEmail(){
     const authorityScore   = dimScore('price');
     const topGapLabel      = topGap.label;
     const verdictText      = verdict.label;
-    try{
-      fetch('https://a.klaviyo.com/client/subscriptions/?company_id=XnAGuL', {
+    console.log('Klaviyo call firing for:', userEmail);
+    fetch('https://a.klaviyo.com/client/subscriptions/?company_id=XnAGuL', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -663,7 +664,9 @@ function buildEmail(){
           }
         })
       });
-    }catch(err){ console.warn('Klaviyo signal-scan sync failed:',err); }
+    } catch(err) {
+      console.error('Signal scan submit error:', err);
+    }
     const QB_KLAVIYO_KEY = window.QB_KLAVIYO_KEY || '';
     const QB_KLAVIYO_LIST_ID = window.QB_KLAVIYO_LIST_ID || '';
     if(QB_KLAVIYO_KEY && QB_KLAVIYO_LIST_ID){
