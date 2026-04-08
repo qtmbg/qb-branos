@@ -459,8 +459,18 @@ let result = null;
 let email = '';
 let emailSubmitted = false;
 let analyzing = false;
+let lastRenderedStep = -1;
+let lastRenderedAnalyzing = null;
 const app = document.getElementById('app');
 function render(){
+  // Guard: if nothing structural changed, don't rebuild the DOM.
+  // This protects text/email inputs from losing focus during typing
+  // even if render() is accidentally invoked from an input event.
+  if(step === lastRenderedStep && analyzing === lastRenderedAnalyzing){
+    return;
+  }
+  lastRenderedStep = step;
+  lastRenderedAnalyzing = analyzing;
   const active = document.activeElement;
   let focusInfo = null;
   if(active && (active.tagName==='TEXTAREA' || (active.tagName==='INPUT' && active.type==='email')) && app.contains(active)){
@@ -736,6 +746,7 @@ function buildResults(){
     h1('Your intelligence brief.',{fontSize:'32px',marginBottom:'8px'}),
     div({fontSize:'14px',color:'var(--text-3)'},'Based on 6 brand health dimensions'),
     div({fontFamily:'var(--font-mono)',fontSize:'11px',color:'var(--patina)',letterSpacing:'.08em',textTransform:'uppercase',marginTop:'14px',animation:'fadeIn .8s cubic-bezier(.2,0,0,1)'},'Results on the way. Check your inbox.'),
+    div({fontFamily:'var(--font-mono)',fontSize:'0.6rem',color:'var(--text-3)',letterSpacing:'.08em',textTransform:'uppercase',marginTop:'6px',animation:'fadeIn .8s cubic-bezier(.2,0,0,1)'},'Check your spam folder if you don\'t see it within 2 minutes.'),
   ]));
   const scoreRow=div({display:'flex',gap:'24px',alignItems:'flex-start',marginBottom:'36px',flexWrap:'wrap'},[]);
   const svgNS='http://www.w3.org/2000/svg';
