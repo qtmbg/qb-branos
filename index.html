@@ -177,7 +177,7 @@ section{position:relative;z-index:2}
 /* Hero demo card */
 .demo-card{border-radius:18px;overflow:hidden;background:var(--bg-base);border:1px solid var(--border-subtle);
   box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 60px -10px rgba(58,95,74,0.05);position:relative}
-.demo-card.glow{border-color:var(--patina-lit);box-shadow:0 0 40px -10px var(--patina-dim),0 40px 80px -20px rgba(0,0,0,0.5)}
+/* .glow replaced by .glow-pulse keyframe animation — see bottom of CSS */
 .demo-titlebar{height:36px;background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;padding:0 14px;gap:6px}
 .demo-dot{width:8px;height:8px;border-radius:50%;background:var(--border-medium)}
 .demo-dot.r{background:#8A4A4A}.demo-dot.y{background:var(--brass)}.demo-dot.g{background:var(--patina)}
@@ -827,7 +827,7 @@ section{position:relative;z-index:2}
         <div>
           <div class="persona-title">I build brands for clients.</div>
           <p class="persona-desc">Up to 8 client portals. Your brand on every output. White-label delivery. Run clients through the same journey with your logo on the result.</p>
-          <a href="mailto:nizzar@quantumbranding.ai" class="btn btn-primary btn-sm">Talk to us</a>
+          <a href="https://calendly.com/qtmbg/strategy-call-lab" target="_blank" class="btn btn-primary btn-sm">Book a call</a>
         </div>
       </div>
     </div>
@@ -955,7 +955,7 @@ section{position:relative;z-index:2}
           <li class="pricing-feature">Dedicated support</li>
           <li class="pricing-feature">Custom onboarding</li>
         </ul>
-        <a href="mailto:nizzar@quantumbranding.ai" class="btn btn-secondary">Talk to us</a>
+        <a href="https://calendly.com/qtmbg/strategy-call-lab" target="_blank" class="btn btn-secondary">Book a call</a>
       </div>
     </div>
     <div class="pricing-note reveal">
@@ -974,7 +974,7 @@ section{position:relative;z-index:2}
       <div class="founder-avatar">NB</div>
       <div class="founder-name">Nizzar Ben Chekroune</div>
       <div class="founder-role">Founder, Quantum Branding</div>
-      <div class="founder-creds-label" style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-top:20px;margin-bottom:8px">Work featured in</div>
+      <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-top:20px;margin-bottom:8px">Work featured in</div>
       <div class="founder-creds">
         <span class="marquee-tag">United Nations Vienna</span>
         <span class="marquee-tag">UNIDO</span>
@@ -1055,7 +1055,7 @@ section{position:relative;z-index:2}
       </div>
       <div>
         <div class="footer-col-title">Company</div>
-        <a href="mailto:nizzar@quantumbranding.ai" class="footer-link">nizzar@quantumbranding.ai</a>
+        <a href="mailto:me@qtmbg.com" class="footer-link">me@qtmbg.com</a>
         <a href="https://nizzar.com" class="footer-link">nizzar.com</a>
         <a href="https://linkedin.com/in/nizzar" class="footer-link">LinkedIn</a>
         <a href="https://instagram.com/thequantumbranding" class="footer-link">Instagram</a>
@@ -1296,4 +1296,21 @@ setTimeout(runDemo,1400);
     var baseAlpha=isDark()?1:0.5;
     particles.forEach(function(p){
       p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=canvas.width;if(p.
+      if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+      if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;
+      ctx.globalAlpha=p.alpha*baseAlpha;
+      ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+})();
+</script>
+</body>
+</html>
