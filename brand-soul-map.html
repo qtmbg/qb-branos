@@ -1326,22 +1326,28 @@
                 );
             };
 
+            // NOTE: Each module (IntroModule, Module1, ...) is defined inside App, so its
+            // function identity changes on every render. Rendering them as <Module1 /> would
+            // make React treat them as a brand-new component type each render, unmounting
+            // and remounting the underlying <input>/<textarea> nodes and killing focus on
+            // every keystroke. Calling them as plain functions inlines their returned JSX
+            // into App's tree, so the DOM nodes persist across renders and focus is kept.
             const STEPS = [
-                { title: 'INITIALIZE', isCheckpoint: false, component: <IntroModule /> },
-                { title: 'IDENTITY', isCheckpoint: false, component: <Module1 /> },
-                { title: 'SYS.SYNC 01', isCheckpoint: true, component: <Module1Recap /> },
-                { title: 'PURPOSE', isCheckpoint: false, component: <Module2 /> },
-                { title: 'SYS.SYNC 02', isCheckpoint: true, component: <Module2Recap /> },
-                { title: 'CRAFT', isCheckpoint: false, component: <Module3 /> },
-                { title: 'SYS.SYNC 03', isCheckpoint: true, component: <Module3Recap /> },
-                { title: 'TRIBE', isCheckpoint: false, component: <Module4 /> },
-                { title: 'SYS.SYNC 04', isCheckpoint: true, component: <Module4Recap /> },
-                { title: 'SIGNAL', isCheckpoint: false, component: <Module5 /> },
-                { title: 'SYS.SYNC 05', isCheckpoint: true, component: <Module5Recap /> },
-                { title: 'WORLD', isCheckpoint: false, component: <Module6 /> },
-                { title: 'SYS.SYNC 06', isCheckpoint: true, component: <Module6Recap /> },
-                { title: 'AUTH', isCheckpoint: false, component: <LeadCaptureModule /> },
-                { title: 'SYNTHESIS', isCheckpoint: false, component: <SynthesisPanel /> }
+                { title: 'INITIALIZE', isCheckpoint: false, component: IntroModule() },
+                { title: 'IDENTITY', isCheckpoint: false, component: Module1() },
+                { title: 'SYS.SYNC 01', isCheckpoint: true, component: Module1Recap() },
+                { title: 'PURPOSE', isCheckpoint: false, component: Module2() },
+                { title: 'SYS.SYNC 02', isCheckpoint: true, component: Module2Recap() },
+                { title: 'CRAFT', isCheckpoint: false, component: Module3() },
+                { title: 'SYS.SYNC 03', isCheckpoint: true, component: Module3Recap() },
+                { title: 'TRIBE', isCheckpoint: false, component: Module4() },
+                { title: 'SYS.SYNC 04', isCheckpoint: true, component: Module4Recap() },
+                { title: 'SIGNAL', isCheckpoint: false, component: Module5() },
+                { title: 'SYS.SYNC 05', isCheckpoint: true, component: Module5Recap() },
+                { title: 'WORLD', isCheckpoint: false, component: Module6() },
+                { title: 'SYS.SYNC 06', isCheckpoint: true, component: Module6Recap() },
+                { title: 'AUTH', isCheckpoint: false, component: LeadCaptureModule() },
+                { title: 'SYNTHESIS', isCheckpoint: false, component: SynthesisPanel() }
             ];
 
             const handleNext = async () => {
