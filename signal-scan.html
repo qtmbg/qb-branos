@@ -460,7 +460,22 @@ let email = '';
 let emailSubmitted = false;
 let analyzing = false;
 const app = document.getElementById('app');
-function render(){ app.innerHTML=''; app.appendChild(build()); }
+function render(){
+  const active = document.activeElement;
+  let focusInfo = null;
+  if(active && (active.tagName==='TEXTAREA' || (active.tagName==='INPUT' && active.type==='email')) && app.contains(active)){
+    focusInfo = {tag: active.tagName, type: active.type, selStart: active.selectionStart, selEnd: active.selectionEnd};
+  }
+  app.innerHTML=''; app.appendChild(build());
+  if(focusInfo){
+    const sel = focusInfo.tag==='TEXTAREA' ? 'textarea' : 'input[type="email"]';
+    const el = app.querySelector(sel);
+    if(el){
+      el.focus();
+      try { el.setSelectionRange(focusInfo.selStart, focusInfo.selEnd); } catch(e){}
+    }
+  }
+}
 function monoLabel(text, color='var(--text-3)', extra={}){
   const e = document.createElement('div');
   Object.assign(e.style,{fontFamily:'var(--font-mono)',fontSize:'10px',letterSpacing:'.15em',color,textTransform:'uppercase',marginBottom:'12px',...extra});
