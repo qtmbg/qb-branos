@@ -362,6 +362,20 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
     const nameRef = useRef(null);
     const companyRef = useRef(null);
     const emailRef = useRef(null);
+    // Mirror validationError in a ref so handleTextInput can stay a stable
+    // useCallback (no deps) — otherwise its identity would change on every
+    // render, and an inline textarea onInput prop that changes each render
+    // can cause React to toggle ref bindings and steal focus mid-typing.
+    const validationErrorRef = useRef('');
+    // Stable ref setter for question textareas. Inline ref callbacks
+    // (el => ...) get a new identity every render, which makes React call
+    // them with null then the element during commits. A useCallback-memoized
+    // setter is stable, so React only invokes it on actual mount/unmount.
+    const setQuestionTextRef = useCallback((el) => {
+      if (!el) return;
+      const qid = el.dataset.qid;
+      if (qid) textRefs.current[qid] = el;
+    }, []);
 
     const syncTextRefsToAnswers = useCallback(() => {
       const updates = {};
@@ -395,9 +409,16 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
       setAnswers(prev => ({ ...prev, [id]: parseInt(value, 10) }));
     }, []);
 
+    // Keep validationErrorRef in sync with state so the stable callback
+    // below can read the latest value without re-creating itself.
+    useEffect(() => { validationErrorRef.current = validationError; }, [validationError]);
+
+    // Stable across renders: no deps, reads error via ref. This guarantees
+    // the textarea's onInput prop identity never changes, which prevents
+    // React from detaching/reattaching handlers or refs during typing.
     const handleTextInput = useCallback(() => {
-      if (validationError) setValidationError('');
-    }, [validationError]);
+      if (validationErrorRef.current) setValidationError('');
+    }, []);
 
     const isChapterComplete = useCallback(() => {
       const questions = SENSESCAPE_DATA[currentChapterIndex].questions;
@@ -736,7 +757,8 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
                         </h3>
                         <label className="block font-serif text-4xl md:text-5xl text-t1 leading-[1.3] tracking-tight">{q.prompt}</label>
                         <textarea
-                          ref={el => { if (el) { textRefs.current[q.id] = el; } else { delete textRefs.current[q.id]; } }}
+                          ref={setQuestionTextRef}
+                          data-qid={q.id}
                           defaultValue={answers[q.id] || ''}
                           onInput={handleTextInput}
                           placeholder="Type your response..."
