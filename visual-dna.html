@@ -621,6 +621,13 @@ function App() {
   const [leadData, setLeadData] = useState({ firstName: '', lastName: '', company: '', email: '' });
   const [isSubmittingForm, setIsSubmittingForm] = useState(false);
 
+  // Uncontrolled form refs (prevents input focus loss on re-render)
+  const firstNameRef = useRef(null);
+  const lastNameRef = useRef(null);
+  const companyRef = useRef(null);
+  const emailRef = useRef(null);
+  const [isFormValid, setIsFormValid] = useState(false);
+
   const startSession = () => {
     // Remove any leftover float button from a previous session
     const oldBtn = document.getElementById('qb-float-results');
@@ -633,6 +640,11 @@ function App() {
     setCurrentIndex(0);
     setPhase('intro');
     setLeadData({ firstName: '', lastName: '', company: '', email: '' });
+    setIsFormValid(false);
+    if (firstNameRef.current) firstNameRef.current.value = '';
+    if (lastNameRef.current) lastNameRef.current.value = '';
+    if (companyRef.current) companyRef.current.value = '';
+    if (emailRef.current) emailRef.current.value = '';
   };
 
   useEffect(() => {
@@ -711,15 +723,29 @@ function App() {
     try { localStorage.setItem('qb-theme', themeName); } catch(e) {}
   }, [isDarkMode]);
 
-  const isFormValid = useMemo(() => {
-    const hasIdentifier = leadData.firstName.trim() !== '' || leadData.lastName.trim() !== '' || leadData.company.trim() !== '';
-    const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(leadData.email);
-    return hasIdentifier && hasValidEmail;
-  }, [leadData]);
+  const checkFormValidity = () => {
+    const fn = (firstNameRef.current?.value || '').trim();
+    const ln = (lastNameRef.current?.value || '').trim();
+    const co = (companyRef.current?.value || '').trim();
+    const em = (emailRef.current?.value || '').trim();
+    const hasIdentifier = fn !== '' || ln !== '' || co !== '';
+    const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em);
+    setIsFormValid(hasIdentifier && hasValidEmail);
+  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    // Read values from uncontrolled inputs
+    const currentLead = {
+      firstName: firstNameRef.current?.value || '',
+      lastName: lastNameRef.current?.value || '',
+      company: companyRef.current?.value || '',
+      email: emailRef.current?.value || '',
+    };
+    const hasIdentifier = currentLead.firstName.trim() !== '' || currentLead.lastName.trim() !== '' || currentLead.company.trim() !== '';
+    const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(currentLead.email);
+    if (!(hasIdentifier && hasValidEmail)) return;
+    setLeadData(currentLead);
     setIsSubmittingForm(true);
 
     setTimeout(() => {
@@ -741,7 +767,7 @@ function App() {
           visualDnaDiscardRate: discardRate,
           visualDnaKeptImages: keepIds,
           visualDnaFastDiscards: fastDiscardR1,
-          brandName: existing.brandName || leadData.company || leadData.firstName || '',
+          brandName: existing.brandName || currentLead.company || currentLead.firstName || '',
         });
         
         localStorage.setItem('qb_qbp', JSON.stringify(updated));
@@ -968,26 +994,26 @@ function App() {
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label className="block label-system opacity-60 mb-2">First Name</label>
-                  <input type="text" value={leadData.firstName} onChange={(e) => setLeadData({...leadData, firstName: e.target.value})}
+                  <input type="text" ref={firstNameRef} defaultValue={leadData.firstName} onInput={checkFormValidity}
                     className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
                   />
                 </div>
                 <div>
                   <label className="block label-system opacity-60 mb-2">Last Name</label>
-                  <input type="text" value={leadData.lastName} onChange={(e) => setLeadData({...leadData, lastName: e.target.value})}
+                  <input type="text" ref={lastNameRef} defaultValue={leadData.lastName} onInput={checkFormValidity}
                     className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
                   />
                 </div>
               </div>
               <div>
                 <label className="block label-system opacity-60 mb-2">Company</label>
-                <input type="text" value={leadData.company} onChange={(e) => setLeadData({...leadData, company: e.target.value})}
+                <input type="text" ref={companyRef} defaultValue={leadData.company} onInput={checkFormValidity}
                   className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
                 />
               </div>
               <div>
                 <label className="block label-system opacity-60 mb-2">Email Address <span className="text-warmred">*</span></label>
-                <input type="email" required value={leadData.email} onChange={(e) => setLeadData({...leadData, email: e.target.value})}
+                <input type="email" required ref={emailRef} defaultValue={leadData.email} onInput={checkFormValidity}
                   className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none placeholder:text-text-3 placeholder:italic outline-none focus:ring-0"
                   placeholder="name@company.com"
                 />
