@@ -1,1067 +1,1768 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quantum Branding — Answer questions. Get a brand.</title>
 <meta name="description" content="QB BrandOS. 18 AI tools build your brand identity, look, voice, content, and strategy. Step by step. Start free.">
-<script>(function(){var t=localStorage.getItem('qb-theme')||'dark';document.documentElement.setAttribute('data-theme',t)})();</script>
-<style>html:not([data-theme]){background:#080604;color:#A89A88}</style>
-<style>
-/* ===========================
-   VARIABLES
-   =========================== */
-:root,[data-theme="dark"]{
-  --bg-void:#080604;--bg-deep:#0A0806;--bg-base:#0E0C09;
-  --bg-surface:rgba(140,110,70,0.045);--bg-elevated:rgba(140,110,70,0.07);
-  --bg-overlay:rgba(18,15,10,0.85);
-  --border-subtle:rgba(140,110,70,0.06);--border-medium:rgba(140,110,70,0.11);--border-strong:rgba(140,110,70,0.18);
-  --patina:#3A5F4A;--patina-lit:#4A7A5E;--patina-dim:rgba(58,95,74,0.2);--patina-faint:rgba(58,95,74,0.08);
-  --brass:#A8903E;--brass-lit:#C4A84E;--brass-dim:rgba(168,144,62,0.18);--brass-faint:rgba(168,144,62,0.06);
-  --text-1:#DDD4C4;--text-2:#A89A88;--text-3:#6A5E50;--text-4:#3E3830;
-  --glass-bg:rgba(18,15,10,0.85);--glass-border:rgba(140,110,70,0.06);
-  --font-display:'DM Serif Display',Georgia,serif;
-  --font-body:'Inter',-apple-system,sans-serif;
-  --font-mono:'JetBrains Mono',monospace;
-  --nav-h:64px;--container:1200px;--radius:16px;--radius-sm:10px;--radius-xs:6px;
-  --ease-out:cubic-bezier(0.16,1,0.3,1);
-}
-[data-theme="light"]{
-  --bg-void:#F4F0EB;--bg-deep:#EDE8E2;--bg-base:#E6E0D8;
-  --bg-surface:rgba(100,80,50,0.04);--bg-elevated:rgba(100,80,50,0.07);
-  --bg-overlay:rgba(244,240,235,0.9);
-  --border-subtle:rgba(100,80,50,0.08);--border-medium:rgba(100,80,50,0.14);--border-strong:rgba(100,80,50,0.22);
-  --patina:#2E4E3C;--patina-lit:#3A6A4E;--patina-dim:rgba(46,78,60,0.15);--patina-faint:rgba(46,78,60,0.06);
-  --brass:#8A7430;--brass-lit:#A08A3A;--brass-dim:rgba(138,116,48,0.15);--brass-faint:rgba(138,116,48,0.05);
-  --text-1:#1A1610;--text-2:#5A5040;--text-3:#8A7E70;--text-4:#B8AEA0;
-  --glass-bg:rgba(244,240,235,0.9);--glass-border:rgba(100,80,50,0.08);
-}
-
-/* ===========================
-   RESET & BASE
-   =========================== */
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-body{font-family:var(--font-body);background:var(--bg-void);color:var(--text-2);font-size:15px;line-height:1.65;overflow-x:hidden;transition:background 0.4s ease,color 0.3s ease}
-img{max-width:100%;display:block}
-a{text-decoration:none;color:inherit}
-button{cursor:pointer;font-family:var(--font-body);background:none;border:none;padding:0;color:inherit}
-
-/* Film grain */
-body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0.03;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:256px 256px}
-[data-theme="light"] body::after{opacity:0.015}
-
-/* Warm vignette */
-body::before{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;
-  background:radial-gradient(ellipse 70% 60% at 50% 35%,transparent 0%,var(--bg-void) 100%);opacity:0.4}
-
-/* ===========================
-   UTILITIES
-   =========================== */
-.container{width:100%;max-width:var(--container);margin:0 auto;padding:0 24px}
-@media(max-width:640px){.container{padding:0 20px}}
-section{position:relative;z-index:2}
-
-/* Scroll reveal */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s var(--ease-out),transform 0.7s var(--ease-out)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}.rd4{transition-delay:.4s}.rd5{transition-delay:.5s}.rd6{transition-delay:.6s}
-
-/* Shimmer gradient text */
-.shimmer{
-  background:linear-gradient(120deg,var(--patina-lit),var(--brass),var(--patina-lit));
-  background-size:200% 100%;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:shimmer 3s ease-in-out infinite}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* Placeholder shimmer */
-.placeholder-shimmer{
-  background:linear-gradient(90deg,var(--bg-surface) 25%,var(--bg-elevated) 50%,var(--bg-surface) 75%);
-  background-size:200% 100%;
-  animation:placeholderShimmer 8s ease-in-out infinite}
-@keyframes placeholderShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* ===========================
-   SHARED COMPONENTS
-   =========================== */
-
-/* Labels */
-.label{font-family:var(--font-mono);font-size:0.68rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--patina-lit)}
-.label-brass{color:var(--brass)}
-
-/* Headings */
-.h1{font-family:var(--font-display);font-weight:400;font-size:clamp(2.6rem,5vw,4rem);line-height:1.08;letter-spacing:-0.015em;color:var(--text-1);max-width:540px}
-.h2{font-family:var(--font-display);font-weight:400;font-size:clamp(1.8rem,3.5vw,2.8rem);line-height:1.12;color:var(--text-1)}
-.h3{font-family:var(--font-display);font-weight:400;font-size:clamp(1.2rem,2vw,1.6rem);line-height:1.2;color:var(--text-1)}
-
-/* Buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-body);font-weight:600;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;padding:14px 32px;border-radius:8px;transition:all 0.3s var(--ease-out);white-space:nowrap;cursor:pointer}
-.btn-primary{background:var(--patina);color:#E6DDD0;border:none}
-.btn-primary:hover{background:var(--patina-lit);transform:translateY(-2px);box-shadow:0 8px 28px -4px var(--patina-dim)}
-.btn-secondary{background:transparent;color:var(--text-2);border:1px solid var(--border-medium)}
-.btn-secondary:hover{border-color:var(--border-strong);color:var(--text-1);transform:translateY(-2px)}
-.btn-ghost{background:transparent;border:none;color:var(--text-2);padding:14px 16px}
-.btn-ghost:hover{color:var(--text-1)}
-.btn-sm{padding:11px 22px;font-size:0.68rem}
-
-/* Pulse dot */
-.pulse-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--brass);flex-shrink:0;
-  box-shadow:0 0 8px rgba(168,144,62,0.7);animation:beat 3s ease infinite}
-@keyframes beat{0%,100%{transform:scale(1);opacity:1}12%{transform:scale(1.35)}24%{transform:scale(0.95);opacity:0.6}36%{transform:scale(1.15)}48%{transform:scale(1);opacity:0.7}}
-
-/* Glass cards */
-.glass{background:var(--glass-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border:1px solid var(--glass-border);border-radius:var(--radius);position:relative;overflow:hidden;
-  transition:border-color 0.35s,box-shadow 0.35s,transform 0.35s}
-.glass::before{content:'';position:absolute;top:-30%;left:-10%;width:60%;height:60%;
-  background:radial-gradient(ellipse at center,rgba(168,144,62,0.03),transparent 70%);pointer-events:none;transition:opacity 0.4s}
-.glass:hover::before{opacity:0.7}
-.glass-hover:hover{border-color:var(--border-strong);transform:translateY(-4px);box-shadow:0 20px 60px -15px rgba(0,0,0,0.4)}
-
-/* ===========================
-   NAV
-   =========================== */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);transition:background 0.3s,border-color 0.3s}
-.nav.scrolled{background:var(--glass-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border-subtle)}
-.nav-inner{max-width:var(--container);margin:0 auto;padding:0 24px;height:100%;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--font-display);font-size:1rem;color:var(--text-1);letter-spacing:0.02em;transition:color 0.2s}
-.nav-logo:hover .pulse-dot{transform:scale(1.5)}
-.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
-.nav-links a{font-family:var(--font-mono);font-size:0.72rem;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text-3);transition:color 0.2s}
-.nav-links a:hover{color:var(--text-1)}
-.nav-actions{display:flex;align-items:center;gap:10px}
-.theme-toggle{width:34px;height:34px;border-radius:6px;border:1px solid var(--border-subtle);
-  display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:var(--text-3);transition:all 0.2s;cursor:pointer}
-.theme-toggle:hover{border-color:var(--border-strong);color:var(--text-1)}
-.hamburger{display:none;width:36px;height:36px;border:1px solid var(--border-subtle);border-radius:8px;
-  flex-direction:column;gap:4px;align-items:center;justify-content:center;cursor:pointer}
-.hamburger span{display:block;width:16px;height:1.5px;background:var(--text-2);border-radius:2px;transition:all 0.3s}
-.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
-.hamburger.active span:nth-child(2){opacity:0}
-.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
-@media(max-width:900px){.nav-links{display:none!important}.nav-actions .btn-ghost,.nav-actions .btn-primary{display:none!important}.hamburger{display:flex}}
-.nav .btn-primary{padding:10px 20px;font-size:0.68rem}
-
-/* Mobile menu */
-.mobile-menu{display:none;position:fixed;inset:0;z-index:200;background:var(--bg-void);flex-direction:column;padding:0 24px}
-.mobile-menu.open{display:flex}
-.mm-header{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle)}
-.mm-close{width:36px;height:36px;border:1px solid var(--border-subtle);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--text-3);cursor:pointer}
-.mm-body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:24px 0}
-.mm-link{font-family:var(--font-display);font-size:1.6rem;color:var(--text-3);cursor:pointer;padding:8px 0;transition:color 0.15s;background:none;border:none;text-align:left}
-.mm-link:hover{color:var(--patina-lit)}
-.mm-footer{padding-bottom:36px}
-
-/* ===========================
-   HERO
-   =========================== */
-.hero{padding:160px 0 120px;position:relative;overflow:hidden}
-@media(max-width:900px){.hero{padding:120px 0 80px}}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:40px}}
-
-/* Hero left */
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 12px;
-  border:1px solid var(--brass-dim);background:var(--brass-faint);border-radius:50px;margin-bottom:24px}
-.hero-badge-text{font-family:var(--font-mono);font-size:0.68rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--brass)}
-.hero-subtitle{font-size:1.1rem;color:var(--text-2);line-height:1.75;max-width:480px;margin:20px 0 28px}
-.hero-buttons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:40px}
-.hero-stats{display:flex;gap:32px;flex-wrap:wrap}
-.hero-stat-value{font-family:var(--font-display);font-size:1.8rem;color:var(--text-1);line-height:1}
-.hero-stat-label{font-family:var(--font-mono);font-size:0.62rem;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-top:6px}
-
-/* Hero demo card */
-.demo-card{border-radius:18px;overflow:hidden;background:var(--bg-base);border:1px solid var(--border-subtle);
-  box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 60px -10px rgba(58,95,74,0.05);position:relative}
-/* .glow replaced by .glow-pulse keyframe animation — see bottom of CSS */
-.demo-titlebar{height:36px;background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;padding:0 14px;gap:6px}
-.demo-dot{width:8px;height:8px;border-radius:50%;background:var(--border-medium)}
-.demo-dot.r{background:#8A4A4A}.demo-dot.y{background:var(--brass)}.demo-dot.g{background:var(--patina)}
-.demo-titlebar-text{margin-left:auto;font-family:var(--font-mono);font-size:0.62rem;letter-spacing:1.5px;color:var(--text-4);text-transform:uppercase}
-.demo-body{padding:24px 22px}
-.demo-body-label{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;color:var(--patina-lit);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.demo-field{margin-bottom:14px}
-.demo-field-key{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:1px;color:var(--text-4);text-transform:uppercase;margin-bottom:3px}
-.demo-field-val{font-family:var(--font-display);font-size:1.05rem;color:var(--text-1);min-height:1.3em}
-.demo-field-val.sm{font-size:0.9rem;color:var(--text-2);font-family:var(--font-body);font-style:italic}
-.demo-field-val.italic{font-style:italic}
-.demo-sep{height:1px;background:var(--border-subtle);margin:14px 0}
-.demo-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.demo-status{display:flex;align-items:center;gap:8px;margin-top:16px;font-family:var(--font-mono);font-size:0.62rem;color:var(--patina-lit);letter-spacing:0.5px}
-.cursor-blink{display:inline-block;width:1.5px;height:0.9em;background:var(--brass);animation:blink 1s step-end infinite;vertical-align:text-bottom;margin-left:1px}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-/* Hero load cascade */
-.hero-cascade{opacity:0;transform:translateY(20px);animation:cascadeIn 0.7s var(--ease-out) forwards}
-.hero-cascade-card{opacity:0;transform:translateX(30px);animation:cascadeInX 0.8s var(--ease-out) forwards}
-@keyframes cascadeIn{to{opacity:1;transform:translateY(0)}}
-@keyframes cascadeInX{to{opacity:1;transform:translateX(0)}}
-
-/* ===========================
-   MARQUEE
-   =========================== */
-.marquee-section{padding:28px 0;border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);overflow:hidden}
-.marquee-wrap{overflow:hidden;position:relative}
-.marquee-wrap::before,.marquee-wrap::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
-.marquee-wrap::before{left:0;background:linear-gradient(90deg,var(--bg-void),transparent)}
-.marquee-wrap::after{right:0;background:linear-gradient(270deg,var(--bg-void),transparent)}
-.marquee-track{display:flex;gap:12px;animation:marqueeScroll 40s linear infinite;width:max-content}
-.marquee-section:hover .marquee-track{animation-play-state:paused}
-@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.marquee-tag{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:8px 16px;
-  border:1px solid var(--border-subtle);border-radius:50px;background:var(--bg-surface);
-  font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.5px;color:var(--text-3);white-space:nowrap;transition:border-color 0.2s,color 0.2s}
-.marquee-tag:hover{border-color:var(--patina-dim);color:var(--patina-lit)}
-.mtag-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.dot-green{background:var(--patina-lit)}.dot-blue{background:#4A7A8A}.dot-warm{background:var(--brass)}
-
-/* ===========================
-   HOW IT WORKS
-   =========================== */
-.how-section{padding:120px 0}
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
-@media(max-width:900px){.how-grid{grid-template-columns:1fr;max-width:480px;margin-left:auto;margin-right:auto}}
-.how-card{padding:28px;border-radius:var(--radius)}
-.how-icon{width:56px;height:56px;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);
-  display:flex;align-items:center;justify-content:center;margin-bottom:20px}
-.how-icon svg{width:24px;height:24px;stroke:var(--patina-lit);stroke-width:1.5;fill:none}
-.how-step{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:8px}
-.how-name{font-family:var(--font-display);font-size:1.3rem;color:var(--text-1);margin-bottom:8px}
-.how-desc{font-size:0.88rem;color:var(--text-2);line-height:1.7;margin-bottom:10px}
-.how-output{font-family:var(--font-mono);font-size:0.68rem;color:var(--patina-lit);letter-spacing:0.5px}
-
-/* ===========================
-   BRAND PROFILE DIFFERENTIATOR
-   =========================== */
-.differ-section{padding:120px 0}
-.differ-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-@media(max-width:900px){.differ-grid{grid-template-columns:1fr;gap:36px}}
-.differ-text .label{margin-bottom:12px}
-.differ-text .h2{margin-bottom:16px}
-.differ-text p{font-size:1rem;color:var(--text-2);line-height:1.75;margin-bottom:24px;max-width:480px}
-.profile-card{padding:28px}
-.profile-row{margin-bottom:16px}
-.profile-row:last-child{margin-bottom:0}
-.profile-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
-.profile-label{font-size:0.82rem;color:var(--text-2)}
-.profile-value{font-family:var(--font-display);font-size:0.9rem;color:var(--text-1)}
-.profile-pct{font-family:var(--font-mono);font-size:0.72rem;color:var(--text-3)}
-.profile-track{height:4px;background:var(--bg-elevated);border-radius:2px;overflow:hidden}
-.profile-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--patina),var(--brass));width:0;transition:width 0.8s var(--ease-out)}
-
-/* ===========================
-   TIMELINE (What You Get)
-   =========================== */
-.timeline-section{padding:120px 0;background:var(--bg-deep)}
-.timeline{position:relative;margin-top:48px;padding-left:40px}
-.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:1px;background:var(--border-medium)}
-.timeline-item{position:relative;padding-bottom:48px}
-.timeline-item:last-child{padding-bottom:0}
-.timeline-dot{position:absolute;left:-40px;top:4px;width:22px;height:22px;border-radius:50%;
-  border:2px solid var(--border-medium);background:var(--bg-void);display:flex;align-items:center;justify-content:center;z-index:2;transition:transform 0.6s var(--ease-out)}
-.timeline-dot-inner{width:8px;height:8px;border-radius:50%}
-.timeline-dot.pulsed{animation:dotPulse 0.6s var(--ease-out)}
-@keyframes dotPulse{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
-.timeline-phase{display:inline-block;font-family:var(--font-mono);font-size:0.62rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
-.phase-green{color:var(--patina-lit)}.phase-blue{color:#4A7A8A}.phase-warm{color:var(--brass)}
-.timeline-name{font-family:var(--font-display);font-size:1.25rem;color:var(--text-1);margin-bottom:6px}
-.timeline-desc{font-size:0.88rem;color:var(--text-2);line-height:1.7;max-width:520px;margin-bottom:12px}
-.timeline-placeholder{height:120px;border-radius:var(--radius-sm);border:1px solid var(--border-subtle);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;max-width:400px;position:relative}
-.timeline-placeholder-num{font-family:var(--font-display);font-size:3rem;color:var(--text-4);line-height:1;opacity:0.5;position:absolute;top:50%;left:50%;transform:translate(-50%,-55%)}
-.timeline-placeholder span{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-4);letter-spacing:1px;text-transform:uppercase;position:relative;z-index:1}
-
-/* Alternating timeline on desktop */
-@media(min-width:768px){
-  .timeline{padding-left:0}
-  .timeline::before{left:50%;transform:translateX(-50%)}
-  .timeline-item{width:50%}
-  .timeline-item:nth-child(odd){margin-left:50%;padding-left:40px;text-align:left}
-  .timeline-item:nth-child(even){padding-right:40px;text-align:right}
-  .timeline-item:nth-child(odd) .timeline-dot{left:-11px}
-  .timeline-item:nth-child(even) .timeline-dot{left:auto;right:-11px}
-  .timeline-item:nth-child(even) .timeline-placeholder{margin-left:auto}
-  .timeline-item:nth-child(even) .timeline-desc{margin-left:auto}
-}
-
-/* ===========================
-   PERSONAS
-   =========================== */
-.persona-section{padding:120px 0}
-.persona-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:40px 0 28px}
-.persona-tab{padding:9px 20px;border:1px solid var(--border-subtle);border-radius:50px;
-  font-family:var(--font-mono);font-size:0.72rem;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;
-  color:var(--text-3);background:transparent;cursor:pointer;transition:all 0.25s ease}
-.persona-tab.active,.persona-tab:hover{color:var(--patina-lit);border-color:var(--patina);background:var(--patina-faint)}
-.persona-stage{position:relative;min-height:360px}
-.persona-panel{opacity:0;pointer-events:none;position:absolute;top:0;left:0;right:0;transition:opacity 0.35s ease;
-  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.persona-panel.active{opacity:1;pointer-events:auto;position:relative}
-@media(max-width:900px){.persona-panel{grid-template-columns:1fr}}
-.persona-image{height:320px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.06);
-  background:rgba(255,255,255,0.02);position:relative;overflow:hidden;
-  display:flex;align-items:center;justify-content:center}
-.persona-image svg{display:block;margin:auto;max-height:300px;width:auto}
-.persona-numeral{font-family:var(--font-display);font-size:4rem;color:var(--text-4);line-height:1}
-.persona-image-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-4);letter-spacing:1px;text-transform:uppercase;text-align:center;padding:0 20px}
-.persona-title{font-family:var(--font-display);font-size:1.6rem;color:var(--text-1);margin-bottom:12px}
-.persona-desc{font-size:1rem;color:var(--text-2);line-height:1.75;margin-bottom:24px}
-
-/* ===========================
-   PROOF STRIP
-   =========================== */
-.proof-section{padding:36px 0;border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle)}
-.proof-label{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-4);margin-bottom:18px;text-align:center}
-.proof-row{display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:center;align-items:center}
-.proof-name{font-family:var(--font-display);font-size:1.05rem;color:var(--text-4);letter-spacing:0.02em;transition:color 0.2s;white-space:nowrap}
-.proof-name:hover{color:var(--text-3)}
-
-/* ===========================
-   PREDICTIVE PANEL
-   =========================== */
-.panel-section{padding:120px 0}
-.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-@media(max-width:900px){.panel-grid{grid-template-columns:1fr;gap:36px}}
-.panel-text .label{margin-bottom:12px}
-.panel-text .h2{margin-bottom:16px}
-.panel-text p{font-size:1rem;color:var(--text-2);line-height:1.75;margin-bottom:24px;max-width:480px}
-.panel-card{padding:28px}
-.panel-card-label{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:20px}
-.panel-confidence-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-.panel-confidence-label{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-3)}
-.panel-confidence-num{font-family:var(--font-display);font-size:2.2rem;color:var(--brass)}
-.panel-main-track{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;margin-bottom:20px}
-.panel-main-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--patina),var(--brass));width:0;transition:width 1s var(--ease-out)}
-.panel-scenario{margin-bottom:10px}
-.panel-scenario-head{display:flex;justify-content:space-between;margin-bottom:4px}
-.panel-scenario-name{font-size:0.82rem;color:var(--text-2)}
-.panel-scenario-pct{font-family:var(--font-mono);font-size:0.72rem}
-.panel-scenario-track{height:3px;background:var(--bg-elevated);border-radius:2px;overflow:hidden}
-.panel-scenario-fill{height:100%;border-radius:2px;width:0;transition:width 1s var(--ease-out)}
-.panel-verdict{margin-top:20px;padding:16px;border-radius:var(--radius-sm);background:var(--patina-faint);border:1px solid var(--patina-dim)}
-.panel-verdict-label{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--patina-lit);margin-bottom:4px}
-.panel-verdict-title{font-family:var(--font-display);font-size:1.1rem;color:var(--patina-lit)}
-.panel-verdict-text{font-size:0.82rem;color:var(--text-2);margin-top:4px}
-
-/* ===========================
-   PRICING
-   =========================== */
-.pricing-section{padding:120px 0;background:var(--bg-deep)}
-.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
-@media(max-width:1000px){.pricing-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.pricing-grid{grid-template-columns:1fr}}
-.pricing-card{padding:28px;display:flex;flex-direction:column;border-radius:var(--radius)}
-.pricing-card.featured{border-color:var(--patina);box-shadow:0 0 40px -12px var(--patina-dim)}
-.pricing-name{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.pricing-badge{font-family:var(--font-mono);font-size:0.58rem;letter-spacing:1px;text-transform:uppercase;
-  padding:3px 8px;border-radius:4px;background:var(--patina-faint);color:var(--patina-lit);border:1px solid var(--patina-dim)}
-.pricing-price{font-family:var(--font-display);font-size:2.2rem;color:var(--text-1);margin-bottom:4px}
-.pricing-price span{font-size:0.88rem;font-weight:400;color:var(--text-3)}
-.pricing-desc{font-size:0.85rem;color:var(--text-2);line-height:1.6;margin-bottom:20px;flex:1}
-.pricing-features{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:24px}
-.pricing-feature{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--text-2)}
-.pricing-feature::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--patina-lit);flex-shrink:0}
-.pricing-card .btn{width:100%;justify-content:center}
-.pricing-note{text-align:center;margin-top:24px;display:flex;justify-content:center}
-.pricing-note-inner{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:50px;background:var(--bg-elevated);border:1px solid var(--border-subtle);font-size:0.82rem;color:var(--text-2)}
-.pricing-anchor{text-align:center;margin-top:20px;font-family:var(--font-display);font-style:italic;font-size:1rem;color:var(--text-3)}
-
-/* ===========================
-   FOUNDER STATEMENT
-   =========================== */
-.founder-section{padding:100px 0}
-.founder-card{max-width:720px;margin:0 auto;text-align:center}
-.founder-label{font-family:var(--font-mono);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:24px}
-.founder-quote{font-family:var(--font-display);font-size:clamp(1.2rem,2.5vw,1.6rem);font-style:italic;color:var(--text-1);line-height:1.5;margin-bottom:28px;position:relative;padding:0 20px}
-.founder-avatar{width:56px;height:56px;border-radius:50%;background:var(--patina);color:#E6DDD0;
-  display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.1rem;margin:0 auto 12px}
-.founder-name{font-family:var(--font-display);font-size:1.1rem;color:var(--text-1)}
-.founder-role{font-size:0.85rem;color:var(--text-3);margin-top:2px}
-.founder-creds{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
-
-/* ===========================
-   FAQ
-   =========================== */
-.faq-section{padding:120px 0}
-.faq-container{max-width:720px;margin:48px auto 0}
-.faq-card{padding:0;overflow:hidden}
-.faq-item{border-bottom:1px solid var(--border-subtle)}
-.faq-item:last-child{border-bottom:none}
-.faq-question{width:100%;text-align:left;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;
-  font-family:var(--font-display);font-size:1.05rem;color:var(--text-1);cursor:pointer;background:none;border:none;transition:color 0.2s}
-.faq-question:hover{color:var(--patina-lit)}
-.faq-icon{font-size:1.2rem;color:var(--text-3);transition:transform 0.25s ease;flex-shrink:0}
-.faq-item.open .faq-icon{transform:rotate(45deg)}
-.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
-.faq-item.open .faq-answer{max-height:400px}
-.faq-answer-inner{padding:0 24px 20px;font-size:0.9rem;color:var(--text-2);line-height:1.7}
-
-/* ===========================
-   CTA
-   =========================== */
-.cta-section{padding:100px 0}
-.cta-card{text-align:center;padding:64px 48px;max-width:700px;margin:0 auto;border-radius:20px;
-  background:var(--patina-faint);border:1px solid var(--patina-dim);position:relative;overflow:hidden}
-.cta-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,var(--patina-dim),transparent 60%);opacity:0.5;pointer-events:none}
-.cta-card>*{position:relative;z-index:1}
-.cta-title{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.6rem);color:var(--text-1);margin-bottom:12px}
-.cta-subtitle{font-size:1rem;color:var(--text-2);line-height:1.7;margin-bottom:28px}
-.cta-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-@media(max-width:640px){.cta-card{padding:48px 24px}}
-
-/* ===========================
-   FOOTER
-   =========================== */
-.site-footer{padding:48px 0 32px;border-top:1px solid var(--border-subtle)}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px}
-@media(max-width:640px){.footer-grid{grid-template-columns:1fr;gap:24px}}
-.footer-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-family:var(--font-display);font-size:1rem;color:var(--text-1)}
-.footer-desc{font-size:0.85rem;color:var(--text-3);max-width:320px;line-height:1.6}
-.footer-col-title{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
-.footer-link{display:block;font-size:0.85rem;color:var(--text-3);margin-bottom:8px;transition:color 0.15s}
-.footer-link:hover{color:var(--patina-lit)}
-.footer-bottom{margin-top:36px;padding-top:20px;border-top:1px solid var(--border-subtle);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.footer-copy{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-4);letter-spacing:0.5px}
-@media(max-width:640px){.footer-bottom{flex-direction:column;align-items:center;text-align:center}}
-
-/* ===========================
-   INTERACTIVE SCANNER
-   =========================== */
-.scanner-section{padding:100px 0}
-.scanner-card{max-width:680px;margin:0 auto;padding:44px;position:relative;overflow:hidden}
-.scanner-card .h2{margin-bottom:8px}
-.scanner-card>p{font-size:1rem;color:var(--text-2);margin-bottom:24px}
-.scan-input-row{display:flex;gap:10px;margin-bottom:12px}
-@media(max-width:640px){.scan-input-row{flex-direction:column}}
-.scan-input{flex:1;padding:14px 18px;border-radius:var(--radius-sm);border:1px solid var(--border-medium);background:var(--bg-surface);
-  color:var(--text-1);font-family:var(--font-body);font-size:0.9rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
-.scan-input::placeholder{color:var(--text-3);font-style:italic;opacity:0.7}
-.scan-input:focus{border-color:var(--patina);box-shadow:0 0 0 3px var(--patina-faint)}
-.scan-btn{white-space:nowrap}
-.scan-btn.scanning{opacity:0.7;pointer-events:none;animation:btnPulse 1s ease infinite}
-@keyframes btnPulse{0%,100%{opacity:0.7}50%{opacity:1}}
-.scan-line{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--patina-lit),var(--brass),transparent);
-  transform:translateY(-4px);opacity:0;z-index:10;pointer-events:none}
-.scan-line.active{opacity:1;animation:scanSweep 0.8s ease-out forwards}
-@keyframes scanSweep{0%{transform:translateY(0)}100%{transform:translateY(500px);opacity:0}}
-.scan-results{display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border-subtle)}
-.scan-results.show{display:block}
-.scan-bars{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-bottom:20px}
-@media(max-width:640px){.scan-bars{grid-template-columns:1fr}}
-.scan-bar-item{}
-.scan-bar-head{display:flex;justify-content:space-between;margin-bottom:4px}
-.scan-bar-label{font-family:var(--font-mono);font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-3)}
-.scan-bar-score{font-family:var(--font-mono);font-size:0.72rem;color:var(--patina-lit)}
-.scan-bar-track{height:5px;background:var(--bg-elevated);border-radius:3px;overflow:hidden}
-.scan-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--patina),var(--brass));width:0;transition:width 1s var(--ease-out)}
-.scan-verdict{padding:18px;border-radius:var(--radius-sm);background:var(--patina-faint);border:1px solid var(--patina-dim);
-  opacity:0;transition:opacity 0.4s ease;margin-bottom:20px}
-.scan-verdict.show{opacity:1}
-.scan-verdict-label{font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--patina-lit);margin-bottom:4px}
-.scan-verdict-title{font-family:var(--font-display);font-size:1.1rem;color:var(--text-1);margin-bottom:4px}
-.scan-verdict-text{font-size:0.85rem;color:var(--text-2)}
-.scan-ctas{display:flex;gap:10px;flex-wrap:wrap}
-.scan-note{font-family:var(--font-mono);font-size:0.6rem;color:var(--text-4);letter-spacing:1.5px;text-transform:uppercase;margin-top:16px;text-align:center}
-
-/* ===========================
-   VIDEO PLACEHOLDER
-   =========================== */
-.video-section{padding:80px 0}
-.video-card{position:relative;width:100%;padding-top:56.25%;border-radius:var(--radius);overflow:hidden;cursor:pointer}
-.video-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--patina-faint),var(--bg-surface));z-index:0}
-.video-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:1}
-.video-play{width:64px;height:64px;border-radius:50%;border:2px solid var(--border-strong);background:var(--glass-bg);
-  display:flex;align-items:center;justify-content:center;transition:all 0.3s ease}
-.video-card:hover .video-play{border-color:var(--patina-lit);transform:scale(1.08);box-shadow:0 0 30px var(--patina-dim)}
-.video-play svg{width:20px;height:20px;fill:var(--text-1);margin-left:3px}
-.video-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-3);letter-spacing:1px;text-transform:uppercase}
-
-/* ===========================
-   AMBIENT PARTICLES
-   =========================== */
-#ambientCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-[data-theme="light"] #ambientCanvas{opacity:0.5}
-
-/* ===========================
-   GLOW PULSE (demo card)
-   =========================== */
-@keyframes glowPulse{
-  0%{border-color:var(--border-subtle);box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 0 transparent}
-  30%{border-color:var(--patina-lit);box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 40px -8px var(--patina-dim),0 0 20px -4px var(--brass-dim)}
-  70%{border-color:var(--patina-lit);box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 40px -8px var(--patina-dim),0 0 20px -4px var(--brass-dim)}
-  100%{border-color:var(--border-subtle);box-shadow:0 40px 80px -20px rgba(0,0,0,0.5),0 0 0 transparent}
-}
-.demo-card.glow-pulse{animation:glowPulse 1.5s ease forwards}
-</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================
+   QB × WISPR FLOW — Design Tokens
+   Wispr layout language, QB warm-patina-brass palette
+   ========================================================== */
+:root{
+  /* QB palette (respecting index.html) */
+  --cream:          #F4F0EB;
+  --cream-soft:     #EDE8E2;
+  --cream-deep:     #E6E0D8;
+  --cream-edge:     rgba(100,80,50,0.10);
+  --cream-line:     rgba(100,80,50,0.14);
+
+  --ink:            #1A1610;
+  --ink-soft:       #5A5040;
+  --ink-mute:       #8A7E70;
+  --ink-faint:      #B8AEA0;
+
+  --patina:         #3A5F4A;
+  --patina-lit:     #4A7A5E;
+  --patina-deep:    #0E1C17;   /* near-black forest */
+  --patina-deeper:  #081310;
+
+  --brass:          #A8903E;
+  --brass-lit:      #C4A84E;
+  --brass-faint:    rgba(168,144,62,0.10);
+
+  /* Character / illustration palette */
+  --terra:          #C4654A;
+  --terra-lit:      #D4785E;
+  --terra-faint:    rgba(196,101,74,0.10);
+  --plum:           #7A5A6E;
+  --plum-lit:       #9A7A8E;
+  --plum-faint:     rgba(122,90,110,0.10);
+  --skin:           #F4E4D0;
+  --skin-shadow:    #E8D4BC;
+
+  /* Dark-section inversions */
+  --dark-text:      #EEE5D2;
+  --dark-text-soft: #A8A092;
+  --dark-text-mute: #6F6A5E;
+  --dark-line:      rgba(238,229,210,0.10);
+  --dark-surface:   rgba(238,229,210,0.04);
+
+  /* CTA pill (wispr-ish pale accent, brass-tinted instead of purple) */
+  --pill-bg:        #F3E9C9;
+  --pill-bg-hover:  #EFE1B4;
+  --pill-border:    #D9C98A;
+  --pill-ink:       #4A3F18;
+
+  /* Type */
+  --f-display: 'EB Garamond', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --f-body:    'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --f-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --ease:      cubic-bezier(.22,1,.36,1);
+  --nav-h:     74px;
+  --container: 1200px;
+  --r-pill:    999px;
+  --r-card:    24px;
+  --r-card-lg: 36px;
+}
+
+/* ============================== RESET ============================== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth}
+body{
+  font-family:var(--f-body);
+  background:var(--cream);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.55;
+  overflow-x:hidden;
+  font-weight:400;
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
+input{font-family:inherit}
+
+/* ============================== TYPE ============================== */
+.display{
+  font-family:var(--f-display);
+  font-weight:400;
+  line-height:1.02;
+  letter-spacing:-0.015em;
+  color:var(--ink);
+}
+.display em, .display i{ font-style:italic; font-weight:500; }
+.h1{ font-size:clamp(3rem, 7.5vw, 6.4rem); }
+.h2{ font-size:clamp(2.4rem, 5.5vw, 4.6rem); }
+.h3{ font-size:clamp(1.6rem, 3vw, 2.4rem); }
+.sub{
+  font-size:clamp(1rem, 1.2vw, 1.125rem);
+  color:var(--ink-soft);
+  line-height:1.6;
+  max-width:34em;
+}
+.eyebrow{
+  font-family:var(--f-body);
+  font-size:.78rem;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--patina);
+}
+
+/* Hand-drawn underline under italic accent */
+.underlined{ position:relative; display:inline-block; }
+.underlined svg{
+  position:absolute;
+  left:-4%;
+  right:-4%;
+  bottom:-0.18em;
+  width:108%;
+  height:.42em;
+  overflow:visible;
+  pointer-events:none;
+}
+.underlined svg path{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:600;
+  stroke-dashoffset:600;
+  animation:drawLine 1.4s .4s var(--ease) forwards;
+}
+@keyframes drawLine{ to{ stroke-dashoffset:0; } }
+
+/* ============================== CONTAINER ============================== */
+.wrap{ width:100%; max-width:var(--container); margin-inline:auto; padding-inline:28px; }
+@media(max-width:640px){ .wrap{ padding-inline:20px; } }
+
+/* ============================== BUTTONS ============================== */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.55em;
+  font-family:var(--f-body);
+  font-weight:500;
+  font-size:.94rem;
+  padding:14px 24px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--ink);
+  background:transparent;
+  color:var(--ink);
+  transition:all .25s var(--ease);
+  white-space:nowrap;
+}
+.btn:hover{ background:var(--ink); color:var(--cream); }
+.btn-primary{
+  background:var(--pill-bg);
+  border-color:var(--pill-border);
+  color:var(--pill-ink);
+}
+.btn-primary:hover{
+  background:var(--pill-bg-hover);
+  color:var(--pill-ink);
+  border-color:var(--pill-ink);
+  transform:translateY(-1px);
+}
+.btn-dark{
+  background:var(--patina-deep);
+  border-color:var(--patina-deep);
+  color:var(--dark-text);
+}
+.btn-dark:hover{ background:var(--patina); border-color:var(--patina); color:var(--dark-text); }
+.btn-ghost{ border-color:transparent; }
+.btn-ghost:hover{ background:transparent; color:var(--ink); text-decoration:underline; text-underline-offset:4px; }
+.btn-sm{ padding:10px 18px; font-size:.85rem; }
+.btn-lg{ padding:17px 30px; font-size:1rem; }
+.btn .ic{ width:16px; height:16px; }
+
+/* ============================== BANNER ============================== */
+.banner{
+  background:var(--patina-deep);
+  color:var(--dark-text);
+  text-align:center;
+  padding:11px 20px;
+  font-size:.88rem;
+  position:relative;
+  z-index:60;
+}
+.banner a{
+  display:inline-flex;
+  align-items:center;
+  gap:.4em;
+  color:var(--brass-lit);
+  font-weight:500;
+}
+.banner a:hover{ text-decoration:underline; text-underline-offset:3px; }
+.banner strong{ font-weight:600; color:var(--dark-text); }
+
+/* ============================== NAV (pill) ============================== */
+.nav-spacer{ height:28px; }
+.nav{
+  position:sticky;
+  top:18px;
+  z-index:50;
+  padding:0 20px;
+}
+.nav-inner{
+  max-width:1160px;
+  margin-inline:auto;
+  background:var(--cream);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  padding:8px 10px 8px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  box-shadow:0 6px 30px -18px rgba(26,22,16,.18);
+}
+.nav-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:var(--f-display);
+  font-size:1.25rem;
+  color:var(--ink);
+  font-weight:500;
+  padding:6px 0;
+}
+.nav-brand .dot{
+  width:10px; height:10px; border-radius:50%;
+  background:var(--brass);
+  box-shadow:0 0 0 3px var(--brass-faint);
+  animation:pulseDot 3s var(--ease) infinite;
+}
+@keyframes pulseDot{
+  0%,100%{ transform:scale(1); box-shadow:0 0 0 3px var(--brass-faint); }
+  50%{ transform:scale(1.15); box-shadow:0 0 0 5px rgba(168,144,62,.05); }
+}
+.nav-links{
+  display:flex; align-items:center; gap:4px;
+  list-style:none;
+}
+.nav-links a{
+  padding:10px 16px;
+  border-radius:var(--r-pill);
+  font-size:.92rem;
+  color:var(--ink-soft);
+  transition:all .2s var(--ease);
+}
+.nav-links a:hover{ background:var(--cream-deep); color:var(--ink); }
+.nav-actions{ display:flex; align-items:center; gap:6px; }
+.hamburger{
+  display:none;
+  width:42px; height:42px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--cream-line);
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.hamburger span{ display:block; width:18px; height:1.5px; background:var(--ink); transition:.25s; }
+.hamburger.open span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; }
+.hamburger.open span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
+
+@media(max-width:960px){
+  .nav-links, .nav .btn-ghost{ display:none; }
+  .hamburger{ display:flex; }
+  .nav-brand{ font-size:1.1rem; }
+  .nav-inner{ padding:8px 8px 8px 20px; }
+}
+
+/* Mobile menu */
+.mmenu{
+  position:fixed; inset:0; z-index:100;
+  background:var(--cream);
+  display:none; flex-direction:column;
+  padding:28px;
+}
+.mmenu.open{ display:flex; }
+.mmenu-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
+.mmenu-close{ width:42px; height:42px; border-radius:50%; border:1px solid var(--cream-line); font-size:1.2rem; }
+.mmenu-list{ display:flex; flex-direction:column; gap:6px; }
+.mmenu-list a{
+  font-family:var(--f-display);
+  font-size:2rem;
+  padding:10px 0;
+  color:var(--ink);
+  border-bottom:1px solid var(--cream-line);
+}
+.mmenu-foot{ margin-top:auto; padding-top:28px; }
+
+/* ============================== SECTIONS ============================== */
+.section{ position:relative; padding:120px 0; }
+.section-tight{ padding:80px 0; }
+.section-dark{
+  background:var(--patina-deep);
+  color:var(--dark-text);
+  border-radius:var(--r-card-lg);
+  margin:0 20px;
+}
+.section-dark .display{ color:var(--dark-text); }
+.section-dark .sub{ color:var(--dark-text-soft); }
+.section-dark .eyebrow{ color:var(--brass-lit); }
+.section-rounded-top{ border-top-left-radius:var(--r-card-lg); border-top-right-radius:var(--r-card-lg); }
+.section-rounded-bot{ border-bottom-left-radius:var(--r-card-lg); border-bottom-right-radius:var(--r-card-lg); }
+
+@media(max-width:700px){
+  .section{ padding:88px 0; }
+  .section-dark{ margin:0 10px; border-radius:28px; }
+}
+
+/* ============================== HERO ============================== */
+.hero{
+  padding:80px 0 100px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero .wrap{ position:relative; z-index:2; }
+.hero-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 18px 8px 14px;
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  background:var(--cream-soft);
+  margin-bottom:36px;
+  font-size:.82rem;
+  color:var(--ink-soft);
+}
+.hero-eyebrow .dot{
+  width:7px; height:7px; border-radius:50%;
+  background:var(--patina-lit);
+  box-shadow:0 0 8px var(--patina-lit);
+}
+.hero h1{
+  max-width:16ch;
+  margin:0 auto 36px;
+  color:var(--ink);
+}
+.hero .sub{
+  margin:0 auto 44px;
+  font-size:clamp(1.05rem,1.4vw,1.2rem);
+  color:var(--ink-soft);
+  max-width:30em;
+}
+.hero-ctas{
+  display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.hero-micro{
+  font-size:.78rem;
+  color:var(--ink-mute);
+  letter-spacing:.02em;
+}
+
+/* Hero floating tool pills in arc */
+.hero-orbit{
+  position:relative;
+  max-width:1060px;
+  margin:70px auto 0;
+  height:260px;
+}
+.orbit-pill{
+  position:absolute;
+  background:var(--cream);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  padding:11px 18px;
+  font-size:.85rem;
+  display:flex; align-items:center; gap:8px;
+  box-shadow:0 10px 30px -12px rgba(26,22,16,.2);
+  color:var(--ink);
+  white-space:nowrap;
+  transition:transform .4s var(--ease);
+}
+.orbit-pill:hover{ transform:translateY(-4px); }
+.orbit-pill .od{ width:6px; height:6px; border-radius:50%; background:var(--patina-lit); }
+.orbit-pill.brass .od{ background:var(--brass); }
+.orbit-pill.deep{ background:var(--patina-deep); color:var(--dark-text); border-color:transparent; }
+.orbit-pill.deep .od{ background:var(--brass-lit); }
+
+/* arc positions */
+.op-1{ top:15%; left:5%; }
+.op-2{ top:4%;  left:22%; }
+.op-3{ top:-4%; left:42%; }
+.op-4{ top:4%;  left:62%; }
+.op-5{ top:15%; left:80%; }
+.op-6{ top:42%; left:11%; }
+.op-7{ top:38%; left:30%; }
+.op-8{ top:44%; left:52%; transform:scale(1.08); }
+.op-9{ top:38%; left:70%; }
+.op-10{ top:70%; left:20%; }
+.op-11{ top:78%; left:42%; }
+.op-12{ top:70%; left:64%; }
+
+@media(max-width:820px){
+  .hero-orbit{ height:auto; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:50px; }
+  .orbit-pill{ position:static; transform:none !important; }
+}
+
+/* ============================== STAT BLOCK (4x faster style) ============================== */
+.stat-block{
+  text-align:center;
+  padding:140px 0 110px;
+}
+.stat-block .big{
+  font-family:var(--f-display);
+  font-size:clamp(3.6rem, 9vw, 8rem);
+  line-height:1;
+  letter-spacing:-.02em;
+}
+.stat-block .big em{
+  font-style:italic;
+  font-weight:500;
+}
+.stat-block .sub{
+  margin:34px auto 0;
+  max-width:38em;
+  text-align:center;
+}
+
+/* ============================== LOGO STRIP (dark) ============================== */
+.logo-strip{
+  padding:90px 0;
+}
+.logo-strip .eye-center{
+  text-align:center;
+  font-family:var(--f-display);
+  font-size:clamp(1.2rem,1.6vw,1.5rem);
+  color:var(--dark-text-soft);
+  font-style:italic;
+  margin-bottom:40px;
+}
+.logo-row{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-around;
+  align-items:center;
+  gap:28px 56px;
+}
+.logo-row span{
+  font-family:var(--f-display);
+  font-size:clamp(1rem,1.5vw,1.4rem);
+  color:var(--dark-text);
+  letter-spacing:.02em;
+  opacity:.7;
+  transition:opacity .3s var(--ease);
+  white-space:nowrap;
+}
+.logo-row span:hover{ opacity:1; }
+
+/* ============================== FEATURE CARD (two-col) ============================== */
+.feat-two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+}
+@media(max-width:900px){ .feat-two{ grid-template-columns:1fr; gap:50px; } }
+.feat-text h2{ margin:14px 0 22px; }
+.feat-text p{ color:var(--ink-soft); margin-bottom:28px; max-width:30em; font-size:1.05rem; }
+
+/* Dark rounded device-style card (Wispr signature) */
+.device-card{
+  background:var(--patina-deep);
+  border-radius:var(--r-card-lg);
+  padding:38px;
+  color:var(--dark-text);
+  box-shadow:0 40px 80px -30px rgba(14,28,23,.5);
+  position:relative;
+  overflow:hidden;
+}
+.device-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse 80% 60% at 30% 0%, rgba(168,144,62,.08), transparent 60%);
+  pointer-events:none;
+}
+.device-card > *{ position:relative; z-index:1; }
+.device-label{
+  font-family:var(--f-mono);
+  font-size:.7rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--brass-lit);
+  margin-bottom:22px;
+}
+
+/* Profile bars */
+.prof-row{ margin-bottom:20px; }
+.prof-row:last-child{ margin-bottom:0; }
+.prof-meta{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom:6px;
+}
+.prof-lbl{ font-size:.85rem; color:var(--dark-text-soft); }
+.prof-pct{ font-family:var(--f-mono); font-size:.72rem; color:var(--dark-text-mute); }
+.prof-val{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:1.1rem;
+  color:var(--dark-text);
+  margin-bottom:8px;
+}
+.prof-track{
+  height:4px;
+  background:rgba(238,229,210,.08);
+  border-radius:2px;
+  overflow:hidden;
+}
+.prof-fill{
+  height:100%;
+  background:linear-gradient(90deg, var(--patina-lit), var(--brass));
+  border-radius:2px;
+  width:0;
+  transition:width 1s var(--ease);
+}
+
+/* ============================== HOW CARDS (3-col dark) ============================== */
+.how-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin-top:60px;
+}
+@media(max-width:900px){ .how-grid{ grid-template-columns:1fr; max-width:460px; margin-inline:auto; } }
+.how-card{
+  background:var(--dark-surface);
+  border:1px solid var(--dark-line);
+  border-radius:var(--r-card);
+  padding:34px 28px;
+  transition:transform .3s var(--ease), border-color .3s;
+}
+.how-card:hover{ transform:translateY(-4px); border-color:rgba(238,229,210,.2); }
+.how-num{
+  font-family:var(--f-display);
+  font-size:2.8rem;
+  font-style:italic;
+  color:var(--brass-lit);
+  line-height:1;
+  margin-bottom:18px;
+}
+.how-name{
+  font-family:var(--f-display);
+  font-size:1.7rem;
+  margin-bottom:12px;
+  color:var(--dark-text);
+}
+.how-desc{
+  color:var(--dark-text-soft);
+  font-size:.95rem;
+  line-height:1.7;
+  margin-bottom:18px;
+}
+.how-out{
+  font-family:var(--f-mono);
+  font-size:.7rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--brass-lit);
+  padding-top:16px;
+  border-top:1px solid var(--dark-line);
+}
+
+/* ============================== MULTI-CARD FEATURES (like wispr Auto Edit / AI Edits) ============================== */
+.multi{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:22px;
+}
+@media(max-width:900px){ .multi{ grid-template-columns:1fr; } }
+.multi .big-card{
+  background:var(--patina-deep);
+  border-radius:var(--r-card-lg);
+  padding:44px;
+  color:var(--dark-text);
+  min-height:380px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+  overflow:hidden;
+}
+.multi .side-col{ display:flex; flex-direction:column; gap:22px; }
+.multi .side-card{
+  background:var(--cream-soft);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-card-lg);
+  padding:36px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.multi .side-card .display{ font-size:clamp(1.6rem,2.4vw,2.2rem); margin-bottom:10px; }
+.multi .side-card .sub{ font-size:.92rem; color:var(--ink-soft); }
+.multi .big-card .display{ font-size:clamp(2rem,3.2vw,2.8rem); color:var(--dark-text); margin-bottom:8px; }
+.multi .big-card .sub{ color:var(--dark-text-soft); }
+
+/* Mock chat/profile visual inside big-card */
+.mock-note{
+  background:rgba(238,229,210,.05);
+  border:1px solid var(--dark-line);
+  border-radius:18px;
+  padding:20px 22px;
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:1.05rem;
+  color:var(--dark-text);
+  line-height:1.55;
+  margin-bottom:24px;
+  position:relative;
+}
+.mock-note::before{
+  content:'"';
+  position:absolute;
+  top:-6px; left:14px;
+  font-size:2.8rem;
+  color:var(--brass-lit);
+  opacity:.5;
+  line-height:1;
+}
+.mock-tags{ display:flex; flex-wrap:wrap; gap:8px; }
+.mock-tag{
+  padding:6px 14px;
+  border-radius:var(--r-pill);
+  background:rgba(168,144,62,.15);
+  border:1px solid rgba(168,144,62,.3);
+  font-size:.75rem;
+  font-family:var(--f-mono);
+  color:var(--brass-lit);
+  letter-spacing:.03em;
+}
+.mock-tag.patina{ background:rgba(74,122,94,.18); border-color:rgba(74,122,94,.35); color:#7FB894; }
+
+/* ============================== PERSONA (Flow is made for you) ============================== */
+.persona-hero{
+  text-align:left;
+  max-width:720px;
+}
+.persona-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:40px;
+  max-width:560px;
+}
+.persona-tag{
+  padding:12px 22px;
+  border-radius:var(--r-pill);
+  border:1px solid rgba(238,229,210,.22);
+  background:transparent;
+  color:var(--dark-text);
+  font-size:.9rem;
+  transition:all .2s var(--ease);
+  cursor:pointer;
+}
+.persona-tag:hover,.persona-tag.active{
+  background:var(--pill-bg);
+  color:var(--pill-ink);
+  border-color:var(--pill-bg);
+}
+.persona-layout{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:80px;
+  align-items:start;
+}
+@media(max-width:900px){ .persona-layout{ grid-template-columns:1fr; gap:40px; } }
+.persona-detail{
+  background:var(--dark-surface);
+  border:1px solid var(--dark-line);
+  border-radius:var(--r-card);
+  padding:36px;
+}
+.persona-detail h3{
+  font-family:var(--f-display);
+  font-size:1.6rem;
+  margin-bottom:14px;
+  color:var(--dark-text);
+}
+.persona-detail h3 em{ font-style:italic; color:var(--brass-lit); }
+.persona-detail p{ color:var(--dark-text-soft); margin-bottom:22px; line-height:1.7; font-size:.95rem; }
+
+/* ============================== PRICING ============================== */
+.price-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-top:64px;
+}
+@media(max-width:1040px){ .price-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:620px){ .price-grid{ grid-template-columns:1fr; } }
+.price-card{
+  background:var(--cream-soft);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-card);
+  padding:34px 28px;
+  display:flex;
+  flex-direction:column;
+  transition:all .3s var(--ease);
+}
+.price-card:hover{ border-color:var(--patina); transform:translateY(-4px); }
+.price-card.feat{
+  background:var(--patina-deep);
+  color:var(--dark-text);
+  border-color:var(--patina-deep);
+}
+.price-card.feat .price-name,.price-card.feat .price-desc,.price-card.feat .price-feat{ color:var(--dark-text-soft); }
+.price-card.feat .price-num,.price-card.feat .price-feat strong{ color:var(--dark-text); }
+.price-card.feat .btn{ background:var(--pill-bg); border-color:var(--pill-bg); color:var(--pill-ink); }
+.price-name{
+  font-family:var(--f-mono);
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ink-mute);
+  margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+}
+.price-tag{
+  font-family:var(--f-mono);
+  font-size:.58rem;
+  padding:3px 9px;
+  border-radius:4px;
+  background:var(--brass-faint);
+  border:1px solid var(--brass);
+  color:var(--brass);
+  letter-spacing:.08em;
+}
+.price-num{
+  font-family:var(--f-display);
+  font-size:2.8rem;
+  line-height:1;
+  margin-bottom:4px;
+  color:var(--ink);
+}
+.price-num span{
+  font-family:var(--f-body);
+  font-size:.9rem;
+  font-weight:400;
+  color:var(--ink-mute);
+}
+.price-desc{
+  font-size:.88rem;
+  color:var(--ink-soft);
+  line-height:1.55;
+  margin:14px 0 24px;
+  flex:1;
+}
+.price-feats{ list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:26px; }
+.price-feat{
+  font-size:.86rem;
+  color:var(--ink-soft);
+  display:flex; align-items:center; gap:10px;
+  padding-left:0;
+}
+.price-feat::before{
+  content:'';
+  width:16px; height:16px; border-radius:50%;
+  background:var(--cream-deep);
+  flex-shrink:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234A7A5E'%3E%3Cpath d='M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z'/%3E%3C/svg%3E");
+  background-size:12px;
+  background-repeat:no-repeat;
+  background-position:center;
+}
+.price-card.feat .price-feat::before{ background-color:rgba(238,229,210,.1); }
+.price-card .btn{ width:100%; }
+
+/* ============================== TESTIMONIALS ============================== */
+.testi-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:18px;
+  margin-top:60px;
+}
+@media(max-width:1040px){ .testi-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:620px){ .testi-grid{ grid-template-columns:1fr; } }
+.testi{
+  background:var(--cream);
+  color:var(--ink);
+  border-radius:var(--r-card);
+  padding:30px 26px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.testi-avatar{
+  width:52px; height:52px; border-radius:50%;
+  background:var(--patina);
+  color:var(--cream);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-display);
+  font-size:1.1rem;
+  margin-bottom:18px;
+}
+.testi-body{
+  font-size:.94rem;
+  line-height:1.55;
+  color:var(--ink);
+  margin-bottom:18px;
+  flex:1;
+}
+.testi-name{
+  font-size:.78rem;
+  color:var(--ink-mute);
+}
+
+/* ============================== FAQ ============================== */
+.faq{
+  max-width:780px;
+  margin:60px auto 0;
+  background:var(--cream-soft);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-card);
+  overflow:hidden;
+}
+.faq-item{ border-bottom:1px solid var(--cream-line); }
+.faq-item:last-child{ border-bottom:none; }
+.faq-q{
+  width:100%;
+  text-align:left;
+  padding:26px 32px;
+  font-family:var(--f-display);
+  font-size:1.25rem;
+  color:var(--ink);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  transition:color .2s;
+}
+.faq-q:hover{ color:var(--patina); }
+.faq-ic{
+  font-size:1.5rem;
+  color:var(--ink-mute);
+  transition:transform .3s var(--ease);
+  flex-shrink:0;
+}
+.faq-item.open .faq-ic{ transform:rotate(45deg); color:var(--brass); }
+.faq-a{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .4s var(--ease);
+}
+.faq-item.open .faq-a{ max-height:400px; }
+.faq-a-inner{
+  padding:0 32px 26px;
+  color:var(--ink-soft);
+  line-height:1.7;
+  font-size:.95rem;
+}
+
+/* ============================== SCANNER ============================== */
+.scanner-card{
+  max-width:720px;
+  margin:40px auto 0;
+  background:var(--cream-soft);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-card);
+  padding:44px;
+  position:relative;
+  overflow:hidden;
+}
+.scan-row{ display:flex; gap:10px; margin-bottom:14px; }
+@media(max-width:620px){ .scan-row{ flex-direction:column; } }
+.scan-input{
+  flex:1;
+  padding:16px 22px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--cream-line);
+  background:var(--cream);
+  font-size:.95rem;
+  color:var(--ink);
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+}
+.scan-input::placeholder{ color:var(--ink-mute); font-style:italic; }
+.scan-input:focus{ border-color:var(--patina); box-shadow:0 0 0 4px rgba(58,95,74,.1); }
+.scan-note{
+  font-family:var(--f-mono);
+  font-size:.68rem;
+  color:var(--ink-mute);
+  text-align:center;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-top:16px;
+}
+.scan-line{
+  position:absolute;
+  left:0; right:0; top:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--patina-lit), var(--brass), transparent);
+  opacity:0;
+}
+.scan-line.go{ animation:sweep 1s var(--ease) forwards; }
+@keyframes sweep{ 0%{ opacity:1; transform:translateY(0); } 100%{ opacity:0; transform:translateY(380px); } }
+.scan-results{ display:none; margin-top:30px; padding-top:30px; border-top:1px solid var(--cream-line); }
+.scan-results.show{ display:block; }
+.scan-bars{ display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin-bottom:26px; }
+@media(max-width:540px){ .scan-bars{ grid-template-columns:1fr; } }
+.scan-bar-head{ display:flex; justify-content:space-between; margin-bottom:5px; }
+.scan-bar-lbl{ font-size:.82rem; color:var(--ink-soft); }
+.scan-bar-score{ font-family:var(--f-mono); font-size:.75rem; color:var(--patina); }
+.scan-bar-track{ height:5px; background:var(--cream-deep); border-radius:3px; overflow:hidden; }
+.scan-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--patina),var(--brass));
+  border-radius:3px;
+  width:0;
+  transition:width 1s var(--ease);
+}
+.scan-verdict{
+  padding:20px 22px;
+  border-radius:18px;
+  background:rgba(58,95,74,.08);
+  border:1px solid rgba(58,95,74,.2);
+  opacity:0;
+  transition:opacity .4s;
+}
+.scan-verdict.show{ opacity:1; }
+.scan-v-lbl{
+  font-family:var(--f-mono);
+  font-size:.62rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--patina);
+  margin-bottom:6px;
+}
+.scan-v-title{ font-family:var(--f-display); font-size:1.3rem; color:var(--ink); margin-bottom:6px; }
+.scan-v-text{ font-size:.9rem; color:var(--ink-soft); }
+
+/* ============================== FINAL CTA ============================== */
+.final-cta{
+  background:var(--patina-deep);
+  color:var(--dark-text);
+  border-radius:var(--r-card-lg);
+  margin:0 20px 60px;
+  padding:120px 30px 130px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.final-cta::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 40%, rgba(168,144,62,.14), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 30% 80%, rgba(74,122,94,.18), transparent 70%);
+  pointer-events:none;
+}
+.final-cta > *{ position:relative; z-index:1; }
+.final-cta .display{
+  color:var(--dark-text);
+  max-width:14ch;
+  margin:0 auto 30px;
+}
+.final-cta .sub{
+  color:var(--dark-text-soft);
+  margin:0 auto 40px;
+  max-width:32em;
+}
+.final-cta .hero-ctas{ margin-bottom:18px; }
+
+/* Dotted arrow decoration */
+.final-cta-arrow{
+  position:absolute;
+  right:8%;
+  top:18%;
+  width:140px;
+  height:140px;
+  opacity:.5;
+  pointer-events:none;
+}
+.final-cta-arrow circle{ fill:var(--brass-lit); }
+@media(max-width:820px){ .final-cta-arrow{ display:none; } }
+
+/* ============================== FOOTER ============================== */
+.site-foot{
+  padding:80px 0 0;
+}
+.foot-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:50px;
+  margin-bottom:60px;
+}
+@media(max-width:820px){ .foot-grid{ grid-template-columns:1fr 1fr; gap:40px; } }
+@media(max-width:520px){ .foot-grid{ grid-template-columns:1fr; } }
+.foot-brand{
+  font-family:var(--f-display);
+  font-size:1.4rem;
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:16px;
+}
+.foot-desc{ color:var(--ink-soft); font-size:.92rem; max-width:30em; line-height:1.6; }
+.foot-col-title{
+  font-family:var(--f-mono);
+  font-size:.68rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ink-mute);
+  margin-bottom:18px;
+}
+.foot-col a{
+  display:block;
+  font-size:.92rem;
+  color:var(--ink-soft);
+  padding:6px 0;
+  transition:color .15s;
+}
+.foot-col a:hover{ color:var(--patina); }
+.foot-logo-xl{
+  font-family:var(--f-display);
+  font-size:clamp(6rem, 20vw, 18rem);
+  line-height:.85;
+  color:var(--ink);
+  letter-spacing:-0.04em;
+  text-align:left;
+  padding:30px 0;
+  border-top:1px solid var(--cream-line);
+  border-bottom:1px solid var(--cream-line);
+  overflow:hidden;
+  white-space:nowrap;
+}
+.foot-logo-xl em{
+  font-style:italic;
+  color:var(--patina);
+}
+.foot-bottom{
+  padding:26px 0;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:14px;
+  font-family:var(--f-mono);
+  font-size:.72rem;
+  color:var(--ink-mute);
+  letter-spacing:.04em;
+}
+.foot-bottom a{ color:var(--ink-soft); margin-right:20px; }
+.foot-bottom a:hover{ color:var(--patina); }
+
+/* ============================== REVEAL ============================== */
+.reveal{ opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease), transform .9s var(--ease); }
+.reveal.in{ opacity:1; transform:translateY(0); }
+.rd1{ transition-delay:.1s; }
+.rd2{ transition-delay:.2s; }
+.rd3{ transition-delay:.3s; }
+.rd4{ transition-delay:.4s; }
+
+/* ============================== ORBIT BOB ============================== */
+.orbit-pill{ animation:bob 5s var(--ease) infinite; }
+.orbit-pill:nth-child(2){ animation-delay:.3s; }
+.orbit-pill:nth-child(3){ animation-delay:.6s; }
+.orbit-pill:nth-child(4){ animation-delay:.9s; }
+.orbit-pill:nth-child(5){ animation-delay:1.2s; }
+.orbit-pill:nth-child(6){ animation-delay:1.5s; }
+.orbit-pill:nth-child(7){ animation-delay:1.8s; }
+.orbit-pill:nth-child(8){ animation-delay:.15s; }
+.orbit-pill:nth-child(9){ animation-delay:.45s; }
+.orbit-pill:nth-child(10){ animation-delay:.75s; }
+.orbit-pill:nth-child(11){ animation-delay:1.05s; }
+.orbit-pill:nth-child(12){ animation-delay:1.35s; }
+@keyframes bob{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-8px); }
+}
+@media(max-width:820px){ .orbit-pill{ animation:none; } }
+
+/* ============================== PANEL CARD (predictive) ============================== */
+.panel-card{
+  background:var(--patina-deep);
+  border-radius:var(--r-card-lg);
+  padding:44px;
+  color:var(--dark-text);
+}
+.panel-label{
+  font-family:var(--f-mono);
+  font-size:.7rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--brass-lit);
+  margin-bottom:26px;
+}
+.panel-conf{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom:10px;
+}
+.panel-conf-lbl{ font-size:.9rem; color:var(--dark-text-soft); }
+.panel-conf-num{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:3rem;
+  color:var(--brass-lit);
+  line-height:1;
+}
+.panel-main{
+  height:6px;
+  background:rgba(238,229,210,.08);
+  border-radius:3px;
+  overflow:hidden;
+  margin-bottom:28px;
+}
+.panel-main-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--patina-lit),var(--brass));
+  border-radius:3px;
+  width:0;
+  transition:width 1.2s var(--ease);
+}
+.panel-verdict{
+  margin-top:22px;
+  padding:18px 20px;
+  border-radius:16px;
+  background:rgba(74,122,94,.18);
+  border:1px solid rgba(74,122,94,.35);
+}
+.panel-verdict-lbl{
+  font-family:var(--f-mono);
+  font-size:.62rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#7FB894;
+  margin-bottom:4px;
+}
+.panel-verdict-ttl{ font-family:var(--f-display); font-size:1.2rem; color:var(--dark-text); }
+.panel-verdict-txt{ font-size:.85rem; color:var(--dark-text-soft); margin-top:3px; }
+
+/* ============================== CHARACTERS & FLOURISHES ============================== */
+.character{
+  display:block;
+  pointer-events:none;
+}
+.char-float{
+  position:absolute;
+  z-index:1;
+  animation:charBob 6s var(--ease) infinite;
+}
+@keyframes charBob{
+  0%,100%{ transform:translateY(0) rotate(0deg); }
+  50%{ transform:translateY(-10px) rotate(-1.5deg); }
+}
+.char-wave .hand{
+  transform-origin:70% 80%;
+  animation:charWave 3.5s var(--ease) infinite;
+}
+@keyframes charWave{
+  0%,60%,100%{ transform:rotate(0deg); }
+  70%,90%{ transform:rotate(-14deg); }
+  80%{ transform:rotate(14deg); }
+}
+
+/* Hero character bottom corner */
+.hero-char{
+  position:absolute;
+  bottom:-20px;
+  left:-10px;
+  width:130px;
+  z-index:0;
+  opacity:.95;
+}
+@media(max-width:900px){ .hero-char{ width:90px; bottom:-30px; left:-20px; } }
+@media(max-width:620px){ .hero-char{ display:none; } }
+
+/* Persona section — big character on the right */
+.persona-layout{ position:relative; }
+.persona-char{
+  position:absolute;
+  right:-20px;
+  top:-30px;
+  width:280px;
+  z-index:0;
+  opacity:.95;
+}
+@media(max-width:1100px){ .persona-char{ width:220px; right:-10px; } }
+@media(max-width:900px){ .persona-char{ position:static; width:180px; margin:0 auto 24px; display:block; } }
+
+/* Brand profile character - small, behind text */
+.profile-char{
+  position:absolute;
+  right:4%;
+  top:-60px;
+  width:170px;
+  opacity:.88;
+  z-index:0;
+}
+@media(max-width:900px){ .profile-char{ display:none; } }
+
+/* Final CTA character */
+.cta-char{
+  position:absolute;
+  left:7%;
+  bottom:10%;
+  width:200px;
+  z-index:1;
+  opacity:.95;
+}
+@media(max-width:900px){ .cta-char{ width:140px; left:3%; bottom:6%; opacity:.7; } }
+@media(max-width:620px){ .cta-char{ display:none; } }
+
+/* Founder quote marks character */
+.founder-char{
+  position:absolute;
+  right:8%;
+  top:15%;
+  width:120px;
+  opacity:.7;
+  z-index:0;
+}
+@media(max-width:900px){ .founder-char{ display:none; } }
+
+/* Scribble / decorative flourishes */
+.scribble{
+  position:absolute;
+  pointer-events:none;
+  z-index:0;
+}
+.scribble path{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:500;
+  stroke-dashoffset:500;
+}
+.scribble.in path{ animation:drawScribble 1.6s var(--ease) forwards; }
+@keyframes drawScribble{ to{ stroke-dashoffset:0; } }
+
+.scribble.terra path{ stroke:var(--terra); }
+.scribble.plum path{ stroke:var(--plum); }
+.scribble.patina path{ stroke:var(--patina-lit); }
+
+/* Little decorative dots constellation */
+.dot-constellation{
+  position:absolute;
+  pointer-events:none;
+  z-index:0;
+}
+.dot-constellation circle{
+  fill:var(--brass);
+  opacity:0;
+  animation:twinkle 3s var(--ease) infinite;
+}
+.dot-constellation circle:nth-child(2){ animation-delay:.3s; fill:var(--terra); }
+.dot-constellation circle:nth-child(3){ animation-delay:.6s; fill:var(--patina-lit); }
+.dot-constellation circle:nth-child(4){ animation-delay:.9s; fill:var(--plum); }
+.dot-constellation circle:nth-child(5){ animation-delay:1.2s; fill:var(--brass-lit); }
+.dot-constellation circle:nth-child(6){ animation-delay:1.5s; fill:var(--terra-lit); }
+@keyframes twinkle{
+  0%,100%{ opacity:.2; transform:scale(1); }
+  50%{ opacity:.9; transform:scale(1.3); }
+}
+
+/* Star sparkle (wispr style) */
+.sparkle{
+  position:absolute;
+  color:var(--brass);
+  font-family:var(--f-display);
+  font-style:italic;
+  pointer-events:none;
+  animation:sparkleRot 8s linear infinite;
+  z-index:0;
+}
+@keyframes sparkleRot{
+  0%,100%{ transform:rotate(0deg) scale(1); opacity:.4; }
+  50%{ transform:rotate(180deg) scale(1.15); opacity:.9; }
+}
+
+/* Section relative anchor for absolute children */
+.has-decor{ position:relative; overflow:visible; }
+
+/* ============================== UTIL ============================== */
+.center{ text-align:center; }
+.eyebrow-center{ text-align:center; margin-bottom:14px; }
+.mt-0{ margin-top:0; }
+.mx-auto{ margin-inline:auto; }
+
+</style>
 </head>
 <body>
 
-<!-- ========== AMBIENT PARTICLES ========== -->
-<canvas id="ambientCanvas"></canvas>
+<!-- ================== SVG SYMBOL LIBRARY ================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Character 1: Founder with notebook (terracotta hair, plum shirt) -->
+    <symbol id="char-notebook" viewBox="0 0 260 220">
+      <!-- shirt -->
+      <path d="M46 220 Q46 130 96 124 L96 220 Z" fill="#7A5A6E"/>
+      <path d="M96 124 L110 124 L110 220 L96 220 Z" fill="#9A7A8E"/>
+      <!-- neck -->
+      <rect x="78" y="108" width="14" height="18" fill="#F4E4D0"/>
+      <!-- head -->
+      <circle cx="84" cy="78" r="28" fill="#F4E4D0"/>
+      <!-- hair -->
+      <path d="M56 80 Q52 38 86 33 Q118 38 114 80 Q110 52 86 50 Q58 52 56 80 Z" fill="#C4654A"/>
+      <!-- hair bun -->
+      <circle cx="112" cy="48" r="9" fill="#C4654A"/>
+      <circle cx="112" cy="48" r="5" fill="#D4785E"/>
+      <!-- glasses -->
+      <circle cx="74" cy="78" r="8.5" fill="none" stroke="#1A1610" stroke-width="2.2"/>
+      <circle cx="94" cy="78" r="8.5" fill="none" stroke="#1A1610" stroke-width="2.2"/>
+      <line x1="82.5" y1="78" x2="85.5" y2="78" stroke="#1A1610" stroke-width="2.2"/>
+      <!-- eyes behind glasses -->
+      <circle cx="74" cy="78" r="1.6" fill="#1A1610"/>
+      <circle cx="94" cy="78" r="1.6" fill="#1A1610"/>
+      <!-- smile -->
+      <path d="M76 93 Q84 98 92 93" fill="none" stroke="#1A1610" stroke-width="2" stroke-linecap="round"/>
+      <!-- cheek -->
+      <circle cx="66" cy="88" r="3" fill="#C4654A" opacity=".4"/>
+      <circle cx="102" cy="88" r="3" fill="#C4654A" opacity=".4"/>
+      <!-- notebook -->
+      <rect x="108" y="100" width="140" height="92" rx="6" fill="#F4F0EB" stroke="#1A1610" stroke-width="3"/>
+      <line x1="108" y1="118" x2="248" y2="118" stroke="#1A1610" stroke-width="2"/>
+      <!-- swirl drawing on notebook -->
+      <path d="M130 150 Q150 125 175 140 Q195 152 180 168 Q165 180 148 168 Q135 158 155 148 Q170 142 180 155" fill="none" stroke="#C4654A" stroke-width="4" stroke-linecap="round"/>
+      <!-- brass accent dots -->
+      <circle cx="220" cy="135" r="2.5" fill="#A8903E"/>
+      <circle cx="228" cy="142" r="2" fill="#A8903E"/>
+      <circle cx="222" cy="150" r="2" fill="#A8903E"/>
+      <!-- hands holding notebook -->
+      <circle cx="112" cy="146" r="10" fill="#F4E4D0" stroke="#1A1610" stroke-width="2.2"/>
+      <circle cx="244" cy="146" r="10" fill="#F4E4D0" stroke="#1A1610" stroke-width="2.2"/>
+      <!-- left arm -->
+      <path d="M96 124 Q100 135 112 146" fill="none" stroke="#7A5A6E" stroke-width="12" stroke-linecap="round"/>
+    </symbol>
 
-<!-- ========== NAV ========== -->
-<nav class="nav" id="nav">
+    <!-- Character 2: Cheering person with hands up (dark hair, medium-warm skin, brass shirt) -->
+    <symbol id="char-cheer" viewBox="0 0 220 260">
+      <!-- shirt -->
+      <path d="M65 260 Q65 165 110 160 Q155 165 155 260 Z" fill="#A8903E"/>
+      <!-- shirt fold -->
+      <path d="M110 160 L110 260" stroke="#8A7530" stroke-width="2" opacity=".5"/>
+      <!-- neck -->
+      <rect x="100" y="140" width="20" height="22" fill="#8B6E4E"/>
+      <!-- head -->
+      <circle cx="110" cy="100" r="40" fill="#8B6E4E"/>
+      <!-- hair messy top -->
+      <path d="M68 100 Q62 44 110 38 Q158 44 152 100 Q148 60 110 58 Q72 60 68 100 Z" fill="#2A1F14"/>
+      <!-- hair tufts -->
+      <path d="M80 55 Q76 38 92 42" fill="#2A1F14"/>
+      <path d="M138 55 Q142 38 126 42" fill="#2A1F14"/>
+      <path d="M110 38 Q108 22 118 30" fill="#2A1F14"/>
+      <!-- glasses round -->
+      <circle cx="95" cy="102" r="13" fill="none" stroke="#7A5A6E" stroke-width="3"/>
+      <circle cx="125" cy="102" r="13" fill="none" stroke="#7A5A6E" stroke-width="3"/>
+      <line x1="108" y1="102" x2="112" y2="102" stroke="#7A5A6E" stroke-width="3"/>
+      <!-- happy closed eyes -->
+      <path d="M89 102 Q95 98 101 102" fill="none" stroke="#1A1610" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M119 102 Q125 98 131 102" fill="none" stroke="#1A1610" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- big smile -->
+      <path d="M98 122 Q110 132 122 122" fill="none" stroke="#1A1610" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- cheek blush -->
+      <circle cx="80" cy="115" r="5" fill="#C4654A" opacity=".35"/>
+      <circle cx="140" cy="115" r="5" fill="#C4654A" opacity=".35"/>
+      <!-- left arm raised -->
+      <path d="M70 180 Q40 140 55 95 Q65 75 80 90" fill="none" stroke="#A8903E" stroke-width="16" stroke-linecap="round"/>
+      <circle cx="55" cy="88" r="9" fill="#8B6E4E" stroke="#1A1610" stroke-width="2"/>
+      <!-- right arm raised with sparkle -->
+      <path d="M150 180 Q180 140 165 95 Q155 75 140 90" fill="none" stroke="#A8903E" stroke-width="16" stroke-linecap="round"/>
+      <circle cx="165" cy="88" r="9" fill="#8B6E4E" stroke="#1A1610" stroke-width="2"/>
+      <!-- sparkle above left hand -->
+      <g transform="translate(55,70)">
+        <path d="M0 -8 L2 -2 L8 0 L2 2 L0 8 L-2 2 L-8 0 L-2 -2 Z" fill="#A8903E"/>
+      </g>
+      <g transform="translate(165,70)">
+        <path d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5 Z" fill="#C4A84E"/>
+      </g>
+    </symbol>
+
+    <!-- Character 3: Speaker with megaphone/speech bubble (for CTA) -->
+    <symbol id="char-speak" viewBox="0 0 260 240">
+      <!-- shirt -->
+      <path d="M58 240 L58 140 Q58 118 100 116 Q142 118 142 140 L142 240 Z" fill="#3A5F4A"/>
+      <!-- neck -->
+      <rect x="90" y="96" width="20" height="22" fill="#F4E4D0"/>
+      <!-- head -->
+      <circle cx="100" cy="68" r="32" fill="#F4E4D0"/>
+      <!-- dark curly hair -->
+      <path d="M68 70 Q58 26 100 22 Q142 26 132 70 Q138 44 100 42 Q62 44 68 70 Z" fill="#1A1610"/>
+      <circle cx="74" cy="42" r="9" fill="#1A1610"/>
+      <circle cx="126" cy="42" r="9" fill="#1A1610"/>
+      <circle cx="86" cy="30" r="7" fill="#1A1610"/>
+      <circle cx="114" cy="30" r="7" fill="#1A1610"/>
+      <!-- eyes -->
+      <circle cx="88" cy="70" r="2.5" fill="#1A1610"/>
+      <circle cx="112" cy="70" r="2.5" fill="#1A1610"/>
+      <!-- open smile -->
+      <path d="M88 86 Q100 95 112 86 Q108 92 100 92 Q92 92 88 86 Z" fill="#1A1610"/>
+      <!-- cheek -->
+      <circle cx="76" cy="82" r="4" fill="#C4654A" opacity=".4"/>
+      <circle cx="124" cy="82" r="4" fill="#C4654A" opacity=".4"/>
+      <!-- raised arm with mic -->
+      <path d="M138 160 Q175 130 180 80" fill="none" stroke="#C4654A" stroke-width="18" stroke-linecap="round"/>
+      <circle cx="180" cy="74" r="10" fill="#F4E4D0" stroke="#1A1610" stroke-width="2"/>
+      <!-- mic body -->
+      <circle cx="190" cy="56" r="11" fill="#7A5A6E" stroke="#1A1610" stroke-width="2"/>
+      <rect x="194" y="60" width="3" height="14" fill="#1A1610" transform="rotate(25 195 67)"/>
+      <!-- speech bubble -->
+      <path d="M200 30 Q240 18 250 48 Q252 72 220 74 Q210 88 200 78 Q192 70 195 58 Q192 40 200 30 Z" fill="#A8903E"/>
+      <path d="M210 42 L228 42" stroke="#1A1610" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M210 52 L240 52" stroke="#1A1610" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M210 62 L232 62" stroke="#1A1610" stroke-width="2.5" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- Character 4: Small thinker (hand on chin) for hero corner -->
+    <symbol id="char-think" viewBox="0 0 180 220">
+      <!-- shirt -->
+      <path d="M40 220 L40 140 Q40 118 90 116 Q140 118 140 140 L140 220 Z" fill="#3A5F4A"/>
+      <!-- neck -->
+      <rect x="80" y="98" width="20" height="20" fill="#F4E4D0"/>
+      <!-- head -->
+      <circle cx="90" cy="72" r="32" fill="#F4E4D0"/>
+      <!-- hair swoop -->
+      <path d="M58 72 Q54 30 90 26 Q126 30 122 72 Q118 46 90 44 Q62 46 58 72 Z" fill="#5A4030"/>
+      <path d="M58 72 Q55 96 70 100" fill="#5A4030"/>
+      <!-- glasses -->
+      <circle cx="78" cy="72" r="9" fill="none" stroke="#1A1610" stroke-width="2.2"/>
+      <circle cx="102" cy="72" r="9" fill="none" stroke="#1A1610" stroke-width="2.2"/>
+      <line x1="87" y1="72" x2="93" y2="72" stroke="#1A1610" stroke-width="2.2"/>
+      <circle cx="78" cy="72" r="1.6" fill="#1A1610"/>
+      <circle cx="102" cy="72" r="1.6" fill="#1A1610"/>
+      <!-- subtle smile -->
+      <path d="M82 88 Q90 92 98 88" fill="none" stroke="#1A1610" stroke-width="2" stroke-linecap="round"/>
+      <!-- thinking arm -->
+      <path d="M122 150 Q145 130 135 95" fill="none" stroke="#3A5F4A" stroke-width="14" stroke-linecap="round"/>
+      <circle cx="132" cy="92" r="9" fill="#F4E4D0" stroke="#1A1610" stroke-width="2"/>
+      <!-- thought bubbles -->
+      <circle cx="148" cy="58" r="4" fill="#A8903E" opacity=".6"/>
+      <circle cx="158" cy="44" r="6" fill="#C4654A" opacity=".6"/>
+      <circle cx="172" cy="28" r="8" fill="#7A5A6E" opacity=".6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ================== BANNER ================== -->
+<div class="banner">
+  <span><strong>Free forever tier</strong> — 3 tools · No account required</span>
+  <a href="https://app.quantumbranding.ai/signal-scan.html">Try it now →</a>
+</div>
+
+<!-- ================== NAV ================== -->
+<div class="nav-spacer"></div>
+<header class="nav">
   <div class="nav-inner">
-    <a href="#" class="nav-logo"><span class="pulse-dot"></span>Quantum Branding</a>
-    <ul class="nav-links">
-      <li><a href="#how-it-works">How it works</a></li>
-      <li><a href="#use-cases">What you get</a></li>
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#about">About Nizzar</a></li>
-    </ul>
+    <a href="#" class="nav-brand">
+      <span class="dot"></span>Quantum Branding
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#what">What you get</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
     <div class="nav-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><span id="themeIcon">&#9790;</span></button>
       <a href="https://app.quantumbranding.ai" class="btn btn-ghost btn-sm">Sign in</a>
       <a href="#scanner" class="btn btn-primary btn-sm">Start free</a>
-      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
-</nav>
+</header>
 
-<!-- ========== MOBILE MENU ========== -->
-<div class="mobile-menu" id="mobileMenu">
-  <div class="mm-header">
-    <div class="nav-logo"><span class="pulse-dot"></span>Quantum Branding</div>
-    <button class="mm-close" id="mmClose">&#x2715;</button>
+<!-- Mobile menu -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-head">
+    <div class="nav-brand"><span class="dot"></span>Quantum Branding</div>
+    <button class="mmenu-close" id="mmenuClose">✕</button>
   </div>
-  <nav class="mm-body">
-    <button class="mm-link" onclick="goTo('how-it-works')">How it works</button>
-    <button class="mm-link" onclick="goTo('use-cases')">What you get</button>
-    <button class="mm-link" onclick="goTo('pricing')">Pricing</button>
-    <button class="mm-link" onclick="goTo('about')">About Nizzar</button>
-    <button class="mm-link" onclick="goTo('scanner')">Free scan</button>
+  <nav class="mmenu-list">
+    <a href="#how">How it works</a>
+    <a href="#what">What you get</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#about">About Nizzar</a>
+    <a href="#scanner">Free scan</a>
   </nav>
-  <div class="mm-footer">
+  <div class="mmenu-foot">
     <a href="https://app.quantumbranding.ai" class="btn btn-primary" style="width:100%">Enter QB BrandOS</a>
   </div>
 </div>
 
-<!-- ========== HERO ========== -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-grid" style="position:relative">
-      <div>
-        <div class="hero-badge hero-cascade" style="animation-delay:0.1s">
-          <span class="pulse-dot"></span>
-          <span class="hero-badge-text">The Brand Operating System</span>
-        </div>
-        <h1 class="h1 hero-cascade" style="animation-delay:0.2s">Answer questions.<br><span class="shimmer">Get a brand.</span></h1>
-        <p class="hero-subtitle hero-cascade" style="animation-delay:0.3s">Tell us who you are and what you're building. AI builds your identity, look, voice, content, and strategy. Step by step. All connected.</p>
-        <div class="hero-buttons hero-cascade" style="animation-delay:0.4s">
-          <a href="#scanner" class="btn btn-primary">&#x2726; Start free</a>
-          <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
-        </div>
-        <div class="hero-stats hero-cascade" style="animation-delay:0.5s">
-          <div><div class="hero-stat-value">5 min</div><div class="hero-stat-label">To your first result</div></div>
-          <div><div class="hero-stat-value">18</div><div class="hero-stat-label">Connected AI tools</div></div>
-          <div><div class="hero-stat-value">$0</div><div class="hero-stat-label">To start. Free forever.</div></div>
-        </div>
-      </div>
-      <div style="position:absolute;bottom:-40px;right:0;opacity:0.12;pointer-events:none;">
-        <svg viewBox="0 0 220 300" width="120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <g stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-            <path d="M40 300 L52 170 Q62 140 110 140 Q158 140 168 170 L180 300" fill="#666666"/>
-            <path d="M70 300 L74 162 Q86 152 110 152 Q134 152 146 162 L150 300 Z" fill="#333333"/>
-            <path d="M96 152 L96 130 Q96 120 110 120 Q124 120 124 130 L124 152" fill="none"/>
-            <path d="M100 118 L100 140 L120 140 L120 118 Z" fill="#EEDCC8"/>
-            <ellipse cx="110" cy="78" rx="36" ry="42" fill="#EEDCC8"/>
-            <path d="M76 74 Q74 38 110 34 Q146 38 144 74 Q140 56 110 54 Q80 56 76 74 Z" fill="#2A2A2A"/>
-            <circle cx="98" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-            <circle cx="122" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-            <path d="M110 88 L108 100"/>
-            <path d="M104 108 L116 108"/>
-            <path d="M52 170 L46 232 L66 236 L72 180" fill="#666666"/>
-            <path d="M168 170 L174 232 L154 236 L148 180" fill="#666666"/>
-            <ellipse cx="56" cy="240" rx="10" ry="8" fill="#EEDCC8"/>
-            <ellipse cx="164" cy="240" rx="10" ry="8" fill="#EEDCC8"/>
-            <circle cx="110" cy="248" r="11" fill="#A8903E"/>
-            <circle cx="110" cy="248" r="4" fill="#333333" stroke="none"/>
-            <rect x="119" y="246" width="26" height="5" fill="#A8903E"/>
-            <rect x="136" y="251" width="4" height="6" fill="#A8903E"/>
-            <rect x="128" y="251" width="4" height="6" fill="#A8903E"/>
-          </g>
-        </svg>
-      </div>
-      <div class="hero-cascade-card" style="animation-delay:0.6s">
-        <div class="demo-card" id="demoCard">
-          <div class="demo-titlebar">
-            <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
-            <span class="demo-titlebar-text">brand soul map</span>
-          </div>
-          <div class="demo-body">
-            <div class="demo-body-label">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--patina-lit)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              Your Brand Profile
-            </div>
-            <div class="demo-field"><div class="demo-field-key">Brand Name</div><div class="demo-field-val" id="demoName"><span class="cursor-blink"></span></div></div>
-            <div class="demo-field"><div class="demo-field-key">Who You Are</div><div class="demo-field-val sm" id="demoEssence"></div></div>
-            <div class="demo-sep"></div>
-            <div class="demo-row">
-              <div class="demo-field"><div class="demo-field-key">Your Energy</div><div class="demo-field-val" id="demoEnergy"></div></div>
-              <div class="demo-field"><div class="demo-field-key">Archetype</div><div class="demo-field-val" id="demoArchetype"></div></div>
-            </div>
-            <div class="demo-sep"></div>
-            <div class="demo-field"><div class="demo-field-key">Your One Line</div><div class="demo-field-val italic" id="demoLine"></div></div>
-            <div class="demo-status"><span class="pulse-dot" style="width:6px;height:6px;"></span>Brand Profile building...</div>
-          </div>
-        </div>
-      </div>
+<!-- ================== HERO ================== -->
+<section class="hero has-decor">
+  <!-- Thinker character bottom-left -->
+  <svg class="character hero-char char-float" viewBox="0 0 180 220"><use href="#char-think"/></svg>
+
+  <!-- Decorative scribble top-right of hero -->
+  <svg class="scribble reveal" style="top:12%;right:6%;width:110px;height:60px" viewBox="0 0 110 60">
+    <path d="M5 30 Q20 5 40 28 Q60 50 80 25 Q95 8 105 30"/>
+  </svg>
+  <!-- Dot constellation -->
+  <svg class="dot-constellation" style="top:20%;left:8%;width:70px;height:70px" viewBox="0 0 70 70">
+    <circle cx="10" cy="15" r="3"/>
+    <circle cx="35" cy="8" r="2.5"/>
+    <circle cx="58" cy="22" r="3"/>
+    <circle cx="20" cy="40" r="2"/>
+    <circle cx="48" cy="48" r="2.5"/>
+    <circle cx="30" cy="60" r="2"/>
+  </svg>
+
+  <div class="wrap">
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      <span>The Brand Operating System</span>
+    </div>
+    <h1 class="display h1">
+      Answer questions, <em class="underlined">get a brand
+        <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+      </em>
+    </h1>
+    <p class="sub">The AI brand operating system that turns your answers into identity, voice, content, and strategy — all connected through one Brand Profile.</p>
+    <div class="hero-ctas">
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-lg">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L14 8 20 10 14 12 12 18 10 12 4 10 10 8z"/></svg>
+        Start free
+      </a>
+      <a href="#how" class="btn btn-lg">See how it works</a>
+    </div>
+    <p class="hero-micro">Free forever tier · No credit card · 5 min to your first brand</p>
+
+    <!-- Orbit of tool pills -->
+    <div class="hero-orbit">
+      <div class="orbit-pill op-1"><span class="od"></span>Signal Scan</div>
+      <div class="orbit-pill op-2 brass"><span class="od"></span>Brand Soul Map</div>
+      <div class="orbit-pill op-3 deep"><span class="od"></span>Sensescape</div>
+      <div class="orbit-pill op-4"><span class="od"></span>Visual DNA</div>
+      <div class="orbit-pill op-5 brass"><span class="od"></span>War Table</div>
+      <div class="orbit-pill op-6"><span class="od"></span>Logo Direction</div>
+      <div class="orbit-pill op-7 deep"><span class="od"></span>Voice Guide</div>
+      <div class="orbit-pill op-8 brass"><span class="od"></span>Predictive Panel</div>
+      <div class="orbit-pill op-9"><span class="od"></span>Instagram Agent</div>
+      <div class="orbit-pill op-10"><span class="od"></span>LinkedIn Agent</div>
+      <div class="orbit-pill op-11 brass"><span class="od"></span>Newsletter</div>
+      <div class="orbit-pill op-12 deep"><span class="od"></span>Quarterly Review</div>
     </div>
   </div>
 </section>
 
-<!-- ========== MARQUEE ========== -->
-<section class="marquee-section">
-  <div class="marquee-wrap">
-    <div class="marquee-track" id="marqueeTrack"></div>
-  </div>
-</section>
-
-<!-- ========== INTERACTIVE SCANNER ========== -->
-<section class="scanner-section" id="scanner">
-  <div class="container">
-    <div style="text-align:center;margin-bottom:32px" class="reveal">
-      <div class="label">Free &middot; 30 seconds &middot; Instant</div>
-      <h2 class="h2" style="margin-top:10px">Try it now.</h2>
-      <p style="color:var(--text-2);font-size:1rem;max-width:420px;margin:10px auto 0">Type your brand name and what you do. Get an instant brand signal read.</p>
-    </div>
-    <div class="scanner-card glass reveal rd1" id="scannerCard">
-      <div class="scan-line" id="scanLine"></div>
-      <div class="scan-input-row">
-        <input type="text" class="scan-input" id="scanInput" placeholder="e.g. Sunrise Bakery &mdash; a neighborhood bakery in Boston">
-        <button type="button" class="btn btn-primary scan-btn" id="scanBtn">Scan my brand</button>
-      </div>
-      <div class="scan-results" id="scanResults">
-        <div class="scan-bars" id="scanBars"></div>
-        <div class="scan-verdict" id="scanVerdict">
-          <div class="scan-verdict-label">Your biggest gap</div>
-          <div class="scan-verdict-title" id="scanVerdictTitle"></div>
-          <div class="scan-verdict-text" id="scanVerdictText"></div>
-        </div>
-        <div class="scan-ctas">
-          <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-sm">Full diagnostic (free)</a>
-          <a href="https://app.quantumbranding.ai" class="btn btn-secondary btn-sm">Enter QB BrandOS</a>
-        </div>
-      </div>
-      <div class="scan-note">No account &middot; No credit card &middot; Instant results</div>
+<!-- ================== LOGO STRIP (dark) ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot logo-strip">
+  <div class="wrap">
+    <p class="eye-center">Nizzar's work has been featured by</p>
+    <div class="logo-row">
+      <span>New York Times</span>
+      <span>Time Magazine</span>
+      <span>Google Arts &amp; Culture</span>
+      <span>United Nations</span>
+      <span>USAID</span>
+      <span>TV5 Monde</span>
+      <span>LA Lakers</span>
+      <span>UM6P</span>
     </div>
   </div>
 </section>
 
-<!-- ========== VIDEO PLACEHOLDER ========== -->
-<section class="video-section">
-  <div class="container">
-    <div class="video-card glass reveal" data-placeholder="Video: QB BrandOS 60-second overview">
-      <div class="video-inner">
-        <div class="video-play"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
-        <span class="video-label">See QB BrandOS in action &mdash; 60 seconds</span>
-      </div>
-    </div>
+<!-- ================== STAT BLOCK ================== -->
+<section class="stat-block has-decor">
+  <svg class="scribble plum" style="top:18%;left:10%;width:90px;height:70px" viewBox="0 0 90 70">
+    <path d="M5 35 Q20 10 40 32 Q55 50 70 20 Q80 5 85 25"/>
+  </svg>
+  <svg class="scribble terra" style="bottom:20%;right:12%;width:110px;height:70px" viewBox="0 0 110 70">
+    <path d="M5 20 Q25 50 50 25 Q75 0 100 30"/>
+  </svg>
+  <div class="sparkle" style="top:28%;right:18%;font-size:2rem">✦</div>
+  <div class="sparkle" style="bottom:32%;left:15%;font-size:1.4rem;animation-delay:1.5s">✦</div>
+  <div class="wrap">
+    <h2 class="display big reveal">
+      18 tools, <em class="underlined">one brain
+        <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+      </em>
+    </h2>
+    <p class="sub reveal rd1">One Brand Profile. Every tool reads from it. You answer questions once — identity, voice, content, and strategy stay connected. Nothing drifts. Everything compounds.</p>
   </div>
 </section>
 
-<!-- ========== HOW IT WORKS ========== -->
-<section class="how-section" id="how-it-works">
-  <div class="container">
-    <div style="text-align:center" class="reveal">
-      <div class="label">How it works</div>
-      <h2 class="h2">Three steps. That's it.</h2>
+<!-- ================== HOW IT WORKS (dark) ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot section" id="how">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">How it works</div>
+      <h2 class="display h2 reveal rd1">Three steps. <em>That's it.</em></h2>
     </div>
     <div class="how-grid">
-      <div class="how-card glass glass-hover reveal rd1">
-        <div class="how-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <div class="how-step">Step 01</div>
+      <div class="how-card reveal rd1">
+        <div class="how-num">01</div>
         <div class="how-name">Answer</div>
         <p class="how-desc">You answer questions about your brand. Who you are, what you believe, who you serve. No wrong answers. The system guides you.</p>
-        <div class="how-output">Result: Your Brand Profile</div>
+        <div class="how-out">Result · Your Brand Profile</div>
       </div>
-      <div class="how-card glass glass-hover reveal rd2">
-        <div class="how-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><line x1="6" y1="7" x2="10" y2="10"/><line x1="14" y1="10" x2="18" y2="7"/><line x1="6" y1="17" x2="10" y2="14"/><line x1="14" y1="14" x2="18" y2="17"/></svg>
-        </div>
-        <div class="how-step">Step 02</div>
+      <div class="how-card reveal rd2">
+        <div class="how-num">02</div>
         <div class="how-name">Build</div>
-        <p class="how-desc">AI turns your answers into a complete brand: identity, visual direction, voice, content, strategy. Everything stays connected through your Brand Profile.</p>
-        <div class="how-output">Result: Logo direction, voice guide, 30+ content pieces</div>
+        <p class="how-desc">AI turns your answers into a complete brand — identity, visual direction, voice, content, strategy. Everything stays connected through your Brand Profile.</p>
+        <div class="how-out">Result · Logo · Voice · 30+ posts</div>
       </div>
-      <div class="how-card glass glass-hover reveal rd3">
-        <div class="how-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
-        <div class="how-step">Step 03</div>
+      <div class="how-card reveal rd3">
+        <div class="how-num">03</div>
         <div class="how-name">Launch</div>
-        <p class="how-desc">Your content is written. Your visual direction is set. Your voice is defined. Your strategy is mapped. You go live with a brand that holds.</p>
-        <div class="how-output">Result: A brand ready to publish</div>
+        <p class="how-desc">Your content is written. Visual direction set. Voice defined. Strategy mapped. You go live with a brand that actually holds together.</p>
+        <div class="how-out">Result · A brand ready to publish</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== BRAND PROFILE DIFFERENTIATOR ========== -->
-<section class="differ-section" id="brand-profile">
-  <div class="container">
-    <div class="differ-grid">
-      <div class="differ-text reveal">
-        <div class="label label-brass">The secret</div>
-        <h2 class="h2">One profile. Every tool reads it.</h2>
-        <p>You answer questions once. Your Brand Profile stores who you are, what you stand for, how you sound, and who you serve. All 18 tools read from it. Nothing is disconnected. Everything compounds.</p>
-        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary">Start your brand profile</a>
-        <div style="margin-top:24px;opacity:0.15;pointer-events:none;">
-          <svg viewBox="0 0 220 300" width="100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <g stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-              <path d="M40 300 L52 170 Q62 140 110 140 Q158 140 168 170 L180 300" fill="#3A5F4A"/>
-              <path d="M88 140 L110 196 L132 140 Z" fill="#2A2A2A"/>
-              <path d="M100 118 L100 142 L120 142 L120 118 Z" fill="#EEDCC8"/>
-              <ellipse cx="110" cy="78" rx="36" ry="42" fill="#EEDCC8"/>
-              <path d="M74 72 Q72 36 110 32 Q148 36 146 76 Q140 58 110 54 Q82 56 74 72 Z" fill="#2A2A2A"/>
-              <circle cx="98" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-              <circle cx="122" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-              <path d="M104 108 Q110 112 116 108"/>
-              <path d="M168 170 L176 220 L148 228 L140 180" fill="#3A5F4A"/>
-              <path d="M52 170 L44 240 L62 246 L72 180" fill="#3A5F4A"/>
-              <ellipse cx="140" cy="232" rx="10" ry="8" fill="#EEDCC8"/>
-              <ellipse cx="74" cy="244" rx="10" ry="8" fill="#EEDCC8"/>
-              <rect x="76" y="216" width="66" height="46" fill="#333333"/>
-              <line x1="76" y1="230" x2="142" y2="230"/>
-              <line x1="136" y1="216" x2="136" y2="262"/>
-            </g>
-          </svg>
+<!-- ================== BRAND PROFILE FEATURE ================== -->
+<section class="section has-decor">
+  <!-- Notebook character floating in the background -->
+  <svg class="character profile-char char-float" viewBox="0 0 260 220"><use href="#char-notebook"/></svg>
+  <!-- sparkle accent -->
+  <svg class="scribble terra reveal" style="top:18%;left:38%;width:80px;height:50px" viewBox="0 0 80 50">
+    <path d="M5 25 Q25 5 45 28 T75 22"/>
+  </svg>
+
+  <div class="wrap feat-two">
+    <div class="feat-text reveal">
+      <div class="eyebrow">The secret</div>
+      <h2 class="display h2">One profile, <em>every tool reads it.</em></h2>
+      <p>You answer questions once. Your Brand Profile stores who you are, what you stand for, how you sound, and who you serve. All 18 tools read from it. Nothing is disconnected. Everything compounds.</p>
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary">Start your Brand Profile</a>
+    </div>
+    <div class="reveal rd2">
+      <div class="device-card">
+        <div class="device-label">Brand Soul Map</div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Brand essence</span><span class="prof-pct">95%</span></div>
+          <div class="prof-val">"The intersection of craft and ambition"</div>
+          <div class="prof-track"><div class="prof-fill" data-w="95"></div></div>
         </div>
-      </div>
-      <div class="reveal rd2">
-        <div class="profile-card glass">
-          <div class="profile-row">
-            <div class="profile-meta"><span class="profile-label">Brand essence</span><span class="profile-pct">95%</span></div>
-            <div class="profile-value" style="margin-bottom:6px">"The intersection of craft and ambition"</div>
-            <div class="profile-track"><div class="profile-fill" data-width="95"></div></div>
-          </div>
-          <div class="profile-row">
-            <div class="profile-meta"><span class="profile-label">Natural force</span><span class="profile-pct">82%</span></div>
-            <div class="profile-value" style="margin-bottom:6px">Wildfire</div>
-            <div class="profile-track"><div class="profile-fill" data-width="82"></div></div>
-          </div>
-          <div class="profile-row">
-            <div class="profile-meta"><span class="profile-label">Archetype</span><span class="profile-pct">88%</span></div>
-            <div class="profile-value" style="margin-bottom:6px">The Alchemist</div>
-            <div class="profile-track"><div class="profile-fill" data-width="88"></div></div>
-          </div>
-          <div class="profile-row">
-            <div class="profile-meta"><span class="profile-label">Primary persona</span><span class="profile-pct">76%</span></div>
-            <div class="profile-value" style="margin-bottom:6px">"Founders who outgrew their brand"</div>
-            <div class="profile-track"><div class="profile-fill" data-width="76"></div></div>
-          </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Natural force</span><span class="prof-pct">82%</span></div>
+          <div class="prof-val">Wildfire</div>
+          <div class="prof-track"><div class="prof-fill" data-w="82"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Archetype</span><span class="prof-pct">88%</span></div>
+          <div class="prof-val">The Alchemist</div>
+          <div class="prof-track"><div class="prof-fill" data-w="88"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Primary persona</span><span class="prof-pct">76%</span></div>
+          <div class="prof-val">"Founders who outgrew their brand"</div>
+          <div class="prof-track"><div class="prof-fill" data-w="76"></div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== WHAT YOU GET — TIMELINE ========== -->
-<section class="timeline-section" id="use-cases">
-  <div class="container">
-    <div style="text-align:center" class="reveal">
-      <div class="label">What you get</div>
-      <h2 class="h2">Everything your brand needs.</h2>
-      <p style="color:var(--text-2);font-size:1rem;margin-top:8px">Built step by step.</p>
+<!-- ================== SCANNER ================== -->
+<section class="section-tight" id="scanner">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">Free · 30 seconds · Instant</div>
+      <h2 class="display h2 reveal rd1">Try it, <em>right now.</em></h2>
+      <p class="sub mx-auto reveal rd2" style="margin-top:16px">Type your brand name and what you do. Get an instant brand signal read across 6 dimensions.</p>
     </div>
-    <div class="timeline">
-      <div class="timeline-item reveal">
-        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-green"></div></div>
-        <div class="timeline-phase phase-green">Phase 01 &middot; Discovery</div>
-        <div class="timeline-name">Your identity</div>
-        <p class="timeline-desc">Answer questions about who you are and what you believe. You get a complete brand profile: your personality, your energy, your one-liner, and the truth your brand is built on.</p>
-        <div style="padding:16px;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);max-width:400px;">
-  <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:10px;">Brand Soul Map</div>
-  <div style="font-family:var(--font-display);font-size:1rem;color:var(--text-1);margin-bottom:4px;">Sunrise Bakery</div>
-  <div style="font-size:0.78rem;color:var(--text-2);font-style:italic;margin-bottom:10px;">"Every loaf is a love letter to slow mornings."</div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <span style="padding:3px 10px;border-radius:50px;background:var(--patina-faint);border:1px solid var(--patina-dim);font-family:var(--font-mono);font-size:0.6rem;color:var(--patina-lit);">The Caregiver</span>
-    <span style="padding:3px 10px;border-radius:50px;background:var(--brass-faint);border:1px solid var(--brass-dim);font-family:var(--font-mono);font-size:0.6rem;color:var(--brass);">Warm, Golden</span>
-  </div>
-</div>
-      </div>
-      <div class="timeline-item reveal rd1">
-        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-blue"></div></div>
-        <div class="timeline-phase phase-blue">Phase 02 &middot; Creation</div>
-        <div class="timeline-name">Your logo + voice</div>
-        <p class="timeline-desc">Get a complete logo brief with AI-generated direction. Then build your brand voice with writing rules, tone guidelines, and ready-to-use templates.</p>
-        <div style="padding:16px;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);max-width:400px;">
-  <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:10px;">Logo Direction Brief</div>
-  <div style="font-size:0.78rem;color:var(--text-2);margin-bottom:8px;">Wordmark with hand-lettered warmth. Avoid geometric precision. Think bakery chalk, not corporate sans.</div>
-  <div style="display:flex;gap:12px;">
-    <div style="width:48px;height:48px;border-radius:8px;background:var(--brass-faint);border:1px solid var(--brass-dim);"></div>
-    <div style="width:48px;height:48px;border-radius:8px;background:var(--patina-faint);border:1px solid var(--patina-dim);"></div>
-    <div style="width:48px;height:48px;border-radius:8px;background:var(--bg-elevated);border:1px solid var(--border-subtle);"></div>
-  </div>
-</div>
-      </div>
-      <div class="timeline-item reveal rd2">
-        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-warm"></div></div>
-        <div class="timeline-phase phase-warm">Validation Gate</div>
-        <div class="timeline-name">Test before you spend</div>
-        <p class="timeline-desc">The Predictive Panel runs your concept through thousands of simulated customers. You see who responds, what works, and whether to go or wait.</p>
-        <div style="padding:16px;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);max-width:400px;">
-  <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:10px;">Predictive Panel</div>
-  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
-    <span style="font-size:0.78rem;color:var(--text-2);">Confidence</span>
-    <span style="font-family:var(--font-display);font-size:1.2rem;color:var(--patina-lit);">78%</span>
-  </div>
-  <div style="height:4px;border-radius:2px;background:var(--bg-elevated);overflow:hidden;margin-bottom:10px;">
-    <div style="width:78%;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--patina),var(--brass));"></div>
-  </div>
-  <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--patina-lit);text-transform:uppercase;letter-spacing:1px;">Verdict: GO</div>
-</div>
-      </div>
-      <div class="timeline-item reveal rd3">
-        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-green"></div></div>
-        <div class="timeline-phase phase-green">Phase 03 &middot; Content</div>
-        <div class="timeline-name">Your first month of content</div>
-        <p class="timeline-desc">Get your first 12 Instagram posts, 20 LinkedIn posts, 6 YouTube scripts, and a full newsletter plan. All written in your voice. All on brand.</p>
-        <div style="padding:16px;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);max-width:400px;">
-  <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:10px;">Instagram Content Plan</div>
-  <div style="font-size:0.78rem;color:var(--text-2);margin-bottom:6px;">Post 1/12: "The smell that starts the line"</div>
-  <div style="font-size:0.78rem;color:var(--text-2);margin-bottom:6px;">Post 2/12: "What 4AM looks like here"</div>
-  <div style="font-size:0.78rem;color:var(--text-2);margin-bottom:6px;">Post 3/12: "The last loaf problem"</div>
-  <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:8px;">+ 9 more posts with captions</div>
-</div>
-      </div>
-      <div class="timeline-item reveal rd4">
-        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-blue"></div></div>
-        <div class="timeline-phase phase-blue">Phase 04 &middot; Execution</div>
-        <div class="timeline-name">Multiply everything</div>
-        <p class="timeline-desc">One piece of content becomes up to 25 pieces across 10 platforms. All rebuilt natively. All on-brand. Nothing copy-pasted.</p>
-        <div style="padding:16px;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);max-width:400px;">
-  <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:10px;">Content Multiplied</div>
-  <div style="font-size:0.78rem;color:var(--text-2);margin-bottom:4px;">1 blog post became:</div>
-  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-    <span style="padding:3px 8px;border-radius:4px;background:var(--bg-elevated);font-family:var(--font-mono);font-size:0.58rem;color:var(--text-3);">4 Instagram</span>
-    <span style="padding:3px 8px;border-radius:4px;background:var(--bg-elevated);font-family:var(--font-mono);font-size:0.58rem;color:var(--text-3);">3 LinkedIn</span>
-    <span style="padding:3px 8px;border-radius:4px;background:var(--bg-elevated);font-family:var(--font-mono);font-size:0.58rem;color:var(--text-3);">2 Threads</span>
-    <span style="padding:3px 8px;border-radius:4px;background:var(--bg-elevated);font-family:var(--font-mono);font-size:0.58rem;color:var(--text-3);">1 Newsletter</span>
-    <span style="padding:3px 8px;border-radius:4px;background:var(--bg-elevated);font-family:var(--font-mono);font-size:0.58rem;color:var(--text-3);">6 Stories</span>
-  </div>
-</div>
-      </div>
-      <div class="timeline-item reveal rd5">
-        <div class="timeline-dot" data-dot><div class="timeline-dot-inner dot-warm"></div></div>
-        <div class="timeline-phase phase-warm">Phase 05 &middot; Intelligence</div>
-        <div class="timeline-name">Know what is working</div>
-        <p class="timeline-desc">See how your brand is performing. Get a quarterly review that updates your profile and tells you what to do next. Your brand gets smarter every 90 days.</p>
-        <div style="padding:16px;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);max-width:400px;">
-  <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--brass);margin-bottom:10px;">Quarterly Review</div>
-  <div style="font-size:0.78rem;color:var(--text-2);margin-bottom:8px;">Q1 Brand Health: <span style="color:var(--patina-lit);">B+</span></div>
-  <div style="font-size:0.78rem;color:var(--text-2);margin-bottom:4px;">Identity: Strong. Voice: Consistent. Content: Growing.</div>
-  <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--brass);margin-top:8px;text-transform:uppercase;letter-spacing:1px;">Next: Scale LinkedIn. Test paid.</div>
-</div>
-      </div>
+    <div class="reveal rd2" style="max-width:520px;margin:40px auto 0;text-align:center;">
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-lg" style="width:100%;max-width:380px;">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L14 8 20 10 14 12 12 18 10 12 4 10 10 8z"/></svg>
+        Scan my brand free
+      </a>
+      <p style="font-family:var(--f-mono);font-size:.68rem;color:var(--ink-mute);letter-spacing:.12em;text-transform:uppercase;margin-top:16px;">No account · No credit card · Instant results</p>
     </div>
   </div>
 </section>
 
-<!-- ========== PERSONAS ========== -->
-<section class="persona-section" id="personas">
-  <div class="container">
-    <div class="reveal">
-      <div class="label">Who it is for</div>
-      <h2 class="h2">If you need a brand, this is for you.</h2>
+<!-- ================== WHAT YOU GET - MULTI CARDS ================== -->
+<section class="section" id="what">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:48px">
+      <div class="eyebrow eyebrow-center reveal">What you get</div>
+      <h2 class="display h2 reveal rd1">Everything your brand needs, <em>built step by step.</em></h2>
     </div>
-    <div class="persona-tabs reveal rd1" id="personaTabs">
-      <button class="persona-tab active" data-tab="0">Starting from zero</button>
-      <button class="persona-tab" data-tab="1">Fixing a brand</button>
-      <button class="persona-tab" data-tab="2">Growing a business</button>
-      <button class="persona-tab" data-tab="3">Running an agency</button>
-    </div>
-    <div class="persona-stage reveal rd2">
-      <div class="persona-panel active" data-panel="0">
-        <div class="persona-image">
-          <svg viewBox="0 0 220 300" width="240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <g stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-              <path d="M40 300 L52 170 Q62 140 110 140 Q158 140 168 170 L180 300" fill="#3A5F4A"/>
-              <path d="M88 140 L110 196 L132 140 Z" fill="#2A2A2A"/>
-              <path d="M100 118 L100 142 L120 142 L120 118 Z" fill="#EEDCC8"/>
-              <ellipse cx="110" cy="78" rx="36" ry="42" fill="#EEDCC8"/>
-              <path d="M74 72 Q72 36 110 32 Q148 36 146 76 Q140 58 110 54 Q82 56 74 72 Z" fill="#2A2A2A"/>
-              <circle cx="98" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-              <circle cx="122" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-              <path d="M110 88 L108 100"/>
-              <path d="M104 108 Q110 112 116 108"/>
-              <path d="M168 170 L176 220 L148 228 L140 180" fill="#3A5F4A"/>
-              <path d="M52 170 L44 240 L62 246 L72 180" fill="#3A5F4A"/>
-              <ellipse cx="140" cy="232" rx="10" ry="8" fill="#EEDCC8"/>
-              <ellipse cx="74" cy="244" rx="10" ry="8" fill="#EEDCC8"/>
-              <rect x="76" y="216" width="66" height="46" fill="#333333"/>
-              <line x1="76" y1="230" x2="142" y2="230"/>
-              <line x1="136" y1="216" x2="136" y2="262"/>
-            </g>
-          </svg>
-        </div>
+
+    <div class="multi reveal rd1">
+      <div class="big-card">
         <div>
-          <div class="persona-title">I have an idea. No brand yet.</div>
-          <p class="persona-desc">You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.</p>
-          <a href="https://app.quantumbranding.ai/signal-scan.html?door=blank" class="btn btn-primary btn-sm">Start from zero</a>
+          <div class="device-label">Discovery · Phase 01</div>
+          <div class="display h3" style="color:var(--dark-text);margin-bottom:10px">Your identity, articulated.</div>
+          <p class="sub" style="color:var(--dark-text-soft);margin-bottom:26px">Answer questions about who you are and what you believe. You get a complete brand profile: personality, energy, one-liner, and the truth your brand is built on.</p>
+          <div class="mock-note">Every loaf is a love letter to slow mornings.</div>
+          <div class="mock-tags">
+            <span class="mock-tag patina">The Caregiver</span>
+            <span class="mock-tag">Warm, Golden</span>
+            <span class="mock-tag patina">Wildfire energy</span>
+          </div>
         </div>
       </div>
-      <div class="persona-panel" data-panel="1">
-        <div class="persona-image">
-          <svg viewBox="0 0 220 300" width="240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <g stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-              <path d="M40 300 L52 170 Q62 140 110 140 Q158 140 168 170 L180 300" fill="#666666"/>
-              <path d="M88 140 L110 200 L132 140 Z" fill="#EEDCC8"/>
-              <path d="M106 150 L114 150 L116 204 L104 204 Z" fill="#2A2A2A"/>
-              <path d="M100 118 L100 142 L120 142 L120 118 Z" fill="#EEDCC8"/>
-              <ellipse cx="110" cy="78" rx="36" ry="42" fill="#EEDCC8"/>
-              <path d="M76 74 Q74 38 110 34 Q146 38 144 74 Q138 58 110 54 Q82 58 76 74 Z" fill="#2A2A2A"/>
-              <path d="M86 56 Q94 50 104 50" stroke="#666666"/>
-              <circle cx="96" cy="84" r="8" fill="none"/>
-              <circle cx="124" cy="84" r="8" fill="none"/>
-              <line x1="104" y1="84" x2="116" y2="84"/>
-              <circle cx="96" cy="84" r="1.5" fill="#1A1A1A" stroke="none"/>
-              <circle cx="124" cy="84" r="1.5" fill="#1A1A1A" stroke="none"/>
-              <path d="M110 92 L108 102"/>
-              <path d="M104 112 L116 112"/>
-              <path d="M52 170 L40 252 L60 258 L72 180" fill="#666666"/>
-              <path d="M168 170 L180 252 L162 258 L148 180" fill="#666666"/>
-              <ellipse cx="52" cy="262" rx="10" ry="8" fill="#EEDCC8"/>
-              <ellipse cx="170" cy="258" rx="10" ry="8" fill="#EEDCC8"/>
-              <rect x="164" y="222" width="14" height="66" fill="#EEDCC8"/>
-              <line x1="164" y1="232" x2="178" y2="232"/>
-              <line x1="164" y1="274" x2="178" y2="274"/>
-            </g>
-          </svg>
+      <div class="side-col">
+        <div class="side-card">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px">Creation · Phase 02</div>
+            <h3 class="display">Logo direction + voice guide.</h3>
+            <p class="sub">A complete logo brief with AI-generated direction. Then your brand voice with writing rules, tone guidelines, and templates.</p>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:20px">
+            <div style="width:44px;height:44px;border-radius:10px;background:rgba(168,144,62,.15);border:1px solid rgba(168,144,62,.35)"></div>
+            <div style="width:44px;height:44px;border-radius:10px;background:rgba(74,122,94,.15);border:1px solid rgba(74,122,94,.35)"></div>
+            <div style="width:44px;height:44px;border-radius:10px;background:var(--cream-deep);border:1px solid var(--cream-line)"></div>
+          </div>
         </div>
+        <div class="side-card" style="background:var(--patina-deep);color:var(--dark-text);border-color:var(--patina-deep)">
+          <div>
+            <div class="eyebrow" style="color:var(--brass-lit);margin-bottom:10px">Content · Phase 03</div>
+            <h3 class="display" style="color:var(--dark-text)">Your first month, <em>written.</em></h3>
+            <p class="sub" style="color:var(--dark-text-soft)">12 Instagram posts, 20 LinkedIn posts, 6 YouTube scripts, a full newsletter plan. All in your voice. All on brand.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="multi reveal rd2" style="margin-top:22px">
+      <div class="side-col" style="grid-column:1">
+        <div class="side-card" style="background:var(--cream-soft)">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px">Execution · Phase 04</div>
+            <h3 class="display">Multiply <em>everything.</em></h3>
+            <p class="sub">One piece of content becomes up to 25 pieces across 10 platforms. All rebuilt natively. All on-brand. Nothing copy-pasted.</p>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:18px">
+            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">Instagram</span>
+            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">LinkedIn</span>
+            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">Threads</span>
+            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">Newsletter</span>
+            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">Stories</span>
+          </div>
+        </div>
+      </div>
+      <div class="big-card" style="grid-column:2">
         <div>
-          <div class="persona-title">I have a brand. Something feels off.</div>
-          <p class="persona-desc">The tools audit what you have and tell you what to keep, fix, or rebuild. Logo evaluation, voice analysis, performance review. Precise verdict, clear path forward.</p>
-          <a href="https://app.quantumbranding.ai/signal-scan.html?door=doubt" class="btn btn-primary btn-sm">Audit your brand</a>
-        </div>
-      </div>
-      <div class="persona-panel" data-panel="2">
-        <div class="persona-image">
-          <svg viewBox="0 0 220 300" width="240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <g stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-              <path d="M40 300 L52 170 Q62 140 110 140 Q158 140 168 170 L180 300" fill="#A8903E"/>
-              <path d="M88 140 L110 196 L132 140 Z" fill="#2A2A2A"/>
-              <path d="M100 118 L100 142 L120 142 L120 118 Z" fill="#EEDCC8"/>
-              <ellipse cx="110" cy="78" rx="36" ry="42" fill="#EEDCC8"/>
-              <path d="M72 82 Q66 38 110 32 Q154 38 150 82 Q152 110 140 124 Q142 94 132 68 Q110 58 88 68 Q78 94 80 124 Q68 110 72 82 Z" fill="#2A2A2A"/>
-              <circle cx="98" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-              <circle cx="122" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-              <path d="M110 88 L108 100"/>
-              <path d="M104 108 Q110 112 116 108"/>
-              <path d="M168 170 L180 222 L150 232 L140 182" fill="#A8903E"/>
-              <rect x="146" y="204" width="66" height="12" fill="#333333"/>
-              <rect x="146" y="216" width="66" height="24" fill="#666666"/>
-              <path d="M52 170 L44 258 L62 264 L72 180" fill="#A8903E"/>
-              <ellipse cx="54" cy="266" rx="10" ry="8" fill="#EEDCC8"/>
-            </g>
-          </svg>
-        </div>
-        <div>
-          <div class="persona-title">Competition is coming.</div>
-          <p class="persona-desc">Skip to strategy and intelligence. The War Table pressure-tests your next move. The Predictive Panel simulates market response before you spend.</p>
-          <a href="https://app.quantumbranding.ai/signal-scan.html?door=scale" class="btn btn-primary btn-sm">Enter strategic mode</a>
-        </div>
-      </div>
-      <div class="persona-panel" data-panel="3">
-        <div class="persona-image">
-          <svg viewBox="0 0 220 300" width="240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <g stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-              <path d="M40 300 L52 170 Q62 140 110 140 Q158 140 168 170 L180 300" fill="#666666"/>
-              <path d="M70 300 L74 162 Q86 152 110 152 Q134 152 146 162 L150 300 Z" fill="#333333"/>
-              <path d="M96 152 L96 130 Q96 120 110 120 Q124 120 124 130 L124 152" fill="none"/>
-              <path d="M100 118 L100 140 L120 140 L120 118 Z" fill="#EEDCC8"/>
-              <ellipse cx="110" cy="78" rx="36" ry="42" fill="#EEDCC8"/>
-              <path d="M76 74 Q74 38 110 34 Q146 38 144 74 Q140 56 110 54 Q80 56 76 74 Z" fill="#2A2A2A"/>
-              <circle cx="98" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-              <circle cx="122" cy="82" r="2" fill="#1A1A1A" stroke="none"/>
-              <path d="M110 88 L108 100"/>
-              <path d="M104 108 L116 108"/>
-              <path d="M52 170 L46 232 L66 236 L72 180" fill="#666666"/>
-              <path d="M168 170 L174 232 L154 236 L148 180" fill="#666666"/>
-              <ellipse cx="56" cy="240" rx="10" ry="8" fill="#EEDCC8"/>
-              <ellipse cx="164" cy="240" rx="10" ry="8" fill="#EEDCC8"/>
-              <circle cx="110" cy="248" r="11" fill="#A8903E"/>
-              <circle cx="110" cy="248" r="4" fill="#333333" stroke="none"/>
-              <rect x="119" y="246" width="26" height="5" fill="#A8903E"/>
-              <rect x="136" y="251" width="4" height="6" fill="#A8903E"/>
-              <rect x="128" y="251" width="4" height="6" fill="#A8903E"/>
-            </g>
-          </svg>
-        </div>
-        <div>
-          <div class="persona-title">I build brands for clients.</div>
-          <p class="persona-desc">Up to 8 client portals. Your brand on every output. White-label delivery. Run clients through the same journey with your logo on the result.</p>
-          <a href="https://calendly.com/qtmbg/strategy-call-lab" target="_blank" class="btn btn-primary btn-sm">Book a call</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== PROOF STRIP ========== -->
-<section class="proof-section">
-  <div class="container reveal">
-    <div class="proof-label">Nizzar's work has been featured by</div>
-    <div class="proof-row">
-      <span class="proof-name" data-logo="nyt">New York Times</span>
-      <span class="proof-name" data-logo="time">Time Magazine</span>
-      <span class="proof-name" data-logo="google-arts">Google Arts &amp; Culture</span>
-      <span class="proof-name" data-logo="un">The United Nations</span>
-      <span class="proof-name" data-logo="usaid">USAID</span>
-      <span class="proof-name" data-logo="tv5">TV5 Monde</span>
-      <span class="proof-name" data-logo="lakers">LA Lakers</span>
-      <span class="proof-name" data-logo="um6p">UM6P</span>
-    </div>
-  </div>
-</section>
-
-<!-- ========== PREDICTIVE PANEL ========== -->
-<section class="panel-section" id="predictive-panel">
-  <div class="container">
-    <div class="panel-grid">
-      <div class="panel-text reveal">
-        <div class="label label-brass">Before you spend a dollar</div>
-        <h2 class="h2">Test your idea before you launch it.</h2>
-        <p>The Predictive Panel runs your concept through thousands of simulated customers. You see who responds, what works, and whether to go or wait.</p>
-        <a href="https://app.quantumbranding.ai/predictive-panel.html" class="btn btn-primary">Try the panel</a>
-      </div>
-      <div class="reveal rd2">
-        <div class="panel-card glass" id="panelCard">
-          <div class="panel-card-label">Panel simulation</div>
-          <div class="panel-confidence-row">
-            <span class="panel-confidence-label">Overall confidence</span>
-            <span class="panel-confidence-num">74</span>
-          </div>
-          <div class="panel-main-track"><div class="panel-main-fill" data-width="74"></div></div>
-          <div class="panel-scenario">
-            <div class="panel-scenario-head"><span class="panel-scenario-name">Strong launch</span><span class="panel-scenario-pct" style="color:var(--patina-lit)">62%</span></div>
-            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:var(--patina-lit)" data-width="62"></div></div>
-          </div>
-          <div class="panel-scenario">
-            <div class="panel-scenario-head"><span class="panel-scenario-name">Needs price adjustment</span><span class="panel-scenario-pct" style="color:#4A7A8A">22%</span></div>
-            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:#4A7A8A" data-width="22"></div></div>
-          </div>
-          <div class="panel-scenario">
-            <div class="panel-scenario-head"><span class="panel-scenario-name">Channel misfit</span><span class="panel-scenario-pct" style="color:var(--brass)">11%</span></div>
-            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:var(--brass)" data-width="11"></div></div>
-          </div>
-          <div class="panel-scenario">
-            <div class="panel-scenario-head"><span class="panel-scenario-name">Positioning unclear</span><span class="panel-scenario-pct" style="color:#8A4A4A">5%</span></div>
-            <div class="panel-scenario-track"><div class="panel-scenario-fill" style="background:#8A4A4A" data-width="5"></div></div>
-          </div>
-          <div class="panel-verdict">
-            <div class="panel-verdict-label">Verdict</div>
-            <div class="panel-verdict-title">GO &mdash; Launch Ready</div>
-            <div class="panel-verdict-text">Strong market fit. Tighten price anchor before launch.</div>
+          <div class="device-label">Intelligence · Phase 05</div>
+          <div class="display h3" style="color:var(--dark-text);margin-bottom:10px">Your brand gets smarter every 90 days.</div>
+          <p class="sub" style="color:var(--dark-text-soft);margin-bottom:26px">Quarterly reviews update your Brand Profile and tell you what to do next. Identity strength, voice consistency, content performance — all tracked.</p>
+          <div class="panel-card" style="padding:24px;border-radius:18px;background:rgba(238,229,210,.04);border:1px solid var(--dark-line)">
+            <div class="panel-conf">
+              <span class="panel-conf-lbl">Q1 Brand Health</span>
+              <span class="panel-conf-num">B+</span>
+            </div>
+            <div class="panel-main"><div class="panel-main-fill" data-w="78"></div></div>
+            <div style="font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-lit)">Next · Scale LinkedIn. Test paid.</div>
           </div>
         </div>
       </div>
@@ -1069,419 +1770,365 @@ section{position:relative;z-index:2}
   </div>
 </section>
 
-<!-- ========== PRICING ========== -->
-<section class="pricing-section" id="pricing">
-  <div class="container">
-    <div style="text-align:center" class="reveal">
-      <div class="label">Pricing</div>
-      <h2 class="h2">Start free. Upgrade when ready.</h2>
-      <p style="color:var(--text-2);font-size:0.95rem;margin-top:8px">Three tools free forever. No credit card. No account to start.</p>
+<!-- ================== PERSONAS (dark, pill tabs) ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot section" id="for-you">
+  <div class="wrap">
+    <div class="persona-layout">
+      <!-- Big cheering character in corner -->
+      <svg class="character persona-char char-float" viewBox="0 0 220 260"><use href="#char-cheer"/></svg>
+
+      <div class="persona-hero">
+        <div class="eyebrow" style="color:var(--brass-lit)">Who it's for</div>
+        <h2 class="display h1" style="color:var(--dark-text);margin-top:20px">
+          QB is made <em class="underlined">for you
+            <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+          </em>
+        </h2>
+        <div class="persona-tags" id="personaTags">
+          <button class="persona-tag active" data-p="0">Starting from zero</button>
+          <button class="persona-tag" data-p="1">Something feels off</button>
+          <button class="persona-tag" data-p="2">Scaling fast</button>
+          <button class="persona-tag" data-p="3">Agency / multi-brand</button>
+        </div>
+      </div>
+      <div class="persona-detail" id="personaDetail">
+        <h3 id="pTitle">I have an idea, <em>no brand yet.</em></h3>
+        <p id="pText">You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.</p>
+        <a id="pLink" href="https://app.quantumbranding.ai/signal-scan.html?door=blank" class="btn btn-primary">Start from zero</a>
+      </div>
     </div>
-    <div class="pricing-grid">
-      <div class="pricing-card glass glass-hover reveal rd1">
-        <div class="pricing-name">Free</div>
-        <div class="pricing-price">$0 <span>/forever</span></div>
-        <div class="pricing-desc">Signal Scan, Brand Soul Map, and Sensescape. Unlimited runs. Your brand profile starts here.</div>
-        <ul class="pricing-features">
-          <li class="pricing-feature">Signal Scan diagnostic</li>
-          <li class="pricing-feature">Brand Soul Map (full)</li>
-          <li class="pricing-feature">Sensescape (full)</li>
-          <li class="pricing-feature">Unlimited runs</li>
-          <li class="pricing-feature">No account needed</li>
+  </div>
+</section>
+
+<!-- ================== PREDICTIVE PANEL ================== -->
+<section class="section">
+  <div class="wrap feat-two">
+    <div class="feat-text reveal">
+      <div class="eyebrow">Before you spend a dollar</div>
+      <h2 class="display h2">Test the idea <em>before you launch it.</em></h2>
+      <p>The Predictive Panel runs your concept through thousands of simulated customers. You see who responds, what works, and whether to go or wait.</p>
+      <a href="https://app.quantumbranding.ai/predictive-panel.html" class="btn btn-primary">Try the Panel</a>
+    </div>
+    <div class="reveal rd2">
+      <div class="panel-card">
+        <div class="panel-label">Panel simulation</div>
+        <div class="panel-conf">
+          <span class="panel-conf-lbl">Overall confidence</span>
+          <span class="panel-conf-num">74</span>
+        </div>
+        <div class="panel-main"><div class="panel-main-fill" data-w="74"></div></div>
+
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Strong launch</span><span class="prof-pct" style="color:#7FB894">62%</span></div>
+          <div class="prof-track"><div class="prof-fill" data-w="62" style="background:#7FB894"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Needs price adjustment</span><span class="prof-pct" style="color:#7A9DA8">22%</span></div>
+          <div class="prof-track"><div class="prof-fill" data-w="22" style="background:#7A9DA8"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Channel misfit</span><span class="prof-pct" style="color:var(--brass-lit)">11%</span></div>
+          <div class="prof-track"><div class="prof-fill" data-w="11" style="background:var(--brass-lit)"></div></div>
+        </div>
+
+        <div class="panel-verdict">
+          <div class="panel-verdict-lbl">Verdict</div>
+          <div class="panel-verdict-ttl">GO — Launch Ready</div>
+          <div class="panel-verdict-txt">Strong market fit. Tighten price anchor before launch.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== TESTIMONIALS ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot section">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">From founders who used it</div>
+      <h2 class="display h2 reveal rd1">
+        Love letters <em class="underlined">to QB
+          <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+        </em>
+      </h2>
+    </div>
+    <div style="max-width:600px;margin:40px auto 0;text-align:center;">
+      <p style="font-family:var(--f-display);font-size:1.2rem;font-style:italic;color:var(--dark-text-soft);line-height:1.6;">Real testimonials arrive when the first cohort ships. Until then, the tools speak for themselves.</p>
+      <p style="font-family:var(--f-mono);font-size:.72rem;color:var(--dark-text-mute);letter-spacing:.12em;text-transform:uppercase;margin-top:20px;">Try the free tools and judge for yourself</p>
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary" style="margin-top:20px;">Start free</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PRICING ================== -->
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">Pricing</div>
+      <h2 class="display h2 reveal rd1">Start free. <em>Upgrade when ready.</em></h2>
+      <p class="sub mx-auto reveal rd2" style="margin-top:14px">Three tools free forever. No credit card. No account to start.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card reveal rd1">
+        <div class="price-name">Free</div>
+        <div class="price-num">$0 <span>/ forever</span></div>
+        <p class="price-desc">Signal Scan, Brand Soul Map, and Sensescape. Unlimited runs. Your brand profile starts here.</p>
+        <ul class="price-feats">
+          <li class="price-feat">Signal Scan diagnostic</li>
+          <li class="price-feat">Brand Soul Map (full)</li>
+          <li class="price-feat">Sensescape (full)</li>
+          <li class="price-feat">Unlimited runs</li>
+          <li class="price-feat">No account needed</li>
         </ul>
-        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-secondary">Start free</a>
+        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn">Start free</a>
       </div>
-      <div class="pricing-card glass glass-hover reveal rd2">
-        <div class="pricing-name">Starter</div>
-        <div class="pricing-price">$97 <span>/month</span></div>
-        <div class="pricing-desc">All 18 tools. Unlimited runs. Your complete brand system, activated.</div>
-        <ul class="pricing-features">
-          <li class="pricing-feature">All 18 agent tools</li>
-          <li class="pricing-feature">Brand Profile saved &amp; connected</li>
-          <li class="pricing-feature">Unlimited runs</li>
-          <li class="pricing-feature">Brand Document export</li>
-          <li class="pricing-feature">Email support</li>
+      <div class="price-card reveal rd2">
+        <div class="price-name">Starter</div>
+        <div class="price-num">$97 <span>/ month</span></div>
+        <p class="price-desc">All 18 tools. Unlimited runs. Your complete brand system, activated.</p>
+        <ul class="price-feats">
+          <li class="price-feat">All 18 agent tools</li>
+          <li class="price-feat">Brand Profile saved &amp; connected</li>
+          <li class="price-feat">Unlimited runs</li>
+          <li class="price-feat">Brand Document export</li>
+          <li class="price-feat">Email support</li>
         </ul>
-        <a href="https://app.quantumbranding.ai" class="btn btn-secondary">Get started</a>
+        <a href="https://app.quantumbranding.ai" class="btn">Get started</a>
       </div>
-      <div class="pricing-card glass glass-hover featured reveal rd3">
-        <div class="pricing-name">Pro <span class="pricing-badge">Most popular</span></div>
-        <div class="pricing-price">$297 <span>/month</span></div>
-        <div class="pricing-desc">Everything in Starter plus Predictive Panel and quarterly strategy.</div>
-        <ul class="pricing-features">
-          <li class="pricing-feature">Everything in Starter</li>
-          <li class="pricing-feature">Predictive Panel (5 runs/mo)</li>
-          <li class="pricing-feature">Priority support</li>
-          <li class="pricing-feature">Quarterly strategy session</li>
-          <li class="pricing-feature">Early access to new tools</li>
+      <div class="price-card feat reveal rd3">
+        <div class="price-name">Pro <span class="price-tag">Most popular</span></div>
+        <div class="price-num">$297 <span>/ month</span></div>
+        <p class="price-desc">Everything in Starter plus Predictive Panel and quarterly strategy sessions.</p>
+        <ul class="price-feats">
+          <li class="price-feat">Everything in Starter</li>
+          <li class="price-feat">Predictive Panel (5 runs/mo)</li>
+          <li class="price-feat">Priority support</li>
+          <li class="price-feat">Quarterly strategy session</li>
+          <li class="price-feat">Early access to new tools</li>
         </ul>
-        <a href="https://app.quantumbranding.ai" class="btn btn-primary">Go Pro</a>
+        <a href="https://app.quantumbranding.ai" class="btn">Go Pro</a>
       </div>
-      <div class="pricing-card glass glass-hover reveal rd4">
-        <div class="pricing-name">Agency</div>
-        <div class="pricing-price">$997 <span>/month</span></div>
-        <div class="pricing-desc">Up to 8 client portals. White-label delivery. Your brand on every output.</div>
-        <ul class="pricing-features">
-          <li class="pricing-feature">8 white-label client portals</li>
-          <li class="pricing-feature">Unlimited Predictive Panel</li>
-          <li class="pricing-feature">Agency branding on outputs</li>
-          <li class="pricing-feature">Dedicated support</li>
-          <li class="pricing-feature">Custom onboarding</li>
+      <div class="price-card reveal rd4">
+        <div class="price-name">Agency</div>
+        <div class="price-num">$997 <span>/ month</span></div>
+        <p class="price-desc">Up to 8 client portals. White-label delivery. Your brand on every output.</p>
+        <ul class="price-feats">
+          <li class="price-feat">8 white-label portals</li>
+          <li class="price-feat">Unlimited Predictive Panel</li>
+          <li class="price-feat">Agency branding on outputs</li>
+          <li class="price-feat">Dedicated support</li>
+          <li class="price-feat">Custom onboarding</li>
         </ul>
-        <a href="https://calendly.com/qtmbg/strategy-call-lab" target="_blank" class="btn btn-secondary">Book a call</a>
+        <a href="https://calendly.com/qtmbg/strategy-call-lab" class="btn">Book a call</a>
       </div>
     </div>
-    <div class="pricing-note reveal">
-      <span class="pricing-note-inner"><span class="pulse-dot" style="width:6px;height:6px;"></span>Free: Signal Scan + Brand Soul Map + Sensescape &mdash; no account needed</span>
-    </div>
-    <div class="pricing-anchor reveal">What would an agency charge for this? $5,000&ndash;20,000. Minimum.</div>
+    <p class="center reveal" style="margin-top:36px;font-family:var(--f-display);font-style:italic;font-size:1.1rem;color:var(--ink-mute)">What would an agency charge for this? $5,000–20,000. Minimum.</p>
   </div>
 </section>
 
-<!-- ========== FOUNDER STATEMENT ========== -->
-<section class="founder-section" id="about">
-  <div class="container">
-    <div class="founder-card reveal">
-      <div class="founder-label">From the founder</div>
-      <p class="founder-quote">&ldquo;I spent 20 years watching brands fail. Not because the work was bad. Because the identity was missing. QB BrandOS is that lesson turned into software.&rdquo;</p>
-      <div class="founder-avatar">NB</div>
-      <div class="founder-name">Nizzar Ben Chekroune</div>
-      <div class="founder-role">Founder, Quantum Branding</div>
-      <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-top:20px;margin-bottom:8px">Work featured in</div>
-      <div class="founder-creds">
-        <span class="marquee-tag">United Nations Vienna</span>
-        <span class="marquee-tag">UNIDO</span>
-        <span class="marquee-tag">Google Arts &amp; Culture</span>
-        <span class="marquee-tag">20+ years</span>
-        <span class="marquee-tag">3 continents</span>
-      </div>
-    </div>
+<!-- ================== FOUNDER ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot section has-decor" id="about">
+  <!-- Decorative constellation -->
+  <svg class="dot-constellation" style="top:20%;left:10%;width:100px;height:100px" viewBox="0 0 100 100">
+    <circle cx="15" cy="20" r="3"/>
+    <circle cx="40" cy="10" r="2.5"/>
+    <circle cx="65" cy="25" r="3"/>
+    <circle cx="25" cy="50" r="2"/>
+    <circle cx="55" cy="60" r="2.5"/>
+    <circle cx="80" cy="45" r="2"/>
+  </svg>
+  <svg class="scribble reveal" style="top:28%;right:12%;width:120px;height:60px" viewBox="0 0 120 60">
+    <path d="M5 30 Q25 5 50 28 Q75 50 100 25 Q110 15 115 28"/>
+  </svg>
+
+  <div class="wrap center" style="max-width:780px;position:relative;z-index:1">
+    <div class="eyebrow eyebrow-center" style="color:var(--brass-lit)">From the founder</div>
+    <p class="display h2" style="color:var(--dark-text);font-style:italic;margin-top:24px;line-height:1.2">
+      "I spent 20 years watching brands fail. Not because the work was bad. Because the identity was missing. QB BrandOS is that lesson turned into software."
+    </p>
+    <div class="testi-avatar" style="margin:40px auto 14px;width:64px;height:64px;font-size:1.3rem">NB</div>
+    <div style="font-family:var(--f-display);font-size:1.2rem;color:var(--dark-text)">Nizzar Ben Chekroune</div>
+    <div style="font-size:.9rem;color:var(--dark-text-mute);margin-top:4px">Founder, Quantum Branding</div>
   </div>
 </section>
 
-<!-- ========== FAQ ========== -->
-<section class="faq-section" id="faq">
-  <div class="container">
-    <div style="text-align:center" class="reveal">
-      <div class="label">Questions</div>
-      <h2 class="h2">Before you decide.</h2>
+<!-- ================== FAQ ================== -->
+<section class="section">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">Questions</div>
+      <h2 class="display h2 reveal rd1">Before <em>you decide.</em></h2>
     </div>
-    <div class="faq-container">
-      <div class="faq-card glass reveal">
-        <div class="faq-item">
-          <button class="faq-question">Is this real AI or a template?<span class="faq-icon">+</span></button>
-          <div class="faq-answer"><div class="faq-answer-inner">Every output is generated fresh by AI, informed by your Brand Profile. No templates. No recycled content. Your answers shape everything.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">Do I need design skills?<span class="faq-icon">+</span></button>
-          <div class="faq-answer"><div class="faq-answer-inner">No. The system guides you with questions, not blank canvases. You bring the knowledge of your brand. The system handles the structure.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">What do I get that I can actually use?<span class="faq-icon">+</span></button>
-          <div class="faq-answer"><div class="faq-answer-inner">Logo direction briefs, voice guides, Instagram posts with captions, LinkedIn content, YouTube scripts, newsletter series, strategy maps. All exportable.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">How is this different from Canva or Looka?<span class="faq-icon">+</span></button>
-          <div class="faq-answer"><div class="faq-answer-inner">Those tools make assets. QB BrandOS builds the thinking underneath. Identity, positioning, voice, strategy. The assets come from that foundation, which is why they hold.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">Can I cancel anytime?<span class="faq-icon">+</span></button>
-          <div class="faq-answer"><div class="faq-answer-inner">Yes. Monthly billing, cancel anytime. No contracts. The free tier stays free forever.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">How long does the full journey take?<span class="faq-icon">+</span></button>
-          <div class="faq-answer"><div class="faq-answer-inner">Your first result in 5 minutes. A complete brand foundation in 2&ndash;3 hours across multiple sessions. Content and strategy build from there.</div></div>
-        </div>
+    <div class="faq reveal rd2">
+      <div class="faq-item">
+        <button class="faq-q">Is this real AI or a template?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Every output is generated fresh by AI, informed by your Brand Profile. No templates. No recycled content. Your answers shape everything.</div></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== FINAL CTA ========== -->
-<section class="cta-section">
-  <div class="container">
-    <div class="cta-card reveal">
-      <h2 class="cta-title">Start with what you have.</h2>
-      <p class="cta-subtitle">Even if that is just an idea. Three tools. Free forever. Five minutes.</p>
-      <div class="cta-buttons">
-        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary">&#x2726; Start free</a>
-        <a href="https://app.quantumbranding.ai" class="btn btn-secondary">Enter QB BrandOS</a>
+      <div class="faq-item">
+        <button class="faq-q">Do I need design skills?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">No. The system guides you with questions, not blank canvases. You bring the knowledge of your brand. The system handles the structure.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What do I actually get?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Logo direction briefs, voice guides, Instagram posts with captions, LinkedIn content, YouTube scripts, newsletter series, strategy maps. All exportable.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How is this different from Canva or Looka?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Those tools make assets. QB BrandOS builds the thinking underneath. Identity, positioning, voice, strategy. The assets come from that foundation, which is why they hold.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I cancel anytime?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. Monthly billing, cancel anytime. No contracts. The free tier stays free forever.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How long does the full journey take?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Your first result in 5 minutes. A complete brand foundation in 2–3 hours across multiple sessions. Content and strategy build from there.</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== FOOTER ========== -->
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
+<!-- ================== FINAL CTA ================== -->
+<div class="final-cta has-decor">
+  <!-- Speaker character bottom-left -->
+  <svg class="character cta-char char-float" viewBox="0 0 260 240"><use href="#char-speak"/></svg>
+
+  <!-- Dotted heart-arc (top-right, wispr "start flowing" style) -->
+  <svg class="final-cta-arrow" viewBox="0 0 180 200" style="width:180px;height:200px;right:6%;top:12%">
+    <g fill="#C4A84E">
+      <!-- heart-shaped dotted path -->
+      <circle cx="90" cy="30" r="2.5"/>
+      <circle cx="75" cy="22" r="2.5"/><circle cx="60" cy="18" r="2.5"/>
+      <circle cx="44" cy="22" r="2.5"/><circle cx="30" cy="34" r="2.5"/>
+      <circle cx="22" cy="50" r="2.5"/><circle cx="22" cy="68" r="2.5"/>
+      <circle cx="30" cy="86" r="2.5"/><circle cx="42" cy="104" r="2.5"/>
+      <circle cx="58" cy="122" r="2.5"/><circle cx="74" cy="140" r="2.5"/>
+      <circle cx="90" cy="158" r="2.5"/><circle cx="106" cy="140" r="2.5"/>
+      <circle cx="122" cy="122" r="2.5"/><circle cx="138" cy="104" r="2.5"/>
+      <circle cx="150" cy="86" r="2.5"/><circle cx="158" cy="68" r="2.5"/>
+      <circle cx="158" cy="50" r="2.5"/><circle cx="150" cy="34" r="2.5"/>
+      <circle cx="136" cy="22" r="2.5"/><circle cx="120" cy="18" r="2.5"/>
+      <circle cx="105" cy="22" r="2.5"/>
+    </g>
+  </svg>
+
+  <!-- Decorative star sparkles -->
+  <div class="sparkle" style="top:18%;left:42%;font-size:1.8rem">✦</div>
+  <div class="sparkle" style="bottom:24%;right:18%;font-size:1.2rem;animation-delay:2s">✦</div>
+  <h2 class="display h1">
+    Start <em class="underlined">building
+      <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+    </em>
+  </h2>
+  <p class="sub">Even if you're starting with just an idea. Three tools. Free forever. Five minutes to your first brand signal.</p>
+  <div class="hero-ctas">
+    <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-lg">Start free</a>
+    <a href="https://app.quantumbranding.ai" class="btn btn-lg" style="border-color:var(--dark-text-soft);color:var(--dark-text)">Enter QB BrandOS</a>
+  </div>
+  <p class="hero-micro" style="color:var(--dark-text-mute)">Available on any device · No download · No credit card</p>
+</div>
+
+<!-- ================== FOOTER ================== -->
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
       <div>
-        <div class="footer-brand"><span class="pulse-dot"></span>Quantum Branding</div>
-        <p class="footer-desc">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
+        <div class="foot-brand"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--brass);display:inline-block"></span>Quantum Branding</div>
+        <p class="foot-desc">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy — one connected platform.</p>
       </div>
-      <div>
-        <div class="footer-col-title">Product</div>
-        <a href="#how-it-works" class="footer-link">How it works</a>
-        <a href="#use-cases" class="footer-link">The 18 tools</a>
-        <a href="#pricing" class="footer-link">Pricing</a>
-        <a href="#scanner" class="footer-link">Free Signal Scan</a>
+      <div class="foot-col">
+        <div class="foot-col-title">Product</div>
+        <a href="#how">How it works</a>
+        <a href="#what">The 18 tools</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#scanner">Free Signal Scan</a>
       </div>
-      <div>
-        <div class="footer-col-title">Company</div>
-        <a href="mailto:me@qtmbg.com" class="footer-link">me@qtmbg.com</a>
-        <a href="https://nizzar.com" class="footer-link">nizzar.com</a>
-        <a href="https://linkedin.com/in/nizzar" class="footer-link">LinkedIn</a>
-        <a href="https://instagram.com/thequantumbranding" class="footer-link">Instagram</a>
+      <div class="foot-col">
+        <div class="foot-col-title">Company</div>
+        <a href="#about">About Nizzar</a>
+        <a href="mailto:me@qtmbg.com">Contact</a>
+        <a href="https://nizzar.com">nizzar.com</a>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Social</div>
+        <a href="https://linkedin.com/in/nizzar">LinkedIn</a>
+        <a href="https://instagram.com/thequantumbranding">Instagram</a>
+        <a href="https://x.com/quantumbranding">X / Twitter</a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span class="footer-copy">&copy; 2026 Quantum Branding &middot; quantumbranding.ai</span>
+
+    <div class="foot-logo-xl">QB<em> BrandOS</em></div>
+
+    <div class="foot-bottom">
+      <div>© 2026 Quantum Branding · quantumbranding.ai</div>
+      <div>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Data</a>
+      </div>
     </div>
   </div>
 </footer>
 
+<!-- ================== JS ================== -->
 <script>
 (function(){
-'use strict';
+  'use strict';
 
-/* ===== THEME TOGGLE ===== */
-var html=document.documentElement,toggle=document.getElementById('themeToggle'),icon=document.getElementById('themeIcon');
-function updateIcon(){icon.innerHTML=html.getAttribute('data-theme')==='dark'?'&#9790;':'&#9728;'}
-updateIcon();
-toggle.addEventListener('click',function(){
-  var n=html.getAttribute('data-theme')==='dark'?'light':'dark';
-  html.setAttribute('data-theme',n);localStorage.setItem('qb-theme',n);updateIcon();
-});
+  /* ===== MOBILE MENU ===== */
+  var ham=document.getElementById('hamburger'),mm=document.getElementById('mmenu'),mc=document.getElementById('mmenuClose');
+  ham.addEventListener('click',function(){ mm.classList.add('open'); document.body.style.overflow='hidden'; });
+  mc.addEventListener('click',closeMM);
+  function closeMM(){ mm.classList.remove('open'); document.body.style.overflow=''; }
+  document.querySelectorAll('.mmenu-list a').forEach(function(a){ a.addEventListener('click',closeMM); });
 
-/* ===== NAV SCROLL ===== */
-var nav=document.getElementById('nav');
-window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+  /* ===== REVEAL ===== */
+  var reveals=document.querySelectorAll('.reveal, .scribble');
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.1,rootMargin:'0px 0px -50px 0px'});
+  reveals.forEach(function(el){ io.observe(el); });
 
-/* ===== MOBILE MENU ===== */
-var hamburger=document.getElementById('hamburger'),mm=document.getElementById('mobileMenu'),mmClose=document.getElementById('mmClose');
-hamburger.addEventListener('click',function(){mm.classList.add('open');document.body.style.overflow='hidden'});
-mmClose.addEventListener('click',closeMM);
-function closeMM(){mm.classList.remove('open');document.body.style.overflow=''}
-window.goTo=function(id){closeMM();var el=document.getElementById(id);if(el)window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-72,behavior:'smooth'})};
+  /* ===== BAR FILLS ===== */
+  var fills=document.querySelectorAll('[data-w]');
+  var fo=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        setTimeout(function(){ e.target.style.width=e.target.getAttribute('data-w')+'%'; },120);
+        fo.unobserve(e.target);
+      }
+    });
+  },{threshold:.3});
+  fills.forEach(function(f){ fo.observe(f); });
 
-/* ===== SCROLL REVEAL ===== */
-var reveals=document.querySelectorAll('.reveal');
-var revObs=new IntersectionObserver(function(entries){entries.forEach(function(e){
-  if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target)}
-})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
-reveals.forEach(function(el){revObs.observe(el)});
+  /* ===== FAQ ===== */
+  document.querySelectorAll('.faq-q').forEach(function(q){
+    q.addEventListener('click',function(){
+      var item=q.parentElement;
+      var open=item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+      if(!open) item.classList.add('open');
+    });
+  });
 
-/* ===== PROGRESS BARS (profile + panel) ===== */
-var bars=document.querySelectorAll('[data-width]');
-var barObs=new IntersectionObserver(function(entries){entries.forEach(function(e){
-  if(e.isIntersecting){
-    var fills=e.target.querySelectorAll?e.target.querySelectorAll('[data-width]'):[];
-    if(e.target.hasAttribute('data-width'))fills=[e.target];
-    fills.forEach(function(f,i){setTimeout(function(){f.style.width=f.getAttribute('data-width')+'%'},120*i)});
-    barObs.unobserve(e.target);
-  }
-})},{threshold:0.2});
-var panelCard=document.getElementById('panelCard');
-if(panelCard)barObs.observe(panelCard);
-document.querySelectorAll('.profile-card').forEach(function(c){barObs.observe(c)});
-bars.forEach(function(b){barObs.observe(b)});
-
-/* ===== TIMELINE DOT PULSE ===== */
-var dots=document.querySelectorAll('[data-dot]');
-var dotObs=new IntersectionObserver(function(entries){entries.forEach(function(e){
-  if(e.isIntersecting){e.target.classList.add('pulsed');dotObs.unobserve(e.target)}
-})},{threshold:0.3});
-dots.forEach(function(d){dotObs.observe(d)});
-
-/* ===== MARQUEE ===== */
-(function(){
-  var tools=[
-    {n:'Signal Scan',c:'dot-green'},{n:'Brand Soul Map',c:'dot-green'},{n:'Sensescape',c:'dot-green'},
-    {n:'Visual DNA',c:'dot-green'},{n:'War Table',c:'dot-green'},
-    {n:'Logo Direction',c:'dot-blue'},{n:'Logo Evaluation',c:'dot-blue'},{n:'Voice Guide',c:'dot-blue'},
-    {n:'Instagram Agent',c:'dot-warm'},{n:'LinkedIn Agent',c:'dot-warm'},{n:'YouTube Agent',c:'dot-warm'},
-    {n:'Newsletter',c:'dot-warm'},{n:'Content Bridge',c:'dot-warm'},
-    {n:'Repurposing Engine',c:'dot-green'},
-    {n:'Dashboard',c:'dot-blue'},{n:'Quarterly Review',c:'dot-blue'},
-    {n:'Predictive Panel',c:'dot-warm'},{n:'BrandOS Hub',c:'dot-warm'}
+  /* ===== PERSONAS ===== */
+  var personas=[
+    {t:'I have an idea, <em>no brand yet.</em>', d:'You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.', h:'?door=blank', cta:'Start from zero'},
+    {t:'I have a brand. <em>Something feels off.</em>', d:'The tools audit what you have and tell you what to keep, fix, or rebuild. Logo evaluation, voice analysis, performance review. Precise verdict, clear path forward.', h:'?door=doubt', cta:'Audit your brand'},
+    {t:'Competition is <em>coming fast.</em>', d:'Skip to strategy and intelligence. The War Table pressure-tests your next move. The Predictive Panel simulates market response before you spend.', h:'?door=scale', cta:'Enter strategic mode'},
+    {t:'I build brands <em>for clients.</em>', d:'Up to 8 client portals. Your brand on every output. White-label delivery. Run clients through the same journey with your logo on the result.', h:'CALENDLY', cta:'Book a call'}
   ];
-  var track=document.getElementById('marqueeTrack'),h='';
-  for(var r=0;r<2;r++)tools.forEach(function(t){h+='<span class="marquee-tag"><span class="mtag-dot '+t.c+'"></span>'+t.n+'</span>'});
-  track.innerHTML=h;
-})();
-
-/* ===== PERSONA TABS ===== */
-(function(){
-  var tabs=document.querySelectorAll('.persona-tab'),panels=document.querySelectorAll('.persona-panel');
-  tabs.forEach(function(tab){
-    tab.addEventListener('click',function(){
-      tabs.forEach(function(t){t.classList.remove('active')});
-      tab.classList.add('active');
-      var idx=tab.getAttribute('data-tab');
-      panels.forEach(function(p){p.classList.remove('active')});
-      var target=document.querySelector('[data-panel="'+idx+'"]');
-      if(target)target.classList.add('active');
+  var pT=document.getElementById('pTitle'),pX=document.getElementById('pText'),pL=document.getElementById('pLink');
+  document.querySelectorAll('.persona-tag').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.persona-tag').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var i=parseInt(btn.getAttribute('data-p'),10);
+      var p=personas[i];
+      pT.innerHTML=p.t; pX.textContent=p.d; pL.textContent=p.cta;
+      if(p.h==='CALENDLY'){ pL.href='https://calendly.com/qtmbg/strategy-call-lab'; pL.target='_blank'; } else { pL.href='https://app.quantumbranding.ai/signal-scan.html'+p.h; pL.target=''; }
     });
   });
-})();
-
-/* ===== FAQ ACCORDION ===== */
-document.querySelectorAll('.faq-question').forEach(function(q){
-  q.addEventListener('click',function(){
-    var item=q.parentElement;
-    var wasOpen=item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(function(i){i.classList.remove('open')});
-    if(!wasOpen)item.classList.add('open');
-  });
-});
-
-/* ===== INTERACTIVE SCANNER ===== */
-(function(){
-  var btn=document.getElementById('scanBtn'),input=document.getElementById('scanInput');
-  var resultsEl=document.getElementById('scanResults'),barsEl=document.getElementById('scanBars');
-  var verdictEl=document.getElementById('scanVerdict'),lineEl=document.getElementById('scanLine');
-  var dims=[
-    {id:'identity',label:'Identity',min:40,max:75},
-    {id:'clarity',label:'Clarity',min:50,max:80},
-    {id:'voice',label:'Voice',min:15,max:55},
-    {id:'visual',label:'Visual',min:10,max:45},
-    {id:'strategy',label:'Strategy',min:10,max:35},
-    {id:'content',label:'Content',min:5,max:25}
-  ];
-
-  btn.addEventListener('click',function(){
-    var v=input.value.trim();
-    if(!v){input.focus();return}
-
-    /* Reset state */
-    btn.textContent='Scanning...';btn.classList.add('scanning');
-    resultsEl.classList.remove('show');verdictEl.classList.remove('show');
-
-    /* Scan line sweep */
-    lineEl.classList.remove('active');
-    void lineEl.offsetWidth;
-    lineEl.classList.add('active');
-
-    /* Generate scores and build bars */
-    var scores=dims.map(function(d){return{label:d.label,score:d.min+Math.floor(Math.random()*(d.max-d.min+1))}});
-
-    setTimeout(function(){
-      /* Build bar HTML */
-      barsEl.innerHTML='';
-      scores.forEach(function(s){
-        var item=document.createElement('div');item.className='scan-bar-item';
-        item.innerHTML='<div class="scan-bar-head"><span class="scan-bar-label">'+s.label+'</span><span class="scan-bar-score">'+s.score+'</span></div><div class="scan-bar-track"><div class="scan-bar-fill" style="width:0"></div></div>';
-        barsEl.appendChild(item);
-      });
-
-      resultsEl.classList.add('show');
-
-      /* Animate bars with 80ms stagger */
-      var fills=barsEl.querySelectorAll('.scan-bar-fill');
-      fills.forEach(function(f,i){
-        setTimeout(function(){f.style.width=scores[i].score+'%'},80*i);
-      });
-
-      /* Show verdict after last bar */
-      var lowest=scores.reduce(function(a,b){return a.score<b.score?a:b});
-      document.getElementById('scanVerdictTitle').textContent=lowest.label+'.';
-      document.getElementById('scanVerdictText').textContent='This is where your brand needs the most attention first. Start with the tools that build this layer.';
-      setTimeout(function(){verdictEl.classList.add('show')},80*scores.length+400);
-
-      btn.textContent='Scan my brand';btn.classList.remove('scanning');
-    },900);
-  });
-})();
-
-/* ===== HERO TYPING DEMO ===== */
-var demoExamples=[
-  {name:'Sunrise Bakery',essence:'A neighborhood bakery that makes people feel like Sunday morning',energy:'Warm, golden, unhurried',archetype:'The Caregiver',line:'Every loaf is a love letter to slow mornings.'},
-  {name:'Noor Studio',essence:'A design practice that finds beauty in restraint',energy:'Precise, luminous, deliberate',archetype:'The Creator',line:'Less noise. More signal.'},
-  {name:'Fithra',essence:'Fitness coaching that honors what your body already knows',energy:'Grounded, fierce, ancestral',archetype:'The Sage',line:'Your body remembers. We help it speak.'}
-];
-var dIdx=0,dAnim=false;
-var dCard=document.getElementById('demoCard');
-var dFields={name:document.getElementById('demoName'),essence:document.getElementById('demoEssence'),energy:document.getElementById('demoEnergy'),archetype:document.getElementById('demoArchetype'),line:document.getElementById('demoLine')};
-
-function typeField(el,text,speed,cb){
-  var i=0;el.textContent='';
-  function step(){
-    if(i<text.length){el.textContent=text.substring(0,i+1);i++;setTimeout(step,speed)}
-    else{el.innerHTML=text+'<span class="cursor-blink"></span>';if(cb)setTimeout(cb,100)}
-  }step();
-}
-
-function clearFields(){Object.values(dFields).forEach(function(f){f.innerHTML=''})}
-
-function runDemo(){
-  if(dAnim)return;dAnim=true;
-  var ex=demoExamples[dIdx%demoExamples.length];dIdx++;
-  clearFields();
-  dFields.name.innerHTML='<span class="cursor-blink"></span>';
-
-  typeField(dFields.name,ex.name,50,function(){
-    typeField(dFields.essence,ex.essence,30,function(){
-      typeField(dFields.energy,ex.energy,40,function(){
-        typeField(dFields.archetype,ex.archetype,45,function(){
-          typeField(dFields.line,'\u201C'+ex.line+'\u201D',35,function(){
-            /* FIX 3: proper glow pulse animation */
-            dCard.classList.remove('glow-pulse');
-            void dCard.offsetWidth;
-            dCard.classList.add('glow-pulse');
-            setTimeout(function(){dCard.classList.remove('glow-pulse')},1500);
-            dAnim=false;
-            setTimeout(runDemo,4000);
-          });
-        });
-      });
-    });
-  });
-}
-setTimeout(runDemo,1400);
-
-/* ===== FIX 2: AMBIENT PARTICLES ===== */
-(function(){
-  var canvas=document.getElementById('ambientCanvas');
-  if(!canvas)return;
-  var ctx=canvas.getContext('2d');
-  var particles=[];
-  var isDark=function(){return html.getAttribute('data-theme')!=='light'};
-
-  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
-  resize();
-  window.addEventListener('resize',resize);
-
-  var colors=['#3A5F4A','#4A7A5E','#A8903E','#C4A84E'];
-  for(var i=0;i<18;i++){
-    particles.push({
-      x:Math.random()*window.innerWidth,
-      y:Math.random()*window.innerHeight,
-      r:1.5+Math.random()*1.5,
-      vx:(Math.random()-0.5)*0.3,
-      vy:(Math.random()-0.5)*0.3,
-      color:colors[Math.floor(Math.random()*colors.length)],
-      alpha:0.06+Math.random()*0.04
-    });
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    var baseAlpha=isDark()?1:0.5;
-    particles.forEach(function(p){
-      p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
-      if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=p.color;
-      ctx.globalAlpha=p.alpha*baseAlpha;
-      ctx.fill();
-    });
-    ctx.globalAlpha=1;
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
 
 })();
 </script>
