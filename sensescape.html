@@ -68,7 +68,7 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
 <body class="bg-void text-t2 min-h-screen antialiased selection:bg-patina-dim selection:text-t1 overflow-x-hidden">
 <div id="root"></div>
 <script type="text/babel">
-  const { useState, useEffect, useMemo, useCallback } = React;
+  const { useState, useEffect, useMemo, useCallback, useRef } = React;
 
   const ArrowRight = ({ size = 16, className = '' }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -357,6 +357,24 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
     const [submitError, setSubmitError] = useState('');
     const [validationError, setValidationError] = useState('');
 
+    // Refs for uncontrolled text inputs (prevents focus loss from re-renders)
+    const textRefs = useRef({});
+    const nameRef = useRef(null);
+    const companyRef = useRef(null);
+    const emailRef = useRef(null);
+
+    const syncTextRefsToAnswers = useCallback(() => {
+      const updates = {};
+      Object.keys(textRefs.current).forEach(id => {
+        const el = textRefs.current[id];
+        if (el) updates[id] = el.value;
+      });
+      if (Object.keys(updates).length) {
+        setAnswers(prev => ({ ...prev, ...updates }));
+      }
+      return updates;
+    }, []);
+
     const toggleTheme = useCallback(() => setTheme(t => {
       const next = t === 'dark' ? 'light' : 'dark';
       localStorage.setItem('qb_theme', next);
@@ -377,22 +395,27 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
       setAnswers(prev => ({ ...prev, [id]: parseInt(value, 10) }));
     }, []);
 
-    const handleTextChange = useCallback((id, value) => {
-      setAnswers(prev => ({ ...prev, [id]: value }));
-      setValidationError('');
-    }, []);
+    const handleTextInput = useCallback(() => {
+      if (validationError) setValidationError('');
+    }, [validationError]);
 
     const isChapterComplete = useCallback(() => {
       const questions = SENSESCAPE_DATA[currentChapterIndex].questions;
       for (let q of questions) {
-        if (q.type === 'text' && (!answers[q.id] || !answers[q.id].trim())) return false;
+        if (q.type === 'text') {
+          const el = textRefs.current[q.id];
+          const current = el ? el.value : (answers[q.id] || '');
+          if (!current || !current.trim()) return false;
+        }
       }
       return true;
     }, [currentChapterIndex, answers]);
 
     const nextChapter = useCallback(() => {
+      syncTextRefsToAnswers();
       if (!isChapterComplete()) { setValidationError('Complete all prompts to continue.'); return; }
       setValidationError('');
+      textRefs.current = {};
       if (currentChapterIndex < SENSESCAPE_DATA.length - 1) {
         setCurrentChapterIndex(prev => prev + 1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -400,15 +423,17 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
         setShowLeadForm(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    }, [currentChapterIndex, isChapterComplete]);
+    }, [currentChapterIndex, isChapterComplete, syncTextRefsToAnswers]);
 
     const prevChapter = useCallback(() => {
+      syncTextRefsToAnswers();
       setValidationError('');
+      textRefs.current = {};
       if (currentChapterIndex > 0) {
         setCurrentChapterIndex(prev => prev - 1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    }, [currentChapterIndex]);
+    }, [currentChapterIndex, syncTextRefsToAnswers]);
 
     const paradoxes = useMemo(() => {
       if (!showCodex) return [];
@@ -465,17 +490,21 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
 
     const handleLeadSubmit = async (e) => {
       e.preventDefault();
+      const nameVal = (nameRef.current && nameRef.current.value) || '';
+      const companyVal = (companyRef.current && companyRef.current.value) || '';
+      const emailVal = (emailRef.current && emailRef.current.value) || '';
       const emailRegex = /.+@.+\..+/;
-      if (!emailRegex.test(leadData.email)) { setValidationError('Enter a valid email address.'); return; }
-      if (!leadData.name.trim()) { setValidationError('Name is required.'); return; }
-      if (!leadData.company.trim()) { setValidationError('Company is required.'); return; }
+      if (!emailRegex.test(emailVal)) { setValidationError('Enter a valid email address.'); return; }
+      if (!nameVal.trim()) { setValidationError('Name is required.'); return; }
+      if (!companyVal.trim()) { setValidationError('Company is required.'); return; }
+      setLeadData({ name: nameVal, company: companyVal, email: emailVal });
       setValidationError(''); setSubmitError(''); setIsSubmitting(true);
       const WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/YOURHOOKID';
       try {
         await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: leadData.name, company: leadData.company, email: leadData.email, answers, submittedAt: new Date().toISOString() }),
+          body: JSON.stringify({ name: nameVal, company: companyVal, email: emailVal, answers, submittedAt: new Date().toISOString() }),
         });
         saveToQBP(answers);
         setIsSubmitting(false); setShowLeadForm(false); setShowCodex(true);
@@ -588,9 +617,9 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
           <form onSubmit={handleLeadSubmit} className="glass-card p-14 w-full max-w-2xl space-y-10">
             <h1 className="font-serif text-5xl text-center">Identity Lock.</h1>
             <div className="space-y-6">
-              <input className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Full Name" value={leadData.name} onChange={e => { setLeadData(prev => ({ ...prev, name: e.target.value })); setValidationError(''); }} />
-              <input className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Company / Brand" value={leadData.company} onChange={e => { setLeadData(prev => ({ ...prev, company: e.target.value })); setValidationError(''); }} />
-              <input className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Email" type="email" value={leadData.email} onChange={e => { setLeadData(prev => ({ ...prev, email: e.target.value })); setValidationError(''); }} />
+              <input ref={nameRef} defaultValue={leadData.name} onInput={handleTextInput} className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Full Name" />
+              <input ref={companyRef} defaultValue={leadData.company} onInput={handleTextInput} className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Company / Brand" />
+              <input ref={emailRef} defaultValue={leadData.email} onInput={handleTextInput} type="email" className="w-full bg-transparent border-b border-border-medium py-4 text-2xl outline-none focus:border-patina transition-all placeholder:text-t4" placeholder="Email" />
             </div>
             {(validationError || submitError) && (
               <div className="flex items-center space-x-2 text-[#C0714A] font-mono text-[11px] uppercase tracking-[0.15em]">
@@ -706,7 +735,10 @@ html:not([data-theme]) { background: var(--bg-void); color: var(--text-2); }
                           <Square size={12} /><span>{q.title}</span>
                         </h3>
                         <label className="block font-serif text-4xl md:text-5xl text-t1 leading-[1.3] tracking-tight">{q.prompt}</label>
-                        <textarea value={answers[q.id] || ''} onChange={e => handleTextChange(q.id, e.target.value)}
+                        <textarea
+                          ref={el => { if (el) { textRefs.current[q.id] = el; } else { delete textRefs.current[q.id]; } }}
+                          defaultValue={answers[q.id] || ''}
+                          onInput={handleTextInput}
                           placeholder="Type your response..."
                           className="w-full bg-transparent border-b-2 border-border-medium focus:border-patina outline-none py-6 text-2xl md:text-3xl font-sans transition-colors resize-none placeholder:italic placeholder:text-t4/30"
                           rows={2}
