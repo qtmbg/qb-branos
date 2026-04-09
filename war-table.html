@@ -400,7 +400,7 @@
 <div id="root" class="relative z-10"></div>
 
 <script type="text/babel">
-const { useState, useMemo, useEffect } = React;
+const { useState, useMemo, useEffect, useRef } = React;
 
 // --- Icons (Mapped to Entangled Time vibes) ---
 const ChevronRight = ({size=16,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polyline points="9 18 15 12 9 6"/></svg>;
@@ -487,6 +487,9 @@ function App() {
   const [initiatives, setInitiatives] = useState([]);
   const [newInitiative, setNewInitiative] = useState({ name: '', description: '', pillar: 'Revenue', persona: '' });
   const [expandedInterrogation, setExpandedInterrogation] = useState(null);
+  const newInitNameRef = useRef(null);
+  const newInitDescRef = useRef(null);
+  const newInitPersonaRef = useRef(null);
 
   // --- State: Phase 5 (Trade-offs) ---
   const [tradeOffs, setTradeOffs] = useState({
@@ -554,6 +557,9 @@ function App() {
     };
     setInitiatives([...initiatives, item]);
     setNewInitiative({ name: '', description: '', pillar: 'Revenue', persona: '' });
+    if (newInitNameRef.current) newInitNameRef.current.value = '';
+    if (newInitDescRef.current) newInitDescRef.current.value = '';
+    if (newInitPersonaRef.current) newInitPersonaRef.current.value = '';
   };
 
   const copyToClipboard = () => {
@@ -730,11 +736,11 @@ function App() {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
              <div>
                <label htmlFor="brief-brand-name" className={classes.labelMono}>Brand Identity</label>
-               <input id="brief-brand-name" type="text" value={brandInfo.brandName} onChange={e => setBrandInfo({...brandInfo, brandName: e.target.value})} className={classes.glassInput} />
+               <input id="brief-brand-name" type="text" defaultValue={brandInfo.brandName} onChange={e => setBrandInfo({...brandInfo, brandName: e.target.value})} className={classes.glassInput} />
              </div>
              <div>
                <label htmlFor="brief-primary-target" className={classes.labelMono}>Primary Target</label>
-               <input id="brief-primary-target" type="text" value={brandInfo.primaryPersona} onChange={e => setBrandInfo({...brandInfo, primaryPersona: e.target.value})} className={classes.glassInput} />
+               <input id="brief-primary-target" type="text" defaultValue={brandInfo.primaryPersona} onChange={e => setBrandInfo({...brandInfo, primaryPersona: e.target.value})} className={classes.glassInput} />
              </div>
            </div>
         </div>
@@ -746,25 +752,25 @@ function App() {
           <div className="space-y-8">
             <div>
               <label htmlFor="brief-bottleneck" className={classes.labelMono}>Commercial Bottleneck (The Actual One)</label>
-              <textarea id="brief-bottleneck" value={brief.bottleneck} onChange={e => setBrief({...brief, bottleneck: e.target.value})} className={`${classes.glassInput} min-h-[100px]`} />
+              <textarea id="brief-bottleneck" defaultValue={brief.bottleneck} onChange={e => setBrief({...brief, bottleneck: e.target.value})} className={`${classes.glassInput} min-h-[100px]`} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
               <div className="md:col-span-2">
                 <label htmlFor="brief-next-month" className={classes.labelMono}>The "Next Month" Delay</label>
-                <input id="brief-next-month" type="text" value={brief.nextMonth} onChange={e => setBrief({...brief, nextMonth: e.target.value})} className={classes.glassInput} />
+                <input id="brief-next-month" type="text" defaultValue={brief.nextMonth} onChange={e => setBrief({...brief, nextMonth: e.target.value})} className={classes.glassInput} />
               </div>
               <div>
                 <label htmlFor="brief-months-delayed" className={classes.labelMono}>Months Delayed</label>
-                <input id="brief-months-delayed" type="number" value={brief.nextMonthDelay} onChange={e => setBrief({...brief, nextMonthDelay: e.target.value})} className={classes.glassInput} />
+                <input id="brief-months-delayed" type="number" defaultValue={brief.nextMonthDelay} onChange={e => setBrief({...brief, nextMonthDelay: e.target.value})} className={classes.glassInput} />
               </div>
             </div>
             <div>
               <label htmlFor="brief-working" className={classes.labelMono}>Organic Growth Vector (If doing nothing new)</label>
-              <input id="brief-working" type="text" value={brief.working} onChange={e => setBrief({...brief, working: e.target.value})} className={classes.glassInput} />
+              <input id="brief-working" type="text" defaultValue={brief.working} onChange={e => setBrief({...brief, working: e.target.value})} className={classes.glassInput} />
             </div>
             <div>
               <label htmlFor="brief-persona-gap" className={classes.labelMono}>Critical Gap for <span className="text-patina">{brandInfo.primaryPersona || 'Target'}</span></label>
-              <input id="brief-persona-gap" type="text" value={brief.personaGap} onChange={e => setBrief({...brief, personaGap: e.target.value})} className={classes.glassInput} />
+              <input id="brief-persona-gap" type="text" defaultValue={brief.personaGap} onChange={e => setBrief({...brief, personaGap: e.target.value})} className={classes.glassInput} />
             </div>
           </div>
         </div>
@@ -776,15 +782,15 @@ function App() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
              <div>
                <label htmlFor="brief-revenue" className={classes.labelMono}>3-Year Revenue</label>
-               <input id="brief-revenue" type="text" value={brief.revenue} onChange={e => setBrief({...brief, revenue: e.target.value})} className={classes.glassInput} />
+               <input id="brief-revenue" type="text" defaultValue={brief.revenue} onChange={e => setBrief({...brief, revenue: e.target.value})} className={classes.glassInput} />
              </div>
              <div>
                <label htmlFor="brief-team-size" className={classes.labelMono}>Team Volume</label>
-               <input id="brief-team-size" type="text" value={brief.teamSize} onChange={e => setBrief({...brief, teamSize: e.target.value})} className={classes.glassInput} />
+               <input id="brief-team-size" type="text" defaultValue={brief.teamSize} onChange={e => setBrief({...brief, teamSize: e.target.value})} className={classes.glassInput} />
              </div>
              <div>
                <label htmlFor="brief-key-metric" className={classes.labelMono}>Primary Metric</label>
-               <input id="brief-key-metric" type="text" value={brief.keyMetric} onChange={e => setBrief({...brief, keyMetric: e.target.value})} className={classes.glassInput} />
+               <input id="brief-key-metric" type="text" defaultValue={brief.keyMetric} onChange={e => setBrief({...brief, keyMetric: e.target.value})} className={classes.glassInput} />
              </div>
           </div>
           <div>
@@ -819,7 +825,7 @@ function App() {
           <div className="space-y-6">
             <div>
               <label htmlFor="initiative-name" className={classes.labelMono}>Asset Designation</label>
-              <input id="initiative-name" type="text" value={newInitiative.name} onChange={e => setNewInitiative({...newInitiative, name: e.target.value})} className={classes.glassInput} />
+              <input id="initiative-name" type="text" ref={newInitNameRef} defaultValue={newInitiative.name} onChange={e => setNewInitiative({...newInitiative, name: e.target.value})} className={classes.glassInput} />
             </div>
             <div>
               <label htmlFor="initiative-pillar" className={classes.labelMono}>Pillar Classification</label>
@@ -829,11 +835,11 @@ function App() {
             </div>
             <div>
               <label htmlFor="initiative-description" className={classes.labelMono}>Operational Description</label>
-              <textarea id="initiative-description" value={newInitiative.description} onChange={e => setNewInitiative({...newInitiative, description: e.target.value})} className={classes.glassInput} rows="3" />
+              <textarea id="initiative-description" ref={newInitDescRef} defaultValue={newInitiative.description} onChange={e => setNewInitiative({...newInitiative, description: e.target.value})} className={classes.glassInput} rows="3" />
             </div>
             <div>
               <label htmlFor="initiative-persona" className={classes.labelMono}>Target Persona</label>
-              <input id="initiative-persona" type="text" value={newInitiative.persona} onChange={e => setNewInitiative({...newInitiative, persona: e.target.value})} className={classes.glassInput} placeholder={brandInfo.primaryPersona} />
+              <input id="initiative-persona" type="text" ref={newInitPersonaRef} defaultValue={newInitiative.persona} onChange={e => setNewInitiative({...newInitiative, persona: e.target.value})} className={classes.glassInput} placeholder={brandInfo.primaryPersona} />
             </div>
             <div className="pt-2">
               <button onClick={handleAddInitiative} disabled={!newInitiative.name} className={classes.primaryBtn}>
@@ -908,22 +914,22 @@ function App() {
                 <div className="space-y-3">
                   <label className={`${classes.labelMono} !text-brass`}>01. The Utility Test</label>
                   <p className="text-sm text-text3 mb-3 italic">Name specific client + real cost if unsolved.</p>
-                  <textarea value={init.interrogation.utility} onChange={e => updateInterrogation(init.id, 'utility', e.target.value)} className={`${classes.glassInput} min-h-[100px] bg-void`} />
+                  <textarea defaultValue={init.interrogation.utility} onChange={e => updateInterrogation(init.id, 'utility', e.target.value)} className={`${classes.glassInput} min-h-[100px] bg-void`} />
                 </div>
                 <div className="space-y-3">
                   <label className={`${classes.labelMono} !text-brass`}>02. The Timing Test</label>
                   <p className="text-sm text-text3 mb-3 italic">Required conditions vs current reality.</p>
-                  <textarea value={init.interrogation.timing} onChange={e => updateInterrogation(init.id, 'timing', e.target.value)} className={`${classes.glassInput} min-h-[100px] bg-void`} />
+                  <textarea defaultValue={init.interrogation.timing} onChange={e => updateInterrogation(init.id, 'timing', e.target.value)} className={`${classes.glassInput} min-h-[100px] bg-void`} />
                 </div>
                 <div className="space-y-3">
                   <label className={`${classes.labelMono} !text-brass`}>03. Persona & Brand Test</label>
                   <p className="text-sm text-text3 mb-3 italic">Target stage match + Soul Axis alignment.</p>
-                  <textarea value={init.interrogation.personaTest} onChange={e => updateInterrogation(init.id, 'personaTest', e.target.value)} className={`${classes.glassInput} min-h-[100px] bg-void`} />
+                  <textarea defaultValue={init.interrogation.personaTest} onChange={e => updateInterrogation(init.id, 'personaTest', e.target.value)} className={`${classes.glassInput} min-h-[100px] bg-void`} />
                 </div>
                 <div className="space-y-3">
                   <label className={`${classes.labelMono} !text-brass`}>04. Cost of Inaction</label>
                   <p className="text-sm text-text3 mb-3 italic">Compounding cost of a 90-day delay.</p>
-                  <textarea value={init.interrogation.urgency} onChange={e => updateInterrogation(init.id, 'urgency', e.target.value)} className={`${classes.glassInput} min-h-[100px] bg-void`} />
+                  <textarea defaultValue={init.interrogation.urgency} onChange={e => updateInterrogation(init.id, 'urgency', e.target.value)} className={`${classes.glassInput} min-h-[100px] bg-void`} />
                 </div>
                 <div className="pt-6 flex justify-end">
                   <button onClick={(e) => { e.stopPropagation(); setExpandedInterrogation(null); }} className="btn-secondary">Commit Block</button>
@@ -1037,15 +1043,15 @@ function App() {
             <div className="space-y-6">
                <div>
                   <label className={classes.labelMono}>Execution Target</label>
-                  <input type="text" value={tradeOffs.closeCall.choose} onChange={e => setTradeOffs({...tradeOffs, closeCall: {...tradeOffs.closeCall, choose: e.target.value}})} className={classes.glassInput} />
+                  <input type="text" defaultValue={tradeOffs.closeCall.choose} onChange={e => setTradeOffs({...tradeOffs, closeCall: {...tradeOffs.closeCall, choose: e.target.value}})} className={classes.glassInput} />
                </div>
                <div>
                   <label className={classes.labelMono}>Strategic Rationale</label>
-                  <input type="text" value={tradeOffs.closeCall.because} onChange={e => setTradeOffs({...tradeOffs, closeCall: {...tradeOffs.closeCall, because: e.target.value}})} className={classes.glassInput} />
+                  <input type="text" defaultValue={tradeOffs.closeCall.because} onChange={e => setTradeOffs({...tradeOffs, closeCall: {...tradeOffs.closeCall, because: e.target.value}})} className={classes.glassInput} />
                </div>
                <div>
                   <label className={classes.labelMono}>Accepted Cost (Asset to wait)</label>
-                  <input type="text" value={tradeOffs.closeCall.acceptWait} onChange={e => setTradeOffs({...tradeOffs, closeCall: {...tradeOffs.closeCall, acceptWait: e.target.value}})} className={classes.glassInput} />
+                  <input type="text" defaultValue={tradeOffs.closeCall.acceptWait} onChange={e => setTradeOffs({...tradeOffs, closeCall: {...tradeOffs.closeCall, acceptWait: e.target.value}})} className={classes.glassInput} />
                </div>
             </div>
           </div>
@@ -1057,11 +1063,11 @@ function App() {
             <div className="space-y-6">
                <div>
                   <label className={classes.labelMono}>Primary Vector Built First</label>
-                  <input type="text" value={tradeOffs.pillarClash.buildFirst} onChange={e => setTradeOffs({...tradeOffs, pillarClash: {...tradeOffs.pillarClash, buildFirst: e.target.value}})} className={classes.glassInput} />
+                  <input type="text" defaultValue={tradeOffs.pillarClash.buildFirst} onChange={e => setTradeOffs({...tradeOffs, pillarClash: {...tradeOffs.pillarClash, buildFirst: e.target.value}})} className={classes.glassInput} />
                </div>
                <div>
                   <label className={classes.labelMono}>Current Stage Justification</label>
-                  <input type="text" value={tradeOffs.pillarClash.because} onChange={e => setTradeOffs({...tradeOffs, pillarClash: {...tradeOffs.pillarClash, because: e.target.value}})} className={classes.glassInput} />
+                  <input type="text" defaultValue={tradeOffs.pillarClash.because} onChange={e => setTradeOffs({...tradeOffs, pillarClash: {...tradeOffs.pillarClash, because: e.target.value}})} className={classes.glassInput} />
                </div>
             </div>
           </div>
@@ -1073,11 +1079,11 @@ function App() {
             <div className="space-y-6">
                <div>
                   <label className={classes.labelMono}>Initial Public Deployment</label>
-                  <input type="text" value={tradeOffs.brandTest.firstMove} onChange={e => setTradeOffs({...tradeOffs, brandTest: {...tradeOffs.brandTest, firstMove: e.target.value}})} className={classes.glassInput} />
+                  <input type="text" defaultValue={tradeOffs.brandTest.firstMove} onChange={e => setTradeOffs({...tradeOffs, brandTest: {...tradeOffs.brandTest, firstMove: e.target.value}})} className={classes.glassInput} />
                </div>
                <div>
                   <label className={classes.labelMono}>Brand Alignment Mechanism</label>
-                  <input type="text" value={tradeOffs.brandTest.makeItFeel} onChange={e => setTradeOffs({...tradeOffs, brandTest: {...tradeOffs.brandTest, makeItFeel: e.target.value}})} className={classes.glassInput} />
+                  <input type="text" defaultValue={tradeOffs.brandTest.makeItFeel} onChange={e => setTradeOffs({...tradeOffs, brandTest: {...tradeOffs.brandTest, makeItFeel: e.target.value}})} className={classes.glassInput} />
                </div>
             </div>
           </div>
@@ -1110,22 +1116,22 @@ function App() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label className={classes.labelMono} htmlFor="lead-name">First Name</label>
-              <input id="lead-name" type="text" value={leadForm.name} onChange={e => setLeadForm({...leadForm, name: e.target.value})} className={classes.glassInput} />
+              <input id="lead-name" type="text" defaultValue={leadForm.name} onChange={e => setLeadForm({...leadForm, name: e.target.value})} className={classes.glassInput} />
             </div>
             <div>
               <label className={classes.labelMono} htmlFor="lead-surname">Last Name</label>
-              <input id="lead-surname" type="text" value={leadForm.surname} onChange={e => setLeadForm({...leadForm, surname: e.target.value})} className={classes.glassInput} />
+              <input id="lead-surname" type="text" defaultValue={leadForm.surname} onChange={e => setLeadForm({...leadForm, surname: e.target.value})} className={classes.glassInput} />
             </div>
           </div>
           <div>
             <label className={classes.labelMono}>Corporate Entity</label>
-            <input id="lead-company" type="text" value={leadForm.company} onChange={e => setLeadForm({...leadForm, company: e.target.value})} className={classes.glassInput} />
+            <input id="lead-company" type="text" defaultValue={leadForm.company} onChange={e => setLeadForm({...leadForm, company: e.target.value})} className={classes.glassInput} />
           </div>
           <div>
             <label className={classes.labelMono} htmlFor="lead-email">Verified Comm Link <span className="text-brass">*</span></label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text3" strokeWidth={1.5} />
-              <input id="lead-email" type="email" required value={leadForm.email} onChange={e => setLeadForm({...leadForm, email: e.target.value})} className={`${classes.glassInput} pl-12`} placeholder="email@domain.com" />
+              <input id="lead-email" type="email" required defaultValue={leadForm.email} onChange={e => setLeadForm({...leadForm, email: e.target.value})} className={`${classes.glassInput} pl-12`} placeholder="email@domain.com" />
             </div>
           </div>
         </div>
