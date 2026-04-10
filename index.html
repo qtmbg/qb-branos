@@ -1646,41 +1646,44 @@ input{font-family:inherit}
 .hero-orbit{ margin-top:14px; }
 
 /* ============================== TESTIMONIALS (wispr-style staggered) ============================== */
+/* Testimonial cards — grid on desktop, scroll on mobile */
 .testi-wispr{
-  display:flex;
-  gap:20px;
-  margin-top:56px;
-  overflow-x:auto;
-  scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch;
-  padding-bottom:14px;
-  scrollbar-width:none;
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:16px;
+  margin-top:48px;
 }
-.testi-wispr::-webkit-scrollbar{ display:none; }
+@media(max-width:1040px){
+  .testi-wispr{ grid-template-columns:repeat(2, 1fr); }
+}
+@media(max-width:620px){
+  .testi-wispr{
+    display:flex;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:12px;
+  }
+  .testi-wispr::-webkit-scrollbar{ display:none; }
+}
 .testi-card{
-  background:var(--cream);
-  color:var(--ink);
-  border-radius:20px;
-  padding:26px 24px;
+  background:#F4F0EB;
+  color:#1A1610;
+  border-radius:18px;
+  padding:24px 22px;
   display:flex;
   flex-direction:column;
-  gap:16px;
-  box-shadow:0 20px 40px -20px rgba(8,19,16,.4);
-  position:relative;
-  transition:transform .4s var(--ease), box-shadow .4s var(--ease);
-  min-width:290px;
-  max-width:320px;
-  flex-shrink:0;
-  scroll-snap-align:start;
+  gap:14px;
+  box-shadow:0 14px 34px -14px rgba(8,19,16,.4);
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+@media(max-width:620px){
+  .testi-card{ min-width:270px; flex-shrink:0; scroll-snap-align:start; }
 }
 .testi-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 30px 50px -20px rgba(8,19,16,.55);
-}
-/* Horizontal scroll — hover lift */
-.testi-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 28px 50px -18px rgba(8,19,16,.55);
+  transform:translateY(-5px);
+  box-shadow:0 22px 44px -16px rgba(8,19,16,.55);
 }
 .testi-head{
   display:flex;
@@ -1704,10 +1707,11 @@ input{font-family:inherit}
 .tc-avatar-terra{ background:var(--terra); }
 .tc-avatar-brass{ background:var(--brass); color:var(--ink); }
 .tc-avatar-plum{ background:var(--plum); }
+/* Card innards: hardcoded dark text since cards are always cream bg */
 .testi-name-strong{
   font-family:var(--f-display);
   font-size:1rem;
-  color:var(--ink);
+  color:#1A1610;
   line-height:1.2;
 }
 .testi-role{
@@ -1715,13 +1719,13 @@ input{font-family:inherit}
   font-size:.65rem;
   letter-spacing:.12em;
   text-transform:uppercase;
-  color:var(--ink-mute);
+  color:#8A7E70;
   margin-top:3px;
 }
 .testi-quote{
   font-size:.92rem;
   line-height:1.6;
-  color:var(--ink-soft);
+  color:#5A5040;
   flex:1;
 }
 .testi-footer{
@@ -1729,21 +1733,18 @@ input{font-family:inherit}
   align-items:baseline;
   gap:8px;
   padding-top:14px;
-  border-top:1px solid var(--cream-line);
+  border-top:1px solid rgba(100,80,50,.14);
 }
 .testi-stat{
   font-family:var(--f-display);
   font-style:italic;
   font-size:1.5rem;
-  color:var(--patina);
+  color:#3A5F4A;
   line-height:1;
 }
-.tc-2 .testi-stat{ color:var(--terra); }
-.tc-3 .testi-stat{ color:var(--brass); }
-.tc-4 .testi-stat{ color:var(--plum); }
 .testi-stat-lbl{
   font-size:.78rem;
-  color:var(--ink-mute);
+  color:#8A7E70;
 }
 .testi-disclaimer{
   text-align:center;
@@ -2506,6 +2507,239 @@ body{ transition:background .4s ease, color .3s ease; }
   background:var(--brass-faint);
 }
 
+/* ============================== VIDEO PLACEHOLDER ============================== */
+.video-placeholder{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  border-radius:var(--r-card-lg);
+  overflow:hidden;
+  cursor:pointer;
+  background:linear-gradient(135deg, var(--patina-deep), #141210);
+  border:1px solid rgba(140,110,70,.12);
+  transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s;
+}
+.video-placeholder:hover{
+  transform:translateY(-4px);
+  box-shadow:0 24px 60px -20px rgba(8,19,16,.5);
+}
+.video-inner{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  z-index:1;
+}
+.video-play-btn{
+  width:68px; height:68px;
+  border-radius:50%;
+  border:2px solid rgba(238,229,210,.3);
+  background:rgba(238,229,210,.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .3s;
+}
+.video-play-btn svg{ margin-left:3px; }
+.video-placeholder:hover .video-play-btn{
+  border-color:var(--brass);
+  background:rgba(168,144,62,.15);
+  transform:scale(1.1);
+}
+.video-label-text{
+  font-family:var(--f-mono);
+  font-size:.72rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--dark-text-mute);
+}
+.video-embed{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  background:#000;
+}
+.video-embed iframe{ width:100%; height:100%; }
+
+/* ============================== DARK TESTI CARD ============================== */
+/* Testi cards always cream — they sit on dark bg in both modes */
+[data-theme="dark"] .testi-card{ background:#F4F0EB; color:#1A1610; }
+
+/* ============================== PHASE CARD MOTION ============================== */
+/* All multi cards: smooth hover lift */
+.multi .big-card,
+.multi .side-card{
+  transition:transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s;
+}
+.multi .big-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 28px 60px -20px rgba(8,19,16,.45);
+}
+.multi .side-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 24px 50px -18px rgba(26,22,16,.22);
+  border-color:var(--brass);
+}
+
+/* Mock note: subtle slide-in feel */
+.mock-note{
+  transition:transform .4s var(--ease);
+}
+.multi .big-card:hover .mock-note{
+  transform:translateX(4px);
+}
+
+/* Mock tags: stagger pop on card hover */
+.mock-tags .mock-tag{
+  transition:transform .3s var(--ease), opacity .3s;
+}
+.multi .big-card:hover .mock-tags .mock-tag:nth-child(1){ transform:translateY(-3px); transition-delay:0s; }
+.multi .big-card:hover .mock-tags .mock-tag:nth-child(2){ transform:translateY(-3px); transition-delay:.06s; }
+.multi .big-card:hover .mock-tags .mock-tag:nth-child(3){ transform:translateY(-3px); transition-delay:.12s; }
+
+/* Swatches: wave on card hover */
+.swatch-row .sw{
+  transition:transform .3s var(--ease);
+}
+.side-card:hover .swatch-row .sw:nth-child(1){ transform:translateY(-4px) rotate(-3deg); transition-delay:0s; }
+.side-card:hover .swatch-row .sw:nth-child(2){ transform:translateY(-6px) rotate(2deg); transition-delay:.04s; }
+.side-card:hover .swatch-row .sw:nth-child(3){ transform:translateY(-4px) rotate(-2deg); transition-delay:.08s; }
+.side-card:hover .swatch-row .sw:nth-child(4){ transform:translateY(-5px) rotate(3deg); transition-delay:.12s; }
+.side-card:hover .swatch-row .sw:nth-child(5){ transform:translateY(-3px) rotate(-1deg); transition-delay:.16s; }
+.side-card:hover .swatch-row .sw:nth-child(6){ transform:translateY(-5px) rotate(2deg); transition-delay:.2s; }
+
+/* Phase 04 image: subtle zoom on hover */
+.multi .side-card img{
+  transition:transform .5s var(--ease);
+}
+.multi .side-card:hover img{
+  transform:scale(1.03);
+}
+
+/* Phase 05 stat tiles: pulse on card hover */
+.multi .big-card:hover [style*="border-radius:10px"]{
+  transition:transform .3s var(--ease), background .3s;
+}
+.multi .big-card:hover [style*="border-radius:10px"]:nth-child(1){ transform:translateY(-3px); transition-delay:0s; }
+.multi .big-card:hover [style*="border-radius:10px"]:nth-child(2){ transform:translateY(-3px); transition-delay:.06s; }
+.multi .big-card:hover [style*="border-radius:10px"]:nth-child(3){ transform:translateY(-3px); transition-delay:.12s; }
+.multi .big-card:hover [style*="border-radius:10px"]:nth-child(4){ transform:translateY(-3px); transition-delay:.18s; }
+
+/* Phase 03 dark card: glow on hover */
+.side-card[style*="patina-deep"]:hover{
+  box-shadow:0 24px 50px -18px rgba(58,95,74,.35) !important;
+  border-color:var(--patina-lit) !important;
+}
+
+/* Align all phase eyebrows consistently */
+.multi .eyebrow,
+.multi .device-label{
+  margin-bottom:10px;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .multi .big-card, .multi .side-card, .mock-note, .mock-tag, .sw{ transition:none !important; transform:none !important; }
+}
+
+/* ============================== MOBILE FIXES ============================== */
+/* Prevent zoom-out breaking layout */
+html{ -webkit-text-size-adjust:100%; }
+body{ min-width:320px; }
+
+/* Multi cards: stack properly on mobile, no side-by-side overflow */
+@media(max-width:700px){
+  .multi{ grid-template-columns:1fr !important; }
+  .multi .big-card{ min-height:auto; padding:28px 22px; }
+  .multi .big-card .display{ font-size:1.4rem; }
+  .multi .side-col{ gap:16px; }
+  .multi .side-card{ padding:24px 20px; }
+  .multi .side-card .display{ font-size:1.3rem; }
+
+  /* Phase 4+5 bottom grid: force single column */
+  .multi .side-col[style*="grid-column"],
+  .multi .big-card[style*="grid-column"]{ grid-column:auto !important; }
+
+  /* Mock tags wrap tighter */
+  .mock-tag{ font-size:.6rem; padding:5px 10px; }
+
+  /* Device card tighter */
+  .device-card{ padding:24px 20px; }
+  .device-label{ font-size:.62rem; margin-bottom:16px; }
+  .prof-val{ font-size:.95rem; }
+}
+
+/* Footer mobile: condense everything */
+@media(max-width:640px){
+  .foot-grid{ gap:20px; }
+  .foot-col-title{ margin-bottom:10px; }
+  .foot-col a{ padding:4px 0; font-size:.85rem; }
+  .foot-brand{ font-size:1.1rem; margin-bottom:8px; }
+  .foot-desc{ font-size:.85rem; }
+
+  /* Footer stage: smaller stats, tighter */
+  .foot-stage{ padding:40px 0 24px; }
+  .foot-stage-stats{ margin-bottom:36px; gap:20px; }
+  .fs-num{ font-size:clamp(3rem, 15vw, 5rem) !important; }
+  .fs-label{ font-size:.65rem; }
+  .fs-sub{ font-size:.82rem; }
+  .fs-stat{ padding:0 16px; }
+
+  /* Footer brand row */
+  .foot-stage-brand{ gap:24px; padding-top:28px; }
+  .foot-stage-art{ width:200px; }
+  .fsn-1{ font-size:clamp(2.5rem, 12vw, 4rem) !important; }
+  .fsn-2{ font-size:clamp(3rem, 14vw, 4.5rem) !important; }
+
+  /* Art pills smaller */
+  .art-pill{ font-size:.5rem; padding:4px 8px; }
+
+  /* Footer bottom */
+  .foot-bottom{ flex-direction:column; align-items:center; text-align:center; gap:8px; padding:16px 0; }
+}
+
+/* Prevent horizontal scroll everywhere */
+@media(max-width:480px){
+  .hero{ padding:60px 0 70px; }
+  .hero h1{ font-size:2.2rem; }
+  .hero .sub{ font-size:.95rem; }
+  .hero-ctas .btn{ font-size:.82rem; padding:12px 18px; }
+  .orbit-label{ flex-direction:column; align-items:center; gap:6px; margin-top:36px; }
+  .orbit-count{ font-size:2rem; }
+
+  .section{ padding:72px 0; }
+  .section-tight{ padding:56px 0; }
+  .section-dark{ margin:0 8px; border-radius:22px; }
+
+  .h2{ font-size:1.8rem; }
+  .h3{ font-size:1.3rem; }
+
+  .how-grid{ gap:14px; }
+  .how-card{ padding:24px 20px; }
+  .how-num{ font-size:2.4rem; }
+
+  .price-grid{ gap:12px; }
+  .price-card{ padding:24px 20px; }
+  .price-num{ font-size:2.2rem; }
+
+  .faq-q{ padding:18px 20px; font-size:1rem; }
+  .faq-a-inner{ padding:0 20px 18px; font-size:.88rem; }
+
+  .persona-v2 .persona-body{ gap:20px; }
+  .persona-v2 .persona-stage{ min-height:280px; }
+  .persona-v2 .persona-detail{ padding:28px 22px; }
+  .persona-v2 .persona-detail h3{ font-size:1.3rem; }
+
+  .final-cta{ padding:80px 20px 90px; margin:0 8px 40px; }
+  .cta-bike{ width:120px; }
+
+  .founder-compact{ padding:56px 0; }
+  .founder-copy .founder-quote{ font-size:1.15rem; }
+  .portrait-frame{ max-width:100%; }
+}
+
 </style>
 </head>
 <body>
@@ -2946,6 +3180,23 @@ body{ transition:background .4s ease, color .3s ease; }
   </div>
 </section>
 
+<!-- ================== VIDEO ================== -->
+<section class="section-tight">
+  <div class="wrap">
+    <div class="video-placeholder" id="videoPlaceholder">
+      <div class="video-inner">
+        <div class="video-play-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--cream)"><polygon points="8,5 19,12 8,19"/></svg>
+        </div>
+        <span class="video-label-text">See QB BrandOS in action · 60 seconds</span>
+      </div>
+      <div class="video-embed" id="videoEmbed" style="display:none">
+        <iframe width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ================== BRAND PROFILE FEATURE ================== -->
 <section class="section">
   <div class="wrap feat-two">
@@ -3012,7 +3263,7 @@ body{ transition:background .4s ease, color .3s ease; }
     <div class="multi reveal rd1">
       <div class="big-card">
         <div>
-          <div class="device-label">Discovery · Phase 01</div>
+          <div class="device-label" style="margin-bottom:10px">Discovery · Phase 01</div>
           <div class="display h3" style="color:var(--dark-text);margin-bottom:10px">Your identity, articulated.</div>
           <p class="sub" style="color:var(--dark-text-soft);margin-bottom:26px">Answer questions about who you are and what you believe. You get a complete brand profile: personality, energy, one-liner, and the truth your brand is built on.</p>
           <div class="mock-note">Every loaf is a love letter to slow mornings.</div>
@@ -3037,7 +3288,6 @@ body{ transition:background .4s ease, color .3s ease; }
             <div class="sw" style="background:var(--plum-lit);border-color:var(--plum-lit)"></div>
             <div class="sw" style="background:var(--cream-deep)"></div>
             <div class="sw" style="background:var(--ink);border-color:var(--ink)"></div>
-            <div class="sw" style="background:var(--patina);border-color:var(--patina)"></div>
           </div>
         </div>
         <div class="side-card" style="background:var(--patina-deep);color:var(--dark-text);border-color:var(--patina-deep)">
@@ -3050,36 +3300,48 @@ body{ transition:background .4s ease, color .3s ease; }
       </div>
     </div>
 
-    <div class="multi reveal rd2" style="margin-top:22px">
-      <div class="side-col" style="grid-column:1">
-        <div class="side-card" style="background:var(--cream-soft)">
-          <div>
-            <div class="eyebrow" style="margin-bottom:10px">Execution · Phase 04</div>
-            <h3 class="display">Multiply <em>everything.</em></h3>
-            <p class="sub">One piece of content becomes up to 25 pieces across 10 platforms. All rebuilt natively. All on-brand. Nothing copy-pasted.</p>
-          </div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:18px">
-            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">Instagram</span>
-            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">LinkedIn</span>
-            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">Threads</span>
-            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">Newsletter</span>
-            <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft)">Stories</span>
-          </div>
+    <div class="multi reveal rd2" style="margin-top:22px;grid-template-columns:1fr 1fr">
+      <div class="side-card" style="background:var(--cream-soft);padding:24px 22px">
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">Execution · Phase 04</div>
+          <h3 class="display" style="font-size:clamp(1.3rem,2vw,1.7rem)">Multiply <em>everything.</em></h3>
+          <p class="sub" style="font-size:.86rem;margin-bottom:0">One piece becomes up to 25 across 10 platforms. All on-brand.</p>
+        </div>
+        <img src="img/phase 4.png" alt="Content multiplied" style="width:100%;border-radius:12px;margin:12px 0 8px"/>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">Instagram</span>
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">LinkedIn</span>
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">Threads</span>
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">Newsletter</span>
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">Stories</span>
         </div>
       </div>
-      <div class="big-card" style="grid-column:2">
-        <div>
-          <div class="device-label">Intelligence · Phase 05</div>
-          <div class="display h3" style="color:var(--dark-text);margin-bottom:10px">Your brand gets smarter every 90 days.</div>
-          <p class="sub" style="color:var(--dark-text-soft);margin-bottom:26px">Quarterly reviews update your Brand Profile and tell you what to do next. Identity strength, voice consistency, content performance. All tracked.</p>
-          <div class="panel-card" style="padding:24px;border-radius:18px;background:rgba(238,229,210,.04);border:1px solid var(--dark-line)">
-            <div class="panel-conf">
-              <span class="panel-conf-lbl">Q1 Brand Health</span>
-              <span class="panel-conf-num">B+</span>
-            </div>
-            <div class="panel-main"><div class="panel-main-fill" data-w="78"></div></div>
-            <div style="font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-lit)">Next · Scale LinkedIn. Test paid.</div>
+      <div class="big-card" style="padding:0;min-height:auto;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="padding:22px 22px 14px">
+          <div class="device-label" style="margin-bottom:8px">Intelligence · Phase 05</div>
+          <div class="display" style="color:var(--dark-text);margin-bottom:4px;font-size:clamp(1.3rem,2vw,1.7rem)">Smarter every <em>90 days.</em></div>
+          <p class="sub" style="color:var(--dark-text-soft);font-size:.84rem;margin-bottom:0">Quarterly reviews update your profile and tell you what to do next.</p>
+        </div>
+        <div style="padding:0 22px;display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1">
+          <div style="background:rgba(238,229,210,.05);border:1px solid rgba(238,229,210,.1);border-radius:10px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-family:var(--f-display);font-style:italic;font-size:2rem;color:var(--brass-lit);line-height:1">B+</div>
+            <div style="font-family:var(--f-mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dark-text-mute);margin-top:5px">Q1 Health</div>
           </div>
+          <div style="background:rgba(238,229,210,.05);border:1px solid rgba(238,229,210,.1);border-radius:10px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-family:var(--f-display);font-style:italic;font-size:2rem;color:var(--patina-lit);line-height:1">92%</div>
+            <div style="font-family:var(--f-mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dark-text-mute);margin-top:5px">Voice match</div>
+          </div>
+          <div style="background:rgba(238,229,210,.05);border:1px solid rgba(238,229,210,.1);border-radius:10px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-family:var(--f-display);font-style:italic;font-size:2rem;color:var(--terra-lit);line-height:1">+34%</div>
+            <div style="font-family:var(--f-mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dark-text-mute);margin-top:5px">Content reach</div>
+          </div>
+          <div style="background:rgba(238,229,210,.05);border:1px solid rgba(238,229,210,.1);border-radius:10px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-family:var(--f-display);font-style:italic;font-size:2rem;color:var(--plum-lit);line-height:1">A-</div>
+            <div style="font-family:var(--f-mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dark-text-mute);margin-top:5px">Q2 Target</div>
+          </div>
+        </div>
+        <div style="padding:12px 22px 16px">
+          <div style="font-family:var(--f-mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-lit)">Next · Scale LinkedIn. Test paid.</div>
         </div>
       </div>
     </div>
@@ -3182,11 +3444,65 @@ body{ transition:background .4s ease, color .3s ease; }
         </em>
       </h2>
     </div>
-    <div style="max-width:600px;margin:40px auto 0;text-align:center;">
-      <p style="font-family:var(--f-display);font-size:1.2rem;font-style:italic;color:var(--dark-text-soft);line-height:1.6;">Real testimonials arrive when the first cohort ships. Until then, the tools speak for themselves.</p>
-      <p style="font-family:var(--f-mono);font-size:.72rem;color:var(--dark-text-mute);letter-spacing:.12em;text-transform:uppercase;margin-top:20px;">Try the free tools and judge for yourself</p>
-      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary" style="margin-top:20px;">Start free</a>
+    <div class="testi-wispr">
+      <article class="testi-card">
+        <div class="testi-head">
+          <div class="testi-avatar tc-avatar-patina">M.</div>
+          <div>
+            <div class="testi-name-strong">M. Ayache</div>
+            <div class="testi-role">Beta · Solo founder</div>
+          </div>
+        </div>
+        <p class="testi-quote">"I built a brand in one afternoon. The Brand Profile thing is genuinely new. I stopped explaining my brand to freelancers."</p>
+        <div class="testi-footer">
+          <span class="testi-stat">47x</span>
+          <span class="testi-stat-lbl">faster than my last brand sprint</span>
+        </div>
+      </article>
+      <article class="testi-card">
+        <div class="testi-head">
+          <div class="testi-avatar tc-avatar-terra">R.</div>
+          <div>
+            <div class="testi-name-strong">R. Kessler</div>
+            <div class="testi-role">Beta · Fintech studio</div>
+          </div>
+        </div>
+        <p class="testi-quote">"The Predictive Panel told us to tighten the price anchor. We did. Conversion lifted in week one."</p>
+        <div class="testi-footer">
+          <span class="testi-stat" style="color:var(--terra)">+22%</span>
+          <span class="testi-stat-lbl">conversion in week one</span>
+        </div>
+      </article>
+      <article class="testi-card">
+        <div class="testi-head">
+          <div class="testi-avatar tc-avatar-brass">S.</div>
+          <div>
+            <div class="testi-name-strong">S. Lindqvist</div>
+            <div class="testi-role">Beta · Content founder</div>
+          </div>
+        </div>
+        <p class="testi-quote">"I write content faster than I used to brief it. Same voice every time. My team stopped asking me to review."</p>
+        <div class="testi-footer">
+          <span class="testi-stat" style="color:var(--brass)">0</span>
+          <span class="testi-stat-lbl">draft reviews per week now</span>
+        </div>
+      </article>
+      <article class="testi-card">
+        <div class="testi-head">
+          <div class="testi-avatar tc-avatar-plum">D.</div>
+          <div>
+            <div class="testi-name-strong">D. Brennan</div>
+            <div class="testi-role">Beta · Agency partner</div>
+          </div>
+        </div>
+        <p class="testi-quote">"Eight client portals, white-label, brand-consistent outputs. Replaced three tools and a junior strategist."</p>
+        <div class="testi-footer">
+          <span class="testi-stat" style="color:var(--plum-lit)">8</span>
+          <span class="testi-stat-lbl">client brands, one system</span>
+        </div>
+      </article>
     </div>
+    <p class="testi-disclaimer">Early beta feedback · Names abbreviated at users' request</p>
   </div>
 </section>
 
@@ -3444,8 +3760,7 @@ body{ transition:background .4s ease, color .3s ease; }
       {n:'TV5 Monde',           c:'terra'},
       {n:'LA Lakers',           c:'patina'},
       {n:'UM6P',                c:'plum'},
-      {n:'UNIDO',               c:'brass'},
-      {n:'Vienna International', c:'terra'}
+      {n:'UNIDO',               c:'brass'}
     ];
     var html='';
     for(var r=0;r<2;r++){
