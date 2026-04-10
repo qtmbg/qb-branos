@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quantum Branding · Answer questions. Get a brand.</title>
 <meta name="description" content="QB BrandOS. 18 AI tools build your brand identity, look, voice, content, and strategy. Step by step. Start free.">
+<script>(function(){var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1906,24 +1907,64 @@ input{font-family:inherit}
   .how-char{ width:220px; }
 }
 
-/* ============================== HERO CHAR (guide holding canvas — LARGE) ============================== */
+/* ============================== HERO CHAR (guide with color swirls) ============================== */
 .hero-char{
   position:absolute;
-  bottom:-60px;
-  right:-40px;
-  width:420px;
+  bottom:-40px;
+  right:-20px;
+  width:440px;
   z-index:0;
-  opacity:.2;
   pointer-events:none;
-  filter:drop-shadow(0 20px 50px rgba(8,19,16,.3));
+  /* Entrance: slide up + fade in */
+  opacity:0;
+  transform:translateY(60px) scale(.92);
+  animation:
+    heroEntrance 1.2s cubic-bezier(.22,1,.36,1) .4s forwards,
+    heroFloat 8s var(--ease) 1.6s infinite,
+    heroGlow 6s ease-in-out 1.6s infinite;
 }
-@keyframes heroCharFloat{
-  0%,100%{ transform:translateY(0) rotate(0deg); }
-  50%{ transform:translateY(-12px) rotate(-1.5deg); }
+@keyframes heroEntrance{
+  to{
+    opacity:.35;
+    transform:translateY(0) scale(1);
+  }
 }
-@media(max-width:1100px){ .hero-char{ width:320px; right:-30px; bottom:-40px; } }
-@media(max-width:820px){ .hero-char{ width:240px; right:-20px; opacity:.12; } }
+@keyframes heroFloat{
+  0%,100%{
+    transform:translateY(0) rotate(0deg) scale(1);
+  }
+  20%{
+    transform:translateY(-12px) rotate(2deg) scale(1.02);
+  }
+  40%{
+    transform:translateY(-18px) rotate(-1.5deg) scale(1.04);
+  }
+  60%{
+    transform:translateY(-8px) rotate(2.5deg) scale(1.03);
+  }
+  80%{
+    transform:translateY(-14px) rotate(-1deg) scale(1.01);
+  }
+}
+@keyframes heroGlow{
+  0%,100%{
+    filter:drop-shadow(0 14px 36px rgba(58,95,74,.25));
+  }
+  33%{
+    filter:drop-shadow(0 20px 48px rgba(168,144,62,.3));
+  }
+  66%{
+    filter:drop-shadow(0 18px 44px rgba(196,101,74,.28));
+  }
+}
+@media(max-width:1100px){ .hero-char{ width:360px; right:-20px; bottom:-30px; } }
+@media(max-width:820px){ .hero-char{ width:280px; right:-10px; opacity:.18; } }
 @media(max-width:620px){ .hero-char{ display:none; } }
+
+/* Dark mode: let it pop, no filter dimming */
+[data-theme="dark"] .hero-char{
+  opacity:.6;
+}
 
 /* ============================== PRESS CHAR (seated figure) ============================== */
 .press-char{
@@ -2333,6 +2374,138 @@ input{font-family:inherit}
   50%{ opacity:1; r:3.5; }
 }
 
+/* ==========================================================
+   DARK MODE
+   ========================================================== */
+[data-theme="dark"]{
+  --cream:          #0E0C09;
+  --cream-soft:     #0A0806;
+  --cream-deep:     #141210;
+  --cream-edge:     rgba(140,110,70,0.06);
+  --cream-line:     rgba(140,110,70,0.10);
+  --ink:            #DDD4C4;
+  --ink-soft:       #A89A88;
+  --ink-mute:       #6A5E50;
+  --ink-faint:      #3A342C;
+  --pill-bg:        #2A2418;
+  --pill-bg-hover:  #3A3020;
+  --pill-border:    #5A4E38;
+  --pill-ink:       #D4BA62;
+}
+/* Body transition */
+body{ transition:background .4s ease, color .3s ease; }
+
+/* Nav glass */
+[data-theme="dark"] .nav-inner{
+  background:rgba(14,12,9,.85);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-color:rgba(140,110,70,.08);
+  box-shadow:0 6px 30px -18px rgba(0,0,0,.5);
+}
+[data-theme="dark"] .nav-links a{ color:var(--ink-mute); }
+[data-theme="dark"] .nav-links a:hover{ background:rgba(140,110,70,.08); color:var(--ink); }
+
+/* Buttons */
+[data-theme="dark"] .btn{ border-color:rgba(140,110,70,.2); color:var(--ink); }
+[data-theme="dark"] .btn:hover{ background:var(--ink); color:var(--cream); }
+[data-theme="dark"] .btn-ghost{ color:var(--ink-soft); }
+
+/* Hero */
+[data-theme="dark"] .hero-eyebrow{ background:rgba(140,110,70,.06); border-color:rgba(140,110,70,.12); }
+[data-theme="dark"] .display{ color:var(--ink); }
+[data-theme="dark"] .hero h1{ color:var(--ink); }
+
+/* Orbit pills */
+[data-theme="dark"] .orbit-pill.op-patina{ background:rgba(58,95,74,.18); border-color:rgba(58,95,74,.4); color:#7FB894; }
+[data-theme="dark"] .orbit-pill.op-brass{ background:rgba(168,144,62,.18); border-color:rgba(168,144,62,.4); color:#D4BA62; }
+[data-theme="dark"] .orbit-pill.op-terra{ background:rgba(196,101,74,.16); border-color:rgba(196,101,74,.38); color:#E8A090; }
+[data-theme="dark"] .orbit-pill.op-plum{ background:rgba(122,90,110,.18); border-color:rgba(122,90,110,.38); color:#C4A8B8; }
+
+/* Cards + surfaces */
+[data-theme="dark"] .price-card{ background:rgba(140,110,70,.04); border-color:rgba(140,110,70,.1); }
+[data-theme="dark"] .price-card:hover{ border-color:rgba(140,110,70,.25); }
+[data-theme="dark"] .price-card.feat{ background:#080A08; border-color:#080A08; }
+[data-theme="dark"] .price-card:nth-child(1){ border-top-color:var(--patina); }
+[data-theme="dark"] .price-card:nth-child(2){ border-top-color:var(--brass); }
+[data-theme="dark"] .price-card:nth-child(3){ border-top-color:var(--terra); }
+[data-theme="dark"] .price-card:nth-child(4){ border-top-color:var(--plum-lit); }
+[data-theme="dark"] .price-feat::before{ background-color:rgba(140,110,70,.08); }
+
+/* FAQ */
+[data-theme="dark"] .faq{ background:rgba(140,110,70,.04); border-color:rgba(140,110,70,.08); }
+[data-theme="dark"] .faq-item{ border-bottom-color:rgba(140,110,70,.06); }
+[data-theme="dark"] .faq-q{ color:var(--ink); }
+
+/* Multi cards */
+[data-theme="dark"] .multi .side-card{ background:rgba(140,110,70,.04); border-color:rgba(140,110,70,.08); }
+
+/* How cards */
+[data-theme="dark"] .how-card.theme-patina::before{ opacity:.2; }
+[data-theme="dark"] .how-card.theme-terra::before{ opacity:.2; }
+[data-theme="dark"] .how-card.theme-plum::before{ opacity:.2; }
+
+/* Section dark: deepen */
+[data-theme="dark"] .section-dark{ background:#080A08; }
+[data-theme="dark"] .final-cta{ background:#060806; }
+
+/* Press pills */
+[data-theme="dark"] .press-pill{ background:rgba(238,229,210,.06); border-color:rgba(238,229,210,.16); }
+
+/* Swatches */
+[data-theme="dark"] .swatch-row .sw{ border-color:rgba(140,110,70,.2); }
+
+/* Mock tags */
+[data-theme="dark"] .mock-tag{ background:rgba(168,144,62,.2); border-color:rgba(168,144,62,.35); }
+[data-theme="dark"] .mock-tag.patina{ background:rgba(74,122,94,.2); border-color:rgba(74,122,94,.4); }
+
+/* Persona tabs */
+[data-theme="dark"] .persona-tag{ border-color:rgba(238,229,210,.18); }
+[data-theme="dark"] .persona-tag:hover{ background:rgba(238,229,210,.06); }
+
+/* Mobile menu */
+[data-theme="dark"] .mmenu{ background:var(--cream); }
+[data-theme="dark"] .mmenu-list a{ color:var(--ink); border-bottom-color:rgba(140,110,70,.08); }
+
+/* Hamburger */
+[data-theme="dark"] .hamburger{ border-color:rgba(140,110,70,.14); }
+[data-theme="dark"] .hamburger span{ background:var(--ink); }
+
+/* Footer */
+[data-theme="dark"] .foot-bottom{ border-top-color:rgba(140,110,70,.08); }
+[data-theme="dark"] .foot-stage{ border-top-color:rgba(140,110,70,.08); }
+[data-theme="dark"] .foot-stage-brand{ border-top-color:rgba(140,110,70,.08); }
+
+/* Hero char: bright in dark */
+[data-theme="dark"] .hero-char{ opacity:.6; }
+
+/* Smooth transitions on containers */
+.nav-inner, .price-card, .faq, .multi .side-card, .orbit-pill, .press-pill, .mmenu{
+  transition:background .4s ease, border-color .3s ease, box-shadow .3s ease;
+}
+
+/* ============================== THEME TOGGLE BUTTON ============================== */
+.theme-toggle{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:1px solid var(--cream-line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  color:var(--ink-mute);
+  cursor:pointer;
+  transition:all .25s var(--ease);
+  background:transparent;
+  flex-shrink:0;
+}
+.theme-toggle:hover{
+  border-color:var(--brass);
+  color:var(--brass);
+  background:var(--brass-faint);
+}
+
 </style>
 </head>
 <body>
@@ -2634,6 +2807,7 @@ input{font-family:inherit}
       </ul>
     </nav>
     <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><span id="toggleIcon">☽</span></button>
       <a href="https://app.quantumbranding.ai" class="btn btn-ghost btn-sm">Sign in</a>
       <a href="#scanner" class="btn btn-primary btn-sm">Start free</a>
       <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -2664,7 +2838,7 @@ input{font-family:inherit}
 <!-- ================== HERO ================== -->
 <section class="hero has-decor">
   <!-- Thinker character bottom-left -->
-  <img src="img/guide.png" alt="" class="character hero-char" style="animation:heroCharFloat 7s var(--ease) infinite"/>
+  <img src="img/guide.png" alt="" class="character hero-char"/>
 
   <div class="wrap">
     <div class="hero-eyebrow">
@@ -2933,7 +3107,7 @@ input{font-family:inherit}
       <div class="persona-body">
         <div class="persona-stage">
           <div class="persona-avatar active" data-avatar="0">
-            <img src="img/blank-slate.png" alt="The Blank Slate" class="persona-img pi-rock"/>
+            <img src="img/blank-slate.png" alt="The Blank Slate" class="persona-img pi-rock" style="transform-origin:center bottom;scale:1.2"/>
           </div>
           <div class="persona-avatar" data-avatar="1">
             <img src="img/doubter.png" alt="The Doubter" class="persona-img pi-lean"/>
@@ -3243,6 +3417,19 @@ input{font-family:inherit}
 <script>
 (function(){
   'use strict';
+
+  /* ===== THEME TOGGLE ===== */
+  var html=document.documentElement;
+  var themeToggle=document.getElementById('themeToggle');
+  var toggleIcon=document.getElementById('toggleIcon');
+  function updateIcon(){ toggleIcon.textContent=html.getAttribute('data-theme')==='dark'?'\u2600':'\u263D'; }
+  updateIcon();
+  themeToggle.addEventListener('click',function(){
+    var next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+    html.setAttribute('data-theme',next);
+    localStorage.setItem('qb-theme',next);
+    updateIcon();
+  });
 
   /* ===== PRESS MARQUEE ===== */
   (function(){
