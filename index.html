@@ -13,9 +13,9 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ================================================================
-   QB HOME — Wispr Flow structure: cream hero + dark showcase + bands
-   Matching ecosystem.html source of truth for palette + fonts
+   DESIGN SYSTEM
    ================================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --cream:#F4F0EB;--cream-soft:#EDE8E2;--cream-deep:#E6E0D8;--cream-line:rgba(100,80,50,.14);
   --ink:#1A1610;--ink-soft:#5A5040;--ink-mute:#8A7E70;
@@ -35,219 +35,140 @@
   --ink:#DDD4C4;--ink-soft:#A89A88;--ink-mute:#6A5E50;
   --pill-bg:#2A2418;--pill-border:#5A4E38;--pill-ink:#D4BA62;
 }
-
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{font-family:var(--f-body);background:var(--cream);color:var(--ink);font-size:16px;line-height:1.55;overflow-x:hidden;transition:background .4s ease,color .3s ease}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--f-body);color:var(--ink);background:var(--cream);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
-img,svg{display:block;max-width:100%}
+img{max-width:100%;display:block}
 
-/* ============================== NAV (pill, matching ecosystem) ============================== */
-.nav-spacer{height:28px}
-.nav{position:sticky;top:18px;z-index:50;padding:0 20px}
-.nav-inner{
-  max-width:1160px;margin-inline:auto;
-  background:var(--cream);border:1px solid var(--cream-line);border-radius:var(--r-pill);
-  padding:8px 10px 8px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;
-  box-shadow:0 6px 30px -18px rgba(26,22,16,.18);transition:background .4s,border-color .3s;
-}
-[data-theme="dark"] .nav-inner{background:rgba(14,12,9,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-color:rgba(140,110,70,.08)}
-.nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-size:1.15rem;color:var(--ink);font-weight:500;padding:6px 0}
-.nav-brand .dot{width:10px;height:10px;border-radius:50%;background:var(--brass);box-shadow:0 0 0 3px var(--brass-faint);animation:pulseDot 3s var(--ease) infinite}
-@keyframes pulseDot{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.nav-links{display:flex;align-items:center;gap:4px;list-style:none}
-.nav-links a{padding:10px 16px;border-radius:var(--r-pill);font-size:.9rem;color:var(--ink-soft);transition:all .2s var(--ease)}
-.nav-links a:hover{background:var(--cream-deep);color:var(--ink)}
-.nav-actions{display:flex;align-items:center;gap:6px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;font-weight:500;font-size:.85rem;padding:10px 18px;border-radius:var(--r-pill);border:1px solid var(--ink);transition:all .25s var(--ease);white-space:nowrap}
-.btn:hover{background:var(--ink);color:var(--cream)}
-.btn-primary{background:var(--pill-bg);border-color:var(--pill-border);color:var(--pill-ink)}
-.btn-primary:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
-.btn-ghost{border-color:transparent}.btn-ghost:hover{background:transparent;color:var(--ink);text-decoration:underline;text-underline-offset:4px}
-.theme-tog{width:36px;height:36px;border-radius:50%;border:1px solid var(--cream-line);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--ink-mute);transition:all .25s var(--ease)}
-.theme-tog:hover{border-color:var(--brass);color:var(--brass)}
-.hamburger{display:none;width:42px;height:42px;border-radius:var(--r-pill);border:1px solid var(--cream-line);flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.hamburger span{display:block;width:18px;height:1.5px;background:var(--ink);transition:.25s}
-@media(max-width:960px){.nav-links,.nav .btn-ghost{display:none}.hamburger{display:flex}.nav-brand{font-size:1rem}.nav-inner{padding:8px 8px 8px 20px}}
-[data-theme="dark"] .hamburger{border-color:rgba(140,110,70,.14)}
-[data-theme="dark"] .hamburger span{background:var(--ink)}
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;padding:0 28px;border-radius:var(--r-pill);font-family:var(--f-body);font-size:.9rem;font-weight:600;letter-spacing:.01em;cursor:pointer;transition:all .3s var(--ease);border:1.5px solid var(--cream-line);background:transparent;color:var(--ink)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.btn-primary{background:var(--patina);color:#fff;border-color:var(--patina)}
+.btn-primary:hover{background:var(--patina-lit);border-color:var(--patina-lit);box-shadow:0 8px 24px rgba(58,95,74,.25)}
+.btn-ghost{background:transparent;border-color:var(--cream-line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink-mute);background:var(--cream-soft)}
 
-/* ============================== BOX 1: HERO (cream, centered, Wispr-style) ============================== */
-.hero{
-  padding:100px 24px 90px;text-align:center;background:var(--cream);position:relative;overflow:hidden;
-}
-.hero-wrap{max-width:800px;margin-inline:auto;position:relative;z-index:2}
-.hero h1{
-  font-family:var(--f-display);font-weight:400;
-  font-size:clamp(2.8rem,7.5vw,5.5rem);line-height:.96;letter-spacing:-.02em;color:var(--ink);
-  margin-bottom:28px;text-wrap:balance;
-}
-.hero h1 em{font-style:italic;font-weight:500;color:var(--patina)}
-[data-theme="dark"] .hero h1 em{color:var(--patina-lit)}
-.hero-sub{font-size:clamp(1rem,1.4vw,1.2rem);color:var(--ink-soft);line-height:1.65;max-width:32em;margin:0 auto 40px}
-.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
-.hero-ctas .btn{padding:14px 28px;font-size:.94rem}
-.hero-micro{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute)}
+/* ================================================================
+   NAV
+   ================================================================ */
+.nav-spacer{height:72px}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,240,235,.85);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--cream-line);transition:background .3s}
+[data-theme="dark"] .nav{background:rgba(14,12,9,.85)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 32px;height:72px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:var(--f-display);font-size:1.15rem;font-weight:600;display:flex;align-items:center;gap:10px;letter-spacing:.01em}
+.dot{width:10px;height:10px;background:var(--patina);border-radius:50%;display:inline-block}
+.nav-links{display:flex;list-style:none;gap:32px}
+.nav-links a{font-size:.88rem;font-weight:500;color:var(--ink-soft);transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.theme-tog{width:40px;height:40px;border-radius:50%;border:1px solid var(--cream-line);background:transparent;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.theme-tog:hover{background:var(--cream-soft)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+.hamburger span{width:20px;height:2px;background:var(--ink);border-radius:2px;transition:all .2s}
 
-/* ============================== BAND 1: PRESS MARQUEE ============================== */
-.press-band{padding:48px 0;border-top:1px solid var(--cream-line);border-bottom:1px solid var(--cream-line);background:var(--cream);overflow:hidden}
-.press-label{text-align:center;font-family:var(--f-display);font-style:italic;font-size:clamp(1rem,1.4vw,1.25rem);color:var(--ink-mute);margin-bottom:28px}
-.press-marquee{overflow:hidden;position:relative;mask-image:linear-gradient(90deg,transparent 0%,#000 8%,#000 92%,transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 8%,#000 92%,transparent 100%);padding:8px 0}
-.press-track{display:flex;gap:14px;width:max-content;animation:pressScroll 50s linear infinite}
-.press-band:hover .press-track{animation-play-state:paused}
-@keyframes pressScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.press-pill{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:var(--r-pill);background:var(--cream-soft);border:1px solid var(--cream-line);font-family:var(--f-display);font-size:1.05rem;color:var(--ink);white-space:nowrap;transition:all .3s var(--ease)}
-.press-pill:hover{border-color:var(--brass);transform:translateY(-2px)}
-.press-pill .pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.pdot.patina{background:var(--patina)}.pdot.brass{background:var(--brass)}.pdot.terra{background:var(--terra)}.pdot.plum{background:var(--plum)}
-
-/* ============================== BOX 2: TOOL SHOWCASE (dark, rounded, Wispr "apps" style) ============================== */
-.showcase{
-  background:var(--patina-deep);color:#EEE5D2;border-radius:var(--r-card-lg);
-  margin:0 20px;padding:100px 24px 80px;text-align:center;position:relative;overflow:hidden;
-}
-[data-theme="dark"] .showcase{background:#060806}
-.showcase h2{
-  font-family:var(--f-display);font-weight:400;
-  font-size:clamp(2.4rem,6vw,4.5rem);line-height:1;letter-spacing:-.02em;color:#EEE5D2;
-  margin-bottom:18px;text-wrap:balance;max-width:16ch;margin-inline:auto;
-}
-.showcase h2 em{font-style:italic;color:var(--brass-lit)}
-.showcase-sub{font-size:clamp(1rem,1.3vw,1.15rem);color:#A8A092;line-height:1.6;max-width:30em;margin:0 auto 44px}
-.showcase-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
-.showcase-cta .btn{border-color:rgba(238,229,210,.3);color:#EEE5D2;padding:14px 28px;font-size:.94rem}
-.showcase-cta .btn:hover{background:#EEE5D2;color:var(--patina-deep);border-color:#EEE5D2}
-.showcase-cta .btn-primary{background:var(--pill-bg);border-color:var(--pill-border);color:var(--pill-ink)}
-.showcase-cta .btn-primary:hover{background:var(--brass-lit);color:var(--patina-deep);border-color:var(--brass-lit)}
-
-/* Tool icon grid inside showcase (Wispr "app logos" style) */
-.tool-orbit{
-  display:flex;flex-wrap:wrap;justify-content:center;gap:14px;max-width:900px;margin:0 auto;
-}
-.tool-tile{
-  width:90px;height:90px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  background:rgba(238,229,210,.06);border:1px solid rgba(238,229,210,.08);
-  transition:all .3s var(--ease);cursor:pointer;text-decoration:none;
-}
-.tool-tile:hover{background:rgba(238,229,210,.12);transform:translateY(-4px);box-shadow:0 12px 28px -10px rgba(0,0,0,.3)}
-.tool-tile svg{width:28px;height:28px;color:rgba(238,229,210,.5);transition:color .3s}
-.tool-tile:hover svg{color:#EEE5D2}
-.tool-tile-name{font-family:var(--f-mono);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(238,229,210,.4);line-height:1.2;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tool-tile:hover .tool-tile-name{color:rgba(238,229,210,.8)}
-@media(max-width:640px){.tool-tile{width:72px;height:72px;border-radius:16px;gap:4px}.tool-tile svg{width:22px;height:22px}.tool-tile-name{font-size:.42rem}}
-
-/* ============================== BAND 2: STAT STRIP (dark, Wispr "4x faster" style) ============================== */
-.stat-band{
-  background:var(--patina-deep);color:#EEE5D2;padding:80px 24px;text-align:center;
-  margin:0 20px;border-bottom-left-radius:var(--r-card-lg);border-bottom-right-radius:var(--r-card-lg);
-  position:relative;
-}
-[data-theme="dark"] .stat-band{background:#060806}
-.stat-band h3{
-  font-family:var(--f-display);font-style:italic;
-  font-size:clamp(2.8rem,8vw,6rem);line-height:.92;letter-spacing:-.02em;color:#EEE5D2;
-  margin-bottom:20px;
-}
-.stat-band-sub{font-size:clamp(.95rem,1.2vw,1.1rem);color:#A8A092;line-height:1.6;max-width:30em;margin:0 auto 36px}
-.stat-row{display:flex;justify-content:center;gap:0;flex-wrap:wrap}
-.stat{text-align:center;padding:0 36px;position:relative}
-.stat::after{content:'';position:absolute;right:0;top:15%;height:70%;width:1px;background:rgba(238,229,210,.12)}
-.stat:last-child::after{display:none}
-.stat-num{font-family:var(--f-display);font-size:clamp(2.4rem,5vw,3.8rem);line-height:.85;color:var(--brass-lit);letter-spacing:-.02em}
-.stat-1 .stat-num{color:var(--patina-lit)}
-.stat-3 .stat-num{color:var(--terra-lit)}
-.stat-lbl{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(238,229,210,.4);margin-top:8px}
-.stat-band .btn{margin-top:40px;border-color:rgba(238,229,210,.3);color:#EEE5D2}
-.stat-band .btn:hover{background:#EEE5D2;color:var(--patina-deep);border-color:#EEE5D2}
-@media(max-width:640px){.stat{padding:0 18px}.stat-num{font-size:2rem}}
-
-/* Connect showcase + stat-band visually (no gap) */
-.showcase{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
-.stat-band{margin-top:0;border-top-left-radius:0;border-top-right-radius:0}
-
-/* ============================== DIAGONAL BANDS (Wispr-style) ============================== */
-.diag-band{
-  width:110%;margin-left:-5%;overflow:hidden;padding:11px 0;
-  transform:rotate(-6deg);transform-origin:center center;
-  position:relative;z-index:2;
-  background:rgba(26,22,16,.04);
-  border-top:1px solid rgba(26,22,16,.06);
-  border-bottom:1px solid rgba(26,22,16,.06);
-}
-[data-theme="dark"] .diag-band{
-  background:rgba(255,255,255,.04);
-  border-top-color:rgba(255,255,255,.08);
-  border-bottom-color:rgba(255,255,255,.08);
-}
-.diag-band-1{margin-bottom:40px}
-.diag-band-2{margin-top:40px}
-.diag-track{display:flex;align-items:center;width:max-content;will-change:transform}
-.diag-track-left{animation:diagLeft 55s linear infinite}
-.diag-track-right{animation:diagRight 70s linear infinite}
-@keyframes diagLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@keyframes diagRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-
-/* Band 1: manifesto text */
-.diag-phrase{
-  font-family:var(--f-mono);font-size:11px;font-weight:400;
-  letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(26,22,16,.35);white-space:nowrap;padding:0 12px;
-}
-[data-theme="dark"] .diag-phrase{color:rgba(255,255,255,.4)}
-.diag-dot{color:rgba(26,22,16,.15);padding:0 4px;font-size:10px}
-[data-theme="dark"] .diag-dot{color:rgba(255,255,255,.2)}
-
-/* Band 2: tool chips */
-.diag-chip{
-  flex-shrink:0;display:inline-flex;align-items:center;gap:7px;
-  padding:6px 14px;border-radius:20px;white-space:nowrap;
-  background:rgba(26,22,16,.04);border:1px solid rgba(26,22,16,.08);
-  margin:0 8px;height:32px;
-  transition:background .25s;
-}
-[data-theme="dark"] .diag-chip{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
-.diag-chip svg{width:14px;height:14px;flex-shrink:0;color:rgba(26,22,16,.4);stroke-width:1.5}
-[data-theme="dark"] .diag-chip svg{color:rgba(255,255,255,.5)}
-.diag-chip span{
-  font-family:var(--f-mono);font-size:9px;font-weight:400;
-  letter-spacing:.14em;text-transform:uppercase;color:rgba(26,22,16,.35);
-}
-[data-theme="dark"] .diag-chip span{color:rgba(255,255,255,.45)}
-
-@media(max-width:640px){
-  .diag-band{transform:rotate(-4deg)}
-  .diag-band-1{margin-bottom:28px}
-  .diag-band-2{margin-top:28px}
-  .diag-chip{padding:5px 10px;height:28px;margin:0 6px}
-  .diag-chip svg{width:12px;height:12px}
-  .diag-chip span{font-size:8px}
-  .diag-phrase{font-size:9px;letter-spacing:.14em}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-actions .btn-ghost,.nav-actions .btn-primary{display:none}
+  .hamburger{display:flex}
 }
 
-/* ============================== FOOTER MINI ============================== */
-.foot{padding:60px 24px 32px;text-align:center}
-.foot-brand{font-family:var(--f-display);font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
-.foot-brand .dot{width:8px;height:8px;border-radius:50%;background:var(--brass)}
-.foot-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:24px}
-.foot-links a{font-size:.88rem;color:var(--ink-soft);transition:color .2s}
-.foot-links a:hover{color:var(--patina)}
-.foot-copy{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.1em;color:var(--ink-mute);text-transform:uppercase}
+/* ================================================================
+   HERO
+   ================================================================ */
+.hero{position:relative;min-height:90vh;display:flex;align-items:center;justify-content:center;background:var(--cream);overflow:hidden;padding:80px 24px 100px}
+.hero-waves{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hero-waves text{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.18em;fill:rgba(26,22,16,.15)}
+[data-theme="dark"] .hero-waves text{fill:rgba(255,255,255,.15)}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:680px}
+.hero-content h1{font-family:var(--f-display);font-size:clamp(2.8rem,6vw,4.5rem);font-weight:400;line-height:1.08;letter-spacing:-.02em;margin-bottom:20px;color:var(--ink)}
+.hero-content h1 em{font-style:italic;color:var(--patina)}
+.hero-content>p{font-size:1.1rem;color:var(--ink-soft);max-width:480px;margin:0 auto 32px;line-height:1.6}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.micro{font-size:.78rem;color:var(--ink-mute);letter-spacing:.02em}
 
-/* ============================== RESPONSIVE ============================== */
-@media(max-width:960px){
-  .hero{padding:80px 20px 70px}
-  .showcase{margin:0 10px;padding:80px 20px 60px;border-radius:28px 28px 0 0}
-  .stat-band{margin:0 10px;padding:60px 20px;border-radius:0 0 28px 28px}
-}
-@media(max-width:640px){
-  .hero h1{font-size:clamp(2.2rem,10vw,3.5rem)}
-  .hero-ctas{flex-direction:column;max-width:300px;margin-inline:auto}
-  .hero-ctas .btn{width:100%;justify-content:center}
-  .showcase h2{font-size:clamp(2rem,8vw,3rem)}
-  .stat-band h3{font-size:clamp(2rem,10vw,3.5rem)}
-}
+/* ================================================================
+   DARK SHOWCASE
+   ================================================================ */
+.showcase{background:var(--patina-deep);color:#EEE5D2;border-radius:var(--r-card-lg) var(--r-card-lg) 0 0;padding:100px 32px 80px;position:relative;overflow:hidden}
+.showcase-inner{max-width:1100px;margin:0 auto}
+.showcase-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-bottom:100px}
+.showcase-text .eyebrow{font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;color:var(--brass-lit);margin-bottom:16px}
+.showcase-text h2{font-family:var(--f-display);font-size:clamp(2rem,4vw,3rem);font-weight:400;line-height:1.12;letter-spacing:-.01em;margin-bottom:20px}
+.showcase-text .body{font-size:.95rem;color:rgba(238,229,210,.7);line-height:1.7;margin-bottom:32px}
+.showcase-text .btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.showcase-text .btns .btn{color:#EEE5D2;border-color:rgba(238,229,210,.2)}
+.showcase-text .btns .btn:hover{border-color:rgba(238,229,210,.4);background:rgba(238,229,210,.06)}
+.showcase-text .btns .btn-primary{background:var(--patina);color:#fff;border-color:var(--patina)}
+.showcase-text .btns .btn-primary:hover{background:var(--patina-lit);border-color:var(--patina-lit)}
+.showcase-text .stat-claim{font-family:var(--f-display);font-size:1.3rem;font-style:italic;color:rgba(238,229,210,.5);line-height:1.4}
+.showcase-text .stat-claim span{color:var(--patina-lit)}
 
+/* Phone mockup */
+.phone-wrap{display:flex;justify-content:center}
+.phone{width:240px;height:460px;background:#1A1F1C;border-radius:36px;border:1px solid rgba(255,255,255,.08);padding:20px 16px;display:flex;flex-direction:column;position:relative;box-shadow:0 40px 80px rgba(0,0,0,.4);animation:phoneFloat 4s ease-in-out infinite}
+@keyframes phoneFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+.phone-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.phone-logo{font-family:var(--f-mono);font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.05em}
+.phone-dot{width:8px;height:8px;background:var(--patina-lit);border-radius:50%}
+.phone-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.phone-card{background:rgba(255,255,255,.04);border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;gap:6px}
+.phone-card-dot{width:6px;height:6px;border-radius:50%}
+.phone-card-label{font-family:var(--f-mono);font-size:.5rem;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4)}
+.phone-bar{margin-top:16px;height:4px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden}
+.phone-bar-fill{height:100%;width:72%;border-radius:4px;background:linear-gradient(90deg,var(--patina-lit),#4A8AB0)}
+
+/* S-curve tool chips */
+.scurve-wrap{position:relative;width:100%;height:340px;margin-bottom:80px}
+.tool-chip{position:absolute;display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:20px;background:rgba(255,255,255,.06);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.08);white-space:nowrap;transition:all .3s var(--ease)}
+.tool-chip:hover{background:rgba(255,255,255,.12);transform:scale(1.08)}
+.tool-chip svg{width:14px;height:14px;stroke:var(--patina-lit);stroke-width:1.5;fill:none}
+.tool-chip span{font-family:var(--f-mono);font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:rgba(238,229,210,.6)}
+
+/* Logo marquee */
+.logos-section{margin-bottom:80px}
+.logos-label{font-family:var(--f-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);text-align:center;margin-bottom:20px}
+.logos-track{overflow:hidden;position:relative}
+.logos-track::before,.logos-track::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.logos-track::before{left:0;background:linear-gradient(to right,var(--patina-deep),transparent)}
+.logos-track::after{right:0;background:linear-gradient(to left,var(--patina-deep),transparent)}
+.logos-scroll{display:flex;gap:48px;animation:marquee 40s linear infinite;width:max-content}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-33.333%)}}
+.logos-scroll span{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);white-space:nowrap}
+
+/* Stat strip */
+.stat-strip{text-align:center;padding:60px 0 0}
+.stat-strip .headline{font-family:var(--f-display);font-size:clamp(2rem,4vw,3.2rem);font-style:italic;font-weight:400;margin-bottom:40px;color:#EEE5D2}
+.stat-row{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;margin-bottom:40px}
+.stat-item{text-align:center}
+.stat-item .num{font-family:var(--f-display);font-size:3.5rem;font-weight:400;line-height:1}
+.stat-item .label{font-family:var(--f-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(238,229,210,.4);margin-top:6px}
+.stat-sep{width:1px;background:rgba(238,229,210,.12);align-self:stretch}
+
+/* ================================================================
+   FOOTER
+   ================================================================ */
+.foot{padding:60px 32px 40px;text-align:center;background:var(--cream);border-top:1px solid var(--cream-line)}
+.foot-brand{font-family:var(--f-display);font-size:1.1rem;font-weight:500;display:inline-flex;align-items:center;gap:8px;margin-bottom:16px}
+.foot-brand .dot{width:8px;height:8px;background:var(--patina);border-radius:50%;display:inline-block}
+.foot-links{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.foot-links a{font-size:.82rem;color:var(--ink-mute);transition:color .2s}
+.foot-links a:hover{color:var(--ink)}
+.foot-copy{font-size:.75rem;color:var(--ink-mute)}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media(max-width:768px){
+  .showcase-grid{grid-template-columns:1fr;gap:48px;text-align:center}
+  .showcase-text .btns{justify-content:center}
+  .phone-wrap{order:-1}
+  .scurve-wrap{height:auto;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:0 16px}
+  .tool-chip{position:relative !important;left:auto !important;top:auto !important}
+  .stat-row{gap:32px}
+  .hero{min-height:80vh;padding:60px 20px 80px}
+}
 </style>
 </head>
 <body>
@@ -274,60 +195,102 @@ img,svg{display:block;max-width:100%}
   </div>
 </header>
 
-<!-- ============================== BOX 1: HERO ============================== -->
+<!-- ============================== HERO ============================== -->
 <section class="hero">
+  <svg class="hero-waves" viewBox="0 0 1400 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="wave1" d="M-200,600 C200,500 500,150 700,400 C900,650 1100,200 1600,300" fill="none"/>
+      <path id="wave2" d="M-200,200 C200,400 500,650 700,400 C900,150 1100,500 1600,500" fill="none"/>
+    </defs>
+    <text>
+      <textPath href="#wave1" startOffset="0%">
+        Your brand is a system, not a logo · Identity before tactics · Coherence before scale · Truth before positioning · Built for founders who mean it · From idea to orbit · Every output feeds the next · Brand is perception made repeatable · Your brand is a system, not a logo · Identity before tactics · Coherence before scale · Truth before positioning · Built for founders who mean it · From idea to orbit · Every output feeds the next · Brand is perception made repeatable ·&nbsp;
+        <animate attributeName="startOffset" from="0%" to="-100%" dur="45s" repeatCount="indefinite"/>
+      </textPath>
+    </text>
+    <text>
+      <textPath href="#wave2" startOffset="0%">
+        Your brand is a system, not a logo · Identity before tactics · Coherence before scale · Truth before positioning · Built for founders who mean it · From idea to orbit · Every output feeds the next · Brand is perception made repeatable · Your brand is a system, not a logo · Identity before tactics · Coherence before scale · Truth before positioning · Built for founders who mean it · From idea to orbit · Every output feeds the next · Brand is perception made repeatable ·&nbsp;
+        <animate attributeName="startOffset" from="0%" to="-100%" dur="55s" repeatCount="indefinite"/>
+      </textPath>
+    </text>
+  </svg>
 
-  <!-- BAND 1: Manifesto phrases, scrolls left -->
-  <div class="diag-band diag-band-1">
-    <div class="diag-track diag-track-left" id="diagTrack1"></div>
-  </div>
-
-  <div class="hero-wrap">
+  <div class="hero-content">
     <h1>Answer questions,<br><em>get a brand.</em></h1>
-    <p class="hero-sub">The AI brand operating system that turns your answers into identity, voice, content, and strategy. 18 connected agents. One living Brand Profile.</p>
-    <div class="hero-ctas">
-      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary">Start free</a>
+    <p>The AI brand operating system. 18 connected agents build, evolve, and protect your identity from one living Brand Profile.</p>
+    <div class="hero-btns">
+      <a href="signal-scan.html" class="btn btn-primary">Start free</a>
       <a href="ecosystem.html" class="btn">See how it works</a>
     </div>
-    <p class="hero-micro">Free forever tier · No credit card · 5 min to first result</p>
-  </div>
-
-  <!-- BAND 2: Tool icon chips, scrolls right -->
-  <div class="diag-band diag-band-2">
-    <div class="diag-track diag-track-right" id="diagTrack2"></div>
-  </div>
-
-</section>
-
-<!-- ============================== BAND 1: PRESS MARQUEE ============================== -->
-<section class="press-band">
-  <p class="press-label">Our work was featured by</p>
-  <div class="press-marquee">
-    <div class="press-track" id="pressTrack"></div>
+    <p class="micro">Free forever tier · No credit card · 5 min to first result</p>
   </div>
 </section>
 
-<!-- ============================== BOX 2: TOOL SHOWCASE (dark) ============================== -->
+<!-- ============================== DARK SHOWCASE ============================== -->
 <section class="showcase">
-  <h2>Build your brand with <em>18 connected agents</em></h2>
-  <p class="showcase-sub">Identity. Voice. Content. Strategy. Each agent reads from one Brand Profile. Nothing drifts. Everything compounds.</p>
-  <div class="showcase-cta">
-    <a href="tools.html" class="btn btn-primary">Explore all tools</a>
-    <a href="ecosystem.html" class="btn">See the ecosystem</a>
-  </div>
-  <div class="tool-orbit" id="toolOrbit"></div>
-</section>
+  <div class="showcase-inner">
 
-<!-- ============================== BAND 2: STAT STRIP ============================== -->
-<section class="stat-band">
-  <h3>From idea to orbit.</h3>
-  <p class="stat-band-sub">What would take an agency 6 weeks and $15,000 happens in one afternoon. Start with a free diagnostic.</p>
-  <div class="stat-row">
-    <div class="stat stat-1"><span class="stat-num">18</span><span class="stat-lbl">Agent tools</span></div>
-    <div class="stat stat-2"><span class="stat-num">1</span><span class="stat-lbl">Brand Profile</span></div>
-    <div class="stat stat-3"><span class="stat-num">$0</span><span class="stat-lbl">To start</span></div>
+    <!-- Two-column -->
+    <div class="showcase-grid">
+      <div class="showcase-text">
+        <p class="eyebrow">18 connected agents</p>
+        <h2>Build your brand with intelligence.</h2>
+        <p class="body">Identity. Voice. Content. Strategy. Every agent reads from one Brand Profile. Nothing drifts. Everything compounds.</p>
+        <div class="btns">
+          <a href="tools.html" class="btn btn-primary">Explore all tools</a>
+          <a href="ecosystem.html" class="btn">See the ecosystem</a>
+        </div>
+        <p class="stat-claim">What takes an agency 6 weeks <span>happens in one afternoon.</span></p>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-top">
+            <span class="phone-logo">[QB]</span>
+            <span class="phone-dot"></span>
+          </div>
+          <div class="phone-grid">
+            <div class="phone-card"><span class="phone-card-dot" style="background:var(--patina-lit)"></span><span class="phone-card-label">Signal Scan</span></div>
+            <div class="phone-card"><span class="phone-card-dot" style="background:var(--brass-lit)"></span><span class="phone-card-label">Brand Soul</span></div>
+            <div class="phone-card"><span class="phone-card-dot" style="background:var(--terra-lit)"></span><span class="phone-card-label">Visual DNA</span></div>
+            <div class="phone-card"><span class="phone-card-dot" style="background:var(--plum-lit)"></span><span class="phone-card-label">Voice Guide</span></div>
+            <div class="phone-card"><span class="phone-card-dot" style="background:#4A8AB0"></span><span class="phone-card-label">War Table</span></div>
+            <div class="phone-card"><span class="phone-card-dot" style="background:var(--patina-lit)"></span><span class="phone-card-label">Dashboard</span></div>
+          </div>
+          <div class="phone-bar"><div class="phone-bar-fill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S-curve tool chips -->
+    <div class="scurve-wrap" id="scurve"></div>
+
+    <!-- Logo marquee -->
+    <div class="logos-section">
+      <p class="logos-label">Used by professionals everywhere to build their brand</p>
+      <div class="logos-track">
+        <div class="logos-scroll">
+          <span>The New York Times</span><span>Time Magazine</span><span>Google Arts</span><span>United Nations</span><span>USAID</span><span>TV5 Monde</span><span>LA Lakers</span><span>UM6P</span>
+          <span>The New York Times</span><span>Time Magazine</span><span>Google Arts</span><span>United Nations</span><span>USAID</span><span>TV5 Monde</span><span>LA Lakers</span><span>UM6P</span>
+          <span>The New York Times</span><span>Time Magazine</span><span>Google Arts</span><span>United Nations</span><span>USAID</span><span>TV5 Monde</span><span>LA Lakers</span><span>UM6P</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat strip -->
+    <div class="stat-strip">
+      <p class="headline">From idea to orbit.</p>
+      <div class="stat-row">
+        <div class="stat-item"><div class="num" style="color:var(--patina-lit)">18</div><div class="label">AI agents</div></div>
+        <div class="stat-sep"></div>
+        <div class="stat-item"><div class="num" style="color:var(--brass-lit)">1</div><div class="label">Brand Profile</div></div>
+        <div class="stat-sep"></div>
+        <div class="stat-item"><div class="num" style="color:var(--terra-lit)">$0</div><div class="label">To start</div></div>
+      </div>
+      <a href="signal-scan.html" class="btn btn-primary">Start your brand scan</a>
+    </div>
+
   </div>
-  <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn">Start your brand scan</a>
 </section>
 
 <!-- ============================== FOOTER ============================== -->
@@ -343,131 +306,95 @@ img,svg{display:block;max-width:100%}
   <div class="foot-copy">&copy; 2026 Quantum Branding · quantumbranding.ai</div>
 </footer>
 
-<!-- ============================== SCRIPT ============================== -->
 <script>
+/* ================================================================
+   THEME TOGGLE
+   ================================================================ */
 (function(){
-  'use strict';
-
-  /* ===== DIAGONAL BAND 1: MANIFESTO ===== */
-  (function(){
-    var t=document.getElementById('diagTrack1');
-    if(!t) return;
-    var phrases=[
-      'Your brand is a system, not a logo',
-      'Identity before tactics',
-      'Coherence before scale',
-      'Truth before positioning',
-      'Built for founders who mean it',
-      'From idea to orbit',
-      'Every output feeds the next',
-      'Brand is perception made repeatable',
-      'The brand you deserve already exists',
-      'Stop collecting tools. Build a system',
-      'Voice, identity, strategy \u2014 one thread',
-      'Nothing re-entered. Everything remembered'
-    ];
-    var h='';
-    for(var r=0;r<2;r++){
-      phrases.forEach(function(p){
-        h+='<span class="diag-phrase">'+p+'</span><span class="diag-dot">\u00B7</span>';
-      });
-    }
-    t.innerHTML=h;
-  })();
-
-  /* ===== DIAGONAL BAND 2: TOOL CHIPS ===== */
-  (function(){
-    var t=document.getElementById('diagTrack2');
-    if(!t) return;
-    var tools=[
-      {n:'Signal Scan',svg:'<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/><path d="M12 5a7 7 0 0 1 0 14" fill="none" stroke="currentColor"/><path d="M12 2a10 10 0 0 1 0 20" fill="none" stroke="currentColor"/>'},
-      {n:'Brand Soul Map',svg:'<circle cx="12" cy="12" r="2" fill="none" stroke="currentColor"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor"/>'},
-      {n:'Sensescape',svg:'<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/><path d="M4 12a8 8 0 0 1 3-6.3M20 12a8 8 0 0 0-3-6.3" fill="none" stroke="currentColor"/>'},
-      {n:'Visual DNA',svg:'<path d="M9 3c0 6 6 6 6 12s-6 6-6 12" fill="none" stroke="currentColor"/><path d="M15 3c0 6-6 6-6 12s6 6 6 12" fill="none" stroke="currentColor"/>'},
-      {n:'War Table',svg:'<rect x="3" y="3" width="18" height="18" rx="1" fill="none" stroke="currentColor"/><line x1="12" y1="3" x2="12" y2="21" stroke="currentColor"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor"/>'},
-      {n:'Logo Direction',svg:'<rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor"/><path d="M10 18l-1 2 2-1 8-8-1-1z" fill="none" stroke="currentColor"/>'},
-      {n:'Logo Eval',svg:'<circle cx="10" cy="10" r="6" fill="none" stroke="currentColor"/><path d="M15 15l5 5" stroke="currentColor"/><path d="M8 10l2 2 3-3" fill="none" stroke="currentColor"/>'},
-      {n:'Voice Guide',svg:'<path d="M12 2a4 4 0 0 1 4 4v4a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z" fill="none" stroke="currentColor"/><path d="M6 10v1a6 6 0 0 0 12 0v-1" fill="none" stroke="currentColor"/><line x1="12" y1="17" x2="12" y2="21" stroke="currentColor"/>'},
-      {n:'Instagram Seed',svg:'<rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>'},
-      {n:'LinkedIn Strategy',svg:'<rect x="4" y="10" width="4" height="10" rx="1" fill="none" stroke="currentColor"/><rect x="10" y="6" width="4" height="14" rx="1" fill="none" stroke="currentColor"/><rect x="16" y="2" width="4" height="18" rx="1" fill="none" stroke="currentColor"/>'},
-      {n:'YouTube Strategy',svg:'<rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor"/><polygon points="10,8 16,12 10,16" fill="none" stroke="currentColor"/>'},
-      {n:'Newsletter',svg:'<rect x="3" y="6" width="18" height="13" rx="2" fill="none" stroke="currentColor"/><path d="M3 7l9 7 9-7" fill="none" stroke="currentColor"/>'},
-      {n:'Content Bridge',svg:'<circle cx="6" cy="12" r="3" fill="none" stroke="currentColor"/><circle cx="18" cy="12" r="3" fill="none" stroke="currentColor"/><path d="M9 12c2-5 4-5 6 0" fill="none" stroke="currentColor"/>'},
-      {n:'Repurposing',svg:'<path d="M17 2l3 3-3 3" fill="none" stroke="currentColor"/><path d="M7 22l-3-3 3-3" fill="none" stroke="currentColor"/><path d="M20 5H9a4 4 0 0 0 0 8h1" fill="none" stroke="currentColor"/><path d="M4 19h11a4 4 0 0 0 0-8h-1" fill="none" stroke="currentColor"/>'},
-      {n:'Scheduler',svg:'<rect x="3" y="4" width="18" height="17" rx="2" fill="none" stroke="currentColor"/><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor"/><line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"/><line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"/>'},
-      {n:'Dashboard',svg:'<rect x="3" y="3" width="8" height="8" rx="1" fill="none" stroke="currentColor"/><rect x="13" y="3" width="8" height="8" rx="1" fill="none" stroke="currentColor"/><rect x="3" y="13" width="8" height="8" rx="1" fill="none" stroke="currentColor"/><rect x="13" y="13" width="8" height="8" rx="1" fill="currentColor" opacity=".3" stroke="currentColor"/>'},
-      {n:'Quarterly Review',svg:'<path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="none" stroke="currentColor"/><line x1="8" y1="8" x2="16" y2="8" stroke="currentColor"/><line x1="8" y1="12" x2="14" y2="12" stroke="currentColor"/><line x1="8" y1="16" x2="12" y2="16" stroke="currentColor"/>'},
-      {n:'Predictive Panel',svg:'<polyline points="4,18 8,12 12,14 16,6 20,10" fill="none" stroke="currentColor"/><path d="M16 6l4 0 0 4" fill="none" stroke="currentColor"/>'}
-    ];
-    var h='';
-    for(var r=0;r<2;r++){
-      tools.forEach(function(tl){
-        h+='<span class="diag-chip"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">'+tl.svg+'</svg><span>'+tl.n+'</span></span>';
-      });
-    }
-    t.innerHTML=h;
-  })();
-
-  /* ===== THEME TOGGLE ===== */
-  var html=document.documentElement;
-  var tog=document.getElementById('themeToggle');
-  var ico=document.getElementById('toggleIcon');
-  function upd(){ico.textContent=html.getAttribute('data-theme')==='dark'?'☀':'☽'}
-  upd();
-  tog.addEventListener('click',function(){
-    var n=html.getAttribute('data-theme')==='dark'?'light':'dark';
-    html.setAttribute('data-theme',n);localStorage.setItem('qb-theme',n);upd();
+  var btn=document.getElementById('themeToggle');
+  var icon=document.getElementById('toggleIcon');
+  function update(){
+    var d=document.documentElement.getAttribute('data-theme')==='dark';
+    icon.textContent=d?'☀':'☽';
+  }
+  update();
+  btn.addEventListener('click',function(){
+    var current=document.documentElement.getAttribute('data-theme');
+    var next=current==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    localStorage.setItem('qb-theme',next);
+    update();
   });
+})();
 
-  /* ===== HAMBURGER (placeholder) ===== */
-  var ham=document.getElementById('hamburger');
-  ham.addEventListener('click',function(){window.location.href='ecosystem.html'});
+/* ================================================================
+   HAMBURGER -> ecosystem.html
+   ================================================================ */
+document.getElementById('hamburger').addEventListener('click',function(){
+  window.location.href='ecosystem.html';
+});
 
-  /* ===== PRESS MARQUEE ===== */
-  var pt=document.getElementById('pressTrack');
-  if(pt){
-    var brands=[
-      {n:'The New York Times',c:'brass'},{n:'Time Magazine',c:'terra'},{n:'Google Arts & Culture',c:'patina'},
-      {n:'United Nations',c:'plum'},{n:'USAID',c:'brass'},{n:'TV5 Monde',c:'terra'},
-      {n:'LA Lakers',c:'patina'},{n:'UM6P',c:'plum'},{n:'UNIDO',c:'brass'}
-    ];
-    var h='';
-    for(var r=0;r<3;r++) brands.forEach(function(b){
-      h+='<span class="press-pill"><span class="pdot '+b.c+'"></span>'+b.n+'</span>';
-    });
-    pt.innerHTML=h;
+/* ================================================================
+   S-CURVE TOOL CHIPS
+   ================================================================ */
+(function(){
+  var tools=[
+    {name:'Signal Scan',icon:'<line x1="2" y1="12" x2="6" y2="12"/><line x1="6" y1="8" x2="10" y2="8"/><line x1="10" y1="4" x2="14" y2="4"/><line x1="6" y1="12" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="4"/>'},
+    {name:'Brand Soul Map',icon:'<circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2"/><line x1="8" y1="2" x2="8" y2="4"/><line x1="8" y1="12" x2="8" y2="14"/>'},
+    {name:'Sensescape',icon:'<path d="M2,12 Q5,4 8,8 Q11,12 14,4"/><circle cx="4" cy="6" r="1"/><circle cx="12" cy="10" r="1"/>'},
+    {name:'Visual DNA',icon:'<path d="M4,2 Q8,6 4,10 Q8,14 4,14"/><path d="M12,2 Q8,6 12,10 Q8,14 12,14"/>'},
+    {name:'War Table',icon:'<rect x="2" y="2" width="12" height="12" rx="2"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="10" x2="14" y2="10"/><line x1="6" y1="2" x2="6" y2="14"/><line x1="10" y1="2" x2="10" y2="14"/>'},
+    {name:'Logo Direction',icon:'<polygon points="8,2 14,14 2,14"/><line x1="8" y1="6" x2="8" y2="10"/><circle cx="8" cy="12" r="0.5"/>'},
+    {name:'Logo Eval',icon:'<circle cx="8" cy="8" r="6"/><polyline points="5,8 7,10 11,6"/>'},
+    {name:'Voice Guide',icon:'<path d="M8,2 L8,10"/><path d="M4,6 Q4,12 8,12 Q12,12 12,6"/><line x1="8" y1="12" x2="8" y2="14"/><line x1="5" y1="14" x2="11" y2="14"/>'},
+    {name:'Instagram',icon:'<rect x="2" y="2" width="12" height="12" rx="3"/><circle cx="8" cy="8" r="3"/><circle cx="12" cy="4" r="0.8"/>'},
+    {name:'LinkedIn',icon:'<rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="7" x2="5" y2="12"/><circle cx="5" cy="5" r="1"/><path d="M8,7 Q8,9 9,9 L11,9 L11,12 M8,12 L8,7"/>'},
+    {name:'YouTube',icon:'<rect x="1" y="3" width="14" height="10" rx="3"/><polygon points="6,6 11,8 6,10"/>'},
+    {name:'Newsletter',icon:'<rect x="2" y="3" width="12" height="10" rx="1"/><polyline points="2,3 8,9 14,3"/>'},
+    {name:'Content Bridge',icon:'<line x1="3" y1="8" x2="13" y2="8"/><circle cx="3" cy="8" r="2"/><circle cx="13" cy="8" r="2"/><line x1="8" y1="5" x2="8" y2="11"/>'},
+    {name:'Repurposing',icon:'<polyline points="4,6 2,8 4,10"/><polyline points="12,6 14,8 12,10"/><line x1="9" y1="3" x2="7" y2="13"/>'},
+    {name:'Scheduler',icon:'<rect x="2" y="3" width="12" height="11" rx="1"/><line x1="2" y1="7" x2="14" y2="7"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="11" y1="1" x2="11" y2="5"/><rect x="5" y="9" width="2" height="2"/>'},
+    {name:'Dashboard',icon:'<rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="3" rx="1"/><rect x="2" y="9" width="5" height="3" rx="1"/><rect x="9" y="7" width="5" height="5" rx="1"/>'},
+    {name:'Quarterly Review',icon:'<polyline points="2,12 5,6 8,9 11,3 14,7"/><circle cx="5" cy="6" r="1"/><circle cx="11" cy="3" r="1"/>'},
+    {name:'Predictive Panel',icon:'<circle cx="8" cy="8" r="6"/><path d="M8,4 L8,8 L11,10"/><path d="M12,3 L14,1"/>'}
+  ];
+
+  var wrap=document.getElementById('scurve');
+  if(!wrap)return;
+  var W=wrap.offsetWidth||1000;
+  var H=wrap.offsetHeight||340;
+  var n=tools.length;
+
+  // Multi-segment bezier S-curve points
+  function bezier(t,p0,p1,p2,p3){
+    var u=1-t;
+    return{
+      x:u*u*u*p0.x+3*u*u*t*p1.x+3*u*t*t*p2.x+t*t*t*p3.x,
+      y:u*u*u*p0.y+3*u*u*t*p1.y+3*u*t*t*p2.y+t*t*t*p3.y
+    };
   }
 
-  /* ===== TOOL ORBIT (icon tiles inside showcase) ===== */
-  var orbit=document.getElementById('toolOrbit');
-  if(orbit){
-    var tools=[
-      {n:'Signal Scan',url:'signal-scan.html',svg:'<circle cx="24" cy="24" r="4"/><path d="M24 14a10 10 0 0 1 0 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M24 8a16 16 0 0 1 0 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
-      {n:'Brand Soul Map',url:'brand-soul-map.html',svg:'<circle cx="24" cy="24" r="3"/><path d="M24 4v8M24 36v8M4 24h8M36 24h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>'},
-      {n:'Sensescape',url:'sensescape.html',svg:'<path d="M6 24a18 18 0 0 1 6-13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14 24a10 10 0 0 1 3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="24" r="4"/><path d="M42 24a18 18 0 0 0-6-13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M34 24a10 10 0 0 0-3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
-      {n:'Visual DNA',url:'visual-dna.html',svg:'<path d="M18 6c0 8 12 8 12 16s-12 8-12 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M30 6c0 8-12 8-12 16s12 8 12 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
-      {n:'War Table',url:'war-table.html',svg:'<rect x="8" y="8" width="32" height="32" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="24" y1="8" x2="24" y2="40" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="24" x2="40" y2="24" stroke="currentColor" stroke-width="1.5"/>'},
-      {n:'Logo Direction',url:'logo-direction-agent.html',svg:'<rect x="10" y="10" width="28" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 34l-2 4 4-2 14-14-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>'},
-      {n:'Logo Eval',url:'logo-evaluation-agent.html',svg:'<circle cx="20" cy="20" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M28 28l10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M16 20l3 3 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'},
-      {n:'Voice Guide',url:'voice-guide-agent.html',svg:'<path d="M8 20c0-8 7-14 16-14s16 6 16 14c0 6-4 10-8 12v4H16v-4c-4-2-8-6-8-12z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M18 22h2M28 22h2M22 28h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
-      {n:'Instagram',url:'instagram-seed-agent.html',svg:'<rect x="10" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="21" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="32" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="10" y="21" width="9" height="9" rx="2" fill="currentColor"/><rect x="21" y="21" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="32" y="21" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="10" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="21" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="32" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/>'},
-      {n:'LinkedIn',url:'linkedin-strategy-agent.html',svg:'<rect x="12" y="18" width="24" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 18v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 30l4-6 4 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'},
-      {n:'YouTube',url:'youtube-strategy-agent.html',svg:'<polygon points="18,12 36,24 18,36" fill="currentColor"/>'},
-      {n:'Newsletter',url:'newsletter-architecture-agent.html',svg:'<rect x="8" y="14" width="32" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 16l16 12 16-12" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'},
-      {n:'Content Bridge',url:'content-bridge.html',svg:'<circle cx="12" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="36" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 24c4-10 8-10 14 0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
-      {n:'Repurposing',url:'content-repurposing-engine.html',svg:'<path d="M12 24h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M24 14l12 2M24 24l12 0M24 34l12-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="24" r="3"/>'},
-      {n:'Scheduler',url:'content-scheduler.html',svg:'<rect x="8" y="10" width="32" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="40" y2="18" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="26" r="2" fill="currentColor"/><circle cx="30" cy="26" r="2" fill="currentColor"/>'},
-      {n:'Dashboard',url:'brand-performance-dashboard.html',svg:'<rect x="10" y="28" width="6" height="12" rx="1" fill="currentColor" opacity=".5"/><rect x="21" y="18" width="6" height="22" rx="1" fill="currentColor" opacity=".7"/><rect x="32" y="10" width="6" height="30" rx="1" fill="currentColor"/>'},
-      {n:'Quarterly',url:'quarterly-brand-review-agent.html',svg:'<circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2" opacity=".3"/><path d="M24 8a16 16 0 0 1 13.9 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
-      {n:'Predictive',url:'predictive-panel.html',svg:'<ellipse cx="24" cy="24" rx="14" ry="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="24" r="4"/><circle cx="16" cy="18" r="1.5" fill="currentColor"/><circle cx="32" cy="18" r="1.5" fill="currentColor"/>'}
-    ];
-    var oh='';
-    tools.forEach(function(t){
-      oh+='<a class="tool-tile" href="'+t.url+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="tool-tile-name">'+t.n+'</span></a>';
-    });
-    orbit.innerHTML=oh;
+  // Two-segment S: first half curves down-right, second half curves up-right
+  var seg1={p0:{x:W*0.02,y:H*0.15},p1:{x:W*0.2,y:H*0.9},p2:{x:W*0.35,y:H*0.9},p3:{x:W*0.5,y:H*0.5}};
+  var seg2={p0:{x:W*0.5,y:H*0.5},p1:{x:W*0.65,y:H*0.1},p2:{x:W*0.8,y:H*0.1},p3:{x:W*0.98,y:H*0.85}};
+
+  for(var i=0;i<n;i++){
+    var t=i/(n-1);
+    var pt;
+    if(t<=0.5){
+      pt=bezier(t*2,seg1.p0,seg1.p1,seg1.p2,seg1.p3);
+    }else{
+      pt=bezier((t-0.5)*2,seg2.p0,seg2.p1,seg2.p2,seg2.p3);
+    }
+    var chip=document.createElement('div');
+    chip.className='tool-chip';
+    chip.style.left=(pt.x-50)+'px';
+    chip.style.top=(pt.y-16)+'px';
+    chip.innerHTML='<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">'+tools[i].icon+'</svg><span>'+tools[i].name+'</span>';
+    wrap.appendChild(chip);
   }
 })();
 </script>
+
 </body>
 </html>
