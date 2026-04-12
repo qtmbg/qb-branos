@@ -62,7 +62,7 @@ img,svg{display:block;max-width:100%}
 [data-theme="dark"] .ham{border-color:rgba(140,110,70,.14)}[data-theme="dark"] .ham span{background:var(--ink)}
 
 /* HERO */
-.hero{position:relative;background:var(--cream);overflow:hidden;padding:100px 24px 80px;text-align:center}
+.hero{position:relative;background:var(--cream);overflow:visible;padding:100px 24px 80px;text-align:center}
 .hero-wrap{max-width:720px;margin:0 auto;position:relative;z-index:2}
 .hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.8rem,7.5vw,5.5rem);line-height:.96;letter-spacing:-.02em;color:var(--ink);margin-bottom:28px;text-wrap:balance}
 .hero h1 em{font-style:italic;font-weight:500;color:var(--patina)}
@@ -178,36 +178,40 @@ img,svg{display:block;max-width:100%}
   </div>
 </header>
 
-<!-- HERO -->
-<section class="hero">
+<!-- HERO WRAPPER (Wispr-style: section + wave siblings) -->
+<div class="hero-wrapper" style="position:relative;overflow:visible">
+  <!-- Hero content section -->
+  <section class="hero">
+    <div class="hero-wrap">
+      <h1>Answer questions,<br><em>get a brand.</em></h1>
+      <p class="hero-sub">The AI brand operating system that turns your answers into identity, voice, content, and strategy. 18 connected agents. One living Brand Profile.</p>
+      <div class="hero-ctas">
+        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-p" style="padding:14px 28px;font-size:.94rem">Start free</a>
+        <a href="ecosystem.html" class="btn" style="padding:14px 28px;font-size:.94rem">See how it works</a>
+      </div>
+      <p class="hero-micro">Free forever tier  ·  No credit card  ·  5 min to first result</p>
+    </div>
+  </section>
+  <!-- Wave SVGs OUTSIDE section, INSIDE wrapper (Wispr pattern) -->
   <div class="hero-wave-left" aria-hidden="true">
     <svg width="100%" height="100%" viewBox="0 0 1048 594" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:55%;height:100%;overflow:visible">
       <path id="qb-c1" d="M0.6 50.9C17.5 143.3 97.9 293.1 284.5 353.5C440.8 399.1 583.8 294.1 500.6 184.7C417.4 75.4 238.2 282.1 499.3 441.7C551.9 477.8 817.5 561.3 1046.4 565.2" stroke="none" fill="none"/>
-      <text x="-4000" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="400" letter-spacing="2" fill="rgba(26,22,16,0.18)" style="text-transform:uppercase">
+      <text x="-4000" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="400" letter-spacing="2" fill="rgba(26,22,16,0.35)" style="text-transform:uppercase">
         <textPath href="#qb-c1">YOUR BRAND IS A SYSTEM NOT A LOGO · IDENTITY BEFORE TACTICS · COHERENCE BEFORE SCALE · TRUTH BEFORE POSITIONING · BUILT FOR FOUNDERS WHO MEAN IT · FROM IDEA TO ORBIT · EVERY OUTPUT FEEDS THE NEXT · BRAND IS PERCEPTION MADE REPEATABLE · THE BRAND YOU DESERVE ALREADY EXISTS · STOP COLLECTING TOOLS BUILD A SYSTEM · VOICE IDENTITY STRATEGY ONE THREAD · NOTHING RE-ENTERED EVERYTHING REMEMBERED · YOUR BRAND IS A SYSTEM NOT A LOGO · IDENTITY BEFORE TACTICS · COHERENCE BEFORE SCALE · TRUTH BEFORE POSITIONING · BUILT FOR FOUNDERS WHO MEAN IT · FROM IDEA TO ORBIT · EVERY OUTPUT FEEDS THE NEXT · BRAND IS PERCEPTION MADE REPEATABLE · THE BRAND YOU DESERVE ALREADY EXISTS · STOP COLLECTING TOOLS BUILD A SYSTEM ·</textPath>
-        <animate attributeName="x" dur="50s" values="-4000;0" repeatCount="indefinite"/>
+        <animate attributeName="x" dur="35s" values="-4000;0" repeatCount="indefinite"/>
       </text>
     </svg>
   </div>
   <div class="hero-wave-right" aria-hidden="true">
     <svg width="100%" height="100%" viewBox="0 0 1024 620" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;right:0;width:65%;height:100%;overflow:visible">
-      <path id="qb-c2" d="M2 563.9C111.6 558.3 316.5 490.1 518 490.1C703 431.3 875.3 444.5 1021.9 453.2" stroke="rgba(26,22,16,0.8)" stroke-width="38" fill="none" stroke-linecap="round"/>
+      <path id="qb-c2" d="M2 563.9C111.6 558.3 316.5 490.1 518 490.1C703 431.3 875.3 444.5 1021.9 453.2" stroke="rgba(26,22,16,0.8)" stroke-width="30" fill="none" stroke-linecap="round"/>
       <text x="-5000" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600" letter-spacing="2" fill="rgba(244,240,235,0.88)" dy="5" style="text-transform:uppercase">
         <textPath href="#qb-c2">YOUR BRAND IS A SYSTEM NOT A LOGO · IDENTITY BEFORE TACTICS · COHERENCE BEFORE SCALE · TRUTH BEFORE POSITIONING · BUILT FOR FOUNDERS WHO MEAN IT · FROM IDEA TO ORBIT · EVERY OUTPUT FEEDS THE NEXT · BRAND IS PERCEPTION MADE REPEATABLE · THE BRAND YOU DESERVE ALREADY EXISTS · STOP COLLECTING TOOLS BUILD A SYSTEM · VOICE IDENTITY STRATEGY ONE THREAD · NOTHING RE-ENTERED EVERYTHING REMEMBERED ·</textPath>
-        <animate attributeName="x" dur="70s" values="-5000;0" repeatCount="indefinite"/>
+        <animate attributeName="x" dur="60s" values="-5000;0" repeatCount="indefinite"/>
       </text>
     </svg>
   </div>
-  <div class="hero-wrap">
-    <h1>Answer questions,<br><em>get a brand.</em></h1>
-    <p class="hero-sub">The AI brand operating system that turns your answers into identity, voice, content, and strategy. 18 connected agents. One living Brand Profile.</p>
-    <div class="hero-ctas">
-      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-p" style="padding:14px 28px;font-size:.94rem">Start free</a>
-      <a href="ecosystem.html" class="btn" style="padding:14px 28px;font-size:.94rem">See how it works</a>
-    </div>
-    <p class="hero-micro">Free forever tier  ·  No credit card  ·  5 min to first result</p>
-  </div>
-</section>
+</div>
 
 <!-- DARK SECTION -->
 <section class="dark-sec">
@@ -222,7 +226,7 @@ img,svg{display:block;max-width:100%}
       </div>
       <p class="stat-claim">What takes an agency 6 weeks <span>happens in one afternoon.</span></p>
     </div>
-    <div class="ph-wrap sr" id="phone-reveal">
+    <div class="ph-wrap" id="phone-reveal">
       <div class="phone">
         <div class="ph-top"><span class="ph-logo">[QB]</span><span class="ph-dot"></span></div>
         <div class="ph-grid">
@@ -322,7 +326,20 @@ img,svg{display:block;max-width:100%}
   ];
 
   var tg=document.getElementById('tileGrid');
-  if(tg && typeof gsap!=='undefined' && typeof MotionPathPlugin!=='undefined'){
+
+  function initMotionPath(){
+    if(!tg || typeof gsap==='undefined' || typeof MotionPathPlugin==='undefined'){
+      // Fallback: simple flex grid
+      if(tg){
+        tg.style.cssText='position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:16px;height:auto;padding:0 20px 80px';
+        var fh='';
+        tools.forEach(function(t){
+          fh+='<a class="tile" href="'+t.url+'" style="position:relative;background:'+t.bg+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="tile-n">'+t.n+'</span></a>';
+        });
+        tg.innerHTML=fh;
+      }
+      return;
+    }
     gsap.registerPlugin(MotionPathPlugin);
     // Duplicate tools to fill the path (36 items = 2x18)
     var all=[];
@@ -332,22 +349,26 @@ img,svg{display:block;max-width:100%}
       th+='<a class="tile" href="'+t.url+'" style="position:absolute;top:0;left:0;background:'+t.bg+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="tile-n">'+t.n+'</span></a>';
     });
     tg.innerHTML=th;
-    var tiles=tg.querySelectorAll('.tile');
-    tiles.forEach(function(tile,i){
-      var start=i/tiles.length;
-      gsap.to(tile,{
-        motionPath:{path:'#qb-icon-path',align:'#qb-icon-path',alignOrigin:[0.5,0.5],autoRotate:false,start:start,end:start+1},
-        ease:'none',duration:60,repeat:-1
+    // Wait for paint before reading SVG path bounds (Wispr pattern)
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        var tiles=tg.querySelectorAll('.tile');
+        tiles.forEach(function(tile,i){
+          var start=i/tiles.length;
+          gsap.to(tile,{
+            motionPath:{path:'#qb-icon-path',align:'#qb-icon-path',alignOrigin:[0.5,0.5],autoRotate:false,start:start,end:start+1},
+            ease:'none',duration:60,repeat:-1
+          });
+        });
       });
     });
-  } else if(tg){
-    // Fallback: simple flex grid if GSAP fails
-    tg.style.cssText='position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:16px;height:auto;padding:0 20px 80px';
-    var th='';
-    tools.forEach(function(t){
-      th+='<a class="tile" href="'+t.url+'" style="position:relative;background:'+t.bg+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="tile-n">'+t.n+'</span></a>';
-    });
-    tg.innerHTML=th;
+  }
+
+  // Init after window load (Wispr pattern: ensures SVG is fully painted)
+  if(document.readyState==='complete'){
+    initMotionPath();
+  } else {
+    window.addEventListener('load',initMotionPath);
   }
 })();
 </script>
