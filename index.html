@@ -5,1392 +5,468 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quantum Branding · Answer questions. Get a brand.</title>
 <meta name="description" content="The Brand Operating System. 18 connected AI agents. One Brand Profile. Answer questions, get a brand.">
-<script>(function(){var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');if(sessionStorage.getItem('qb-seen'))document.documentElement.setAttribute('data-seen','1');sessionStorage.setItem('qb-seen','1')})();</script>
+<script>(function(){var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')})();</script>
 <link rel="prefetch" href="ecosystem.html" as="document">
-<link rel="preconnect" href="https://app.quantumbranding.ai">
+<link rel="prefetch" href="tools.html" as="document">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ==========================================================
-   QB HERO · The Entrance
-   Pure first-touch. Tension. Motion. One choice: enter.
-   ========================================================== */
+/* ================================================================
+   QB HOME — Wispr Flow structure: cream hero + dark showcase + bands
+   Matching ecosystem.html source of truth for palette + fonts
+   ================================================================ */
 :root{
-  --cream:          #F4F0EB;
-  --cream-soft:     #EDE8E2;
-  --cream-deep:     #E6E0D8;
-  --cream-line:     rgba(100,80,50,0.14);
-  --ink:            #1A1610;
-  --ink-soft:       #5A5040;
-  --ink-mute:       #8A7E70;
-  --patina:         #3A5F4A;
-  --patina-lit:     #4A7A5E;
-  --patina-deep:    #0E1C17;
-  --brass:          #A8903E;
-  --brass-lit:      #C4A84E;
-  --brass-faint:    rgba(168,144,62,0.10);
-  --terra:          #C4654A;
-  --terra-lit:      #D4785E;
-  --plum:           #7A5A6E;
-  --plum-lit:       #9A7A8E;
-  --pill-bg:        #F3E9C9;
-  --pill-bg-hover:  #EFE1B4;
-  --pill-border:    #D9C98A;
-  --pill-ink:       #4A3F18;
-  --f-display:      'EB Garamond', Georgia, serif;
-  --f-body:         'Figtree', -apple-system, BlinkMacSystemFont, sans-serif;
-  --f-mono:         'JetBrains Mono', ui-monospace, monospace;
-  --ease:           cubic-bezier(.22,1,.36,1);
-  --ease-drop:      cubic-bezier(.34,1.56,.64,1);
+  --cream:#F4F0EB;--cream-soft:#EDE8E2;--cream-deep:#E6E0D8;--cream-line:rgba(100,80,50,.14);
+  --ink:#1A1610;--ink-soft:#5A5040;--ink-mute:#8A7E70;
+  --patina:#3A5F4A;--patina-lit:#4A7A5E;--patina-deep:#0E1C17;
+  --brass:#A8903E;--brass-lit:#C4A84E;--brass-faint:rgba(168,144,62,.1);
+  --terra:#C4654A;--terra-lit:#D4785E;
+  --plum:#7A5A6E;--plum-lit:#9A7A8E;
+  --pill-bg:#F3E9C9;--pill-border:#D9C98A;--pill-ink:#4A3F18;
+  --f-display:'EB Garamond',Georgia,serif;
+  --f-body:'Figtree',-apple-system,BlinkMacSystemFont,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --r-pill:999px;--r-card:24px;--r-card-lg:36px;
 }
 [data-theme="dark"]{
-  --cream:          #0E0C09;
-  --cream-soft:     #0A0806;
-  --cream-deep:     #141210;
-  --cream-line:     rgba(140,110,70,0.12);
-  --ink:            #DDD4C4;
-  --ink-soft:       #A89A88;
-  --ink-mute:       #6A5E50;
-  --pill-bg:        #2A2418;
-  --pill-bg-hover:  #3A3020;
-  --pill-border:    #5A4E38;
-  --pill-ink:       #D4BA62;
+  --cream:#0E0C09;--cream-soft:#0A0806;--cream-deep:#141210;--cream-line:rgba(140,110,70,.12);
+  --ink:#DDD4C4;--ink-soft:#A89A88;--ink-mute:#6A5E50;
+  --pill-bg:#2A2418;--pill-border:#5A4E38;--pill-ink:#D4BA62;
 }
 
-/* ===== RESET ===== */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{
-  font-family:var(--f-body);
-  background:var(--cream);
-  color:var(--ink);
-  font-size:16px;
-  line-height:1.55;
-  overflow-x:hidden;
-  min-width:320px;
-  transition:background .5s ease, color .3s ease;
-}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--f-body);background:var(--cream);color:var(--ink);font-size:16px;line-height:1.55;overflow-x:hidden;transition:background .4s ease,color .3s ease}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
-svg,img{display:block;max-width:100%}
+img,svg{display:block;max-width:100%}
 
-/* ==========================================================
-   INTRO CURTAIN — slides up on load revealing the hero
-   ========================================================== */
-.curtain{
-  position:fixed;
-  inset:0;
-  z-index:999;
-  background:var(--ink);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-  animation:curtainRise 1s cubic-bezier(.76,0,.24,1) .2s forwards;
-}
-.curtain.skip{ display:none; }
-html[data-seen] .curtain{ display:none; }
-[data-theme="dark"] .curtain{ background:#060806; }
-.curtain-mark{
-  font-family:var(--f-display);
-  font-style:italic;
-  font-size:clamp(3rem, 10vw, 7rem);
-  color:#F4F0EB;
-  letter-spacing:-0.03em;
-  opacity:0;
-  transform:translateY(20px);
-  animation:curtainMark .55s var(--ease) 0s forwards, curtainMarkOut .25s var(--ease) .8s forwards;
-}
-.curtain-mark em{ color:var(--brass-lit); }
-@keyframes curtainMark{
-  to{ opacity:1; transform:translateY(0); }
-}
-@keyframes curtainMarkOut{
-  to{ opacity:0; transform:translateY(-30px); }
-}
-@keyframes curtainRise{
-  0%{ transform:translateY(0); }
-  100%{ transform:translateY(-100%); }
-}
-
-/* ==========================================================
-   AMBIENT LAYERS — Flow-inspired cinematic atmosphere
-   ========================================================== */
-.ambient{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  overflow:hidden;
-}
-
-/* Full-bleed cinematic gradient backdrop */
-.cinematic-bg{
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(ellipse 120% 80% at 50% 100%, rgba(58,95,74,.12), transparent 60%),
-    radial-gradient(ellipse 80% 60% at 80% 20%, rgba(196,101,74,.10), transparent 55%),
-    radial-gradient(ellipse 70% 60% at 20% 30%, rgba(122,90,110,.08), transparent 55%),
-    radial-gradient(ellipse 100% 60% at 50% 0%, rgba(168,144,62,.06), transparent 60%);
-  animation:cinemaBreath 22s ease-in-out infinite;
-}
-[data-theme="dark"] .cinematic-bg{
-  background:
-    radial-gradient(ellipse 120% 80% at 50% 100%, rgba(58,95,74,.4), transparent 60%),
-    radial-gradient(ellipse 80% 60% at 80% 20%, rgba(196,101,74,.32), transparent 55%),
-    radial-gradient(ellipse 70% 60% at 20% 30%, rgba(122,90,110,.28), transparent 55%),
-    radial-gradient(ellipse 100% 60% at 50% 0%, rgba(196,168,78,.22), transparent 60%);
-}
-@keyframes cinemaBreath{
-  0%,100%{ transform:scale(1) rotate(0deg); opacity:1; }
-  50%{ transform:scale(1.08) rotate(1deg); opacity:.92; }
-}
-
-/* Cursor-following orb — enhanced, Flow-style spotlight */
-.orb{
-  position:absolute;
-  width:720px;
-  height:720px;
-  border-radius:50%;
-  background:radial-gradient(circle at center,
-    rgba(196,168,78,.28),
-    rgba(196,101,74,.14) 35%,
-    rgba(122,90,110,.08) 60%,
-    transparent 75%);
-  filter:blur(70px);
-  left:0;
-  top:0;
-  transition:transform .6s cubic-bezier(.22,1,.36,1);
-  will-change:transform;
-  mix-blend-mode:screen;
-  opacity:.7;
-}
-[data-theme="dark"] .orb{
-  background:radial-gradient(circle at center,
-    rgba(196,168,78,.42),
-    rgba(196,101,74,.22) 35%,
-    rgba(122,90,110,.14) 60%,
-    transparent 75%);
-  opacity:.9;
-}
-
-/* Breathing color blobs — larger, softer */
-.blob{
-  position:absolute;
-  border-radius:50%;
-  filter:blur(100px);
-  opacity:.14;
-  mix-blend-mode:screen;
-  will-change:transform;
-}
-[data-theme="dark"] .blob{ opacity:.22; }
-.blob-1{
-  width:640px; height:640px;
-  top:-15%; left:-15%;
-  background:var(--patina);
-  animation:blobFloat1 18s ease-in-out infinite;
-}
-.blob-2{
-  width:540px; height:540px;
-  top:20%; right:-15%;
-  background:var(--terra);
-  animation:blobFloat2 20s ease-in-out infinite;
-}
-.blob-3{
-  width:480px; height:480px;
-  bottom:-20%; left:25%;
-  background:var(--plum);
-  animation:blobFloat3 22s ease-in-out infinite;
-}
-.blob-4{
-  width:400px; height:400px;
-  bottom:5%; right:8%;
-  background:var(--brass);
-  animation:blobFloat4 16s ease-in-out infinite;
-}
-
-/* Subtle drifting particles */
-.particles{
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-}
-.particle{
-  position:absolute;
-  width:3px;
-  height:3px;
-  border-radius:50%;
-  background:var(--brass-lit);
-  opacity:0;
-  animation:particleRise 12s linear infinite;
-}
-.particle:nth-child(1){ left:10%; animation-delay:0s; background:var(--brass-lit); }
-.particle:nth-child(2){ left:25%; animation-delay:2s; background:var(--patina-lit); }
-.particle:nth-child(3){ left:40%; animation-delay:4s; background:var(--terra-lit); }
-.particle:nth-child(4){ left:55%; animation-delay:6s; background:var(--plum-lit); }
-.particle:nth-child(5){ left:70%; animation-delay:8s; background:var(--brass-lit); }
-.particle:nth-child(6){ left:85%; animation-delay:10s; background:var(--patina-lit); }
-.particle:nth-child(7){ left:15%; animation-delay:5s; background:var(--terra-lit); }
-.particle:nth-child(8){ left:50%; animation-delay:3s; background:var(--brass-lit); }
-.particle:nth-child(9){ left:75%; animation-delay:7s; background:var(--plum-lit); }
-.particle:nth-child(10){ left:90%; animation-delay:1s; background:var(--patina-lit); }
-@keyframes particleRise{
-  0%{ bottom:-5%; opacity:0; transform:translateX(0); }
-  10%{ opacity:.8; }
-  50%{ transform:translateX(30px); }
-  90%{ opacity:.8; }
-  100%{ bottom:105%; opacity:0; transform:translateX(-20px); }
-}
-@keyframes blobFloat1{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(40px,30px) scale(1.08); }
-  66%{ transform:translate(-20px,60px) scale(.95); }
-}
-@keyframes blobFloat2{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  50%{ transform:translate(-50px,40px) scale(1.1); }
-}
-@keyframes blobFloat3{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  40%{ transform:translate(60px,-30px) scale(1.05); }
-  80%{ transform:translate(-30px,20px) scale(.92); }
-}
-@keyframes blobFloat4{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  50%{ transform:translate(-40px,-50px) scale(1.15); }
-}
-
-/* Film grain overlay */
-.grain{
-  position:fixed;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  opacity:.05;
-  mix-blend-mode:multiply;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-[data-theme="dark"] .grain{ opacity:.08; mix-blend-mode:screen; }
-
-/* Vignette edge falloff */
-.vignette{
-  position:fixed;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(26,22,16,.08));
-}
-[data-theme="dark"] .vignette{
-  background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(0,0,0,.5));
-}
-
-/* ==========================================================
-   NAV
-   ========================================================== */
-.nav{
-  position:fixed;
-  top:24px;
-  left:0;
-  right:0;
-  z-index:80;
-  padding:0 24px;
-  opacity:0;
-  transform:translateY(-20px);
-  animation:navDrop .7s var(--ease) 1s forwards;
-}
-@keyframes navDrop{
-  to{ opacity:1; transform:translateY(0); }
-}
+/* ============================== NAV (pill, matching ecosystem) ============================== */
+.nav-spacer{height:28px}
+.nav{position:sticky;top:18px;z-index:50;padding:0 20px}
 .nav-inner{
-  max-width:1200px;
-  margin-inline:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 14px 10px 24px;
-  background:var(--cream);
-  border:1px solid var(--cream-line);
-  border-radius:999px;
-  box-shadow:0 8px 32px -18px rgba(26,22,16,.2);
+  max-width:1160px;margin-inline:auto;
+  background:var(--cream);border:1px solid var(--cream-line);border-radius:var(--r-pill);
+  padding:8px 10px 8px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;
+  box-shadow:0 6px 30px -18px rgba(26,22,16,.18);transition:background .4s,border-color .3s;
 }
-[data-theme="dark"] .nav-inner{
-  background:rgba(14,12,9,.88);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-}
-.nav-brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-family:var(--f-display);
-  font-size:1.15rem;
-  color:var(--ink);
-  font-weight:500;
-}
-.nav-brand .pulse{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:var(--brass);
-  box-shadow:0 0 0 3px var(--brass-faint);
-  animation:navPulse 3s var(--ease) infinite;
-}
-@keyframes navPulse{
-  0%,100%{ transform:scale(1); box-shadow:0 0 0 3px var(--brass-faint); }
-  50%{ transform:scale(1.15); box-shadow:0 0 0 6px rgba(168,144,62,.05); }
-}
-.nav-actions{ display:flex; align-items:center; gap:6px; }
-.nav-btn{
-  padding:9px 18px;
-  border-radius:999px;
-  font-size:.82rem;
-  font-weight:500;
-  color:var(--ink-soft);
-  transition:all .25s var(--ease);
-}
-.nav-btn:hover{ background:var(--cream-deep); color:var(--ink); }
-.theme-tog{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:1px solid var(--cream-line);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1rem;
-  color:var(--ink-mute);
-  transition:all .25s var(--ease);
-}
-.theme-tog:hover{
-  border-color:var(--brass);
-  color:var(--brass);
-}
+[data-theme="dark"] .nav-inner{background:rgba(14,12,9,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-color:rgba(140,110,70,.08)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-size:1.15rem;color:var(--ink);font-weight:500;padding:6px 0}
+.nav-brand .dot{width:10px;height:10px;border-radius:50%;background:var(--brass);box-shadow:0 0 0 3px var(--brass-faint);animation:pulseDot 3s var(--ease) infinite}
+@keyframes pulseDot{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.nav-links{display:flex;align-items:center;gap:4px;list-style:none}
+.nav-links a{padding:10px 16px;border-radius:var(--r-pill);font-size:.9rem;color:var(--ink-soft);transition:all .2s var(--ease)}
+.nav-links a:hover{background:var(--cream-deep);color:var(--ink)}
+.nav-actions{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;font-weight:500;font-size:.85rem;padding:10px 18px;border-radius:var(--r-pill);border:1px solid var(--ink);transition:all .25s var(--ease);white-space:nowrap}
+.btn:hover{background:var(--ink);color:var(--cream)}
+.btn-primary{background:var(--pill-bg);border-color:var(--pill-border);color:var(--pill-ink)}
+.btn-primary:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.btn-ghost{border-color:transparent}.btn-ghost:hover{background:transparent;color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.theme-tog{width:36px;height:36px;border-radius:50%;border:1px solid var(--cream-line);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--ink-mute);transition:all .25s var(--ease)}
+.theme-tog:hover{border-color:var(--brass);color:var(--brass)}
+.hamburger{display:none;width:42px;height:42px;border-radius:var(--r-pill);border:1px solid var(--cream-line);flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.hamburger span{display:block;width:18px;height:1.5px;background:var(--ink);transition:.25s}
+@media(max-width:960px){.nav-links,.nav .btn-ghost{display:none}.hamburger{display:flex}.nav-brand{font-size:1rem}.nav-inner{padding:8px 8px 8px 20px}}
+[data-theme="dark"] .hamburger{border-color:rgba(140,110,70,.14)}
+[data-theme="dark"] .hamburger span{background:var(--ink)}
 
-/* ==========================================================
-   HERO
-   ========================================================== */
+/* ============================== BOX 1: HERO (cream, centered, Wispr-style) ============================== */
 .hero{
+  padding:100px 24px 90px;text-align:center;background:var(--cream);position:relative;overflow:hidden;
+}
+.hero-wrap{max-width:800px;margin-inline:auto;position:relative;z-index:2}
+.hero h1{
+  font-family:var(--f-display);font-weight:400;
+  font-size:clamp(2.8rem,7.5vw,5.5rem);line-height:.96;letter-spacing:-.02em;color:var(--ink);
+  margin-bottom:28px;text-wrap:balance;
+}
+.hero h1 em{font-style:italic;font-weight:500;color:var(--patina)}
+[data-theme="dark"] .hero h1 em{color:var(--patina-lit)}
+.hero-sub{font-size:clamp(1rem,1.4vw,1.2rem);color:var(--ink-soft);line-height:1.65;max-width:32em;margin:0 auto 40px}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.hero-ctas .btn{padding:14px 28px;font-size:.94rem}
+.hero-micro{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute)}
+
+/* ============================== BAND 1: PRESS MARQUEE ============================== */
+.press-band{padding:48px 0;border-top:1px solid var(--cream-line);border-bottom:1px solid var(--cream-line);background:var(--cream);overflow:hidden}
+.press-label{text-align:center;font-family:var(--f-display);font-style:italic;font-size:clamp(1rem,1.4vw,1.25rem);color:var(--ink-mute);margin-bottom:28px}
+.press-marquee{overflow:hidden;position:relative;mask-image:linear-gradient(90deg,transparent 0%,#000 8%,#000 92%,transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 8%,#000 92%,transparent 100%);padding:8px 0}
+.press-track{display:flex;gap:14px;width:max-content;animation:pressScroll 50s linear infinite}
+.press-band:hover .press-track{animation-play-state:paused}
+@keyframes pressScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.press-pill{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:var(--r-pill);background:var(--cream-soft);border:1px solid var(--cream-line);font-family:var(--f-display);font-size:1.05rem;color:var(--ink);white-space:nowrap;transition:all .3s var(--ease)}
+.press-pill:hover{border-color:var(--brass);transform:translateY(-2px)}
+.press-pill .pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.pdot.patina{background:var(--patina)}.pdot.brass{background:var(--brass)}.pdot.terra{background:var(--terra)}.pdot.plum{background:var(--plum)}
+
+/* ============================== BOX 2: TOOL SHOWCASE (dark, rounded, Wispr "apps" style) ============================== */
+.showcase{
+  background:var(--patina-deep);color:#EEE5D2;border-radius:var(--r-card-lg);
+  margin:0 20px;padding:100px 24px 80px;text-align:center;position:relative;overflow:hidden;
+}
+[data-theme="dark"] .showcase{background:#060806}
+.showcase h2{
+  font-family:var(--f-display);font-weight:400;
+  font-size:clamp(2.4rem,6vw,4.5rem);line-height:1;letter-spacing:-.02em;color:#EEE5D2;
+  margin-bottom:18px;text-wrap:balance;max-width:16ch;margin-inline:auto;
+}
+.showcase h2 em{font-style:italic;color:var(--brass-lit)}
+.showcase-sub{font-size:clamp(1rem,1.3vw,1.15rem);color:#A8A092;line-height:1.6;max-width:30em;margin:0 auto 44px}
+.showcase-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
+.showcase-cta .btn{border-color:rgba(238,229,210,.3);color:#EEE5D2;padding:14px 28px;font-size:.94rem}
+.showcase-cta .btn:hover{background:#EEE5D2;color:var(--patina-deep);border-color:#EEE5D2}
+.showcase-cta .btn-primary{background:var(--pill-bg);border-color:var(--pill-border);color:var(--pill-ink)}
+.showcase-cta .btn-primary:hover{background:var(--brass-lit);color:var(--patina-deep);border-color:var(--brass-lit)}
+
+/* Tool icon grid inside showcase (Wispr "app logos" style) */
+.tool-orbit{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:14px;max-width:900px;margin:0 auto;
+}
+.tool-tile{
+  width:90px;height:90px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  background:rgba(238,229,210,.06);border:1px solid rgba(238,229,210,.08);
+  transition:all .3s var(--ease);cursor:pointer;text-decoration:none;
+}
+.tool-tile:hover{background:rgba(238,229,210,.12);transform:translateY(-4px);box-shadow:0 12px 28px -10px rgba(0,0,0,.3)}
+.tool-tile svg{width:28px;height:28px;color:rgba(238,229,210,.5);transition:color .3s}
+.tool-tile:hover svg{color:#EEE5D2}
+.tool-tile-name{font-family:var(--f-mono);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(238,229,210,.4);line-height:1.2;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tool-tile:hover .tool-tile-name{color:rgba(238,229,210,.8)}
+@media(max-width:640px){.tool-tile{width:72px;height:72px;border-radius:16px;gap:4px}.tool-tile svg{width:22px;height:22px}.tool-tile-name{font-size:.42rem}}
+
+/* ============================== BAND 2: STAT STRIP (dark, Wispr "4x faster" style) ============================== */
+.stat-band{
+  background:var(--patina-deep);color:#EEE5D2;padding:80px 24px;text-align:center;
+  margin:0 20px;border-bottom-left-radius:var(--r-card-lg);border-bottom-right-radius:var(--r-card-lg);
   position:relative;
-  z-index:2;
-  min-height:100vh;
-  min-height:100svh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  padding:120px 24px 160px;
-  text-align:center;
-  overflow:hidden;
+}
+[data-theme="dark"] .stat-band{background:#060806}
+.stat-band h3{
+  font-family:var(--f-display);font-style:italic;
+  font-size:clamp(2.8rem,8vw,6rem);line-height:.92;letter-spacing:-.02em;color:#EEE5D2;
+  margin-bottom:20px;
+}
+.stat-band-sub{font-size:clamp(.95rem,1.2vw,1.1rem);color:#A8A092;line-height:1.6;max-width:30em;margin:0 auto 36px}
+.stat-row{display:flex;justify-content:center;gap:0;flex-wrap:wrap}
+.stat{text-align:center;padding:0 36px;position:relative}
+.stat::after{content:'';position:absolute;right:0;top:15%;height:70%;width:1px;background:rgba(238,229,210,.12)}
+.stat:last-child::after{display:none}
+.stat-num{font-family:var(--f-display);font-size:clamp(2.4rem,5vw,3.8rem);line-height:.85;color:var(--brass-lit);letter-spacing:-.02em}
+.stat-1 .stat-num{color:var(--patina-lit)}
+.stat-3 .stat-num{color:var(--terra-lit)}
+.stat-lbl{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(238,229,210,.4);margin-top:8px}
+.stat-band .btn{margin-top:40px;border-color:rgba(238,229,210,.3);color:#EEE5D2}
+.stat-band .btn:hover{background:#EEE5D2;color:var(--patina-deep);border-color:#EEE5D2}
+@media(max-width:640px){.stat{padding:0 18px}.stat-num{font-size:2rem}}
+
+/* Connect showcase + stat-band visually (no gap) */
+.showcase{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
+.stat-band{margin-top:0;border-top-left-radius:0;border-top-right-radius:0}
+
+/* ============================== DIAGONAL BANDS (Wispr-style) ============================== */
+.diag-band{
+  width:110%;margin-left:-5%;overflow:hidden;padding:11px 0;
+  transform:rotate(-6deg);transform-origin:center center;
+  position:relative;z-index:2;
+  background:rgba(26,22,16,.04);
+  border-top:1px solid rgba(26,22,16,.06);
+  border-bottom:1px solid rgba(26,22,16,.06);
+}
+[data-theme="dark"] .diag-band{
+  background:rgba(255,255,255,.04);
+  border-top-color:rgba(255,255,255,.08);
+  border-bottom-color:rgba(255,255,255,.08);
+}
+.diag-band-1{margin-bottom:40px}
+.diag-band-2{margin-top:40px}
+.diag-track{display:flex;align-items:center;width:max-content;will-change:transform}
+.diag-track-left{animation:diagLeft 55s linear infinite}
+.diag-track-right{animation:diagRight 70s linear infinite}
+@keyframes diagLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes diagRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+
+/* Band 1: manifesto text */
+.diag-phrase{
+  font-family:var(--f-mono);font-size:11px;font-weight:400;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(26,22,16,.35);white-space:nowrap;padding:0 12px;
+}
+[data-theme="dark"] .diag-phrase{color:rgba(255,255,255,.4)}
+.diag-dot{color:rgba(26,22,16,.15);padding:0 4px;font-size:10px}
+[data-theme="dark"] .diag-dot{color:rgba(255,255,255,.2)}
+
+/* Band 2: tool chips */
+.diag-chip{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:7px;
+  padding:6px 14px;border-radius:20px;white-space:nowrap;
+  background:rgba(26,22,16,.04);border:1px solid rgba(26,22,16,.08);
+  margin:0 8px;height:32px;
+  transition:background .25s;
+}
+[data-theme="dark"] .diag-chip{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+.diag-chip svg{width:14px;height:14px;flex-shrink:0;color:rgba(26,22,16,.4);stroke-width:1.5}
+[data-theme="dark"] .diag-chip svg{color:rgba(255,255,255,.5)}
+.diag-chip span{
+  font-family:var(--f-mono);font-size:9px;font-weight:400;
+  letter-spacing:.14em;text-transform:uppercase;color:rgba(26,22,16,.35);
+}
+[data-theme="dark"] .diag-chip span{color:rgba(255,255,255,.45)}
+
+@media(max-width:640px){
+  .diag-band{transform:rotate(-4deg)}
+  .diag-band-1{margin-bottom:28px}
+  .diag-band-2{margin-top:28px}
+  .diag-chip{padding:5px 10px;height:28px;margin:0 6px}
+  .diag-chip svg{width:12px;height:12px}
+  .diag-chip span{font-size:8px}
+  .diag-phrase{font-size:9px;letter-spacing:.14em}
 }
 
-/* ==========================================================
-   LIQUID BACKDROP — flowing color video substitute
-   ========================================================== */
-.liquid-backdrop{
-  position:absolute;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  overflow:hidden;
-}
-.liquid-layer{
-  position:absolute;
-  inset:-20%;
-  background-size:200% 200%;
-  mix-blend-mode:screen;
-  opacity:.9;
-  will-change:transform, background-position;
-}
-[data-theme="dark"] .liquid-layer{ mix-blend-mode:screen; }
-.l1{
-  background:
-    radial-gradient(ellipse 60% 50% at 25% 30%, var(--terra) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 60% at 75% 70%, var(--patina) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 50% at 50% 50%, var(--brass) 0%, transparent 50%);
-  animation:liquidFlow1 22s ease-in-out infinite;
-  filter:blur(40px);
-}
-.l2{
-  background:
-    radial-gradient(ellipse 80% 60% at 70% 30%, var(--plum) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 70% at 30% 70%, var(--brass-lit) 0%, transparent 55%);
-  animation:liquidFlow2 26s ease-in-out infinite;
-  filter:blur(50px);
-}
-.l3{
-  background:
-    radial-gradient(ellipse 50% 50% at 50% 50%, var(--terra-lit) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 40% at 20% 80%, var(--patina-lit) 0%, transparent 50%);
-  animation:liquidFlow3 18s ease-in-out infinite;
-  filter:blur(60px);
-}
-@keyframes liquidFlow1{
-  0%,100%{ transform:translate(0,0) scale(1) rotate(0deg); }
-  33%{ transform:translate(5%,-3%) scale(1.08) rotate(3deg); }
-  66%{ transform:translate(-4%,4%) scale(.95) rotate(-2deg); }
-}
-@keyframes liquidFlow2{
-  0%,100%{ transform:translate(0,0) scale(1) rotate(0deg); }
-  50%{ transform:translate(-6%,5%) scale(1.12) rotate(-4deg); }
-}
-@keyframes liquidFlow3{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  40%{ transform:translate(4%,-5%) scale(1.1); }
-  80%{ transform:translate(-5%,3%) scale(.92); }
-}
+/* ============================== FOOTER MINI ============================== */
+.foot{padding:60px 24px 32px;text-align:center}
+.foot-brand{font-family:var(--f-display);font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
+.foot-brand .dot{width:8px;height:8px;border-radius:50%;background:var(--brass)}
+.foot-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:24px}
+.foot-links a{font-size:.88rem;color:var(--ink-soft);transition:color .2s}
+.foot-links a:hover{color:var(--patina)}
+.foot-copy{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.1em;color:var(--ink-mute);text-transform:uppercase}
 
-/* ==========================================================
-   MASK STAGE — giant QB text clipped to the liquid
-   ========================================================== */
-.mask-stage{
-  position:absolute;
-  inset:0;
-  z-index:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-  padding:0 6vw;
-  overflow:hidden;
-}
-.mask-text{
-  font-family:var(--f-display);
-  font-weight:500;
-  font-style:italic;
-  font-size:clamp(10rem, 36vw, 38rem);
-  line-height:.85;
-  letter-spacing:-0.06em;
-  color:transparent;
-  background:linear-gradient(
-    115deg,
-    var(--brass) 0%,
-    var(--terra) 20%,
-    var(--plum-lit) 40%,
-    var(--patina-lit) 60%,
-    var(--brass-lit) 80%,
-    var(--terra-lit) 100%
-  );
-  background-size:300% 300%;
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:maskFlow 14s ease-in-out infinite, maskBreath 8s ease-in-out infinite;
-  opacity:.16;
-  filter:blur(1px);
-  transform:translateY(-2vh);
-  user-select:none;
-  padding:0 .08em;
-  white-space:nowrap;
-  max-width:100%;
-}
-[data-theme="dark"] .mask-text{
-  opacity:.22;
-}
-@keyframes maskFlow{
-  0%,100%{ background-position:0% 50%; }
-  50%{ background-position:100% 50%; }
-}
-@keyframes maskBreath{
-  0%,100%{ transform:translateY(-2vh) scale(1); }
-  50%{ transform:translateY(-2vh) scale(1.02); }
-}
-@media(max-width:700px){
-  .mask-text{ font-size:clamp(8rem, 44vw, 18rem); }
-}
-.hero-wrap{
-  max-width:1100px;
-  width:100%;
-  margin-inline:auto;
-  position:relative;
-  z-index:2;
-}
-
-/* --- Eyebrow badge --- */
-.eyebrow{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:8px 18px 8px 14px;
-  border-radius:999px;
-  border:1px solid var(--cream-line);
-  background:var(--cream-soft);
-  font-family:var(--f-mono);
-  font-size:.68rem;
-  font-weight:500;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:var(--ink-soft);
-  margin-bottom:44px;
-  opacity:0;
-  transform:translateY(20px);
-  animation:eyebrowIn .8s var(--ease) 1.1s forwards;
-}
-@keyframes eyebrowIn{
-  to{ opacity:1; transform:translateY(0); }
-}
-.eyebrow .dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--patina-lit);
-  box-shadow:0 0 8px var(--patina-lit);
-  animation:eyebrowDot 2.4s var(--ease) infinite;
-}
-@keyframes eyebrowDot{
-  0%,100%{ transform:scale(1); opacity:.8; }
-  50%{ transform:scale(1.4); opacity:1; }
-}
-
-/* --- Giant headline --- */
-.headline{
-  font-family:var(--f-display);
-  font-weight:400;
-  font-size:clamp(3rem, 9vw, 8rem);
-  line-height:.94;
-  letter-spacing:-0.025em;
-  color:var(--ink);
-  max-width:15ch;
-  margin:0 auto;
-  text-shadow:0 2px 40px rgba(26,22,16,.04);
-}
-[data-theme="dark"] .headline{
-  text-shadow:0 2px 60px rgba(196,168,78,.08);
-}
-.headline-line{
-  display:block;
-  padding:.12em .15em;
-  position:relative;
-  perspective:1200px;
-  overflow:visible;
-}
-
-/* Blur-reveal words: pure @keyframes, no transition-chaining */
-.blur-word{
-  display:inline-block;
-  margin-right:.28em;
-  opacity:0;
-  filter:blur(20px);
-  transform:translateY(30px) scale(.85);
-  animation:wordBlurIn 1.6s cubic-bezier(.2,.9,.25,1) forwards;
-  will-change:filter, transform, opacity;
-}
-.blur-word:last-child{ margin-right:0; }
-@keyframes wordBlurIn{
-  0%{
-    opacity:0;
-    filter:blur(20px);
-    transform:translateY(30px) scale(.85);
-  }
-  60%{
-    opacity:1;
-    filter:blur(2px);
-    transform:translateY(0) scale(1.02);
-  }
-  100%{
-    opacity:1;
-    filter:blur(0);
-    transform:translateY(0) scale(1);
-  }
-}
-.headline em{
-  font-style:italic;
-  font-weight:500;
-  position:relative;
-  display:inline-block;
-  padding:0 .08em;
-  margin:0 -.04em;
-}
-.headline em .blur-word{
-  background:linear-gradient(120deg, var(--brass) 0%, var(--terra) 50%, var(--patina) 100%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-size:200% auto;
-  /* Compose blur-in + gradient shift together (CSS supports multiple animations) */
-  animation:wordBlurIn 1.6s cubic-bezier(.2,.9,.25,1) forwards,
-            gradientShift 8s ease-in-out infinite 2s;
-}
-@keyframes gradientShift{
-  0%,100%{ background-position:0% 50%; }
-  50%{ background-position:100% 50%; }
-}
-
-/* Hand-drawn underline under italic word */
-.underline-svg{
-  position:absolute;
-  left:-4%;
-  right:-4%;
-  bottom:-0.08em;
-  width:108%;
-  height:.42em;
-  overflow:visible;
-  pointer-events:none;
-}
-.underline-svg path{
-  fill:none;
-  stroke:var(--brass);
-  stroke-width:8;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-  stroke-dasharray:600;
-  stroke-dashoffset:600;
-  animation:underlineDraw 1.2s var(--ease) 3.4s forwards;
-}
-@keyframes underlineDraw{
-  to{ stroke-dashoffset:0; }
-}
-
-/* --- Subhead --- */
-.subhead{
-  font-size:clamp(1rem, 1.4vw, 1.2rem);
-  color:var(--ink-soft);
-  line-height:1.65;
-  max-width:36em;
-  margin:44px auto 52px;
-  padding:0 16px;
-  overflow-wrap:break-word;
-  word-wrap:break-word;
-  hyphens:auto;
-}
-.subhead .word{
-  display:inline-block;
-  opacity:0;
-  transform:translateY(14px);
-  animation:wordFade .7s var(--ease) forwards;
-  max-width:100%;
-  white-space:normal;
-}
-@keyframes wordFade{
-  to{ opacity:1; transform:translateY(0); }
-}
-.subhead strong{
-  font-weight:500;
-  color:var(--patina);
-}
-[data-theme="dark"] .subhead strong{ color:var(--patina-lit); }
-
-/* --- CTAs --- */
-.cta-row{
-  display:flex;
-  gap:14px;
-  justify-content:center;
-  flex-wrap:wrap;
-  margin-bottom:36px;
-  opacity:0;
-  transform:translateY(20px);
-  animation:ctaRise .9s var(--ease) 3.6s forwards;
-}
-@keyframes ctaRise{
-  to{ opacity:1; transform:translateY(0); }
-}
-
-@property --angle{
-  syntax:'<angle>';
-  initial-value:0deg;
-  inherits:false;
-}
-.cta-primary{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:18px 34px;
-  border-radius:999px;
-  background:var(--pill-bg);
-  border:1px solid var(--pill-border);
-  color:var(--pill-ink);
-  font-family:var(--f-body);
-  font-weight:600;
-  font-size:1rem;
-  letter-spacing:.01em;
-  transition:all .35s var(--ease);
-  overflow:visible;
-  isolation:isolate;
-}
-.cta-primary::before{
-  content:'';
-  position:absolute;
-  inset:-3px;
-  background:conic-gradient(from var(--angle), var(--patina), var(--brass), var(--terra), var(--plum), var(--patina));
-  border-radius:999px;
-  z-index:-1;
-  opacity:0;
-  transition:opacity .4s ease;
-  animation:spinAngle 6s linear infinite;
-  filter:blur(10px);
-}
-@keyframes spinAngle{
-  to{ --angle:360deg; }
-}
-.cta-primary:hover{
-  transform:translateY(-3px);
-  padding-right:40px;
-  box-shadow:0 14px 40px -12px rgba(168,144,62,.4);
-}
-.cta-primary:hover::before{
-  opacity:.85;
-}
-.cta-primary .arrow{
-  transition:transform .35s var(--ease);
-}
-.cta-primary:hover .arrow{
-  transform:translateX(4px);
-}
-
-.cta-secondary{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:18px 28px;
-  border-radius:999px;
-  border:1px solid var(--ink);
-  color:var(--ink);
-  font-family:var(--f-body);
-  font-weight:500;
-  font-size:.94rem;
-  transition:all .3s var(--ease);
-}
-[data-theme="dark"] .cta-secondary{
-  border-color:rgba(221,212,196,.35);
-}
-.cta-secondary:hover{
-  background:var(--ink);
-  color:var(--cream);
-  transform:translateY(-2px);
-}
-
-/* --- Micro caption --- */
-.micro{
-  font-family:var(--f-mono);
-  font-size:.68rem;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:var(--ink-mute);
-  opacity:0;
-  animation:microFade .9s var(--ease) 3.9s forwards;
-}
-@keyframes microFade{
-  to{ opacity:1; }
-}
-
-/* ==========================================================
-   STAT STRIP
-   ========================================================== */
-.stat-strip{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin-top:72px;
-  opacity:0;
-  transform:translateY(24px);
-  animation:stripRise 1s var(--ease) 4s forwards;
-}
-@keyframes stripRise{
-  to{ opacity:1; transform:translateY(0); }
-}
-.stat{
-  flex:0 0 auto;
-  min-width:140px;
-  text-align:center;
-  padding:0 28px;
-  position:relative;
-  transition:transform .35s var(--ease);
-}
-.stat:hover{ transform:translateY(-4px); }
-.stat::after{
-  content:'';
-  position:absolute;
-  right:0;
-  top:15%;
-  height:70%;
-  width:1px;
-  background:var(--cream-line);
-}
-.stat:last-child::after{ display:none; }
-.stat-num{
-  display:block;
-  font-family:var(--f-display);
-  font-size:clamp(2.4rem, 5vw, 3.6rem);
-  line-height:.85;
-  color:var(--ink);
-  letter-spacing:-0.02em;
-  transition:transform .3s var(--ease);
-}
-.stat-1 .stat-num{ color:var(--patina); }
-.stat-2 .stat-num{ color:var(--terra); font-style:italic; }
-.stat-3 .stat-num{ color:var(--brass); }
-.stat:hover .stat-num{ transform:scale(1.08); }
-.stat-lbl{
-  display:block;
-  font-family:var(--f-mono);
-  font-size:.62rem;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  color:var(--ink-mute);
-  margin-top:8px;
-}
-
-/* ==========================================================
-   SCROLL CUE
-   ========================================================== */
-.scroll-cue{
-  position:absolute;
-  bottom:40px;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  font-family:var(--f-mono);
-  font-size:.58rem;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--ink-mute);
-  opacity:0;
-  animation:cueFade .8s var(--ease) 4.2s forwards;
-  z-index:3;
-}
-@keyframes cueFade{
-  to{ opacity:1; }
-}
-.scroll-cue-line{
-  width:1px;
-  height:46px;
-  background:linear-gradient(to bottom, transparent, var(--ink-mute), transparent);
-  position:relative;
-  overflow:hidden;
-}
-.scroll-cue-line::after{
-  content:'';
-  position:absolute;
-  top:-100%;
-  left:0;
-  width:100%;
-  height:50%;
-  background:linear-gradient(to bottom, transparent, var(--brass));
-  animation:cueStream 2.4s ease-in-out infinite;
-}
-@keyframes cueStream{
-  0%{ top:-50%; }
-  100%{ top:120%; }
-}
-
-/* ==========================================================
-   ICON RAIL — Wispr-style diagonal floating tile marquee
-   ========================================================== */
-.icon-rail-section{
-  position:relative;
-  z-index:2;
-  padding:60px 0 80px;
-  overflow:hidden;
-  background:var(--cream);
-  border-top:1px solid var(--cream-line);
-}
-.icon-rail-wrap{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-  transform:rotate(-3deg);
-  margin:0 -60px;
-}
-.icon-rail{
-  overflow:hidden;
-  mask-image:linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
-  -webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
-}
-.icon-rail-track{
-  display:flex;
-  gap:14px;
-  width:max-content;
-}
-.rail-left .icon-rail-track{
-  animation:railScrollLeft 50s linear infinite;
-}
-.rail-right .icon-rail-track{
-  animation:railScrollRight 55s linear infinite;
-}
-.icon-rail-section:hover .icon-rail-track{
-  animation-play-state:paused;
-}
-@keyframes railScrollLeft{
-  0%{ transform:translateX(0); }
-  100%{ transform:translateX(-50%); }
-}
-@keyframes railScrollRight{
-  0%{ transform:translateX(-50%); }
-  100%{ transform:translateX(0); }
-}
-
-/* Individual icon tile */
-.rail-tile{
-  flex-shrink:0;
-  width:120px;
-  height:120px;
-  border-radius:24px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:14px 10px;
-  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
-  cursor:pointer;
-  text-decoration:none;
-  position:relative;
-  overflow:hidden;
-}
-.rail-tile:hover{
-  transform:translateY(-6px) scale(1.06);
-  box-shadow:0 16px 36px -12px rgba(26,22,16,.2);
-}
-.rail-tile svg{
-  width:36px;
-  height:36px;
-  color:rgba(26,22,16,.55);
-  flex-shrink:0;
-  transition:color .3s, transform .3s;
-}
-[data-theme="dark"] .rail-tile svg{ color:rgba(221,212,196,.5); }
-.rail-tile:hover svg{
-  color:var(--ink);
-  transform:scale(1.1);
-}
-[data-theme="dark"] .rail-tile:hover svg{ color:var(--ink); }
-.rail-tile-name{
-  font-family:var(--f-body);
-  font-size:.6rem;
-  font-weight:600;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-  color:rgba(26,22,16,.5);
-  text-align:center;
-  line-height:1.2;
-  max-width:100%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-[data-theme="dark"] .rail-tile-name{ color:rgba(221,212,196,.45); }
-.rail-tile:hover .rail-tile-name{ color:var(--ink); }
-
-/* Tile background colors (from brand palette tints) */
-.rt-patina{ background:#E0EDE4; }
-.rt-patina-alt{ background:#E3ECE7; }
-.rt-plum{ background:#E8E2E6; }
-.rt-plum-alt{ background:#E5E0E8; }
-.rt-terra{ background:#EDE0DD; }
-.rt-terra-alt{ background:#EDE3E0; }
-.rt-brass{ background:#ECE9DE; }
-.rt-brass-alt{ background:#EBE5DC; }
-[data-theme="dark"] .rt-patina,
-[data-theme="dark"] .rt-patina-alt{ background:rgba(58,95,74,.15); }
-[data-theme="dark"] .rt-plum,
-[data-theme="dark"] .rt-plum-alt{ background:rgba(122,90,110,.15); }
-[data-theme="dark"] .rt-terra,
-[data-theme="dark"] .rt-terra-alt{ background:rgba(196,101,74,.12); }
-[data-theme="dark"] .rt-brass,
-[data-theme="dark"] .rt-brass-alt{ background:rgba(168,144,62,.12); }
-
-/* QB logotype tile */
-.rail-tile.rt-logo{
-  background:var(--ink);
-  color:var(--cream);
-}
-[data-theme="dark"] .rail-tile.rt-logo{
-  background:var(--cream-deep);
-  color:var(--ink);
-}
-.rail-tile.rt-logo svg{ color:var(--cream); }
-[data-theme="dark"] .rail-tile.rt-logo svg{ color:var(--ink); }
-.rail-tile.rt-logo .rail-tile-name{ color:var(--cream); opacity:.7; }
-[data-theme="dark"] .rail-tile.rt-logo .rail-tile-name{ color:var(--ink); }
-
-/* Bottom CTA link */
-.rail-cta{
-  text-align:center;
-  margin-top:48px;
-  font-family:var(--f-display);
-  font-style:italic;
-  font-size:clamp(1.1rem, 1.8vw, 1.4rem);
-  color:var(--ink-soft);
-  transform:rotate(0deg);
-}
-.rail-cta a{
-  color:var(--brass);
-  border-bottom:1px solid var(--brass);
-  padding-bottom:2px;
-  transition:color .3s, border-color .3s;
-}
-.rail-cta a:hover{
-  color:var(--terra);
-  border-color:var(--terra);
-}
-
-@media(max-width:700px){
-  .rail-tile{ width:96px; height:96px; border-radius:20px; padding:10px 8px; gap:6px; }
-  .rail-tile svg{ width:28px; height:28px; }
-  .rail-tile-name{ font-size:.52rem; }
-  .icon-rail-wrap{ gap:12px; }
-}
-
-/* ==========================================================
-   RESPONSIVE
-   ========================================================== */
-@media(max-width:900px){
-  .nav{ top:16px; padding:0 14px; }
-  .nav-inner{ padding:8px 10px 8px 18px; }
-  .nav-brand{ font-size:1rem; }
-  .nav-btn{ font-size:.75rem; padding:8px 12px; }
-  .hero{ padding:110px 20px 200px; min-height:auto; }
-  .eyebrow{ margin-bottom:32px; font-size:.6rem; }
-  .subhead{ margin:32px auto 40px; }
-  .cta-primary{ padding:16px 26px; font-size:.92rem; }
-  .cta-secondary{ padding:16px 22px; font-size:.88rem; }
-  .stat-strip{ margin-top:56px; }
-  .stat{ min-width:auto; padding:0 18px; }
-  .stat::after{ height:60%; top:20%; }
-  .stat-lbl{ font-size:.55rem; }
-  .scroll-cue{ position:static; transform:none; margin:56px auto 0; }
-  .whisper-section{ padding:50px 0 70px; }
-  .final-whisper{ margin-top:44px; }
-}
-@media(max-width:620px){
-  .nav-btn[data-hide-mobile]{ display:none; }
-  .blob{ filter:blur(60px); }
-  .orb{ width:380px; height:380px; filter:blur(50px); }
-  .headline{ font-size:clamp(2.4rem, 12vw, 4.2rem); }
-  .subhead{ font-size:.98rem; }
-  .stat{ padding:0 14px; min-width:auto; }
-  .stat-num{ font-size:2rem; }
-  .stat-lbl{ font-size:.5rem; letter-spacing:.12em; }
-  .cta-row{ flex-direction:column; width:100%; max-width:320px; margin-inline:auto; }
-  .cta-primary,.cta-secondary{ width:100%; justify-content:center; }
-  .stat-strip{ gap:0; }
-  .hero{ padding-bottom:160px; }
-  .scroll-cue{ margin-top:44px; font-size:.52rem; }
-  .scroll-cue-line{ height:36px; }
-}
-
-@media(prefers-reduced-motion:reduce){
-  *, *::before, *::after{
-    animation-duration:.01s !important;
-    animation-iteration-count:1 !important;
-    transition-duration:.01s !important;
-  }
-  .curtain{ display:none; }
+/* ============================== RESPONSIVE ============================== */
+@media(max-width:960px){
+  .hero{padding:80px 20px 70px}
+  .showcase{margin:0 10px;padding:80px 20px 60px;border-radius:28px 28px 0 0}
+  .stat-band{margin:0 10px;padding:60px 20px;border-radius:0 0 28px 28px}
+}
+@media(max-width:640px){
+  .hero h1{font-size:clamp(2.2rem,10vw,3.5rem)}
+  .hero-ctas{flex-direction:column;max-width:300px;margin-inline:auto}
+  .hero-ctas .btn{width:100%;justify-content:center}
+  .showcase h2{font-size:clamp(2rem,8vw,3rem)}
+  .stat-band h3{font-size:clamp(2rem,10vw,3.5rem)}
 }
 
 </style>
 </head>
 <body>
 
-<!-- ========== INTRO CURTAIN ========== -->
-<div class="curtain" id="curtain">
-  <div class="curtain-mark">Q<em>B</em></div>
-</div>
-
-<!-- ========== AMBIENT LAYERS (Flow-inspired) ========== -->
-<div class="ambient">
-  <div class="cinematic-bg"></div>
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
-  <div class="blob blob-4"></div>
-  <div class="particles">
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-  </div>
-  <div class="orb" id="orb"></div>
-</div>
-<div class="grain"></div>
-<div class="vignette"></div>
-
-<!-- ========== NAV ========== -->
-<nav class="nav">
+<!-- ============================== NAV ============================== -->
+<div class="nav-spacer"></div>
+<header class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand">
-      <span class="pulse"></span>Quantum Branding
-    </a>
+    <a href="index.html" class="nav-brand"><span class="dot"></span>Quantum Branding</a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="ecosystem.html">Ecosystem</a></li>
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="ecosystem.html#pricing">Pricing</a></li>
+        <li><a href="ecosystem.html#about">About</a></li>
+      </ul>
+    </nav>
     <div class="nav-actions">
-      <a href="ecosystem.html" class="nav-btn" data-hide-mobile>The ecosystem</a>
-      <a href="https://app.quantumbranding.ai" class="nav-btn">Sign in</a>
       <button class="theme-tog" id="themeToggle" aria-label="Toggle theme"><span id="toggleIcon">☽</span></button>
+      <a href="https://app.quantumbranding.ai" class="btn btn-ghost">Sign in</a>
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary">Start free</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
   </div>
-</nav>
+</header>
 
-<!-- ========== HERO ========== -->
+<!-- ============================== BOX 1: HERO ============================== -->
 <section class="hero">
-  <!-- Cinematic liquid backdrop that plays "through" the mask text -->
-  <div class="liquid-backdrop">
-    <div class="liquid-layer l1"></div>
-    <div class="liquid-layer l2"></div>
-    <div class="liquid-layer l3"></div>
-  </div>
 
-  <!-- Massive QB cutout — text acts as window into the liquid -->
-  <div class="mask-stage">
-    <div class="mask-text">QB</div>
+  <!-- BAND 1: Manifesto phrases, scrolls left -->
+  <div class="diag-band diag-band-1">
+    <div class="diag-track diag-track-left" id="diagTrack1"></div>
   </div>
 
   <div class="hero-wrap">
-    <div class="eyebrow">
-      <span class="dot"></span>
-      <span>Introducing · The Brand Operating System</span>
+    <h1>Answer questions,<br><em>get a brand.</em></h1>
+    <p class="hero-sub">The AI brand operating system that turns your answers into identity, voice, content, and strategy. 18 connected agents. One living Brand Profile.</p>
+    <div class="hero-ctas">
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary">Start free</a>
+      <a href="ecosystem.html" class="btn">See how it works</a>
     </div>
-
-    <h1 class="headline">
-      <span class="headline-line" data-text="Answer questions,"></span>
-      <span class="headline-line">
-        <em data-text="get a brand">get a brand</em><svg class="underline-svg" viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
-      </span>
-    </h1>
-
-    <p class="subhead" id="subhead">
-      The Brand Operating System, built with and for founders. <strong>18 connected AI agents.</strong> One living Brand Profile. From idea to orbit.
-    </p>
-
-    <div class="cta-row">
-      <a href="ecosystem.html" class="cta-primary">
-        Build with Quantum
-        <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-      <a href="ecosystem.html#pricing" class="cta-secondary">
-        Explore the ecosystem
-      </a>
-    </div>
-
-    <p class="micro">Free forever tier · No credit card · See the FAQ</p>
-
-    <div class="stat-strip">
-      <div class="stat stat-1">
-        <span class="stat-num" data-count="18">0</span>
-        <span class="stat-lbl">agent tools</span>
-      </div>
-      <div class="stat stat-2">
-        <span class="stat-num">1</span>
-        <span class="stat-lbl">Brand Profile</span>
-      </div>
-      <div class="stat stat-3">
-        <span class="stat-num">$0</span>
-        <span class="stat-lbl">to start</span>
-      </div>
-    </div>
+    <p class="hero-micro">Free forever tier · No credit card · 5 min to first result</p>
   </div>
 
-  <div class="scroll-cue">
-    <span>Scroll to explore</span>
-    <div class="scroll-cue-line"></div>
+  <!-- BAND 2: Tool icon chips, scrolls right -->
+  <div class="diag-band diag-band-2">
+    <div class="diag-track diag-track-right" id="diagTrack2"></div>
+  </div>
+
+</section>
+
+<!-- ============================== BAND 1: PRESS MARQUEE ============================== -->
+<section class="press-band">
+  <p class="press-label">Our work was featured by</p>
+  <div class="press-marquee">
+    <div class="press-track" id="pressTrack"></div>
   </div>
 </section>
 
-<!-- ========== ICON RAIL (Wispr-style diagonal marquee) ========== -->
-<section class="icon-rail-section">
-  <div class="icon-rail-wrap">
-    <!-- Row 1: scrolls left -->
-    <div class="icon-rail rail-left">
-      <div class="icon-rail-track" id="railTrack1"></div>
-    </div>
-    <!-- Row 2: scrolls right -->
-    <div class="icon-rail rail-right">
-      <div class="icon-rail-track" id="railTrack2"></div>
-    </div>
+<!-- ============================== BOX 2: TOOL SHOWCASE (dark) ============================== -->
+<section class="showcase">
+  <h2>Build your brand with <em>18 connected agents</em></h2>
+  <p class="showcase-sub">Identity. Voice. Content. Strategy. Each agent reads from one Brand Profile. Nothing drifts. Everything compounds.</p>
+  <div class="showcase-cta">
+    <a href="tools.html" class="btn btn-primary">Explore all tools</a>
+    <a href="ecosystem.html" class="btn">See the ecosystem</a>
   </div>
-  <p class="rail-cta">
-    <a href="tools.html">Explore all 18 agents →</a>
-  </p>
+  <div class="tool-orbit" id="toolOrbit"></div>
 </section>
 
-<!-- ========== SCRIPT ========== -->
+<!-- ============================== BAND 2: STAT STRIP ============================== -->
+<section class="stat-band">
+  <h3>From idea to orbit.</h3>
+  <p class="stat-band-sub">What would take an agency 6 weeks and $15,000 happens in one afternoon. Start with a free diagnostic.</p>
+  <div class="stat-row">
+    <div class="stat stat-1"><span class="stat-num">18</span><span class="stat-lbl">Agent tools</span></div>
+    <div class="stat stat-2"><span class="stat-num">1</span><span class="stat-lbl">Brand Profile</span></div>
+    <div class="stat stat-3"><span class="stat-num">$0</span><span class="stat-lbl">To start</span></div>
+  </div>
+  <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn">Start your brand scan</a>
+</section>
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="foot">
+  <div class="foot-brand"><span class="dot"></span>Quantum Branding</div>
+  <div class="foot-links">
+    <a href="ecosystem.html">Ecosystem</a>
+    <a href="tools.html">Tools</a>
+    <a href="ecosystem.html#pricing">Pricing</a>
+    <a href="ecosystem.html#about">About</a>
+    <a href="mailto:me@qtmbg.com">Contact</a>
+  </div>
+  <div class="foot-copy">&copy; 2026 Quantum Branding · quantumbranding.ai</div>
+</footer>
+
+<!-- ============================== SCRIPT ============================== -->
 <script>
 (function(){
   'use strict';
 
+  /* ===== DIAGONAL BAND 1: MANIFESTO ===== */
+  (function(){
+    var t=document.getElementById('diagTrack1');
+    if(!t) return;
+    var phrases=[
+      'Your brand is a system, not a logo',
+      'Identity before tactics',
+      'Coherence before scale',
+      'Truth before positioning',
+      'Built for founders who mean it',
+      'From idea to orbit',
+      'Every output feeds the next',
+      'Brand is perception made repeatable',
+      'The brand you deserve already exists',
+      'Stop collecting tools. Build a system',
+      'Voice, identity, strategy \u2014 one thread',
+      'Nothing re-entered. Everything remembered'
+    ];
+    var h='';
+    for(var r=0;r<2;r++){
+      phrases.forEach(function(p){
+        h+='<span class="diag-phrase">'+p+'</span><span class="diag-dot">\u00B7</span>';
+      });
+    }
+    t.innerHTML=h;
+  })();
+
+  /* ===== DIAGONAL BAND 2: TOOL CHIPS ===== */
+  (function(){
+    var t=document.getElementById('diagTrack2');
+    if(!t) return;
+    var tools=[
+      {n:'Signal Scan',svg:'<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/><path d="M12 5a7 7 0 0 1 0 14" fill="none" stroke="currentColor"/><path d="M12 2a10 10 0 0 1 0 20" fill="none" stroke="currentColor"/>'},
+      {n:'Brand Soul Map',svg:'<circle cx="12" cy="12" r="2" fill="none" stroke="currentColor"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor"/>'},
+      {n:'Sensescape',svg:'<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/><path d="M4 12a8 8 0 0 1 3-6.3M20 12a8 8 0 0 0-3-6.3" fill="none" stroke="currentColor"/>'},
+      {n:'Visual DNA',svg:'<path d="M9 3c0 6 6 6 6 12s-6 6-6 12" fill="none" stroke="currentColor"/><path d="M15 3c0 6-6 6-6 12s6 6 6 12" fill="none" stroke="currentColor"/>'},
+      {n:'War Table',svg:'<rect x="3" y="3" width="18" height="18" rx="1" fill="none" stroke="currentColor"/><line x1="12" y1="3" x2="12" y2="21" stroke="currentColor"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor"/>'},
+      {n:'Logo Direction',svg:'<rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor"/><path d="M10 18l-1 2 2-1 8-8-1-1z" fill="none" stroke="currentColor"/>'},
+      {n:'Logo Eval',svg:'<circle cx="10" cy="10" r="6" fill="none" stroke="currentColor"/><path d="M15 15l5 5" stroke="currentColor"/><path d="M8 10l2 2 3-3" fill="none" stroke="currentColor"/>'},
+      {n:'Voice Guide',svg:'<path d="M12 2a4 4 0 0 1 4 4v4a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z" fill="none" stroke="currentColor"/><path d="M6 10v1a6 6 0 0 0 12 0v-1" fill="none" stroke="currentColor"/><line x1="12" y1="17" x2="12" y2="21" stroke="currentColor"/>'},
+      {n:'Instagram Seed',svg:'<rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>'},
+      {n:'LinkedIn Strategy',svg:'<rect x="4" y="10" width="4" height="10" rx="1" fill="none" stroke="currentColor"/><rect x="10" y="6" width="4" height="14" rx="1" fill="none" stroke="currentColor"/><rect x="16" y="2" width="4" height="18" rx="1" fill="none" stroke="currentColor"/>'},
+      {n:'YouTube Strategy',svg:'<rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor"/><polygon points="10,8 16,12 10,16" fill="none" stroke="currentColor"/>'},
+      {n:'Newsletter',svg:'<rect x="3" y="6" width="18" height="13" rx="2" fill="none" stroke="currentColor"/><path d="M3 7l9 7 9-7" fill="none" stroke="currentColor"/>'},
+      {n:'Content Bridge',svg:'<circle cx="6" cy="12" r="3" fill="none" stroke="currentColor"/><circle cx="18" cy="12" r="3" fill="none" stroke="currentColor"/><path d="M9 12c2-5 4-5 6 0" fill="none" stroke="currentColor"/>'},
+      {n:'Repurposing',svg:'<path d="M17 2l3 3-3 3" fill="none" stroke="currentColor"/><path d="M7 22l-3-3 3-3" fill="none" stroke="currentColor"/><path d="M20 5H9a4 4 0 0 0 0 8h1" fill="none" stroke="currentColor"/><path d="M4 19h11a4 4 0 0 0 0-8h-1" fill="none" stroke="currentColor"/>'},
+      {n:'Scheduler',svg:'<rect x="3" y="4" width="18" height="17" rx="2" fill="none" stroke="currentColor"/><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor"/><line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"/><line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"/>'},
+      {n:'Dashboard',svg:'<rect x="3" y="3" width="8" height="8" rx="1" fill="none" stroke="currentColor"/><rect x="13" y="3" width="8" height="8" rx="1" fill="none" stroke="currentColor"/><rect x="3" y="13" width="8" height="8" rx="1" fill="none" stroke="currentColor"/><rect x="13" y="13" width="8" height="8" rx="1" fill="currentColor" opacity=".3" stroke="currentColor"/>'},
+      {n:'Quarterly Review',svg:'<path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="none" stroke="currentColor"/><line x1="8" y1="8" x2="16" y2="8" stroke="currentColor"/><line x1="8" y1="12" x2="14" y2="12" stroke="currentColor"/><line x1="8" y1="16" x2="12" y2="16" stroke="currentColor"/>'},
+      {n:'Predictive Panel',svg:'<polyline points="4,18 8,12 12,14 16,6 20,10" fill="none" stroke="currentColor"/><path d="M16 6l4 0 0 4" fill="none" stroke="currentColor"/>'}
+    ];
+    var h='';
+    for(var r=0;r<2;r++){
+      tools.forEach(function(tl){
+        h+='<span class="diag-chip"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">'+tl.svg+'</svg><span>'+tl.n+'</span></span>';
+      });
+    }
+    t.innerHTML=h;
+  })();
+
   /* ===== THEME TOGGLE ===== */
   var html=document.documentElement;
-  var themeToggle=document.getElementById('themeToggle');
-  var toggleIcon=document.getElementById('toggleIcon');
-  function updateIcon(){ toggleIcon.textContent=html.getAttribute('data-theme')==='dark'?'☀':'☽'; }
-  updateIcon();
-  themeToggle.addEventListener('click',function(){
-    var next=html.getAttribute('data-theme')==='dark'?'light':'dark';
-    html.setAttribute('data-theme',next);
-    localStorage.setItem('qb-theme',next);
-    updateIcon();
+  var tog=document.getElementById('themeToggle');
+  var ico=document.getElementById('toggleIcon');
+  function upd(){ico.textContent=html.getAttribute('data-theme')==='dark'?'☀':'☽'}
+  upd();
+  tog.addEventListener('click',function(){
+    var n=html.getAttribute('data-theme')==='dark'?'light':'dark';
+    html.setAttribute('data-theme',n);localStorage.setItem('qb-theme',n);upd();
   });
 
-  /* ===== BLUR-REVEAL HEADLINE (pure CSS animation w/ per-word delays) ===== */
-  function splitIntoWords(el, baseDelay){
-    var text=el.getAttribute('data-text') || el.textContent.trim();
-    var words=text.split(/\s+/);
-    el.innerHTML='';
-    words.forEach(function(w,i){
-      var span=document.createElement('span');
-      span.className='blur-word';
-      span.textContent=w;
-      // Each word starts 110ms after the previous one, with a tiny random jitter
-      var jitter=(Math.random()-0.5)*0.04;
-      span.style.animationDelay=(baseDelay + i*0.11 + jitter)+'s';
-      el.appendChild(span);
+  /* ===== HAMBURGER (placeholder) ===== */
+  var ham=document.getElementById('hamburger');
+  ham.addEventListener('click',function(){window.location.href='ecosystem.html'});
+
+  /* ===== PRESS MARQUEE ===== */
+  var pt=document.getElementById('pressTrack');
+  if(pt){
+    var brands=[
+      {n:'The New York Times',c:'brass'},{n:'Time Magazine',c:'terra'},{n:'Google Arts & Culture',c:'patina'},
+      {n:'United Nations',c:'plum'},{n:'USAID',c:'brass'},{n:'TV5 Monde',c:'terra'},
+      {n:'LA Lakers',c:'patina'},{n:'UM6P',c:'plum'},{n:'UNIDO',c:'brass'}
+    ];
+    var h='';
+    for(var r=0;r<3;r++) brands.forEach(function(b){
+      h+='<span class="press-pill"><span class="pdot '+b.c+'"></span>'+b.n+'</span>';
     });
+    pt.innerHTML=h;
   }
 
-  var line1=document.querySelector('.headline-line[data-text]');
-  var line2Em=document.querySelector('.headline em[data-text]');
-  // Line 1 begins at 2.1s (after curtain). Italic begins at 2.9s (slight overlap).
-  if(line1) splitIntoWords(line1, 1.2);
-  if(line2Em) splitIntoWords(line2Em, 1.9);
-
-  /* ===== SUBHEAD: word-by-word fade ===== */
-  var subhead=document.getElementById('subhead');
-  if(subhead){
-    function wrapWords(node){
-      var children=Array.from(node.childNodes);
-      children.forEach(function(child){
-        if(child.nodeType===3){
-          var words=child.textContent.split(/(\s+)/);
-          var frag=document.createDocumentFragment();
-          words.forEach(function(w){
-            if(/^\s+$/.test(w)){
-              frag.appendChild(document.createTextNode(w));
-            }else if(w){
-              var sp=document.createElement('span');
-              sp.className='word';
-              sp.textContent=w;
-              frag.appendChild(sp);
-            }
-          });
-          child.replaceWith(frag);
-        }else if(child.nodeType===1 && child.tagName!=='BR'){
-          wrapWords(child);
-        }
-      });
-    }
-    wrapWords(subhead);
-    subhead.querySelectorAll('.word').forEach(function(w,i){
-      w.style.animationDelay=(3 + i*0.035)+'s';
+  /* ===== TOOL ORBIT (icon tiles inside showcase) ===== */
+  var orbit=document.getElementById('toolOrbit');
+  if(orbit){
+    var tools=[
+      {n:'Signal Scan',url:'signal-scan.html',svg:'<circle cx="24" cy="24" r="4"/><path d="M24 14a10 10 0 0 1 0 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M24 8a16 16 0 0 1 0 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
+      {n:'Brand Soul Map',url:'brand-soul-map.html',svg:'<circle cx="24" cy="24" r="3"/><path d="M24 4v8M24 36v8M4 24h8M36 24h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>'},
+      {n:'Sensescape',url:'sensescape.html',svg:'<path d="M6 24a18 18 0 0 1 6-13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14 24a10 10 0 0 1 3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="24" r="4"/><path d="M42 24a18 18 0 0 0-6-13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M34 24a10 10 0 0 0-3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
+      {n:'Visual DNA',url:'visual-dna.html',svg:'<path d="M18 6c0 8 12 8 12 16s-12 8-12 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M30 6c0 8-12 8-12 16s12 8 12 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
+      {n:'War Table',url:'war-table.html',svg:'<rect x="8" y="8" width="32" height="32" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="24" y1="8" x2="24" y2="40" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="24" x2="40" y2="24" stroke="currentColor" stroke-width="1.5"/>'},
+      {n:'Logo Direction',url:'logo-direction-agent.html',svg:'<rect x="10" y="10" width="28" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 34l-2 4 4-2 14-14-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>'},
+      {n:'Logo Eval',url:'logo-evaluation-agent.html',svg:'<circle cx="20" cy="20" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M28 28l10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M16 20l3 3 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'},
+      {n:'Voice Guide',url:'voice-guide-agent.html',svg:'<path d="M8 20c0-8 7-14 16-14s16 6 16 14c0 6-4 10-8 12v4H16v-4c-4-2-8-6-8-12z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M18 22h2M28 22h2M22 28h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
+      {n:'Instagram',url:'instagram-seed-agent.html',svg:'<rect x="10" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="21" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="32" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="10" y="21" width="9" height="9" rx="2" fill="currentColor"/><rect x="21" y="21" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="32" y="21" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="10" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="21" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="32" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/>'},
+      {n:'LinkedIn',url:'linkedin-strategy-agent.html',svg:'<rect x="12" y="18" width="24" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 18v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 30l4-6 4 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'},
+      {n:'YouTube',url:'youtube-strategy-agent.html',svg:'<polygon points="18,12 36,24 18,36" fill="currentColor"/>'},
+      {n:'Newsletter',url:'newsletter-architecture-agent.html',svg:'<rect x="8" y="14" width="32" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 16l16 12 16-12" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'},
+      {n:'Content Bridge',url:'content-bridge.html',svg:'<circle cx="12" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="36" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 24c4-10 8-10 14 0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
+      {n:'Repurposing',url:'content-repurposing-engine.html',svg:'<path d="M12 24h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M24 14l12 2M24 24l12 0M24 34l12-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="24" r="3"/>'},
+      {n:'Scheduler',url:'content-scheduler.html',svg:'<rect x="8" y="10" width="32" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="40" y2="18" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="26" r="2" fill="currentColor"/><circle cx="30" cy="26" r="2" fill="currentColor"/>'},
+      {n:'Dashboard',url:'brand-performance-dashboard.html',svg:'<rect x="10" y="28" width="6" height="12" rx="1" fill="currentColor" opacity=".5"/><rect x="21" y="18" width="6" height="22" rx="1" fill="currentColor" opacity=".7"/><rect x="32" y="10" width="6" height="30" rx="1" fill="currentColor"/>'},
+      {n:'Quarterly',url:'quarterly-brand-review-agent.html',svg:'<circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2" opacity=".3"/><path d="M24 8a16 16 0 0 1 13.9 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
+      {n:'Predictive',url:'predictive-panel.html',svg:'<ellipse cx="24" cy="24" rx="14" ry="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="24" r="4"/><circle cx="16" cy="18" r="1.5" fill="currentColor"/><circle cx="32" cy="18" r="1.5" fill="currentColor"/>'}
+    ];
+    var oh='';
+    tools.forEach(function(t){
+      oh+='<a class="tool-tile" href="'+t.url+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="tool-tile-name">'+t.n+'</span></a>';
     });
+    orbit.innerHTML=oh;
   }
-
-  /* ===== CURSOR ORB ===== */
-  var orb=document.getElementById('orb');
-  var targetX=window.innerWidth/2;
-  var targetY=window.innerHeight/2;
-  var currentX=targetX;
-  var currentY=targetY;
-  document.addEventListener('mousemove',function(e){
-    targetX=e.clientX;
-    targetY=e.clientY;
-  });
-  function animate(){
-    currentX+=(targetX-currentX)*0.08;
-    currentY+=(targetY-currentY)*0.08;
-    if(orb){ orb.style.transform='translate('+(currentX-260)+'px, '+(currentY-260)+'px)'; }
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-  /* ===== STAT COUNTUP ===== */
-  var statNum=document.querySelector('.stat-num[data-count]');
-  if(statNum){
-    setTimeout(function(){
-      var target=parseInt(statNum.getAttribute('data-count'),10);
-      var duration=1400;
-      var startTime=null;
-      function step(ts){
-        if(!startTime)startTime=ts;
-        var p=Math.min((ts-startTime)/duration,1);
-        var eased=1-Math.pow(1-p,3);
-        statNum.textContent=Math.round(eased*target);
-        if(p<1)requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    },4200);
-  }
-
-  /* ===== ICON RAIL BUILDER ===== */
-  var tools=[
-    {n:'Signal Scan', cls:'rt-patina', url:'signal-scan.html',
-     svg:'<circle cx="24" cy="24" r="4"/><path d="M24 14a10 10 0 0 1 0 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M24 8a16 16 0 0 1 0 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
-    {n:'Brand Soul Map', cls:'rt-patina-alt', url:'brand-soul-map.html',
-     svg:'<circle cx="24" cy="24" r="3"/><path d="M24 4v8M24 36v8M4 24h8M36 24h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>'},
-    {n:'Sensescape', cls:'rt-patina', url:'sensescape.html',
-     svg:'<path d="M6 24a18 18 0 0 1 6-13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14 24a10 10 0 0 1 3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="24" r="4"/><path d="M42 24a18 18 0 0 0-6-13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M34 24a10 10 0 0 0-3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
-    {n:'Visual DNA', cls:'rt-terra', url:'visual-dna.html',
-     svg:'<path d="M18 6c0 8 12 8 12 16s-12 8-12 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M30 6c0 8-12 8-12 16s12 8 12 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
-    {n:'War Table', cls:'rt-patina-alt', url:'war-table.html',
-     svg:'<rect x="8" y="8" width="32" height="32" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="24" y1="8" x2="24" y2="40" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="24" x2="40" y2="24" stroke="currentColor" stroke-width="1.5"/>'},
-    {n:'Logo Direction', cls:'rt-plum', url:'logo-direction-agent.html',
-     svg:'<rect x="10" y="10" width="28" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 34l-2 4 4-2 14-14-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>'},
-    {n:'Logo Eval', cls:'rt-plum-alt', url:'logo-evaluation-agent.html',
-     svg:'<circle cx="20" cy="20" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M28 28l10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M16 20l3 3 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'},
-    {n:'Voice Guide', cls:'rt-brass', url:'voice-guide-agent.html',
-     svg:'<path d="M8 20c0-8 7-14 16-14s16 6 16 14c0 6-4 10-8 12v4H16v-4c-4-2-8-6-8-12z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M18 22h2M28 22h2M22 28h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
-    {n:'Instagram', cls:'rt-terra', url:'instagram-seed-agent.html',
-     svg:'<rect x="10" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="21" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="32" y="10" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="10" y="21" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="21" y="21" width="9" height="9" rx="2" fill="currentColor"/><rect x="32" y="21" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="10" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="21" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/><rect x="32" y="32" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/>'},
-    {n:'LinkedIn', cls:'rt-terra-alt', url:'linkedin-strategy-agent.html',
-     svg:'<rect x="12" y="18" width="24" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 18v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 30l4-6 4 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'},
-    {n:'YouTube', cls:'rt-terra', url:'youtube-strategy-agent.html',
-     svg:'<polygon points="18,12 36,24 18,36" fill="currentColor"/>'},
-    {n:'Newsletter', cls:'rt-brass-alt', url:'newsletter-architecture-agent.html',
-     svg:'<rect x="8" y="14" width="32" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 16l16 12 16-12" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><rect x="12" y="20" width="24" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1" opacity=".3"/>'},
-    {n:'Content Bridge', cls:'rt-terra-alt', url:'content-bridge.html',
-     svg:'<circle cx="12" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="36" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 24c4-10 8-10 14 0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
-    {n:'Repurposing', cls:'rt-brass', url:'content-repurposing-engine.html',
-     svg:'<path d="M12 24h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M24 14l12 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M24 24l12 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M24 34l12-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="24" r="3"/>'},
-    {n:'Scheduler', cls:'rt-brass-alt', url:'content-scheduler.html',
-     svg:'<rect x="8" y="10" width="32" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="40" y2="18" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="26" r="2" fill="currentColor"/><circle cx="30" cy="26" r="2" fill="currentColor"/><circle cx="18" cy="32" r="2" fill="currentColor"/>'},
-    {n:'Dashboard', cls:'rt-patina', url:'brand-performance-dashboard.html',
-     svg:'<rect x="10" y="28" width="6" height="12" rx="1" fill="currentColor" opacity=".5"/><rect x="21" y="18" width="6" height="22" rx="1" fill="currentColor" opacity=".7"/><rect x="32" y="10" width="6" height="30" rx="1" fill="currentColor"/>'},
-    {n:'Quarterly', cls:'rt-patina-alt', url:'quarterly-brand-review-agent.html',
-     svg:'<circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2" opacity=".3"/><path d="M24 8a16 16 0 0 1 13.9 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
-    {n:'Predictive', cls:'rt-brass', url:'predictive-panel.html',
-     svg:'<ellipse cx="24" cy="24" rx="14" ry="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="24" r="4"/><circle cx="16" cy="18" r="1.5" fill="currentColor"/><circle cx="32" cy="18" r="1.5" fill="currentColor"/><circle cx="18" cy="30" r="1.5" fill="currentColor"/><circle cx="30" cy="30" r="1.5" fill="currentColor"/>'}
-  ];
-
-  // QB logotype tile
-  var qbTile='<a class="rail-tile rt-logo" href="ecosystem.html"><svg viewBox="0 0 48 48" fill="none"><text x="50%" y="58%" text-anchor="middle" font-family="\'EB Garamond\',Georgia,serif" font-size="28" font-style="italic" fill="currentColor">QB</text></svg><span class="rail-tile-name">BrandOS</span></a>';
-
-  function buildRail(trackId, toolOrder){
-    var track=document.getElementById(trackId);
-    if(!track) return;
-    var html='';
-    for(var r=0;r<2;r++){
-      toolOrder.forEach(function(t){
-        html+='<a class="rail-tile '+t.cls+'" href="'+t.url+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="rail-tile-name">'+t.n+'</span></a>';
-      });
-      // Insert QB logo tile after each full set
-      html+=qbTile;
-    }
-    track.innerHTML=html;
-  }
-
-  // Row 1: tools 0-8 (discovery + brand creation)
-  // Row 2: tools 9-17 (content + execution + intelligence + validation), reversed
-  var row1=tools.slice(0,9);
-  var row2=tools.slice(9).reverse();
-  buildRail('railTrack1', row1);
-  buildRail('railTrack2', row2);
-
-  /* ===== SCROLL CUE FADE ===== */
-  var cue=document.querySelector('.scroll-cue');
-  window.addEventListener('scroll',function(){
-    if(!cue)return;
-    var y=window.scrollY;
-    cue.style.opacity=Math.max(0, 1 - y/200);
-  },{passive:true});
-
 })();
 </script>
 </body>
