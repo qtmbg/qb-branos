@@ -1,23 +1,54 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QB — Brand Signal Scan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
   (function() {
     try {
-      var theme = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
+      var theme = localStorage.getItem('qb-theme');
+      if(theme) document.documentElement.setAttribute('data-theme', theme);
+      else if(window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches) document.documentElement.setAttribute('data-theme','dark');
     } catch(e) {}
   })();
 </script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-:root, [data-theme="dark"] {
+:root {
+  --bg-void: #F4F0EB;
+  --bg-deep: #EDE8E2;
+  --bg-base: #E6E0D8;
+  --bg-surface: rgba(100,80,50,0.04);
+  --bg-elevated: rgba(100,80,50,0.07);
+  --bg-overlay: rgba(244,240,235,0.9);
+  --border-subtle: rgba(100,80,50,0.08);
+  --border-medium: rgba(100,80,50,0.14);
+  --border-strong: rgba(100,80,50,0.22);
+  --patina: #3A5F4A;
+  --patina-lit: #4A7A5E;
+  --patina-dim: rgba(58,95,74,0.15);
+  --patina-faint: rgba(58,95,74,0.06);
+  --brass: #A8903E;
+  --brass-lit: #C4A84E;
+  --brass-dim: rgba(168,144,62,0.15);
+  --brass-faint: rgba(168,144,62,0.06);
+  --text-1: #1A1610;
+  --text-2: #5A5040;
+  --text-3: #8A7E70;
+  --text-4: #B8AEA0;
+  --success: var(--patina);
+  --warning: var(--brass);
+  --error: #6A3A3A;
+  --info: #2E5A6A;
+  --font-body: 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'EB Garamond', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+[data-theme="dark"] {
   --bg-void: #080604;
   --bg-deep: #0A0806;
   --bg-base: #0E0C09;
@@ -43,36 +74,6 @@
   --warning: var(--brass);
   --error: #8A4A4A;
   --info: #4A7A8A;
-  --font-body: 'Inter', sans-serif;
-  --font-display: 'DM Serif Display', serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
-[data-theme="light"] {
-  --bg-void: #F4F0EB;
-  --bg-deep: #EDE8E2;
-  --bg-base: #E6E0D8;
-  --bg-surface: rgba(100,80,50,0.04);
-  --bg-elevated: rgba(100,80,50,0.07);
-  --bg-overlay: rgba(244,240,235,0.9);
-  --border-subtle: rgba(100,80,50,0.08);
-  --border-medium: rgba(100,80,50,0.14);
-  --border-strong: rgba(100,80,50,0.22);
-  --patina: #2E4E3C;
-  --patina-lit: #3A6A4E;
-  --patina-dim: rgba(46,78,60,0.15);
-  --patina-faint: rgba(46,78,60,0.06);
-  --brass: #8A7430;
-  --brass-lit: #A08A3A;
-  --brass-dim: rgba(138,116,48,0.15);
-  --brass-faint: rgba(138,116,48,0.05);
-  --text-1: #1A1610;
-  --text-2: #5A5040;
-  --text-3: #8A7E70;
-  --text-4: #B8AEA0;
-  --success: var(--patina);
-  --warning: var(--brass);
-  --error: #6A3A3A;
-  --info: #2E5A6A;
 }
 body {
   background: var(--bg-void);
@@ -86,8 +87,7 @@ body {
   padding: 0;
   position: relative;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  -moz-osx-font-smoothing: grayscale; font-weight: 500;}
 body::after {
   content: '';
   position: fixed;
@@ -98,17 +98,17 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 256px 256px;
 }
-[data-theme="light"] body::after { opacity: 0.015; }
+[data-theme="dark"] body::after { opacity: 0.05; }
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.1) 100%);
 }
-[data-theme="light"] body::before {
-  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
+[data-theme="dark"] body::before {
+  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.35) 100%);
 }
 #app {
   position: relative;
@@ -185,7 +185,8 @@ textarea { resize: none; line-height: 1.6; }
   box-shadow: 0 0 8px rgba(168,144,62,0.7), 0 0 2px rgba(168,144,62,1);
   animation: beat 3s ease infinite;
 }
-[data-theme="light"] .pulse-dot { box-shadow: 0 0 6px rgba(138,116,48,0.5); }
+.pulse-dot { box-shadow: 0 0 6px rgba(138,116,48,0.5); }
+[data-theme="dark"] .pulse-dot { box-shadow: 0 0 8px rgba(168,144,62,0.7); }
 @keyframes beat {
   0%, 100% { transform: scale(1); opacity: 1; }
   12% { transform: scale(1.35); opacity: 1; }
@@ -230,7 +231,7 @@ textarea { resize: none; line-height: 1.6; }
   transition: all 0.25s;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
 }
-[data-theme="light"] .opt-dot { box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+.opt-dot { box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
 .option-btn.selected .opt-dot {
   background: var(--patina);
   box-shadow: 0 0 8px var(--patina-dim), inset 0 1px 2px rgba(255,255,255,0.2);
@@ -277,30 +278,197 @@ textarea { resize: none; line-height: 1.6; }
   border-color: var(--text-2);
   color: var(--text-1);
 }
+
+/* ============================== SITE HEADER ============================== */
+.site-header{
+  position:fixed;
+  top:18px;
+  left:0;
+  right:0;
+  z-index:100;
+  padding:0 20px;
+}
+.site-header-inner{
+  max-width:640px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 10px 8px 20px;
+  background:var(--bg-overlay);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border-subtle);
+  border-radius:999px;
+  box-shadow:0 6px 24px -12px rgba(26,22,16,.12);
+}
+[data-theme="dark"] .site-header-inner{
+  box-shadow:0 6px 24px -12px rgba(0,0,0,.4);
+}
+.site-header .brand-link{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--font-display);
+  font-size:.95rem;
+  color:var(--text-1);
+  text-decoration:none;
+}
+.site-header .brand-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--brass);
+  box-shadow:0 0 0 3px var(--brass-faint);
+}
+.site-header .header-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.site-header .header-link{
+  padding:7px 14px;
+  border-radius:999px;
+  font-family:var(--font-body);
+  font-size:.78rem;
+  font-weight:500;
+  color:var(--text-3);
+  text-decoration:none;
+  transition:all .2s;
+}
+.site-header .header-link:hover{
+  background:var(--bg-surface);
+  color:var(--text-1);
+}
+.site-header .theme-btn{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:1px solid var(--border-subtle);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.9rem;
+  color:var(--text-3);
+  cursor:pointer;
+  transition:all .2s;
+  background:transparent;
+}
+.site-header .theme-btn:hover{
+  border-color:var(--brass);
+  color:var(--brass);
+}
+
+/* ============================== MICRO FOOTER ============================== */
+.site-micro-footer{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:640px;
+  margin:0 auto;
+  padding:32px 24px 24px;
+  text-align:center;
+  font-family:var(--font-mono);
+  font-size:.62rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  border-top:1px solid var(--border-subtle);
+}
+.site-micro-footer a{
+  color:var(--text-3);
+  text-decoration:none;
+  margin:0 10px;
+}
+.site-micro-footer a:hover{ color:var(--patina); }
+
+/* Adjust app padding for fixed header */
+#app{ padding-top:84px !important; }
+
+/* ============================== AMBIENT (matching homepage) ============================== */
+.ambient-scan{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.ambient-scan .ablob{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(100px);
+  opacity:.1;
+  mix-blend-mode:screen;
+}
+[data-theme="dark"] .ambient-scan .ablob{ opacity:.16; }
+.ambient-scan .ab1{
+  width:400px; height:400px;
+  top:-15%; left:-15%;
+  background:var(--patina);
+  animation:abf1 18s ease-in-out infinite;
+}
+.ambient-scan .ab2{
+  width:360px; height:360px;
+  bottom:-10%; right:-15%;
+  background:var(--brass);
+  animation:abf2 20s ease-in-out infinite;
+}
+@keyframes abf1{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  50%{ transform:translate(30px,20px) scale(1.08); }
+}
+@keyframes abf2{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  50%{ transform:translate(-30px,-20px) scale(1.1); }
+}
+
 </style>
 </head>
 <body>
+
+<!-- Ambient layers -->
+<div class="ambient-scan">
+  <div class="ablob ab1"></div>
+  <div class="ablob ab2"></div>
+</div>
+
+<!-- Site header (branded nav bar) -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-link">
+      <span class="brand-dot"></span>Quantum Branding
+    </a>
+    <div class="header-actions">
+      <a href="tools.html" class="header-link">All tools</a>
+      <a href="ecosystem.html" class="header-link">Ecosystem</a>
+      <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme" id="headerThemeBtn">&#9789;</button>
+    </div>
+  </div>
+</header>
+
 <div id="app"></div>
+
+<!-- Micro footer -->
+<div class="site-micro-footer">
+  <span>&copy; 2026 Quantum Branding</span>
+  <a href="ecosystem.html#pricing">Pricing</a>
+  <a href="tools.html">Tools</a>
+  <a href="ecosystem.html#about">About</a>
+</div>
 <script>
 function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('qb-theme', next);
+  var hb = document.getElementById('headerThemeBtn');
+  if(hb) hb.innerHTML = next==='dark' ? '&#9728;' : '&#9789;';
 }
-const themeBtn = document.createElement('button');
-themeBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-Object.assign(themeBtn.style, {
-  position: 'fixed', top: '24px', right: '24px', background: 'var(--bg-surface)',
-  color: 'var(--text-3)', border: '1px solid var(--border-subtle)', cursor: 'pointer',
-  zIndex: 10000,
-  width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-  transition: 'all 0.3s ease'
-});
-themeBtn.onmouseover = () => { themeBtn.style.color = 'var(--text-1)'; themeBtn.style.borderColor = 'var(--border-medium)'; };
-themeBtn.onmouseout = () => { themeBtn.style.color = 'var(--text-3)'; themeBtn.style.borderColor = 'var(--border-subtle)'; };
-themeBtn.onclick = toggleTheme;
-document.body.appendChild(themeBtn);
+// Update icon on load
+(function(){
+  var hb = document.getElementById('headerThemeBtn');
+  if(hb) hb.innerHTML = document.documentElement.getAttribute('data-theme')==='dark' ? '&#9728;' : '&#9789;';
+})();
 (function(){
   var p=new URLSearchParams(window.location.search);
   var kpk=p.get('kpk');var kli=p.get('kli');
