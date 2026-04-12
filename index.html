@@ -73,8 +73,7 @@ img,svg{display:block;max-width:100%}
 .hero-micro{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute)}
 
 /* HERO WAVE SVG */
-.hero-wave{position:absolute;top:0;left:50%;transform:translateX(-50%);width:1440px;height:100%;z-index:0;pointer-events:none;overflow:visible}
-.hero-wave text{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.18em}
+.hero-wave-left,.hero-wave-right{position:absolute;top:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible}
 
 /* DARK SECTION */
 .dark-sec{background:var(--patina-deep);color:#EEE5D2;border-radius:var(--r-card-lg);margin:0 20px;padding:100px 28px 0;overflow:hidden}
@@ -148,7 +147,14 @@ img,svg{display:block;max-width:100%}
 
 @media(max-width:960px){.dark-sec{margin:0 10px;border-radius:28px;padding:80px 20px 0}}
 @media(max-width:640px){.hero h1{font-size:clamp(2.2rem,10vw,3.5rem)}.hero-ctas{flex-direction:column;max-width:300px;margin-inline:auto}.hero-ctas .btn{width:100%;justify-content:center}}
+
+/* SCROLL REVEAL */
+.sr{opacity:0;transform:translateY(40px)}
+.sr.visible{opacity:1;transform:translateY(0);transition:opacity .7s var(--ease),transform .7s var(--ease)}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js" defer></script>
 </head>
 <body>
 
@@ -174,14 +180,24 @@ img,svg{display:block;max-width:100%}
 
 <!-- HERO -->
 <section class="hero">
-  <svg class="hero-wave" viewBox="0 0 1440 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <path id="w1" d="M-200,100 Q300,600 720,300 T1640,-100"/>
-      <path id="w2" d="M-200,500 Q300,0 720,300 T1640,700"/>
-    </defs>
-    <text fill="rgba(26,22,16,.08)"><textPath id="tp1" href="#w1"></textPath></text>
-    <text fill="rgba(26,22,16,.08)"><textPath id="tp2" href="#w2"></textPath></text>
-  </svg>
+  <div class="hero-wave-left" aria-hidden="true">
+    <svg width="100%" height="100%" viewBox="0 0 1048 594" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:55%;height:100%;overflow:visible">
+      <path id="qb-c1" d="M0.6 50.9C17.5 143.3 97.9 293.1 284.5 353.5C440.8 399.1 583.8 294.1 500.6 184.7C417.4 75.4 238.2 282.1 499.3 441.7C551.9 477.8 817.5 561.3 1046.4 565.2" stroke="none" fill="none"/>
+      <text x="-4000" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="400" letter-spacing="2" fill="rgba(26,22,16,0.18)" style="text-transform:uppercase">
+        <textPath href="#qb-c1">YOUR BRAND IS A SYSTEM NOT A LOGO · IDENTITY BEFORE TACTICS · COHERENCE BEFORE SCALE · TRUTH BEFORE POSITIONING · BUILT FOR FOUNDERS WHO MEAN IT · FROM IDEA TO ORBIT · EVERY OUTPUT FEEDS THE NEXT · BRAND IS PERCEPTION MADE REPEATABLE · THE BRAND YOU DESERVE ALREADY EXISTS · STOP COLLECTING TOOLS BUILD A SYSTEM · VOICE IDENTITY STRATEGY ONE THREAD · NOTHING RE-ENTERED EVERYTHING REMEMBERED · YOUR BRAND IS A SYSTEM NOT A LOGO · IDENTITY BEFORE TACTICS · COHERENCE BEFORE SCALE · TRUTH BEFORE POSITIONING · BUILT FOR FOUNDERS WHO MEAN IT · FROM IDEA TO ORBIT · EVERY OUTPUT FEEDS THE NEXT · BRAND IS PERCEPTION MADE REPEATABLE · THE BRAND YOU DESERVE ALREADY EXISTS · STOP COLLECTING TOOLS BUILD A SYSTEM ·</textPath>
+        <animate attributeName="x" dur="50s" values="-4000;0" repeatCount="indefinite"/>
+      </text>
+    </svg>
+  </div>
+  <div class="hero-wave-right" aria-hidden="true">
+    <svg width="100%" height="100%" viewBox="0 0 1024 620" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;right:0;width:65%;height:100%;overflow:visible">
+      <path id="qb-c2" d="M2 563.9C111.6 558.3 316.5 490.1 518 490.1C703 431.3 875.3 444.5 1021.9 453.2" stroke="rgba(26,22,16,0.8)" stroke-width="38" fill="none" stroke-linecap="round"/>
+      <text x="-5000" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600" letter-spacing="2" fill="rgba(244,240,235,0.88)" dy="5" style="text-transform:uppercase">
+        <textPath href="#qb-c2">YOUR BRAND IS A SYSTEM NOT A LOGO · IDENTITY BEFORE TACTICS · COHERENCE BEFORE SCALE · TRUTH BEFORE POSITIONING · BUILT FOR FOUNDERS WHO MEAN IT · FROM IDEA TO ORBIT · EVERY OUTPUT FEEDS THE NEXT · BRAND IS PERCEPTION MADE REPEATABLE · THE BRAND YOU DESERVE ALREADY EXISTS · STOP COLLECTING TOOLS BUILD A SYSTEM · VOICE IDENTITY STRATEGY ONE THREAD · NOTHING RE-ENTERED EVERYTHING REMEMBERED ·</textPath>
+        <animate attributeName="x" dur="70s" values="-5000;0" repeatCount="indefinite"/>
+      </text>
+    </svg>
+  </div>
   <div class="hero-wrap">
     <h1>Answer questions,<br><em>get a brand.</em></h1>
     <p class="hero-sub">The AI brand operating system that turns your answers into identity, voice, content, and strategy. 18 connected agents. One living Brand Profile.</p>
@@ -206,7 +222,7 @@ img,svg{display:block;max-width:100%}
       </div>
       <p class="stat-claim">What takes an agency 6 weeks <span>happens in one afternoon.</span></p>
     </div>
-    <div class="ph-wrap">
+    <div class="ph-wrap sr" id="phone-reveal">
       <div class="phone">
         <div class="ph-top"><span class="ph-logo">[QB]</span><span class="ph-dot"></span></div>
         <div class="ph-grid">
@@ -222,12 +238,17 @@ img,svg{display:block;max-width:100%}
     </div>
   </div>
 
-  <!-- 18 TOOL TILES (app-icon style) -->
-  <div class="tile-grid" id="tileGrid"></div>
+  <!-- 18 TOOL TILES on S-curve path -->
+  <div style="position:relative;width:100%;overflow:hidden;padding-bottom:60px">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 3570 1125" fill="none" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none">
+      <path d="M0.6 1.2C82.9 190 357.3 608 796.6 769.7C1235.9 931.4 1567.2 773.2 1711.8 678.2C1891.9 559.8 2155.7 289.6 2443.9 327.4C2732.2 365.1 3187.5 563.8 3568.8 1124.3" id="qb-icon-path" stroke="none"/>
+    </svg>
+    <div id="tileGrid" style="position:relative;width:100%;height:500px"></div>
+  </div>
 
   <!-- LOGOS -->
   <div class="logos-wrap">
-    <p class="logos-lbl">Our work was featured by</p>
+    <p class="logos-lbl">Trusted by professionals worldwide</p>
     <div class="logos-track"><div class="logos-scroll" id="logosScroll"></div></div>
   </div>
 
@@ -278,35 +299,73 @@ img,svg{display:block;max-width:100%}
   var ls=document.getElementById('logosScroll');
   if(ls){var lh='';for(var r=0;r<3;r++)brands.forEach(function(b){lh+='<span>'+b+'</span>'});ls.innerHTML=lh}
 
-  /* TOOL TILES */
+  /* TOOL TILES on GSAP MotionPath */
   var tools=[
     {n:'Signal Scan',bg:'#E0EDE4',url:'signal-scan.html',svg:'<circle cx="24" cy="24" r="4"/><path d="M24 14a10 10 0 0 1 0 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M24 8a16 16 0 0 1 0 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
     {n:'Soul Map',bg:'#E6E8EC',url:'brand-soul-map.html',svg:'<circle cx="24" cy="24" r="3"/><path d="M24 4v8M24 36v8M4 24h8M36 24h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>'},
-    {n:'Sensescape',bg:'#E3ECE7',url:'sensescape.html',svg:'<path d="M6 24a18 18 0 0 1 6-13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14 24a10 10 0 0 1 3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="24" r="4"/><path d="M42 24a18 18 0 0 0-6-13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M34 24a10 10 0 0 0-3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
+    {n:'Sensescape',bg:'#E3ECE7',url:'sensescape.html',svg:'<circle cx="24" cy="24" r="4"/><path d="M14 24a10 10 0 0 1 3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M34 24a10 10 0 0 0-3-7.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
     {n:'Visual DNA',bg:'#EDE3DF',url:'visual-dna.html',svg:'<path d="M18 6c0 8 12 8 12 16s-12 8-12 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M30 6c0 8-12 8-12 16s12 8 12 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
     {n:'War Table',bg:'#E2EBE5',url:'war-table.html',svg:'<rect x="8" y="8" width="32" height="32" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="24" y1="8" x2="24" y2="40" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="24" x2="40" y2="24" stroke="currentColor" stroke-width="1.5"/>'},
-    {n:'Logo Dir.',bg:'#E8E2E6',url:'logo-direction-agent.html',svg:'<rect x="10" y="10" width="28" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 34l-2 4 4-2 14-14-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>'},
-    {n:'Logo Eval',bg:'#E5E0E8',url:'logo-evaluation-agent.html',svg:'<circle cx="20" cy="20" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M28 28l10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M16 20l3 3 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'},
-    {n:'Voice',bg:'#EBE5DC',url:'voice-guide-agent.html',svg:'<path d="M8 20c0-8 7-14 16-14s16 6 16 14c0 6-4 10-8 12v4H16v-4c-4-2-8-6-8-12z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M18 22h2M28 22h2M22 28h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
+    {n:'Logo Dir.',bg:'#E8E2E6',url:'logo-direction-agent.html',svg:'<rect x="10" y="10" width="28" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 34l-2 4 4-2 14-14-2-2z" stroke="currentColor" stroke-width="2" fill="none"/>'},
+    {n:'Logo Eval',bg:'#E5E0E8',url:'logo-evaluation-agent.html',svg:'<circle cx="20" cy="20" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M28 28l10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M16 20l3 3 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
+    {n:'Voice',bg:'#EBE5DC',url:'voice-guide-agent.html',svg:'<rect x="18" y="8" width="12" height="18" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 24a12 12 0 0 0 24 0" fill="none" stroke="currentColor" stroke-width="2"/><line x1="24" y1="36" x2="24" y2="42" stroke="currentColor" stroke-width="2"/>'},
     {n:'Instagram',bg:'#EDE0DD',url:'instagram-seed-agent.html',svg:'<rect x="10" y="10" width="28" height="28" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="24" r="7" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="33" cy="15" r="2" fill="currentColor"/>'},
-    {n:'LinkedIn',bg:'#EBE1DC',url:'linkedin-strategy-agent.html',svg:'<rect x="12" y="18" width="24" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 18v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 30l4-6 4 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'},
+    {n:'LinkedIn',bg:'#EBE1DC',url:'linkedin-strategy-agent.html',svg:'<rect x="12" y="18" width="24" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 18v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
     {n:'YouTube',bg:'#EDE3E0',url:'youtube-strategy-agent.html',svg:'<rect x="6" y="10" width="36" height="28" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><polygon points="20,17 32,24 20,31" fill="currentColor"/>'},
-    {n:'Newsletter',bg:'#E4EBE5',url:'newsletter-architecture-agent.html',svg:'<rect x="8" y="14" width="32" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 16l16 12 16-12" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'},
+    {n:'Newsletter',bg:'#E4EBE5',url:'newsletter-architecture-agent.html',svg:'<rect x="8" y="14" width="32" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 16l16 12 16-12" fill="none" stroke="currentColor" stroke-width="2"/>'},
     {n:'Bridge',bg:'#ECE7DD',url:'content-bridge.html',svg:'<circle cx="12" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="36" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 24c4-10 8-10 14 0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'},
     {n:'Repurpose',bg:'#ECE9DE',url:'content-repurposing-engine.html',svg:'<path d="M12 24h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M24 14l12 2M24 24l12 0M24 34l12-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="24" r="3" fill="currentColor"/>'},
     {n:'Scheduler',bg:'#EAE7DC',url:'content-scheduler.html',svg:'<rect x="8" y="10" width="32" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="40" y2="18" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="26" r="2" fill="currentColor"/><circle cx="30" cy="26" r="2" fill="currentColor"/>'},
     {n:'Dashboard',bg:'#E3ECE7',url:'brand-performance-dashboard.html',svg:'<rect x="10" y="28" width="6" height="12" rx="1" fill="currentColor" opacity=".5"/><rect x="21" y="18" width="6" height="22" rx="1" fill="currentColor" opacity=".7"/><rect x="32" y="10" width="6" height="30" rx="1" fill="currentColor"/>'},
     {n:'Quarterly',bg:'#E1EAE5',url:'quarterly-brand-review-agent.html',svg:'<circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2" opacity=".3"/><path d="M24 8a16 16 0 0 1 13.9 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>'},
-    {n:'Predictive',bg:'#EDE9DF',url:'predictive-panel.html',svg:'<ellipse cx="24" cy="24" rx="14" ry="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="24" r="4" fill="currentColor"/><circle cx="16" cy="18" r="1.5" fill="currentColor"/><circle cx="32" cy="18" r="1.5" fill="currentColor"/>'}
+    {n:'Predictive',bg:'#EDE9DF',url:'predictive-panel.html',svg:'<ellipse cx="24" cy="24" rx="14" ry="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="24" r="4" fill="currentColor"/>'}
   ];
+
   var tg=document.getElementById('tileGrid');
-  if(tg){
+  if(tg && typeof gsap!=='undefined' && typeof MotionPathPlugin!=='undefined'){
+    gsap.registerPlugin(MotionPathPlugin);
+    // Duplicate tools to fill the path (36 items = 2x18)
+    var all=[];
+    for(var d=0;d<2;d++) tools.forEach(function(t){all.push(t)});
+    var th='';
+    all.forEach(function(t){
+      th+='<a class="tile" href="'+t.url+'" style="position:absolute;top:0;left:0;background:'+t.bg+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="tile-n">'+t.n+'</span></a>';
+    });
+    tg.innerHTML=th;
+    var tiles=tg.querySelectorAll('.tile');
+    tiles.forEach(function(tile,i){
+      var start=i/tiles.length;
+      gsap.to(tile,{
+        motionPath:{path:'#qb-icon-path',align:'#qb-icon-path',alignOrigin:[0.5,0.5],autoRotate:false,start:start,end:start+1},
+        ease:'none',duration:60,repeat:-1
+      });
+    });
+  } else if(tg){
+    // Fallback: simple flex grid if GSAP fails
+    tg.style.cssText='position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:16px;height:auto;padding:0 20px 80px';
     var th='';
     tools.forEach(function(t){
-      th+='<a class="tile" href="'+t.url+'" style="background:'+t.bg+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="tile-n">'+t.n+'</span></a>';
+      th+='<a class="tile" href="'+t.url+'" style="position:relative;background:'+t.bg+'"><svg viewBox="0 0 48 48" fill="currentColor">'+t.svg+'</svg><span class="tile-n">'+t.n+'</span></a>';
     });
     tg.innerHTML=th;
   }
+})();
+</script>
+
+<!-- PHONE SCROLL REVEAL -->
+<script>
+(function(){
+  var ph=document.querySelector('.ph-wrap');
+  if(!ph) return;
+  ph.style.opacity='0';
+  ph.style.transform='translateY(60px)';
+  ph.style.transition='opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)';
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ph.style.opacity='1';ph.style.transform='translateY(0)';obs.unobserve(ph)}
+    });
+  },{threshold:0.2});
+  obs.observe(ph);
 })();
 </script>
 </body>
