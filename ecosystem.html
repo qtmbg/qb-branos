@@ -1,0 +1,4110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The QB Ecosystem · 18 agent tools, one Brand Profile</title>
+<meta name="description" content="QB BrandOS. 18 AI tools build your brand identity, look, voice, content, and strategy. Step by step. Start free.">
+<script>(function(){var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================
+   QB × WISPR FLOW · Design Tokens
+   Wispr layout language, QB warm-patina-brass palette
+   ========================================================== */
+:root{
+  /* QB palette (respecting index.html) */
+  --cream:          #F4F0EB;
+  --cream-soft:     #EDE8E2;
+  --cream-deep:     #E6E0D8;
+  --cream-edge:     rgba(100,80,50,0.10);
+  --cream-line:     rgba(100,80,50,0.14);
+
+  --ink:            #1A1610;
+  --ink-soft:       #5A5040;
+  --ink-mute:       #8A7E70;
+  --ink-faint:      #B8AEA0;
+
+  --patina:         #3A5F4A;
+  --patina-lit:     #4A7A5E;
+  --patina-deep:    #0E1C17;   /* near-black forest */
+  --patina-deeper:  #081310;
+
+  --brass:          #A8903E;
+  --brass-lit:      #C4A84E;
+  --brass-faint:    rgba(168,144,62,0.10);
+
+  /* Character / illustration palette */
+  --terra:          #C4654A;
+  --terra-lit:      #D4785E;
+  --terra-faint:    rgba(196,101,74,0.10);
+  --plum:           #7A5A6E;
+  --plum-lit:       #9A7A8E;
+  --plum-faint:     rgba(122,90,110,0.10);
+  --skin:           #F4E4D0;
+  --skin-shadow:    #E8D4BC;
+
+  /* Dark-section inversions */
+  --dark-text:      #EEE5D2;
+  --dark-text-soft: #A8A092;
+  --dark-text-mute: #6F6A5E;
+  --dark-line:      rgba(238,229,210,0.10);
+  --dark-surface:   rgba(238,229,210,0.04);
+
+  /* CTA pill (wispr-ish pale accent, brass-tinted instead of purple) */
+  --pill-bg:        #F3E9C9;
+  --pill-bg-hover:  #EFE1B4;
+  --pill-border:    #D9C98A;
+  --pill-ink:       #4A3F18;
+
+  /* Type */
+  --f-display: 'EB Garamond', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --f-body:    'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --f-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --ease:      cubic-bezier(.22,1,.36,1);
+  --nav-h:     74px;
+  --container: 1200px;
+  --r-pill:    999px;
+  --r-card:    24px;
+  --r-card-lg: 36px;
+}
+
+/* ============================== RESET ============================== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth}
+body{
+  font-family:var(--f-body);
+  background:var(--cream);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.55;
+  overflow-x:hidden;
+  font-weight:400;
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
+input{font-family:inherit}
+
+/* ============================== TYPE ============================== */
+.display{
+  font-family:var(--f-display);
+  font-weight:400;
+  line-height:1.02;
+  letter-spacing:-0.015em;
+  color:var(--ink);
+}
+.display em, .display i{ font-style:italic; font-weight:500; }
+.h1{ font-size:clamp(3rem, 7.5vw, 6.4rem); }
+.h2{ font-size:clamp(2.4rem, 5.5vw, 4.6rem); }
+.h3{ font-size:clamp(1.6rem, 3vw, 2.4rem); }
+.sub{
+  font-size:clamp(1rem, 1.2vw, 1.125rem);
+  color:var(--ink-soft);
+  line-height:1.6;
+  max-width:34em;
+}
+.eyebrow{
+  font-family:var(--f-body);
+  font-size:.78rem;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--patina);
+}
+
+/* Hand-drawn underline under italic accent */
+.underlined{ position:relative; display:inline-block; }
+.underlined svg{
+  position:absolute;
+  left:-4%;
+  right:-4%;
+  bottom:-0.18em;
+  width:108%;
+  height:.42em;
+  overflow:visible;
+  pointer-events:none;
+}
+.underlined svg path{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:600;
+  stroke-dashoffset:600;
+  animation:drawLine 1.4s .4s var(--ease) forwards;
+}
+@keyframes drawLine{ to{ stroke-dashoffset:0; } }
+
+/* ============================== CONTAINER ============================== */
+.wrap{ width:100%; max-width:var(--container); margin-inline:auto; padding-inline:28px; }
+@media(max-width:640px){ .wrap{ padding-inline:20px; } }
+
+/* ============================== BUTTONS ============================== */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.55em;
+  font-family:var(--f-body);
+  font-weight:500;
+  font-size:.94rem;
+  padding:14px 24px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--ink);
+  background:transparent;
+  color:var(--ink);
+  transition:all .25s var(--ease);
+  white-space:nowrap;
+}
+.btn:hover{ background:var(--ink); color:var(--cream); }
+.btn-primary{
+  background:var(--pill-bg);
+  border-color:var(--pill-border);
+  color:var(--pill-ink);
+}
+.btn-primary:hover{
+  background:var(--pill-bg-hover);
+  color:var(--pill-ink);
+  border-color:var(--pill-ink);
+  transform:translateY(-1px);
+}
+.btn-dark{
+  background:var(--patina-deep);
+  border-color:var(--patina-deep);
+  color:var(--dark-text);
+}
+.btn-dark:hover{ background:var(--patina); border-color:var(--patina); color:var(--dark-text); }
+.btn-ghost{ border-color:transparent; }
+.btn-ghost:hover{ background:transparent; color:var(--ink); text-decoration:underline; text-underline-offset:4px; }
+.btn-sm{ padding:10px 18px; font-size:.85rem; }
+.btn-lg{ padding:17px 30px; font-size:1rem; }
+.btn .ic{ width:16px; height:16px; }
+
+/* ============================== BANNER ============================== */
+.banner{
+  background:var(--patina-deep);
+  color:var(--dark-text);
+  text-align:center;
+  padding:11px 20px;
+  font-size:.88rem;
+  position:relative;
+  z-index:60;
+}
+.banner a{
+  display:inline-flex;
+  align-items:center;
+  gap:.4em;
+  color:var(--brass-lit);
+  font-weight:500;
+}
+.banner a:hover{ text-decoration:underline; text-underline-offset:3px; }
+.banner strong{ font-weight:600; color:var(--dark-text); }
+
+/* ============================== NAV (pill) ============================== */
+.nav-spacer{ height:28px; }
+.nav{
+  position:sticky;
+  top:18px;
+  z-index:50;
+  padding:0 20px;
+}
+.nav-inner{
+  max-width:1160px;
+  margin-inline:auto;
+  background:var(--cream);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  padding:8px 10px 8px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  box-shadow:0 6px 30px -18px rgba(26,22,16,.18);
+}
+.nav-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:var(--f-display);
+  font-size:1.25rem;
+  color:var(--ink);
+  font-weight:500;
+  padding:6px 0;
+}
+.nav-brand .dot{
+  width:10px; height:10px; border-radius:50%;
+  background:var(--brass);
+  box-shadow:0 0 0 3px var(--brass-faint);
+  animation:pulseDot 3s var(--ease) infinite;
+}
+@keyframes pulseDot{
+  0%,100%{ transform:scale(1); box-shadow:0 0 0 3px var(--brass-faint); }
+  50%{ transform:scale(1.15); box-shadow:0 0 0 5px rgba(168,144,62,.05); }
+}
+.nav-links{
+  display:flex; align-items:center; gap:4px;
+  list-style:none;
+}
+.nav-links a{
+  padding:10px 16px;
+  border-radius:var(--r-pill);
+  font-size:.92rem;
+  color:var(--ink-soft);
+  transition:all .2s var(--ease);
+}
+.nav-links a:hover{ background:var(--cream-deep); color:var(--ink); }
+.nav-actions{ display:flex; align-items:center; gap:6px; }
+.hamburger{
+  display:none;
+  width:42px; height:42px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--cream-line);
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.hamburger span{ display:block; width:18px; height:1.5px; background:var(--ink); transition:.25s; }
+.hamburger.open span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; }
+.hamburger.open span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
+
+@media(max-width:960px){
+  .nav-links, .nav .btn-ghost{ display:none; }
+  .hamburger{ display:flex; }
+  .nav-brand{ font-size:1.1rem; }
+  .nav-inner{ padding:8px 8px 8px 20px; }
+}
+
+/* Mobile menu */
+.mmenu{
+  position:fixed; inset:0; z-index:100;
+  background:var(--cream);
+  display:none; flex-direction:column;
+  padding:28px;
+}
+.mmenu.open{ display:flex; }
+.mmenu-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
+.mmenu-close{ width:42px; height:42px; border-radius:50%; border:1px solid var(--cream-line); font-size:1.2rem; }
+.mmenu-list{ display:flex; flex-direction:column; gap:6px; }
+.mmenu-list a{
+  font-family:var(--f-display);
+  font-size:2rem;
+  padding:10px 0;
+  color:var(--ink);
+  border-bottom:1px solid var(--cream-line);
+}
+.mmenu-foot{ margin-top:auto; padding-top:28px; }
+
+/* ============================== SECTIONS ============================== */
+.section{ position:relative; padding:120px 0; }
+.section-tight{ padding:80px 0; }
+.section-dark{
+  background:var(--patina-deep);
+  color:var(--dark-text);
+  border-radius:var(--r-card-lg);
+  margin:0 20px;
+}
+.section-dark .display{ color:var(--dark-text); }
+.section-dark .sub{ color:var(--dark-text-soft); }
+.section-dark .eyebrow{ color:var(--brass-lit); }
+.section-rounded-top{ border-top-left-radius:var(--r-card-lg); border-top-right-radius:var(--r-card-lg); }
+.section-rounded-bot{ border-bottom-left-radius:var(--r-card-lg); border-bottom-right-radius:var(--r-card-lg); }
+
+@media(max-width:700px){
+  .section{ padding:88px 0; }
+  .section-dark{ margin:0 10px; border-radius:28px; }
+}
+
+/* ============================== HERO ============================== */
+.hero{
+  padding:80px 0 100px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero .wrap{ position:relative; z-index:2; }
+.hero-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 18px 8px 14px;
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  background:var(--cream-soft);
+  margin-bottom:36px;
+  font-size:.82rem;
+  color:var(--ink-soft);
+}
+.hero-eyebrow .dot{
+  width:7px; height:7px; border-radius:50%;
+  background:var(--patina-lit);
+  box-shadow:0 0 8px var(--patina-lit);
+}
+.hero h1{
+  max-width:16ch;
+  margin:0 auto 36px;
+  color:var(--ink);
+}
+.hero .sub{
+  margin:0 auto 44px;
+  font-size:clamp(1.05rem,1.4vw,1.2rem);
+  color:var(--ink-soft);
+  max-width:30em;
+}
+.hero-ctas{
+  display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.hero-micro{
+  font-size:.78rem;
+  color:var(--ink-mute);
+  letter-spacing:.02em;
+}
+
+/* Hero floating tool pills — flowing wrap */
+.hero-orbit{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  max-width:960px;
+  margin:60px auto 0;
+}
+.orbit-pill{
+  background:var(--cream);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  padding:11px 18px;
+  font-size:.85rem;
+  font-weight:500;
+  display:flex; align-items:center; gap:8px;
+  box-shadow:0 8px 24px -10px rgba(26,22,16,.18);
+  color:var(--ink);
+  white-space:nowrap;
+  transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.orbit-pill:hover{ transform:translateY(-4px); box-shadow:0 14px 30px -8px rgba(26,22,16,.25); }
+.orbit-pill .od{ width:7px; height:7px; border-radius:50%; background:var(--patina-lit); flex-shrink:0; }
+
+/* Palette variants — tinted background, colored border, matching dot + text */
+.orbit-pill.op-patina{
+  background:rgba(58,95,74,.08);
+  border-color:rgba(58,95,74,.28);
+  color:#2A4538;
+}
+.orbit-pill.op-patina .od{ background:var(--patina); box-shadow:0 0 0 3px rgba(58,95,74,.15); }
+
+.orbit-pill.op-brass{
+  background:rgba(168,144,62,.10);
+  border-color:rgba(168,144,62,.32);
+  color:#6A5620;
+}
+.orbit-pill.op-brass .od{ background:var(--brass); box-shadow:0 0 0 3px rgba(168,144,62,.15); }
+
+.orbit-pill.op-terra{
+  background:rgba(196,101,74,.09);
+  border-color:rgba(196,101,74,.30);
+  color:#7A3A24;
+}
+.orbit-pill.op-terra .od{ background:var(--terra); box-shadow:0 0 0 3px rgba(196,101,74,.15); }
+
+.orbit-pill.op-plum{
+  background:rgba(122,90,110,.10);
+  border-color:rgba(122,90,110,.30);
+  color:#4A3444;
+}
+.orbit-pill.op-plum .od{ background:var(--plum); box-shadow:0 0 0 3px rgba(122,90,110,.15); }
+
+.orbit-pill.op-ink{
+  background:var(--ink);
+  border-color:var(--ink);
+  color:var(--cream);
+}
+.orbit-pill.op-ink .od{ background:var(--brass-lit); box-shadow:0 0 0 3px rgba(196,168,78,.2); }
+
+.orbit-pill.op-cream{
+  background:var(--cream);
+  border-color:var(--cream-line);
+  color:var(--ink);
+}
+.orbit-pill.op-cream .od{ background:var(--patina); }
+
+/* Legacy classes kept as aliases so any old references still style */
+.orbit-pill.brass{ background:rgba(168,144,62,.10); border-color:rgba(168,144,62,.32); color:#6A5620; }
+.orbit-pill.brass .od{ background:var(--brass); }
+.orbit-pill.deep{ background:var(--ink); border-color:var(--ink); color:var(--cream); }
+.orbit-pill.deep .od{ background:var(--brass-lit); }
+
+/* orbit label sits below cloud */
+.orbit-label{ margin-top:22px; }
+
+/* ============================== STAT BLOCK (4x faster style) ============================== */
+.stat-block{
+  text-align:center;
+  padding:140px 0 110px;
+}
+.stat-block .big{
+  font-family:var(--f-display);
+  font-size:clamp(3.6rem, 9vw, 8rem);
+  line-height:1;
+  letter-spacing:-.02em;
+}
+.stat-block .big em{
+  font-style:italic;
+  font-weight:500;
+}
+.stat-block .sub{
+  margin:34px auto 0;
+  max-width:38em;
+  text-align:center;
+}
+
+/* ============================== LOGO STRIP (dark) ============================== */
+.logo-strip{
+  padding:90px 0;
+}
+.logo-strip .eye-center{
+  text-align:center;
+  font-family:var(--f-display);
+  font-size:clamp(1.2rem,1.6vw,1.5rem);
+  color:var(--dark-text-soft);
+  font-style:italic;
+  margin-bottom:40px;
+}
+.logo-row{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-around;
+  align-items:center;
+  gap:28px 56px;
+}
+.logo-row span{
+  font-family:var(--f-display);
+  font-size:clamp(1rem,1.5vw,1.4rem);
+  color:var(--dark-text);
+  letter-spacing:.02em;
+  opacity:.7;
+  transition:opacity .3s var(--ease);
+  white-space:nowrap;
+}
+.logo-row span:hover{ opacity:1; }
+
+/* ============================== FEATURE CARD (two-col) ============================== */
+.feat-two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+}
+@media(max-width:900px){ .feat-two{ grid-template-columns:1fr; gap:50px; } }
+.feat-text h2{ margin:14px 0 22px; }
+.feat-text p{ color:var(--ink-soft); margin-bottom:28px; max-width:30em; font-size:1.05rem; }
+
+/* Dark rounded device-style card (Wispr signature) */
+.device-card{
+  background:var(--patina-deep);
+  border-radius:var(--r-card-lg);
+  padding:38px;
+  color:var(--dark-text);
+  box-shadow:0 40px 80px -30px rgba(14,28,23,.5);
+  position:relative;
+  overflow:hidden;
+}
+.device-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse 80% 60% at 30% 0%, rgba(168,144,62,.08), transparent 60%);
+  pointer-events:none;
+}
+.device-card > *{ position:relative; z-index:1; }
+.device-label{
+  font-family:var(--f-mono);
+  font-size:.7rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--brass-lit);
+  margin-bottom:22px;
+}
+
+/* Profile bars */
+.prof-row{ margin-bottom:20px; }
+.prof-row:last-child{ margin-bottom:0; }
+.prof-meta{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom:6px;
+}
+.prof-lbl{ font-size:.85rem; color:var(--dark-text-soft); }
+.prof-pct{ font-family:var(--f-mono); font-size:.72rem; color:var(--dark-text-mute); }
+.prof-val{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:1.1rem;
+  color:var(--dark-text);
+  margin-bottom:8px;
+}
+.prof-track{
+  height:4px;
+  background:rgba(238,229,210,.08);
+  border-radius:2px;
+  overflow:hidden;
+}
+.prof-fill{
+  height:100%;
+  background:linear-gradient(90deg, var(--patina-lit), var(--brass));
+  border-radius:2px;
+  width:0;
+  transition:width 1s var(--ease);
+}
+
+/* ============================== HOW CARDS (3-col dark) ============================== */
+.how-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin-top:60px;
+}
+@media(max-width:900px){ .how-grid{ grid-template-columns:1fr; max-width:460px; margin-inline:auto; } }
+.how-card{
+  background:var(--dark-surface);
+  border:1px solid var(--dark-line);
+  border-radius:var(--r-card);
+  padding:34px 28px;
+  transition:transform .3s var(--ease), border-color .3s;
+}
+.how-card:hover{ transform:translateY(-4px); border-color:rgba(238,229,210,.2); }
+.how-num{
+  font-family:var(--f-display);
+  font-size:2.8rem;
+  font-style:italic;
+  color:var(--brass-lit);
+  line-height:1;
+  margin-bottom:18px;
+}
+.how-name{
+  font-family:var(--f-display);
+  font-size:1.7rem;
+  margin-bottom:12px;
+  color:var(--dark-text);
+}
+.how-desc{
+  color:var(--dark-text-soft);
+  font-size:.95rem;
+  line-height:1.7;
+  margin-bottom:18px;
+}
+.how-out{
+  font-family:var(--f-mono);
+  font-size:.7rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--brass-lit);
+  padding-top:16px;
+  border-top:1px solid var(--dark-line);
+}
+
+/* ============================== MULTI-CARD FEATURES (like wispr Auto Edit / AI Edits) ============================== */
+.multi{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:22px;
+}
+@media(max-width:900px){ .multi{ grid-template-columns:1fr; } }
+.multi .big-card{
+  background:var(--patina-deep);
+  border-radius:var(--r-card-lg);
+  padding:44px;
+  color:var(--dark-text);
+  min-height:380px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+  overflow:hidden;
+}
+.multi .side-col{ display:flex; flex-direction:column; gap:22px; }
+.multi .side-card{
+  background:var(--cream-soft);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-card-lg);
+  padding:36px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.multi .side-card .display{ font-size:clamp(1.6rem,2.4vw,2.2rem); margin-bottom:10px; }
+.multi .side-card .sub{ font-size:.92rem; color:var(--ink-soft); }
+.multi .big-card .display{ font-size:clamp(2rem,3.2vw,2.8rem); color:var(--dark-text); margin-bottom:8px; }
+.multi .big-card .sub{ color:var(--dark-text-soft); }
+
+/* Mock chat/profile visual inside big-card */
+.mock-note{
+  background:rgba(238,229,210,.05);
+  border:1px solid var(--dark-line);
+  border-radius:18px;
+  padding:20px 22px;
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:1.05rem;
+  color:var(--dark-text);
+  line-height:1.55;
+  margin-bottom:24px;
+  position:relative;
+}
+.mock-note::before{
+  content:'"';
+  position:absolute;
+  top:-6px; left:14px;
+  font-size:2.8rem;
+  color:var(--brass-lit);
+  opacity:.5;
+  line-height:1;
+}
+.mock-tags{ display:flex; flex-wrap:wrap; gap:8px; }
+.mock-tag{
+  padding:6px 14px;
+  border-radius:var(--r-pill);
+  background:rgba(168,144,62,.15);
+  border:1px solid rgba(168,144,62,.3);
+  font-size:.75rem;
+  font-family:var(--f-mono);
+  color:var(--brass-lit);
+  letter-spacing:.03em;
+}
+.mock-tag.patina{ background:rgba(74,122,94,.18); border-color:rgba(74,122,94,.35); color:#7FB894; }
+
+/* ============================== PERSONA (Flow is made for you) ============================== */
+.persona-hero{
+  text-align:left;
+  max-width:720px;
+}
+.persona-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:40px;
+  max-width:560px;
+}
+.persona-tag{
+  padding:12px 22px;
+  border-radius:var(--r-pill);
+  border:1px solid rgba(238,229,210,.22);
+  background:transparent;
+  color:var(--dark-text);
+  font-size:.9rem;
+  transition:all .2s var(--ease);
+  cursor:pointer;
+}
+.persona-tag:hover,.persona-tag.active{
+  background:var(--pill-bg);
+  color:var(--pill-ink);
+  border-color:var(--pill-bg);
+}
+.persona-layout{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:80px;
+  align-items:start;
+}
+@media(max-width:900px){ .persona-layout{ grid-template-columns:1fr; gap:40px; } }
+.persona-detail{
+  background:var(--dark-surface);
+  border:1px solid var(--dark-line);
+  border-radius:var(--r-card);
+  padding:36px;
+}
+.persona-detail h3{
+  font-family:var(--f-display);
+  font-size:1.6rem;
+  margin-bottom:14px;
+  color:var(--dark-text);
+}
+.persona-detail h3 em{ font-style:italic; color:var(--brass-lit); }
+.persona-detail p{ color:var(--dark-text-soft); margin-bottom:22px; line-height:1.7; font-size:.95rem; }
+
+/* ============================== PRICING ============================== */
+.price-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-top:64px;
+}
+@media(max-width:1040px){ .price-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:620px){ .price-grid{ grid-template-columns:1fr; } }
+.price-card{
+  background:var(--cream-soft);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-card);
+  padding:34px 28px;
+  display:flex;
+  flex-direction:column;
+  transition:all .3s var(--ease);
+}
+.price-card:hover{ border-color:var(--patina); transform:translateY(-4px); }
+.price-card.feat{
+  background:var(--patina-deep);
+  color:var(--dark-text);
+  border-color:var(--patina-deep);
+}
+.price-card.feat .price-name,.price-card.feat .price-desc,.price-card.feat .price-feat{ color:var(--dark-text-soft); }
+.price-card.feat .price-num,.price-card.feat .price-feat strong{ color:var(--dark-text); }
+.price-card.feat .btn{ background:var(--pill-bg); border-color:var(--pill-bg); color:var(--pill-ink); }
+.price-name{
+  font-family:var(--f-mono);
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ink-mute);
+  margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+}
+.price-tag{
+  font-family:var(--f-mono);
+  font-size:.58rem;
+  padding:3px 9px;
+  border-radius:4px;
+  background:var(--brass-faint);
+  border:1px solid var(--brass);
+  color:var(--brass);
+  letter-spacing:.08em;
+}
+.price-num{
+  font-family:var(--f-display);
+  font-size:2.8rem;
+  line-height:1;
+  margin-bottom:4px;
+  color:var(--ink);
+}
+.price-num span{
+  font-family:var(--f-body);
+  font-size:.9rem;
+  font-weight:400;
+  color:var(--ink-mute);
+}
+.price-desc{
+  font-size:.88rem;
+  color:var(--ink-soft);
+  line-height:1.55;
+  margin:14px 0 24px;
+  flex:1;
+}
+.price-feats{ list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:26px; }
+.price-feat{
+  font-size:.86rem;
+  color:var(--ink-soft);
+  display:flex; align-items:center; gap:10px;
+  padding-left:0;
+}
+.price-feat::before{
+  content:'';
+  width:16px; height:16px; border-radius:50%;
+  background:var(--cream-deep);
+  flex-shrink:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234A7A5E'%3E%3Cpath d='M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z'/%3E%3C/svg%3E");
+  background-size:12px;
+  background-repeat:no-repeat;
+  background-position:center;
+}
+.price-card.feat .price-feat::before{ background-color:rgba(238,229,210,.1); }
+.price-card .btn{ width:100%; }
+
+/* ============================== TESTIMONIALS ============================== */
+.testi-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:18px;
+  margin-top:60px;
+}
+@media(max-width:1040px){ .testi-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:620px){ .testi-grid{ grid-template-columns:1fr; } }
+.testi{
+  background:var(--cream);
+  color:var(--ink);
+  border-radius:var(--r-card);
+  padding:30px 26px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.testi-avatar{
+  width:52px; height:52px; border-radius:50%;
+  background:var(--patina);
+  color:var(--cream);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-display);
+  font-size:1.1rem;
+  margin-bottom:18px;
+}
+.testi-body{
+  font-size:.94rem;
+  line-height:1.55;
+  color:var(--ink);
+  margin-bottom:18px;
+  flex:1;
+}
+.testi-name{
+  font-size:.78rem;
+  color:var(--ink-mute);
+}
+
+/* ============================== FAQ ============================== */
+.faq{
+  max-width:780px;
+  margin:60px auto 0;
+  background:var(--cream-soft);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-card);
+  overflow:hidden;
+}
+.faq-item{ border-bottom:1px solid var(--cream-line); }
+.faq-item:last-child{ border-bottom:none; }
+.faq-q{
+  width:100%;
+  text-align:left;
+  padding:26px 32px;
+  font-family:var(--f-display);
+  font-size:1.25rem;
+  color:var(--ink);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  transition:color .2s;
+}
+.faq-q:hover{ color:var(--patina); }
+.faq-ic{
+  font-size:1.5rem;
+  color:var(--ink-mute);
+  transition:transform .3s var(--ease);
+  flex-shrink:0;
+}
+.faq-item.open .faq-ic{ transform:rotate(45deg); color:var(--brass); }
+.faq-a{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .4s var(--ease);
+}
+.faq-item.open .faq-a{ max-height:400px; }
+.faq-a-inner{
+  padding:0 32px 26px;
+  color:var(--ink-soft);
+  line-height:1.7;
+  font-size:.95rem;
+}
+
+/* ============================== SCANNER ============================== */
+.scanner-card{
+  max-width:720px;
+  margin:40px auto 0;
+  background:var(--cream-soft);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-card);
+  padding:44px;
+  position:relative;
+  overflow:hidden;
+}
+.scan-row{ display:flex; gap:10px; margin-bottom:14px; }
+@media(max-width:620px){ .scan-row{ flex-direction:column; } }
+.scan-input{
+  flex:1;
+  padding:16px 22px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--cream-line);
+  background:var(--cream);
+  font-size:.95rem;
+  color:var(--ink);
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+}
+.scan-input::placeholder{ color:var(--ink-mute); font-style:italic; }
+.scan-input:focus{ border-color:var(--patina); box-shadow:0 0 0 4px rgba(58,95,74,.1); }
+.scan-note{
+  font-family:var(--f-mono);
+  font-size:.68rem;
+  color:var(--ink-mute);
+  text-align:center;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-top:16px;
+}
+.scan-line{
+  position:absolute;
+  left:0; right:0; top:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--patina-lit), var(--brass), transparent);
+  opacity:0;
+}
+.scan-line.go{ animation:sweep 1s var(--ease) forwards; }
+@keyframes sweep{ 0%{ opacity:1; transform:translateY(0); } 100%{ opacity:0; transform:translateY(380px); } }
+.scan-results{ display:none; margin-top:30px; padding-top:30px; border-top:1px solid var(--cream-line); }
+.scan-results.show{ display:block; }
+.scan-bars{ display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin-bottom:26px; }
+@media(max-width:540px){ .scan-bars{ grid-template-columns:1fr; } }
+.scan-bar-head{ display:flex; justify-content:space-between; margin-bottom:5px; }
+.scan-bar-lbl{ font-size:.82rem; color:var(--ink-soft); }
+.scan-bar-score{ font-family:var(--f-mono); font-size:.75rem; color:var(--patina); }
+.scan-bar-track{ height:5px; background:var(--cream-deep); border-radius:3px; overflow:hidden; }
+.scan-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--patina),var(--brass));
+  border-radius:3px;
+  width:0;
+  transition:width 1s var(--ease);
+}
+.scan-verdict{
+  padding:20px 22px;
+  border-radius:18px;
+  background:rgba(58,95,74,.08);
+  border:1px solid rgba(58,95,74,.2);
+  opacity:0;
+  transition:opacity .4s;
+}
+.scan-verdict.show{ opacity:1; }
+.scan-v-lbl{
+  font-family:var(--f-mono);
+  font-size:.62rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--patina);
+  margin-bottom:6px;
+}
+.scan-v-title{ font-family:var(--f-display); font-size:1.3rem; color:var(--ink); margin-bottom:6px; }
+.scan-v-text{ font-size:.9rem; color:var(--ink-soft); }
+
+/* ============================== FINAL CTA ============================== */
+.final-cta{
+  background:var(--patina-deep);
+  color:var(--dark-text);
+  border-radius:var(--r-card-lg);
+  margin:0 20px 60px;
+  padding:120px 30px 130px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.final-cta::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 40%, rgba(168,144,62,.14), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 30% 80%, rgba(74,122,94,.18), transparent 70%);
+  pointer-events:none;
+}
+.final-cta > *{ position:relative; z-index:1; }
+.final-cta .display{
+  color:var(--dark-text);
+  max-width:14ch;
+  margin:0 auto 30px;
+}
+.final-cta .sub{
+  color:var(--dark-text-soft);
+  margin:0 auto 40px;
+  max-width:32em;
+}
+.final-cta .hero-ctas{ margin-bottom:18px; }
+
+/* Dotted arrow decoration */
+.final-cta-arrow{
+  position:absolute;
+  right:8%;
+  top:18%;
+  width:140px;
+  height:140px;
+  opacity:.5;
+  pointer-events:none;
+}
+.final-cta-arrow circle{ fill:var(--brass-lit); }
+@media(max-width:820px){ .final-cta-arrow{ display:none; } }
+
+/* ============================== FOOTER ============================== */
+.site-foot{
+  padding:80px 0 0;
+}
+.foot-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:50px;
+  margin-bottom:60px;
+}
+@media(max-width:820px){ .foot-grid{ grid-template-columns:1fr 1fr; gap:40px; } }
+@media(max-width:520px){
+  .foot-grid{
+    grid-template-columns:1fr 1fr;
+    gap:24px 20px;
+  }
+  .foot-grid > div:first-child{
+    grid-column:1 / -1;
+  }
+}
+.foot-brand{
+  font-family:var(--f-display);
+  font-size:1.4rem;
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:16px;
+}
+.foot-desc{ color:var(--ink-soft); font-size:.92rem; max-width:30em; line-height:1.6; }
+.foot-col-title{
+  font-family:var(--f-mono);
+  font-size:.68rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ink-mute);
+  margin-bottom:18px;
+}
+.foot-col a{
+  display:block;
+  font-size:.92rem;
+  color:var(--ink-soft);
+  padding:6px 0;
+  transition:color .15s;
+}
+.foot-col a:hover{ color:var(--patina); }
+/* foot-logo-xl replaced by foot-showcase */
+.foot-bottom{
+  padding:26px 0;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:14px;
+  font-family:var(--f-mono);
+  font-size:.72rem;
+  color:var(--ink-mute);
+  letter-spacing:.04em;
+}
+.foot-bottom a{ color:var(--ink-soft); margin-right:20px; }
+.foot-bottom a:hover{ color:var(--patina); }
+
+/* ============================== REVEAL ============================== */
+.reveal{ opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease), transform .9s var(--ease); }
+.reveal.in{ opacity:1; transform:translateY(0); }
+.rd1{ transition-delay:.1s; }
+.rd2{ transition-delay:.2s; }
+.rd3{ transition-delay:.3s; }
+.rd4{ transition-delay:.4s; }
+
+/* Orbit bob removed — flow layout now */
+
+/* ============================== PANEL CARD (predictive) ============================== */
+.panel-card{
+  background:var(--patina-deep);
+  border-radius:var(--r-card-lg);
+  padding:44px;
+  color:var(--dark-text);
+}
+.panel-label{
+  font-family:var(--f-mono);
+  font-size:.7rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--brass-lit);
+  margin-bottom:26px;
+}
+.panel-conf{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom:10px;
+}
+.panel-conf-lbl{ font-size:.9rem; color:var(--dark-text-soft); }
+.panel-conf-num{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:3rem;
+  color:var(--brass-lit);
+  line-height:1;
+}
+.panel-main{
+  height:6px;
+  background:rgba(238,229,210,.08);
+  border-radius:3px;
+  overflow:hidden;
+  margin-bottom:28px;
+}
+.panel-main-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--patina-lit),var(--brass));
+  border-radius:3px;
+  width:0;
+  transition:width 1.2s var(--ease);
+}
+.panel-verdict{
+  margin-top:22px;
+  padding:18px 20px;
+  border-radius:16px;
+  background:rgba(74,122,94,.18);
+  border:1px solid rgba(74,122,94,.35);
+}
+.panel-verdict-lbl{
+  font-family:var(--f-mono);
+  font-size:.62rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#7FB894;
+  margin-bottom:4px;
+}
+.panel-verdict-ttl{ font-family:var(--f-display); font-size:1.2rem; color:var(--dark-text); }
+.panel-verdict-txt{ font-size:.85rem; color:var(--dark-text-soft); margin-top:3px; }
+
+/* ============================== CHARACTERS & FLOURISHES ============================== */
+.character{
+  display:block;
+  pointer-events:none;
+}
+.char-float{
+  position:absolute;
+  z-index:1;
+  animation:charBob 6s var(--ease) infinite;
+}
+@keyframes charBob{
+  0%,100%{ transform:translateY(0) rotate(0deg); }
+  50%{ transform:translateY(-10px) rotate(-1.5deg); }
+}
+.char-wave .hand{
+  transform-origin:70% 80%;
+  animation:charWave 3.5s var(--ease) infinite;
+}
+@keyframes charWave{
+  0%,60%,100%{ transform:rotate(0deg); }
+  70%,90%{ transform:rotate(-14deg); }
+  80%{ transform:rotate(14deg); }
+}
+
+/* Hero character — replaced by new block below */
+
+/* Persona section · big character on the right */
+.persona-layout{ position:relative; }
+.persona-char{
+  position:absolute;
+  right:-20px;
+  top:-30px;
+  width:280px;
+  z-index:0;
+  opacity:.95;
+}
+@media(max-width:1100px){ .persona-char{ width:220px; right:-10px; } }
+@media(max-width:900px){ .persona-char{ position:static; width:180px; margin:0 auto 24px; display:block; } }
+
+/* Brand profile character - small, behind text */
+.profile-char{
+  position:absolute;
+  right:4%;
+  top:-60px;
+  width:170px;
+  opacity:.88;
+  z-index:0;
+}
+@media(max-width:900px){ .profile-char{ display:none; } }
+
+/* Final CTA character */
+.cta-char{
+  position:absolute;
+  left:7%;
+  bottom:10%;
+  width:200px;
+  z-index:1;
+  opacity:.95;
+}
+@media(max-width:900px){ .cta-char{ width:140px; left:3%; bottom:6%; opacity:.7; } }
+@media(max-width:620px){ .cta-char{ display:none; } }
+
+/* Founder quote marks character */
+.founder-char{
+  position:absolute;
+  right:8%;
+  top:15%;
+  width:120px;
+  opacity:.7;
+  z-index:0;
+}
+@media(max-width:900px){ .founder-char{ display:none; } }
+
+/* Scribble / decorative flourishes */
+.scribble{
+  position:absolute;
+  pointer-events:none;
+  z-index:0;
+}
+.scribble path{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:500;
+  stroke-dashoffset:500;
+}
+.scribble.in path{ animation:drawScribble 1.6s var(--ease) forwards; }
+@keyframes drawScribble{ to{ stroke-dashoffset:0; } }
+
+.scribble.terra path{ stroke:var(--terra); }
+.scribble.plum path{ stroke:var(--plum); }
+.scribble.patina path{ stroke:var(--patina-lit); }
+
+/* Little decorative dots constellation */
+.dot-constellation{
+  position:absolute;
+  pointer-events:none;
+  z-index:0;
+}
+.dot-constellation circle{
+  fill:var(--brass);
+  opacity:0;
+  animation:twinkle 3s var(--ease) infinite;
+}
+.dot-constellation circle:nth-child(2){ animation-delay:.3s; fill:var(--terra); }
+.dot-constellation circle:nth-child(3){ animation-delay:.6s; fill:var(--patina-lit); }
+.dot-constellation circle:nth-child(4){ animation-delay:.9s; fill:var(--plum); }
+.dot-constellation circle:nth-child(5){ animation-delay:1.2s; fill:var(--brass-lit); }
+.dot-constellation circle:nth-child(6){ animation-delay:1.5s; fill:var(--terra-lit); }
+@keyframes twinkle{
+  0%,100%{ opacity:.2; transform:scale(1); }
+  50%{ opacity:.9; transform:scale(1.3); }
+}
+
+/* Star sparkle (wispr style) */
+.sparkle{
+  position:absolute;
+  color:var(--brass);
+  font-family:var(--f-display);
+  font-style:italic;
+  pointer-events:none;
+  animation:sparkleRot 8s linear infinite;
+  z-index:0;
+}
+@keyframes sparkleRot{
+  0%,100%{ transform:rotate(0deg) scale(1); opacity:.4; }
+  50%{ transform:rotate(180deg) scale(1.15); opacity:.9; }
+}
+
+/* Section relative anchor for absolute children */
+.has-decor{ position:relative; overflow:visible; }
+
+/* ============================== UTIL ============================== */
+.center{ text-align:center; }
+.eyebrow-center{ text-align:center; margin-bottom:14px; }
+.mt-0{ margin-top:0; }
+.mx-auto{ margin-inline:auto; }
+
+/* ============================== OVERRIDES & NEW FEATURES ============================== */
+
+/* Headline balance: keep orphan words from sitting alone on a new line */
+.display{ text-wrap:balance; }
+
+/* Line break helper: on wider screens acts as a hard break, on mobile collapses to space */
+.lb-period{ display:block; }
+
+/* ----- FOOTER logo fix (was truncating) ----- */
+.foot-logo-xl{
+  font-size:clamp(4.5rem, 14vw, 13rem);
+  white-space:normal;
+  text-wrap:balance;
+  line-height:.9;
+  letter-spacing:-0.035em;
+}
+
+/* ----- FOUNDER section: shrink ----- */
+.founder-compact{
+  padding-top:72px;
+  padding-bottom:72px;
+}
+.founder-compact .display{
+  font-size:clamp(1.3rem, 2.4vw, 1.85rem);
+  max-width:38em;
+  margin-inline:auto;
+  line-height:1.45;
+}
+.founder-compact .testi-avatar{
+  width:52px;
+  height:52px;
+  font-size:1rem;
+  margin-top:28px;
+}
+
+/* ----- HOW-IT-WORKS: more fun (per-card color theme) ----- */
+.how-card{
+  position:relative;
+  overflow:hidden;
+}
+.how-card::before{
+  content:'';
+  position:absolute;
+  top:-60px;
+  right:-60px;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  opacity:.14;
+  filter:blur(8px);
+  transition:transform .6s var(--ease), opacity .3s;
+}
+.how-card:hover::before{ transform:scale(1.3); opacity:.22; }
+.how-card.theme-patina::before{ background:var(--patina-lit); }
+.how-card.theme-terra::before{ background:var(--terra); }
+.how-card.theme-plum::before{ background:var(--plum-lit); }
+.how-card.theme-patina .how-num{ color:var(--patina-lit); }
+.how-card.theme-terra  .how-num{ color:var(--terra-lit); }
+.how-card.theme-plum   .how-num{ color:var(--plum-lit); }
+.how-card.theme-patina .how-out{ color:var(--patina-lit); }
+.how-card.theme-terra  .how-out{ color:var(--terra-lit); }
+.how-card.theme-plum   .how-out{ color:var(--plum-lit); }
+.how-card .how-num{
+  font-size:3.4rem;
+  transition:transform .4s var(--ease);
+}
+.how-card:hover .how-num{ transform:rotate(-3deg) scale(1.05); }
+.how-card .how-icon-doodle{
+  position:absolute;
+  top:24px;
+  right:24px;
+  width:38px;
+  height:38px;
+  opacity:.55;
+  transition:transform .5s var(--ease), opacity .3s;
+}
+.how-card:hover .how-icon-doodle{ transform:rotate(12deg); opacity:1; }
+.how-card .how-icon-doodle path,
+.how-card .how-icon-doodle circle,
+.how-card .how-icon-doodle line{
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.how-card.theme-patina .how-icon-doodle *{ stroke:var(--patina-lit); }
+.how-card.theme-terra  .how-icon-doodle *{ stroke:var(--terra-lit); }
+.how-card.theme-plum   .how-icon-doodle *{ stroke:var(--plum-lit); }
+
+/* ----- LOGO STRIP: auto-scrolling marquee ----- */
+.press-strip{
+  padding:70px 0 80px;
+}
+.press-strip .eye-center{
+  text-align:center;
+  font-family:var(--f-display);
+  font-size:clamp(1.1rem,1.5vw,1.4rem);
+  color:var(--dark-text-soft);
+  font-style:italic;
+  margin-bottom:36px;
+}
+.press-marquee{
+  overflow:hidden;
+  position:relative;
+  padding:14px 0;
+  mask-image:linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  -webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+.press-track{
+  display:flex;
+  gap:14px;
+  width:max-content;
+  animation:pressScroll 45s linear infinite;
+}
+.press-strip:hover .press-track{ animation-play-state:paused; }
+@keyframes pressScroll{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-50%); }
+}
+.press-pill{
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 22px;
+  border-radius:var(--r-pill);
+  background:rgba(238,229,210,.04);
+  border:1px solid rgba(238,229,210,.14);
+  font-family:var(--f-display);
+  font-size:1.05rem;
+  color:var(--dark-text);
+  white-space:nowrap;
+  transition:all .3s var(--ease);
+}
+.press-pill:hover{
+  background:rgba(238,229,210,.08);
+  border-color:rgba(238,229,210,.28);
+  transform:translateY(-2px);
+}
+.press-pill .pdot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.pdot.brass{ background:var(--brass-lit); }
+.pdot.patina{ background:var(--patina-lit); }
+.pdot.terra{ background:var(--terra-lit); }
+.pdot.plum{ background:var(--plum-lit); }
+
+/* ----- PERSONA RESTRUCTURE ----- */
+.persona-v2{ position:relative; }
+.persona-v2 .persona-header{
+  text-align:left;
+  margin-bottom:44px;
+  max-width:780px;
+}
+.persona-v2 .persona-tags{
+  margin:28px 0 0;
+  max-width:760px;
+}
+.persona-v2 .persona-body{
+  display:grid;
+  grid-template-columns:380px 1fr;
+  gap:60px;
+  align-items:stretch;
+}
+@media(max-width:900px){
+  .persona-v2 .persona-body{
+    grid-template-columns:1fr;
+    gap:28px;
+  }
+}
+.persona-v2 .persona-stage{
+  position:relative;
+  min-height:380px;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(196,101,74,.06), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(168,144,62,.08), transparent 70%),
+    rgba(238,229,210,.035);
+  border:1px solid var(--dark-line);
+  border-radius:var(--r-card);
+  overflow:hidden;
+  padding:32px;
+}
+.persona-v2 .persona-stage::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(168,144,62,.10), transparent 70%);
+  pointer-events:none;
+}
+.persona-v2 .persona-avatar{
+  position:absolute;
+  inset:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transform:translateY(14px) scale(.96);
+  transition:opacity .45s var(--ease), transform .6s var(--ease);
+  pointer-events:none;
+}
+.persona-v2 .persona-avatar.active{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+.persona-v2 .persona-avatar svg{
+  width:100%;
+  max-width:260px;
+  height:auto;
+  filter:drop-shadow(0 20px 40px rgba(8,19,16,.5));
+  animation:charBob 6s var(--ease) infinite;
+}
+.persona-v2 .persona-stage-tag{
+  position:absolute;
+  bottom:18px;
+  left:18px;
+  font-family:var(--f-mono);
+  font-size:.6rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--brass-lit);
+  background:rgba(14,28,23,.6);
+  padding:6px 12px;
+  border-radius:var(--r-pill);
+  border:1px solid rgba(196,168,78,.3);
+  z-index:2;
+}
+.persona-v2 .persona-detail{
+  background:rgba(238,229,210,.035);
+  border:1px solid var(--dark-line);
+  border-radius:var(--r-card);
+  padding:44px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.persona-v2 .persona-detail h3{
+  font-family:var(--f-display);
+  font-size:clamp(1.6rem, 2.8vw, 2.2rem);
+  color:var(--dark-text);
+  line-height:1.2;
+  margin-bottom:18px;
+  text-wrap:balance;
+}
+.persona-v2 .persona-detail h3 em{ color:var(--brass-lit); }
+.persona-v2 .persona-detail p{
+  color:var(--dark-text-soft);
+  line-height:1.75;
+  font-size:1rem;
+  margin-bottom:28px;
+  max-width:40em;
+}
+.persona-v2 .persona-tag{
+  color:var(--dark-text);
+}
+
+/* Themed accents for each persona tab (rotating palette) */
+.persona-tag[data-p="0"].active{ background:var(--patina-lit); border-color:var(--patina-lit); color:var(--cream); }
+.persona-tag[data-p="1"].active{ background:var(--terra); border-color:var(--terra); color:var(--cream); }
+.persona-tag[data-p="2"].active{ background:var(--brass); border-color:var(--brass); color:var(--patina-deep); }
+.persona-tag[data-p="3"].active{ background:var(--plum-lit); border-color:var(--plum-lit); color:var(--cream); }
+
+/* ----- PRICING: cool hover + entrance ----- */
+.price-card{
+  position:relative;
+  opacity:0;
+  transform:translateY(24px) scale(.98);
+  animation:priceRise .8s var(--ease) forwards;
+}
+.price-card:nth-child(1){ animation-delay:.05s; }
+.price-card:nth-child(2){ animation-delay:.15s; }
+.price-card:nth-child(3){ animation-delay:.25s; }
+.price-card:nth-child(4){ animation-delay:.35s; }
+@keyframes priceRise{
+  to{ opacity:1; transform:translateY(0) scale(1); }
+}
+@media(prefers-reduced-motion:reduce){
+  .price-card{ opacity:1; transform:none; animation:none; }
+}
+.price-card::after{
+  content:'';
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  background:linear-gradient(135deg, var(--terra), var(--brass), var(--patina-lit), var(--plum-lit));
+  opacity:0;
+  z-index:-1;
+  transition:opacity .4s var(--ease);
+  filter:blur(14px);
+}
+.price-card:hover::after{ opacity:.45; }
+.price-card:hover{ transform:translateY(-6px) scale(1.015); }
+
+.price-card .price-num{
+  transition:transform .4s var(--ease), color .3s;
+}
+.price-card:hover .price-num{
+  transform:scale(1.06);
+}
+
+/* Themed price card accents */
+.price-card:nth-child(1){ border-top:3px solid var(--patina-lit); }
+.price-card:nth-child(2){ border-top:3px solid var(--terra); }
+.price-card:nth-child(3).feat{ border-top:3px solid var(--brass); }
+.price-card:nth-child(4){ border-top:3px solid var(--plum-lit); }
+
+/* ----- 6-color swatch row helper ----- */
+.swatch-row{ display:flex; gap:8px; margin-top:20px; flex-wrap:wrap; }
+.swatch-row .sw{
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  border:1px solid var(--cream-line);
+  transition:transform .3s var(--ease);
+  cursor:pointer;
+}
+.swatch-row .sw:hover{ transform:translateY(-3px) rotate(-3deg); }
+
+/* Remove the old persona char (no longer used in v2 layout) */
+.persona-char{ display:none !important; }
+
+/* ============================== HERO SUB LINE-BREAK ============================== */
+.hero-sub{
+  max-width:32em;
+  margin-inline:auto;
+}
+.hero-sub br{ display:block; content:''; margin-top:4px; }
+.sub-accent{
+  color:var(--patina);
+  font-weight:500;
+}
+
+/* ============================== ORBIT COUNT LABEL ============================== */
+.orbit-label{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:14px;
+  margin:56px auto 18px;
+}
+.orbit-count{
+  font-family:var(--f-display);
+  font-size:clamp(2rem, 3.6vw, 3rem);
+  font-style:italic;
+  color:var(--brass);
+  line-height:1;
+}
+.orbit-count-txt{
+  font-family:var(--f-mono);
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.hero-orbit{ margin-top:14px; }
+
+/* ============================== TESTIMONIALS (wispr-style staggered) ============================== */
+/* Testimonial cards — grid on desktop, scroll on mobile */
+.testi-wispr{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:16px;
+  margin-top:48px;
+}
+@media(max-width:1040px){
+  .testi-wispr{ grid-template-columns:repeat(2, 1fr); }
+}
+@media(max-width:620px){
+  .testi-wispr{
+    display:flex;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:16px;
+    gap:14px;
+    margin-left:-20px;
+    margin-right:-20px;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  .testi-wispr::-webkit-scrollbar{ display:none; }
+}
+.testi-card{
+  background:#F4F0EB;
+  color:#1A1610;
+  border-radius:18px;
+  padding:24px 22px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  box-shadow:0 14px 34px -14px rgba(8,19,16,.4);
+  transition:transform .55s var(--ease), box-shadow .55s var(--ease), opacity .7s var(--ease);
+  /* Scroll-triggered entrance */
+  opacity:0;
+  transform:translateY(40px) scale(.96);
+}
+.testi-card.in{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+.testi-card:nth-child(1){ transition-delay:.05s; }
+.testi-card:nth-child(2){ transition-delay:.15s; }
+.testi-card:nth-child(3){ transition-delay:.25s; }
+.testi-card:nth-child(4){ transition-delay:.35s; }
+@media(max-width:620px){
+  .testi-card{
+    min-width:280px;
+    max-width:85vw;
+    flex-shrink:0;
+    scroll-snap-align:start;
+    /* On mobile, visible immediately since horizontal scroll */
+    opacity:1 !important;
+    transform:none !important;
+  }
+  .testi-card:nth-child(n){ transition-delay:0s; }
+}
+.testi-card.in:hover{
+  transform:translateY(-6px) scale(1.015);
+  box-shadow:0 22px 44px -16px rgba(8,19,16,.55);
+}
+.testi-head{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.testi-head .testi-avatar{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--f-display);
+  font-size:1rem;
+  color:var(--cream);
+  margin-bottom:0;
+  flex-shrink:0;
+}
+.tc-avatar-patina{ background:var(--patina); }
+.tc-avatar-terra{ background:var(--terra); }
+.tc-avatar-brass{ background:var(--brass); color:var(--ink); }
+.tc-avatar-plum{ background:var(--plum); }
+/* Card innards: hardcoded dark text since cards are always cream bg */
+.testi-name-strong{
+  font-family:var(--f-display);
+  font-size:1rem;
+  color:#1A1610;
+  line-height:1.2;
+}
+.testi-role{
+  font-family:var(--f-mono);
+  font-size:.65rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#8A7E70;
+  margin-top:3px;
+}
+.testi-quote{
+  font-size:.92rem;
+  line-height:1.6;
+  color:#5A5040;
+  flex:1;
+}
+.testi-footer{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  padding-top:14px;
+  border-top:1px solid rgba(100,80,50,.14);
+}
+.testi-stat{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:1.5rem;
+  color:#3A5F4A;
+  line-height:1;
+}
+.testi-stat-lbl{
+  font-size:.78rem;
+  color:#8A7E70;
+}
+.testi-disclaimer{
+  text-align:center;
+  font-family:var(--f-mono);
+  font-size:.65rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--dark-text-mute);
+  margin-top:60px;
+}
+
+/* ============================== FOUNDER PORTRAIT ============================== */
+.founder-compact{
+  padding-top:88px;
+  padding-bottom:88px;
+}
+.founder-layout{
+  display:grid;
+  grid-template-columns:minmax(260px, 320px) 1fr;
+  gap:60px;
+  align-items:center;
+  max-width:960px;
+  margin-inline:auto;
+}
+@media(max-width:820px){
+  .founder-layout{
+    grid-template-columns:1fr;
+    gap:40px;
+    text-align:center;
+  }
+}
+.founder-portrait{
+  position:relative;
+  justify-self:center;
+}
+/* portrait-frame — old block cleared */
+.portrait-fallback{
+  position:absolute;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--f-display);
+  font-size:3.5rem;
+  color:var(--cream);
+  background:var(--patina);
+}
+.portrait-dot{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.portrait-dot-1{
+  top:-12px;
+  right:-14px;
+  width:22px;
+  height:22px;
+  background:var(--brass);
+  border:2px solid var(--ink);
+}
+.portrait-dot-2{
+  bottom:-10px;
+  left:-16px;
+  width:14px;
+  height:14px;
+  background:var(--plum-lit);
+  border:2px solid var(--ink);
+}
+.portrait-dot-3{
+  top:40%;
+  left:-22px;
+  width:10px;
+  height:10px;
+  background:var(--patina-lit);
+  border:1.5px solid var(--ink);
+}
+.founder-copy .founder-quote{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:clamp(1.3rem, 2.3vw, 1.75rem);
+  line-height:1.4;
+  color:var(--dark-text);
+  margin:18px 0 28px;
+  max-width:32em;
+}
+.founder-meta{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.founder-name{
+  font-family:var(--f-display);
+  font-size:1.1rem;
+  color:var(--dark-text);
+}
+.founder-title{
+  font-family:var(--f-mono);
+  font-size:.68rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--dark-text-mute);
+}
+
+/* ============================== PERSONA IMAGES ============================== */
+.persona-img{
+  width:100%;
+  max-height:340px;
+  object-fit:contain;
+  filter:drop-shadow(0 16px 30px rgba(8,19,16,.5));
+}
+/* Subtle distinct animations per persona */
+.pi-rock{ animation:piRock 5s var(--ease) infinite; }
+@keyframes piRock{
+  0%,100%{ transform:rotate(0deg); }
+  25%{ transform:rotate(1.5deg); }
+  75%{ transform:rotate(-1.5deg); }
+}
+.pi-lean{ animation:piLean 6s var(--ease) infinite; }
+@keyframes piLean{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-6px); }
+}
+.pi-pulse{
+  animation:piPulse 4s var(--ease) infinite;
+  filter:drop-shadow(0 16px 30px rgba(8,19,16,.5)) hue-rotate(15deg) saturate(0.85);
+}
+@keyframes piPulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.02); }
+}
+.pi-breathe{ animation:piBreathe 7s var(--ease) infinite; }
+@keyframes piBreathe{
+  0%,100%{ transform:translateY(0) scale(1); }
+  50%{ transform:translateY(-4px) scale(1.01); }
+}
+
+/* ============================== HOW HEADER ============================== */
+.how-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:40px;
+  margin-bottom:20px;
+}
+.how-char{
+  width:300px;
+  height:auto;
+  flex-shrink:0;
+  filter:drop-shadow(0 16px 30px rgba(8,19,16,.4));
+  animation:howSkate 8s linear infinite;
+}
+@keyframes howSkate{
+  0%{ transform:translateX(-30px) rotate(-2deg); opacity:.7; }
+  20%{ opacity:1; }
+  50%{ transform:translateX(30px) rotate(2deg); }
+  80%{ opacity:1; }
+  100%{ transform:translateX(-30px) rotate(-2deg); opacity:.7; }
+}
+@media(max-width:700px){
+  .how-header{ flex-direction:column; text-align:center; }
+  .how-char{ width:220px; }
+}
+
+/* ============================== HERO CHAR (guide with color swirls) ============================== */
+.hero-char{
+  position:absolute;
+  bottom:-40px;
+  right:-20px;
+  width:440px;
+  z-index:0;
+  pointer-events:none;
+  /* Entrance: slide up + fade in */
+  opacity:0;
+  transform:translateY(60px) scale(.92);
+  animation:
+    heroEntrance 1.2s cubic-bezier(.22,1,.36,1) .4s forwards,
+    heroFloat 8s var(--ease) 1.6s infinite,
+    heroGlow 6s ease-in-out 1.6s infinite;
+}
+@keyframes heroEntrance{
+  to{
+    opacity:.35;
+    transform:translateY(0) scale(1);
+  }
+}
+@keyframes heroFloat{
+  0%,100%{
+    transform:translateY(0) rotate(0deg) scale(1);
+  }
+  20%{
+    transform:translateY(-12px) rotate(2deg) scale(1.02);
+  }
+  40%{
+    transform:translateY(-18px) rotate(-1.5deg) scale(1.04);
+  }
+  60%{
+    transform:translateY(-8px) rotate(2.5deg) scale(1.03);
+  }
+  80%{
+    transform:translateY(-14px) rotate(-1deg) scale(1.01);
+  }
+}
+@keyframes heroGlow{
+  0%,100%{
+    filter:drop-shadow(0 14px 36px rgba(58,95,74,.25));
+  }
+  33%{
+    filter:drop-shadow(0 20px 48px rgba(168,144,62,.3));
+  }
+  66%{
+    filter:drop-shadow(0 18px 44px rgba(196,101,74,.28));
+  }
+}
+@media(max-width:1100px){ .hero-char{ width:360px; right:-20px; bottom:-30px; } }
+@media(max-width:820px){ .hero-char{ width:280px; right:-10px; opacity:.18; } }
+@media(max-width:620px){ .hero-char{ display:none; } }
+
+/* Dark mode: let it pop, no filter dimming */
+[data-theme="dark"] .hero-char{
+  opacity:.6;
+}
+
+/* ============================== PRESS CHAR (seated figure) ============================== */
+.press-char{
+  position:absolute;
+  right:5%;
+  bottom:12px;
+  height:130px;
+  width:auto;
+  z-index:1;
+  pointer-events:none;
+  opacity:.85;
+  filter:drop-shadow(0 8px 20px rgba(8,19,16,.4));
+  animation:pressCharSip 5s var(--ease) infinite;
+}
+@keyframes pressCharSip{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-4px); }
+}
+@media(max-width:900px){ .press-char{ height:100px; right:3%; } }
+@media(max-width:620px){ .press-char{ display:none; } }
+
+/* ============================== CTA BIKE RIDE ============================== */
+.cta-bike{
+  position:absolute;
+  bottom:12%;
+  left:-5%;
+  width:280px;
+  height:auto;
+  z-index:1;
+  pointer-events:none;
+  opacity:.9;
+  filter:drop-shadow(0 10px 28px rgba(8,19,16,.5));
+  animation:bikeRide 12s linear infinite;
+}
+@keyframes bikeRide{
+  0%{ transform:translateX(-120%) translateY(10px); opacity:0; }
+  8%{ opacity:.9; }
+  45%{ transform:translateX(30vw) translateY(-8px); opacity:.9; }
+  55%{ transform:translateX(50vw) translateY(-4px); opacity:.85; }
+  92%{ opacity:.9; }
+  100%{ transform:translateX(120vw) translateY(10px); opacity:0; }
+}
+@media(max-width:900px){ .cta-bike{ width:200px; bottom:8%; } }
+@media(max-width:620px){ .cta-bike{ width:160px; bottom:4%; } }
+@media(prefers-reduced-motion:reduce){ .cta-bike{ animation:none; left:5%; opacity:.7; transform:none; } }
+
+/* ============================== FOUNDER PORTRAIT ============================== */
+.founder-portrait{
+  position:relative;
+  justify-self:center;
+  animation:portraitFloat 6s var(--ease) infinite;
+}
+@keyframes portraitFloat{
+  0%,100%{ transform:translateY(0) rotate(0deg); }
+  50%{ transform:translateY(-10px) rotate(-1deg); }
+}
+.portrait-frame{
+  width:100%;
+  max-width:440px;
+  height:auto;
+  aspect-ratio:16/9;
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+  border:3px solid var(--ink);
+  background:var(--patina-deeper);
+  box-shadow:
+    8px 8px 0 0 var(--terra),
+    16px 16px 0 0 rgba(196,101,74,.3);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+.portrait-frame:hover{
+  transform:translate(-4px,-4px) rotate(.5deg);
+  box-shadow:
+    12px 12px 0 0 var(--terra),
+    24px 24px 0 0 rgba(196,101,74,.3);
+}
+.portrait-frame img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+}
+/* Floating dots orbit the frame */
+.portrait-dot{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.portrait-dot-1{
+  top:-14px; right:-16px;
+  width:22px; height:22px;
+  background:var(--brass);
+  border:2px solid var(--ink);
+  animation:dotOrbit1 4s var(--ease) infinite;
+}
+.portrait-dot-2{
+  bottom:-12px; left:-18px;
+  width:14px; height:14px;
+  background:var(--plum-lit);
+  border:2px solid var(--ink);
+  animation:dotOrbit2 5s var(--ease) infinite;
+}
+.portrait-dot-3{
+  top:40%; left:-24px;
+  width:10px; height:10px;
+  background:var(--patina-lit);
+  border:1.5px solid var(--ink);
+  animation:dotOrbit3 3.5s var(--ease) infinite;
+}
+@keyframes dotOrbit1{
+  0%,100%{ transform:translate(0,0); }
+  25%{ transform:translate(4px,-6px); }
+  50%{ transform:translate(-2px,-10px); }
+  75%{ transform:translate(-6px,-4px); }
+}
+@keyframes dotOrbit2{
+  0%,100%{ transform:translate(0,0); }
+  33%{ transform:translate(-6px,4px); }
+  66%{ transform:translate(4px,8px); }
+}
+@keyframes dotOrbit3{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  50%{ transform:translate(-4px,-6px) scale(1.3); }
+}
+
+/* ============================== AIRPLANE FLIGHT ============================== */
+.final-cta-arrow{
+  animation:planeFly 7s ease-in-out infinite;
+}
+@keyframes planeFly{
+  0%{ transform:translate(0, 0) rotate(0deg); opacity:0; }
+  10%{ opacity:.7; }
+  45%{ transform:translate(-18px, -8px) rotate(-3deg); opacity:.9; }
+  55%{ transform:translate(-22px, -4px) rotate(2deg); opacity:.9; }
+  90%{ opacity:.6; }
+  100%{ transform:translate(0, 0) rotate(0deg); opacity:0; }
+}
+@media(prefers-reduced-motion:reduce){
+  .final-cta-arrow{ animation:none; opacity:.7; }
+}
+
+/* ============================== FOOTER STAGE ============================== */
+.foot-stage{
+  border-top:1px solid var(--cream-line);
+  padding:64px 0 40px;
+}
+
+/* === Stats row: counting, bouncing, alive === */
+.foot-stage-stats{
+  display:flex;
+  justify-content:center;
+  align-items:stretch;
+  gap:0;
+  margin-bottom:64px;
+}
+@media(max-width:700px){
+  .foot-stage-stats{ flex-direction:column; align-items:center; gap:36px; }
+}
+.fs-stat{
+  flex:1;
+  max-width:320px;
+  text-align:center;
+  padding:0 36px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  cursor:default;
+}
+.fs-divider{
+  width:1px;
+  align-self:stretch;
+  background:var(--cream-line);
+  flex-shrink:0;
+}
+@media(max-width:700px){ .fs-divider{ width:60px; height:1px; } }
+
+.fs-num{
+  font-family:var(--f-display);
+  font-size:clamp(5rem, 12vw, 9rem);
+  line-height:.82;
+  letter-spacing:-0.04em;
+  opacity:0;
+  transform:translateY(30px) scale(.8);
+  transition:opacity .6s var(--ease), transform .6s var(--ease);
+}
+.fs-stat.in-view .fs-num{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+/* Stagger */
+.fs-stat-1 .fs-num{ transition-delay:0s; }
+.fs-stat-2 .fs-num{ transition-delay:.2s; }
+.fs-stat-3 .fs-num{ transition-delay:.4s; }
+
+/* After entrance: bounce idle */
+.fs-stat.counted .fs-num{
+  animation:numBounce 3s var(--ease) infinite;
+}
+.fs-stat-1.counted .fs-num{ animation-delay:0s; }
+.fs-stat-2.counted .fs-num{ animation-delay:1s; }
+.fs-stat-3.counted .fs-num{ animation-delay:2s; }
+@keyframes numBounce{
+  0%,100%{ transform:translateY(0) scale(1) rotate(0deg); }
+  20%{ transform:translateY(-8px) scale(1.06) rotate(-1.5deg); }
+  40%{ transform:translateY(2px) scale(.98) rotate(.5deg); }
+  60%{ transform:translateY(-4px) scale(1.02) rotate(-.5deg); }
+}
+
+.fs-stat-1 .fs-num{ color:var(--patina); }
+.fs-stat-2 .fs-num{ color:var(--terra); }
+.fs-stat-3 .fs-num{ color:var(--brass); }
+
+/* Hover: pop + glow */
+.fs-stat:hover .fs-num{
+  transform:translateY(-10px) scale(1.12) !important;
+  animation:none !important;
+  filter:drop-shadow(0 8px 20px currentColor);
+  transition:transform .25s var(--ease), filter .25s;
+}
+
+.fs-label{
+  font-family:var(--f-mono);
+  font-size:.75rem;
+  font-weight:600;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--ink);
+  margin-top:8px;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
+.fs-stat.in-view .fs-label{ opacity:1; transform:translateY(0); }
+.fs-stat-1 .fs-label{ transition-delay:.3s; }
+.fs-stat-2 .fs-label{ transition-delay:.5s; }
+.fs-stat-3 .fs-label{ transition-delay:.7s; }
+
+.fs-sub{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:.95rem;
+  color:var(--ink-mute);
+  margin-top:4px;
+  opacity:0;
+  transition:opacity .6s var(--ease);
+}
+.fs-stat.in-view .fs-sub{ opacity:1; transition-delay:.6s; }
+
+@media(prefers-reduced-motion:reduce){
+  .fs-num,.fs-label,.fs-sub{ opacity:1; transform:none; animation:none; }
+  .fs-stat.counted .fs-num{ animation:none; }
+}
+
+/* === Art left + stacked name right === */
+.foot-stage-brand{
+  display:flex;
+  align-items:center;
+  gap:48px;
+  padding-top:48px;
+  border-top:1px solid var(--cream-line);
+}
+@media(max-width:900px){
+  .foot-stage-brand{ flex-direction:column; text-align:center; }
+}
+
+/* Art with floating pills */
+.foot-stage-art{
+  position:relative;
+  width:340px;
+  flex-shrink:0;
+}
+.foot-stage-art img{
+  width:100%;
+  height:auto;
+  border-radius:var(--r-card);
+  border:2px solid var(--cream-line);
+  filter:drop-shadow(0 16px 36px rgba(26,22,16,.2));
+  transition:transform .8s var(--ease);
+}
+.foot-stage-art:hover img{
+  transform:scale(1.03) rotate(-1deg);
+}
+/* Floating UI pills over art */
+.art-overlay-pills{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.art-pill{
+  position:absolute;
+  padding:6px 14px;
+  border-radius:var(--r-pill);
+  font-family:var(--f-mono);
+  font-size:.6rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  border:1px solid;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.ap-1{
+  top:10%; left:-12%;
+  background:rgba(58,95,74,.85); color:var(--cream); border-color:var(--patina);
+  animation:pillFloat1 5s var(--ease) infinite;
+}
+.ap-2{
+  top:36%; right:-16%;
+  background:rgba(168,144,62,.88); color:var(--ink); border-color:var(--brass);
+  animation:pillFloat2 6s var(--ease) infinite;
+}
+.ap-3{
+  bottom:28%; left:-8%;
+  background:rgba(196,101,74,.85); color:var(--cream); border-color:var(--terra);
+  animation:pillFloat3 5.5s var(--ease) infinite;
+}
+.ap-4{
+  bottom:6%; right:-10%;
+  background:rgba(122,90,110,.85); color:var(--cream); border-color:var(--plum);
+  animation:pillFloat4 4.5s var(--ease) infinite;
+}
+@keyframes pillFloat1{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-6px) rotate(-2deg); } }
+@keyframes pillFloat2{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-8px) rotate(1.5deg); } }
+@keyframes pillFloat3{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-5px); } }
+@keyframes pillFloat4{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-7px) rotate(-1deg); } }
+@media(max-width:900px){
+  .art-pill{ font-size:.55rem; padding:5px 10px; }
+  .ap-1{ left:-6%; } .ap-2{ right:-8%; } .ap-3{ left:-4%; } .ap-4{ right:-6%; }
+  .foot-stage-art{ width:260px; }
+}
+
+/* Stacked name: Quantum line 1, Branding line 2 */
+.foot-stage-name{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  text-align:right;
+  flex:1;
+  min-width:0;
+}
+.fsn-line{
+  font-family:var(--f-display);
+  letter-spacing:-0.04em;
+  display:block;
+  line-height:.86;
+  opacity:0;
+  transform:translateX(40px);
+  transition:opacity .8s var(--ease), transform .8s var(--ease);
+}
+.fsn-line.in-view{
+  opacity:1;
+  transform:translateX(0);
+}
+.fsn-1{
+  font-size:clamp(4rem, 12vw, 11rem);
+  color:var(--ink);
+  transition-delay:0s;
+}
+.fsn-2{
+  font-size:clamp(4.5rem, 13vw, 12rem);
+  color:var(--ink);
+  transition-delay:.15s;
+}
+.fsn-2 em{
+  font-style:italic;
+  color:var(--patina);
+  animation:brandingColorCycle 10s var(--ease) infinite;
+}
+@keyframes brandingColorCycle{
+  0%,100%{ color:var(--patina); }
+  20%{ color:var(--brass); }
+  40%{ color:var(--terra); }
+  60%{ color:var(--plum-lit); }
+  80%{ color:var(--patina-lit); }
+}
+@media(max-width:900px){
+  .foot-stage-name{ text-align:center; }
+  .fsn-1{ font-size:clamp(3rem, 14vw, 6rem); }
+  .fsn-2{ font-size:clamp(3.5rem, 16vw, 7rem); }
+  .fsn-line{ transform:translateY(20px); }
+  .fsn-line.in-view{ transform:translateY(0); }
+}
+
+/* Character micro-animations */
+.pen-tip{
+  animation:penPulse 1.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes penPulse{
+  0%,100%{ opacity:.3; r:1.5; }
+  50%{ opacity:1; r:3; }
+}
+.earring-glint{
+  animation:glintPulse 2.2s ease-in-out infinite;
+}
+@keyframes glintPulse{
+  0%,100%{ opacity:.4; }
+  50%{ opacity:1; }
+}
+.key-glint{
+  animation:keyPulse 2s ease-in-out infinite;
+}
+@keyframes keyPulse{
+  0%,100%{ opacity:.5; r:2; }
+  50%{ opacity:1; r:3.5; }
+}
+
+/* ==========================================================
+   DARK MODE
+   ========================================================== */
+[data-theme="dark"]{
+  --cream:          #0E0C09;
+  --cream-soft:     #0A0806;
+  --cream-deep:     #141210;
+  --cream-edge:     rgba(140,110,70,0.06);
+  --cream-line:     rgba(140,110,70,0.10);
+  --ink:            #DDD4C4;
+  --ink-soft:       #A89A88;
+  --ink-mute:       #6A5E50;
+  --ink-faint:      #3A342C;
+  --pill-bg:        #2A2418;
+  --pill-bg-hover:  #3A3020;
+  --pill-border:    #5A4E38;
+  --pill-ink:       #D4BA62;
+}
+/* Body transition */
+body{ transition:background .4s ease, color .3s ease; }
+
+/* Nav glass */
+[data-theme="dark"] .nav-inner{
+  background:rgba(14,12,9,.85);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-color:rgba(140,110,70,.08);
+  box-shadow:0 6px 30px -18px rgba(0,0,0,.5);
+}
+[data-theme="dark"] .nav-links a{ color:var(--ink-mute); }
+[data-theme="dark"] .nav-links a:hover{ background:rgba(140,110,70,.08); color:var(--ink); }
+
+/* Buttons */
+[data-theme="dark"] .btn{ border-color:rgba(140,110,70,.2); color:var(--ink); }
+[data-theme="dark"] .btn:hover{ background:var(--ink); color:var(--cream); }
+[data-theme="dark"] .btn-ghost{ color:var(--ink-soft); }
+
+/* Hero */
+[data-theme="dark"] .hero-eyebrow{ background:rgba(140,110,70,.06); border-color:rgba(140,110,70,.12); }
+[data-theme="dark"] .display{ color:var(--ink); }
+[data-theme="dark"] .hero h1{ color:var(--ink); }
+
+/* Orbit pills */
+[data-theme="dark"] .orbit-pill.op-patina{ background:rgba(58,95,74,.18); border-color:rgba(58,95,74,.4); color:#7FB894; }
+[data-theme="dark"] .orbit-pill.op-brass{ background:rgba(168,144,62,.18); border-color:rgba(168,144,62,.4); color:#D4BA62; }
+[data-theme="dark"] .orbit-pill.op-terra{ background:rgba(196,101,74,.16); border-color:rgba(196,101,74,.38); color:#E8A090; }
+[data-theme="dark"] .orbit-pill.op-plum{ background:rgba(122,90,110,.18); border-color:rgba(122,90,110,.38); color:#C4A8B8; }
+
+/* Cards + surfaces */
+[data-theme="dark"] .price-card{ background:rgba(140,110,70,.04); border-color:rgba(140,110,70,.1); }
+[data-theme="dark"] .price-card:hover{ border-color:rgba(140,110,70,.25); }
+[data-theme="dark"] .price-card.feat{ background:#080A08; border-color:#080A08; }
+[data-theme="dark"] .price-card:nth-child(1){ border-top-color:var(--patina); }
+[data-theme="dark"] .price-card:nth-child(2){ border-top-color:var(--brass); }
+[data-theme="dark"] .price-card:nth-child(3){ border-top-color:var(--terra); }
+[data-theme="dark"] .price-card:nth-child(4){ border-top-color:var(--plum-lit); }
+[data-theme="dark"] .price-feat::before{ background-color:rgba(140,110,70,.08); }
+
+/* FAQ */
+[data-theme="dark"] .faq{ background:rgba(140,110,70,.04); border-color:rgba(140,110,70,.08); }
+[data-theme="dark"] .faq-item{ border-bottom-color:rgba(140,110,70,.06); }
+[data-theme="dark"] .faq-q{ color:var(--ink); }
+
+/* Multi cards */
+[data-theme="dark"] .multi .side-card{ background:rgba(140,110,70,.04); border-color:rgba(140,110,70,.08); }
+
+/* How cards */
+[data-theme="dark"] .how-card.theme-patina::before{ opacity:.2; }
+[data-theme="dark"] .how-card.theme-terra::before{ opacity:.2; }
+[data-theme="dark"] .how-card.theme-plum::before{ opacity:.2; }
+
+/* Section dark: deepen */
+[data-theme="dark"] .section-dark{ background:#080A08; }
+[data-theme="dark"] .final-cta{ background:#060806; }
+
+/* Press pills */
+[data-theme="dark"] .press-pill{ background:rgba(238,229,210,.06); border-color:rgba(238,229,210,.16); }
+
+/* Swatches */
+[data-theme="dark"] .swatch-row .sw{ border-color:rgba(140,110,70,.2); }
+
+/* Mock tags */
+[data-theme="dark"] .mock-tag{ background:rgba(168,144,62,.2); border-color:rgba(168,144,62,.35); }
+[data-theme="dark"] .mock-tag.patina{ background:rgba(74,122,94,.2); border-color:rgba(74,122,94,.4); }
+
+/* Persona tabs */
+[data-theme="dark"] .persona-tag{ border-color:rgba(238,229,210,.18); }
+[data-theme="dark"] .persona-tag:hover{ background:rgba(238,229,210,.06); }
+
+/* Mobile menu */
+[data-theme="dark"] .mmenu{ background:var(--cream); }
+[data-theme="dark"] .mmenu-list a{ color:var(--ink); border-bottom-color:rgba(140,110,70,.08); }
+
+/* Hamburger */
+[data-theme="dark"] .hamburger{ border-color:rgba(140,110,70,.14); }
+[data-theme="dark"] .hamburger span{ background:var(--ink); }
+
+/* Footer */
+[data-theme="dark"] .foot-bottom{ border-top-color:rgba(140,110,70,.08); }
+[data-theme="dark"] .foot-stage{ border-top-color:rgba(140,110,70,.08); }
+[data-theme="dark"] .foot-stage-brand{ border-top-color:rgba(140,110,70,.08); }
+
+/* Hero char: bright in dark */
+[data-theme="dark"] .hero-char{ opacity:.6; }
+
+/* Smooth transitions on containers */
+.nav-inner, .price-card, .faq, .multi .side-card, .orbit-pill, .press-pill, .mmenu{
+  transition:background .4s ease, border-color .3s ease, box-shadow .3s ease;
+}
+
+/* ============================== THEME TOGGLE BUTTON ============================== */
+.theme-toggle{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:1px solid var(--cream-line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  color:var(--ink-mute);
+  cursor:pointer;
+  transition:all .25s var(--ease);
+  background:transparent;
+  flex-shrink:0;
+}
+.theme-toggle:hover{
+  border-color:var(--brass);
+  color:var(--brass);
+  background:var(--brass-faint);
+}
+
+/* ============================== VIDEO PLACEHOLDER ============================== */
+.video-placeholder{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  border-radius:var(--r-card-lg);
+  overflow:hidden;
+  cursor:pointer;
+  background:linear-gradient(135deg, var(--patina-deep), #141210);
+  border:1px solid rgba(140,110,70,.12);
+  transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s;
+}
+.video-placeholder:hover{
+  transform:translateY(-4px);
+  box-shadow:0 24px 60px -20px rgba(8,19,16,.5);
+}
+.video-inner{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  z-index:1;
+}
+.video-play-btn{
+  width:68px; height:68px;
+  border-radius:50%;
+  border:2px solid rgba(238,229,210,.3);
+  background:rgba(238,229,210,.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .3s;
+}
+.video-play-btn svg{ margin-left:3px; }
+.video-placeholder:hover .video-play-btn{
+  border-color:var(--brass);
+  background:rgba(168,144,62,.15);
+  transform:scale(1.1);
+}
+.video-label-text{
+  font-family:var(--f-mono);
+  font-size:.72rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--dark-text-mute);
+}
+.video-embed{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  background:#000;
+}
+.video-embed iframe{ width:100%; height:100%; }
+
+/* ============================== DARK TESTI CARD ============================== */
+/* Testi cards always cream — they sit on dark bg in both modes */
+[data-theme="dark"] .testi-card{ background:#F4F0EB; color:#1A1610; }
+
+/* ============================== PHASE CARD MOTION ============================== */
+/* All multi cards: smooth hover lift */
+.multi .big-card,
+.multi .side-card{
+  transition:transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s;
+}
+.multi .big-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 28px 60px -20px rgba(8,19,16,.45);
+}
+.multi .side-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 24px 50px -18px rgba(26,22,16,.22);
+  border-color:var(--brass);
+}
+
+/* Mock note: subtle slide-in feel */
+.mock-note{
+  transition:transform .4s var(--ease);
+}
+.multi .big-card:hover .mock-note{
+  transform:translateX(4px);
+}
+
+/* Mock tags: stagger pop on card hover */
+.mock-tags .mock-tag{
+  transition:transform .3s var(--ease), opacity .3s;
+}
+.multi .big-card:hover .mock-tags .mock-tag:nth-child(1){ transform:translateY(-3px); transition-delay:0s; }
+.multi .big-card:hover .mock-tags .mock-tag:nth-child(2){ transform:translateY(-3px); transition-delay:.06s; }
+.multi .big-card:hover .mock-tags .mock-tag:nth-child(3){ transform:translateY(-3px); transition-delay:.12s; }
+
+/* Swatches: wave on card hover */
+.swatch-row .sw{
+  transition:transform .3s var(--ease);
+}
+.side-card:hover .swatch-row .sw:nth-child(1){ transform:translateY(-4px) rotate(-3deg); transition-delay:0s; }
+.side-card:hover .swatch-row .sw:nth-child(2){ transform:translateY(-6px) rotate(2deg); transition-delay:.04s; }
+.side-card:hover .swatch-row .sw:nth-child(3){ transform:translateY(-4px) rotate(-2deg); transition-delay:.08s; }
+.side-card:hover .swatch-row .sw:nth-child(4){ transform:translateY(-5px) rotate(3deg); transition-delay:.12s; }
+.side-card:hover .swatch-row .sw:nth-child(5){ transform:translateY(-3px) rotate(-1deg); transition-delay:.16s; }
+.side-card:hover .swatch-row .sw:nth-child(6){ transform:translateY(-5px) rotate(2deg); transition-delay:.2s; }
+
+/* Phase 04 image: subtle zoom on hover */
+.multi .side-card img{
+  transition:transform .5s var(--ease);
+}
+.multi .side-card:hover img{
+  transform:scale(1.03);
+}
+
+/* Phase 05 stat tiles: pulse on card hover */
+.multi .big-card:hover [style*="border-radius:10px"]{
+  transition:transform .3s var(--ease), background .3s;
+}
+.multi .big-card:hover [style*="border-radius:10px"]:nth-child(1){ transform:translateY(-3px); transition-delay:0s; }
+.multi .big-card:hover [style*="border-radius:10px"]:nth-child(2){ transform:translateY(-3px); transition-delay:.06s; }
+.multi .big-card:hover [style*="border-radius:10px"]:nth-child(3){ transform:translateY(-3px); transition-delay:.12s; }
+.multi .big-card:hover [style*="border-radius:10px"]:nth-child(4){ transform:translateY(-3px); transition-delay:.18s; }
+
+/* Phase 03 dark card: glow on hover */
+.side-card[style*="patina-deep"]:hover{
+  box-shadow:0 24px 50px -18px rgba(58,95,74,.35) !important;
+  border-color:var(--patina-lit) !important;
+}
+
+/* Align all phase eyebrows consistently */
+.multi .eyebrow,
+.multi .device-label{
+  margin-bottom:10px;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .multi .big-card, .multi .side-card, .mock-note, .mock-tag, .sw{ transition:none !important; transform:none !important; }
+}
+
+/* ============================== MOBILE FIXES ============================== */
+/* Prevent zoom-out breaking layout */
+html{ -webkit-text-size-adjust:100%; }
+body{ min-width:320px; }
+
+/* Multi cards: stack properly on mobile, no side-by-side overflow */
+@media(max-width:700px){
+  .multi{ grid-template-columns:1fr !important; }
+  .multi .big-card{ min-height:auto; padding:28px 22px; }
+  .multi .big-card .display{ font-size:1.4rem; }
+  .multi .side-col{ gap:16px; }
+  .multi .side-card{ padding:24px 20px; }
+  .multi .side-card .display{ font-size:1.3rem; }
+
+  /* Phase 4+5 bottom grid: force single column */
+  .multi .side-col[style*="grid-column"],
+  .multi .big-card[style*="grid-column"]{ grid-column:auto !important; }
+
+  /* Mock tags wrap tighter */
+  .mock-tag{ font-size:.6rem; padding:5px 10px; }
+
+  /* Device card tighter */
+  .device-card{ padding:24px 20px; }
+  .device-label{ font-size:.62rem; margin-bottom:16px; }
+  .prof-val{ font-size:.95rem; }
+}
+
+/* Footer mobile: condense everything */
+@media(max-width:640px){
+  .foot-grid{ gap:20px 16px; grid-template-columns:1fr 1fr; }
+  .foot-grid > div:first-child{ grid-column:1 / -1; }
+  .foot-col-title{ margin-bottom:10px; }
+  .foot-col a{ padding:4px 0; font-size:.85rem; }
+  .foot-brand{ font-size:1.1rem; margin-bottom:8px; }
+  .foot-desc{ font-size:.85rem; }
+
+  /* Footer stage: smaller stats, tighter */
+  .foot-stage{ padding:40px 0 24px; }
+  .foot-stage-stats{ margin-bottom:36px; gap:20px; }
+  .fs-num{ font-size:clamp(3rem, 15vw, 5rem) !important; }
+  .fs-label{ font-size:.65rem; }
+  .fs-sub{ font-size:.82rem; }
+  .fs-stat{ padding:0 16px; }
+
+  /* Footer brand row */
+  .foot-stage-brand{ gap:24px; padding-top:28px; }
+  .foot-stage-art{ width:200px; }
+  .fsn-1{ font-size:clamp(2.5rem, 12vw, 4rem) !important; }
+  .fsn-2{ font-size:clamp(3rem, 14vw, 4.5rem) !important; }
+
+  /* Art pills smaller */
+  .art-pill{ font-size:.5rem; padding:4px 8px; }
+
+  /* Footer bottom */
+  .foot-bottom{ flex-direction:column; align-items:center; text-align:center; gap:8px; padding:16px 0; }
+}
+
+/* Prevent horizontal scroll everywhere */
+@media(max-width:480px){
+  .hero{ padding:60px 0 70px; }
+  .hero h1{ font-size:2.2rem; }
+  .hero .sub{ font-size:.95rem; }
+  .hero-ctas .btn{ font-size:.82rem; padding:12px 18px; }
+  .orbit-label{ flex-direction:column; align-items:center; gap:6px; margin-top:36px; }
+  .orbit-count{ font-size:2rem; }
+
+  .section{ padding:72px 0; }
+  .section-tight{ padding:56px 0; }
+  .section-dark{ margin:0 8px; border-radius:22px; }
+
+  .h2{ font-size:1.8rem; }
+  .h3{ font-size:1.3rem; }
+
+  .how-grid{ gap:14px; }
+  .how-card{ padding:24px 20px; }
+  .how-num{ font-size:2.4rem; }
+
+  .price-grid{ gap:12px; }
+  .price-card{ padding:24px 20px; }
+  .price-num{ font-size:2.2rem; }
+
+  .faq-q{ padding:18px 20px; font-size:1rem; }
+  .faq-a-inner{ padding:0 20px 18px; font-size:.88rem; }
+
+  .persona-v2 .persona-body{ gap:20px; }
+  .persona-v2 .persona-stage{ min-height:280px; }
+  .persona-v2 .persona-detail{ padding:28px 22px; }
+  .persona-v2 .persona-detail h3{ font-size:1.3rem; }
+
+  .final-cta{ padding:80px 20px 90px; margin:0 8px 40px; }
+  .cta-bike{ width:120px; }
+
+  .founder-compact{ padding:56px 0; }
+  .founder-copy .founder-quote{ font-size:1.15rem; }
+  .portrait-frame{ max-width:100%; }
+}
+
+/* ==========================================================
+   GLOSSY AMBIENT LAYERS (harmonized with index.html hero)
+   ========================================================== */
+.ambient-eco{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.ambient-eco .orb{
+  position:absolute;
+  width:560px;
+  height:560px;
+  border-radius:50%;
+  background:radial-gradient(circle at center,
+    rgba(168,144,62,.14),
+    rgba(196,101,74,.08) 40%,
+    transparent 70%);
+  filter:blur(70px);
+  left:0;
+  top:0;
+  transition:transform .5s cubic-bezier(.22,1,.36,1);
+  will-change:transform;
+  mix-blend-mode:multiply;
+}
+[data-theme="dark"] .ambient-eco .orb{
+  background:radial-gradient(circle at center,
+    rgba(196,168,78,.28),
+    rgba(196,101,74,.15) 40%,
+    transparent 70%);
+  mix-blend-mode:screen;
+}
+.ambient-eco .blob{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(100px);
+  opacity:.12;
+  mix-blend-mode:screen;
+  will-change:transform;
+}
+[data-theme="dark"] .ambient-eco .blob{ opacity:.18; }
+.ambient-eco .b1{
+  width:520px; height:520px;
+  top:-10%; left:-10%;
+  background:var(--patina);
+  animation:ebFloat1 18s ease-in-out infinite;
+}
+.ambient-eco .b2{
+  width:440px; height:440px;
+  top:30%; right:-10%;
+  background:var(--terra);
+  animation:ebFloat2 20s ease-in-out infinite;
+}
+.ambient-eco .b3{
+  width:380px; height:380px;
+  top:70%; left:25%;
+  background:var(--plum);
+  animation:ebFloat3 22s ease-in-out infinite;
+}
+.ambient-eco .b4{
+  width:320px; height:320px;
+  top:110%; right:20%;
+  background:var(--brass);
+  animation:ebFloat4 16s ease-in-out infinite;
+}
+@keyframes ebFloat1{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(40px,30px) scale(1.08); }
+  66%{ transform:translate(-20px,60px) scale(.95); }
+}
+@keyframes ebFloat2{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  50%{ transform:translate(-50px,40px) scale(1.1); }
+}
+@keyframes ebFloat3{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  40%{ transform:translate(60px,-30px) scale(1.05); }
+  80%{ transform:translate(-30px,20px) scale(.92); }
+}
+@keyframes ebFloat4{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  50%{ transform:translate(-40px,-50px) scale(1.15); }
+}
+
+/* Film grain overlay */
+.grain-eco{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:.05;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .grain-eco{ opacity:.08; mix-blend-mode:screen; }
+
+/* Vignette */
+.vignette-eco{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(26,22,16,.06));
+}
+[data-theme="dark"] .vignette-eco{
+  background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(0,0,0,.3));
+}
+
+/* Ensure content sits above ambient */
+.page-wrap{
+  position:relative;
+  z-index:2;
+}
+
+/* ==========================================================
+   GLOSSY CTA UPGRADE (harmonize all .btn-primary)
+   ========================================================== */
+@property --eco-angle{
+  syntax:'<angle>';
+  initial-value:0deg;
+  inherits:false;
+}
+.btn-primary{
+  position:relative;
+  isolation:isolate;
+}
+.btn-primary::before{
+  content:'';
+  position:absolute;
+  inset:-3px;
+  background:conic-gradient(from var(--eco-angle), var(--patina), var(--brass), var(--terra), var(--plum), var(--patina));
+  border-radius:999px;
+  z-index:-1;
+  opacity:0;
+  transition:opacity .4s ease;
+  animation:ecoSpin 6s linear infinite;
+  filter:blur(10px);
+}
+@keyframes ecoSpin{
+  to{ --eco-angle:360deg; }
+}
+.btn-primary:hover::before{
+  opacity:.75;
+}
+.btn-primary:hover{
+  box-shadow:0 14px 40px -12px rgba(168,144,62,.35);
+}
+
+/* Smooth page transition */
+body{
+  transition:background .5s ease, color .3s ease;
+}
+
+/* Section backgrounds: layer ambient through */
+.section{ position:relative; z-index:2; }
+.section-dark{ position:relative; z-index:2; }
+
+</style>
+</head>
+<body>
+
+<!-- ================== GLOSSY AMBIENT LAYERS ================== -->
+<div class="ambient-eco">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+  <div class="orb" id="ecoOrb"></div>
+</div>
+<div class="grain-eco"></div>
+<div class="vignette-eco"></div>
+
+<!-- ================== SVG SYMBOL LIBRARY ================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- ================================================================
+         CHAR-THINK · 01 The Blank Slate
+         Seated woman, long wavy brown hair, tan jacket + green scarf,
+         book on crossed lap, pen at lip · matches reference image 3
+    ================================================================ -->
+    <symbol id="char-think" viewBox="0 0 240 280">
+      <!-- crossed legs (grey pants) -->
+      <path d="M50 278 Q45 240 85 220 L155 220 Q195 240 190 278 Z" fill="#8A8378"/>
+      <!-- shoe left -->
+      <ellipse cx="60" cy="272" rx="18" ry="8" fill="#5A4030"/>
+      <!-- shoe right -->
+      <ellipse cx="180" cy="272" rx="18" ry="8" fill="#5A4030"/>
+      <!-- tan jacket body -->
+      <path d="M70 225 L70 135 Q70 110 120 108 Q170 110 170 135 L170 225 Z" fill="#C49A6A"/>
+      <!-- jacket lapels -->
+      <path d="M100 108 L120 150 L140 108 L138 130 L120 160 L102 130 Z" fill="#A8815A"/>
+      <!-- cream shirt -->
+      <path d="M108 108 L108 160 L132 160 L132 108 Z" fill="#F4F0EB"/>
+      <!-- green scarf knot -->
+      <path d="M105 110 Q120 100 135 110 L138 125 L120 132 L102 125 Z" fill="#3A5F4A"/>
+      <path d="M115 128 L125 128 L122 142 L118 142 Z" fill="#3A5F4A"/>
+      <!-- neck -->
+      <rect x="110" y="96" width="20" height="14" fill="#F4E4D0"/>
+      <!-- head -->
+      <circle cx="120" cy="68" r="32" fill="#F4E4D0"/>
+      <!-- long wavy hair -->
+      <path d="M86 72 Q80 26 120 22 Q160 26 154 72 Q158 100 150 130 Q142 105 150 72 Q148 48 120 46 Q92 48 90 72 Q98 105 90 130 Q82 100 86 72 Z" fill="#8B5A3C"/>
+      <!-- hair length left -->
+      <path d="M86 100 Q82 130 90 155" fill="none" stroke="#8B5A3C" stroke-width="12" stroke-linecap="round"/>
+      <!-- hair length right -->
+      <path d="M154 100 Q158 130 150 155" fill="none" stroke="#8B5A3C" stroke-width="12" stroke-linecap="round"/>
+      <!-- eyes thin lines -->
+      <path d="M104 70 L112 70" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M128 70 L136 70" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- eyebrows straight -->
+      <path d="M102 62 L114 61" stroke="#1A1610" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M126 61 L138 62" stroke="#1A1610" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- quiet closed smile (Mona Lisa) -->
+      <path d="M113 87 Q120 91 127 87" fill="none" stroke="#1A1610" stroke-width="1.6" stroke-linecap="round"/>
+      <!-- book on lap -->
+      <path d="M80 210 L160 210 L170 235 L70 235 Z" fill="#F4F0EB" stroke="#1A1610" stroke-width="2.5"/>
+      <line x1="120" y1="210" x2="120" y2="235" stroke="#1A1610" stroke-width="1.5"/>
+      <line x1="88" y1="220" x2="112" y2="220" stroke="#8A7E70" stroke-width="1"/>
+      <line x1="128" y1="220" x2="152" y2="220" stroke="#8A7E70" stroke-width="1"/>
+      <line x1="88" y1="226" x2="112" y2="226" stroke="#8A7E70" stroke-width="1"/>
+      <!-- left arm down holding book -->
+      <path d="M80 170 Q70 195 82 212" fill="none" stroke="#C49A6A" stroke-width="14" stroke-linecap="round"/>
+      <!-- right arm bent thoughtfully, hand holding pen beside cheek -->
+      <path d="M158 170 Q180 140 160 110 Q152 100 146 102" fill="none" stroke="#C49A6A" stroke-width="14" stroke-linecap="round"/>
+      <!-- right hand -->
+      <circle cx="148" cy="104" r="8" fill="#F4E4D0" stroke="#1A1610" stroke-width="1.5"/>
+      <!-- pen held diagonally (not touching lip) -->
+      <rect x="150" y="86" width="3" height="18" rx="1" fill="#A8903E" transform="rotate(18 151 95)"/>
+      <!-- pen cap accent -->
+      <circle cx="156" cy="84" r="2" fill="#C4A84E" class="pen-tip"/>
+    </symbol>
+
+    <!-- ================================================================
+         CHAR-NOTEBOOK · 02 The Doubter
+         Older man, grey hair, full dark suit + vest, holding business
+         card up at arm's length, one hand in pocket · matches image 2
+    ================================================================ -->
+    <symbol id="char-notebook" viewBox="0 0 220 320">
+      <!-- legs dark trousers -->
+      <path d="M75 318 L80 195 L140 195 L145 318 Z" fill="#1A1610"/>
+      <line x1="110" y1="200" x2="110" y2="318" stroke="#3A3028" stroke-width="1.5"/>
+      <!-- shoes -->
+      <ellipse cx="80" cy="316" rx="14" ry="6" fill="#0A0805"/>
+      <ellipse cx="140" cy="316" rx="14" ry="6" fill="#0A0805"/>
+      <!-- suit jacket -->
+      <path d="M50 220 Q50 140 110 125 Q170 140 170 220 L160 220 L155 200 L65 200 L60 220 Z" fill="#2A241E"/>
+      <!-- lapels -->
+      <path d="M90 130 L80 180 L110 195 L140 180 L130 130 L120 175 L100 175 Z" fill="#1A1610"/>
+      <!-- vest -->
+      <path d="M90 150 L90 200 L130 200 L130 150 Z" fill="#3A3028"/>
+      <!-- vest buttons -->
+      <circle cx="110" cy="165" r="1.5" fill="#A8903E"/>
+      <circle cx="110" cy="178" r="1.5" fill="#A8903E"/>
+      <circle cx="110" cy="191" r="1.5" fill="#A8903E"/>
+      <!-- watch chain across vest -->
+      <path d="M100 175 Q110 188 120 175" fill="none" stroke="#A8903E" stroke-width="1.5"/>
+      <!-- shirt collar triangle -->
+      <path d="M100 125 L110 140 L120 125 Z" fill="#F4F0EB"/>
+      <!-- tie -->
+      <path d="M107 130 L113 130 L115 160 L110 170 L105 160 Z" fill="#1A1610"/>
+      <!-- neck -->
+      <rect x="102" y="108" width="16" height="18" fill="#E8D4BC"/>
+      <!-- head -->
+      <circle cx="110" cy="78" r="30" fill="#E8D4BC"/>
+      <!-- grey swept-back hair -->
+      <path d="M80 80 Q78 42 110 38 Q142 42 140 80 Q138 56 110 54 Q82 56 80 80 Z" fill="#9A9488"/>
+      <path d="M82 78 Q84 70 100 68" fill="none" stroke="#7A7468" stroke-width="2"/>
+      <!-- hair streak white -->
+      <path d="M110 40 Q112 55 108 70" fill="none" stroke="#D4CEC0" stroke-width="2"/>
+      <!-- skeptical eyebrow raised left -->
+      <path d="M92 66 Q100 58 106 66" fill="none" stroke="#1A1610" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M116 66 Q122 62 128 66" fill="none" stroke="#1A1610" stroke-width="2" stroke-linecap="round"/>
+      <!-- eyes -->
+      <circle cx="99" cy="74" r="2" fill="#1A1610"/>
+      <circle cx="121" cy="74" r="2" fill="#1A1610"/>
+      <!-- nose -->
+      <path d="M110 78 L108 88 L112 88" fill="none" stroke="#C4A890" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- composed half-smile (adult, slightly knowing) -->
+      <path d="M102 96 Q110 100 118 96" fill="none" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- arm raised with card -->
+      <path d="M58 200 Q35 150 40 95" fill="none" stroke="#2A241E" stroke-width="18" stroke-linecap="round"/>
+      <!-- hand -->
+      <circle cx="42" cy="92" r="9" fill="#E8D4BC" stroke="#1A1610" stroke-width="1.5"/>
+      <!-- business card -->
+      <rect x="26" y="58" width="36" height="48" rx="2" fill="#F4F0EB" stroke="#1A1610" stroke-width="2" transform="rotate(-8 44 82)"/>
+      <!-- card symbol (brass arrow) -->
+      <path d="M36 78 L50 72 L46 80 L52 86 L42 92" fill="none" stroke="#A8903E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-8 44 82)"/>
+      <!-- other arm in pocket -->
+      <path d="M162 200 Q175 180 150 180" fill="none" stroke="#2A241E" stroke-width="16" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- ================================================================
+         CHAR-SPEAK · 03 The Player
+         Woman standing at laptop, short curly dark hair, dark skin,
+         patina/green blazer, gold hoop earrings · matches image 4
+    ================================================================ -->
+    <symbol id="char-speak" viewBox="0 0 280 240">
+      <!-- desk line -->
+      <line x1="10" y1="200" x2="270" y2="200" stroke="#1A1610" stroke-width="2.5"/>
+      <line x1="10" y1="218" x2="270" y2="218" stroke="#1A1610" stroke-width="2.5"/>
+      <!-- laptop base -->
+      <path d="M20 200 L95 200 L100 180 L15 180 Z" fill="#1A1610"/>
+      <!-- laptop screen -->
+      <path d="M22 180 L95 180 L92 105 L25 105 Z" fill="#2A2420" stroke="#1A1610" stroke-width="2"/>
+      <!-- screen glow line -->
+      <rect x="28" y="110" width="60" height="2" fill="#4A7A5E" opacity=".6"/>
+      <rect x="28" y="118" width="42" height="2" fill="#A8903E" opacity=".6"/>
+      <rect x="28" y="126" width="50" height="2" fill="#4A7A5E" opacity=".4"/>
+      <!-- laptop hinge highlight -->
+      <line x1="20" y1="180" x2="100" y2="180" stroke="#3A3028" stroke-width="1"/>
+      <!-- blazer body (green) -->
+      <path d="M105 220 L105 130 Q105 108 170 105 Q235 108 235 130 L235 220 Z" fill="#3A5F4A"/>
+      <!-- blazer lapels -->
+      <path d="M140 108 L130 180 L170 195 L210 180 L200 108 L190 170 L150 170 Z" fill="#2A4538"/>
+      <!-- black top under blazer -->
+      <path d="M150 108 L150 175 L190 175 L190 108 Z" fill="#0E1410"/>
+      <!-- neck -->
+      <rect x="160" y="88" width="20" height="18" fill="#8B5A3C"/>
+      <!-- head -->
+      <circle cx="170" cy="60" r="30" fill="#8B5A3C"/>
+      <!-- short curly hair (tight afro) -->
+      <path d="M138 60 Q128 18 170 14 Q212 18 202 60 Q200 38 170 36 Q140 38 138 60 Z" fill="#1A1610"/>
+      <circle cx="145" cy="40" r="8" fill="#1A1610"/>
+      <circle cx="158" cy="30" r="7" fill="#1A1610"/>
+      <circle cx="170" cy="26" r="7" fill="#1A1610"/>
+      <circle cx="182" cy="30" r="7" fill="#1A1610"/>
+      <circle cx="195" cy="40" r="8" fill="#1A1610"/>
+      <circle cx="140" cy="54" r="6" fill="#1A1610"/>
+      <circle cx="200" cy="54" r="6" fill="#1A1610"/>
+      <!-- gold hoop earrings -->
+      <circle cx="142" cy="68" r="4" fill="none" stroke="#C4A84E" stroke-width="2"/>
+      <circle cx="198" cy="68" r="4" fill="none" stroke="#C4A84E" stroke-width="2"/>
+      <!-- earring glint hook -->
+      <circle cx="198" cy="68" r="1.5" fill="#C4A84E" class="earring-glint"/>
+      <!-- eyebrows focused -->
+      <path d="M156 50 L166 48" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M174 48 L184 50" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- eyes thin lines -->
+      <path d="M157 58 L163 58" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M177 58 L183 58" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- nose bridge -->
+      <path d="M170 62 L168 72" stroke="#5A3020" stroke-width="1.3" stroke-linecap="round"/>
+      <!-- confident upturn smile -->
+      <path d="M163 80 Q170 84 177 80" fill="none" stroke="#1A1610" stroke-width="1.6" stroke-linecap="round"/>
+      <!-- arm on laptop (left, reaching down) -->
+      <path d="M115 150 Q95 175 85 180" fill="none" stroke="#3A5F4A" stroke-width="16" stroke-linecap="round"/>
+      <circle cx="85" cy="182" r="8" fill="#8B5A3C" stroke="#1A1610" stroke-width="1.5"/>
+      <!-- arm on desk (right, resting) -->
+      <path d="M225 150 Q240 180 248 198" fill="none" stroke="#3A5F4A" stroke-width="16" stroke-linecap="round"/>
+      <circle cx="250" cy="200" r="8" fill="#8B5A3C" stroke="#1A1610" stroke-width="1.5"/>
+      <!-- finger lines on right hand -->
+      <path d="M246 198 L258 200" stroke="#1A1610" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M246 202 L258 204" stroke="#1A1610" stroke-width="1.2" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- ================================================================
+         CHAR-CHEER · 04 The Guide
+         Young person in apron, black hair, holding open book outward
+         with chart + flowchart, brass key on desk · matches image 1
+    ================================================================ -->
+    <symbol id="char-cheer" viewBox="0 0 300 280">
+      <!-- desk baseline -->
+      <line x1="10" y1="240" x2="290" y2="240" stroke="#1A1610" stroke-width="2.5"/>
+      <line x1="10" y1="258" x2="290" y2="258" stroke="#1A1610" stroke-width="2.5"/>
+      <!-- brass key on desk -->
+      <g>
+        <circle cx="170" cy="248" r="6" fill="none" stroke="#A8903E" stroke-width="2.5"/>
+        <circle cx="170" cy="248" r="2" fill="#A8903E" class="key-glint"/>
+        <rect x="176" y="246" width="22" height="4" fill="#A8903E"/>
+        <rect x="192" y="250" width="3" height="5" fill="#A8903E"/>
+        <rect x="186" y="250" width="3" height="5" fill="#A8903E"/>
+      </g>
+      <!-- white shirt base -->
+      <path d="M80 240 L80 140 Q80 110 150 108 Q220 110 220 140 L220 240 Z" fill="#F4F0EB" stroke="#1A1610" stroke-width="2"/>
+      <!-- shirt sleeves rolled -->
+      <path d="M80 150 L65 175 L80 180" fill="#F4F0EB" stroke="#1A1610" stroke-width="2"/>
+      <path d="M220 150 L235 175 L220 180" fill="#F4F0EB" stroke="#1A1610" stroke-width="2"/>
+      <!-- apron (dark) -->
+      <path d="M100 240 L100 130 Q100 115 150 114 Q200 115 200 130 L200 240 Z" fill="#2A241E"/>
+      <!-- apron top strap -->
+      <path d="M115 120 L130 90" fill="none" stroke="#2A241E" stroke-width="4"/>
+      <path d="M185 120 L170 90" fill="none" stroke="#2A241E" stroke-width="4"/>
+      <!-- apron neck collar -->
+      <path d="M130 115 Q150 110 170 115 L170 125 L130 125 Z" fill="#F4F0EB"/>
+      <path d="M145 115 L150 128 L155 115 Z" fill="#F4F0EB"/>
+      <!-- apron stitching line -->
+      <line x1="110" y1="160" x2="190" y2="160" stroke="#1A1610" stroke-width="1" stroke-dasharray="3 3"/>
+      <!-- apron pocket with pencil -->
+      <rect x="165" y="170" width="25" height="20" fill="none" stroke="#1A1610" stroke-width="1.5"/>
+      <rect x="178" y="155" width="3" height="20" fill="#3A5F4A"/>
+      <rect x="178" y="150" width="3" height="6" fill="#C4A84E"/>
+      <line x1="168" y1="185" x2="188" y2="185" stroke="#1A1610" stroke-width="1" stroke-dasharray="2 2"/>
+      <!-- neck -->
+      <rect x="142" y="92" width="16" height="18" fill="#F4E4D0"/>
+      <!-- head -->
+      <circle cx="150" cy="62" r="30" fill="#F4E4D0"/>
+      <!-- short black hair -->
+      <path d="M120 62 Q116 22 150 18 Q184 22 180 62 Q178 38 150 36 Q122 38 120 62 Z" fill="#0A0805"/>
+      <!-- hair bang -->
+      <path d="M132 36 Q140 24 158 30 Q170 36 165 42" fill="#0A0805"/>
+      <!-- ears -->
+      <circle cx="120" cy="62" r="3" fill="#F4E4D0"/>
+      <circle cx="180" cy="62" r="3" fill="#F4E4D0"/>
+      <!-- eyebrows subtle -->
+      <path d="M138 54 L148 54" stroke="#1A1610" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M152 54 L162 54" stroke="#1A1610" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- eyes thin lines -->
+      <path d="M139 62 L145 62" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M155 62 L161 62" stroke="#1A1610" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- nose bridge -->
+      <path d="M150 66 L148 76" stroke="#C4A890" stroke-width="1.3" stroke-linecap="round"/>
+      <!-- warm welcoming smile -->
+      <path d="M144 83 Q150 88 156 83" fill="none" stroke="#1A1610" stroke-width="1.6" stroke-linecap="round"/>
+      <!-- open book outward -->
+      <g>
+        <path d="M30 215 L90 205 L90 245 L30 255 Z" fill="#F4F0EB" stroke="#1A1610" stroke-width="2.5"/>
+        <path d="M90 205 L150 215 L150 255 L90 245 Z" fill="#F4F0EB" stroke="#1A1610" stroke-width="2.5"/>
+        <line x1="90" y1="205" x2="90" y2="245" stroke="#1A1610" stroke-width="2"/>
+        <!-- pie chart on left page -->
+        <circle cx="60" cy="225" r="9" fill="none" stroke="#1A1610" stroke-width="1.5"/>
+        <path d="M60 225 L60 216 A9 9 0 0 1 68 228 Z" fill="#7A5A6E"/>
+        <path d="M60 225 L68 228 A9 9 0 0 1 54 232 Z" fill="#C4654A"/>
+        <line x1="42" y1="240" x2="78" y2="237" stroke="#8A7E70" stroke-width="1"/>
+        <line x1="42" y1="246" x2="72" y2="243" stroke="#8A7E70" stroke-width="1"/>
+        <!-- flowchart on right page -->
+        <rect x="100" y="218" width="12" height="8" rx="1" fill="none" stroke="#1A1610" stroke-width="1.2"/>
+        <rect x="122" y="218" width="12" height="8" rx="1" fill="none" stroke="#1A1610" stroke-width="1.2"/>
+        <rect x="100" y="235" width="12" height="8" rx="1" fill="none" stroke="#1A1610" stroke-width="1.2"/>
+        <rect x="122" y="235" width="12" height="8" rx="1" fill="none" stroke="#1A1610" stroke-width="1.2"/>
+        <line x1="112" y1="222" x2="122" y2="222" stroke="#1A1610" stroke-width="1"/>
+        <line x1="106" y1="226" x2="106" y2="235" stroke="#1A1610" stroke-width="1"/>
+        <line x1="128" y1="226" x2="128" y2="235" stroke="#1A1610" stroke-width="1"/>
+      </g>
+      <!-- left arm reaching to book -->
+      <path d="M95 170 Q70 200 50 225" fill="none" stroke="#F4F0EB" stroke-width="14" stroke-linecap="round"/>
+      <path d="M95 170 Q70 200 50 225" fill="none" stroke="#1A1610" stroke-width="2" stroke-linecap="round" fill-opacity="0"/>
+      <circle cx="48" cy="226" r="7" fill="#F4E4D0" stroke="#1A1610" stroke-width="1.5"/>
+      <!-- right arm resting on desk -->
+      <path d="M205 180 Q230 210 230 240" fill="none" stroke="#F4F0EB" stroke-width="14" stroke-linecap="round"/>
+      <path d="M205 180 Q230 210 230 240" fill="none" stroke="#1A1610" stroke-width="2" stroke-linecap="round" fill-opacity="0"/>
+      <circle cx="230" cy="242" r="8" fill="#F4E4D0" stroke="#1A1610" stroke-width="1.5"/>
+      <path d="M224 240 L236 240" stroke="#1A1610" stroke-width="1.2"/>
+      <path d="M224 244 L236 244" stroke="#1A1610" stroke-width="1.2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ================== BANNER ================== -->
+<div class="banner">
+  <span><strong>Free forever tier</strong> · 3 tools · No account required</span>
+  <a href="https://app.quantumbranding.ai/signal-scan.html">Try it now →</a>
+</div>
+
+<!-- ================== NAV ================== -->
+<div class="nav-spacer"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="dot"></span>Quantum Branding
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#what">What you get</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><span id="toggleIcon">☽</span></button>
+      <a href="https://app.quantumbranding.ai" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="#scanner" class="btn btn-primary btn-sm">Start free</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-head">
+    <div class="nav-brand"><span class="dot"></span>Quantum Branding</div>
+    <button class="mmenu-close" id="mmenuClose">✕</button>
+  </div>
+  <nav class="mmenu-list">
+    <a href="#how">How it works</a>
+    <a href="#what">What you get</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#about">About Nizzar</a>
+    <a href="#scanner">Free scan</a>
+  </nav>
+  <div class="mmenu-foot">
+    <a href="https://app.quantumbranding.ai" class="btn btn-primary" style="width:100%">Enter QB BrandOS</a>
+  </div>
+</div>
+
+<!-- ================== HERO ================== -->
+<section class="hero has-decor">
+  <!-- Thinker character bottom-left -->
+  <img src="img/guide.png" alt="" class="character hero-char"/>
+
+  <div class="wrap">
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      <span>The Brand Operating System</span>
+    </div>
+    <h1 class="display h1">
+      Answer questions, <em class="underlined">get a brand
+        <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+      </em>
+    </h1>
+    <p class="sub hero-sub">The AI brand operating system that turns your answers into identity, voice, content, and strategy.<br><span class="sub-accent">All connected through one Brand Profile.</span></p>
+    <div class="hero-ctas">
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-lg">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L14 8 20 10 14 12 12 18 10 12 4 10 10 8z"/></svg>
+        Start free
+      </a>
+      <a href="#how" class="btn btn-lg">See how it works</a>
+    </div>
+    <p class="hero-micro">Free forever tier · No credit card · 5 min to your first brand</p>
+
+    <!-- 18 agents cloud -->
+    <div class="hero-orbit">
+      <div class="orbit-pill op-patina"><span class="od"></span>Signal Scan</div>
+      <div class="orbit-pill op-brass"><span class="od"></span>Brand Soul Map</div>
+      <div class="orbit-pill op-terra"><span class="od"></span>Sensescape</div>
+      <div class="orbit-pill op-plum"><span class="od"></span>Visual DNA</div>
+      <div class="orbit-pill op-patina"><span class="od"></span>War Table</div>
+      <div class="orbit-pill op-brass"><span class="od"></span>Logo Direction</div>
+      <div class="orbit-pill op-terra"><span class="od"></span>Logo Evaluation</div>
+      <div class="orbit-pill op-plum"><span class="od"></span>Voice Guide</div>
+      <div class="orbit-pill op-patina"><span class="od"></span>Instagram Agent</div>
+      <div class="orbit-pill op-brass"><span class="od"></span>LinkedIn Agent</div>
+      <div class="orbit-pill op-terra"><span class="od"></span>YouTube Agent</div>
+      <div class="orbit-pill op-plum"><span class="od"></span>Newsletter</div>
+      <div class="orbit-pill op-patina"><span class="od"></span>Content Bridge</div>
+      <div class="orbit-pill op-brass"><span class="od"></span>Repurposing Engine</div>
+      <div class="orbit-pill op-terra"><span class="od"></span>Predictive Panel</div>
+      <div class="orbit-pill op-plum"><span class="od"></span>Dashboard</div>
+      <div class="orbit-pill op-patina"><span class="od"></span>Quarterly Review</div>
+      <div class="orbit-pill op-brass"><span class="od"></span>BrandOS Hub</div>
+    </div>
+    <div class="orbit-label">
+      <span class="orbit-count">18</span>
+      <span class="orbit-count-txt">connected agents, one Brand Profile</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PRESS MARQUEE (dark) ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot press-strip">
+  <p class="eye-center">Our work was featured by</p>
+  <div class="press-marquee">
+    <div class="press-track" id="pressTrack">
+      <!-- populated by JS to allow seamless loop -->
+    </div>
+  </div>
+</section>
+
+<!-- ================== STAT BLOCK ================== -->
+<section class="stat-block">
+  <div class="wrap">
+    <h2 class="display big reveal">
+      18 tools, <em class="underlined">one brain
+        <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+      </em>
+    </h2>
+    <p class="sub reveal rd1">One Brand Profile. Every tool reads from it. You answer questions once. Identity, voice, content, and strategy stay connected. Nothing drifts. Everything compounds.</p>
+  </div>
+</section>
+
+<!-- ================== HOW IT WORKS (dark) ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot section" id="how">
+  <div class="wrap">
+    <div class="how-header reveal">
+      <div>
+        <div class="eyebrow">How it works</div>
+        <h2 class="display h2" style="margin-top:10px">Three steps. <em>That's it.</em></h2>
+      </div>
+      <img src="img/three-steps.png" alt="" class="how-char"/>
+    </div>
+    <div class="how-grid">
+      <div class="how-card theme-patina reveal rd1">
+        <svg class="how-icon-doodle" viewBox="0 0 40 40"><circle cx="20" cy="20" r="14"/><path d="M14 20 L18 24 L26 14"/></svg>
+        <div class="how-num">01</div>
+        <div class="how-name">Answer</div>
+        <p class="how-desc">You answer questions about your brand. Who you are, what you believe, who you serve. No wrong answers. The system guides you.</p>
+        <div class="how-out">Result · Your Brand Profile</div>
+      </div>
+      <div class="how-card theme-terra reveal rd2">
+        <svg class="how-icon-doodle" viewBox="0 0 40 40"><path d="M6 32 L6 12 L34 12 L34 32 Z"/><path d="M12 22 L18 16 L24 22 L30 14"/><circle cx="30" cy="14" r="1.5"/></svg>
+        <div class="how-num">02</div>
+        <div class="how-name">Build</div>
+        <p class="how-desc">AI turns your answers into a complete brand. Identity, visual direction, voice, content, strategy. Everything stays connected through your Brand Profile.</p>
+        <div class="how-out">Result · Logo · Voice · 30+ posts</div>
+      </div>
+      <div class="how-card theme-plum reveal rd3">
+        <svg class="how-icon-doodle" viewBox="0 0 40 40"><path d="M20 6 L20 28"/><path d="M12 14 L20 6 L28 14"/><line x1="8" y1="34" x2="32" y2="34"/></svg>
+        <div class="how-num">03</div>
+        <div class="how-name">Launch</div>
+        <p class="how-desc">Your content is written. Visual direction set. Voice defined. Strategy mapped. You go live with a brand that actually holds together.</p>
+        <div class="how-out">Result · A brand ready to publish</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== VIDEO ================== -->
+<section class="section-tight">
+  <div class="wrap">
+    <div class="video-placeholder" id="videoPlaceholder">
+      <div class="video-inner">
+        <div class="video-play-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--cream)"><polygon points="8,5 19,12 8,19"/></svg>
+        </div>
+        <span class="video-label-text">See QB BrandOS in action · 60 seconds</span>
+      </div>
+      <div class="video-embed" id="videoEmbed" style="display:none">
+        <iframe width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== BRAND PROFILE FEATURE ================== -->
+<section class="section">
+  <div class="wrap feat-two">
+    <div class="feat-text reveal">
+      <div class="eyebrow">The secret</div>
+      <h2 class="display h2">One profile,<br><em>every tool reads it.</em></h2>
+      <p>You answer questions once. Your Brand Profile stores who you are, what you stand for, how you sound, and who you serve. All 18 tools read from it. Nothing is disconnected. Everything compounds.</p>
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary">Start your Brand Profile</a>
+    </div>
+    <div class="reveal rd2">
+      <div class="device-card">
+        <div class="device-label">Brand Soul Map</div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Brand essence</span><span class="prof-pct">95%</span></div>
+          <div class="prof-val">"The intersection of craft and ambition"</div>
+          <div class="prof-track"><div class="prof-fill" data-w="95"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Natural force</span><span class="prof-pct">82%</span></div>
+          <div class="prof-val">Wildfire</div>
+          <div class="prof-track"><div class="prof-fill" data-w="82"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Archetype</span><span class="prof-pct">88%</span></div>
+          <div class="prof-val">The Alchemist</div>
+          <div class="prof-track"><div class="prof-fill" data-w="88"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Primary persona</span><span class="prof-pct">76%</span></div>
+          <div class="prof-val">"Founders who outgrew their brand"</div>
+          <div class="prof-track"><div class="prof-fill" data-w="76"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== SCANNER ================== -->
+<section class="section-tight" id="scanner">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">Free · 30 seconds · Instant</div>
+      <h2 class="display h2 reveal rd1">Try it, <em>right now.</em></h2>
+      <p class="sub mx-auto reveal rd2" style="margin-top:16px">Type your brand name and what you do. Get an instant brand signal read across 6 dimensions.</p>
+    </div>
+    <div class="reveal rd2" style="max-width:520px;margin:40px auto 0;text-align:center;">
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-lg" style="width:100%;max-width:380px;">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L14 8 20 10 14 12 12 18 10 12 4 10 10 8z"/></svg>
+        Scan my brand free
+      </a>
+      <p style="font-family:var(--f-mono);font-size:.68rem;color:var(--ink-mute);letter-spacing:.12em;text-transform:uppercase;margin-top:16px;">No account · No credit card · Instant results</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================== WHAT YOU GET - MULTI CARDS ================== -->
+<section class="section" id="what">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:48px">
+      <div class="eyebrow eyebrow-center reveal">What you get</div>
+      <h2 class="display h2 reveal rd1">Everything your brand needs,<br><em>built step by step.</em></h2>
+    </div>
+
+    <div class="multi reveal rd1">
+      <div class="big-card">
+        <div>
+          <div class="device-label" style="margin-bottom:10px">Discovery · Phase 01</div>
+          <div class="display h3" style="color:var(--dark-text);margin-bottom:10px">Your identity, articulated.</div>
+          <p class="sub" style="color:var(--dark-text-soft);margin-bottom:26px">Answer questions about who you are and what you believe. You get a complete brand profile: personality, energy, one-liner, and the truth your brand is built on.</p>
+          <div class="mock-note">Every loaf is a love letter to slow mornings.</div>
+          <div class="mock-tags">
+            <span class="mock-tag patina">The Caregiver</span>
+            <span class="mock-tag">Warm, Golden</span>
+            <span class="mock-tag patina">Wildfire energy</span>
+          </div>
+        </div>
+      </div>
+      <div class="side-col">
+        <div class="side-card">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px">Creation · Phase 02</div>
+            <h3 class="display">Logo direction + voice guide.</h3>
+            <p class="sub">A complete logo brief with AI-generated direction. Then your brand voice with writing rules, tone guidelines, and templates.</p>
+          </div>
+          <div class="swatch-row">
+            <div class="sw" style="background:var(--brass);border-color:var(--brass)"></div>
+            <div class="sw" style="background:var(--patina-lit);border-color:var(--patina-lit)"></div>
+            <div class="sw" style="background:var(--terra);border-color:var(--terra)"></div>
+            <div class="sw" style="background:var(--plum-lit);border-color:var(--plum-lit)"></div>
+            <div class="sw" style="background:var(--cream-deep)"></div>
+            <div class="sw" style="background:var(--ink);border-color:var(--ink)"></div>
+          </div>
+        </div>
+        <div class="side-card" style="background:var(--patina-deep);color:var(--dark-text);border-color:var(--patina-deep)">
+          <div>
+            <div class="eyebrow" style="color:var(--brass-lit);margin-bottom:10px">Content · Phase 03</div>
+            <h3 class="display" style="color:var(--dark-text)">Your first month, <em>written.</em></h3>
+            <p class="sub" style="color:var(--dark-text-soft)">12 Instagram posts, 20 LinkedIn posts, 6 YouTube scripts, a full newsletter plan. All in your voice. All on brand.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="multi reveal rd2" style="margin-top:22px;grid-template-columns:1fr 1fr">
+      <div class="side-card" style="background:var(--cream-soft);padding:24px 22px">
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">Execution · Phase 04</div>
+          <h3 class="display" style="font-size:clamp(1.3rem,2vw,1.7rem)">Multiply <em>everything.</em></h3>
+          <p class="sub" style="font-size:.86rem;margin-bottom:0">One piece becomes up to 25 across 10 platforms. All on-brand.</p>
+        </div>
+        <img src="img/phase 4.png" alt="Content multiplied" style="width:100%;border-radius:12px;margin:12px 0 8px"/>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">Instagram</span>
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">LinkedIn</span>
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">Threads</span>
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">Newsletter</span>
+          <span class="mock-tag" style="background:var(--cream);border-color:var(--cream-line);color:var(--ink-soft);font-size:.58rem;padding:4px 10px">Stories</span>
+        </div>
+      </div>
+      <div class="big-card" style="padding:0;min-height:auto;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="padding:22px 22px 14px">
+          <div class="device-label" style="margin-bottom:8px">Intelligence · Phase 05</div>
+          <div class="display" style="color:var(--dark-text);margin-bottom:4px;font-size:clamp(1.3rem,2vw,1.7rem)">Smarter every <em>90 days.</em></div>
+          <p class="sub" style="color:var(--dark-text-soft);font-size:.84rem;margin-bottom:0">Quarterly reviews update your profile and tell you what to do next.</p>
+        </div>
+        <div style="padding:0 22px;display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1">
+          <div style="background:rgba(238,229,210,.05);border:1px solid rgba(238,229,210,.1);border-radius:10px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-family:var(--f-display);font-style:italic;font-size:2rem;color:var(--brass-lit);line-height:1">B+</div>
+            <div style="font-family:var(--f-mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dark-text-mute);margin-top:5px">Q1 Health</div>
+          </div>
+          <div style="background:rgba(238,229,210,.05);border:1px solid rgba(238,229,210,.1);border-radius:10px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-family:var(--f-display);font-style:italic;font-size:2rem;color:var(--patina-lit);line-height:1">92%</div>
+            <div style="font-family:var(--f-mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dark-text-mute);margin-top:5px">Voice match</div>
+          </div>
+          <div style="background:rgba(238,229,210,.05);border:1px solid rgba(238,229,210,.1);border-radius:10px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-family:var(--f-display);font-style:italic;font-size:2rem;color:var(--terra-lit);line-height:1">+34%</div>
+            <div style="font-family:var(--f-mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dark-text-mute);margin-top:5px">Content reach</div>
+          </div>
+          <div style="background:rgba(238,229,210,.05);border:1px solid rgba(238,229,210,.1);border-radius:10px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-family:var(--f-display);font-style:italic;font-size:2rem;color:var(--plum-lit);line-height:1">A-</div>
+            <div style="font-family:var(--f-mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dark-text-mute);margin-top:5px">Q2 Target</div>
+          </div>
+        </div>
+        <div style="padding:12px 22px 16px">
+          <div style="font-family:var(--f-mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-lit)">Next · Scale LinkedIn. Test paid.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PERSONAS (dark, pill tabs, v2 layout) ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot section" id="for-you">
+  <div class="wrap">
+    <div class="persona-v2">
+      <div class="persona-header">
+        <div class="eyebrow" style="color:var(--brass-lit)">Who it's for</div>
+        <h2 class="display h1" style="color:var(--dark-text);margin-top:20px">
+          QB is made <em class="underlined">for you
+            <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+          </em>
+        </h2>
+        <div class="persona-tags" id="personaTags">
+          <button class="persona-tag active" data-p="0">Starting from zero</button>
+          <button class="persona-tag" data-p="1">Something feels off</button>
+          <button class="persona-tag" data-p="2">Scaling fast</button>
+          <button class="persona-tag" data-p="3">Agency / multi-brand</button>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-stage">
+          <div class="persona-avatar active" data-avatar="0">
+            <img src="img/blank-slate.png" alt="The Blank Slate" class="persona-img pi-rock" style="transform-origin:center bottom;scale:1.2"/>
+          </div>
+          <div class="persona-avatar" data-avatar="1">
+            <img src="img/doubter.png" alt="The Doubter" class="persona-img pi-lean"/>
+          </div>
+          <div class="persona-avatar" data-avatar="2">
+            <img src="img/player.png" alt="Scaling Fast" class="persona-img pi-pulse"/>
+          </div>
+          <div class="persona-avatar" data-avatar="3">
+            <img src="img/agency.png" alt="Agency Multi Brand" class="persona-img pi-breathe"/>
+          </div>
+          <div class="persona-stage-tag" id="personaStageTag">01 · The Blank Slate</div>
+        </div>
+        <div class="persona-detail" id="personaDetail">
+          <h3 id="pTitle">I have an idea.<span class="lb-period"></span><em>No brand yet.</em></h3>
+          <p id="pText">You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.</p>
+          <a id="pLink" href="https://app.quantumbranding.ai/signal-scan.html?door=blank" class="btn btn-primary">Start from zero</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PREDICTIVE PANEL ================== -->
+<section class="section">
+  <div class="wrap feat-two">
+    <div class="feat-text reveal">
+      <div class="eyebrow">Before you spend a dollar</div>
+      <h2 class="display h2">Test the idea <em>before you launch it.</em></h2>
+      <p>The Predictive Panel runs your concept through thousands of simulated customers. You see who responds, what works, and whether to go or wait.</p>
+      <a href="https://app.quantumbranding.ai/predictive-panel.html" class="btn btn-primary">Try the Panel</a>
+    </div>
+    <div class="reveal rd2">
+      <div class="panel-card">
+        <div class="panel-label">Panel simulation</div>
+        <div class="panel-conf">
+          <span class="panel-conf-lbl">Overall confidence</span>
+          <span class="panel-conf-num">74</span>
+        </div>
+        <div class="panel-main"><div class="panel-main-fill" data-w="74"></div></div>
+
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Strong launch</span><span class="prof-pct" style="color:#7FB894">62%</span></div>
+          <div class="prof-track"><div class="prof-fill" data-w="62" style="background:#7FB894"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Needs price adjustment</span><span class="prof-pct" style="color:#7A9DA8">22%</span></div>
+          <div class="prof-track"><div class="prof-fill" data-w="22" style="background:#7A9DA8"></div></div>
+        </div>
+        <div class="prof-row">
+          <div class="prof-meta"><span class="prof-lbl">Channel misfit</span><span class="prof-pct" style="color:var(--brass-lit)">11%</span></div>
+          <div class="prof-track"><div class="prof-fill" data-w="11" style="background:var(--brass-lit)"></div></div>
+        </div>
+
+        <div class="panel-verdict">
+          <div class="panel-verdict-lbl">Verdict</div>
+          <div class="panel-verdict-ttl">GO · Launch Ready</div>
+          <div class="panel-verdict-txt">Strong market fit. Tighten price anchor before launch.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== TESTIMONIALS ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot section">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">From founders who used it</div>
+      <h2 class="display h2 reveal rd1">
+        Love letters <em class="underlined">to QB
+          <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+        </em>
+      </h2>
+    </div>
+    <div class="testi-wispr">
+      <article class="testi-card">
+        <div class="testi-head">
+          <div class="testi-avatar tc-avatar-patina">M.</div>
+          <div>
+            <div class="testi-name-strong">M. Ayache</div>
+            <div class="testi-role">Beta · Solo founder</div>
+          </div>
+        </div>
+        <p class="testi-quote">"I built a brand in one afternoon. The Brand Profile thing is genuinely new. I stopped explaining my brand to freelancers."</p>
+        <div class="testi-footer">
+          <span class="testi-stat">47x</span>
+          <span class="testi-stat-lbl">faster than my last brand sprint</span>
+        </div>
+      </article>
+      <article class="testi-card">
+        <div class="testi-head">
+          <div class="testi-avatar tc-avatar-terra">R.</div>
+          <div>
+            <div class="testi-name-strong">R. Kessler</div>
+            <div class="testi-role">Beta · Fintech studio</div>
+          </div>
+        </div>
+        <p class="testi-quote">"The Predictive Panel told us to tighten the price anchor. We did. Conversion lifted in week one."</p>
+        <div class="testi-footer">
+          <span class="testi-stat" style="color:var(--terra)">+22%</span>
+          <span class="testi-stat-lbl">conversion in week one</span>
+        </div>
+      </article>
+      <article class="testi-card">
+        <div class="testi-head">
+          <div class="testi-avatar tc-avatar-brass">S.</div>
+          <div>
+            <div class="testi-name-strong">S. Lindqvist</div>
+            <div class="testi-role">Beta · Content founder</div>
+          </div>
+        </div>
+        <p class="testi-quote">"I write content faster than I used to brief it. Same voice every time. My team stopped asking me to review."</p>
+        <div class="testi-footer">
+          <span class="testi-stat" style="color:var(--brass)">0</span>
+          <span class="testi-stat-lbl">draft reviews per week now</span>
+        </div>
+      </article>
+      <article class="testi-card">
+        <div class="testi-head">
+          <div class="testi-avatar tc-avatar-plum">D.</div>
+          <div>
+            <div class="testi-name-strong">D. Brennan</div>
+            <div class="testi-role">Beta · Agency partner</div>
+          </div>
+        </div>
+        <p class="testi-quote">"Eight client portals, white-label, brand-consistent outputs. Replaced three tools and a junior strategist."</p>
+        <div class="testi-footer">
+          <span class="testi-stat" style="color:var(--plum-lit)">8</span>
+          <span class="testi-stat-lbl">client brands, one system</span>
+        </div>
+      </article>
+    </div>
+    <p class="testi-disclaimer">Early beta feedback · Names abbreviated at users' request</p>
+  </div>
+</section>
+
+<!-- ================== PRICING ================== -->
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">Pricing</div>
+      <h2 class="display h2 reveal rd1">Start free. <em>Upgrade when ready.</em></h2>
+      <p class="sub mx-auto reveal rd2" style="margin-top:14px">Three tools free forever. No credit card. No account to start.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card reveal rd1">
+        <div class="price-name">Free</div>
+        <div class="price-num">$0 <span>/ forever</span></div>
+        <p class="price-desc">Signal Scan, Brand Soul Map, and Sensescape. Unlimited runs. Your brand profile starts here.</p>
+        <ul class="price-feats">
+          <li class="price-feat">Signal Scan diagnostic</li>
+          <li class="price-feat">Brand Soul Map (full)</li>
+          <li class="price-feat">Sensescape (full)</li>
+          <li class="price-feat">Unlimited runs</li>
+          <li class="price-feat">No account needed</li>
+        </ul>
+        <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn">Start free</a>
+      </div>
+      <div class="price-card reveal rd2">
+        <div class="price-name">Starter</div>
+        <div class="price-num">$97 <span>/ month</span></div>
+        <p class="price-desc">All 18 tools. Unlimited runs. Your complete brand system, activated.</p>
+        <ul class="price-feats">
+          <li class="price-feat">All 18 agent tools</li>
+          <li class="price-feat">Brand Profile saved &amp; connected</li>
+          <li class="price-feat">Unlimited runs</li>
+          <li class="price-feat">Brand Document export</li>
+          <li class="price-feat">Email support</li>
+        </ul>
+        <a href="https://app.quantumbranding.ai" class="btn">Get started</a>
+      </div>
+      <div class="price-card feat reveal rd3">
+        <div class="price-name">Pro <span class="price-tag">Most popular</span></div>
+        <div class="price-num">$297 <span>/ month</span></div>
+        <p class="price-desc">Everything in Starter plus Predictive Panel and quarterly strategy sessions.</p>
+        <ul class="price-feats">
+          <li class="price-feat">Everything in Starter</li>
+          <li class="price-feat">Predictive Panel (5 runs/mo)</li>
+          <li class="price-feat">Priority support</li>
+          <li class="price-feat">Quarterly strategy session</li>
+          <li class="price-feat">Early access to new tools</li>
+        </ul>
+        <a href="https://app.quantumbranding.ai" class="btn">Go Pro</a>
+      </div>
+      <div class="price-card reveal rd4">
+        <div class="price-name">Agency</div>
+        <div class="price-num">$997 <span>/ month</span></div>
+        <p class="price-desc">Up to 8 client portals. White-label delivery. Your brand on every output.</p>
+        <ul class="price-feats">
+          <li class="price-feat">8 white-label portals</li>
+          <li class="price-feat">Unlimited Predictive Panel</li>
+          <li class="price-feat">Agency branding on outputs</li>
+          <li class="price-feat">Dedicated support</li>
+          <li class="price-feat">Custom onboarding</li>
+        </ul>
+        <a href="https://calendly.com/qtmbg/strategy-call-lab" class="btn">Book a call</a>
+      </div>
+    </div>
+    <p class="center reveal" style="margin-top:36px;font-family:var(--f-display);font-style:italic;font-size:1.1rem;color:var(--ink-mute)">What would an agency charge for this? $5,000–20,000. Minimum.</p>
+  </div>
+</section>
+
+<!-- ================== FOUNDER (compact) ================== -->
+<section class="section-dark section-rounded-top section-rounded-bot founder-compact" id="about">
+  <div class="wrap founder-layout">
+    <div class="founder-portrait">
+      <div class="portrait-frame">
+        <img src="img/nizzarfounder.png" alt="Nizzar Ben Chekroune" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="portrait-fallback">NB</div>
+      </div>
+      <div class="portrait-dot portrait-dot-1"></div>
+      <div class="portrait-dot portrait-dot-2"></div>
+      <div class="portrait-dot portrait-dot-3"></div>
+    </div>
+    <div class="founder-copy">
+      <div class="eyebrow" style="color:var(--brass-lit)">From the founder</div>
+      <p class="display founder-quote">"I spent 20 years watching brands fail. Not because the work was bad. Because the identity was missing. QB BrandOS is that lesson turned into software."</p>
+      <div class="founder-meta">
+        <div class="founder-name">Nizzar Ben Chekroune</div>
+        <div class="founder-title">Founder, Quantum Branding</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== FAQ ================== -->
+<section class="section">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow eyebrow-center reveal">Questions</div>
+      <h2 class="display h2 reveal rd1">Before <em>you decide.</em></h2>
+    </div>
+    <div class="faq reveal rd2">
+      <div class="faq-item">
+        <button class="faq-q">Is this real AI or a template?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Every output is generated fresh by AI, informed by your Brand Profile. No templates. No recycled content. Your answers shape everything.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do I need design skills?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">No. The system guides you with questions, not blank canvases. You bring the knowledge of your brand. The system handles the structure.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What do I actually get?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Logo direction briefs, voice guides, Instagram posts with captions, LinkedIn content, YouTube scripts, newsletter series, strategy maps. All exportable.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How is this different from Canva or Looka?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Those tools make assets. QB BrandOS builds the thinking underneath. Identity, positioning, voice, strategy. The assets come from that foundation, which is why they hold.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I cancel anytime?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. Monthly billing, cancel anytime. No contracts. The free tier stays free forever.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How long does the full journey take?<span class="faq-ic">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Your first result in 5 minutes. A complete brand foundation in 2–3 hours across multiple sessions. Content and strategy build from there.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== FINAL CTA ================== -->
+<div class="final-cta has-decor">
+  <!-- Bike couple riding across -->
+  <img src="img/start-building.png" alt="" class="cta-bike"/>
+
+  <h2 class="display h1">
+    Start <em class="underlined">building
+      <svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M8 20 Q 100 4 200 14 T 392 10"/></svg>
+    </em>
+  </h2>
+  <p class="sub">Even if you're starting with just an idea. Three tools. Free forever. Five minutes to your first brand signal.</p>
+  <div class="hero-ctas">
+    <a href="https://app.quantumbranding.ai/signal-scan.html" class="btn btn-primary btn-lg">Start free</a>
+    <a href="https://app.quantumbranding.ai" class="btn btn-lg" style="border-color:var(--dark-text-soft);color:var(--dark-text)">Enter QB BrandOS</a>
+  </div>
+  <p class="hero-micro" style="color:var(--dark-text-mute)">Available on any device · No download · No credit card</p>
+</div>
+
+<!-- ================== FOOTER ================== -->
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--brass);display:inline-block"></span>Quantum Branding</div>
+        <p class="foot-desc">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Product</div>
+        <a href="#how">How it works</a>
+        <a href="#what">The 18 tools</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#scanner">Free Signal Scan</a>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Company</div>
+        <a href="#about">About Nizzar</a>
+        <a href="mailto:me@qtmbg.com">Contact</a>
+        <a href="https://nizzar.com">nizzar.com</a>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Social</div>
+        <a href="https://linkedin.com/in/nizzar">LinkedIn</a>
+        <a href="https://instagram.com/thequantumbranding">Instagram</a>
+        <a href="https://x.com/quantumbranding">X / Twitter</a>
+      </div>
+    </div>
+
+    <!-- Footer showcase -->
+    <div class="foot-stage">
+      <!-- Animated stat counters -->
+      <div class="foot-stage-stats">
+        <div class="fs-stat fs-stat-1">
+          <span class="fs-num" data-count="18">0</span>
+          <span class="fs-label">agent tools</span>
+          <span class="fs-sub">Identity. Voice. Content. Strategy.</span>
+        </div>
+        <div class="fs-divider"></div>
+        <div class="fs-stat fs-stat-2">
+          <span class="fs-num" data-count="1">0</span>
+          <span class="fs-label">Brand Profile</span>
+          <span class="fs-sub">Every tool reads from it.</span>
+        </div>
+        <div class="fs-divider"></div>
+        <div class="fs-stat fs-stat-3">
+          <span class="fs-num fs-num-dollar" data-count="0">$0</span>
+          <span class="fs-label">to start</span>
+          <span class="fs-sub">Free forever. No card.</span>
+        </div>
+      </div>
+      <!-- Art left + big stacked name right -->
+      <div class="foot-stage-brand">
+        <div class="foot-stage-art">
+          <img src="img/synergy.png" alt="Brand ecosystem"/>
+          <div class="art-overlay-pills">
+            <span class="art-pill ap-1">Brand Profile</span>
+            <span class="art-pill ap-2">18 Agents</span>
+            <span class="art-pill ap-3">Voice Guide</span>
+            <span class="art-pill ap-4">Content</span>
+          </div>
+        </div>
+        <div class="foot-stage-name">
+          <span class="fsn-line fsn-1">Quantum</span>
+          <span class="fsn-line fsn-2"><em>Branding.</em></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <div>© 2026 Quantum Branding · quantumbranding.ai</div>
+      <div>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Data</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ================== JS ================== -->
+<script>
+(function(){
+  'use strict';
+
+  /* ===== CURSOR ORB (harmonized with index hero) ===== */
+  var ecoOrb=document.getElementById('ecoOrb');
+  if(ecoOrb){
+    var tX=window.innerWidth/2, tY=window.innerHeight/2;
+    var cX=tX, cY=tY;
+    document.addEventListener('mousemove',function(e){ tX=e.clientX; tY=e.clientY; });
+    (function animate(){
+      cX+=(tX-cX)*0.07;
+      cY+=(tY-cY)*0.07;
+      ecoOrb.style.transform='translate('+(cX-280)+'px, '+(cY-280)+'px)';
+      requestAnimationFrame(animate);
+    })();
+  }
+
+  /* ===== THEME TOGGLE ===== */
+  var html=document.documentElement;
+  var themeToggle=document.getElementById('themeToggle');
+  var toggleIcon=document.getElementById('toggleIcon');
+  function updateIcon(){ toggleIcon.textContent=html.getAttribute('data-theme')==='dark'?'\u2600':'\u263D'; }
+  updateIcon();
+  themeToggle.addEventListener('click',function(){
+    var next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+    html.setAttribute('data-theme',next);
+    localStorage.setItem('qb-theme',next);
+    updateIcon();
+  });
+
+  /* ===== PRESS MARQUEE ===== */
+  (function(){
+    var track=document.getElementById('pressTrack');
+    if(!track) return;
+    var items=[
+      {n:'The New York Times', c:'brass'},
+      {n:'Time Magazine',       c:'terra'},
+      {n:'Google Arts & Culture', c:'patina'},
+      {n:'United Nations',      c:'plum'},
+      {n:'USAID',               c:'brass'},
+      {n:'TV5 Monde',           c:'terra'},
+      {n:'LA Lakers',           c:'patina'},
+      {n:'UM6P',                c:'plum'},
+      {n:'UNIDO',               c:'brass'}
+    ];
+    var html='';
+    for(var r=0;r<2;r++){
+      items.forEach(function(it){
+        html+='<span class="press-pill"><span class="pdot '+it.c+'"></span>'+it.n+'</span>';
+      });
+    }
+    track.innerHTML=html;
+  })();
+
+  /* ===== MOBILE MENU ===== */
+  var ham=document.getElementById('hamburger'),mm=document.getElementById('mmenu'),mc=document.getElementById('mmenuClose');
+  ham.addEventListener('click',function(){ mm.classList.add('open'); document.body.style.overflow='hidden'; });
+  mc.addEventListener('click',closeMM);
+  function closeMM(){ mm.classList.remove('open'); document.body.style.overflow=''; }
+  document.querySelectorAll('.mmenu-list a').forEach(function(a){ a.addEventListener('click',closeMM); });
+
+  /* ===== REVEAL ===== */
+  var reveals=document.querySelectorAll('.reveal, .scribble');
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.1,rootMargin:'0px 0px -50px 0px'});
+  reveals.forEach(function(el){ io.observe(el); });
+
+  /* ===== TESTIMONIAL CARDS STAGGER ===== */
+  var testiCards=document.querySelectorAll('.testi-card');
+  var testiIO=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); testiIO.unobserve(e.target); }
+    });
+  },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
+  testiCards.forEach(function(c){ testiIO.observe(c); });
+
+  /* ===== BAR FILLS ===== */
+  var fills=document.querySelectorAll('[data-w]');
+  var fo=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        setTimeout(function(){ e.target.style.width=e.target.getAttribute('data-w')+'%'; },120);
+        fo.unobserve(e.target);
+      }
+    });
+  },{threshold:.3});
+  fills.forEach(function(f){ fo.observe(f); });
+
+  /* ===== FOOTER STATS: COUNT UP + BOUNCE ===== */
+  var fsStats=document.querySelectorAll('.fs-stat');
+  if(fsStats.length){
+    function countUp(el,target,prefix,duration){
+      var start=0,startTime=null;
+      function step(ts){
+        if(!startTime)startTime=ts;
+        var progress=Math.min((ts-startTime)/duration,1);
+        var eased=1-Math.pow(1-progress,3);
+        var current=Math.round(eased*target);
+        el.textContent=prefix+current;
+        if(progress<1)requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    var fsObs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('in-view');
+          var numEl=e.target.querySelector('.fs-num');
+          if(numEl && numEl.hasAttribute('data-count')){
+            var val=parseInt(numEl.getAttribute('data-count'),10);
+            var isDollar=numEl.classList.contains('fs-num-dollar');
+            var delay=parseFloat(getComputedStyle(numEl).transitionDelay)||0;
+            setTimeout(function(){
+              countUp(numEl,val,isDollar?'$':'',900);
+              setTimeout(function(){ e.target.classList.add('counted'); },1000);
+            },delay*1000+100);
+          }
+          fsObs.unobserve(e.target);
+        }
+      });
+    },{threshold:.3});
+    fsStats.forEach(function(s){ fsObs.observe(s); });
+  }
+
+  /* ===== FOOTER NAME SLIDE-IN ===== */
+  var fsnLines=document.querySelectorAll('.fsn-line');
+  if(fsnLines.length){
+    var fsnObs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in-view'); fsnObs.unobserve(e.target); }
+      });
+    },{threshold:.2});
+    fsnLines.forEach(function(l){ fsnObs.observe(l); });
+  }
+
+  /* ===== FAQ ===== */
+  document.querySelectorAll('.faq-q').forEach(function(q){
+    q.addEventListener('click',function(){
+      var item=q.parentElement;
+      var open=item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+      if(!open) item.classList.add('open');
+    });
+  });
+
+  /* ===== PERSONAS ===== */
+  var personas=[
+    {t:'I have an idea.<span class="lb-period"></span><em>No brand yet.</em>', d:'You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.', h:'?door=blank', cta:'Start from zero', tag:'01 · The Blank Slate'},
+    {t:'I have a brand.<span class="lb-period"></span><em>Something feels off.</em>', d:'The tools audit what you have and tell you what to keep, fix, or rebuild. Logo evaluation, voice analysis, performance review. Precise verdict, clear path forward.', h:'?door=doubt', cta:'Audit your brand', tag:'02 · The Doubter'},
+    {t:'Competition is <em>coming fast.</em>', d:'Skip to strategy and intelligence. The War Table pressure-tests your next move. The Predictive Panel simulates market response before you spend.', h:'?door=scale', cta:'Enter strategic mode', tag:'03 · The Player'},
+    {t:'I build brands <em>for clients.</em>', d:'Up to 8 client portals. Your brand on every output. White-label delivery. Run clients through the same journey with your logo on the result.', h:'CALENDLY', cta:'Book a call', tag:'04 · The Guide'}
+  ];
+  var pT=document.getElementById('pTitle'),pX=document.getElementById('pText'),pL=document.getElementById('pLink'),pStageTag=document.getElementById('personaStageTag');
+  var avatars=document.querySelectorAll('.persona-avatar');
+  document.querySelectorAll('.persona-tag').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.persona-tag').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var i=parseInt(btn.getAttribute('data-p'),10);
+      var p=personas[i];
+      pT.innerHTML=p.t; pX.textContent=p.d; pL.textContent=p.cta;
+      if(pStageTag) pStageTag.textContent=p.tag;
+      avatars.forEach(function(a){ a.classList.remove('active'); });
+      var targetAvatar=document.querySelector('[data-avatar="'+i+'"]');
+      if(targetAvatar) targetAvatar.classList.add('active');
+      if(p.h==='CALENDLY'){ pL.href='https://calendly.com/qtmbg/strategy-call-lab'; pL.target='_blank'; } else { pL.href='https://app.quantumbranding.ai/signal-scan.html'+p.h; pL.target=''; }
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
