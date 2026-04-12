@@ -61,7 +61,7 @@
 html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth}
 body{
   font-family:var(--f-body);
-  background:#F4F0EB;
+  background:var(--cream);
   color:var(--ink);
   font-size:16px;
   line-height:1.55;
@@ -745,10 +745,171 @@ input{font-family:inherit}
   .fsn-2{ font-size:clamp(3rem, 14vw, 4.5rem) !important; }
   .art-pill{ font-size:.5rem; padding:4px 8px; }
 }
+
+/* ==========================================================
+   DARK MODE (matching index.html source of truth)
+   ========================================================== */
+[data-theme="dark"]{
+  --cream:          #0E0C09;
+  --cream-soft:     #0A0806;
+  --cream-deep:     #141210;
+  --cream-line:     rgba(140,110,70,0.12);
+  --ink:            #DDD4C4;
+  --ink-soft:       #A89A88;
+  --ink-mute:       #6A5E50;
+  --ink-faint:      #3A342C;
+  --pill-bg:        #2A2418;
+  --pill-bg-hover:  #3A3020;
+  --pill-border:    #5A4E38;
+  --pill-ink:       #D4BA62;
+  --dark-text:      #EEE5D2;
+  --dark-text-soft: #A8A092;
+  --dark-text-mute: #6F6A5E;
+}
+body{ transition:background .4s ease, color .3s ease; }
+
+/* Nav dark */
+[data-theme="dark"] .nav-inner{
+  background:rgba(14,12,9,.88);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-color:rgba(140,110,70,.08);
+}
+[data-theme="dark"] .nav-links a{ color:var(--ink-mute); }
+[data-theme="dark"] .nav-links a:hover{ background:rgba(140,110,70,.08); color:var(--ink); }
+[data-theme="dark"] .btn{ border-color:rgba(140,110,70,.2); color:var(--ink); }
+[data-theme="dark"] .btn:hover{ background:var(--ink); color:var(--cream); }
+[data-theme="dark"] .hamburger{ border-color:rgba(140,110,70,.14); }
+[data-theme="dark"] .hamburger span{ background:var(--ink); }
+[data-theme="dark"] .mmenu{ background:var(--cream); }
+[data-theme="dark"] .mmenu-list a{ color:var(--ink); border-bottom-color:rgba(140,110,70,.08); }
+
+/* Filter pills dark */
+[data-theme="dark"] .filter-pill{
+  border-color:rgba(140,110,70,.25);
+  color:var(--ink-mute);
+}
+[data-theme="dark"] .filter-pill:hover{
+  border-color:rgba(140,110,70,.5);
+  color:var(--ink);
+}
+[data-theme="dark"] .filter-pill.active{
+  background:var(--ink);
+  border-color:var(--ink);
+  color:var(--cream);
+}
+
+/* Cards dark: keep their pastel bg but at reduced opacity */
+[data-theme="dark"] .tool-card{
+  filter:brightness(.75) saturate(.85);
+}
+[data-theme="dark"] .tool-card:hover{
+  filter:brightness(.85) saturate(.9);
+}
+[data-theme="dark"] .tool-bcard{
+  filter:brightness(.75) saturate(.85);
+}
+
+/* Bottom CTA dark */
+[data-theme="dark"] .tools-cta .cta-btn{
+  background:var(--patina-lit);
+}
+[data-theme="dark"] .tools-cta .cta-btn:hover{
+  background:var(--patina);
+}
+
+/* Footer dark */
+[data-theme="dark"] .foot-bottom{ border-top-color:rgba(140,110,70,.08); }
+
+/* ==========================================================
+   AMBIENT LAYERS (matching ecosystem.html)
+   ========================================================== */
+.ambient-tools{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.ambient-tools .blob{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(100px);
+  opacity:.12;
+  mix-blend-mode:screen;
+  will-change:transform;
+}
+[data-theme="dark"] .ambient-tools .blob{ opacity:.18; }
+.ambient-tools .b1{
+  width:520px; height:520px;
+  top:-10%; left:-10%;
+  background:var(--patina);
+  animation:tbFloat1 18s ease-in-out infinite;
+}
+.ambient-tools .b2{
+  width:440px; height:440px;
+  top:40%; right:-10%;
+  background:var(--terra);
+  animation:tbFloat2 20s ease-in-out infinite;
+}
+.ambient-tools .b3{
+  width:380px; height:380px;
+  bottom:-15%; left:25%;
+  background:var(--plum);
+  animation:tbFloat3 22s ease-in-out infinite;
+}
+@keyframes tbFloat1{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(40px,30px) scale(1.08); }
+  66%{ transform:translate(-20px,60px) scale(.95); }
+}
+@keyframes tbFloat2{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  50%{ transform:translate(-50px,40px) scale(1.1); }
+}
+@keyframes tbFloat3{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  40%{ transform:translate(60px,-30px) scale(1.05); }
+  80%{ transform:translate(-30px,20px) scale(.92); }
+}
+.grain-tools{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:.04;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .grain-tools{ opacity:.06; mix-blend-mode:screen; }
+.vignette-tools{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(26,22,16,.06));
+}
+[data-theme="dark"] .vignette-tools{
+  background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(0,0,0,.3));
+}
+
+/* Content above ambient */
+.page-content{ position:relative; z-index:2; }
+
 </style>
 </head>
 <body>
 
+<!-- ================== AMBIENT LAYERS ================== -->
+<div class="ambient-tools">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+<div class="grain-tools"></div>
+<div class="vignette-tools"></div>
+
+<div class="page-content">
 <!-- ================== NAV ================== -->
 <div class="nav-spacer"></div>
 <header class="nav">
@@ -1675,5 +1836,6 @@ input{font-family:inherit}
 
 })();
 </script>
+</div><!-- /.page-content -->
 </body>
 </html>
