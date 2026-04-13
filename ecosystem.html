@@ -56,8 +56,8 @@
   /* CTA pill (wispr-ish pale accent, brass-tinted instead of purple) */
   --pill-bg:        #F3E9C9;
   --pill-bg-hover:  #EFE1B4;
-  --pill-border:    #D9C98A;
-  --pill-ink:       #4A3F18;
+  --pill-border:    #A8903E;
+  --pill-ink:       #1A1610;
 
   /* Type */
   --f-display: 'EB Garamond', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
@@ -160,17 +160,19 @@ input{font-family:inherit}
   color:var(--ink);
   transition:all .25s var(--ease);
   white-space:nowrap;
+  text-decoration:none !important;
+  box-shadow:none !important;
 }
 .btn:hover{ background:var(--ink); color:var(--cream); }
 .btn-primary{
-  background:var(--pill-bg);
-  border-color:var(--pill-border);
-  color:var(--pill-ink);
+  background:var(--pill-bg) !important;
+  border-color:var(--pill-border) !important;
+  color:var(--pill-ink) !important;
 }
 .btn-primary:hover{
-  background:var(--pill-bg-hover);
-  color:var(--pill-ink);
-  border-color:var(--pill-ink);
+  background:var(--pill-bg-hover) !important;
+  color:var(--pill-ink) !important;
+  border-color:var(--pill-ink) !important;
   transform:translateY(-1px);
 }
 .btn-dark{
@@ -254,6 +256,7 @@ input{font-family:inherit}
   padding:10px 16px;
   border-radius:var(--r-pill);
   font-size:.92rem;
+  font-weight:500;
   color:var(--ink-soft);
   transition:all .2s var(--ease);
 }
