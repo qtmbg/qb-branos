@@ -322,6 +322,20 @@
   .vignette-eco { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(26, 22, 16, 0.06)); }
   [data-theme="dark"] .vignette-eco { background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(0, 0, 0, 0.3)); }
   .page-wrapper { position: relative; z-index: 2; }
+
+  /* Dark mode text enforcement — fix Webflow CSS overrides */
+  [data-theme="dark"] p { color: var(--ink) !important; }
+  [data-theme="dark"] span { color: inherit; }
+  [data-theme="dark"] [subheader-element] { color: var(--ink) !important; }
+  [data-theme="dark"] .text-size-large { color: var(--ink) !important; }
+  [data-theme="dark"] .text-weight-semibold { color: var(--ink) !important; }
+  [data-theme="dark"] .text-color-black20 { color: var(--ink-soft) !important; }
+  [data-theme="dark"] .text-color-black70 { color: var(--ink-mute) !important; }
+  /* Second section (dark patina band) — cream variables become near-black in dark mode, override with fixed light values */
+  [data-theme="dark"] .integrations_left h2 { color: #EEE5D2 !important; }
+  [data-theme="dark"] .integrations_left p.text-size-large { color: rgba(238,229,210,.75) !important; }
+  [data-theme="dark"] .home_integrations_chip { background-color: rgba(244,240,235,.12) !important; border: 1px solid rgba(244,240,235,.18) !important; }
+  [data-theme="dark"] .home_integrations_chip div { color: #EEE5D2 !important; }
 </style>
 </head>
 

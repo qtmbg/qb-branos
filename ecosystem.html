@@ -2275,15 +2275,18 @@ input{font-family:inherit}
   width:340px;
   flex-shrink:0;
 }
-.foot-stage-art img{
+.foot-stage-art img,
+.foot-stage-art video{
   width:100%;
   height:auto;
   border-radius:var(--r-card);
   border:2px solid var(--cream-line);
   filter:drop-shadow(0 16px 36px rgba(26,22,16,.2));
   transition:transform .8s var(--ease);
+  display:block;
 }
-.foot-stage-art:hover img{
+.foot-stage-art:hover img,
+.foot-stage-art:hover video{
   transform:scale(1.03) rotate(-1deg);
 }
 /* Floating UI pills over art */
@@ -3911,7 +3914,7 @@ body{
       <!-- Art left + big stacked name right -->
       <div class="foot-stage-brand">
         <div class="foot-stage-art">
-          <img src="img/synergy.png" alt="Brand ecosystem"/>
+          <video class="synergy-vid" src="img/synergy.mov" muted playsinline loop preload="metadata" aria-label="Brand ecosystem"></video>
           <div class="art-overlay-pills">
             <span class="art-pill ap-1">Brand Profile</span>
             <span class="art-pill ap-2">18 Agents</span>
@@ -4109,6 +4112,19 @@ body{
     });
   });
 
+})();
+
+// Scroll-triggered autoplay for synergy video
+(function(){
+  var vids = document.querySelectorAll('.synergy-vid');
+  if (!vids.length) return;
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting) e.target.play();
+      else { e.target.pause(); e.target.currentTime=0; }
+    });
+  },{threshold:0.3});
+  vids.forEach(function(v){ obs.observe(v); });
 })();
 </script>
 </body>
