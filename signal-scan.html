@@ -47,6 +47,37 @@
   --font-body: 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'EB Garamond', Georgia, serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Ecosystem nav/btn tokens (additive, match ecosystem.html) */
+  --cream:          #F4F0EB;
+  --cream-soft:     #EDE8E2;
+  --cream-deep:     #E6E0D8;
+  --cream-edge:     rgba(100,80,50,0.10);
+  --cream-line:     rgba(100,80,50,0.14);
+  --ink:            #1A1610;
+  --ink-soft:       #5A5040;
+  --ink-mute:       #8A7E70;
+  --ink-faint:      #B8AEA0;
+  --patina-deep:    #0E1C17;
+  --patina-deeper:  #081310;
+  --terra:          #C4654A;
+  --terra-lit:      #D4785E;
+  --plum:           #7A5A6E;
+  --plum-lit:       #9A7A8E;
+  --dark-text:      #EEE5D2;
+  --dark-text-soft: #A8A092;
+  --pill-bg:        #F3E9C9;
+  --pill-bg-hover:  #EFE1B4;
+  --pill-border:    #A8903E;
+  --pill-ink:       #1A1610;
+  --f-display:      var(--font-display);
+  --f-body:         var(--font-body);
+  --f-mono:         var(--font-mono);
+  --ease:           cubic-bezier(.22,1,.36,1);
+  --r-pill:         999px;
+  --r-card:         24px;
+  --r-card-lg:      36px;
+  --nav-h:          74px;
+  --container:      1200px;
 }
 [data-theme="dark"] {
   --bg-void: #080604;
@@ -74,6 +105,20 @@
   --warning: var(--brass);
   --error: #8A4A4A;
   --info: #4A7A8A;
+  /* Ecosystem nav/btn tokens — dark mode overrides */
+  --cream:          #080604;
+  --cream-soft:     #0A0806;
+  --cream-deep:     #12100C;
+  --cream-edge:     rgba(140,110,70,0.06);
+  --cream-line:     rgba(140,110,70,0.11);
+  --ink:            #EEE5D2;
+  --ink-soft:       #A8A092;
+  --ink-mute:       #6F6A5E;
+  --ink-faint:      #3E3830;
+  --pill-bg:        #2A2318;
+  --pill-bg-hover:  #3A2E1F;
+  --pill-border:    #A8903E;
+  --pill-ink:       #EEE5D2;
 }
 body {
   background: var(--bg-void);
@@ -279,85 +324,206 @@ textarea { resize: none; line-height: 1.6; }
   color: var(--text-1);
 }
 
-/* ============================== SITE HEADER ============================== */
-.site-header{
-  position:fixed;
-  top:18px;
-  left:0;
-  right:0;
-  z-index:100;
-  padding:0 20px;
+/* ============================== BUTTONS (ecosystem parity) ============================== */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.55em;
+  font-family:var(--f-body);
+  font-weight:500;
+  font-size:.94rem;
+  padding:14px 24px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--ink);
+  background:transparent;
+  color:var(--ink);
+  transition:all .25s var(--ease);
+  white-space:nowrap;
+  text-decoration:none !important;
+  box-shadow:none !important;
+  cursor:pointer;
 }
-.site-header-inner{
-  max-width:640px;
-  margin:0 auto;
+.btn:hover{ background:var(--ink); color:var(--cream); }
+@property --eco-angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
+.btn-primary{
+  background:var(--pill-bg) !important;
+  border-color:var(--pill-border) !important;
+  color:var(--pill-ink) !important;
+  position:relative;
+  isolation:isolate;
+}
+.btn-primary::before{
+  content:'';
+  position:absolute;
+  inset:-3px;
+  background:conic-gradient(from var(--eco-angle), var(--patina), var(--brass), var(--terra), var(--plum), var(--patina));
+  border-radius:999px;
+  z-index:-1;
+  opacity:0;
+  transition:opacity .4s ease;
+  animation:ecoSpin 6s linear infinite;
+  filter:blur(10px);
+}
+@keyframes ecoSpin{ to{ --eco-angle:360deg; } }
+.btn-primary:hover::before{ opacity:.75; }
+.btn-primary:hover{
+  background:var(--pill-bg-hover) !important;
+  color:var(--pill-ink) !important;
+  border-color:var(--pill-ink) !important;
+  transform:translateY(-1px);
+  box-shadow:0 14px 40px -12px rgba(168,144,62,.35) !important;
+}
+.btn-ghost{ border-color:transparent; }
+.btn-ghost:hover{ background:transparent; color:var(--ink); text-decoration:underline; text-underline-offset:4px; }
+.btn-sm{ padding:10px 18px; font-size:.85rem; }
+.btn-lg{ padding:17px 30px; font-size:1rem; }
+.btn .ic{ width:16px; height:16px; }
+
+/* ============================== NAV (pill, ecosystem parity) ============================== */
+.nav-spacer{ height:28px; width:100%; flex-shrink:0; }
+.nav{
+  position:sticky;
+  top:18px;
+  z-index:50;
+  padding:0 20px;
+  width:100%;
+  flex-shrink:0;
+  align-self:stretch;
+}
+.nav-inner{
+  max-width:1160px;
+  margin-inline:auto;
+  background:var(--cream);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  padding:8px 10px 8px 24px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:8px 10px 8px 20px;
-  background:var(--bg-overlay);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border:1px solid var(--border-subtle);
-  border-radius:999px;
-  box-shadow:0 6px 24px -12px rgba(26,22,16,.12);
+  gap:20px;
+  box-shadow:0 6px 30px -18px rgba(26,22,16,.18);
+  transition:background .4s ease, border-color .3s ease, box-shadow .3s ease;
 }
-[data-theme="dark"] .site-header-inner{
-  box-shadow:0 6px 24px -12px rgba(0,0,0,.4);
-}
-.site-header .brand-link{
+.nav-brand{
   display:flex;
   align-items:center;
-  gap:8px;
-  font-family:var(--font-display);
-  font-size:.95rem;
-  color:var(--text-1);
+  gap:10px;
+  font-family:var(--f-display);
+  font-size:1.25rem;
+  color:var(--ink);
+  font-weight:500;
+  padding:6px 0;
   text-decoration:none;
 }
-.site-header .brand-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
+.nav-brand .dot{
+  width:10px; height:10px; border-radius:50%;
   background:var(--brass);
   box-shadow:0 0 0 3px var(--brass-faint);
+  animation:pulseDot 3s var(--ease) infinite;
 }
-.site-header .header-actions{
-  display:flex;
-  align-items:center;
-  gap:6px;
+@keyframes pulseDot{
+  0%,100%{ transform:scale(1); box-shadow:0 0 0 3px var(--brass-faint); }
+  50%{ transform:scale(1.15); box-shadow:0 0 0 5px rgba(168,144,62,.05); }
 }
-.site-header .header-link{
-  padding:7px 14px;
-  border-radius:999px;
-  font-family:var(--font-body);
-  font-size:.78rem;
+.nav-links{
+  display:flex; align-items:center; gap:4px;
+  list-style:none;
+}
+.nav-links a{
+  padding:10px 16px;
+  border-radius:var(--r-pill);
+  font-size:.92rem;
   font-weight:500;
-  color:var(--text-3);
+  color:var(--ink-soft);
+  transition:all .2s var(--ease);
   text-decoration:none;
-  transition:all .2s;
 }
-.site-header .header-link:hover{
-  background:var(--bg-surface);
-  color:var(--text-1);
-}
-.site-header .theme-btn{
-  width:32px;
-  height:32px;
+.nav-links a:hover{ background:var(--cream-deep); color:var(--ink); }
+.nav-actions{ display:flex; align-items:center; gap:6px; }
+.theme-toggle{
+  width:36px;
+  height:36px;
   border-radius:50%;
-  border:1px solid var(--border-subtle);
+  border:1px solid var(--cream-line);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:.9rem;
-  color:var(--text-3);
+  font-size:1rem;
+  color:var(--ink-mute);
   cursor:pointer;
-  transition:all .2s;
+  transition:all .25s var(--ease);
   background:transparent;
+  flex-shrink:0;
 }
-.site-header .theme-btn:hover{
+.theme-toggle:hover{
   border-color:var(--brass);
   color:var(--brass);
+  background:var(--brass-faint);
 }
+.hamburger{
+  display:none;
+  width:42px; height:42px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--cream-line);
+  background:transparent;
+  cursor:pointer;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.hamburger span{ display:block; width:18px; height:1.5px; background:var(--ink); transition:.25s; }
+.hamburger.open span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; }
+.hamburger.open span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
+
+@media(max-width:960px){
+  .nav-links, .nav .btn-ghost{ display:none; }
+  .hamburger{ display:flex; }
+  .nav-brand{ font-size:1.1rem; }
+  .nav-inner{ padding:8px 8px 8px 20px; }
+}
+
+/* Mobile menu */
+.mmenu{
+  position:fixed; inset:0; z-index:100;
+  background:var(--cream);
+  display:none; flex-direction:column;
+  padding:28px;
+}
+.mmenu.open{ display:flex; }
+.mmenu-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
+.mmenu-close{
+  width:42px; height:42px; border-radius:50%;
+  border:1px solid var(--cream-line);
+  background:transparent;
+  font-size:1.2rem;
+  color:var(--ink);
+  cursor:pointer;
+}
+.mmenu-list{ display:flex; flex-direction:column; gap:6px; }
+.mmenu-list a{
+  font-family:var(--f-display);
+  font-size:2rem;
+  padding:10px 0;
+  color:var(--ink);
+  border-bottom:1px solid var(--cream-line);
+  text-decoration:none;
+}
+.mmenu-foot{ margin-top:auto; padding-top:28px; }
+
+/* Dark mode nav overrides (ecosystem parity) */
+[data-theme="dark"] .nav-inner{
+  background:rgba(18,15,10,.85);
+  border-color:rgba(140,110,70,.15);
+  backdrop-filter:blur(14px);
+}
+[data-theme="dark"] .nav-links a{ color:var(--ink-mute); }
+[data-theme="dark"] .nav-links a:hover{ background:rgba(140,110,70,.08); color:var(--ink); }
+[data-theme="dark"] .btn{ border-color:rgba(140,110,70,.2); color:var(--ink); }
+[data-theme="dark"] .btn:hover{ background:var(--ink); color:var(--cream); }
+[data-theme="dark"] .btn-ghost{ color:var(--ink-soft); }
 
 /* ============================== MICRO FOOTER ============================== */
 .site-micro-footer{
@@ -383,7 +549,7 @@ textarea { resize: none; line-height: 1.6; }
 .site-micro-footer a:hover{ color:var(--patina); }
 
 /* Adjust app padding for fixed header */
-#app{ padding-top:84px !important; }
+/* Nav is sticky with spacer — no extra top padding needed on #app */
 
 /* ============================== AMBIENT (matching homepage) ============================== */
 .ambient-scan{
@@ -432,19 +598,49 @@ textarea { resize: none; line-height: 1.6; }
   <div class="ablob ab2"></div>
 </div>
 
-<!-- Site header (branded nav bar) -->
-<header class="site-header">
-  <div class="site-header-inner">
-    <a href="index.html" class="brand-link">
-      <span class="brand-dot"></span>Quantum Branding
+<!-- Nav (ecosystem parity) -->
+<div class="nav-spacer"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="dot"></span>Quantum Branding
     </a>
-    <div class="header-actions">
-      <a href="tools.html" class="header-link">All tools</a>
-      <a href="ecosystem.html" class="header-link">Ecosystem</a>
-      <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme" id="headerThemeBtn">&#9789;</button>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="ecosystem.html">Ecosystem</a></li>
+        <li><a href="ecosystem.html#pricing">Pricing</a></li>
+        <li><a href="ecosystem.html#about">About</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Toggle theme"><span id="toggleIcon">&#9789;</span></button>
+      <a href="https://app.quantumbranding.ai" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="#app" class="btn btn-primary btn-sm">Start scan</a>
+      <button class="hamburger" type="button" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </header>
+
+<!-- Mobile menu -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-head">
+    <div class="nav-brand"><span class="dot"></span>Quantum Branding</div>
+    <button class="mmenu-close" type="button" id="mmenuClose" aria-label="Close menu">&#10005;</button>
+  </div>
+  <nav class="mmenu-list">
+    <a href="tools.html">Tools</a>
+    <a href="ecosystem.html">Ecosystem</a>
+    <a href="ecosystem.html#pricing">Pricing</a>
+    <a href="ecosystem.html#about">About</a>
+    <a href="#app">Free scan</a>
+  </nav>
+  <div class="mmenu-foot">
+    <a href="https://app.quantumbranding.ai" class="btn btn-primary" style="width:100%">Enter QB BrandOS</a>
+  </div>
+</div>
 
 <div id="app"></div>
 
@@ -456,18 +652,47 @@ textarea { resize: none; line-height: 1.6; }
   <a href="ecosystem.html#about">About</a>
 </div>
 <script>
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('qb-theme', next);
-  var hb = document.getElementById('headerThemeBtn');
-  if(hb) hb.innerHTML = next==='dark' ? '&#9728;' : '&#9789;';
-}
-// Update icon on load
+/* ============================== Theme toggle + mobile menu (ecosystem parity) ============================== */
 (function(){
-  var hb = document.getElementById('headerThemeBtn');
-  if(hb) hb.innerHTML = document.documentElement.getAttribute('data-theme')==='dark' ? '&#9728;' : '&#9789;';
+  var toggle = document.getElementById('themeToggle');
+  var icon   = document.getElementById('toggleIcon');
+  function setIcon(){
+    if(!icon) return;
+    icon.innerHTML = document.documentElement.getAttribute('data-theme') === 'dark' ? '&#9728;' : '&#9789;';
+  }
+  setIcon();
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      var current = document.documentElement.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try{ localStorage.setItem('qb-theme', next); }catch(e){}
+      setIcon();
+    });
+  }
+  var ham   = document.getElementById('hamburger');
+  var mmenu = document.getElementById('mmenu');
+  var close = document.getElementById('mmenuClose');
+  if(ham && mmenu){
+    ham.addEventListener('click', function(){
+      ham.classList.toggle('open');
+      mmenu.classList.toggle('open');
+    });
+  }
+  if(close && mmenu){
+    close.addEventListener('click', function(){
+      if(ham) ham.classList.remove('open');
+      mmenu.classList.remove('open');
+    });
+  }
+  if(mmenu){
+    mmenu.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        if(ham) ham.classList.remove('open');
+        mmenu.classList.remove('open');
+      });
+    });
+  }
 })();
 (function(){
   var p=new URLSearchParams(window.location.search);
