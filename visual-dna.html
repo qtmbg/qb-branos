@@ -1,269 +1,967 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QB BrandOS — Visual DNA</title>
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script>
-  // Anti-flash: Read theme immediately and apply
-  (function() {
-    try {
-      var t = localStorage.getItem('qb-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', t);
-    } catch(e) {}
-  })();
-</script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: ["class", '[data-theme="dark"]'],
-    theme: { 
-      extend: { 
-        fontFamily: { 
-          sans: ["Inter", "-apple-system", "sans-serif"], 
-          mono: ["JetBrains Mono", "monospace"],
-          serif: ["DM Serif Display", "Georgia", "serif"]
-        }, 
-        colors: { 
-          patina: { DEFAULT: "#3A5F4A", lit: "#4A7A5E", dim: "rgba(58,95,74,0.2)", faint: "rgba(58,95,74,0.08)" },
-          brass: { DEFAULT: "#A8903E", lit: "#C4A84E", dim: "rgba(168,144,62,0.18)", faint: "rgba(168,144,62,0.06)" },
-          warmred: "#8A4A4A",
-          bg: { void: "var(--bg-void)", deep: "var(--bg-deep)", base: "var(--bg-base)", surface: "var(--bg-surface)", elevated: "var(--bg-elevated)", overlay: "var(--bg-overlay)" },
-          border: { subtle: "var(--border-subtle)", medium: "var(--border-medium)", strong: "var(--border-strong)" },
-          text: { 1: "var(--text-1)", 2: "var(--text-2)", 3: "var(--text-3)", 4: "var(--text-4)" }
-        } 
-      } 
-    }
-  }
-</script>
+<meta name="description" content="Visual DNA · QB BrandOS Phase 01 — trust your eye, discover your brand's visual signature.">
+<script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* DESIGN SYSTEM: Entangled Time - Base Variables */
-  :root, [data-theme="dark"] {
-    --bg-void: #080604;
-    --bg-deep: #0A0806;
-    --bg-base: #0E0C09;
-    --bg-surface: rgba(140,110,70,0.045);
-    --bg-elevated: rgba(140,110,70,0.07);
-    --bg-overlay: rgba(18,15,10,0.85);
-    --border-subtle: rgba(140,110,70,0.06);
-    --border-medium: rgba(140,110,70,0.11);
-    --border-strong: rgba(140,110,70,0.18);
-    --text-1: #DDD4C4;
-    --text-2: #A89A88;
-    --text-3: #6A5E50;
-    --text-4: #3E3830;
+*,*::before,*::after{ margin:0; padding:0; box-sizing:border-box }
+:root{
+  /* QB ecosystem tokens (light-first, warm cream + patina/brass) */
+  --cream:          #F4F0EB;
+  --cream-soft:     #EDE8E2;
+  --cream-deep:     #E6E0D8;
+  --cream-edge:     rgba(100,80,50,0.10);
+  --cream-line:     rgba(100,80,50,0.14);
+  --bg-void:        var(--cream);
+  --bg-deep:        var(--cream-soft);
+  --bg-base:        var(--cream-deep);
+  --bg-surface:     rgba(100,80,50,0.04);
+  --bg-elevated:    rgba(100,80,50,0.07);
+  --bg-overlay:     rgba(244,240,235,0.9);
+  --border-subtle:  rgba(100,80,50,0.08);
+  --border-medium:  rgba(100,80,50,0.14);
+  --border-strong:  rgba(100,80,50,0.22);
+  --ink:            #1A1610;
+  --ink-soft:       #5A5040;
+  --ink-mute:       #8A7E70;
+  --ink-faint:      #B8AEA0;
+  --text-1:         var(--ink);
+  --text-2:         var(--ink-soft);
+  --text-3:         var(--ink-mute);
+  --text-4:         var(--ink-faint);
+  --patina:         #3A5F4A;
+  --patina-lit:     #4A7A5E;
+  --patina-dim:     rgba(58,95,74,0.15);
+  --patina-faint:   rgba(58,95,74,0.06);
+  --patina-deep:    #0E1C17;
+  --brass:          #A8903E;
+  --brass-lit:      #C4A84E;
+  --brass-dim:      rgba(168,144,62,0.15);
+  --brass-faint:    rgba(168,144,62,0.06);
+  --terra:          #C4654A;
+  --terra-lit:      #D4785E;
+  --plum:           #7A5A6E;
+  --plum-lit:       #9A7A8E;
+  --warmred:        #8A4A4A;
+  --pill-bg:        #F3E9C9;
+  --pill-bg-hover:  #EFE1B4;
+  --pill-border:    #A8903E;
+  --pill-ink:       #1A1610;
+  --f-display:      'EB Garamond','Cormorant Garamond',Georgia,serif;
+  --f-body:         'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --f-mono:         'JetBrains Mono',ui-monospace,monospace;
+  --font-display:   var(--f-display);
+  --font-body:      var(--f-body);
+  --font-mono:      var(--f-mono);
+  --ease:           cubic-bezier(.22,1,.36,1);
+  --r-pill:         999px;
+  --r-card:         24px;
+  --r-card-lg:      36px;
+  --nav-h:          74px;
+  --container:      1200px;
+}
+[data-theme="dark"]{
+  --cream:          #080604;
+  --cream-soft:     #0A0806;
+  --cream-deep:     #12100C;
+  --cream-edge:     rgba(140,110,70,0.06);
+  --cream-line:     rgba(140,110,70,0.11);
+  --bg-void:        var(--cream);
+  --bg-deep:        var(--cream-soft);
+  --bg-base:        var(--cream-deep);
+  --bg-surface:     rgba(140,110,70,0.045);
+  --bg-elevated:    rgba(140,110,70,0.07);
+  --bg-overlay:     rgba(18,15,10,0.85);
+  --border-subtle:  rgba(140,110,70,0.06);
+  --border-medium:  rgba(140,110,70,0.11);
+  --border-strong:  rgba(140,110,70,0.18);
+  --ink:            #EEE5D2;
+  --ink-soft:       #A8A092;
+  --ink-mute:       #6F6A5E;
+  --ink-faint:      #3E3830;
+  --text-1:         var(--ink);
+  --text-2:         var(--ink-soft);
+  --text-3:         var(--ink-mute);
+  --text-4:         var(--ink-faint);
+  --patina-dim:     rgba(58,95,74,0.2);
+  --patina-faint:   rgba(58,95,74,0.08);
+  --brass-dim:      rgba(168,144,62,0.18);
+  --warmred:        #B06767;
+  --pill-bg:        #2A2318;
+  --pill-bg-hover:  #3A2E1F;
+  --pill-border:    #A8903E;
+  --pill-ink:       #EEE5D2;
+}
+html{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior:smooth; background:var(--bg-void); }
+body{
+  font-family:var(--f-body);
+  font-weight:400;
+  background:var(--bg-void);
+  color:var(--text-2);
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+  transition:background .5s ease, color .3s ease;
+}
+body::after{
+  content:'';
+  position:fixed; inset:0; z-index:9999;
+  pointer-events:none; opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px 256px;
+}
+[data-theme="dark"] body::after{ opacity:.05; }
+a{ color:inherit; text-decoration:none; }
+img{ display:block; max-width:100%; }
+button{ font-family:inherit; }
 
-    /* Brand colour tokens — used in plain CSS rules below */
-    --patina: #3A5F4A;
-    --patina-lit: #4A7A5E;
-    --patina-faint: rgba(58,95,74,0.08);
-    --brass: #A8903E;
-    --brass-faint: rgba(168,144,62,0.06);
-  }
-  
-  [data-theme="light"] {
-    --bg-void: #F4F0EB;
-    --bg-deep: #EDE8E2;
-    --bg-base: #E6E0D8;
-    --bg-surface: rgba(100,80,50,0.04);
-    --bg-elevated: rgba(100,80,50,0.07);
-    --bg-overlay: rgba(244,240,235,0.9);
-    --border-subtle: rgba(100,80,50,0.08);
-    --border-medium: rgba(100,80,50,0.14);
-    --border-strong: rgba(100,80,50,0.22);
-    --text-1: #1A1610;
-    --text-2: #5A5040;
-    --text-3: #8A7E70;
-    --text-4: #B8AEA0;
+/* ================== AMBIENT ================== */
+.ambient{
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; overflow:hidden;
+}
+.ambient .ablob{
+  position:absolute; border-radius:50%;
+  filter:blur(120px); opacity:.1; mix-blend-mode:screen;
+}
+[data-theme="dark"] .ambient .ablob{ opacity:.18; }
+.ablob.ab1{
+  width:500px; height:500px; top:-15%; left:-10%;
+  background:var(--patina);
+  animation:abf1 22s ease-in-out infinite;
+}
+.ablob.ab2{
+  width:420px; height:420px; bottom:-10%; right:-12%;
+  background:var(--brass);
+  animation:abf2 26s ease-in-out infinite;
+}
+@keyframes abf1{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(40px,30px) scale(1.08); } }
+@keyframes abf2{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-40px,-30px) scale(1.1); } }
 
-    /* Brand colour tokens — light mode variants */
-    --patina: #2E4D3A;
-    --patina-lit: #3A5F4A;
-    --patina-faint: rgba(46,77,58,0.08);
-    --brass: #8A7430;
-    --brass-faint: rgba(138,116,48,0.06);
-  }
+.vignette{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.10) 100%);
+}
+[data-theme="dark"] .vignette{
+  background:radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.45) 100%);
+}
 
-  html:not([data-theme]) { background: #080604; color: #A89A88; }
-  
-  body {
-    background-color: var(--bg-void);
-    color: var(--text-2);
-    font-family: 'Inter', -apple-system, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+/* ================== BUTTONS (ecosystem parity) ================== */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:.55em;
+  font-family:var(--f-body); font-weight:500; font-size:.94rem;
+  padding:14px 24px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--ink);
+  background:transparent; color:var(--ink);
+  transition:all .25s var(--ease);
+  white-space:nowrap;
+  text-decoration:none !important;
+  cursor:pointer;
+}
+.btn:hover{ background:var(--ink); color:var(--cream); }
+@property --eco-angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
+.btn-primary{
+  background:var(--pill-bg) !important;
+  border-color:var(--pill-border) !important;
+  color:var(--pill-ink) !important;
+  position:relative; isolation:isolate;
+}
+.btn-primary::before{
+  content:''; position:absolute; inset:-3px;
+  background:conic-gradient(from var(--eco-angle), var(--patina), var(--brass), var(--terra), var(--plum), var(--patina));
+  border-radius:999px; z-index:-1; opacity:0;
+  transition:opacity .4s ease;
+  animation:ecoSpin 6s linear infinite;
+  filter:blur(10px);
+}
+@keyframes ecoSpin{ to{ --eco-angle:360deg; } }
+.btn-primary:hover::before{ opacity:.75; }
+.btn-primary:hover{
+  background:var(--pill-bg-hover) !important;
+  border-color:var(--pill-ink) !important;
+  transform:translateY(-1px);
+  box-shadow:0 14px 40px -12px rgba(168,144,62,.35) !important;
+}
+.btn-primary:disabled{
+  opacity:.45; cursor:not-allowed; transform:none;
+}
+.btn-primary:disabled::before{ display:none; }
+.btn-ghost{ border-color:transparent; }
+.btn-ghost:hover{ background:transparent; color:var(--ink); text-decoration:underline; text-underline-offset:4px; }
+.btn-sm{ padding:10px 18px; font-size:.85rem; }
+.btn-lg{ padding:17px 30px; font-size:1rem; }
+.btn .ic{ width:16px; height:16px; }
 
-  /* 1. Film Grain Overlay */
-  body::after {
-    content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 256px 256px;
-  }
-  [data-theme="light"] body::after { opacity: 0.02; }
+/* ================== NAV (pill, ecosystem parity) ================== */
+.nav-spacer{ height:28px; width:100%; flex-shrink:0; }
+.nav{
+  position:sticky; top:18px; z-index:50;
+  padding:0 20px; width:100%;
+}
+.nav-inner{
+  max-width:1160px; margin-inline:auto;
+  background:var(--cream);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  padding:8px 10px 8px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:20px;
+  box-shadow:0 6px 30px -18px rgba(26,22,16,.18);
+  transition:background .4s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.nav-brand{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--f-display); font-size:1.25rem;
+  color:var(--ink); font-weight:500; padding:6px 0;
+}
+.nav-brand .dot{
+  width:10px; height:10px; border-radius:50%;
+  background:var(--brass);
+  box-shadow:0 0 0 3px var(--brass-faint);
+  animation:pulseDot 3s var(--ease) infinite;
+}
+@keyframes pulseDot{
+  0%,100%{ transform:scale(1); box-shadow:0 0 0 3px var(--brass-faint); }
+  50%{ transform:scale(1.15); box-shadow:0 0 0 5px rgba(168,144,62,.05); }
+}
+.nav-links{ display:flex; align-items:center; gap:4px; list-style:none; }
+.nav-links a{
+  padding:10px 16px; border-radius:var(--r-pill);
+  font-size:.92rem; font-weight:500;
+  color:var(--ink-soft);
+  transition:all .2s var(--ease);
+}
+.nav-links a:hover{ background:var(--cream-deep); color:var(--ink); }
+.nav-actions{ display:flex; align-items:center; gap:6px; }
+.theme-toggle{
+  width:36px; height:36px; border-radius:50%;
+  border:1px solid var(--cream-line);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; color:var(--ink-mute);
+  cursor:pointer; background:transparent; flex-shrink:0;
+  transition:all .25s var(--ease);
+}
+.theme-toggle:hover{
+  border-color:var(--brass); color:var(--brass);
+  background:var(--brass-faint);
+}
+.hamburger{
+  display:none; width:42px; height:42px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--cream-line);
+  background:transparent; cursor:pointer;
+  flex-direction:column; align-items:center; justify-content:center; gap:4px;
+}
+.hamburger span{ display:block; width:18px; height:1.5px; background:var(--ink); transition:.25s; }
+.hamburger.open span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; }
+.hamburger.open span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
+@media(max-width:960px){
+  .nav-links, .nav .btn-ghost{ display:none; }
+  .hamburger{ display:flex; }
+  .nav-brand{ font-size:1.1rem; }
+  .nav-inner{ padding:8px 8px 8px 20px; }
+}
+.mmenu{
+  position:fixed; inset:0; z-index:100;
+  background:var(--cream);
+  display:none; flex-direction:column;
+  padding:28px;
+}
+.mmenu.open{ display:flex; }
+.mmenu-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
+.mmenu-close{
+  width:42px; height:42px; border-radius:50%;
+  border:1px solid var(--cream-line);
+  background:transparent; font-size:1.2rem; color:var(--ink); cursor:pointer;
+}
+.mmenu-list{ display:flex; flex-direction:column; gap:6px; }
+.mmenu-list a{
+  font-family:var(--f-display); font-size:2rem;
+  padding:10px 0; color:var(--ink);
+  border-bottom:1px solid var(--cream-line);
+}
+.mmenu-foot{ margin-top:auto; padding-top:28px; }
 
-  /* 8. Warm Vignette */
-  .vignette {
-    position: fixed; inset: 0; pointer-events: none; z-index: 1;
-    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.4) 100%);
-  }
-  [data-theme="light"] .vignette {
-    background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.15) 100%);
-  }
+/* Dark mode nav overrides (ecosystem parity) */
+[data-theme="dark"] .nav-inner{
+  background:rgba(18,15,10,.85);
+  border-color:rgba(140,110,70,.15);
+  backdrop-filter:blur(14px);
+}
+[data-theme="dark"] .nav-links a{ color:var(--ink-mute); }
+[data-theme="dark"] .nav-links a:hover{ background:rgba(140,110,70,.08); color:var(--ink); }
+[data-theme="dark"] .btn{ border-color:rgba(140,110,70,.2); color:var(--ink); }
+[data-theme="dark"] .btn:hover{ background:var(--ink); color:var(--cream); }
+[data-theme="dark"] .btn-ghost{ color:var(--ink-soft); }
 
-  /* 2. Warm Glass Cards */
-  .glass-card {
-    background: var(--bg-overlay);
-    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--border-medium);
-    border-radius: 14px;
-    position: relative;
-    overflow: hidden;
-    transition: box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .glass-card::before {
-    content: ''; position: absolute; top: -30%; left: -10%; width: 60%; height: 60%;
-    background: radial-gradient(ellipse at center, rgba(168,144,62,0.035) 0%, transparent 70%);
-    pointer-events: none;
-  }
+/* ================== IMMERSIVE MODE (hide nav during swipe) ================== */
+body.immersive .nav-spacer,
+body.immersive .nav,
+body.immersive .mmenu{ display:none !important; }
+body.immersive{ overflow:hidden; }
 
-  /* 3. Brass Heartbeat Pulse */
-  .pulse-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #A8903E;
-    box-shadow: 0 0 8px rgba(168,144,62,0.7), 0 0 2px rgba(168,144,62,1);
-    animation: beat 3s ease infinite;
-  }
-  [data-theme="light"] .pulse-dot {
-    background: #8A7430; box-shadow: 0 0 8px rgba(138,116,48,0.7), 0 0 2px rgba(138,116,48,1);
-  }
-  @keyframes beat {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    12% { transform: scale(1.35); opacity: 1; }
-    24% { transform: scale(0.95); opacity: 0.6; }
-    36% { transform: scale(1.15); opacity: 1; }
-    48% { transform: scale(1); opacity: 0.7; }
-  }
+/* ================== TYPE PRIMITIVES ================== */
+.label-system{
+  font-family:var(--f-mono);
+  font-size:10px; font-weight:500;
+  text-transform:uppercase; letter-spacing:.2em;
+  color:var(--text-2);
+}
+.heading-display{
+  font-family:var(--f-display);
+  font-weight:500; letter-spacing:-.01em;
+  color:var(--text-1); line-height:1.05;
+}
+.heading-display em{ font-style:italic; color:var(--brass); font-weight:400; }
+.body-copy{
+  font-family:var(--f-body);
+  font-size:15px; line-height:1.75;
+  color:var(--text-2);
+}
+.serif-italic{ font-family:var(--f-display); font-style:italic; color:var(--text-2); }
+.mono{ font-family:var(--f-mono); }
 
-  /* 4. Manifesto Block */
-  .manifesto-block {
-    position: relative;
-    padding: 24px 0 24px 24px;
-  }
-  .manifesto-block::before {
-    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-    background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
-    border-radius: 2px;
-    box-shadow: 0 0 8px var(--brass-faint);
-  }
+/* ================== EXERCISE COMPONENTS ================== */
+.glass-card{
+  background:var(--bg-surface);
+  border:1px solid var(--border-medium);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-radius:16px;
+  transition:border-color .3s ease, background .3s ease;
+}
+.manifesto-block{
+  background:var(--bg-deep);
+  border-left:3px solid var(--brass);
+  padding:28px;
+  border-radius:0 12px 12px 0;
+}
+.pulse-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--brass);
+  box-shadow:0 0 0 3px var(--brass-faint);
+  animation:pulseDot 2.4s var(--ease) infinite;
+  display:inline-block;
+}
+.quantum-image{
+  filter:grayscale(.1) contrast(1.02);
+  transition:filter .6s ease, opacity .6s ease;
+}
+.animate-in{
+  animation:fadeUp .7s var(--ease) both;
+}
+@keyframes fadeUp{
+  from{ opacity:0; transform:translateY(14px); }
+  to  { opacity:1; transform:translateY(0); }
+}
+.spin{ animation:spin 1s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
 
-  /* 5. Input Focus */
-  input:focus, textarea:focus {
-    border-color: var(--patina) !important;
-    box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
-    outline: none;
-  }
+.pill{
+  display:inline-flex; align-items:center;
+  font-family:var(--f-mono);
+  font-size:10px; font-weight:500;
+  letter-spacing:.18em; text-transform:uppercase;
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid var(--border-medium);
+  background:var(--bg-surface);
+  color:var(--text-2);
+  margin:4px 6px 4px 0;
+}
+.pill.green{
+  color:var(--patina-lit);
+  border-color:var(--patina-dim);
+  background:var(--patina-faint);
+}
+.pill.red{
+  color:var(--warmred);
+  border-color:rgba(138,74,74,.25);
+  background:rgba(138,74,74,.08);
+}
+.pill.brass{
+  color:var(--brass);
+  border-color:var(--brass-dim);
+  background:var(--brass-faint);
+}
 
-  /* 6. Primary Button */
-  .btn-primary {
-    background: var(--patina);
-    color: #E6DDD0;
-    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11px;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    padding: 14px 32px; border-radius: 7px; border: none;
-    transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer;
-  }
-  .btn-primary:hover:not(:disabled) {
-    background: var(--patina-lit);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 24px -4px rgba(58,95,74,0.3), 0 0 0 1px var(--brass-faint);
-  }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(50%); }
+/* Form inputs (matches visual language) */
+.vd-input{
+  width:100%;
+  background:transparent;
+  border:none;
+  border-bottom:1px solid var(--border-strong);
+  padding:10px 0;
+  color:var(--text-1);
+  font-family:var(--f-body); font-size:15px;
+  outline:none;
+  transition:border-color .2s ease;
+}
+.vd-input:focus{ border-bottom-color:var(--patina); }
+.vd-input::placeholder{ color:var(--text-3); font-style:italic; }
+.vd-label{
+  display:block; margin-bottom:8px;
+  font-family:var(--f-mono); font-size:10px;
+  text-transform:uppercase; letter-spacing:.2em;
+  color:var(--text-3);
+}
+.vd-checkbox{
+  accent-color:var(--patina);
+  width:14px; height:14px;
+  cursor:pointer;
+}
 
-  /* 7. Progress/Image Filters */
-  .quantum-image {
-    filter: contrast(1.05) saturate(0.9) sepia(0.1);
-  }
+/* ================== PHASE: STUDIO ================== */
+.phase-studio{
+  position:relative; z-index:2;
+  min-height:calc(100vh - 120px);
+  display:flex; align-items:center; justify-content:center;
+  padding:60px 24px;
+}
+.studio-wrap{
+  width:100%; max-width:980px;
+}
+.studio-header{
+  display:flex; flex-direction:column; gap:20px;
+  padding-bottom:32px;
+  border-bottom:1px solid var(--border-medium);
+  margin-bottom:48px;
+}
+@media(min-width:760px){
+  .studio-header{ flex-direction:row; justify-content:space-between; align-items:flex-end; }
+}
+.studio-header h1{ font-size:clamp(2.25rem, 5vw, 3.25rem); }
+.studio-header-meta{
+  display:flex; align-items:center; gap:20px;
+  color:var(--brass);
+}
+.studio-grid{
+  display:grid; grid-template-columns:1fr; gap:24px;
+  margin-bottom:40px;
+}
+@media(min-width:760px){ .studio-grid{ grid-template-columns:1fr 1fr; } }
+.studio-card{
+  padding:32px;
+}
+.studio-card h2{
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:24px;
+}
+.studio-row{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--border-subtle);
+}
+.studio-row:last-child{ border-bottom:none; }
+.studio-footnote{
+  margin-top:16px;
+  font-family:var(--f-body); font-size:12px;
+  color:var(--text-3); line-height:1.6;
+}
+.studio-cta{
+  display:flex; justify-content:center; padding-top:16px;
+}
 
-  /* Animations */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-  }
-  @keyframes fadeInSlideUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .animate-in { animation: fadeInSlideUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-  
-  /* Typography Overrides */
-  .heading-display {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-weight: 400;
-    letter-spacing: -0.015em;
-    color: var(--text-1);
-  }
-  .label-system {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--text-3);
-  }
-  .body-copy {
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--text-2);
-  }
+/* ================== PHASE: INTRO ================== */
+.phase-intro{
+  position:relative; z-index:2;
+  min-height:calc(100vh - 120px);
+  display:flex; align-items:center; justify-content:center;
+  padding:60px 24px; text-align:center;
+}
+.intro-wrap{ max-width:640px; display:flex; flex-direction:column; align-items:center; }
+.intro-badge{
+  display:inline-block;
+  font-family:var(--f-mono); font-size:10px; letter-spacing:.22em;
+  text-transform:uppercase;
+  padding:6px 14px; border-radius:999px;
+  color:var(--brass);
+  border:1px solid var(--brass-dim);
+  background:var(--brass-faint);
+  margin-bottom:32px;
+}
+.intro-wrap h2{
+  font-family:var(--f-display); font-size:clamp(2.5rem,6vw,4.5rem);
+  margin-bottom:24px; color:var(--text-1); line-height:1.05;
+}
+.intro-wrap .serif-italic{
+  font-size:clamp(1.1rem,2.2vw,1.4rem);
+  margin-bottom:48px;
+}
+.intro-wrap p.body-copy{ max-width:420px; margin:0 auto 56px; }
+.intro-keys{
+  display:flex; align-items:center; justify-content:center; gap:64px;
+  margin-bottom:56px;
+}
+.intro-key{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.intro-key .key-circle{
+  width:48px; height:48px; border-radius:50%;
+  border:1px solid var(--border-strong);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; color:var(--text-2);
+}
+
+/* ================== PHASE: ROUND ================== */
+.phase-round{
+  position:fixed; inset:0; z-index:2;
+  background:var(--bg-void);
+  overflow:hidden;
+}
+.round-progress{
+  position:absolute; top:32px; left:0; right:0; z-index:5;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  pointer-events:none;
+}
+.round-progress .rp-label{
+  font-family:var(--f-mono); font-size:10px;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--text-3);
+}
+.round-progress .rp-bar{
+  width:140px; height:2px; border-radius:2px;
+  background:var(--border-subtle); overflow:hidden;
+}
+.round-progress .rp-fill{
+  height:100%; background:var(--brass);
+  transition:width .3s ease;
+}
+.round-indicator-l, .round-indicator-r{
+  position:absolute; bottom:32px; width:6px; height:6px;
+  border-radius:50%;
+  opacity:.5;
+}
+.round-indicator-l{ left:36px; background:var(--warmred); box-shadow:0 0 12px rgba(138,74,74,.6); }
+.round-indicator-r{ right:36px; background:var(--patina); box-shadow:0 0 12px rgba(58,95,74,.6); }
+.swipe-stage{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  touch-action:none; overflow:hidden;
+}
+.swipe-glow-r, .swipe-glow-l{
+  position:absolute; top:0; bottom:0; width:200px;
+  pointer-events:none; mix-blend-mode:screen;
+  filter:blur(120px); opacity:0;
+  transition:opacity .2s ease;
+}
+.swipe-glow-r{ right:0; background:var(--patina); }
+.swipe-glow-l{ left:0; background:var(--warmred); }
+.swipe-card{
+  position:relative;
+  width:min(92vw, 720px);
+  height:min(82vh, 900px);
+  cursor:grab;
+  will-change:transform, opacity;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.swipe-card:active{ cursor:grabbing; }
+.swipe-card img{
+  width:100%; height:100%;
+  object-fit:cover;
+  border-radius:18px;
+  border:1px solid var(--border-strong);
+  box-shadow:0 24px 64px -16px rgba(0,0,0,.4);
+  pointer-events:none;
+}
+
+/* ================== PHASE: TRANSITION ================== */
+.phase-transition{
+  position:fixed; inset:0; z-index:2;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+  transition:background 2.6s var(--ease);
+}
+.phase-transition.t1{ background:#2E5A6A; }
+.phase-transition.t2{ background:#6A3A3A; }
+.phase-transition.t3{ background:#A8903E; }
+.phase-transition::after{
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, transparent, rgba(255,255,255,.18));
+  mix-blend-mode:overlay;
+  opacity:.1;
+  animation:pulseOverlay 3s ease-in-out infinite;
+}
+@keyframes pulseOverlay{
+  0%,100%{ opacity:.1; }
+  50%{ opacity:.25; }
+}
+
+/* ================== PHASE: FINALS ================== */
+.phase-finals{
+  position:fixed; inset:0; z-index:2;
+  display:flex; background:var(--bg-void);
+  overflow:hidden;
+}
+.finals-half{
+  width:50%; height:100%;
+  position:relative;
+  cursor:pointer;
+  overflow:hidden;
+}
+.finals-half img{
+  width:100%; height:100%;
+  object-fit:cover;
+  opacity:.5;
+  transition:opacity .5s ease;
+}
+.finals-half:hover img{ opacity:1; }
+.finals-divider{
+  width:1px; height:100%;
+  background:var(--border-strong);
+}
+
+/* ================== PHASE: REVEAL ================== */
+.phase-reveal{
+  position:relative; z-index:2;
+  min-height:calc(100vh - 120px);
+  padding:80px 24px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.reveal-grid{
+  display:grid; grid-template-columns:repeat(2,1fr); gap:14px;
+  width:100%; max-width:1000px;
+}
+@media(min-width:760px){ .reveal-grid{ grid-template-columns:repeat(5,1fr); } }
+.reveal-tile{
+  aspect-ratio:4/5;
+  overflow:hidden; border-radius:14px;
+  border:1px solid var(--border-medium);
+}
+.reveal-tile img{ width:100%; height:100%; object-fit:cover; opacity:.85; }
+.reveal-empty{
+  font-family:var(--f-mono); font-size:12px;
+  color:var(--text-3);
+  margin-bottom:32px;
+}
+.reveal-cta{
+  margin-top:56px;
+  font-family:var(--f-mono); font-size:11px;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--text-3);
+  border-bottom:1px solid transparent;
+  padding:0 0 4px;
+  background:transparent; border-top:none; border-left:none; border-right:none;
+  cursor:pointer;
+  transition:color .2s ease, border-color .2s ease;
+}
+.reveal-cta:hover{ color:var(--brass); border-bottom-color:var(--brass); }
+
+/* ================== PHASE: CAPTURE ================== */
+.phase-capture{
+  position:relative; z-index:2;
+  min-height:calc(100vh - 120px);
+  display:flex; align-items:center; justify-content:center;
+  padding:60px 24px;
+}
+.capture-wrap{ width:100%; max-width:480px; }
+.capture-head{ text-align:center; margin-bottom:40px; }
+.capture-head h2{
+  font-family:var(--f-display); font-size:clamp(2rem, 4vw, 2.6rem);
+  color:var(--text-1); margin-bottom:10px;
+}
+.capture-head .serif-italic{ font-size:16px; }
+.capture-form{
+  padding:32px;
+  display:flex; flex-direction:column; gap:24px;
+}
+.capture-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+/* ================== PHASE: REPORT ================== */
+.phase-report{
+  position:relative; z-index:2;
+  min-height:100vh;
+  padding:100px 24px 80px;
+  color:var(--text-2);
+}
+.report-banner{
+  position:fixed; top:24px; left:0; right:0; z-index:48;
+  display:flex; justify-content:center;
+  padding:0 16px;
+  pointer-events:none;
+}
+.report-banner-inner{
+  pointer-events:auto;
+  background:var(--bg-overlay);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--border-strong);
+  border-radius:999px;
+  padding:10px 20px;
+  display:inline-flex; align-items:center; gap:12px;
+  font-family:var(--f-mono); font-size:10px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--text-1);
+  box-shadow:0 12px 36px -12px rgba(26,22,16,.2);
+}
+.report-banner-inner strong{ color:var(--brass); font-weight:600; margin-left:4px; text-transform:none; letter-spacing:0; font-family:var(--f-body); font-size:13px; }
+.report-wrap{
+  max-width:920px; margin:0 auto;
+  display:flex; flex-direction:column; gap:64px;
+}
+.report-head{
+  padding-bottom:32px;
+  border-bottom:1px solid var(--border-medium);
+  display:flex; flex-direction:column; gap:20px;
+}
+.report-head-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap; }
+.report-head h1{
+  font-family:var(--f-display); font-size:clamp(2.5rem, 5vw, 3.75rem);
+  color:var(--text-1);
+}
+.report-head .client{
+  font-family:var(--f-display); font-style:italic;
+  font-size:15px; color:var(--text-3); margin-top:10px;
+}
+.report-actions{ display:flex; align-items:center; gap:12px; }
+.btn-reset{
+  font-family:var(--f-mono); font-size:10px;
+  letter-spacing:.2em; text-transform:uppercase;
+  padding:10px 16px;
+  border-radius:8px;
+  border:1px solid var(--border-strong);
+  background:transparent;
+  color:var(--text-2);
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-reset:hover{ background:var(--bg-surface); color:var(--text-1); }
+.section-label{
+  font-family:var(--f-mono); font-size:10px;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--text-3);
+  margin-bottom:16px;
+  opacity:.85;
+}
+.section-card{
+  padding:36px;
+  display:grid; grid-template-columns:1fr; gap:28px;
+}
+@media(min-width:760px){ .section-card.two-col{ grid-template-columns:1fr 1fr; } }
+.section-number{
+  font-family:var(--f-display); font-size:42px;
+  color:var(--text-1); line-height:1;
+}
+.section-number-sub{
+  font-family:var(--f-body); font-size:13px;
+  color:var(--text-3); margin-left:10px; letter-spacing:0;
+}
+.section-split{
+  display:grid; grid-template-columns:1fr; gap:24px;
+}
+@media(min-width:760px){ .section-split{ grid-template-columns:1fr 1fr; } }
+.signature-block{
+  background:var(--bg-deep);
+  border:1px solid var(--border-strong);
+  border-radius:16px;
+  padding:40px;
+  text-align:center;
+}
+.signature-block h3{
+  font-family:var(--f-display); font-style:italic;
+  font-weight:400;
+  font-size:clamp(1.1rem, 2vw, 1.4rem);
+  color:var(--text-1); opacity:.9;
+  margin-bottom:36px;
+}
+.signature-grid{
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
+}
+@media(min-width:760px){ .signature-grid{ grid-template-columns:repeat(5,1fr); } }
+.signature-grid .tile{
+  aspect-ratio:4/5; overflow:hidden; border-radius:10px;
+  border:1px solid var(--border-subtle);
+  background:var(--bg-surface);
+}
+.signature-grid .tile img{ width:100%; height:100%; object-fit:cover; opacity:.7; transition:opacity .5s ease; }
+.signature-grid .tile:hover img{ opacity:1; }
+.log-block{
+  padding:36px;
+  font-family:var(--f-mono); font-size:11px; line-height:2.1;
+  letter-spacing:.08em;
+  color:var(--text-2);
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.warn-block{
+  display:flex; align-items:center; gap:10px;
+  padding:12px 16px; margin-top:auto;
+  border:1px solid rgba(138,74,74,.3);
+  background:rgba(138,74,74,.1);
+  color:var(--warmred);
+  border-radius:8px;
+  font-family:var(--f-mono); font-size:10px;
+  letter-spacing:.2em; text-transform:uppercase;
+}
+.warn-block .wd{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--warmred);
+  animation:pulseDot 1.2s var(--ease) infinite;
+}
+
+/* Footer */
+.micro-foot{
+  position:relative; z-index:2;
+  text-align:center; padding:40px 24px;
+  font-family:var(--f-mono); font-size:10px;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--text-3);
+  border-top:1px solid var(--border-subtle);
+  margin-top:40px;
+}
+.micro-foot a{ color:var(--text-3); margin:0 10px; }
+.micro-foot a:hover{ color:var(--patina); }
+
+/* Float results button (matches ecosystem btn-primary visually) */
+#qb-float-results{
+  position:fixed; bottom:32px; right:32px; z-index:9000;
+  border:1px solid var(--pill-border);
+  background:var(--pill-bg);
+  color:var(--pill-ink);
+  font-family:var(--f-body); font-weight:500; font-size:14px;
+  padding:14px 26px;
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:0 12px 40px -12px rgba(168,144,62,.5);
+  transition:transform .2s var(--ease), background .2s ease;
+}
+#qb-float-results:hover{
+  background:var(--pill-bg-hover);
+  transform:translateY(-2px);
+}
 </style>
 </head>
-<body class="min-h-screen transition-colors duration-700">
-<div id="root"></div>
-<script type="text/babel" data-presets="react,env">
-const { useState, useEffect, useRef, useMemo, useCallback } = React;
+<body>
 
-// Icon stubs (softened, adapted)
-const Settings = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>;
-const Play = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}><polygon points="5 3 19 12 5 21 5 3"/></svg>;
-const CheckCircle = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>;
-const ImageIcon = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>;
-const Sun = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
-const Moon = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
-const Loader2 = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} style={{animation:"spin 1s linear infinite"}}><line x1="12" y1="2" x2="12" y2="6" strokeOpacity="1"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93" strokeOpacity="0.875"/><line x1="18" y1="12" x2="22" y2="12" strokeOpacity="0.75"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07" strokeOpacity="0.625"/><line x1="12" y1="18" x2="12" y2="22" strokeOpacity="0.5"/><line x1="7.76" y1="16.24" x2="4.93" y2="19.07" strokeOpacity="0.375"/><line x1="6" y1="12" x2="2" y2="12" strokeOpacity="0.25"/><line x1="7.76" y1="7.76" x2="4.93" y2="4.93" strokeOpacity="0.125"/></svg>;
-const Check = ({size=14,className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><polyline points="20 6 9 17 4 12"/></svg>;
+<!-- Ambient -->
+<div class="ambient">
+  <div class="ablob ab1"></div>
+  <div class="ablob ab2"></div>
+</div>
+<div class="vignette"></div>
 
-// --- DATA & TAXONOMY ---
-const TAG_DIMENSIONS = {
-  weight: ['Light', 'Medium', 'Heavy'],
-  temperature: ['Warm', 'Neutral', 'Cool'],
-  composition: ['Minimal', 'Structured', 'Dense'],
-  subject: ['Architecture', 'Person', 'Object', 'Abstract', 'Nature', 'Typography'],
-  energy: ['Static', 'Implied motion', 'Kinetic'],
-  era: ['Heritage', 'Timeless', 'Contemporary', 'Futuristic'],
-  finish: ['Matte', 'Textured', 'Glossy', 'Gradient'],
-  mood: ['Serene', 'Confident', 'Intense', 'Playful', 'Intimate', 'Monumental']
-};
+<!-- Nav (ecosystem parity) -->
+<div class="nav-spacer"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="dot"></span>Quantum Branding
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="ecosystem.html">Ecosystem</a></li>
+        <li><a href="ecosystem.html#pricing">Pricing</a></li>
+        <li><a href="ecosystem.html#about">About</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Toggle theme"><span id="toggleIcon">&#9789;</span></button>
+      <a href="https://app.quantumbranding.ai" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="ecosystem.html#scanner" class="btn btn-primary btn-sm">Start free</a>
+      <button class="hamburger" type="button" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
 
-const generateMockImages = (count = 200) => {
-  const images = [];
-  const baseUrls = [
+<!-- Mobile menu -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-head">
+    <div class="nav-brand"><span class="dot"></span>Quantum Branding</div>
+    <button class="mmenu-close" type="button" id="mmenuClose" aria-label="Close menu">&#10005;</button>
+  </div>
+  <nav class="mmenu-list">
+    <a href="tools.html">Tools</a>
+    <a href="ecosystem.html">Ecosystem</a>
+    <a href="ecosystem.html#pricing">Pricing</a>
+    <a href="ecosystem.html#about">About</a>
+  </nav>
+  <div class="mmenu-foot">
+    <a href="https://app.quantumbranding.ai" class="btn btn-primary" style="width:100%">Enter QB BrandOS</a>
+  </div>
+</div>
+
+<!-- App mount -->
+<main id="app" role="main"></main>
+
+<!-- Footer -->
+<div class="micro-foot">
+  <span>&copy; 2026 Quantum Branding</span>
+  <a href="tools.html">Tools</a>
+  <a href="ecosystem.html#pricing">Pricing</a>
+  <a href="ecosystem.html#about">About</a>
+</div>
+
+<script>
+/* ============================== NAV WIRING (ecosystem parity) ============================== */
+(function(){
+  var toggle = document.getElementById('themeToggle');
+  var icon   = document.getElementById('toggleIcon');
+  function setIcon(){
+    if(!icon) return;
+    icon.innerHTML = document.documentElement.getAttribute('data-theme') === 'dark' ? '&#9728;' : '&#9789;';
+  }
+  setIcon();
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      var current = document.documentElement.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try{ localStorage.setItem('qb-theme', next); }catch(e){}
+      setIcon();
+    });
+  }
+  var ham   = document.getElementById('hamburger');
+  var mmenu = document.getElementById('mmenu');
+  var mClose = document.getElementById('mmenuClose');
+  if(ham && mmenu){
+    ham.addEventListener('click', function(){
+      ham.classList.toggle('open'); mmenu.classList.toggle('open');
+    });
+  }
+  if(mClose && mmenu){
+    mClose.addEventListener('click', function(){
+      if(ham) ham.classList.remove('open'); mmenu.classList.remove('open');
+    });
+  }
+  if(mmenu){
+    mmenu.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        if(ham) ham.classList.remove('open'); mmenu.classList.remove('open');
+      });
+    });
+  }
+})();
+</script>
+
+<script>
+/* ============================== VISUAL DNA · STATE + ENGINE ============================== */
+(function(){
+  'use strict';
+
+  /* --- Data model --- */
+  var TAG_DIMENSIONS = {
+    weight:      ['Light','Medium','Heavy'],
+    temperature: ['Warm','Neutral','Cool'],
+    composition: ['Minimal','Structured','Dense'],
+    subject:     ['Architecture','Person','Object','Abstract','Nature','Typography'],
+    energy:      ['Static','Implied motion','Kinetic'],
+    era:         ['Heritage','Timeless','Contemporary','Futuristic'],
+    finish:      ['Matte','Textured','Glossy','Gradient'],
+    mood:        ['Serene','Confident','Intense','Playful','Intimate','Monumental']
+  };
+
+  var BASE_URLS = [
     'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80',
     'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1920&q=80',
     'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1920&q=80',
@@ -273,771 +971,772 @@ const generateMockImages = (count = 200) => {
     'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1920&q=80',
     'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1920&q=80',
     'https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?auto=format&fit=crop&w=1920&q=80',
-    'https://images.unsplash.com/photo-1534081333815-ae5019106622?auto=format&fit=crop&w=1920&q=80',
+    'https://images.unsplash.com/photo-1534081333815-ae5019106622?auto=format&fit=crop&w=1920&q=80'
   ];
-  for (let i = 0; i < count; i++) {
-    const isShadow = i % 8 === 0;
-    const tags = {};
-    Object.keys(TAG_DIMENSIONS).forEach(dim => {
-      const options = TAG_DIMENSIONS[dim];
-      tags[dim] = options[Math.floor(Math.random() * options.length)];
-    });
-    images.push({
-      id: `img_${i + 1}`,
-      url: `${baseUrls[i % baseUrls.length]}&sig=${i}`,
-      tags,
-      isShadow
-    });
-  }
-  return images;
-};
 
-// --- CORE COMPONENTS ---
-
-// Physics Engine for Cards
-const SwipeCard = ({ image, onSwipe }) => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const cardRef = useRef(null);
-  const startPos = useRef({ x: 0, y: 0 });
-  const mountTime = useRef(Date.now());
-  const isExiting = useRef(false);
-  const threshold = 120;
-  
-  const triggerExit = useCallback((action) => {
-    if (isExiting.current) return;
-    isExiting.current = true;
-    const hesitation = Date.now() - mountTime.current;
-    const direction = action === 'keep' ? window.innerWidth : -window.innerWidth;
-    if (cardRef.current) cardRef.current.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease-out';
-    setPosition({ x: direction, y: position.y });
-    setTimeout(() => onSwipe(action, hesitation), 300);
-  }, [onSwipe, position.y]);
-
-  useEffect(() => {
-    mountTime.current = Date.now();
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowLeft') triggerExit('discard');
-      else if (e.key === 'ArrowRight') triggerExit('keep');
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [image.id, triggerExit]);
-
-  const handlePointerDown = (e) => {
-    if (isExiting.current) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    setIsDragging(true);
-    startPos.current = { x: e.clientX - position.x, y: e.clientY - position.y };
-    if (cardRef.current) cardRef.current.style.transition = 'none';
-  };
-
-  const handlePointerMove = (e) => {
-    if (!isDragging || isExiting.current) return;
-    const newX = e.clientX - startPos.current.x;
-    const newY = e.clientY - startPos.current.y;
-    setPosition({ x: newX, y: newY });
-  };
-
-  const handlePointerUp = (e) => {
-    setIsDragging(false);
-    if (isExiting.current) return;
-    if (cardRef.current) cardRef.current.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease-out';
-    const dragDistance = Math.abs(position.x);
-    if (position.x > threshold) triggerExit('keep');
-    else if (position.x < -threshold) triggerExit('discard');
-    else if (dragDistance < 10) {
-      const clickX = e.clientX;
-      if (clickX > window.innerWidth / 2) triggerExit('keep');
-      else triggerExit('discard');
-    } else setPosition({ x: 0, y: 0 });
-  };
-
-  const rotation = position.x * 0.05;
-  const opacity = 1 - Math.abs(position.x) / (window.innerWidth * 1.5);
-  const glowRight = Math.max(0, position.x / threshold);
-  const glowLeft = Math.max(0, -position.x / threshold);
-
-  return (
-    <div className="absolute inset-0 flex items-center justify-center touch-none overflow-hidden">
-      <div className="absolute inset-y-0 right-0 w-48 bg-patina blur-[120px] transition-opacity duration-300 pointer-events-none mix-blend-screen" style={{ opacity: glowRight * 0.5 }} />
-      <div className="absolute inset-y-0 left-0 w-48 bg-warmred blur-[120px] transition-opacity duration-300 pointer-events-none mix-blend-screen" style={{ opacity: glowLeft * 0.5 }} />
-
-      <div
-        ref={cardRef}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerLeave={isDragging ? handlePointerUp : undefined}
-        className="relative w-full h-full max-w-[800px] max-h-[85vh] cursor-pointer active:cursor-grabbing will-change-transform"
-        style={{
-          transform: `translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
-          opacity: opacity,
-        }}
-      >
-        <img
-          src={image.url}
-          alt=""
-          draggable="false"
-          className="quantum-image w-full h-full object-cover rounded-xl select-none pointer-events-none border border-border-strong shadow-2xl"
-        />
-      </div>
-    </div>
-  );
-};
-
-// Theme Toggle Component
-const ThemeToggle = ({ isDarkMode, onToggle }) => (
-  <button
-    onClick={onToggle}
-    className="flex items-center justify-center w-8 h-8 rounded border border-border-medium hover:bg-bg-surface transition-all duration-300 active:scale-95 text-text-3 hover:text-brass"
-    title="Toggle Theme"
-  >
-    {isDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-  </button>
-);
-
-// Report Generation Engine & View
-const Pill = ({ children, variant = "default" }) => {
-  const variants = {
-    default: "border border-border-strong bg-bg-surface text-text-2",
-    green: "border border-patina-dim bg-patina-faint text-patina-lit",
-    red: "border border-warmred/20 bg-warmred/10 text-warmred"
-  };
-  return <span className={`inline-flex items-center rounded-full px-2.5 py-1 label-system tracking-[0.1em] ${variants[variant]} mr-2 mb-2`}>{children}</span>;
-};
-
-const ReportView = ({ history, images, finalists, onRestart, isDarkMode, toggleTheme, leadData }) => {
-  const reportData = useMemo(() => {
-    const r1History = history.filter(h => h.round === 1);
-    const keepsR1 = r1History.filter(h => h.action === 'keep');
-    const discardsR1 = r1History.filter(h => h.action === 'discard');
-
-    const keepsR2 = history.filter(h => h.round === 2 && h.action === 'keep').map(h=>h.imageId);
-    const keepsR3 = history.filter(h => h.round === 3 && h.action === 'keep').map(h=>h.imageId);
-    const coreKeepsIds = keepsR3.filter(id => keepsR2.includes(id));
-
-    const getDominantTagsArr = (imageIds) => {
-      const tagCounts = {};
-      imageIds.forEach(id => {
-        const img = images.find(i => i.id === id);
-        if(!img) return;
-        Object.values(img.tags).forEach(tag => { tagCounts[tag] = (tagCounts[tag] || 0) + 1; });
+  function generateMockImages(count){
+    var out = [];
+    for (var i = 0; i < count; i++){
+      var tags = {};
+      Object.keys(TAG_DIMENSIONS).forEach(function(dim){
+        var opts = TAG_DIMENSIONS[dim];
+        tags[dim] = opts[Math.floor(Math.random() * opts.length)];
       });
-      return Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 4).map(e => e[0]);
-    };
-    
-    const considered = r1History.filter(h => h.hesitation > 2500 && h.hesitation < 5000);
-    const shadowImages = images.filter(i => i.isShadow).map(i => i.id);
-    const keptShadows = keepsR1.filter(k => shadowImages.includes(k.imageId));
-    
-    return {
-      keepRate: Math.round((keepsR1.length / Math.max(1, r1History.length)) * 100),
-      dominantKept: getDominantTagsArr(keepsR1.map(k => k.imageId)),
-      dominantDiscarded: getDominantTagsArr(discardsR1.map(d => d.imageId)),
-      coreKeepsCount: coreKeepsIds.length,
-      signatureTags: getDominantTagsArr(coreKeepsIds),
-      biasTags: getDominantTagsArr(considered.map(c => c.imageId)),
-      fastDiscards: getDominantTagsArr(discardsR1.filter(d => d.hesitation < 1000).map(d=>d.imageId)),
-      shadowRate: shadowImages.length ? Math.round((keptShadows.length / shadowImages.length) * 100) : 0,
-      energeticSignature: getDominantTagsArr(finalists.map(f => f.id))
-    };
-  }, [history, images, finalists]);
+      out.push({
+        id: 'img_' + (i+1),
+        url: BASE_URLS[i % BASE_URLS.length] + '&sig=' + i,
+        tags: tags,
+        isShadow: (i % 8 === 0)
+      });
+    }
+    return out;
+  }
 
-  return (
-    <div className="min-h-screen bg-bg-void text-text-2 pt-24 pb-32 px-6 md:px-12 selection:bg-patina selection:text-white relative z-10">
-      
-      <div className="fixed top-6 left-0 right-0 z-50 flex justify-center p-4 pointer-events-none">
-        <div className="bg-bg-overlay backdrop-blur-md text-text-1 px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 border border-border-strong label-system animate-in pointer-events-auto">
-          <div className="pulse-dot"></div>
-          <span className="opacity-80">Report securely generated to <strong className="text-brass font-bold ml-1">{leadData.email}</strong></span>
-        </div>
-      </div>
+  /* --- State --- */
+  var state = {
+    phase: 'studio',
+    demoMode: true,
+    session: { client: '', code: 'DNA001' },
+    images: [],
+    history: [],
+    currentIndex: 0,
+    currentRoundImages: [],
+    tournamentQueue: [],
+    finalists: [],
+    leadData: { firstName:'', lastName:'', company:'', email:'' },
+    isSubmitting: false
+  };
 
-      <div className="max-w-3xl mx-auto space-y-16 animate-in">
-        <header className="border-b border-border-medium pb-10 flex flex-col gap-6 relative">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="label-system text-brass mb-4">Diagnostic Output</div>
-              <h1 className="heading-display text-5xl md:text-6xl">Visual DNA</h1>
-              {(leadData.firstName || leadData.company) && (
-                <p className="body-copy mt-4 text-text-3 italic">
-                  Client: {leadData.firstName} {leadData.lastName} {leadData.company ? `(${leadData.company})` : ''}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center space-x-4">
-              <ThemeToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
-              <button onClick={onRestart} className="label-system px-4 py-2 border border-border-strong rounded hover:bg-bg-surface hover:text-text-1 transition-colors">
-                Reset
-              </button>
-            </div>
-          </div>
-        </header>
+  var IMMERSIVE_PHASES = { r1:1, r2:1, r3:1, t1:1, t2:1, t3:1, finals:1 };
 
-        {/* SEC 01 */}
-        <section>
-          <div className="label-system mb-4 opacity-70">Sec 01. The Eye Chooses</div>
-          <div className="glass-card p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <div className="mb-8">
-                <span className="label-system block mb-3 opacity-60">Acceptance Rate</span>
-                <span className="heading-display text-4xl text-text-1">{reportData.keepRate}%</span>
-              </div>
-              <div className="mb-6">
-                <span className="label-system block mb-3 opacity-60">Dominant Markers (Kept)</span>
-                <div className="flex flex-wrap">{reportData.dominantKept.length ? reportData.dominantKept.map(t => <Pill key={t} variant="green">{t}</Pill>) : <Pill>Neutral</Pill>}</div>
-              </div>
-              <div>
-                <span className="label-system block mb-3 opacity-60">Dominant Markers (Discarded)</span>
-                <div className="flex flex-wrap">{reportData.dominantDiscarded.length ? reportData.dominantDiscarded.map(t => <Pill key={t}>{t}</Pill>) : <Pill>Neutral</Pill>}</div>
-              </div>
-            </div>
-            <div className="manifesto-block bg-bg-deep rounded-r-lg">
-              <span className="label-system block mb-4 text-brass">Generated Insight</span>
-              <p className="body-copy">
-                The client's eye moves instinctively toward <strong className="text-text-1 font-medium">{reportData.dominantKept[0] || 'neutrality'}</strong> and violently away from <strong className="text-text-1 font-medium">{reportData.dominantDiscarded[0] || 'standard'}</strong>. The initial calibration strongly rejects historical/static norms.
-              </p>
-            </div>
-          </div>
-        </section>
+  /* --- Helpers --- */
+  var $app = document.getElementById('app');
 
-        {/* SEC 02 */}
-        <section>
-          <div className="label-system mb-4 opacity-70">Sec 02. The Visual Signature</div>
-          <div className="glass-card p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <div className="mb-8">
-                <span className="label-system block mb-3 opacity-60">Core Assets</span>
-                <span className="heading-display text-4xl text-text-1">{reportData.coreKeepsCount} <span className="text-lg font-sans text-text-3 tracking-normal">survived all rounds</span></span>
-              </div>
-              <div>
-                <span className="label-system block mb-3 opacity-60">The Signature</span>
-                <div className="flex flex-wrap">{reportData.signatureTags.length ? reportData.signatureTags.map(t => <Pill key={t} variant="green">{t}</Pill>) : <Pill>Varied</Pill>}</div>
-              </div>
-            </div>
-            <div className="manifesto-block bg-bg-deep rounded-r-lg">
-              <span className="label-system block mb-4 text-brass">Generated Insight</span>
-              <p className="body-copy">
-                The brand's aesthetic nervous system is tuned to <strong className="text-text-1 font-medium">{reportData.signatureTags[0] || 'variety'}</strong>. It establishes its presence through uncompromising <strong className="text-text-1 font-medium">{reportData.signatureTags[1] || 'forms'}</strong>.
-              </p>
-            </div>
-          </div>
-        </section>
+  function el(tag, attrs, kids){
+    var node = document.createElement(tag);
+    if (attrs){
+      for (var k in attrs){
+        if (!attrs.hasOwnProperty(k)) continue;
+        var v = attrs[k];
+        if (v == null || v === false) continue;
+        if (k === 'class')       node.className = v;
+        else if (k === 'html')   node.innerHTML = v;
+        else if (k === 'text')   node.textContent = v;
+        else if (k === 'style' && typeof v === 'object') Object.assign(node.style, v);
+        else if (k.indexOf('on') === 0 && typeof v === 'function') node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v);
+      }
+    }
+    if (kids){
+      (Array.isArray(kids) ? kids : [kids]).forEach(function(c){
+        if (c == null || c === false) return;
+        node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+      });
+    }
+    return node;
+  }
 
-        {/* SEC 03 & 04 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <section>
-            <div className="label-system mb-4 opacity-70">Sec 03. Subconscious Bias</div>
-            <div className="glass-card p-8 md:p-10 h-full flex flex-col">
-              <span className="label-system block mb-3 opacity-60">Hesitation Clusters</span>
-              <div className="flex flex-wrap mb-6">{reportData.biasTags.length ? reportData.biasTags.map(t => <Pill key={t}>{t}</Pill>) : <Pill>None Distinct</Pill>}</div>
-              <p className="mt-auto body-copy border-t border-border-subtle pt-6">
-                The client consistently paused at this imagery. This signals recognition, not ambivalence. The brand is drawn to this energy even when it doesn't yet fully claim it.
-              </p>
-            </div>
-          </section>
-          
-          <section>
-            <div className="label-system mb-4 opacity-70">Sec 04. Rejection Taxonomy</div>
-            <div className="glass-card p-8 md:p-10 h-full flex flex-col">
-              <div className="mb-6">
-                <span className="label-system block mb-3 opacity-60">Allergic (Fast Discards)</span>
-                <div className="flex flex-wrap">{reportData.fastDiscards.length ? reportData.fastDiscards.map(t => <Pill key={t} variant="red">{t}</Pill>) : <Pill>None</Pill>}</div>
-              </div>
-              <div className="mb-4">
-                <span className="label-system block mb-3 opacity-60">Shadow Deck Acceptance</span>
-                <span className="heading-display text-4xl text-text-1">{reportData.shadowRate}%</span>
-              </div>
-              {reportData.shadowRate > 30 && (
-                <div className="mt-auto border border-warmred/30 bg-warmred/10 text-warmred p-4 rounded label-system flex items-center">
-                  <span className="w-1.5 h-1.5 rounded-full bg-warmred animate-pulse mr-3"></span>
-                  WARNING: Proximity to Shadow qualities.
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
+  function updateImmersive(){
+    document.body.classList.toggle('immersive', !!IMMERSIVE_PHASES[state.phase]);
+  }
 
-        {/* SEC 05 */}
-        <section>
-          <div className="label-system mb-4 opacity-70">Sec 05. Energetic Synthesis</div>
-          <div className="bg-bg-deep p-10 md:p-12 rounded-xl border border-border-strong relative overflow-hidden">
-            <h3 className="text-center text-xl md:text-2xl font-serif italic mb-10 relative z-10 text-text-1 font-light opacity-90">
-              "{reportData.energeticSignature.join(' · ') || 'Balanced Synthesis'}"
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 relative z-10">
-              {finalists.slice(0, 5).map((img, i) => (
-                <div key={i} className="aspect-[4/5] bg-bg-surface rounded-lg overflow-hidden border border-border-subtle">
-                  <img src={img.url} className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity duration-500" alt="Finalist" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+  function setPhase(next){
+    state.phase = next;
+    updateImmersive();
+    render();
+  }
 
-        {/* SEC 06 */}
-        <section className="relative">
-          <div className="label-system text-patina mb-4">Sec 06. Final Brief</div>
-          <div className="glass-card p-8 md:p-10 font-mono text-[11px] leading-[2.2] tracking-wider whitespace-pre-wrap text-text-2 border-border-medium">
-{`>> SYSTEM LOG: VISUAL DNA BRIEF
->> CLIENT: ${leadData.company || leadData.firstName || 'UNDEFINED'}
-======================================================
-
-// VISUAL IDENTITY PARAMETERS
-Direction:      [ ${reportData.signatureTags.join(' / ').padEnd(30)} ]
-Temperature:    [ ${(reportData.dominantKept.find(t=>['Warm','Neutral','Cool'].includes(t)) || 'Neutral').padEnd(30)} ]
-Core Energy:    [ ${(reportData.energeticSignature[0] || 'Balanced').padEnd(30)} ]
-
-// THE ANTI-PATTERN BLOCKLIST
-Allergic:       [ ${reportData.fastDiscards.join(' / ').padEnd(30)} ]
-Shadow Warning: [ ${reportData.shadowRate > 30 ? 'HIGH PROXIMITY - ENFORCE GUARDRAILS' : 'NOMINAL'} ]
-
-======================================================
->> END OF LOG`}
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-};
-
-// --- APP STATE MACHINE ---
-function App() {
-  const [phase, setPhase] = useState('studio');
-  const [demoMode, setDemoMode] = useState(true);
-  const [session, setSession] = useState({ client: '', code: 'DNA001' });
-
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    try { return (localStorage.getItem('qb-theme') || 'dark') === 'dark'; } catch(e) { return true; }
-  });
-
-  const [images, setImages] = useState([]);
-  const [history, setHistory] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentRoundImages, setCurrentRoundImages] = useState([]);
-  const [tournamentQueue, setTournamentQueue] = useState([]);
-  const [finalists, setFinalists] = useState([]);
-  const [leadData, setLeadData] = useState({ firstName: '', lastName: '', company: '', email: '' });
-  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
-
-  // Uncontrolled form refs (prevents input focus loss on re-render)
-  const firstNameRef = useRef(null);
-  const lastNameRef = useRef(null);
-  const companyRef = useRef(null);
-  const emailRef = useRef(null);
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  const startSession = () => {
-    // Remove any leftover float button from a previous session
-    const oldBtn = document.getElementById('qb-float-results');
-    if (oldBtn) oldBtn.remove();
-    const imgCount = demoMode ? 15 : 200;
-    const freshImages = generateMockImages(imgCount);
-    setImages(freshImages);
-    setCurrentRoundImages(freshImages);
-    setHistory([]);
-    setCurrentIndex(0);
+  /* --- Session --- */
+  function startSession(){
+    var old = document.getElementById('qb-float-results');
+    if (old) old.remove();
+    var imgCount = state.demoMode ? 15 : 200;
+    state.images = generateMockImages(imgCount);
+    state.currentRoundImages = state.images.slice();
+    state.history = [];
+    state.currentIndex = 0;
+    state.tournamentQueue = [];
+    state.finalists = [];
+    state.leadData = { firstName:'', lastName:'', company:'', email:'' };
     setPhase('intro');
-    setLeadData({ firstName: '', lastName: '', company: '', email: '' });
-    setIsFormValid(false);
-    if (firstNameRef.current) firstNameRef.current.value = '';
-    if (lastNameRef.current) lastNameRef.current.value = '';
-    if (companyRef.current) companyRef.current.value = '';
-    if (emailRef.current) emailRef.current.value = '';
-  };
+  }
 
-  useEffect(() => {
-    if (phase.startsWith('t')) {
-      const duration = demoMode ? 3000 : 30000;
-      const nextPhase = phase === 't1' ? 'r2' : phase === 't2' ? 'r3' : 'finals';
-      const timer = setTimeout(() => { setupNextRound(nextPhase); }, duration);
-      return () => clearTimeout(timer);
-    }
-  }, [phase, demoMode, setupNextRound]);
-
-  const setupNextRound = useCallback((nextPhase) => {
-    setCurrentIndex(0);
-    if (nextPhase === 'r2') {
-      const r1Keeps = history.filter(h => h.round === 1 && h.action === 'keep').map(h => h.imageId);
-      setCurrentRoundImages(images.filter(img => r1Keeps.includes(img.id)).sort(() => Math.random() - 0.5));
+  /* --- Round transition logic --- */
+  function setupNextRound(nextPhase){
+    state.currentIndex = 0;
+    if (nextPhase === 'r2'){
+      var r1Keeps = state.history.filter(function(h){ return h.round === 1 && h.action === 'keep'; }).map(function(h){ return h.imageId; });
+      state.currentRoundImages = state.images
+        .filter(function(img){ return r1Keeps.indexOf(img.id) !== -1; })
+        .sort(function(){ return Math.random() - 0.5; });
+      if (!state.currentRoundImages.length){ buildFinals(); return; }
       setPhase('r2');
-    } else if (nextPhase === 'r3') {
-      const r2Keeps = history.filter(h => h.round === 2 && h.action === 'keep').map(h => h.imageId);
-      setCurrentRoundImages(images.filter(img => r2Keeps.includes(img.id)).sort(() => Math.random() - 0.5));
+    } else if (nextPhase === 'r3'){
+      var r2Keeps = state.history.filter(function(h){ return h.round === 2 && h.action === 'keep'; }).map(function(h){ return h.imageId; });
+      state.currentRoundImages = state.images
+        .filter(function(img){ return r2Keeps.indexOf(img.id) !== -1; })
+        .sort(function(){ return Math.random() - 0.5; });
+      if (!state.currentRoundImages.length){ buildFinals(); return; }
       setPhase('r3');
-    } else if (nextPhase === 'finals') {
-      const r2Keeps = history.filter(h => h.round === 2 && h.action === 'keep').map(h => h.imageId);
-      const r3Keeps = history.filter(h => h.round === 3 && h.action === 'keep').map(h => h.imageId);
-      const coreKeeps = r3Keeps.filter(id => r2Keeps.includes(id));
-      const toTournament = images.filter(img => coreKeeps.includes(img.id));
-      const queue = [];
-      for (let i = 0; i < toTournament.length; i += 2) {
-        if (toTournament[i+1]) queue.push([toTournament[i], toTournament[i+1]]);
-        else setFinalists(prev => [...prev, toTournament[i]]);
-      }
-      if (queue.length === 0) {
-        setPhase('reveal');
-      } else {
-        setTournamentQueue(queue);
-        setPhase('finals');
-      }
+    } else if (nextPhase === 'finals'){
+      buildFinals();
     }
-  }, [history, images, setFinalists]);
+  }
 
-  const recordSwipe = (action, hesitation) => {
-    if (currentIndex >= currentRoundImages.length) return;
-    const currentImg = currentRoundImages[currentIndex];
-    const roundNum = phase === 'r1' ? 1 : phase === 'r2' ? 2 : 3;
-
-    setHistory(prev => [...prev, { imageId: currentImg.id, round: roundNum, action, hesitation }]);
-    
-    if (currentIndex < currentRoundImages.length - 1) {
-      setCurrentIndex(prev => prev + 1);
+  function buildFinals(){
+    var r2Keeps = state.history.filter(function(h){ return h.round === 2 && h.action === 'keep'; }).map(function(h){ return h.imageId; });
+    var r3Keeps = state.history.filter(function(h){ return h.round === 3 && h.action === 'keep'; }).map(function(h){ return h.imageId; });
+    var coreKeeps = r3Keeps.filter(function(id){ return r2Keeps.indexOf(id) !== -1; });
+    var toTournament = state.images.filter(function(img){ return coreKeeps.indexOf(img.id) !== -1; });
+    var queue = [];
+    state.finalists = [];
+    for (var i = 0; i < toTournament.length; i += 2){
+      if (toTournament[i+1]) queue.push([toTournament[i], toTournament[i+1]]);
+      else state.finalists.push(toTournament[i]);
+    }
+    if (!queue.length){
+      setPhase('reveal');
     } else {
-      if (phase === 'r1') setPhase('t1');
-      else if (phase === 'r2') setPhase('t2');
-      else if (phase === 'r3') setPhase('t3');
+      state.tournamentQueue = queue;
+      setPhase('finals');
     }
+  }
+
+  function recordSwipe(action, hesitation){
+    if (state.currentIndex >= state.currentRoundImages.length) return;
+    var currentImg = state.currentRoundImages[state.currentIndex];
+    var roundNum = state.phase === 'r1' ? 1 : state.phase === 'r2' ? 2 : 3;
+    state.history.push({ imageId: currentImg.id, round: roundNum, action: action, hesitation: hesitation });
+
+    if (state.currentIndex < state.currentRoundImages.length - 1){
+      state.currentIndex++;
+      renderRoundCard(); // just re-mount the card
+    } else {
+      if (state.phase === 'r1') setPhase('t1');
+      else if (state.phase === 'r2') setPhase('t2');
+      else if (state.phase === 'r3') setPhase('t3');
+    }
+  }
+
+  function handleTournamentChoice(winner){
+    state.finalists.push(winner);
+    if (state.tournamentQueue.length > 1){
+      state.tournamentQueue.shift();
+      render();
+    } else {
+      setPhase('reveal');
+    }
+  }
+
+  /* ============================== RENDERERS ============================== */
+
+  function render(){
+    $app.innerHTML = '';
+    var viewFn = views[state.phase];
+    if (viewFn) $app.appendChild(viewFn());
+  }
+
+  var views = {};
+
+  /* --- STUDIO --- */
+  views.studio = function(){
+    var wrap = el('section', { class:'phase-studio' },
+      el('div', { class:'studio-wrap animate-in' }, [
+        el('header', { class:'studio-header' }, [
+          el('div', {}, [
+            el('div', { class:'label-system', style:{opacity:.6, marginBottom:'12px'}, text:'System Ready' }),
+            el('h1', { class:'heading-display', text:'Visual DNA' })
+          ]),
+          el('div', { class:'studio-header-meta' }, [
+            el('div', { class:'label-system', style:{color:'var(--brass)', display:'inline-flex', alignItems:'center', gap:'10px'} }, [
+              el('span', { class:'pulse-dot' }),
+              document.createTextNode('Facilitator Terminal')
+            ])
+          ])
+        ]),
+        el('div', { class:'studio-grid' }, [
+          el('div', { class:'glass-card studio-card' }, [
+            el('h2', { class:'label-system', style:{opacity:.8}, text:'Session Config' }),
+            el('div', {}, [
+              el('div', { style:{marginBottom:'24px'} }, [
+                el('label', { class:'vd-label', text:'Session Identifier' }),
+                (function(){
+                  var i = el('input', { type:'text', class:'vd-input', value: state.session.code === 'DNA001' ? 'Verne Jewels — March 2026' : state.session.client, placeholder:'Client — Month Year' });
+                  i.addEventListener('input', function(e){ state.session.client = e.target.value; });
+                  return i;
+                })()
+              ]),
+              el('div', { style:{marginBottom:'24px'} }, [
+                el('label', { class:'vd-label', text:'Access Code' }),
+                el('div', { class:'mono', style:{fontSize:'22px', letterSpacing:'.3em', color:'var(--text-1)'}, text: state.session.code })
+              ]),
+              el('label', { style:{display:'flex', alignItems:'center', gap:'10px', cursor:'pointer'} }, [
+                (function(){
+                  var cb = el('input', { type:'checkbox', class:'vd-checkbox', id:'vd-demo' });
+                  cb.checked = !!state.demoMode;
+                  cb.addEventListener('change', function(e){ state.demoMode = e.target.checked; });
+                  return cb;
+                })(),
+                el('span', { class:'label-system', style:{opacity:.75}, text:'Demo Protocol (15 IMG / 3s)' })
+              ])
+            ])
+          ]),
+          el('div', { class:'glass-card studio-card' }, [
+            el('h2', { class:'label-system', style:{opacity:.8}, text:'Asset Status' }),
+            el('div', { class:'studio-row' }, [
+              el('span', { class:'body-copy', style:{fontSize:'14px', color:'var(--text-2)'}, text:'Standard Deck' }),
+              el('span', { class:'label-system', style:{color:'var(--patina-lit)'}, text:'Ready (' + (state.demoMode ? '13' : '175') + ')' })
+            ]),
+            el('div', { class:'studio-row' }, [
+              el('span', { class:'body-copy', style:{fontSize:'14px', color:'var(--text-2)'}, text:'Shadow Deck' }),
+              el('span', { class:'label-system', style:{color:'var(--patina-lit)'}, text:'Ready (' + (state.demoMode ? '2' : '25') + ')' })
+            ]),
+            el('p', { class:'studio-footnote', text:'Images pre-tagged across 8 psychological dimensions. Transitions pre-configured per 30-minute architecture.' })
+          ])
+        ]),
+        el('div', { class:'studio-cta' }, [
+          el('button', { class:'btn btn-primary btn-lg', type:'button', onclick: startSession }, 'Initiate sequence →')
+        ])
+      ])
+    );
+    return wrap;
   };
 
-  const handleTournamentChoice = (winner) => {
-    setFinalists(prev => [...prev, winner]);
-    if (tournamentQueue.length > 1) setTournamentQueue(prev => prev.slice(1));
-    else setPhase('reveal');
+  /* --- INTRO --- */
+  views.intro = function(){
+    return el('section', { class:'phase-intro animate-in' },
+      el('div', { class:'intro-wrap' }, [
+        el('div', { class:'intro-badge', text:'Calibration Phase' }),
+        el('h2', { text:'Trust your eye.' }),
+        el('p', { class:'serif-italic', text:'Do not overthink. Let your instinct decide.' }),
+        el('p', { class:'body-copy', text:'For each image, choose whether it belongs to your brand\'s future. Try to choose intuitively within 7 seconds.' }),
+        el('div', { class:'intro-keys' }, [
+          el('div', { class:'intro-key' }, [
+            el('span', { class:'key-circle', text:'←' }),
+            el('div', { class:'label-system', text:'Discard' })
+          ]),
+          el('div', { class:'intro-key' }, [
+            el('span', { class:'key-circle', text:'→' }),
+            el('div', { class:'label-system', text:'Keep' })
+          ])
+        ]),
+        el('button', { class:'btn btn-primary btn-lg', type:'button', onclick:function(){ setPhase('r1'); } }, 'Begin →')
+      ])
+    );
   };
 
-  const toggleTheme = () => setIsDarkMode(prev => {
-    const next = !prev;
-    const themeName = next ? 'dark' : 'light';
-    try { localStorage.setItem('qb-theme', themeName); } catch(e) {}
-    document.documentElement.setAttribute('data-theme', themeName);
-    return next;
-  });
+  /* --- ROUND (r1/r2/r3) --- */
+  views.r1 = function(){ return renderRoundShell(); };
+  views.r2 = function(){ return renderRoundShell(); };
+  views.r3 = function(){ return renderRoundShell(); };
 
-  const isFirstRender = useRef(true);
-  useEffect(() => {
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
-    const themeName = isDarkMode ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', themeName);
-    try { localStorage.setItem('qb-theme', themeName); } catch(e) {}
-  }, [isDarkMode]);
+  function renderRoundShell(){
+    var wrap = el('div', { class:'phase-round', id:'phase-round' });
+    // Progress strip
+    var total = state.currentRoundImages.length || 1;
+    var rp = el('div', { class:'round-progress' }, [
+      el('span', { class:'rp-label', text:'Round ' + (state.phase === 'r1' ? '01' : state.phase === 'r2' ? '02' : '03') }),
+      el('div', { class:'rp-bar' }, el('div', { class:'rp-fill', id:'rp-fill', style:{width: Math.round((state.currentIndex/total)*100) + '%'} })),
+      el('span', { class:'rp-label', text:(state.currentIndex) + ' / ' + total })
+    ]);
+    wrap.appendChild(rp);
+    wrap.appendChild(el('div', { class:'round-indicator-l' }));
+    wrap.appendChild(el('div', { class:'round-indicator-r' }));
 
-  const checkFormValidity = () => {
-    const fn = (firstNameRef.current?.value || '').trim();
-    const ln = (lastNameRef.current?.value || '').trim();
-    const co = (companyRef.current?.value || '').trim();
-    const em = (emailRef.current?.value || '').trim();
-    const hasIdentifier = fn !== '' || ln !== '' || co !== '';
-    const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em);
-    setIsFormValid(hasIdentifier && hasValidEmail);
+    var stage = el('div', { class:'swipe-stage', id:'swipe-stage' }, [
+      el('div', { class:'swipe-glow-l', id:'swipe-glow-l' }),
+      el('div', { class:'swipe-glow-r', id:'swipe-glow-r' })
+    ]);
+    wrap.appendChild(stage);
+
+    // Mount the current card on next frame so the container exists
+    requestAnimationFrame(renderRoundCard);
+    return wrap;
+  }
+
+  function renderRoundCard(){
+    var stage = document.getElementById('swipe-stage');
+    if (!stage) return;
+    // Clean existing card
+    var existing = stage.querySelector('.swipe-card');
+    if (existing) existing.remove();
+
+    // Update progress
+    var total = state.currentRoundImages.length || 1;
+    var fill = document.getElementById('rp-fill');
+    if (fill) fill.style.width = Math.round((state.currentIndex/total)*100) + '%';
+    var labels = document.querySelectorAll('.round-progress .rp-label');
+    if (labels && labels[1]) labels[1].textContent = state.currentIndex + ' / ' + total;
+
+    var img = state.currentRoundImages[state.currentIndex];
+    if (!img) return;
+
+    // Preload next
+    if (state.currentIndex < state.currentRoundImages.length - 1){
+      var next = state.currentRoundImages[state.currentIndex + 1];
+      var pre = new Image(); pre.src = next.url;
+    }
+
+    mountSwipeCard(stage, img, recordSwipe);
+  }
+
+  /* --- SWIPE CARD (vanilla, pointer + keyboard) --- */
+  function mountSwipeCard(container, imgData, onSwipe){
+    var card = el('div', { class:'swipe-card' },
+      el('img', { class:'quantum-image', src:imgData.url, alt:'', draggable:'false' })
+    );
+    container.appendChild(card);
+
+    var glowL = document.getElementById('swipe-glow-l');
+    var glowR = document.getElementById('swipe-glow-r');
+
+    var mountTime = Date.now();
+    var threshold = 120;
+    var isDragging = false;
+    var isExiting  = false;
+    var pos  = { x:0, y:0 };
+    var start= { x:0, y:0 };
+
+    function setTransform(){
+      var rotation = pos.x * 0.05;
+      var opacity  = 1 - Math.abs(pos.x) / (window.innerWidth * 1.5);
+      card.style.transform = 'translate(' + pos.x + 'px,' + pos.y + 'px) rotate(' + rotation + 'deg)';
+      card.style.opacity = opacity;
+      if (glowL) glowL.style.opacity = Math.max(0, -pos.x / threshold) * 0.5;
+      if (glowR) glowR.style.opacity = Math.max(0,  pos.x / threshold) * 0.5;
+    }
+
+    function exit(action){
+      if (isExiting) return;
+      isExiting = true;
+      var hesitation = Date.now() - mountTime;
+      var dir = action === 'keep' ? window.innerWidth : -window.innerWidth;
+      card.style.transition = 'transform .42s cubic-bezier(.2,.8,.2,1), opacity .42s ease-out';
+      pos.x = dir; setTransform();
+      setTimeout(function(){
+        if (glowL) glowL.style.opacity = 0;
+        if (glowR) glowR.style.opacity = 0;
+        window.removeEventListener('keydown', onKey);
+        onSwipe(action, hesitation);
+      }, 320);
+    }
+
+    function onKey(e){
+      if (e.key === 'ArrowLeft') exit('discard');
+      else if (e.key === 'ArrowRight') exit('keep');
+    }
+    window.addEventListener('keydown', onKey);
+
+    card.addEventListener('pointerdown', function(e){
+      if (isExiting) return;
+      card.setPointerCapture(e.pointerId);
+      isDragging = true;
+      start.x = e.clientX - pos.x; start.y = e.clientY - pos.y;
+      card.style.transition = 'none';
+    });
+    card.addEventListener('pointermove', function(e){
+      if (!isDragging || isExiting) return;
+      pos.x = e.clientX - start.x;
+      pos.y = e.clientY - start.y;
+      setTransform();
+    });
+    card.addEventListener('pointerup', function(e){
+      isDragging = false;
+      if (isExiting) return;
+      card.style.transition = 'transform .42s cubic-bezier(.2,.8,.2,1), opacity .42s ease-out';
+      var dragDist = Math.abs(pos.x);
+      if (pos.x > threshold) exit('keep');
+      else if (pos.x < -threshold) exit('discard');
+      else if (dragDist < 10){
+        // tap: left half = discard, right half = keep
+        var half = window.innerWidth / 2;
+        if (e.clientX > half) exit('keep');
+        else exit('discard');
+      } else {
+        pos.x = 0; pos.y = 0; setTransform();
+      }
+    });
+    card.addEventListener('pointerleave', function(){
+      if (isDragging && !isExiting){
+        isDragging = false;
+        card.style.transition = 'transform .42s cubic-bezier(.2,.8,.2,1)';
+        pos.x = 0; pos.y = 0; setTransform();
+      }
+    });
+  }
+
+  /* --- TRANSITIONS --- */
+  views.t1 = function(){ return renderTransition('t1', 'r2'); };
+  views.t2 = function(){ return renderTransition('t2', 'r3'); };
+  views.t3 = function(){ return renderTransition('t3', 'finals'); };
+
+  function renderTransition(cls, nextPhase){
+    var node = el('div', { class:'phase-transition ' + cls });
+    var ms = state.demoMode ? 3000 : 30000;
+    setTimeout(function(){ setupNextRound(nextPhase); }, ms);
+    return node;
+  }
+
+  /* --- FINALS --- */
+  views.finals = function(){
+    if (!state.tournamentQueue.length){
+      // shouldn't happen (buildFinals routes to reveal) but safe
+      return views.reveal();
+    }
+    var pair = state.tournamentQueue[0];
+    var leftImg = pair[0], rightImg = pair[1];
+    return el('div', { class:'phase-finals' }, [
+      el('div', { class:'finals-half', onclick:function(){ handleTournamentChoice(leftImg); } },
+        el('img', { class:'quantum-image', src:leftImg.url, alt:'' })
+      ),
+      el('div', { class:'finals-divider' }),
+      el('div', { class:'finals-half', onclick:function(){ handleTournamentChoice(rightImg); } },
+        el('img', { class:'quantum-image', src:rightImg.url, alt:'' })
+      )
+    ]);
   };
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    // Read values from uncontrolled inputs
-    const currentLead = {
-      firstName: firstNameRef.current?.value || '',
-      lastName: lastNameRef.current?.value || '',
-      company: companyRef.current?.value || '',
-      email: emailRef.current?.value || '',
+  /* --- REVEAL --- */
+  views.reveal = function(){
+    var finalists = state.finalists;
+    var content = finalists.length
+      ? el('div', { class:'reveal-grid animate-in' },
+          finalists.map(function(img){
+            return el('div', { class:'reveal-tile' }, el('img', { class:'quantum-image', src:img.url, alt:'' }));
+          })
+        )
+      : el('div', { class:'reveal-empty', text:'No finalists — try a longer session.' });
+    return el('section', { class:'phase-reveal' }, [
+      content,
+      el('button', { class:'reveal-cta', type:'button', onclick:function(){ setPhase('capture'); } }, 'Proceed to diagnostics →')
+    ]);
+  };
+
+  /* --- CAPTURE --- */
+  views.capture = function(){
+    var formValid = false;
+    var submitBtn;
+
+    function checkValidity(){
+      var fn = (document.getElementById('vd-firstName').value || '').trim();
+      var ln = (document.getElementById('vd-lastName').value || '').trim();
+      var co = (document.getElementById('vd-company').value || '').trim();
+      var em = (document.getElementById('vd-email').value || '').trim();
+      var hasIdentifier = fn !== '' || ln !== '' || co !== '';
+      var hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em);
+      formValid = hasIdentifier && hasValidEmail;
+      if (submitBtn) submitBtn.disabled = !formValid || state.isSubmitting;
+    }
+
+    function onSubmit(e){
+      e.preventDefault();
+      if (!formValid || state.isSubmitting) return;
+      state.leadData = {
+        firstName: document.getElementById('vd-firstName').value || '',
+        lastName:  document.getElementById('vd-lastName').value || '',
+        company:   document.getElementById('vd-company').value || '',
+        email:     document.getElementById('vd-email').value || ''
+      };
+      state.isSubmitting = true;
+      if (submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Processing…'; }
+      setTimeout(function(){
+        state.isSubmitting = false;
+        setPhase('report');
+        saveToQBP();
+        mountFloatResults();
+        postToParent();
+      }, 1500);
+    }
+
+    var form = el('form', { class:'glass-card capture-form', onsubmit:onSubmit }, [
+      el('div', { class:'capture-row' }, [
+        el('div', {}, [
+          el('label', { class:'vd-label', text:'First Name' }),
+          el('input', { type:'text', class:'vd-input', id:'vd-firstName', value:state.leadData.firstName, oninput:checkValidity })
+        ]),
+        el('div', {}, [
+          el('label', { class:'vd-label', text:'Last Name' }),
+          el('input', { type:'text', class:'vd-input', id:'vd-lastName', value:state.leadData.lastName, oninput:checkValidity })
+        ])
+      ]),
+      el('div', {}, [
+        el('label', { class:'vd-label', text:'Company' }),
+        el('input', { type:'text', class:'vd-input', id:'vd-company', value:state.leadData.company, oninput:checkValidity })
+      ]),
+      el('div', {}, [
+        el('label', { class:'vd-label', html:'Email address <span style="color:var(--warmred)">*</span>' }),
+        el('input', { type:'email', class:'vd-input', id:'vd-email', required:'', placeholder:'name@company.com', value:state.leadData.email, oninput:checkValidity })
+      ]),
+      (function(){
+        submitBtn = el('button', { type:'submit', class:'btn btn-primary btn-lg', disabled:'' }, 'Generate report');
+        return submitBtn;
+      })()
+    ]);
+
+    return el('section', { class:'phase-capture animate-in' },
+      el('div', { class:'capture-wrap' }, [
+        el('div', { class:'capture-head' }, [
+          el('h2', { text:'Analysis Ready.' }),
+          el('p', { class:'serif-italic', text:'System compilation complete.' })
+        ]),
+        form
+      ])
+    );
+  };
+
+  /* --- REPORT --- */
+  views.report = function(){
+    var r = computeReportData();
+    var lead = state.leadData;
+
+    function pillRow(items, variant){
+      if (!items || !items.length) return [ el('span', { class:'pill', text:'None' }) ];
+      return items.map(function(t){
+        return el('span', { class:'pill' + (variant ? ' ' + variant : ''), text:t });
+      });
+    }
+
+    var clientLine = (lead.firstName || lead.company)
+      ? el('p', { class:'client', text:'Client: ' + [lead.firstName, lead.lastName].filter(Boolean).join(' ') + (lead.company ? ' (' + lead.company + ')' : '') })
+      : null;
+
+    var logText =
+      '>> SYSTEM LOG: VISUAL DNA BRIEF\n' +
+      '>> CLIENT: ' + (lead.company || lead.firstName || 'UNDEFINED').toUpperCase() + '\n' +
+      '======================================================\n\n' +
+      '// VISUAL IDENTITY PARAMETERS\n' +
+      'Direction:      [ ' + padRight(r.signatureTags.join(' / '), 30) + ' ]\n' +
+      'Temperature:    [ ' + padRight((r.dominantKept.find(function(t){ return ['Warm','Neutral','Cool'].indexOf(t) !== -1; }) || 'Neutral'), 30) + ' ]\n' +
+      'Core Energy:    [ ' + padRight((r.energeticSignature[0] || 'Balanced'), 30) + ' ]\n\n' +
+      '// THE ANTI-PATTERN BLOCKLIST\n' +
+      'Allergic:       [ ' + padRight(r.fastDiscards.join(' / '), 30) + ' ]\n' +
+      'Shadow Warning: [ ' + padRight(r.shadowRate > 30 ? 'HIGH PROXIMITY - ENFORCE GUARDRAILS' : 'NOMINAL', 30) + ' ]\n\n' +
+      '======================================================\n' +
+      '>> END OF LOG';
+
+    return el('section', { class:'phase-report' }, [
+      el('div', { class:'report-banner' },
+        el('div', { class:'report-banner-inner' }, [
+          el('span', { class:'pulse-dot' }),
+          document.createTextNode('Report securely generated to'),
+          el('strong', { text: lead.email || '—' })
+        ])
+      ),
+      el('div', { class:'report-wrap animate-in' }, [
+        // HEAD
+        el('header', { class:'report-head' }, [
+          el('div', { class:'report-head-row' }, [
+            el('div', {}, [
+              el('div', { class:'label-system', style:{color:'var(--brass)', marginBottom:'14px'}, text:'Diagnostic Output' }),
+              el('h1', { text:'Visual DNA' }),
+              clientLine
+            ]),
+            el('div', { class:'report-actions' }, [
+              el('button', { class:'btn-reset', type:'button', onclick:function(){ setPhase('studio'); } }, 'Reset')
+            ])
+          ])
+        ]),
+
+        // SEC 01
+        el('section', {}, [
+          el('div', { class:'section-label', text:'Sec 01. The Eye Chooses' }),
+          el('div', { class:'glass-card section-card two-col' }, [
+            el('div', {}, [
+              el('div', { style:{marginBottom:'32px'} }, [
+                el('div', { class:'label-system', style:{opacity:.6, marginBottom:'10px'}, text:'Acceptance Rate' }),
+                el('div', { class:'section-number', text: r.keepRate + '%' })
+              ]),
+              el('div', { style:{marginBottom:'24px'} }, [
+                el('div', { class:'label-system', style:{opacity:.6, marginBottom:'10px'}, text:'Dominant Markers (Kept)' }),
+                el('div', { style:{display:'flex', flexWrap:'wrap'} }, pillRow(r.dominantKept, 'green'))
+              ]),
+              el('div', {}, [
+                el('div', { class:'label-system', style:{opacity:.6, marginBottom:'10px'}, text:'Dominant Markers (Discarded)' }),
+                el('div', { style:{display:'flex', flexWrap:'wrap'} }, pillRow(r.dominantDiscarded))
+              ])
+            ]),
+            el('div', { class:'manifesto-block' }, [
+              el('div', { class:'label-system', style:{color:'var(--brass)', marginBottom:'14px'}, text:'Generated Insight' }),
+              el('p', { class:'body-copy', html:'The client\'s eye moves instinctively toward <strong style="color:var(--text-1); font-weight:500">' + (r.dominantKept[0] || 'neutrality') + '</strong> and violently away from <strong style="color:var(--text-1); font-weight:500">' + (r.dominantDiscarded[0] || 'standard') + '</strong>. The initial calibration strongly rejects historical/static norms.' })
+            ])
+          ])
+        ]),
+
+        // SEC 02
+        el('section', {}, [
+          el('div', { class:'section-label', text:'Sec 02. The Visual Signature' }),
+          el('div', { class:'glass-card section-card two-col' }, [
+            el('div', {}, [
+              el('div', { style:{marginBottom:'32px'} }, [
+                el('div', { class:'label-system', style:{opacity:.6, marginBottom:'10px'}, text:'Core Assets' }),
+                el('div', { class:'section-number' }, [
+                  document.createTextNode(r.coreKeepsCount + ''),
+                  el('span', { class:'section-number-sub', text:' survived all rounds' })
+                ])
+              ]),
+              el('div', {}, [
+                el('div', { class:'label-system', style:{opacity:.6, marginBottom:'10px'}, text:'The Signature' }),
+                el('div', { style:{display:'flex', flexWrap:'wrap'} }, pillRow(r.signatureTags, 'green'))
+              ])
+            ]),
+            el('div', { class:'manifesto-block' }, [
+              el('div', { class:'label-system', style:{color:'var(--brass)', marginBottom:'14px'}, text:'Generated Insight' }),
+              el('p', { class:'body-copy', html:'The brand\'s aesthetic nervous system is tuned to <strong style="color:var(--text-1); font-weight:500">' + (r.signatureTags[0] || 'variety') + '</strong>. It establishes its presence through uncompromising <strong style="color:var(--text-1); font-weight:500">' + (r.signatureTags[1] || 'forms') + '</strong>.' })
+            ])
+          ])
+        ]),
+
+        // SEC 03 & 04
+        el('div', { class:'section-split' }, [
+          el('section', {}, [
+            el('div', { class:'section-label', text:'Sec 03. Subconscious Bias' }),
+            el('div', { class:'glass-card section-card', style:{height:'100%', display:'flex', flexDirection:'column', gap:'18px'} }, [
+              el('div', { class:'label-system', style:{opacity:.6}, text:'Hesitation Clusters' }),
+              el('div', { style:{display:'flex', flexWrap:'wrap'} }, pillRow(r.biasTags)),
+              el('p', { class:'body-copy', style:{marginTop:'auto', paddingTop:'24px', borderTop:'1px solid var(--border-subtle)'}, text:'The client consistently paused at this imagery. This signals recognition, not ambivalence. The brand is drawn to this energy even when it doesn\'t yet fully claim it.' })
+            ])
+          ]),
+          el('section', {}, [
+            el('div', { class:'section-label', text:'Sec 04. Rejection Taxonomy' }),
+            el('div', { class:'glass-card section-card', style:{height:'100%', display:'flex', flexDirection:'column', gap:'20px'} }, [
+              el('div', {}, [
+                el('div', { class:'label-system', style:{opacity:.6, marginBottom:'10px'}, text:'Allergic (Fast Discards)' }),
+                el('div', { style:{display:'flex', flexWrap:'wrap'} }, pillRow(r.fastDiscards, 'red'))
+              ]),
+              el('div', {}, [
+                el('div', { class:'label-system', style:{opacity:.6, marginBottom:'10px'}, text:'Shadow Deck Acceptance' }),
+                el('div', { class:'section-number', text: r.shadowRate + '%' })
+              ]),
+              r.shadowRate > 30
+                ? el('div', { class:'warn-block' }, [
+                    el('span', { class:'wd' }),
+                    document.createTextNode('Warning: proximity to shadow qualities.')
+                  ])
+                : null
+            ])
+          ])
+        ]),
+
+        // SEC 05
+        el('section', {}, [
+          el('div', { class:'section-label', text:'Sec 05. Energetic Synthesis' }),
+          el('div', { class:'signature-block' }, [
+            el('h3', { text:'"' + (r.energeticSignature.join(' · ') || 'Balanced Synthesis') + '"' }),
+            el('div', { class:'signature-grid' },
+              state.finalists.slice(0,5).map(function(img){
+                return el('div', { class:'tile' }, el('img', { class:'quantum-image', src:img.url, alt:'' }));
+              })
+            )
+          ])
+        ]),
+
+        // SEC 06
+        el('section', {}, [
+          el('div', { class:'section-label', style:{color:'var(--patina)'}, text:'Sec 06. Final Brief' }),
+          el('div', { class:'glass-card log-block', text: logText })
+        ])
+      ])
+    ]);
+  };
+
+  /* --- COMPUTE REPORT DATA --- */
+  function computeReportData(){
+    var r1History = state.history.filter(function(h){ return h.round === 1; });
+    var keepsR1 = r1History.filter(function(h){ return h.action === 'keep'; });
+    var discardsR1 = r1History.filter(function(h){ return h.action === 'discard'; });
+    var keepsR2 = state.history.filter(function(h){ return h.round === 2 && h.action === 'keep'; }).map(function(h){ return h.imageId; });
+    var keepsR3 = state.history.filter(function(h){ return h.round === 3 && h.action === 'keep'; }).map(function(h){ return h.imageId; });
+    var coreKeepsIds = keepsR3.filter(function(id){ return keepsR2.indexOf(id) !== -1; });
+
+    function dominantTags(imageIds){
+      var counts = {};
+      imageIds.forEach(function(id){
+        var img = state.images.find(function(i){ return i.id === id; });
+        if (!img) return;
+        Object.values(img.tags).forEach(function(tag){ counts[tag] = (counts[tag] || 0) + 1; });
+      });
+      return Object.entries(counts).sort(function(a,b){ return b[1]-a[1]; }).slice(0,4).map(function(e){ return e[0]; });
+    }
+
+    var considered = r1History.filter(function(h){ return h.hesitation > 2500 && h.hesitation < 5000; });
+    var shadowImageIds = state.images.filter(function(i){ return i.isShadow; }).map(function(i){ return i.id; });
+    var keptShadows = keepsR1.filter(function(k){ return shadowImageIds.indexOf(k.imageId) !== -1; });
+
+    return {
+      keepRate:          Math.round((keepsR1.length / Math.max(1, r1History.length)) * 100),
+      dominantKept:      dominantTags(keepsR1.map(function(k){ return k.imageId; })),
+      dominantDiscarded: dominantTags(discardsR1.map(function(d){ return d.imageId; })),
+      coreKeepsCount:    coreKeepsIds.length,
+      signatureTags:     dominantTags(coreKeepsIds),
+      biasTags:          dominantTags(considered.map(function(c){ return c.imageId; })),
+      fastDiscards:      dominantTags(discardsR1.filter(function(d){ return d.hesitation < 1000; }).map(function(d){ return d.imageId; })),
+      shadowRate:        shadowImageIds.length ? Math.round((keptShadows.length / shadowImageIds.length) * 100) : 0,
+      energeticSignature: dominantTags(state.finalists.map(function(f){ return f.id; }))
     };
-    const hasIdentifier = currentLead.firstName.trim() !== '' || currentLead.lastName.trim() !== '' || currentLead.company.trim() !== '';
-    const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(currentLead.email);
-    if (!(hasIdentifier && hasValidEmail)) return;
-    setLeadData(currentLead);
-    setIsSubmittingForm(true);
-
-    setTimeout(() => {
-      setIsSubmittingForm(false);
-      setPhase('report');
-      
-      try {
-        const keeps = history.filter(h => h.action === 'keep');
-        const keepIds = keeps.map(h => h.imageId).slice(0, 10);
-        const keepCount = keeps.length;
-        const discardCount = history.filter(h => h.action === 'discard').length;
-        const discardRate = discardCount > 0 ? Math.round((discardCount / (keepCount + discardCount)) * 100) : 0;
-        const fastDiscardR1 = history.filter(h => h.round === 1 && h.action === 'discard' && h.hesitation < 3000).map(h=>h.imageId);
-        
-        const existing = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
-        const updated = Object.assign({}, existing, {
-          visualDnaCompletedAt: new Date().toISOString(),
-          visualDnaKeepCount: keepCount,
-          visualDnaDiscardRate: discardRate,
-          visualDnaKeptImages: keepIds,
-          visualDnaFastDiscards: fastDiscardR1,
-          brandName: existing.brandName || currentLead.company || currentLead.firstName || '',
-        });
-        
-        localStorage.setItem('qb_qbp', JSON.stringify(updated));
-        localStorage.setItem('qb_visual_dna_done', '1');
-        
-        setTimeout(function() {
-          if (!document.getElementById('qb-float-results')) {
-            var btn = document.createElement('button');
-            btn.id = 'qb-float-results';
-            btn.className = 'btn-primary';
-            btn.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:9000;box-shadow:0 8px 32px rgba(58,95,74,.3);';
-            btn.innerHTML = 'Send me my results';
-            btn.addEventListener('click', function() {
-              var qbp = {};
-              try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) {}
-              if (window.QB_showResultsModal) { 
-                window.QB_showResultsModal({ toolId: 'visual-dna', qbp: qbp, results: {}, pdfPage: '/visual-dna-pdf.html' }); 
-              }
-            });
-            document.body.appendChild(btn);
-          }
-        }, 600);
-        
-        if (window.parent && window.parent !== window) {
-          window.parent.postMessage({ type: 'QB_PHASE_COMPLETE', phase: 1, tool: 'visual-dna', qbp: updated }, window.location.origin || '*');
-        }
-      } catch(e) { console.warn('QB Visual DNA sync:', e); }
-
-    }, 1500);
-  };
-
-  // --- VIEWS ---
-  if (phase === 'studio') {
-    return (
-      <div className="relative min-h-screen flex flex-col items-center justify-center p-6 md:p-12 z-10">
-        <div className="vignette"></div>
-        <div className="w-full max-w-4xl space-y-12 animate-in relative z-10">
-          <header className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-border-medium pb-8 gap-6">
-            <div>
-              <div className="label-system mb-3 opacity-60">System Ready</div>
-              <h1 className="heading-display text-4xl md:text-5xl">Visual DNA</h1>
-            </div>
-            <div className="flex items-center space-x-6">
-              <div className="label-system flex items-center text-brass">
-                <div className="pulse-dot mr-3"></div> Facilitator Terminal
-              </div>
-              <ThemeToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
-            </div>
-          </header>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="glass-card p-8 space-y-8">
-              <h2 className="label-system flex items-center opacity-80">
-                <Settings className="w-3.5 h-3.5 mr-3" /> Session Config
-              </h2>
-              <div className="space-y-6">
-                <div>
-                  <label className="block label-system opacity-60 mb-2">Session Identifier</label>
-                  <input type="text"
-                    className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[15px] focus:border-patina transition-colors placeholder:text-text-3 placeholder:italic focus:outline-none focus:ring-0"
-                    value={session.code === "DNA001" ? "Verne Jewels — March 2026" : session.client}
-                    onChange={(e) => setSession(prev => ({...prev, client: e.target.value}))}
-                  />
-                </div>
-                <div>
-                  <label className="block label-system opacity-60 mb-2">Access Code</label>
-                  <div className="text-2xl font-mono tracking-widest font-normal text-text-1">{session.code}</div>
-                </div>
-                <div className="flex items-center space-x-3 pt-2">
-                  <input type="checkbox" id="demo" checked={demoMode} onChange={(e) => setDemoMode(e.target.checked)}
-                    className="w-3.5 h-3.5 accent-patina bg-transparent border-border-medium cursor-pointer"
-                  />
-                  <label htmlFor="demo" className="label-system cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
-                    Demo Protocol (15 IMG / 3s)
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            <div className="glass-card p-8 space-y-8">
-              <h2 className="label-system flex items-center opacity-80">
-                <ImageIcon className="w-3.5 h-3.5 mr-3" /> Asset Status
-              </h2>
-              <div className="space-y-5">
-                <div className="flex justify-between items-center py-2 border-b border-border-subtle">
-                  <span className="body-copy">Standard Deck</span>
-                  <span className="label-system text-patina flex items-center tracking-widest">
-                    <CheckCircle className="w-3 h-3 mr-2"/> Ready ({demoMode ? '13' : '175'})
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-border-subtle">
-                  <span className="body-copy">Shadow Deck</span>
-                  <span className="label-system text-patina flex items-center tracking-widest">
-                    <CheckCircle className="w-3 h-3 mr-2"/> Ready ({demoMode ? '2' : '25'})
-                  </span>
-                </div>
-                <p className="label-system opacity-50 leading-relaxed pt-2 normal-case tracking-normal font-sans text-[12px]">
-                  Images pre-tagged across 8 psychological dimensions. Transitions pre-configured per 30-minute architecture.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="pt-8 flex justify-center">
-            <button onClick={startSession} className="btn-primary">
-              <Play className="w-3.5 h-3.5 mr-2" /> Initiate Sequence
-            </button>
-          </div>
-        </div>
-      </div>
-    );
   }
 
-  if (phase === 'intro') {
-    return (
-      <div className="relative min-h-screen flex flex-col items-center justify-center p-8 text-center z-10">
-        <div className="vignette"></div>
-        <div className="animate-in max-w-2xl flex flex-col items-center relative z-10">
-          <div className="label-system text-brass mb-8 border border-brass-dim bg-brass-faint rounded-full px-3 py-1">Calibration Phase</div>
-          <h2 className="heading-display text-5xl md:text-7xl mb-6">Trust your eye.</h2>
-          <p className="font-serif italic text-xl md:text-2xl text-text-2 mb-12 opacity-80">
-            Do not overthink. Let your instinct decide.
-          </p>
-
-          <p className="body-copy mb-16 max-w-md mx-auto">
-            For each image, choose whether it belongs to your brand's future. Try to choose intuitively within 7 seconds.
-          </p>
-
-          <div className="flex items-center justify-center space-x-16 mb-16 label-system opacity-60">
-            <div className="flex flex-col items-center">
-              <span className="w-12 h-12 border border-border-strong rounded-full flex items-center justify-center mb-3 text-lg font-sans">←</span>
-              DISCARD
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="w-12 h-12 border border-border-strong rounded-full flex items-center justify-center mb-3 text-lg font-sans">→</span>
-              KEEP
-            </div>
-          </div>
-          
-          <button onClick={() => setPhase('r1')} className="btn-primary px-12">
-            Begin
-          </button>
-        </div>
-      </div>
-    );
+  function padRight(s, n){
+    s = String(s || '');
+    return s.length >= n ? s : s + new Array(n - s.length + 1).join(' ');
   }
 
-  if (phase.startsWith('t')) {
-    // Transition Colors mapping to Entangled Time phases
-    const bgColor = phase === 't1' ? 'bg-[#2E5A6A]' : phase === 't2' ? 'bg-[#6A3A3A]' : 'bg-[#A8903E]';
-    return (
-      <div className={`h-screen w-screen ${bgColor} flex items-center justify-center overflow-hidden transition-colors duration-[3000ms] relative z-10`}>
-        <div className="w-full h-full animate-pulse opacity-10 mix-blend-overlay bg-gradient-to-tr from-transparent to-white/30" />
-      </div>
-    );
+  /* --- PERSISTENCE + HAND-OFF --- */
+  function saveToQBP(){
+    try{
+      var keeps = state.history.filter(function(h){ return h.action === 'keep'; });
+      var keepIds = keeps.map(function(h){ return h.imageId; }).slice(0,10);
+      var keepCount = keeps.length;
+      var discardCount = state.history.filter(function(h){ return h.action === 'discard'; }).length;
+      var discardRate = discardCount > 0 ? Math.round((discardCount / (keepCount + discardCount)) * 100) : 0;
+      var fastDiscardR1 = state.history.filter(function(h){ return h.round === 1 && h.action === 'discard' && h.hesitation < 3000; }).map(function(h){ return h.imageId; });
+
+      var existing = {};
+      try { existing = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e){}
+      var updated = Object.assign({}, existing, {
+        visualDnaCompletedAt: new Date().toISOString(),
+        visualDnaKeepCount: keepCount,
+        visualDnaDiscardRate: discardRate,
+        visualDnaKeptImages: keepIds,
+        visualDnaFastDiscards: fastDiscardR1,
+        brandName: existing.brandName || state.leadData.company || state.leadData.firstName || ''
+      });
+      localStorage.setItem('qb_qbp', JSON.stringify(updated));
+      localStorage.setItem('qb_visual_dna_done', '1');
+    } catch(e) { console.warn('QB Visual DNA persistence:', e); }
   }
 
-  if (phase === 'r1' || phase === 'r2' || phase === 'r3') {
-    const currentImg = currentRoundImages[currentIndex];
-    return (
-      <div className={`h-screen w-screen bg-bg-void overflow-hidden relative transition-colors duration-1000 z-10`}>
-        <div className="vignette"></div>
-        <div className="absolute bottom-8 left-12 w-1.5 h-1.5 rounded-full bg-warmred opacity-40 shadow-[0_0_12px_rgba(138,74,74,0.6)]" />
-        <div className="absolute bottom-8 right-12 w-1.5 h-1.5 rounded-full bg-patina opacity-40 shadow-[0_0_12px_rgba(58,95,74,0.6)]" />
-        {currentIndex < currentRoundImages.length - 1 && ( <img src={currentRoundImages[currentIndex + 1].url} className="hidden" alt="preload" /> )}
-        {currentImg && <SwipeCard key={currentImg.id + phase} image={currentImg} onSwipe={recordSwipe} />}
-      </div>
-    );
+  function mountFloatResults(){
+    if (document.getElementById('qb-float-results')) return;
+    var btn = document.createElement('button');
+    btn.id = 'qb-float-results';
+    btn.type = 'button';
+    btn.textContent = 'Send me my results';
+    btn.addEventListener('click', function(){
+      var qbp = {};
+      try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e){}
+      if (window.QB_showResultsModal){
+        window.QB_showResultsModal({ toolId:'visual-dna', qbp:qbp, results:{}, pdfPage:'/visual-dna-pdf.html' });
+      }
+    });
+    document.body.appendChild(btn);
   }
 
-  if (phase === 'finals') {
-    if (tournamentQueue.length === 0) return null;
-    const [leftImg, rightImg] = tournamentQueue[0];
-    return (
-      <div className="h-screen w-screen bg-bg-void flex overflow-hidden relative z-10">
-        <div className="vignette pointer-events-none z-20"></div>
-        <div className="w-1/2 h-full relative cursor-pointer group" onClick={() => handleTournamentChoice(leftImg)}>
-          <img src={leftImg.url} className="quantum-image w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity duration-500" alt="" />
-        </div>
-        <div className="w-[1px] h-full bg-border-strong z-30" />
-        <div className="w-1/2 h-full relative cursor-pointer group" onClick={() => handleTournamentChoice(rightImg)}>
-          <img src={rightImg.url} className="quantum-image w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity duration-500" alt="" />
-        </div>
-      </div>
-    );
+  function postToParent(){
+    try{
+      if (window.parent && window.parent !== window){
+        var qbp = {};
+        try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e){}
+        window.parent.postMessage({ type:'QB_PHASE_COMPLETE', phase:1, tool:'visual-dna', qbp:qbp }, window.location.origin || '*');
+      }
+    } catch(e){}
   }
 
-  if (phase === 'reveal') {
-    return (
-      <div className="min-h-screen bg-bg-void flex flex-col items-center justify-center p-8 z-10 relative">
-        <div className="vignette"></div>
-        {finalists.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 w-full max-w-5xl animate-in relative z-10">
-            {finalists.map((img, i) => (
-              <div key={i} className="aspect-[4/5] rounded-xl overflow-hidden border border-border-medium relative">
-                <img src={img.url} className="quantum-image w-full h-full object-cover opacity-80" alt="" />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="animate-in text-center relative z-10 mb-8">
-            <p className="label-system opacity-60">No finalists — try a longer session</p>
-          </div>
-        )}
-        <button onClick={() => setPhase('capture')} className="mt-16 label-system text-text-3 hover:text-brass transition-colors border-b border-transparent hover:border-brass pb-1 relative z-10">
-          Proceed to Diagnostics
-        </button>
-      </div>
-    );
-  }
+  /* --- BOOT --- */
+  updateImmersive();
+  render();
 
-  if (phase === 'capture') {
-    return (
-      <div className="min-h-screen bg-bg-void flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
-        <div className="vignette"></div>
-        <div className="w-full max-w-md animate-in relative z-10">
-          <div className="text-center mb-10">
-            <h2 className="heading-display text-4xl mb-3">Analysis Ready.</h2>
-            <p className="font-serif italic text-text-2 opacity-80 text-lg">System compilation complete.</p>
-          </div>
-
-          <form onSubmit={handleFormSubmit} className="glass-card p-8 space-y-8">
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block label-system opacity-60 mb-2">First Name</label>
-                  <input type="text" ref={firstNameRef} defaultValue={leadData.firstName} onInput={checkFormValidity}
-                    className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
-                  />
-                </div>
-                <div>
-                  <label className="block label-system opacity-60 mb-2">Last Name</label>
-                  <input type="text" ref={lastNameRef} defaultValue={leadData.lastName} onInput={checkFormValidity}
-                    className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block label-system opacity-60 mb-2">Company</label>
-                <input type="text" ref={companyRef} defaultValue={leadData.company} onInput={checkFormValidity}
-                  className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none outline-none focus:ring-0"
-                />
-              </div>
-              <div>
-                <label className="block label-system opacity-60 mb-2">Email Address <span className="text-warmred">*</span></label>
-                <input type="email" required ref={emailRef} defaultValue={leadData.email} onInput={checkFormValidity}
-                  className="w-full bg-transparent border-b border-border-strong pb-2 text-text-1 font-sans text-[14px] focus:border-patina transition-colors rounded-none placeholder:text-text-3 placeholder:italic outline-none focus:ring-0"
-                  placeholder="name@company.com"
-                />
-              </div>
-            </div>
-
-            <button type="submit" disabled={!isFormValid || isSubmittingForm} className="btn-primary w-full">
-              {isSubmittingForm ? <><Loader2 className="w-3.5 h-3.5 mr-2" /> Processing</> : 'Generate Report'}
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  if (phase === 'report') {
-    return <ReportView history={history} images={images} finalists={finalists} onRestart={() => setPhase('studio')} isDarkMode={isDarkMode} toggleTheme={toggleTheme} leadData={leadData} />;
-  }
-
-  return null;
-}
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+})();
 </script>
+
 </body>
 </html>
