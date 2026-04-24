@@ -1729,7 +1729,8 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         formField('The opening image',    'The film opens on a single image. What is that image?',        textInput('docImage', 'Describe the opening shot…', 2)),
         formField('The central argument', 'Complete: “This is the story of a brand that proved ____.”',    textInput('docArgument', '…', 2)),
         formField('The three voices',     'Describe the three real people interviewed.',                  textInput('docVoices', 'Who they were before, what happened, who they became…')),
-        formField('The final line',       'The last words spoken in the film.',                           textInput('docFinalLine', 'Quote…', 2))
+        formField('The final line',       'The last words spoken in the film.',                           textInput('docFinalLine', 'Quote…', 2)),
+        formField('Personal reflection',  'What did writing this documentary reveal to you that surprised you?', textInput('docReflection', 'A private note to yourself…', 3))
       ]),
       el('div', { class:'glass-panel', style:{ marginTop:'24px' } }, [
         el('h3', { class:'panel-h', text:'06. The manifesto line' }),
@@ -1746,7 +1747,9 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         ),
         d.manifestoQuoteId ? el('div', { style:{ padding:'24px', background:'var(--bg-surface)', border:'1px solid var(--border-medium)', borderRadius:'var(--r-card)' } }, [
           formField('What is the specific belief encoded in this line?', null, textInput('manifestoBelief', '', 2)),
-          formField('Write your own manifesto line', null, lineInput('originalManifesto', 'We believe that…'))
+          formField('Write your own manifesto line',                       null, lineInput('originalManifesto', 'We believe that…')),
+          formField('Proof behaviour',          'What does this belief look like in practice? A behaviour, a policy, or a refusal that proves you actually hold it.', textInput('manifestoProof',    'We prove this by…', 2)),
+          formField('What this belief opposes', 'Name the assumption, the category default, or the specific competitor stance this belief rejects.',                   textInput('manifestoOpposite', 'We reject the idea that…', 2))
         ]) : null
       ])
     ]);
@@ -1801,8 +1804,12 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
           archSelect('tensionArch',   '3', 'Tension')
         ]),
         (d.primaryArch && d.secondaryArch && d.tensionArch)
-          ? formField('The fusion', 'Complete: Only we can be ' + (ARCHETYPES.find(function(a){ return a.id === d.primaryArch; }) || {}).name + ' and ' + (ARCHETYPES.find(function(a){ return a.id === d.secondaryArch; }) || {}).name + ' at the same time because…',
-              textInput('archFusion', '', 2))
+          ? el('div', {}, [
+              formField('The fusion', 'Complete: Only we can be ' + (ARCHETYPES.find(function(a){ return a.id === d.primaryArch; }) || {}).name + ' and ' + (ARCHETYPES.find(function(a){ return a.id === d.secondaryArch; }) || {}).name + ' at the same time because…',
+                textInput('archFusion', '', 2)),
+              formField('The shadow', 'What does the tension archetype ' + ((ARCHETYPES.find(function(a){ return a.id === d.tensionArch; }) || {}).name || '') + ' bring that the other two cannot? What does it cost you?',
+                textInput('archShadow', 'This archetype disciplines us by…', 2))
+            ])
           : null
       ]),
       el('div', { class:'glass-panel', style:{ marginTop:'24px' } }, [
@@ -1810,13 +1817,18 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         el('div', { class:'grid-2', style:{ marginBottom:'28px' } }, [
           el('div', { class:'mirror-card-neg' }, [
             el('h4', {}, [ document.createTextNode('✗ The anti-brand') ]),
-            (function(){ var i = el('input', { type:'text', class:'glass-input', placeholder:'NAME…', style:{ marginBottom:'12px' } }); i.value = d.abName || ''; i.addEventListener('input', function(e){ updateData('abName', e.target.value); }); return i; })(),
-            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'BELIEFS ABOUT PEOPLE…', rows:'3' }); t.value = d.abBelief || ''; t.addEventListener('input', function(e){ updateData('abBelief', e.target.value); }); return t; })()
+            (function(){ var i = el('input', { type:'text', class:'glass-input', placeholder:'NAME…', style:{ marginBottom:'10px' } }); i.value = d.abName || ''; i.addEventListener('input', function(e){ updateData('abName', e.target.value); }); return i; })(),
+            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'What they promise…', rows:'2', style:{ marginBottom:'10px' } }); t.value = d.abPromise || ''; t.addEventListener('input', function(e){ updateData('abPromise', e.target.value); }); return t; })(),
+            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'Beliefs about people…', rows:'2', style:{ marginBottom:'10px' } }); t.value = d.abBelief || ''; t.addEventListener('input', function(e){ updateData('abBelief', e.target.value); }); return t; })(),
+            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'What they sell (features, fear, speed)…', rows:'2', style:{ marginBottom:'10px' } }); t.value = d.abSells || ''; t.addEventListener('input', function(e){ updateData('abSells', e.target.value); }); return t; })(),
+            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'What they would never do…', rows:'2' }); t.value = d.abNever || ''; t.addEventListener('input', function(e){ updateData('abNever', e.target.value); }); return t; })()
           ]),
           el('div', { class:'mirror-card-pos' }, [
             el('h4', {}, [ document.createTextNode('✓ Your brand') ]),
-            el('div', { class:'glass-input', style:{ marginBottom:'12px', fontWeight:'600', textTransform:'uppercase' }, text: d.brandName || '[BRAND NAME]' }),
-            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'BELIEFS ABOUT PEOPLE…', rows:'3' }); t.value = d.bBelief || ''; t.addEventListener('input', function(e){ updateData('bBelief', e.target.value); }); return t; })()
+            el('div', { class:'glass-input', style:{ marginBottom:'10px', fontWeight:'600', textTransform:'uppercase' }, text: d.brandName || '[BRAND NAME]' }),
+            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'Your beliefs about people…', rows:'2', style:{ marginBottom:'10px' } }); t.value = d.bBelief || ''; t.addEventListener('input', function(e){ updateData('bBelief', e.target.value); }); return t; })(),
+            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'What you sell (meaning, ritual, sovereignty)…', rows:'2', style:{ marginBottom:'10px' } }); t.value = d.bSells || ''; t.addEventListener('input', function(e){ updateData('bSells', e.target.value); }); return t; })(),
+            (function(){ var t = el('textarea', { class:'glass-input', placeholder:'What you will never do…', rows:'2' }); t.value = d.bNever || ''; t.addEventListener('input', function(e){ updateData('bNever', e.target.value); }); return t; })()
           ])
         ]),
         el('div', { class:'pos-spine' }, [
@@ -1829,6 +1841,16 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
             document.createTextNode(', '),
             (function(){ var i = el('input', { type:'text', class:'pos-adj-input', placeholder:'ADJ 3' }); i.value = d.posAdj3 || ''; i.addEventListener('input', function(e){ updateData('posAdj3', e.target.value); }); return i; })(),
             document.createTextNode('.')
+          ]),
+          el('div', { class:'grid-2', style:{ marginTop:'24px' } }, [
+            el('div', {}, [
+              el('label', { class:'label-mono', text:'For' }),
+              textInput('posFor',    'The person who arrives knowing…', 2)
+            ]),
+            el('div', {}, [
+              el('label', { class:'label-mono', text:'Not for' }),
+              textInput('posNotFor', 'The person who arrives expecting…', 2)
+            ])
           ])
         ])
       ])
@@ -1863,7 +1885,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   /* --- 7 Tribe (Module 4) --- */
   views[7] = function(){
     var d = state.data;
-    function wordSelector(dim, words, listKey, essKey){
+    function wordSelector(dim, words, listKey, essKey, reasonKey, reasonPrompt){
       var selected = d[listKey] || [];
       var essential = d[essKey] || '';
       var sel = el('div', { class:'word-selector' }, [
@@ -1896,6 +1918,15 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
               }, w);
             })
           )
+        ]) : null,
+        (essential && reasonKey) ? el('div', { style:{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid var(--border-subtle)' } }, [
+          el('label', { class:'label-mono', text: 'Why ' + essential + '?' }),
+          (function(){
+            var t = el('textarea', { class:'glass-input', placeholder: reasonPrompt || 'Why this word is irreplaceable…', rows:'2' });
+            t.value = d[reasonKey] || '';
+            t.addEventListener('input', function(e){ updateData(reasonKey, e.target.value); });
+            return t;
+          })()
         ]) : null
       ]);
       return sel;
@@ -1904,11 +1935,11 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       vizHeader('Module IV · Tribe', 'Exercises 9 & 10', 'tribe'),
       el('div', { class:'glass-panel' }, [
         el('h3', { class:'panel-h', text:'09. Brand attributes' }),
-        wordSelector('Culture',    WORD_BANKS.culture,   'cWords',   'cEss'),
-        wordSelector('Customers',  WORD_BANKS.customers, 'cuWords',  'cuEss'),
-        wordSelector('Voice',      WORD_BANKS.voice,     'vWords',   'vEss'),
-        wordSelector('Look/Feel',  WORD_BANKS.look,      'lWords',   'lEss'),
-        wordSelector('Value prop', WORD_BANKS.value,     'valWords', 'valEss')
+        wordSelector('Culture',    WORD_BANKS.culture,   'cWords',   'cEss',   'cEssReason',   'Why this word is irreplaceable for your culture'),
+        wordSelector('Customers',  WORD_BANKS.customers, 'cuWords',  'cuEss',  'cuEssReason',  'The belief that brought this customer to you'),
+        wordSelector('Voice',      WORD_BANKS.voice,     'vWords',   'vEss',   'vEssReason',   'What the first 10 seconds of hearing you feels like'),
+        wordSelector('Look/Feel',  WORD_BANKS.look,      'lWords',   'lEss',   'lEssReason',   'What your brand feels like in the body'),
+        wordSelector('Value prop', WORD_BANKS.value,     'valWords', 'valEss', 'valEssReason', 'What becomes possible when your work lands')
       ]),
       el('div', { class:'glass-panel', style:{ marginTop:'24px' } }, [
         el('h3', { class:'panel-h', text:'10. The fan letter' }),
@@ -1963,6 +1994,29 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         )
       ]);
     }
+    function alignInput(key, placeholder, mono){
+      var i = el('input', { type:'text', class:'glass-input', placeholder: placeholder, style: mono ? { fontWeight:'600', textTransform:'uppercase', fontFamily:'var(--f-mono)' } : {} });
+      i.value = d[key] || '';
+      i.addEventListener('input', function(e){ updateData(key, e.target.value); });
+      return i;
+    }
+    function alignTextarea(key, placeholder, rows){
+      var t = el('textarea', { class:'glass-input', placeholder: placeholder, rows: rows || '2' });
+      t.value = d[key] || '';
+      t.addEventListener('input', function(e){ updateData(key, e.target.value); });
+      return t;
+    }
+    function songField(i, propKey, placeholder, cls){
+      var inp = el('input', { type:'text', placeholder: placeholder });
+      if (cls) inp.className = cls;
+      inp.value = d.songs[i][propKey] || '';
+      inp.addEventListener('input', function(e){
+        var arr = state.data.songs.slice();
+        arr[i] = Object.assign({}, arr[i], (function(){ var o = {}; o[propKey] = e.target.value; return o; })());
+        updateData('songs', arr);
+      });
+      return inp;
+    }
     return el('div', { class:'step-container' }, [
       vizHeader('Module V · Signal', 'Exercises 11, 12 & 13', 'signal'),
       el('div', { class:'glass-panel' }, [
@@ -1970,11 +2024,24 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         el('div', { class:'grid-2' }, [
           el('div', { class:'mirror-card-pos' }, [
             el('h4', {}, [ document.createTextNode('✓ Aligned with') ]),
-            (function(){ var i = el('input', { type:'text', class:'glass-input', placeholder:'Brand A…', style:{ fontWeight:'600', textTransform:'uppercase', fontFamily:'var(--f-mono)' } }); i.value = d.a1 || ''; i.addEventListener('input', function(e){ updateData('a1', e.target.value); }); return i; })()
+            formField('Brand A', null, alignInput('a1', 'Brand A…', true)),
+            formField('What quality resonates?', null, alignTextarea('a1Q', 'The exact quality you share…', 2)),
+            formField('Brand B (optional)', null, alignInput('a2', 'Brand B…', true)),
+            formField('What quality resonates?', null, alignTextarea('a2Q', 'The exact quality you share…', 2))
           ]),
           el('div', { class:'mirror-card-neg' }, [
             el('h4', {}, [ document.createTextNode('✗ Non-aligned with') ]),
-            (function(){ var i = el('input', { type:'text', class:'glass-input', placeholder:'Brand C…', style:{ fontWeight:'600', textTransform:'uppercase', fontFamily:'var(--f-mono)' } }); i.value = d.na1 || ''; i.addEventListener('input', function(e){ updateData('na1', e.target.value); }); return i; })()
+            formField('Brand C', null, alignInput('na1', 'Brand C…', true)),
+            formField('What makes you refuse?', null, alignTextarea('na1C', 'Why this approach is not yours…', 2)),
+            formField('Brand D (optional)', null, alignInput('na2', 'Brand D…', true)),
+            formField('What makes you refuse?', null, alignTextarea('na2C', 'Why this approach is not yours…', 2))
+          ])
+        ]),
+        el('div', { style:{ marginTop:'24px', paddingTop:'20px', borderTop:'1px solid var(--border-subtle)' } }, [
+          formField('The principle that separates them', 'What rule of engagement do your aligned brands share that the non-aligned violate?', alignTextarea('alignPrinciple', 'The dividing line in one sentence…', 2)),
+          el('div', { class:'grid-2', style:{ marginTop:'16px' } }, [
+            formField('We always…', null, alignTextarea('alignAlways', 'What you always do that they don\'t…', 2)),
+            formField('We never…', null, alignTextarea('alignNever', 'What you never do that they do…', 2))
           ])
         ])
       ]),
@@ -1982,34 +2049,58 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         el('h3', { class:'panel-h', text:'12. Celebrity personification' }),
         el('div', { style:{ display:'flex', flexDirection:'column', gap:'20px' } },
           BINARIES.map(binaryRow)
-        )
+        ),
+        el('div', { style:{ marginTop:'20px', paddingTop:'20px', borderTop:'1px solid var(--border-subtle)' } }, [
+          formField('The thread across all five', 'What behavioral theme connects your choices? What does this brand fundamentally do?', alignTextarea('behTheme', 'The through-line of how this brand acts…', 2))
+        ])
       ]),
       el('div', { class:'glass-panel', style:{ marginTop:'24px' } }, [
         el('h3', { class:'panel-h', text:'13. The soundtrack' }),
         d.songs.map(function(song, i){
-          var row = el('div', { class:'song-row' }, [
-            el('span', { class:'num', text: '0' + (i + 1) + '.' }),
+          return el('div', { style:{ padding:'16px', border:'1px solid var(--border-subtle)', borderRadius:'var(--r-card)', marginBottom:'12px' } }, [
+            el('div', { class:'song-row', style:{ marginBottom:'10px' } }, [
+              el('span', { class:'num', text: '0' + (i + 1) + '.' }),
+              songField(i, 'n', 'SONG NAME…'),
+              songField(i, 'a', 'ARTIST…', 'artist')
+            ]),
+            el('div', { class:'grid-2', style:{ marginTop:'10px' } }, [
+              (function(){
+                var inp = el('input', { type:'text', class:'glass-input', placeholder:'Tempo / energy…' });
+                inp.value = song.t || '';
+                inp.addEventListener('input', function(e){
+                  var arr = state.data.songs.slice(); arr[i] = Object.assign({}, arr[i], { t: e.target.value });
+                  updateData('songs', arr);
+                });
+                return inp;
+              })(),
+              (function(){
+                var inp = el('input', { type:'text', class:'glass-input', placeholder:'What it feels like…' });
+                inp.value = song.f || '';
+                inp.addEventListener('input', function(e){
+                  var arr = state.data.songs.slice(); arr[i] = Object.assign({}, arr[i], { f: e.target.value });
+                  updateData('songs', arr);
+                });
+                return inp;
+              })()
+            ]),
             (function(){
-              var inp = el('input', { type:'text', placeholder:'SONG NAME…' });
-              inp.value = song.n || '';
-              inp.addEventListener('input', function(e){
-                var arr = state.data.songs.slice(); arr[i] = Object.assign({}, arr[i], { n: e.target.value });
+              var t = el('textarea', { class:'glass-input', placeholder:'Why this one (what it says about the brand)…', rows:'2', style:{ marginTop:'10px' } });
+              t.value = song.w || '';
+              t.addEventListener('input', function(e){
+                var arr = state.data.songs.slice(); arr[i] = Object.assign({}, arr[i], { w: e.target.value });
                 updateData('songs', arr);
               });
-              return inp;
-            })(),
-            (function(){
-              var inp = el('input', { type:'text', class:'artist', placeholder:'ARTIST…' });
-              inp.value = song.a || '';
-              inp.addEventListener('input', function(e){
-                var arr = state.data.songs.slice(); arr[i] = Object.assign({}, arr[i], { a: e.target.value });
-                updateData('songs', arr);
-              });
-              return inp;
+              return t;
             })()
           ]);
-          return row;
-        })
+        }),
+        el('div', { style:{ marginTop:'20px', paddingTop:'20px', borderTop:'1px solid var(--border-subtle)' } }, [
+          el('div', { class:'grid-2' }, [
+            formField('Rhythm across the five', 'What tempo/cadence connects them?', alignTextarea('rhythmTempo', 'The shared rhythm (urgent, patient, driving, suspended…)', 2)),
+            formField('Emotional register', 'What emotional state they all sit in?', alignTextarea('rhythmEmotion', 'The shared emotional weight…', 2))
+          ]),
+          formField('If this playlist were your voice…', 'Synthesize the soundtrack into a single sentence about how your brand sounds.', alignTextarea('voiceSynthesis', 'Our voice, if it were music, would…', 2))
+        ])
       ])
     ]);
   };
@@ -2062,6 +2153,15 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         })
       ]);
     }
+    function worldInput(key, placeholder, rows){
+      var t = el('textarea', { class:'glass-input', placeholder: placeholder, rows: rows || '2' });
+      t.value = d[key] || '';
+      t.addEventListener('input', function(e){ updateData(key, e.target.value); });
+      return t;
+    }
+    var coreAlwaysSelected = d.coreAlwaysIdx !== null && d.always[d.coreAlwaysIdx];
+    var coreNeverSelected  = d.coreNeverIdx  !== null && d.nevers[d.coreNeverIdx];
+    var selectedMovement = MOVEMENTS.find(function(m){ return m.id === d.movementId; });
     return el('div', { class:'step-container' }, [
       vizHeader('Module VI · World', 'Exercises 14 & 15', 'world'),
       el('div', { class:'glass-panel' }, [
@@ -2069,7 +2169,11 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         el('div', { class:'grid-2' }, [
           manifestoBlock('always', 'always', 'coreAlwaysIdx'),
           manifestoBlock('never',  'nevers', 'coreNeverIdx')
-        ])
+        ]),
+        (coreAlwaysSelected || coreNeverSelected) ? el('div', { style:{ marginTop:'24px', paddingTop:'20px', borderTop:'1px solid var(--border-subtle)' } }, [
+          formField('The core conviction connecting them', 'What principle links your chosen always and your chosen never?', worldInput('coreConviction', 'The belief beneath both…', 2)),
+          formField('How this resolves a decision', 'When you face a hard call, how does this conviction resolve it?', worldInput('decFramework', 'When X comes up, we do Y because…', 2))
+        ]) : null
       ]),
       el('div', { class:'glass-panel', style:{ marginTop:'24px' } }, [
         el('h3', { class:'panel-h', text:'15. Cultural movement' }),
@@ -2083,7 +2187,13 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
               el('p', { text: m.desc })
             ]);
           })
-        )
+        ),
+        selectedMovement ? el('div', { style:{ marginTop:'24px', paddingTop:'20px', borderTop:'1px solid var(--border-subtle)' } }, [
+          el('div', { class:'label-mono', style:{ marginBottom:'12px' }, text: 'Your lineage · ' + selectedMovement.name }),
+          formField('The belief you share with this movement', 'What did it argue that your brand still argues today?', worldInput('movBelief', 'This movement and our brand both insist that…', 2)),
+          formField('Your stance in 2026', 'Where you stand that\'s contested right now. What you\'re willing to defend.', worldInput('movStance', 'In this moment, we stand for…', 2)),
+          formField('What you refuse', 'The cultural logic you will not participate in.', worldInput('movRefusal', 'We refuse…', 2))
+        ]) : null
       ])
     ]);
   };
