@@ -4,8 +4,17 @@
 
 export const config = { runtime: 'edge' };
 
-const ALLOWED_MODELS = ['claude-sonnet-4-20250514', 'claude-opus-4-20250514', 'claude-haiku-4-5-20251001'];
-const DEFAULT_MODEL = 'claude-sonnet-4-20250514';
+const ALLOWED_MODELS = [
+  'claude-opus-4-7',
+  'claude-opus-4-6',
+  'claude-sonnet-4-6',
+  'claude-haiku-4-5',
+  // Legacy IDs retained for tools still pinned to them
+  'claude-sonnet-4-20250514',
+  'claude-opus-4-20250514',
+  'claude-haiku-4-5-20251001'
+];
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
 export default async function handler(req) {
   // CORS preflight
