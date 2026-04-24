@@ -629,13 +629,15 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
 .binary-opts{ display:flex; flex-direction:column; gap:12px; }
 @media(min-width:760px){ .binary-opts{ flex-direction:row; } }
 .binary-opt{
-  flex:1; padding:18px;
+  flex:1; padding:18px 18px 20px;
   border:1px solid var(--border-strong);
   background:transparent;
   border-radius:var(--r-card);
   cursor:pointer;
   transition:all .2s;
-  text-align:left;
+  text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  font-family:inherit;
 }
 .binary-opt:hover{ border-color:var(--border-medium); }
 .binary-opt.selected{
@@ -651,6 +653,140 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   font-family:var(--f-display); font-style:italic;
   font-size:13px; color:var(--text-3); line-height:1.5;
 }
+.binary-portrait{
+  width:108px; height:108px;
+  border-radius:50%;
+  overflow:hidden;
+  background:var(--cream-pale, #efe8dc);
+  border:1px solid var(--border-subtle);
+  position:relative;
+  flex-shrink:0;
+  filter:saturate(.85) contrast(1.02);
+}
+.binary-portrait img{
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:cover;
+  display:block;
+}
+.binary-portrait .portrait-fallback{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-display); font-size:2.4rem; font-weight:500;
+  color:var(--text-3);
+  background:linear-gradient(135deg, var(--cream, #efe8dc) 0%, var(--bg-surface) 100%);
+  z-index:0;
+}
+.binary-opt.selected .binary-portrait{
+  border-color:var(--patina);
+  box-shadow:0 0 0 2px var(--patina-dim);
+  filter:saturate(1) contrast(1.05);
+}
+
+/* Archetype visual grid (Module III) */
+.archetype-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+  gap:12px;
+  margin-top:16px;
+}
+.archetype-card{
+  padding:16px 12px 14px;
+  border:1px solid var(--border-strong);
+  background:var(--bg-surface);
+  border-radius:var(--r-card);
+  cursor:pointer;
+  transition:all .2s;
+  text-align:center;
+  position:relative;
+  display:flex; flex-direction:column; gap:10px; align-items:center; justify-content:flex-start;
+  min-height:160px;
+  font-family:inherit;
+}
+.archetype-card:hover{ border-color:var(--border-medium); transform:translateY(-1px); }
+.archetype-card.selected{
+  background:var(--bg-base);
+}
+.archetype-card.role-primary{
+  border-color:var(--brass);
+  box-shadow:0 0 0 1px var(--brass), 0 0 20px var(--brass-dim, rgba(184,146,82,.28));
+}
+.archetype-card.role-secondary{
+  border-color:var(--patina);
+  box-shadow:0 0 0 1px var(--patina), 0 0 20px var(--patina-dim);
+}
+.archetype-card.role-tension{
+  border-color:var(--plum);
+  box-shadow:0 0 0 1px var(--plum), 0 0 20px rgba(138, 92, 114, .3);
+}
+.archetype-card .role-badge{
+  position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+  padding:4px 10px; border-radius:999px;
+  font-family:var(--f-mono); font-size:8px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.22em;
+  background:var(--ink); color:var(--cream);
+  white-space:nowrap;
+}
+.archetype-card.role-primary   .role-badge{ background:var(--brass);   color:var(--ink); }
+.archetype-card.role-secondary .role-badge{ background:var(--patina);  color:var(--cream); }
+.archetype-card.role-tension   .role-badge{ background:var(--plum);    color:var(--cream); }
+.archetype-logo{
+  width:64px; height:64px;
+  border-radius:50%;
+  overflow:hidden;
+  background:#fff;
+  border:1px solid var(--border-subtle);
+  position:relative;
+  flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.archetype-logo img{
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:contain;
+  padding:8px;
+  display:block;
+}
+.archetype-logo .logo-fallback{
+  font-family:var(--f-mono); font-size:9px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-3);
+  z-index:0; text-align:center;
+  padding:0 4px;
+}
+.archetype-card .arch-name{
+  font-family:var(--f-display); font-size:0.98rem; font-weight:500;
+  color:var(--text-1); line-height:1.2;
+}
+.archetype-card .arch-brand{
+  font-family:var(--f-mono); font-size:9px; font-weight:500;
+  text-transform:uppercase; letter-spacing:.22em;
+  color:var(--text-3);
+}
+.archetype-role-legend{
+  display:flex; gap:16px; flex-wrap:wrap;
+  margin-bottom:4px; padding:10px 14px;
+  border:1px solid var(--border-subtle); border-radius:var(--r-card);
+  background:var(--bg-surface);
+  font-family:var(--f-mono); font-size:9px;
+  text-transform:uppercase; letter-spacing:.22em;
+  color:var(--text-3);
+}
+.archetype-role-legend .chip{
+  display:inline-flex; align-items:center; gap:6px;
+}
+.archetype-role-legend .chip .swatch{
+  width:10px; height:10px; border-radius:50%;
+}
+.archetype-role-legend .chip[data-role="primary"]   .swatch{ background:var(--brass); }
+.archetype-role-legend .chip[data-role="secondary"] .swatch{ background:var(--patina); }
+.archetype-role-legend .chip[data-role="tension"]   .swatch{ background:var(--plum); }
+.archetype-reset{
+  margin-left:auto;
+  background:transparent; border:none; padding:0;
+  font-family:var(--f-mono); font-size:9px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.22em;
+  color:var(--terra, #c4654a); cursor:pointer;
+}
+.archetype-reset:hover{ text-decoration:underline; }
 
 /* Always/Never manifesto */
 .always-block, .never-block{
@@ -1385,21 +1521,52 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   };
 
   var BINARIES = [
-    { id:'lead',      options:[{ name:'Gandhi',         desc:'Moral authority, patience. Long game.' },     { name:'Malcolm X',      desc:'Urgency, confrontation. Truth.' }] },
-    { id:'influence', options:[{ name:'Oprah',          desc:'Intimacy at scale. Vulnerability.' },         { name:'Anna Wintour',   desc:'Authority through curation. Standard.' }] },
-    { id:'innovate',  options:[{ name:'Elon Musk',      desc:'Moonshots. Changing physics.' },              { name:'Steve Jobs',     desc:'Obsession with 3mm. Experience.' }] },
-    { id:'create',    options:[{ name:'Picasso',        desc:'Prolific, form-breaking. Expansive.' },       { name:'Frida Kahlo',    desc:'Autobiographical, interior. Intensive.' }] },
-    { id:'endure',    options:[{ name:'Muhammad Ali',   desc:'Conviction and professional identity.' },     { name:'Michael Jordan', desc:'Standard set and refused to lower.' }] }
+    { id:'lead',      options:[
+      { name:'Gandhi',         desc:'Moral authority, patience. Long game.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Portrait_Gandhi.jpg/320px-Portrait_Gandhi.jpg' },
+      { name:'Malcolm X',      desc:'Urgency, confrontation. Truth.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Malcolm_X_NYWTS_4.jpg/320px-Malcolm_X_NYWTS_4.jpg' }
+    ]},
+    { id:'influence', options:[
+      { name:'Oprah',          desc:'Intimacy at scale. Vulnerability.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Oprah_Winfrey_%2850683395676%29_%28cropped%29.jpg/320px-Oprah_Winfrey_%2850683395676%29_%28cropped%29.jpg' },
+      { name:'Anna Wintour',   desc:'Authority through curation. Standard.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Anna_Wintour_at_the_Vogue_Festival_2012_%28cropped%29.jpg/320px-Anna_Wintour_at_the_Vogue_Festival_2012_%28cropped%29.jpg' }
+    ]},
+    { id:'innovate',  options:[
+      { name:'Elon Musk',      desc:'Moonshots. Changing physics.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/320px-Elon_Musk_Royal_Society_%28crop2%29.jpg' },
+      { name:'Steve Jobs',     desc:'Obsession with 3mm. Experience.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg/320px-Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg' }
+    ]},
+    { id:'create',    options:[
+      { name:'Picasso',        desc:'Prolific, form-breaking. Expansive.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Pablo_picasso_1.jpg/320px-Pablo_picasso_1.jpg' },
+      { name:'Frida Kahlo',    desc:'Autobiographical, interior. Intensive.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg/320px-Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg' }
+    ]},
+    { id:'endure',    options:[
+      { name:'Muhammad Ali',   desc:'Conviction and professional identity.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Muhammad_Ali_NYWTS.jpg/320px-Muhammad_Ali_NYWTS.jpg' },
+      { name:'Michael Jordan', desc:'Standard set and refused to lower.',
+        portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Michael_Jordan_in_2014.jpg/320px-Michael_Jordan_in_2014.jpg' }
+    ]}
   ];
   var BINARY_KEYS = { lead:'leadChoice', influence:'infChoice', innovate:'innChoice', create:'creChoice', endure:'endChoice' };
 
   var ARCHETYPES = [
-    { id:'hero',      name:'The Hero',      brand:'Nike' },       { id:'rebel',     name:'The Rebel',     brand:'Harley' },
-    { id:'magician',  name:'The Magician',  brand:'Disney' },     { id:'explorer',  name:'The Explorer',  brand:'Patagonia' },
-    { id:'sage',      name:'The Sage',      brand:'TED' },        { id:'innocent',  name:'The Innocent',  brand:'Dove' },
-    { id:'everyman',  name:'The Everyman',  brand:'IKEA' },       { id:'jester',    name:'The Jester',    brand:'Old Spice' },
-    { id:'lover',     name:'The Lover',     brand:'Gucci' },      { id:'caregiver', name:'The Caregiver', brand:'TOMS' },
-    { id:'creator',   name:'The Creator',   brand:'LEGO' },       { id:'ruler',     name:'The Ruler',     brand:'Microsoft' }
+    { id:'hero',      name:'The Hero',      brand:'Nike',       domain:'nike.com' },
+    { id:'rebel',     name:'The Rebel',     brand:'Harley',     domain:'harley-davidson.com' },
+    { id:'magician',  name:'The Magician',  brand:'Disney',     domain:'disney.com' },
+    { id:'explorer',  name:'The Explorer',  brand:'Patagonia',  domain:'patagonia.com' },
+    { id:'sage',      name:'The Sage',      brand:'TED',        domain:'ted.com' },
+    { id:'innocent',  name:'The Innocent',  brand:'Dove',       domain:'dove.com' },
+    { id:'everyman',  name:'The Everyman',  brand:'IKEA',       domain:'ikea.com' },
+    { id:'jester',    name:'The Jester',    brand:'Old Spice',  domain:'oldspice.com' },
+    { id:'lover',     name:'The Lover',     brand:'Gucci',      domain:'gucci.com' },
+    { id:'caregiver', name:'The Caregiver', brand:'TOMS',       domain:'toms.com' },
+    { id:'creator',   name:'The Creator',   brand:'LEGO',       domain:'lego.com' },
+    { id:'ruler',     name:'The Ruler',     brand:'Microsoft',  domain:'microsoft.com' }
   ];
 
   var WORD_BANKS = {
@@ -1780,29 +1947,70 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   /* --- 5 Craft (Module 3) --- */
   views[5] = function(){
     var d = state.data;
-    function archSelect(role, labelNum, labelText){
-      var s = el('select', { class:'glass-input' });
-      s.appendChild(el('option', { value:'', text:'SELECT…' }));
-      ARCHETYPES.forEach(function(a){
-        var o = el('option', { value:a.id, text: a.name + ' (' + a.brand + ')' });
-        if (d[role] === a.id) o.selected = true;
-        s.appendChild(o);
-      });
-      s.addEventListener('change', function(e){ updateData(role, e.target.value || null); });
-      return el('div', { class:'arch-select' }, [
-        el('span', { class:'k', text: labelNum + '. ' + labelText }),
-        s
-      ]);
+    function roleOf(id){
+      if (d.primaryArch   === id) return 'primary';
+      if (d.secondaryArch === id) return 'secondary';
+      if (d.tensionArch   === id) return 'tension';
+      return '';
     }
+    function cycleArchetype(id){
+      var role = roleOf(id);
+      if (role === 'primary')        updateData('primaryArch',   null);
+      else if (role === 'secondary') updateData('secondaryArch', null);
+      else if (role === 'tension')   updateData('tensionArch',   null);
+      else if (!d.primaryArch)       updateData('primaryArch',   id);
+      else if (!d.secondaryArch)     updateData('secondaryArch', id);
+      else if (!d.tensionArch)       updateData('tensionArch',   id);
+      rerenderStep();
+    }
+    function clearAllArchetypes(){
+      state.data.primaryArch = null;
+      state.data.secondaryArch = null;
+      state.data.tensionArch = null;
+      updateData('primaryArch', null);
+      rerenderStep();
+    }
+    function archCard(a){
+      var role = roleOf(a.id);
+      var card = el('button', {
+        type:'button',
+        class:'archetype-card' + (role ? ' selected role-' + role : ''),
+        onclick:function(){ cycleArchetype(a.id); }
+      }, [
+        role ? el('span', { class:'role-badge', text: role }) : null,
+        (function(){
+          var wrap = el('div', { class:'archetype-logo' });
+          var fallback = el('span', { class:'logo-fallback', text: a.brand });
+          wrap.appendChild(fallback);
+          if (a.domain){
+            var img = el('img', { alt: a.brand + ' logo', loading:'lazy' });
+            img.src = 'https://logo.clearbit.com/' + a.domain;
+            img.addEventListener('error', function(){ img.remove(); });
+            wrap.appendChild(img);
+          }
+          return wrap;
+        })(),
+        el('div', { class:'arch-name', text: a.name }),
+        el('div', { class:'arch-brand', text: a.brand })
+      ]);
+      return card;
+    }
+    var anyPicked = d.primaryArch || d.secondaryArch || d.tensionArch;
     return el('div', { class:'step-container' }, [
       vizHeader('Module III · Craft', 'Exercises 7 & 8', 'craft'),
       el('div', { class:'glass-panel' }, [
         el('h3', { class:'panel-h', text:'07. Brand DNA' }),
-        el('div', { class:'grid-3', style:{ marginBottom:'20px' } }, [
-          archSelect('primaryArch',   '1', 'Primary'),
-          archSelect('secondaryArch', '2', 'Secondary'),
-          archSelect('tensionArch',   '3', 'Tension')
+        el('p', { class:'label-mono', style:{ color:'var(--text-3)', marginBottom:'14px', textTransform:'none', letterSpacing:'.04em', fontFamily:'var(--f-display)', fontSize:'14px' },
+          text:'Tap once for Primary · twice (on another) for Secondary · thrice for Tension. Tap an assigned card to clear it.' }),
+        el('div', { class:'archetype-role-legend' }, [
+          el('span', { class:'chip', 'data-role':'primary'   }, [ el('span', { class:'swatch' }), document.createTextNode('Primary')   ]),
+          el('span', { class:'chip', 'data-role':'secondary' }, [ el('span', { class:'swatch' }), document.createTextNode('Secondary') ]),
+          el('span', { class:'chip', 'data-role':'tension'   }, [ el('span', { class:'swatch' }), document.createTextNode('Tension')   ]),
+          anyPicked ? el('button', { type:'button', class:'archetype-reset', onclick: clearAllArchetypes, text:'Reset' }) : null
         ]),
+        el('div', { class:'archetype-grid', style:{ marginBottom:'20px' } },
+          ARCHETYPES.map(archCard)
+        ),
         (d.primaryArch && d.secondaryArch && d.tensionArch)
           ? el('div', {}, [
               formField('The fusion', 'Complete: Only we can be ' + (ARCHETYPES.find(function(a){ return a.id === d.primaryArch; }) || {}).name + ' and ' + (ARCHETYPES.find(function(a){ return a.id === d.secondaryArch; }) || {}).name + ' at the same time because…',
@@ -1976,6 +2184,19 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   /* --- 9 Signal (Module 5) --- */
   views[9] = function(){
     var d = state.data;
+    function makePortrait(opt){
+      var wrap = el('div', { class:'binary-portrait' });
+      var initial = (opt.name || '').trim().charAt(0).toUpperCase() || '?';
+      var fallback = el('div', { class:'portrait-fallback', text: initial });
+      wrap.appendChild(fallback);
+      if (opt.portrait){
+        var img = el('img', { alt: opt.name + ' portrait', loading:'lazy' });
+        img.src = opt.portrait;
+        img.addEventListener('error', function(){ img.remove(); });
+        wrap.appendChild(img);
+      }
+      return wrap;
+    }
     function binaryRow(bin){
       var key = BINARY_KEYS[bin.id];
       return el('div', { class:'binary-card' }, [
@@ -1987,6 +2208,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
               type:'button',
               onclick:function(){ updateData(key, opt.name); rerenderStep(); }
             }, [
+              makePortrait(opt),
               el('div', { class:'name', text: opt.name }),
               el('div', { class:'desc', text: opt.desc })
             ]);
