@@ -695,6 +695,7 @@ const PHASES = [
 // FIX #13: panel is ph:5 directly — phantom ph:6 + post-hoc remapping forEach removed
 const TOOLS = [
   // Phase 01 — Discovery
+  { id: 'archetype-compass', ph: 1, name: 'Archetype Compass',     desc: 'The first step. Read your trinity — primary archetype, secondary texture, and tension.', file: 'archetype-compass.html',     icon: '✦' },
   { id: 'soul-map',    ph: 1, name: 'Brand Soul Map',              desc: 'Uncover your brand identity through 6 modules and 15 exercises.',        file: 'brand-soul-map.html',                icon: '◬' },
   { id: 'sensescape',  ph: 1, name: 'Sensescape',                  desc: 'Map the sensory universe of your brand across 47 spectrums.',             file: 'sensescape.html',                    icon: '◌' },
   { id: 'visual-dna',  ph: 1, name: 'Visual DNA',                  desc: 'Build your visual reference library through instinctive selection.',      file: 'visual-dna.html',                    icon: '◫' },
@@ -789,6 +790,7 @@ function computeToolStates() {
   TOOLS.forEach(tool => {
     let isCompleted = S.completedTools.includes(tool.id);
 
+    if (tool.id === 'archetype-compass' && S.qbp.archetypeCompassComplete) isCompleted = true;
     if (tool.id === 'soul-map'   && S.qbp.brandEssence)     isCompleted = true;
     if (tool.id === 'sensescape' && S.qbp.colorTerritory)   isCompleted = true;
     // Consistent with Journey Guide: visual-dna completion reads qbp.visualReferences
