@@ -806,6 +806,15 @@ if (urlParams.get('payment') === 'success') {
     if (existing) saveSession({ ...existing, tier: plan });
   }
   view = 'success';
+} else {
+  // Pricing page CTAs deep-link with ?plan=starter|pro|agency.
+  // Pre-select that plan so the user lands directly on the auth (email) step.
+  const incomingPlan = urlParams.get('plan');
+  const PLAN_IDS = ['starter', 'pro', 'agency'];
+  if (incomingPlan && PLAN_IDS.indexOf(incomingPlan) !== -1) {
+    selectedPlan = incomingPlan;
+    view = 'auth';
+  }
 }
 
 if (document.readyState === 'loading') {
