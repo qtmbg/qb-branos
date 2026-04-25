@@ -408,49 +408,41 @@ textarea,input{ font-family:inherit; }
   margin-top:16px; max-width:620px; margin-inline:auto;
 }
 
-/* Card grids */
-.q-grid{ display:grid; gap:14px; }
-.q-grid.cols-4{ grid-template-columns:repeat(4,1fr); }
+/* Card grids — calmer rhythm, fewer columns, more breathing room */
+.q-grid{ display:grid; gap:20px; max-width:1080px; margin:0 auto; }
+.q-grid.cols-4,
 .q-grid.cols-3{ grid-template-columns:repeat(3,1fr); }
-.q-grid.cols-2{ grid-template-columns:repeat(2,1fr); max-width:760px; margin:0 auto; }
+.q-grid.cols-2{ grid-template-columns:repeat(2,1fr); max-width:760px; }
 @media(max-width:960px){
-  .q-grid.cols-4{ grid-template-columns:repeat(2,1fr); }
+  .q-grid.cols-4,
   .q-grid.cols-3{ grid-template-columns:repeat(2,1fr); }
 }
 @media(max-width:540px){
   .q-grid.cols-4,.q-grid.cols-3{ grid-template-columns:1fr; }
 }
 
-/* Generic option card */
+/* Generic option card — quieter chrome, lets the content carry the weight */
 .q-opt{
   position:relative; display:flex; flex-direction:column;
-  padding:22px 20px;
+  padding:22px 22px 20px;
   background:var(--bg-surface);
-  border:1px solid var(--border-medium);
+  border:1px solid var(--border-subtle);
   border-radius:var(--r-card);
   cursor:pointer; text-align:left;
-  transition:all .25s var(--ease);
+  transition:border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
   overflow:hidden;
   min-height:150px;
   gap:12px;
 }
-.q-opt::before{
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:var(--brass); opacity:0; transition:opacity .3s ease;
-}
 .q-opt:hover{
   background:var(--bg-elevated);
-  border-color:var(--border-strong);
-  transform:translateY(-2px);
-  box-shadow:0 16px 40px -20px rgba(26,22,16,.18);
+  border-color:var(--border-medium);
 }
-.q-opt:hover::before{ opacity:.5; }
 .q-opt.is-selected{
   background:var(--bg-elevated);
   border-color:var(--brass);
-  box-shadow:0 0 0 1px var(--brass), 0 18px 44px -22px rgba(168,144,62,.4);
+  box-shadow:0 0 0 1px var(--brass);
 }
-.q-opt.is-selected::before{ opacity:1; }
 .q-opt .arch-glyph{
   display:inline-flex; align-items:center; justify-content:center;
   width:32px; height:32px; border-radius:50%;
@@ -477,9 +469,10 @@ textarea,input{ font-family:inherit; }
 .q-opt.kind-keyword{ justify-content:space-between; min-height:140px; }
 .q-opt.kind-keyword .opt-text{
   font-family:var(--f-display); font-weight:500;
-  font-size:clamp(1.3rem,2vw,1.7rem);
-  letter-spacing:-.01em;
-  line-height:1.1;
+  font-size:clamp(1.4rem,2.2vw,1.85rem);
+  letter-spacing:-.012em;
+  line-height:1.05;
+  color:var(--text-1);
 }
 
 /* Quote option */
@@ -518,50 +511,57 @@ textarea,input{ font-family:inherit; }
   color:var(--text-3);
 }
 
-/* Peers cluster */
-.q-opt.kind-peers{ padding:18px; min-height:200px; justify-content:center; }
+/* Peers cluster — horizontal logo strip instead of dense 2×2 grid */
+.q-opt.kind-peers{
+  padding:24px 22px 22px;
+  min-height:170px;
+  justify-content:center; gap:18px;
+}
 .q-opt.kind-peers .peer-grid{
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:14px; width:100%;
-  align-items:center; justify-items:center;
+  display:flex; flex-wrap:nowrap; gap:10px;
+  width:100%;
+  justify-content:center; align-items:center;
 }
 .q-opt.kind-peers .peer{
-  display:flex; flex-direction:column; align-items:center; gap:6px;
-  width:100%;
+  display:flex; flex-direction:column; align-items:center;
+  flex:1 1 0; min-width:0;
 }
 .q-opt.kind-peers .peer-logo{
-  width:48px; height:48px; border-radius:50%;
+  width:44px; height:44px; border-radius:50%;
   background:#fff; border:1px solid var(--border-subtle);
   position:relative; overflow:hidden;
   display:flex; align-items:center; justify-content:center;
   flex-shrink:0;
-  transition:all .3s ease;
+  transition:border-color .3s ease, box-shadow .3s ease;
 }
 .q-opt.kind-peers .peer-logo img{
   position:absolute; inset:0;
   width:100%; height:100%; object-fit:contain;
-  padding:6px;
+  padding:5px;
   display:block;
 }
 .q-opt.kind-peers .peer-fallback{
-  font-family:var(--f-mono); font-size:7.5px; font-weight:600;
-  text-transform:uppercase; letter-spacing:.08em;
+  font-family:var(--f-mono); font-size:7px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.04em;
   color:var(--text-3);
-  text-align:center; padding:0 3px; line-height:1.1;
+  text-align:center; padding:0 2px; line-height:1.05;
 }
-.q-opt.kind-peers .peer-name{
-  font-family:var(--f-mono); font-size:9px; font-weight:500;
-  text-align:center; line-height:1.2;
-  color:var(--text-2);
-  transition:color .3s ease;
-  letter-spacing:.04em; text-transform:uppercase;
-}
-.q-opt.kind-peers:hover .peer-name,
-.q-opt.kind-peers.is-selected .peer-name{ color:var(--text-1); }
+/* Hide individual brand names on the card — the cluster reads as a single image */
+.q-opt.kind-peers .peer-name{ display:none; }
 .q-opt.kind-peers.is-selected .peer-logo{
   border-color:var(--brass);
-  box-shadow:0 0 0 2px var(--brass-faint);
+  box-shadow:0 0 0 1px var(--brass);
 }
+/* Cluster archetype label — appears under the logo strip when selected */
+.q-opt.kind-peers .peer-meta{
+  font-family:var(--f-mono); font-size:9px; font-weight:500;
+  text-transform:uppercase; letter-spacing:.22em;
+  color:var(--text-3);
+  text-align:center;
+  transition:color .25s ease;
+}
+.q-opt.kind-peers.is-selected .peer-meta,
+.q-opt.kind-peers:hover .peer-meta{ color:var(--text-2); }
 
 /* Figure portrait — real image overlay (sits on top of placeholder) */
 .q-opt.kind-figure .figure-img{
@@ -588,7 +588,7 @@ textarea,input{ font-family:inherit; }
 
 /* Figure (celebrity/metaphor/expression) — uses placeholder portrait frames */
 .q-opt.kind-figure{
-  padding:0; min-height:260px;
+  padding:0; min-height:280px;
   display:flex; flex-direction:column;
   overflow:hidden;
 }
@@ -1732,7 +1732,7 @@ function buildCard(sc, opt, idx, n){
     opt.peers.forEach(function(p){
       var pName = (typeof p === 'string') ? p : p.name;
       var pDomain = (typeof p === 'string') ? null : p.domain;
-      var cell = el('div', {class:'peer'});
+      var cell = el('div', {class:'peer', title: pName});
       var logoWrap = el('div', {class:'peer-logo'});
       var fallback = el('span', {class:'peer-fallback'}, pName);
       logoWrap.appendChild(fallback);
@@ -1746,7 +1746,10 @@ function buildCard(sc, opt, idx, n){
       cell.appendChild(el('div', {class:'peer-name'}, pName));
       peerGrid.appendChild(cell);
     });
-    return el('button', {class: base + ' kind-peers', onclick:onSelect, type:'button'}, [peerGrid]);
+    var archMeta = ARCHETYPES[opt.a];
+    var metaLabel = archMeta ? archMeta.name : '';
+    var meta = el('div', {class:'peer-meta'}, metaLabel);
+    return el('button', {class: base + ' kind-peers', onclick:onSelect, type:'button'}, [peerGrid, meta]);
   }
 
   if (sc.kind === 'quadrant'){
