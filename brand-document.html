@@ -369,10 +369,21 @@ input:focus, textarea:focus {
       <div class="doc-cover-date" id="cover-date"></div>
     </div>
 
-    <!-- Section 01: Identity Core (from Soul Map) -->
-    <div class="doc-section" id="section-identity">
+    <!-- Section 01: Archetype Trinity (from Compass) -->
+    <div class="doc-section" id="section-compass">
       <div class="doc-section-header">
         <div class="doc-section-num">01</div>
+        <div class="doc-section-title">Archetype Trinity</div>
+        <div class="doc-section-phase">Archetype Compass</div>
+        <div class="status-badge" id="compass-status" role="status">Status</div>
+      </div>
+      <div id="compass-content"></div>
+    </div>
+
+    <!-- Section 02: Identity Core (from Soul Map) -->
+    <div class="doc-section" id="section-identity">
+      <div class="doc-section-header">
+        <div class="doc-section-num">02</div>
         <div class="doc-section-title">Identity Core</div>
         <div class="doc-section-phase">Brand Soul Map</div>
         <div class="status-badge" id="identity-status" role="status">Status</div>
@@ -380,10 +391,10 @@ input:focus, textarea:focus {
       <div id="identity-content"></div>
     </div>
 
-    <!-- Section 02: Sensory Universe (from Sensescape) -->
+    <!-- Section 03: Sensory Universe (from Sensescape) -->
     <div class="doc-section" id="section-sensory">
       <div class="doc-section-header">
-        <div class="doc-section-num">02</div>
+        <div class="doc-section-num">03</div>
         <div class="doc-section-title">Sensory Universe</div>
         <div class="doc-section-phase">Sensescape</div>
         <div class="status-badge" id="sensory-status" role="status">Status</div>
@@ -391,10 +402,10 @@ input:focus, textarea:focus {
       <div id="sensory-content"></div>
     </div>
 
-    <!-- Section 03: Visual DNA (from Visual DNA) -->
+    <!-- Section 04: Visual DNA (from Visual DNA) -->
     <div class="doc-section" id="section-visual">
       <div class="doc-section-header">
-        <div class="doc-section-num">03</div>
+        <div class="doc-section-num">04</div>
         <div class="doc-section-title">Visual DNA</div>
         <div class="doc-section-phase">Visual DNA</div>
         <div class="status-badge" id="visual-status" role="status">Status</div>
@@ -402,10 +413,10 @@ input:focus, textarea:focus {
       <div id="visual-content"></div>
     </div>
 
-    <!-- Section 04: Strategic Direction (from War Table) -->
+    <!-- Section 05: Strategic Direction (from War Table) -->
     <div class="doc-section" id="section-strategy">
       <div class="doc-section-header">
-        <div class="doc-section-num">04</div>
+        <div class="doc-section-num">05</div>
         <div class="doc-section-title">Strategic Direction</div>
         <div class="doc-section-phase">War Table</div>
         <div class="status-badge" id="strategy-status" role="status">Status</div>
@@ -413,10 +424,10 @@ input:focus, textarea:focus {
       <div id="strategy-content"></div>
     </div>
 
-    <!-- Section 05: QBP Summary -->
+    <!-- Section 06: QBP Summary -->
     <div class="doc-section" id="section-summary">
       <div class="doc-section-header">
-        <div class="doc-section-num">05</div>
+        <div class="doc-section-num">06</div>
         <div class="doc-section-title">Complete QBP Summary</div>
         <div class="doc-section-phase">Auto-generated</div>
       </div>
@@ -495,7 +506,34 @@ function render() {
   const pendingBadge = '<div class="pulse-dot" aria-hidden="true"></div> Pending';
   const completeBadge = '\u2713 Complete';
 
-  // ── SECTION 01: Identity Core ──────────────────────────────────────────────
+  // ── SECTION 01: Archetype Trinity (from Compass) ──────────────────────────
+  const compassDone = !!(qbp.archetypeCompassComplete);
+  document.getElementById('compass-status').className = 'status-badge ' + (compassDone ? 'status-done' : 'status-pending');
+  document.getElementById('compass-status').innerHTML = compassDone ? completeBadge : pendingBadge;
+
+  if (compassDone) {
+    const paradox = qbp.archetypeCentralParadox || {};
+    document.getElementById('compass-content').innerHTML =
+      field('Headline', qbp.archetypeHeadline, true) +
+      fieldGrid([
+        ['Primary Archetype',   qbp.archetypePrimary],
+        ['Secondary Archetype', qbp.archetypeSecondary],
+        ['Tension Archetype',   qbp.archetypeTension],
+      ]) +
+      field('The Fusion', qbp.archetypeFusion) +
+      fieldGrid([
+        ['Core Motivation', qbp.archetypeCoreMotivation],
+        ['Core Fear',       qbp.archetypeCoreFear],
+        ['Tone Register',   qbp.archetypeToneRegister],
+      ]) +
+      (paradox.statement ? field('Central Paradox', paradox.statement) : '') +
+      field('Decision Filter',    qbp.archetypeDecisionFilter) +
+      field('First Move (this week)', qbp.archetypeFirstMove);
+  } else {
+    document.getElementById('compass-content').innerHTML = emptySection('Archetype Compass', 'archetype-compass.html');
+  }
+
+  // ── SECTION 02: Identity Core ──────────────────────────────────────────────
   const idDone = !!(qbp.brandEssence);
   const idHasData = !!(qbp.brandEssence || qbp.spark);
   document.getElementById('identity-status').className = 'status-badge ' + (idDone ? 'status-done' : 'status-pending');
@@ -519,7 +557,7 @@ function render() {
     document.getElementById('identity-content').innerHTML = emptySection('Brand Soul Map', 'brand-soul-map.html');
   }
 
-  // ── SECTION 02: Sensory Universe ──────────────────────────────────────────
+  // ── SECTION 03: Sensory Universe ──────────────────────────────────────────
   const sensDone = !!(qbp.colorTerritory);
   document.getElementById('sensory-status').className = 'status-badge ' + (sensDone ? 'status-done' : 'status-pending');
   document.getElementById('sensory-status').innerHTML = sensDone ? completeBadge : pendingBadge;
@@ -536,7 +574,7 @@ function render() {
     document.getElementById('sensory-content').innerHTML = emptySection('Sensescape', 'sensescape.html');
   }
 
-  // ── SECTION 03: Visual DNA ──────────────────────────────────────────────
+  // ── SECTION 04: Visual DNA ──────────────────────────────────────────────
   const visDone = !!(qbp.visualDnaCompletedAt);
   document.getElementById('visual-status').className = 'status-badge ' + (visDone ? 'status-done' : 'status-pending');
   document.getElementById('visual-status').innerHTML = visDone ? completeBadge : pendingBadge;
@@ -556,7 +594,7 @@ function render() {
     document.getElementById('visual-content').innerHTML = emptySection('Visual DNA', 'visual-dna.html');
   }
 
-  // ── SECTION 04: Strategic Direction ──────────────────────────────────────
+  // ── SECTION 05: Strategic Direction ──────────────────────────────────────
   const warDone = !!(qbp.warTableCompletedAt);
   document.getElementById('strategy-status').className = 'status-badge ' + (warDone ? 'status-done' : 'status-pending');
   document.getElementById('strategy-status').innerHTML = warDone ? completeBadge : pendingBadge;
@@ -575,7 +613,7 @@ function render() {
     document.getElementById('strategy-content').innerHTML = emptySection('War Table', 'war-table.html');
   }
 
-  // ── SECTION 05: QBP Summary — FIX M-02: now uses fieldGrid() like all other sections ──
+  // ── SECTION 06: QBP Summary — FIX M-02: now uses fieldGrid() like all other sections ──
   document.getElementById('summary-content').innerHTML =
     fieldGrid([
       ['Brand Name',      qbp.brandName],

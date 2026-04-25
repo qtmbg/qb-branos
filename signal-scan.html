@@ -823,11 +823,12 @@ function getTopGap(dims){
 }
 function getRecommendedPath(moment, topGap){
   const tools = {
+    compass:  {tool:'Archetype Compass', file:'archetype-compass.html',         desc:'Read your archetype trinity in 10 minutes. The shortest path to a clear identity foundation.'},
     soulMap:  {tool:'Brand Soul Map',    file:'brand-soul-map.html',            desc:'Start at identity. Everything else is built from here.'},
     logo:     {tool:'Logo Evaluation',   file:'logo-evaluation-agent.html',     desc:'Audit what you have against identity standards before rebuilding.'},
     warTable: {tool:'War Table',         file:'war-table.html',                 desc:'Pressure-test your next move with strategic prioritization.'},
   };
-  if(moment==='blank' || moment==='pivot') return tools.soulMap;
+  if(moment==='blank' || moment==='pivot') return tools.compass;
   if(moment==='doubt'){
     if(topGap.id==='identity') return {...tools.soulMap, desc:'The identity is the root problem. Resolve this before any visual or voice work.'};
     if(topGap.id==='visual')   return {...tools.logo,    desc:'The visual system is your primary gap. Audit it against identity standards first.'};
