@@ -519,21 +519,63 @@ textarea,input{ font-family:inherit; }
 }
 
 /* Peers cluster */
-.q-opt.kind-peers{ padding:22px; min-height:180px; justify-content:center; }
+.q-opt.kind-peers{ padding:18px; min-height:200px; justify-content:center; }
 .q-opt.kind-peers .peer-grid{
   display:grid; grid-template-columns:1fr 1fr;
-  gap:8px 14px; width:100%;
+  gap:14px; width:100%;
   align-items:center; justify-items:center;
 }
 .q-opt.kind-peers .peer{
-  font-family:var(--f-mono); font-size:10px;
-  text-align:center; line-height:1.3;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  width:100%;
+}
+.q-opt.kind-peers .peer-logo{
+  width:48px; height:48px; border-radius:50%;
+  background:#fff; border:1px solid var(--border-subtle);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  transition:all .3s ease;
+}
+.q-opt.kind-peers .peer-logo img{
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:contain;
+  padding:6px;
+  display:block;
+}
+.q-opt.kind-peers .peer-fallback{
+  font-family:var(--f-mono); font-size:7.5px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.08em;
+  color:var(--text-3);
+  text-align:center; padding:0 3px; line-height:1.1;
+}
+.q-opt.kind-peers .peer-name{
+  font-family:var(--f-mono); font-size:9px; font-weight:500;
+  text-align:center; line-height:1.2;
   color:var(--text-2);
   transition:color .3s ease;
-  letter-spacing:.02em;
+  letter-spacing:.04em; text-transform:uppercase;
 }
-.q-opt.kind-peers:hover .peer,
-.q-opt.kind-peers.is-selected .peer{ color:var(--text-1); }
+.q-opt.kind-peers:hover .peer-name,
+.q-opt.kind-peers.is-selected .peer-name{ color:var(--text-1); }
+.q-opt.kind-peers.is-selected .peer-logo{
+  border-color:var(--brass);
+  box-shadow:0 0 0 2px var(--brass-faint);
+}
+
+/* Figure portrait — real image overlay (sits on top of placeholder) */
+.q-opt.kind-figure .figure-img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center top;
+  z-index:2;
+  filter:saturate(.88) contrast(1.02);
+  transition:filter .3s ease;
+}
+.q-opt.kind-figure.is-selected .figure-img{
+  filter:saturate(1) contrast(1.06);
+}
+.q-opt.kind-figure .figure-frame .figure-tag{ z-index:3; }
 
 /* Fear card */
 .q-opt.kind-fear{ min-height:170px; }
@@ -823,6 +865,37 @@ textarea,input{ font-family:inherit; }
   font-family:var(--f-mono); font-size:9px;
   text-transform:uppercase; letter-spacing:.18em;
   color:var(--text-3); line-height:1.55;
+}
+.r-arch .meta-ref{
+  display:flex; align-items:center; gap:10px;
+  margin:6px 0 4px;
+}
+.r-arch .meta-ref-label{
+  font-family:var(--f-mono); font-size:9px;
+  text-transform:uppercase; letter-spacing:.22em;
+  color:var(--text-3);
+}
+.r-arch .meta-ref-logo{
+  width:28px; height:28px; border-radius:50%;
+  background:#fff; border:1px solid var(--border-subtle);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.r-arch .meta-ref-logo img{
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:contain;
+  padding:3px; display:block;
+}
+.r-arch .meta-ref-fallback{
+  font-family:var(--f-mono); font-size:6.5px; font-weight:600;
+  letter-spacing:.04em; text-transform:uppercase;
+  color:var(--text-3); text-align:center; line-height:1;
+}
+.r-arch .meta-ref-name{
+  font-family:var(--f-mono); font-size:10px; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--text-2);
 }
 .r-arch .read{
   font-family:var(--f-body); font-size:14px; line-height:1.7;
@@ -1233,18 +1306,18 @@ textarea,input{ font-family:inherit; }
 
 /* ============================== CONSTANTS ============================== */
 var ARCHETYPES = {
-  innocent:  { name:'The Innocent',  brand:'Dove',            gift:'Faith',          shadow:'Naivety',       glyph:'○' },
-  sage:      { name:'The Sage',      brand:'TED',             gift:'Wisdom',         shadow:'Detachment',    glyph:'◉' },
-  explorer:  { name:'The Explorer',  brand:'Patagonia',       gift:'Autonomy',       shadow:'Restlessness',  glyph:'▲' },
-  rebel:     { name:'The Rebel',     brand:'Harley-Davidson', gift:'Liberation',     shadow:'Destruction',   glyph:'▼' },
-  magician:  { name:'The Magician',  brand:'Disney',          gift:'Transformation', shadow:'Manipulation',  glyph:'✦' },
-  hero:      { name:'The Hero',      brand:'Nike',            gift:'Mastery',        shadow:'Arrogance',     glyph:'△' },
-  lover:     { name:'The Lover',     brand:'Chanel',          gift:'Passion',        shadow:'Obsession',     glyph:'♡' },
-  jester:    { name:'The Jester',    brand:"M&M's",           gift:'Joy',            shadow:'Frivolity',     glyph:'◐' },
-  everyman:  { name:'The Everyman',  brand:'IKEA',            gift:'Belonging',      shadow:'Conformity',    glyph:'◎' },
-  caregiver: { name:'The Caregiver', brand:'UNICEF',          gift:'Compassion',     shadow:'Martyrdom',     glyph:'✚' },
-  creator:   { name:'The Creator',   brand:'LEGO',            gift:'Imagination',    shadow:'Perfectionism', glyph:'◆' },
-  ruler:     { name:'The Ruler',     brand:'Mercedes-Benz',   gift:'Authority',      shadow:'Tyranny',       glyph:'◼' }
+  innocent:  { name:'The Innocent',  brand:'Dove',            domain:'dove.com',                 gift:'Faith',          shadow:'Naivety',       glyph:'○' },
+  sage:      { name:'The Sage',      brand:'TED',             domain:'ted.com',                  gift:'Wisdom',         shadow:'Detachment',    glyph:'◉' },
+  explorer:  { name:'The Explorer',  brand:'Patagonia',       domain:'patagonia.com',            gift:'Autonomy',       shadow:'Restlessness',  glyph:'▲' },
+  rebel:     { name:'The Rebel',     brand:'Harley-Davidson', domain:'harley-davidson.com',      gift:'Liberation',     shadow:'Destruction',   glyph:'▼' },
+  magician:  { name:'The Magician',  brand:'Disney',          domain:'disney.com',               gift:'Transformation', shadow:'Manipulation',  glyph:'✦' },
+  hero:      { name:'The Hero',      brand:'Nike',            domain:'nike.com',                 gift:'Mastery',        shadow:'Arrogance',     glyph:'△' },
+  lover:     { name:'The Lover',     brand:'Chanel',          domain:'chanel.com',               gift:'Passion',        shadow:'Obsession',     glyph:'♡' },
+  jester:    { name:'The Jester',    brand:"M&M's",           domain:'mms.com',                  gift:'Joy',            shadow:'Frivolity',     glyph:'◐' },
+  everyman:  { name:'The Everyman',  brand:'IKEA',            domain:'ikea.com',                 gift:'Belonging',      shadow:'Conformity',    glyph:'◎' },
+  caregiver: { name:'The Caregiver', brand:'UNICEF',          domain:'unicef.org',               gift:'Compassion',     shadow:'Martyrdom',     glyph:'✚' },
+  creator:   { name:'The Creator',   brand:'LEGO',            domain:'lego.com',                 gift:'Imagination',    shadow:'Perfectionism', glyph:'◆' },
+  ruler:     { name:'The Ruler',     brand:'Mercedes-Benz',   domain:'mercedes-benz.com',        gift:'Authority',      shadow:'Tyranny',       glyph:'◼' }
 };
 
 var QUADRANT_ARCHETYPES = {
@@ -1279,18 +1352,18 @@ var SCREENS = [
     title:'Which personality does your brand most align with?',
     sub:"A brand has a soul that resembles a real human presence. Trust who you recognize yourself in.",
     opts:[
-      { name:'Ibn Battuta',        desc:'Most alive when crossing into the unknown.',                       slug:'battuta', a:'explorer'  },
-      { name:'Tom Hanks',          desc:"I am just like you and you are just like me.",                     slug:'hanks',   a:'everyman'  },
-      { name:'Albert Einstein',    desc:'The truth lives in knowledge and understanding.',                  slug:'einstein',a:'sage'      },
-      { name:'Pablo Picasso',      desc:'Imagination remakes the world from nothing.',                      slug:'picasso', a:'creator'   },
-      { name:'The Dalai Lama',     desc:'Faith carried lightly. Laughter as a vow.',                        slug:'dalai',   a:'innocent'  },
-      { name:'Charlie Chaplin',    desc:'Made important things laughable. Lightness as resistance.',        slug:'chaplin', a:'jester'    },
-      { name:'Apollinaire',        desc:'Beauty is a form of devotion.',                                    slug:'apolli',  a:'lover'     },
-      { name:'Michael Jordan',     desc:'Elegance, the strive for greatness. The process is the religion.', slug:'jordan',  a:'hero'      },
-      { name:'Nelson Mandela',     desc:'Authority earned through conscience.',                             slug:'mandela', a:'ruler'     },
-      { name:'Muhammad Ali',       desc:'A poet who happened to be the greatest.',                          slug:'ali',     a:'rebel'     },
-      { name:'Martin Luther King', desc:'Vision strong enough to bend reality. The fierce urgency of now.', slug:'mlk',     a:'magician'  },
-      { name:'Mother Teresa',      desc:'Selfless care for those the world forgets.',                       slug:'teresa',  a:'caregiver' }
+      { name:'Ibn Battuta',        desc:'Most alive when crossing into the unknown.',                       slug:'battuta', a:'explorer',  portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ibn_Battuta-Tippoo%27s_Tiger.jpg/320px-Ibn_Battuta-Tippoo%27s_Tiger.jpg' },
+      { name:'Tom Hanks',          desc:"I am just like you and you are just like me.",                     slug:'hanks',   a:'everyman',  portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Tom_Hanks_TIFF_2019.jpg/320px-Tom_Hanks_TIFF_2019.jpg' },
+      { name:'Albert Einstein',    desc:'The truth lives in knowledge and understanding.',                  slug:'einstein',a:'sage',      portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Albert_Einstein_Head.jpg/320px-Albert_Einstein_Head.jpg' },
+      { name:'Pablo Picasso',      desc:'Imagination remakes the world from nothing.',                      slug:'picasso', a:'creator',   portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Pablo_picasso_1.jpg/320px-Pablo_picasso_1.jpg' },
+      { name:'The Dalai Lama',     desc:'Faith carried lightly. Laughter as a vow.',                        slug:'dalai',   a:'innocent',  portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Dalailama1_20121014_4639.jpg/320px-Dalailama1_20121014_4639.jpg' },
+      { name:'Charlie Chaplin',    desc:'Made important things laughable. Lightness as resistance.',        slug:'chaplin', a:'jester',    portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Charlie_Chaplin.jpg/320px-Charlie_Chaplin.jpg' },
+      { name:'Apollinaire',        desc:'Beauty is a form of devotion.',                                    slug:'apolli',  a:'lover',     portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Guillaume_Apollinaire_foto.jpg/320px-Guillaume_Apollinaire_foto.jpg' },
+      { name:'Michael Jordan',     desc:'Elegance, the strive for greatness. The process is the religion.', slug:'jordan',  a:'hero',      portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Michael_Jordan_in_2014.jpg/320px-Michael_Jordan_in_2014.jpg' },
+      { name:'Nelson Mandela',     desc:'Authority earned through conscience.',                             slug:'mandela', a:'ruler',     portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Nelson_Mandela_1994.jpg/320px-Nelson_Mandela_1994.jpg' },
+      { name:'Muhammad Ali',       desc:'A poet who happened to be the greatest.',                          slug:'ali',     a:'rebel',     portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Muhammad_Ali_NYWTS.jpg/320px-Muhammad_Ali_NYWTS.jpg' },
+      { name:'Martin Luther King', desc:'Vision strong enough to bend reality. The fierce urgency of now.', slug:'mlk',     a:'magician',  portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Martin_Luther_King%2C_Jr..jpg/320px-Martin_Luther_King%2C_Jr..jpg' },
+      { name:'Mother Teresa',      desc:'Selfless care for those the world forgets.',                       slug:'teresa',  a:'caregiver', portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/MotherTeresa_094.jpg/320px-MotherTeresa_094.jpg' }
     ]
   },
   {
@@ -1317,18 +1390,18 @@ var SCREENS = [
     title:'Which brand cluster best aligns with yours?',
     sub:'Trust the cluster that feels like the room your brand belongs in.',
     opts:[
-      { peers:['North Face','Timberland','GoPro','Land Rover'],  a:'explorer'  },
-      { peers:['Apple','LEGO','Pinterest','Etsy'],               a:'creator'   },
-      { peers:["McDonald's",'IKEA','Volkswagen','Heineken'],     a:'everyman'  },
-      { peers:["Levi's",'MTV','Uber','Harley-Davidson'],         a:'rebel'     },
-      { peers:["M&M's",'Fanta','Doritos','Old Spice'],           a:'jester'    },
-      { peers:['Rolex','Nespresso','Hugo Boss','Mercedes-Benz'], a:'ruler'     },
-      { peers:['Nike','Duracell','FedEx','Marvel'],              a:'hero'      },
-      { peers:['Pampers','UNICEF','Flower Farm','WWF'],          a:'caregiver' },
-      { peers:['Dove','Innocent','Headspace','Snuggle'],         a:'innocent'  },
-      { peers:['Disney','Rolls Royce','Dyson','Rituals'],        a:'magician'  },
-      { peers:['Alfa Romeo','Magnum','Diptyque','Chanel'],       a:'lover'     },
-      { peers:['Harvard','BBC','Wikipedia','TED'],               a:'sage'      }
+      { peers:[{name:'North Face',domain:'thenorthface.com'},{name:'Timberland',domain:'timberland.com'},{name:'GoPro',domain:'gopro.com'},{name:'Land Rover',domain:'landrover.com'}],         a:'explorer'  },
+      { peers:[{name:'Apple',domain:'apple.com'},{name:'LEGO',domain:'lego.com'},{name:'Pinterest',domain:'pinterest.com'},{name:'Etsy',domain:'etsy.com'}],                                       a:'creator'   },
+      { peers:[{name:"McDonald's",domain:'mcdonalds.com'},{name:'IKEA',domain:'ikea.com'},{name:'Volkswagen',domain:'volkswagen.com'},{name:'Heineken',domain:'heineken.com'}],                    a:'everyman'  },
+      { peers:[{name:"Levi's",domain:'levi.com'},{name:'MTV',domain:'mtv.com'},{name:'Uber',domain:'uber.com'},{name:'Harley-Davidson',domain:'harley-davidson.com'}],                             a:'rebel'     },
+      { peers:[{name:"M&M's",domain:'mms.com'},{name:'Fanta',domain:'fanta.com'},{name:'Doritos',domain:'doritos.com'},{name:'Old Spice',domain:'oldspice.com'}],                                  a:'jester'    },
+      { peers:[{name:'Rolex',domain:'rolex.com'},{name:'Nespresso',domain:'nespresso.com'},{name:'Hugo Boss',domain:'hugoboss.com'},{name:'Mercedes-Benz',domain:'mercedes-benz.com'}],            a:'ruler'     },
+      { peers:[{name:'Nike',domain:'nike.com'},{name:'Duracell',domain:'duracell.com'},{name:'FedEx',domain:'fedex.com'},{name:'Marvel',domain:'marvel.com'}],                                     a:'hero'      },
+      { peers:[{name:'Pampers',domain:'pampers.com'},{name:'UNICEF',domain:'unicef.org'},{name:'Flower Farm',domain:'flowerfarm.com'},{name:'WWF',domain:'worldwildlife.org'}],                    a:'caregiver' },
+      { peers:[{name:'Dove',domain:'dove.com'},{name:'Innocent',domain:'innocentdrinks.co.uk'},{name:'Headspace',domain:'headspace.com'},{name:'Snuggle',domain:'snuggle.com'}],                   a:'innocent'  },
+      { peers:[{name:'Disney',domain:'disney.com'},{name:'Rolls Royce',domain:'rolls-roycemotorcars.com'},{name:'Dyson',domain:'dyson.com'},{name:'Rituals',domain:'rituals.com'}],                a:'magician'  },
+      { peers:[{name:'Alfa Romeo',domain:'alfaromeousa.com'},{name:'Magnum',domain:'magnumicecream.com'},{name:'Diptyque',domain:'diptyqueparis.com'},{name:'Chanel',domain:'chanel.com'}],        a:'lover'     },
+      { peers:[{name:'Harvard',domain:'harvard.edu'},{name:'BBC',domain:'bbc.com'},{name:'Wikipedia',domain:'wikipedia.org'},{name:'TED',domain:'ted.com'}],                                       a:'sage'      }
     ]
   },
   {
@@ -1656,7 +1729,23 @@ function buildCard(sc, opt, idx, n){
 
   if (sc.kind === 'peers'){
     var peerGrid = el('div', {class:'peer-grid'});
-    opt.peers.forEach(function(p){ peerGrid.appendChild(el('div', {class:'peer'}, p)); });
+    opt.peers.forEach(function(p){
+      var pName = (typeof p === 'string') ? p : p.name;
+      var pDomain = (typeof p === 'string') ? null : p.domain;
+      var cell = el('div', {class:'peer'});
+      var logoWrap = el('div', {class:'peer-logo'});
+      var fallback = el('span', {class:'peer-fallback'}, pName);
+      logoWrap.appendChild(fallback);
+      if (pDomain){
+        var img = el('img', {alt: pName + ' logo', loading:'lazy'});
+        img.src = 'https://logo.clearbit.com/' + pDomain;
+        img.addEventListener('error', function(){ img.remove(); });
+        logoWrap.appendChild(img);
+      }
+      cell.appendChild(logoWrap);
+      cell.appendChild(el('div', {class:'peer-name'}, pName));
+      peerGrid.appendChild(cell);
+    });
     return el('button', {class: base + ' kind-peers', onclick:onSelect, type:'button'}, [peerGrid]);
   }
 
@@ -1675,14 +1764,19 @@ function buildCard(sc, opt, idx, n){
   }
 
   if (sc.kind === 'figure'){
-    // Portrait placeholder card. Real imagery goes to /img/archetype/{slug}.jpg (see data-img).
-    var frame = el('div', {class:'figure-frame', 'data-img':'img/archetype/' + (opt.slug||'') + '.jpg'}, [
-      el('div', {class:'figure-tag'}, sc.figureTag || 'Placeholder'),
+    var frame = el('div', {class:'figure-frame', 'data-img': opt.portrait || ('img/archetype/' + (opt.slug||'') + '.jpg')}, [
+      el('div', {class:'figure-tag'}, sc.figureTag || 'Portrait'),
       el('div', {class:'figure-placeholder'}, [
         el('div', {class:'placeholder-ring', html: PLACEHOLDER_SVG}),
         el('div', {class:'placeholder-meta'}, 'Portrait · ' + (opt.slug||'tba'))
       ])
     ]);
+    if (opt.portrait){
+      var pimg = el('img', {alt: opt.name + ' portrait', class:'figure-img', loading:'lazy'});
+      pimg.src = opt.portrait;
+      pimg.addEventListener('error', function(){ pimg.remove(); });
+      frame.appendChild(pimg);
+    }
     return el('button', {class: base + ' kind-figure', onclick:onSelect, type:'button'}, [
       frame,
       el('div', {class:'figure-body'}, [
@@ -1987,13 +2081,28 @@ function divider(num, ttl){
 
 function archCard(role, arch, read){
   var roleLabels = { primary:'01 · Primary', secondary:'02 · Secondary', tension:'03 · Tension' };
+  var refRow = el('div', {class:'meta-ref'});
+  var refLabel = el('span', {class:'meta-ref-label'}, 'Reference');
+  var logoWrap = el('div', {class:'meta-ref-logo'});
+  var fb = el('span', {class:'meta-ref-fallback'}, arch.brand);
+  logoWrap.appendChild(fb);
+  if (arch.domain){
+    var img = el('img', {alt: arch.brand + ' logo', loading:'lazy'});
+    img.src = 'https://logo.clearbit.com/' + arch.domain;
+    img.addEventListener('error', function(){ img.remove(); });
+    logoWrap.appendChild(img);
+  }
+  refRow.appendChild(refLabel);
+  refRow.appendChild(logoWrap);
+  refRow.appendChild(el('span', {class:'meta-ref-name'}, arch.brand));
   return el('div', {class:'r-arch ' + role}, [
     el('div', {class:'role'}, roleLabels[role]),
     el('div', {class:'name-row'}, [
       el('span', {class:'name'}, arch.name),
       el('span', {class:'glyph'}, arch.glyph)
     ]),
-    el('div', {class:'meta-line'}, 'Reference · ' + arch.brand + '  /  Gift · ' + arch.gift + '  /  Shadow · ' + arch.shadow),
+    refRow,
+    el('div', {class:'meta-line'}, 'Gift · ' + arch.gift + '  /  Shadow · ' + arch.shadow),
     el('div', {class:'read'}, read || '—')
   ]);
 }
