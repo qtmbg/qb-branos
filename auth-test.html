@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB Auth Test · Checkpoint 1</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000;color:#fff;font-family:'Inter',sans-serif;min-height:100vh;padding:48px 20px}
+  .wrap{max-width:760px;margin:0 auto}
+  .label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.16em;color:#4ade80;margin-bottom:14px;text-transform:uppercase}
+  h1{font-size:32px;font-weight:500;line-height:1.2;margin-bottom:14px;letter-spacing:-0.01em}
+  .lede{font-size:15px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:36px}
+  .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;margin-bottom:18px}
+  .card h2{font-size:14px;font-family:'JetBrains Mono',monospace;letter-spacing:0.14em;text-transform:uppercase;color:#fff;margin-bottom:6px}
+  .card .subtitle{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:18px;line-height:1.55}
+  .row{display:flex;flex-wrap:wrap;gap:10px}
+  button{background:#4ade80;color:#000;border:none;border-radius:8px;padding:11px 18px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:opacity .15s}
+  button.secondary{background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.12)}
+  button.danger{background:rgba(248,113,113,0.16);color:#f87171;border:1px solid rgba(248,113,113,0.3)}
+  button:hover{opacity:0.85}
+  .state{background:#000;border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.6;color:rgba(255,255,255,0.7);white-space:pre-wrap;word-break:break-all;max-height:340px;overflow:auto}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase}
+  .pill.live{background:rgba(74,222,128,0.16);color:#4ade80}
+  .pill.dead{background:rgba(248,113,113,0.16);color:#f87171}
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  hr{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:24px 0}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:3px;color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="label">QUANTUM BRANDING · DEV</div>
+  <h1>Auth + Gate · Checkpoint 1 verifier</h1>
+  <p class="lede">
+    Page only used to test the magic-link auth flow + gate UI before they're wired into Phase 01 tools.
+    Open this URL, click <code>Open Save Gate</code>, fill the form, click the magic link in your inbox.
+    You should land back here with a session in localStorage.
+  </p>
+
+  <!-- AUTH STATE ─────────────────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>Auth state</h2>
+    <p class="subtitle">Live view of <code>QB.isAuthed()</code> + the session blob in localStorage.</p>
+    <div id="authPill" class="pill dead"><span class="dot"></span><span id="authPillTxt">CHECKING…</span></div>
+    <div id="state" class="state" style="margin-top:14px">loading…</div>
+    <div class="row" style="margin-top:14px">
+      <button class="secondary" onclick="refreshState()">Refresh</button>
+      <button class="secondary" onclick="pullCloud()">Pull QBP from cloud</button>
+      <button class="danger" onclick="doLogout()">Logout (clear session)</button>
+    </div>
+  </div>
+
+  <!-- GATE TESTS ─────────────────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>Save gate (anonymous post-synthesis flow)</h2>
+    <p class="subtitle">Simulates the gate that fires when an anonymous user finishes a Phase 01 tool.</p>
+    <div class="row">
+      <button onclick="openSave('soul-map', 'Brand Soul Map', 'Verne')">Soul Map gate</button>
+      <button onclick="openSave('sensescape', 'Sensescape', 'Verne')">Sensescape gate</button>
+      <button onclick="openSave('visual-dna', 'Visual DNA', '')">Visual DNA gate (no brand)</button>
+      <button onclick="openSave('war-table', 'The War Table', 'Verne')">War Table gate</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Login modal (returning-user flow)</h2>
+    <p class="subtitle">The same modal in <code>hub-login</code> mode — used by the hub for returning users.</p>
+    <div class="row">
+      <button onclick="openLogin()">Open login modal</button>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- COMPLETIONS + QBP MUTATION ─────────────────────────────────────────── -->
+  <div class="card">
+    <h2>Tool completion + QBP mutation</h2>
+    <p class="subtitle">Mock the QBP merges + completion tracking that real tools will trigger.</p>
+    <div class="row">
+      <button class="secondary" onclick="mockComplete('soul-map')">Complete Soul Map</button>
+      <button class="secondary" onclick="mockComplete('sensescape')">Complete Sensescape</button>
+      <button class="secondary" onclick="mockComplete('visual-dna')">Complete Visual DNA</button>
+      <button class="secondary" onclick="mockComplete('war-table')">Complete War Table</button>
+      <button class="danger" onclick="clearLocal()">Clear ALL local QB data</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
+<script>
+function refreshState(){
+  const session = (() => { try { return JSON.parse(localStorage.getItem('qb_session') || '{}'); } catch(e){ return {}; }})();
+  const qbp     = (() => { try { return JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e){ return {}; }})();
+  const compl   = (() => { try { return JSON.parse(localStorage.getItem('qb_completions') || '{}'); } catch(e){ return {}; }})();
+  const pending = (() => { try { return JSON.parse(localStorage.getItem('qb_pending_signup') || '{}'); } catch(e){ return {}; }})();
+
+  const authed = window.QB && QB.isAuthed();
+  const pill   = document.getElementById('authPill');
+  const pillTx = document.getElementById('authPillTxt');
+  pill.className = 'pill ' + (authed ? 'live' : 'dead');
+  pillTx.textContent = authed ? 'AUTHED · ' + (session.email || '?') : 'ANONYMOUS';
+
+  const tier = localStorage.getItem('qb_user_tier');
+  const fname = localStorage.getItem('qb_first_name');
+  const sub = localStorage.getItem('qb_sub_status');
+
+  document.getElementById('state').textContent =
+    'isAuthed:        ' + !!authed + '\n'
+    + 'first_name:      ' + (fname || '—') + '\n'
+    + 'tier:            ' + (tier || '—') + '\n'
+    + 'subscription:    ' + (sub  || '—') + '\n\n'
+    + 'qb_session:\n' + JSON.stringify(session, null, 2) + '\n\n'
+    + 'qb_qbp (' + Object.keys(qbp).length + ' fields):\n' + JSON.stringify(qbp, null, 2) + '\n\n'
+    + 'qb_completions:\n' + JSON.stringify(compl, null, 2) + '\n\n'
+    + 'qb_pending_signup:\n' + JSON.stringify(pending, null, 2);
+}
+
+function openSave(toolId, toolName, brandName){
+  if (brandName) QB.mergeQBP({ brandName });
+  QB.openGate({ toolId, toolName, brandName, onClose: refreshState });
+}
+function openLogin(){
+  QB.openGate({ toolId:'hub-login', toolName:'Welcome back', onClose: refreshState });
+}
+function mockComplete(toolId){
+  const names = { 'soul-map':'Brand Soul Map', 'sensescape':'Sensescape', 'visual-dna':'Visual DNA', 'war-table':'The War Table' };
+  QB.mergeQBP({ brandName:'Verne', archetype:'The Magician + The Sage' });
+  QB.recordCompletion(toolId);
+  refreshState();
+  alert('Recorded completion for ' + names[toolId] + '.');
+}
+function pullCloud(){
+  if (!QB.isAuthed()) { alert('Not authed.'); return; }
+  QB.pullQBPFromCloud().then(p => { refreshState(); alert(p ? 'Pulled.' : 'Pull failed.'); });
+}
+function doLogout(){
+  QB.logout();
+  refreshState();
+}
+function clearLocal(){
+  if (!confirm('Wipe all qb_* localStorage? This cannot be undone.')) return;
+  ['qb_session','qb_qbp','qb_completions','qb_pending_signup','qb_first_name','qb_user_tier','qb_sub_status']
+    .forEach(k => localStorage.removeItem(k));
+  ['soul-map','sensescape','visual-dna','war-table'].forEach(t => {
+    localStorage.removeItem('qb_' + t.replace(/-/g,'_') + '_done');
+  });
+  refreshState();
+}
+
+refreshState();
+window.addEventListener('storage', refreshState);
+</script>
+</body>
+</html>

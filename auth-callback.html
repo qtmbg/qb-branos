@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saving your Brand Profile…</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000;color:#fff;font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .box{max-width:440px;text-align:center}
+  .label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;color:#4ade80;margin-bottom:24px}
+  h1{font-size:22px;font-weight:500;line-height:1.4;margin-bottom:14px}
+  p{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.6}
+  .err{color:#f87171;margin-top:18px;font-size:13px;font-family:'JetBrains Mono',monospace}
+  .spinner{width:28px;height:28px;border:2px solid rgba(255,255,255,0.1);border-top-color:#4ade80;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 24px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  a{color:#4ade80;text-decoration:none}
+  a:hover{opacity:.8}
+</style>
+</head>
+<body>
+<div class="box">
+  <div id="spinner" class="spinner"></div>
+  <div class="label">QUANTUM BRANDING</div>
+  <h1 id="title">Saving your Brand Profile…</h1>
+  <p id="msg">One moment.</p>
+  <div id="err" class="err" style="display:none"></div>
+</div>
+<script src="/qb-cloud.js"></script>
+<script>
+(async function(){
+  const $ = id => document.getElementById(id);
+  const showError = msg => {
+    $('spinner').style.display = 'none';
+    $('title').textContent = 'Something went wrong';
+    $('msg').innerHTML = 'Try requesting a new link, or <a href="/">go back home</a>.';
+    $('err').textContent = msg;
+    $('err').style.display = 'block';
+  };
+
+  if (!window.QB) {
+    showError('qb-cloud.js failed to load.');
+    return;
+  }
+
+  // Supabase magic-link returns tokens in the URL fragment
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  const queryParams = new URLSearchParams(window.location.search);
+  const returnTo = queryParams.get('return_to') || '/';
+
+  if (!accessToken) {
+    showError('No token in the URL. The link may have expired or already been used.');
+    return;
+  }
+
+  try {
+    // Verify the session by fetching the user
+    const userRes = await fetch(QB.SUPA_URL + '/auth/v1/user', {
+      headers: {
+        'apikey': QB.SUPA_KEY,
+        'Authorization': 'Bearer ' + accessToken
+      }
+    });
+    if (!userRes.ok) throw new Error('Could not verify session.');
+    const user = await userRes.json();
+
+    // Recover any pending signup metadata stashed by qb-cloud.sendMagicLink()
+    let pending = {};
+    try { pending = JSON.parse(localStorage.getItem('qb_pending_signup') || '{}'); }
+    catch(e){}
+
+    // Save the session
+    QB.setSession({
+      token: accessToken,
+      refreshToken: refreshToken,
+      userId: user.id,
+      email:  user.email,
+      firstName: pending.firstName
+        || (user.user_metadata && user.user_metadata.first_name)
+        || ''
+    });
+    localStorage.removeItem('qb_pending_signup');
+    if (pending.firstName) localStorage.setItem('qb_first_name', pending.firstName);
+
+    // Push pre-signup local QBP to cloud so the user's work is persisted
+    const localQBP = QB.getQBP();
+    if (localQBP && Object.keys(localQBP).length > 0) {
+      try {
+        await fetch(QB.SUPA_URL + '/rest/v1/profiles?id=eq.' + user.id, {
+          method: 'PATCH',
+          headers: {
+            'apikey': QB.SUPA_KEY,
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            qbp: localQBP,
+            updated_at: new Date().toISOString(),
+            last_active_at: new Date().toISOString()
+          })
+        });
+      } catch(e){}
+    }
+
+    // Push pre-signup local completions to cloud
+    const localCompletions = QB.getCompletions();
+    if (localCompletions && Object.keys(localCompletions).length > 0) {
+      try {
+        await fetch(QB.SUPA_URL + '/rest/v1/profiles?id=eq.' + user.id, {
+          method: 'PATCH',
+          headers: {
+            'apikey': QB.SUPA_KEY,
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ tool_completions: localCompletions })
+        });
+      } catch(e){}
+    }
+
+    // Klaviyo: identify the profile + record the signup event
+    try {
+      await QB.syncKlaviyoProfile(user.email, pending.firstName || '', {
+        signup_source: pending.sourceTool || 'unknown',
+        brand_name:    localQBP.brandName    || '',
+        archetype:     localQBP.archetype    || '',
+        tools_completed_at_signup: Object.keys(localCompletions || {}).length,
+        signup_date:   new Date().toISOString().split('T')[0]
+      });
+      await QB.sendKlaviyoEvent('Brand Profile Saved', {
+        source_tool:     pending.sourceTool || 'unknown',
+        tools_completed: Object.keys(localCompletions || {}).length
+      });
+    } catch(e){}
+
+    // Success → redirect back
+    $('spinner').style.display = 'none';
+    $('title').textContent = "You're in.";
+    $('msg').innerHTML = 'Taking you back to your result…';
+    setTimeout(() => { window.location.href = returnTo; }, 900);
+  } catch(e) {
+    showError(e.message || 'Unknown error.');
+  }
+})();
+</script>
+</body>
+</html>

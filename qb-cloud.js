@@ -1,0 +1,332 @@
+/* ────────────────────────────────────────────────────────────────────────────
+   QB CLOUD — Shared module for auth, QBP sync, completion tracking,
+              Klaviyo bridge, and feature-access checks.
+   Loaded once per page via <script src="/qb-cloud.js"></script>.
+   Exposes window.QB.
+   ──────────────────────────────────────────────────────────────────────────── */
+(function(){
+  'use strict';
+
+  const SUPA_URL = 'https://yushbxjwfhuokaezoioe.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0';
+
+  // ── Tool registry ──────────────────────────────────────────────────────────
+  const TOOL_NAMES = {
+    'soul-map':   'Brand Soul Map',
+    'sensescape': 'Sensescape',
+    'visual-dna': 'Visual DNA',
+    'war-table':  'The War Table'
+  };
+  const TOOL_FILES = {
+    'soul-map':   'brand-soul-map.html',
+    'sensescape': 'sensescape.html',
+    'visual-dna': 'visual-dna.html',
+    'war-table':  'war-table.html'
+  };
+  const PHASE_01_TOOLS = ['soul-map', 'sensescape', 'visual-dna', 'war-table'];
+
+  // ── Session management ────────────────────────────────────────────────────
+  function getSession(){
+    try { return JSON.parse(localStorage.getItem('qb_session') || '{}'); }
+    catch(e){ return {}; }
+  }
+  function setSession(s){
+    localStorage.setItem('qb_session', JSON.stringify(s));
+  }
+  function clearSession(){
+    localStorage.removeItem('qb_session');
+  }
+  function isAuthed(){
+    const s = getSession();
+    return !!(s && s.token && s.userId);
+  }
+
+  // ── QBP read/write — local + cloud mirror ─────────────────────────────────
+  function getQBP(){
+    try { return JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }
+    catch(e){ return {}; }
+  }
+  function setQBP(qbp){
+    localStorage.setItem('qb_qbp', JSON.stringify(qbp));
+    syncQBPToCloud(qbp);
+    return qbp;
+  }
+  function mergeQBP(patch){
+    if (!patch || typeof patch !== 'object') return getQBP();
+    // Strip undefined values so we don't overwrite real data with nothing
+    const cleanPatch = {};
+    Object.keys(patch).forEach(k => { if (patch[k] !== undefined) cleanPatch[k] = patch[k]; });
+    const next = Object.assign({}, getQBP(), cleanPatch);
+    return setQBP(next);
+  }
+  async function syncQBPToCloud(qbp){
+    if (!isAuthed()) return false;
+    const s = getSession();
+    try {
+      const res = await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + s.userId, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': 'Bearer ' + s.token,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          qbp,
+          updated_at: new Date().toISOString(),
+          last_active_at: new Date().toISOString()
+        })
+      });
+      return res.ok;
+    } catch(e){ return false; }
+  }
+  async function pullQBPFromCloud(){
+    if (!isAuthed()) return null;
+    const s = getSession();
+    try {
+      const res = await fetch(SUPA_URL + '/rest/v1/profiles?select=qbp,first_name,tier,subscription_status,tool_completions&id=eq.' + s.userId, {
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': 'Bearer ' + s.token
+        }
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      const profile = data && data[0];
+      if (!profile) return null;
+
+      // Merge cloud → local. Cloud is source of truth, but don't drop
+      // local fields that haven't been pushed yet.
+      const local = getQBP();
+      const merged = Object.assign({}, local, profile.qbp || {});
+      localStorage.setItem('qb_qbp', JSON.stringify(merged));
+
+      if (profile.first_name)         localStorage.setItem('qb_first_name',  profile.first_name);
+      if (profile.tier)               localStorage.setItem('qb_user_tier',   profile.tier);
+      if (profile.subscription_status)localStorage.setItem('qb_sub_status',  profile.subscription_status);
+      if (profile.tool_completions)   localStorage.setItem('qb_completions', JSON.stringify(profile.tool_completions));
+
+      return profile;
+    } catch(e){ return null; }
+  }
+
+  // ── Completion tracking ───────────────────────────────────────────────────
+  function getCompletions(){
+    try { return JSON.parse(localStorage.getItem('qb_completions') || '{}'); }
+    catch(e){ return {}; }
+  }
+  async function recordCompletion(toolId){
+    if (!toolId) return;
+
+    // Local mirror — stays even if user is anonymous
+    const localKey = 'qb_' + toolId.replace(/-/g, '_') + '_done';
+    localStorage.setItem(localKey, '1');
+    const completions = getCompletions();
+    const wasComplete = !!completions[toolId];
+    completions[toolId] = new Date().toISOString();
+    localStorage.setItem('qb_completions', JSON.stringify(completions));
+
+    // Cloud (only if authed)
+    if (isAuthed()) {
+      const s = getSession();
+      try {
+        await fetch(SUPA_URL + '/rest/v1/rpc/record_tool_completion', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPA_KEY,
+            'Authorization': 'Bearer ' + s.token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ p_user_id: s.userId, p_tool_id: toolId })
+        });
+      } catch(e){ /* silent */ }
+    }
+
+    // Klaviyo per-tool event
+    sendKlaviyoEvent('Tool Completed', {
+      tool_id:   toolId,
+      tool_name: TOOL_NAMES[toolId] || toolId
+    });
+
+    // Klaviyo Phase 01 milestone event — fires only on the transition
+    // from "not all done" → "all done"
+    if (!wasComplete && PHASE_01_TOOLS.every(t => completions[t])) {
+      const firstAt = completions[PHASE_01_TOOLS[0]];
+      const totalDays = firstAt
+        ? Math.max(0, Math.round((Date.now() - new Date(firstAt).getTime()) / 86400000))
+        : 0;
+      sendKlaviyoEvent('Phase 01 Complete', { total_time_days: totalDays });
+    }
+  }
+  function nextRecommendedTool(){
+    const done = getCompletions();
+    return PHASE_01_TOOLS.find(t => !done[t]) || null;
+  }
+  function phase01Progress(){
+    const done = getCompletions();
+    const completed = PHASE_01_TOOLS.filter(t => done[t]).length;
+    return {
+      completed,
+      total:   PHASE_01_TOOLS.length,
+      percent: Math.round((completed / PHASE_01_TOOLS.length) * 100)
+    };
+  }
+
+  // ── Magic-link auth ───────────────────────────────────────────────────────
+  async function sendMagicLink(email, firstName, sourceTool){
+    if (!email) return { ok:false, error:'Email is required.' };
+    const redirectTo = window.location.origin
+      + '/auth-callback.html?return_to='
+      + encodeURIComponent(window.location.href);
+    try {
+      const res = await fetch(SUPA_URL + '/auth/v1/otp', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          create_user: true,
+          options: {
+            email_redirect_to: redirectTo,
+            data: {
+              first_name:    firstName || '',
+              signup_source: sourceTool || 'unknown'
+            }
+          }
+        })
+      });
+      if (!res.ok) {
+        let msg = 'Email send failed';
+        try {
+          const err = await res.json();
+          msg = err.msg || err.error_description || err.message || msg;
+        } catch(e){}
+        throw new Error(msg);
+      }
+      // Stash for the callback page so it knows the source/firstName
+      localStorage.setItem('qb_pending_signup', JSON.stringify({
+        email, firstName, sourceTool, sentAt: Date.now()
+      }));
+      return { ok:true };
+    } catch(e){
+      return { ok:false, error:e.message };
+    }
+  }
+
+  function logout(){
+    clearSession();
+    localStorage.removeItem('qb_first_name');
+    localStorage.removeItem('qb_user_tier');
+    localStorage.removeItem('qb_sub_status');
+    // Keep qb_qbp + qb_completions locally so the user doesn't lose work
+  }
+
+  // ── Feature access (paywall shim — used by Phase 02+ tools) ───────────────
+  // Mirrors the existing window.QB_HAS_ACCESS contract used by hub + tools.
+  function hasAccess(feature){
+    const tier = localStorage.getItem('qb_user_tier') || 'free';
+    const status = localStorage.getItem('qb_sub_status') || 'inactive';
+    // Phase 01 tools are always free
+    if (PHASE_01_TOOLS.includes(feature)) return true;
+    if (feature === 'signal-scan')        return true;
+    // Everything else requires an active paid subscription
+    return status === 'active' && tier !== 'free';
+  }
+  // Backwards-compat shim — existing code calls window.QB_HAS_ACCESS
+  if (typeof window.QB_HAS_ACCESS !== 'function') {
+    window.QB_HAS_ACCESS = hasAccess;
+  }
+
+  // ── Klaviyo bridge ────────────────────────────────────────────────────────
+  // Klaviyo public key + list ID can be injected via:
+  //   - window.QB_KLAVIYO_KEY / window.QB_KLAVIYO_LIST_ID (script-tag config)
+  //   - localStorage.qb_klaviyo_pk / qb_klaviyo_list (set by hub settings)
+  // If neither is present, all Klaviyo functions silently no-op.
+  function getKlaviyoConfig(){
+    return {
+      key:    window.QB_KLAVIYO_KEY     || localStorage.getItem('qb_klaviyo_pk')   || '',
+      listId: window.QB_KLAVIYO_LIST_ID || localStorage.getItem('qb_klaviyo_list') || ''
+    };
+  }
+  async function syncKlaviyoProfile(email, firstName, props){
+    const cfg = getKlaviyoConfig();
+    if (!cfg.key || !email) return;
+    try {
+      await fetch('https://a.klaviyo.com/client/profiles/?company_id=' + cfg.key, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'revision':'2024-10-15' },
+        body: JSON.stringify({
+          data: {
+            type: 'profile',
+            attributes: {
+              email,
+              first_name: firstName || undefined,
+              properties: props || {}
+            }
+          }
+        })
+      });
+      if (cfg.listId) {
+        await fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + cfg.key, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'revision':'2024-10-15' },
+          body: JSON.stringify({
+            data: {
+              type: 'subscription',
+              attributes: {
+                profile: { data: { type:'profile', attributes:{ email } } },
+                custom_source: 'Brand Profile Gate'
+              },
+              relationships: { list: { data: { type:'list', id: cfg.listId } } }
+            }
+          })
+        });
+      }
+    } catch(e){ /* silent */ }
+  }
+  async function sendKlaviyoEvent(eventName, props){
+    const cfg = getKlaviyoConfig();
+    if (!cfg.key) return;
+    let email = null;
+    try {
+      const s = JSON.parse(localStorage.getItem('qb_session') || '{}');
+      email = s.email || null;
+    } catch(e){}
+    if (!email) return;
+    try {
+      await fetch('https://a.klaviyo.com/client/events/?company_id=' + cfg.key, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'revision':'2024-10-15' },
+        body: JSON.stringify({
+          data: {
+            type: 'event',
+            attributes: {
+              metric:     { data: { type:'metric',  attributes:{ name: eventName } } },
+              profile:    { data: { type:'profile', attributes:{ email } } },
+              properties: props || {}
+            }
+          }
+        })
+      });
+    } catch(e){ /* silent */ }
+  }
+
+  // ── Bootstrap on load ─────────────────────────────────────────────────────
+  if (isAuthed()) {
+    pullQBPFromCloud();
+  }
+
+  // ── Public API ────────────────────────────────────────────────────────────
+  window.QB = {
+    SUPA_URL, SUPA_KEY,
+    isAuthed, getSession, setSession, clearSession,
+    getQBP, setQBP, mergeQBP, syncQBPToCloud, pullQBPFromCloud,
+    recordCompletion, getCompletions, nextRecommendedTool, phase01Progress,
+    sendMagicLink, logout,
+    hasAccess,
+    syncKlaviyoProfile, sendKlaviyoEvent,
+    TOOL_NAMES, TOOL_FILES, PHASE_01_TOOLS
+  };
+})();
