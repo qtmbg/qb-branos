@@ -6,6 +6,8 @@
 <title>QB BrandOS — The Brand Soul Map</title>
 <meta name="description" content="The Brand Soul Map · QB BrandOS Phase 01 — discover your brand's irreducible truth, archetype, and emotional foundation.">
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -3328,13 +3330,21 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         soulMapCompletedAt:   new Date().toISOString(),
         soulMapSessionId:     state.codexSessionId || newSessionId()
       });
-      localStorage.setItem('qb_qbp', JSON.stringify(updated));
+      // Cloud-aware write: mirrors to Supabase if user is authed, no-op otherwise
+      if (window.QB && QB.setQBP) { QB.setQBP(updated); }
+      else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
       localStorage.setItem('qb_soul_map_done', '1');
       try {
         if (window.parent && window.parent !== window){
           window.parent.postMessage({ type:'QB_PHASE_COMPLETE', phase:1, tool:'soul-map', qbp:updated }, window.location.origin || '*');
         }
       } catch(e){}
+      // Open soft gate (no-op if already authed; records local completion either way)
+      try {
+        if (window.QB && QB.openGate) {
+          QB.openGate({ toolId:'soul-map', toolName:'Brand Soul Map', brandName: updated.brandName || '' });
+        }
+      } catch(e){ console.warn('QB gate:', e); }
     } catch(e){ console.warn('QBP sync:', e); }
   }
 

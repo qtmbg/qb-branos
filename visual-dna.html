@@ -6,6 +6,8 @@
 <title>QB BrandOS — Visual DNA</title>
 <meta name="description" content="Visual DNA · QB BrandOS Phase 01 — trust your eye, discover your brand's visual signature.">
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1700,8 +1702,16 @@ body.immersive{ overflow:hidden; }
         visualDnaFastDiscards: fastDiscardR1,
         brandName: existing.brandName || state.leadData.company || state.leadData.firstName || ''
       });
-      localStorage.setItem('qb_qbp', JSON.stringify(updated));
+      // Cloud-aware write: mirrors to Supabase if user is authed
+      if (window.QB && QB.setQBP) { QB.setQBP(updated); }
+      else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
       localStorage.setItem('qb_visual_dna_done', '1');
+      // Open soft gate (no-op if already authed)
+      try {
+        if (window.QB && QB.openGate){
+          QB.openGate({ toolId:'visual-dna', toolName:'Visual DNA', brandName: updated.brandName || '' });
+        }
+      } catch(e){ console.warn('QB gate:', e); }
     } catch(e) { console.warn('QB Visual DNA persistence:', e); }
   }
 

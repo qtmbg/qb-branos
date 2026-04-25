@@ -11,6 +11,8 @@
   // Flash-free theme initialization
   (function(){var t=localStorage.getItem('qb-theme')||'dark';document.documentElement.setAttribute('data-theme',t)})();
 </script>
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
 <style>
 /* Base Reset & Design System Variables - "Entangled Time" */
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -853,6 +855,10 @@ function buildHeader() {
   });
   right.appendChild(navLinks);
 
+  // Auth pill: shows Log In when anonymous, [NAME · LOGOUT] when authed.
+  // Reuses qb-gate.js openGate() in 'hub-login' mode for the login modal.
+  right.appendChild(buildAuthPill());
+
   // FIX #10: button only updates its own text + data-theme; does not call render()
   right.appendChild(el('button', {
     class: 'theme-toggle',
@@ -863,6 +869,57 @@ function buildHeader() {
 
   header.appendChild(right);
   return header;
+}
+
+function buildAuthPill() {
+  const authed = window.QB && QB.isAuthed();
+  if (authed) {
+    const name = (localStorage.getItem('qb_first_name') || 'Account').toUpperCase();
+    return el('button', {
+      type: 'button',
+      title: 'Click to log out',
+      style: {
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        color: 'var(--text-1)',
+        fontSize: '11px',
+        padding: '6px 12px',
+        borderRadius: '6px',
+        cursor: 'pointer',
+        fontFamily: 'var(--f-mono, monospace)',
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        fontWeight: '500'
+      },
+      onClick: () => {
+        if (confirm('Log out?')) { QB.logout(); render(); }
+      }
+    }, [name + ' · LOGOUT']);
+  }
+  return el('button', {
+    type: 'button',
+    style: {
+      background: '#4ade80',
+      color: '#000',
+      border: 'none',
+      fontSize: '11px',
+      padding: '6px 12px',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      fontWeight: '600',
+      letterSpacing: '0.04em'
+    },
+    onClick: openLoginModal
+  }, ['LOG IN']);
+}
+
+function openLoginModal() {
+  if (!window.QB || !QB.openGate) return;
+  QB.openGate({
+    toolId: 'hub-login',
+    toolName: 'Welcome back',
+    onClose: () => render()
+  });
 }
 
 function buildHealthMeter(health) {

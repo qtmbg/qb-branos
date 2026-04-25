@@ -13,6 +13,7 @@
   document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
+<script src="/qb-cloud.js"></script>
 <style>html:not([data-theme]){background:#080604;color:#A89A88}</style>
 
 
@@ -436,6 +437,15 @@ main { position: relative; z-index: 10; max-width: 740px; margin: 0 auto; paddin
 
 
 <main>
+  <!-- Returning-user banner — injected by render() when authed -->
+  <div id="return-banner" style="display:none;background:linear-gradient(90deg,rgba(74,222,128,0.10),rgba(74,222,128,0.02) 70%,transparent);border:1px solid rgba(74,222,128,0.22);border-radius:12px;padding:14px 18px;margin-bottom:18px;display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+    <div style="flex:1;min-width:240px">
+      <div id="rb-eyebrow" style="font-family:var(--f-mono,monospace);font-size:10px;letter-spacing:.16em;color:#4ade80;margin-bottom:4px;text-transform:uppercase">WELCOME BACK</div>
+      <div id="rb-msg" style="font-size:14px;line-height:1.5;color:var(--text-1)">Phase 01 is in progress.</div>
+    </div>
+    <button id="rb-cta" type="button" style="background:#4ade80;color:#000;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Continue →</button>
+  </div>
+
   <!-- Current Step Hero -->
   <div id="current-step-hero" class="glass-card fade-in" style="animation-delay: 0.1s">
     <div class="csh-eyebrow mono-label" id="hero-eyebrow">Your next step</div>
@@ -649,10 +659,16 @@ JOURNEY.forEach(phase => {
 // ── STATE ──
 function isStepDone(step) {
   if (localStorage.getItem(step.storageKey)) return true;
+  // Cloud-synced completions written by qb-cloud.js (cross-device persistence)
+  if (window.QB && QB.getCompletions) {
+    const completions = QB.getCompletions();
+    if (completions && completions[step.id]) return true;
+  }
   try {
     const qbpStr = localStorage.getItem('qb_qbp');
     if (qbpStr) {
       const qbp = JSON.parse(qbpStr);
+      if (step.id === 'archetype-compass' && qbp.archetypeCompassComplete) return true;
       if (step.id === 'soul-map' && qbp.brandEssence) return true;
       if (step.id === 'sensescape' && qbp.colorTerritory) return true;
       // FIX #5: Was qbp.exemplarWords (a Voice Guide field) — corrected to qbp.visualReferences
@@ -702,11 +718,41 @@ function openCurrentStep() {
 
 
 // ── RENDER ──
+function renderReturnBanner(progress, currentStep, allDone) {
+  const wrap = document.getElementById('return-banner');
+  if (!wrap) return;
+  if (!window.QB || !QB.isAuthed()) { wrap.style.display = 'none'; return; }
+  const firstName = localStorage.getItem('qb_first_name') || '';
+  const phase01 = QB.phase01Progress();
+  const eyebrow = 'WELCOME BACK' + (firstName ? ' · ' + firstName.toUpperCase() : '');
+  let msg, ctaLabel = 'Continue →', ctaHref = null;
+  if (allDone) {
+    msg = 'You\'ve completed every step of the journey. Open the OS to revisit any tool.';
+    ctaLabel = 'Open OS →';
+    ctaHref = 'qb-branidos-hub.html';
+  } else if (phase01.percent < 100 && currentStep && currentStep.phase === 1) {
+    msg = 'Phase 01 is ' + phase01.percent + '% complete. ' + currentStep.name + ' compounds next.';
+    ctaHref = currentStep.file;
+  } else if (currentStep) {
+    msg = 'Picking up at ' + currentStep.name + '.';
+    ctaHref = currentStep.file;
+  } else {
+    wrap.style.display = 'none'; return;
+  }
+  document.getElementById('rb-eyebrow').textContent = eyebrow;
+  document.getElementById('rb-msg').textContent = msg;
+  const cta = document.getElementById('rb-cta');
+  cta.textContent = ctaLabel;
+  cta.onclick = ctaHref ? function(){ window.location.href = ctaHref; } : null;
+  wrap.style.display = 'flex';
+}
+
 function render() {
   const progress = getProgress();
   const currentIdx = getCurrentStep();
   const currentStep = ALL_STEPS[currentIdx];
   const allDone = currentIdx >= ALL_STEPS.length;
+  renderReturnBanner(progress, currentStep, allDone);
 
   // FIX #14: delayCounter starts at 1 (0.05s offset) to gently stagger after
   // the hero card's hardcoded 0.1s animation-delay, with explicit intent comment.
@@ -1038,8 +1084,13 @@ window.addEventListener('storage', function(e) {
 });
 
 
-// Initialization
-render();
+// Initialization — if authed, pull cloud QBP + completions before first render
+(async function initJourney(){
+  if (window.QB && QB.isAuthed()) {
+    try { await QB.pullQBPFromCloud(); } catch(e) {}
+  }
+  render();
+})();
 </script>
 </body>
 </html>

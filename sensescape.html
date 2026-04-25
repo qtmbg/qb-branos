@@ -6,6 +6,8 @@
 <title>QB BrandOS — Sensescape</title>
 <meta name="description" content="Sensescape · QB BrandOS Phase 01 — before a brand speaks, it is felt.">
 <script>(function(){try{var legacy=localStorage.getItem('qb_theme');if(legacy){localStorage.setItem('qb-theme',legacy);localStorage.removeItem('qb_theme');}var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&family=Lora:wght@500&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
@@ -2488,10 +2490,21 @@ body.phase-intro{ overflow:hidden; }
   }
 
   function setPhase(next){
+    var prev = state.phase;
     state.phase = next;
     updateImmersive();
     render();
     try { window.scrollTo({ top:0, behavior:'smooth' }); } catch(e){ window.scrollTo(0,0); }
+    // Fire the soft gate exactly once when the codex first appears
+    if (next === 'codex' && prev !== 'codex' && !state._gateFired){
+      state._gateFired = true;
+      try {
+        if (window.QB && QB.openGate){
+          var qbp = QB.getQBP();
+          QB.openGate({ toolId:'sensescape', toolName:'Sensescape', brandName: (qbp && qbp.brandName) || (state.leadData && state.leadData.company) || '' });
+        }
+      } catch(e){ console.warn('QB gate:', e); }
+    }
   }
 
   /* --- DOM helper --- */
@@ -5135,7 +5148,9 @@ body.phase-intro{ overflow:hidden; }
         sensescapeRawAnswers:  a,
         sensescapeCompletedAt: new Date().toISOString()
       });
-      localStorage.setItem('qb_qbp', JSON.stringify(updated));
+      // Cloud-aware write: mirrors to Supabase if user is authed
+      if (window.QB && QB.setQBP) { QB.setQBP(updated); }
+      else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
       try {
         window.dispatchEvent(new StorageEvent('storage', {
           key:'qb_qbp', newValue:JSON.stringify(updated), storageArea:localStorage
