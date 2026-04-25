@@ -408,30 +408,133 @@ textarea,input{ font-family:inherit; }
   margin-top:16px; max-width:620px; margin-inline:auto;
 }
 
-/* Card grids — calmer rhythm, fewer columns, more breathing room */
-.q-grid{ display:grid; gap:20px; max-width:1080px; margin:0 auto; }
-.q-grid.cols-4,
-.q-grid.cols-3{ grid-template-columns:repeat(3,1fr); }
-.q-grid.cols-2{ grid-template-columns:repeat(2,1fr); max-width:760px; }
-@media(max-width:960px){
-  .q-grid.cols-4,
-  .q-grid.cols-3{ grid-template-columns:repeat(2,1fr); }
+/* ============================================================
+   CARD DECKS — horizontal scroll-snap rail
+   The 12-option questions (cols-3/cols-4) render as a single
+   horizontal deck. Cards snap to center on scroll/drag/arrow.
+   The 4-option quadrant question keeps its 2×2 grid because
+   it already fits the viewport without scrolling.
+   ============================================================ */
+.q-deck-wrap{
+  position:relative;
+  max-width:1180px; margin:0 auto;
+  --deck-fade:36px;
 }
-@media(max-width:540px){
-  .q-grid.cols-4,.q-grid.cols-3{ grid-template-columns:1fr; }
+.q-grid{
+  display:flex;
+  flex-direction:row;
+  gap:18px;
+  overflow-x:auto;
+  overflow-y:visible;
+  scroll-snap-type:x mandatory;
+  scroll-padding-inline:48px;
+  scroll-behavior:smooth;
+  padding:14px 48px 28px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color: var(--border-medium) transparent;
+}
+.q-grid::-webkit-scrollbar{ height:5px; }
+.q-grid::-webkit-scrollbar-track{ background:transparent; }
+.q-grid::-webkit-scrollbar-thumb{
+  background:var(--border-medium); border-radius:3px;
+}
+/* Side fade masks so cards "drift" into and out of view */
+.q-deck-wrap::before,
+.q-deck-wrap::after{
+  content:''; position:absolute; top:0; bottom:0; width:48px;
+  pointer-events:none; z-index:2;
+  transition:opacity .25s ease;
+}
+.q-deck-wrap::before{
+  left:0;
+  background:linear-gradient(to right, var(--bg-base) 0%, var(--bg-base) 14%, transparent 100%);
+}
+.q-deck-wrap::after{
+  right:0;
+  background:linear-gradient(to left, var(--bg-base) 0%, var(--bg-base) 14%, transparent 100%);
+}
+.q-deck-wrap.at-start::before{ opacity:0; }
+.q-deck-wrap.at-end::after{ opacity:0; }
+
+/* Deck arrow buttons — desktop convenience, hidden on touch */
+.q-deck-arrow{
+  position:absolute; top:50%; transform:translateY(-50%);
+  z-index:3;
+  width:40px; height:40px; border-radius:50%;
+  border:1px solid var(--border-medium);
+  background:var(--bg-surface);
+  color:var(--text-2);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  font-size:18px; line-height:1;
+  box-shadow:0 6px 16px -8px rgba(26,22,16,.18);
+  transition:opacity .2s ease, transform .15s ease, border-color .2s ease, background-color .2s ease;
+}
+.q-deck-arrow:hover{
+  border-color:var(--brass); color:var(--brass);
+  background:var(--bg-elevated);
+}
+.q-deck-arrow:active{ transform:translateY(-50%) scale(.94); }
+.q-deck-arrow.left{  left:6px; }
+.q-deck-arrow.right{ right:6px; }
+.q-deck-arrow[disabled],
+.q-deck-arrow.is-disabled{
+  opacity:0; pointer-events:none;
+}
+@media(hover:none){
+  .q-deck-arrow{ display:none; }
 }
 
-/* Generic option card — quieter chrome, lets the content carry the weight */
+/* Deck progress — small "5 / 12" counter under the rail */
+.q-deck-meter{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin-top:10px;
+  font-family:var(--f-mono); font-size:9px;
+  text-transform:uppercase; letter-spacing:.32em;
+  color:var(--text-3);
+}
+.q-deck-meter .progress{
+  width:160px; height:2px; border-radius:2px;
+  background:var(--border-subtle);
+  position:relative; overflow:hidden;
+}
+.q-deck-meter .progress-fill{
+  position:absolute; top:0; left:0; height:100%;
+  background:var(--brass);
+  transition:width .25s ease;
+}
+
+/* Quadrant question (cols-2) keeps a calm 2×2 layout */
+.q-grid.cols-2{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:20px;
+  max-width:760px;
+  margin:0 auto;
+  overflow:visible;
+  padding:0;
+  scroll-snap-type:none;
+}
+.q-grid.cols-2 .q-opt{ flex:initial; scroll-snap-align:none; min-width:0; }
+@media(max-width:540px){
+  .q-grid.cols-2{ grid-template-columns:1fr; }
+}
+
+/* Generic option card — sized for the horizontal deck */
 .q-opt{
   position:relative; display:flex; flex-direction:column;
+  flex:0 0 280px;
+  width:280px;
+  scroll-snap-align:center;
   padding:22px 22px 20px;
   background:var(--bg-surface);
   border:1px solid var(--border-subtle);
   border-radius:var(--r-card);
   cursor:pointer; text-align:left;
-  transition:border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+  transition:border-color .2s ease, background-color .2s ease, box-shadow .2s ease, transform .25s ease, opacity .25s ease;
   overflow:hidden;
-  min-height:150px;
+  min-height:240px;
   gap:12px;
 }
 .q-opt:hover{
@@ -442,6 +545,9 @@ textarea,input{ font-family:inherit; }
   background:var(--bg-elevated);
   border-color:var(--brass);
   box-shadow:0 0 0 1px var(--brass);
+}
+@media(max-width:540px){
+  .q-opt{ flex-basis:84%; width:84%; }
 }
 .q-opt .arch-glyph{
   display:inline-flex; align-items:center; justify-content:center;
@@ -465,18 +571,18 @@ textarea,input{ font-family:inherit; }
 }
 
 /* Text-only option (tone, keyword) */
-.q-opt.kind-text{ justify-content:space-between; text-align:left; min-height:140px; }
-.q-opt.kind-keyword{ justify-content:space-between; min-height:140px; }
+.q-opt.kind-text{ justify-content:space-between; text-align:left; }
+.q-opt.kind-keyword{ justify-content:center; align-items:flex-start; }
 .q-opt.kind-keyword .opt-text{
   font-family:var(--f-display); font-weight:500;
-  font-size:clamp(1.4rem,2.2vw,1.85rem);
-  letter-spacing:-.012em;
+  font-size:clamp(1.6rem,2.4vw,2rem);
+  letter-spacing:-.014em;
   line-height:1.05;
   color:var(--text-1);
 }
 
 /* Quote option */
-.q-opt.kind-quote{ min-height:170px; }
+.q-opt.kind-quote{ }
 .q-opt.kind-quote .quote-mark{
   font-family:var(--f-display); font-size:2.4rem;
   color:var(--brass); opacity:.35;
@@ -514,7 +620,6 @@ textarea,input{ font-family:inherit; }
 /* Peers cluster — horizontal logo strip instead of dense 2×2 grid */
 .q-opt.kind-peers{
   padding:24px 22px 22px;
-  min-height:170px;
   justify-content:center; gap:18px;
 }
 .q-opt.kind-peers .peer-grid{
@@ -578,7 +683,7 @@ textarea,input{ font-family:inherit; }
 .q-opt.kind-figure .figure-frame .figure-tag{ z-index:3; }
 
 /* Fear card */
-.q-opt.kind-fear{ min-height:170px; }
+.q-opt.kind-fear{ }
 .q-opt.kind-fear .fear-words{
   font-family:var(--f-display); font-weight:500;
   font-size:clamp(1.05rem,1.5vw,1.2rem);
@@ -588,7 +693,7 @@ textarea,input{ font-family:inherit; }
 
 /* Figure (celebrity/metaphor/expression) — uses placeholder portrait frames */
 .q-opt.kind-figure{
-  padding:0; min-height:280px;
+  padding:0;
   display:flex; flex-direction:column;
   overflow:hidden;
 }
@@ -1672,7 +1777,30 @@ function renderQuestion(n){
 
   var grid = el('div', {class:'q-grid cols-' + sc.cols});
   sc.opts.forEach(function(opt, idx){ grid.appendChild(buildCard(sc, opt, idx, n)); });
-  wrap.appendChild(grid);
+
+  // Quadrant (cols:2) stays as a normal 2×2 grid; everything else gets a horizontal deck.
+  if (sc.cols === 2){
+    wrap.appendChild(grid);
+  } else {
+    var deck = el('div', {class:'q-deck-wrap at-start'});
+    var prev = el('button', {class:'q-deck-arrow left', type:'button', 'aria-label':'Previous option'}, '‹');
+    var next = el('button', {class:'q-deck-arrow right',type:'button', 'aria-label':'Next option'},     '›');
+    deck.appendChild(prev);
+    deck.appendChild(grid);
+    deck.appendChild(next);
+
+    var meter = el('div', {class:'q-deck-meter'});
+    var counter = el('span', {class:'counter'}, '01 / ' + String(sc.opts.length).padStart(2,'0'));
+    var bar = el('div', {class:'progress'}, [ el('div', {class:'progress-fill'}) ]);
+    meter.appendChild(counter);
+    meter.appendChild(bar);
+
+    wrap.appendChild(deck);
+    wrap.appendChild(meter);
+
+    // Wire up scroll behavior after mount
+    setTimeout(function(){ wireDeck(deck, grid, prev, next, counter, bar.firstChild, sc.opts.length); }, 0);
+  }
 
   var ready = S.answers[n] !== undefined;
 
@@ -1697,6 +1825,77 @@ function renderQuestion(n){
 
   wrap.appendChild(navEl);
   return wrap;
+}
+
+function wireDeck(deck, grid, prev, next, counter, fill, total){
+  if (!grid) return;
+  var cards = Array.prototype.slice.call(grid.children);
+  if (!cards.length) return;
+
+  function cardWidth(){
+    if (cards.length < 2) return cards[0].getBoundingClientRect().width + 18;
+    var a = cards[0].getBoundingClientRect();
+    var b = cards[1].getBoundingClientRect();
+    return Math.max(120, b.left - a.left);
+  }
+
+  function activeIndex(){
+    // Card whose center is closest to the deck's viewport center.
+    var rect = grid.getBoundingClientRect();
+    var center = rect.left + rect.width / 2;
+    var bestIdx = 0, bestDist = Infinity;
+    for (var i = 0; i < cards.length; i++){
+      var r = cards[i].getBoundingClientRect();
+      var d = Math.abs((r.left + r.width / 2) - center);
+      if (d < bestDist){ bestDist = d; bestIdx = i; }
+    }
+    return bestIdx;
+  }
+
+  function update(){
+    var idx = activeIndex();
+    var pct = total > 1 ? (idx / (total - 1)) * 100 : 100;
+    fill.style.width = pct + '%';
+    counter.textContent = String(idx + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+    var atStart = grid.scrollLeft <= 4;
+    var atEnd   = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4;
+    deck.classList.toggle('at-start', atStart);
+    deck.classList.toggle('at-end',   atEnd);
+    if (prev) prev.classList.toggle('is-disabled', atStart);
+    if (next) next.classList.toggle('is-disabled', atEnd);
+  }
+
+  function step(dir){
+    var w = cardWidth();
+    grid.scrollBy({ left: dir * w, behavior:'smooth' });
+  }
+
+  if (prev) prev.addEventListener('click', function(){ step(-1); });
+  if (next) next.addEventListener('click', function(){ step( 1); });
+
+  grid.addEventListener('scroll', update, { passive:true });
+
+  // Keyboard nav — arrow keys when deck is in focus / hovered
+  function keyHandler(e){
+    if (e.key === 'ArrowLeft')  { step(-1); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { step( 1); e.preventDefault(); }
+  }
+  deck.tabIndex = 0;
+  deck.addEventListener('keydown', keyHandler);
+
+  // If a card is already selected, scroll it into view
+  var preselected = -1;
+  for (var i = 0; i < cards.length; i++){
+    if (cards[i].classList.contains('is-selected')) { preselected = i; break; }
+  }
+  if (preselected >= 0){
+    setTimeout(function(){
+      cards[preselected].scrollIntoView({ behavior:'auto', inline:'center', block:'nearest' });
+      update();
+    }, 0);
+  } else {
+    update();
+  }
 }
 
 function buildCard(sc, opt, idx, n){
