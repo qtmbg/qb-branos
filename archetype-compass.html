@@ -409,100 +409,58 @@ textarea,input{ font-family:inherit; }
 }
 
 /* ============================================================
-   CARD DECKS — horizontal scroll-snap rail
-   The 12-option questions (cols-3/cols-4) render as a single
-   horizontal deck. Cards snap to center on scroll/drag/arrow.
-   The 4-option quadrant question keeps its 2×2 grid because
-   it already fits the viewport without scrolling.
+   CARD GRID — responsive multi-column layout
+   The 12-option questions (cols-4) render as a wrapping grid
+   so all options are visible at once. Users rank their top 3.
+   The quadrant question (cols-2) keeps its 2×2 layout.
    ============================================================ */
-.q-deck-wrap{
-  position:relative;
-  max-width:1180px; margin:0 auto;
-  --deck-fade:36px;
-}
 .q-grid{
-  display:flex;
-  flex-direction:row;
-  gap:18px;
-  overflow-x:auto;
-  overflow-y:visible;
-  scroll-snap-type:x mandatory;
-  scroll-padding-inline:48px;
-  scroll-behavior:smooth;
-  padding:14px 48px 28px;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:thin;
-  scrollbar-color: var(--border-medium) transparent;
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:14px;
+  max-width:1180px;
+  margin:0 auto;
+  padding:4px 0 8px;
 }
-.q-grid::-webkit-scrollbar{ height:5px; }
-.q-grid::-webkit-scrollbar-track{ background:transparent; }
-.q-grid::-webkit-scrollbar-thumb{
-  background:var(--border-medium); border-radius:3px;
+@media(max-width:1024px){
+  .q-grid{ grid-template-columns:repeat(3, 1fr); }
 }
-/* Side fade masks so cards "drift" into and out of view */
-.q-deck-wrap::before,
-.q-deck-wrap::after{
-  content:''; position:absolute; top:0; bottom:0; width:48px;
-  pointer-events:none; z-index:2;
-  transition:opacity .25s ease;
+@media(max-width:720px){
+  .q-grid{ grid-template-columns:repeat(2, 1fr); gap:10px; }
 }
-.q-deck-wrap::before{
-  left:0;
-  background:linear-gradient(to right, var(--bg-base) 0%, var(--bg-base) 14%, transparent 100%);
-}
-.q-deck-wrap::after{
-  right:0;
-  background:linear-gradient(to left, var(--bg-base) 0%, var(--bg-base) 14%, transparent 100%);
-}
-.q-deck-wrap.at-start::before{ opacity:0; }
-.q-deck-wrap.at-end::after{ opacity:0; }
 
-/* Deck arrow buttons — desktop convenience, hidden on touch */
-.q-deck-arrow{
-  position:absolute; top:50%; transform:translateY(-50%);
-  z-index:3;
-  width:40px; height:40px; border-radius:50%;
-  border:1px solid var(--border-medium);
+/* Ranking hint shown above the grid for top-3 exercises */
+.q-rank-hint{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:14px; flex-wrap:wrap;
+  max-width:1180px; margin:0 auto 14px;
+  padding:10px 14px;
+  border:1px dashed var(--border-subtle);
+  border-radius:var(--r-card);
   background:var(--bg-surface);
-  color:var(--text-2);
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer;
-  font-size:18px; line-height:1;
-  box-shadow:0 6px 16px -8px rgba(26,22,16,.18);
-  transition:opacity .2s ease, transform .15s ease, border-color .2s ease, background-color .2s ease;
 }
-.q-deck-arrow:hover{
-  border-color:var(--brass); color:var(--brass);
-  background:var(--bg-elevated);
+.q-rank-hint .rh-text{
+  font-family:var(--f-body); font-size:13px;
+  color:var(--text-2); line-height:1.45;
 }
-.q-deck-arrow:active{ transform:translateY(-50%) scale(.94); }
-.q-deck-arrow.left{  left:6px; }
-.q-deck-arrow.right{ right:6px; }
-.q-deck-arrow[disabled],
-.q-deck-arrow.is-disabled{
-  opacity:0; pointer-events:none;
-}
-@media(hover:none){
-  .q-deck-arrow{ display:none; }
-}
-
-/* Deck progress — small "5 / 12" counter under the rail */
-.q-deck-meter{
-  display:flex; align-items:center; justify-content:center; gap:14px;
-  margin-top:10px;
+.q-rank-hint .rh-text b{ color:var(--text-1); font-weight:600; }
+.q-rank-hint .rh-pips{
+  display:flex; align-items:center; gap:6px;
   font-family:var(--f-mono); font-size:9px;
-  text-transform:uppercase; letter-spacing:.32em;
+  text-transform:uppercase; letter-spacing:.28em;
   color:var(--text-3);
 }
-.q-deck-meter .progress{
-  width:160px; height:2px; border-radius:2px;
-  background:var(--border-subtle);
-  position:relative; overflow:hidden;
+.q-rank-hint .rh-pip{
+  width:18px; height:18px; border-radius:50%;
+  border:1px solid var(--border-medium);
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:10px; color:var(--text-3);
+  background:var(--bg-base);
+  transition:all .2s ease;
 }
-.q-deck-meter .progress-fill{
-  position:absolute; top:0; left:0; height:100%;
-  background:var(--brass);
-  transition:width .25s ease;
+.q-rank-hint .rh-pip.filled{
+  background:var(--brass); color:var(--cream);
+  border-color:var(--brass);
 }
 
 /* Quadrant question (cols-2) keeps a calm 2×2 layout */
@@ -511,44 +469,54 @@ textarea,input{ font-family:inherit; }
   grid-template-columns:repeat(2,1fr);
   gap:20px;
   max-width:760px;
-  margin:0 auto;
-  overflow:visible;
-  padding:0;
-  scroll-snap-type:none;
 }
-.q-grid.cols-2 .q-opt{ flex:initial; scroll-snap-align:none; min-width:0; }
 @media(max-width:540px){
   .q-grid.cols-2{ grid-template-columns:1fr; }
 }
 
-/* Generic option card — sized for the horizontal deck */
+/* Generic option card — sized for the responsive grid */
 .q-opt{
   position:relative; display:flex; flex-direction:column;
-  flex:0 0 280px;
-  width:280px;
-  scroll-snap-align:center;
-  padding:22px 22px 20px;
+  width:100%;
+  padding:18px 18px 16px;
   background:var(--bg-surface);
   border:1px solid var(--border-subtle);
   border-radius:var(--r-card);
   cursor:pointer; text-align:left;
-  transition:border-color .2s ease, background-color .2s ease, box-shadow .2s ease, transform .25s ease, opacity .25s ease;
+  transition:border-color .2s ease, background-color .2s ease, box-shadow .2s ease, transform .15s ease, opacity .25s ease;
   overflow:hidden;
-  min-height:240px;
-  gap:12px;
+  min-height:220px;
+  gap:10px;
 }
 .q-opt:hover{
   background:var(--bg-elevated);
   border-color:var(--border-medium);
+  transform:translateY(-1px);
 }
 .q-opt.is-selected{
   background:var(--bg-elevated);
   border-color:var(--brass);
   box-shadow:0 0 0 1px var(--brass);
 }
-@media(max-width:540px){
-  .q-opt{ flex-basis:84%; width:84%; }
+.q-opt.is-rank-1{ box-shadow:0 0 0 2px var(--brass); }
+.q-opt.is-dimmed{ opacity:.55; }
+.q-opt.is-dimmed:hover{ opacity:.9; }
+
+/* Rank badge shown on selected ranking cards */
+.q-rank-badge{
+  position:absolute; top:10px; right:10px;
+  width:30px; height:30px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-mono); font-size:11px; font-weight:600;
+  letter-spacing:.04em;
+  background:var(--brass); color:var(--cream);
+  border:2px solid var(--bg-base);
+  box-shadow:0 4px 12px -4px rgba(26,22,16,.35);
+  z-index:2;
 }
+.q-rank-badge.r-1{ background:var(--brass); }
+.q-rank-badge.r-2{ background:var(--brass); opacity:.78; }
+.q-rank-badge.r-3{ background:var(--brass); opacity:.55; }
 .q-opt .arch-glyph{
   display:inline-flex; align-items:center; justify-content:center;
   width:32px; height:32px; border-radius:50%;
@@ -667,6 +635,10 @@ textarea,input{ font-family:inherit; }
 }
 .q-opt.kind-peers.is-selected .peer-meta,
 .q-opt.kind-peers:hover .peer-meta{ color:var(--text-2); }
+@media(max-width:720px){
+  .q-opt.kind-peers .peer-grid{ gap:6px; }
+  .q-opt.kind-peers .peer-logo{ width:32px; height:32px; }
+}
 
 /* Figure portrait — real image overlay (sits on top of placeholder) */
 .q-opt.kind-figure .figure-img{
@@ -1696,14 +1668,14 @@ function renderIntro(){
 
   inner.appendChild(el('div', {class:'intro-hero'}, [
     el('h1', {html:'The <em>Archetype Compass.</em><br/>The first step.'}),
-    el('p', {class:'intro-lede'}, "Ten exercises, about five minutes. The clearest read of your brand's identity foundation — primary archetype, secondary texture, and the shadow to manage. Everything else in QB BrandOS sharpens once this is set."),
+    el('p', {class:'intro-lede'}, "Ten exercises, about seven minutes. The clearest read of your brand's identity foundation — primary archetype, secondary texture, and the shadow to manage. Everything else in QB BrandOS sharpens once this is set."),
     el('p', {class:'intro-lede', style:{fontSize:'1rem', color:'var(--text-3)'}}, "The brand isn't being invented here. It's being uncovered.")
   ]));
 
   inner.appendChild(el('div', {class:'intro-meta'}, [
     el('span', {}, '10 exercises'),
-    el('span', {}, '~5 minutes'),
-    el('span', {}, 'First answer wins')
+    el('span', {}, '~7 minutes'),
+    el('span', {}, 'Rank your top 3')
   ]));
 
   inner.appendChild(el('div', {class:'intro-protocols'}, [
@@ -1740,12 +1712,19 @@ function renderIntro(){
   return wrap;
 }
 
+function isAnswered(n){
+  var a = S.answers[n];
+  if (a === undefined || a === null) return false;
+  if (Array.isArray(a)) return a.length === 3;
+  return true;
+}
+
 function renderProgress(){
   var wrap = document.createDocumentFragment();
   var bar = el('div', {class:'prog-bar'});
   for (var i = 1; i <= 10; i++){
     var cls = 'prog-dot';
-    if (i < S.step) cls += ' done';
+    if (i < S.step && isAnswered(i)) cls += ' done';
     else if (i === S.step) cls += ' active';
     bar.appendChild(el('div', {class:cls}));
   }
@@ -1764,6 +1743,7 @@ function renderProgress(){
 
 function renderQuestion(n){
   var sc = SCREENS[n-1];
+  var isRanking = sc.cols !== 2;
   var wrap = el('div', {class:'q-shell'});
 
   var head = el('div', {class:'q-head'});
@@ -1775,34 +1755,26 @@ function renderQuestion(n){
   if (sc.sub) head.appendChild(el('p', {class:'sub'}, sc.sub));
   wrap.appendChild(head);
 
-  var grid = el('div', {class:'q-grid cols-' + sc.cols});
-  sc.opts.forEach(function(opt, idx){ grid.appendChild(buildCard(sc, opt, idx, n)); });
-
-  // Quadrant (cols:2) stays as a normal 2×2 grid; everything else gets a horizontal deck.
-  if (sc.cols === 2){
-    wrap.appendChild(grid);
-  } else {
-    var deck = el('div', {class:'q-deck-wrap at-start'});
-    var prev = el('button', {class:'q-deck-arrow left', type:'button', 'aria-label':'Previous option'}, '‹');
-    var next = el('button', {class:'q-deck-arrow right',type:'button', 'aria-label':'Next option'},     '›');
-    deck.appendChild(prev);
-    deck.appendChild(grid);
-    deck.appendChild(next);
-
-    var meter = el('div', {class:'q-deck-meter'});
-    var counter = el('span', {class:'counter'}, '01 / ' + String(sc.opts.length).padStart(2,'0'));
-    var bar = el('div', {class:'progress'}, [ el('div', {class:'progress-fill'}) ]);
-    meter.appendChild(counter);
-    meter.appendChild(bar);
-
-    wrap.appendChild(deck);
-    wrap.appendChild(meter);
-
-    // Wire up scroll behavior after mount
-    setTimeout(function(){ wireDeck(deck, grid, prev, next, counter, bar.firstChild, sc.opts.length); }, 0);
+  if (isRanking){
+    var picks = Array.isArray(S.answers[n]) ? S.answers[n] : [];
+    var pipsRow = el('div', {class:'rh-pips'}, [
+      el('span', {}, 'Picked'),
+      el('span', {class:'rh-pip' + (picks.length >= 1 ? ' filled' : '')}, picks.length >= 1 ? '1' : ''),
+      el('span', {class:'rh-pip' + (picks.length >= 2 ? ' filled' : '')}, picks.length >= 2 ? '2' : ''),
+      el('span', {class:'rh-pip' + (picks.length >= 3 ? ' filled' : '')}, picks.length >= 3 ? '3' : '')
+    ]);
+    var hint = el('div', {class:'q-rank-hint'}, [
+      el('div', {class:'rh-text', html: 'Pick your <b>top 3</b> in order — most-us first. Tap a picked card to remove it.'}),
+      pipsRow
+    ]);
+    wrap.appendChild(hint);
   }
 
-  var ready = S.answers[n] !== undefined;
+  var grid = el('div', {class:'q-grid cols-' + sc.cols});
+  sc.opts.forEach(function(opt, idx){ grid.appendChild(buildCard(sc, opt, idx, n)); });
+  wrap.appendChild(grid);
+
+  var ready = isAnswered(n);
 
   var navEl = el('div', {class:'q-nav'});
   navEl.appendChild(el('button', {
@@ -1827,103 +1799,72 @@ function renderQuestion(n){
   return wrap;
 }
 
-function wireDeck(deck, grid, prev, next, counter, fill, total){
-  if (!grid) return;
-  var cards = Array.prototype.slice.call(grid.children);
-  if (!cards.length) return;
-
-  function cardWidth(){
-    if (cards.length < 2) return cards[0].getBoundingClientRect().width + 18;
-    var a = cards[0].getBoundingClientRect();
-    var b = cards[1].getBoundingClientRect();
-    return Math.max(120, b.left - a.left);
-  }
-
-  function activeIndex(){
-    // Card whose center is closest to the deck's viewport center.
-    var rect = grid.getBoundingClientRect();
-    var center = rect.left + rect.width / 2;
-    var bestIdx = 0, bestDist = Infinity;
-    for (var i = 0; i < cards.length; i++){
-      var r = cards[i].getBoundingClientRect();
-      var d = Math.abs((r.left + r.width / 2) - center);
-      if (d < bestDist){ bestDist = d; bestIdx = i; }
-    }
-    return bestIdx;
-  }
-
-  function update(){
-    var idx = activeIndex();
-    var pct = total > 1 ? (idx / (total - 1)) * 100 : 100;
-    fill.style.width = pct + '%';
-    counter.textContent = String(idx + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
-    var atStart = grid.scrollLeft <= 4;
-    var atEnd   = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4;
-    deck.classList.toggle('at-start', atStart);
-    deck.classList.toggle('at-end',   atEnd);
-    if (prev) prev.classList.toggle('is-disabled', atStart);
-    if (next) next.classList.toggle('is-disabled', atEnd);
-  }
-
-  function step(dir){
-    var w = cardWidth();
-    grid.scrollBy({ left: dir * w, behavior:'smooth' });
-  }
-
-  if (prev) prev.addEventListener('click', function(){ step(-1); });
-  if (next) next.addEventListener('click', function(){ step( 1); });
-
-  grid.addEventListener('scroll', update, { passive:true });
-
-  // Keyboard nav — arrow keys when deck is in focus / hovered
-  function keyHandler(e){
-    if (e.key === 'ArrowLeft')  { step(-1); e.preventDefault(); }
-    if (e.key === 'ArrowRight') { step( 1); e.preventDefault(); }
-  }
-  deck.tabIndex = 0;
-  deck.addEventListener('keydown', keyHandler);
-
-  // If a card is already selected, scroll it into view
-  var preselected = -1;
-  for (var i = 0; i < cards.length; i++){
-    if (cards[i].classList.contains('is-selected')) { preselected = i; break; }
-  }
-  if (preselected >= 0){
-    setTimeout(function(){
-      cards[preselected].scrollIntoView({ behavior:'auto', inline:'center', block:'nearest' });
-      update();
-    }, 0);
-  } else {
-    update();
-  }
-}
-
 function buildCard(sc, opt, idx, n){
-  var selected = S.answers[n] === idx;
-  var onSelect = function(){ S.answers[n] = idx; render(); };
-  var base = 'q-opt' + (selected ? ' is-selected' : '');
+  var isRanking = sc.cols !== 2;
+  var rank = 0;       // 1 / 2 / 3 if picked in ranking; 0 otherwise
+  var selected = false;
+  var dimmed = false;
+
+  if (isRanking){
+    var picks = Array.isArray(S.answers[n]) ? S.answers[n] : [];
+    var pos = picks.indexOf(idx);
+    if (pos >= 0){ rank = pos + 1; selected = true; }
+    else if (picks.length >= 3){ dimmed = true; }
+  } else {
+    selected = S.answers[n] === idx;
+  }
+
+  var onSelect = function(){
+    if (isRanking){
+      var picks = Array.isArray(S.answers[n]) ? S.answers[n].slice() : [];
+      var pos = picks.indexOf(idx);
+      if (pos >= 0){
+        picks.splice(pos, 1);                    // tap-to-remove (others shift up)
+      } else if (picks.length < 3){
+        picks.push(idx);                          // assign next rank
+      } else {
+        return;                                   // already 3 picked, ignore
+      }
+      S.answers[n] = picks;
+    } else {
+      S.answers[n] = idx;
+    }
+    render();
+  };
+
+  var base = 'q-opt'
+    + (selected ? ' is-selected' : '')
+    + (rank ? ' is-rank-' + rank : '')
+    + (dimmed ? ' is-dimmed' : '');
+
+  function withBadge(node){
+    if (rank){
+      node.appendChild(el('span', {class:'q-rank-badge r-' + rank, 'aria-label':'Rank ' + rank}, '#' + rank));
+    }
+    return node;
+  }
 
   if (sc.kind === 'text'){
     var a = ARCHETYPES[opt.a];
-    return el('button', {class: base + ' kind-text', onclick:onSelect, type:'button'}, [
+    return withBadge(el('button', {class: base + ' kind-text', onclick:onSelect, type:'button'}, [
       el('span', {class:'arch-glyph'}, a.glyph),
       el('span', {class:'opt-text'}, opt.label)
-    ]);
+    ]));
   }
 
   if (sc.kind === 'keyword'){
     var ak = ARCHETYPES[opt.a];
-    return el('button', {class: base + ' kind-keyword', onclick:onSelect, type:'button'}, [
+    return withBadge(el('button', {class: base + ' kind-keyword', onclick:onSelect, type:'button'}, [
       el('span', {class:'arch-glyph'}, ak.glyph),
       el('span', {class:'opt-text'}, opt.label)
-    ]);
+    ]));
   }
 
   if (sc.kind === 'quote'){
-    return el('button', {class: base + ' kind-quote', onclick:onSelect, type:'button'}, [
+    return withBadge(el('button', {class: base + ' kind-quote', onclick:onSelect, type:'button'}, [
       el('span', {class:'quote-mark'}, '“'),
       el('span', {class:'opt-text'}, opt.label)
-    ]);
+    ]));
   }
 
   if (sc.kind === 'peers'){
@@ -1948,7 +1889,7 @@ function buildCard(sc, opt, idx, n){
     var archMeta = ARCHETYPES[opt.a];
     var metaLabel = archMeta ? archMeta.name : '';
     var meta = el('div', {class:'peer-meta'}, metaLabel);
-    return el('button', {class: base + ' kind-peers', onclick:onSelect, type:'button'}, [peerGrid, meta]);
+    return withBadge(el('button', {class: base + ' kind-peers', onclick:onSelect, type:'button'}, [peerGrid, meta]));
   }
 
   if (sc.kind === 'quadrant'){
@@ -1959,10 +1900,10 @@ function buildCard(sc, opt, idx, n){
   }
 
   if (sc.kind === 'fear'){
-    return el('button', {class: base + ' kind-fear', onclick:onSelect, type:'button'}, [
+    return withBadge(el('button', {class: base + ' kind-fear', onclick:onSelect, type:'button'}, [
       el('span', {class:'fear-words'}, opt.words.join(' · ')),
       el('span', {class:'opt-sub'}, opt.tag)
-    ]);
+    ]));
   }
 
   if (sc.kind === 'figure'){
@@ -1979,13 +1920,13 @@ function buildCard(sc, opt, idx, n){
       pimg.addEventListener('error', function(){ pimg.remove(); });
       frame.appendChild(pimg);
     }
-    return el('button', {class: base + ' kind-figure', onclick:onSelect, type:'button'}, [
+    return withBadge(el('button', {class: base + ' kind-figure', onclick:onSelect, type:'button'}, [
       frame,
       el('div', {class:'figure-body'}, [
         el('div', {class:'figure-name'}, opt.name),
         el('div', {class:'figure-desc'}, opt.desc)
       ])
-    ]);
+    ]));
   }
 
   if (sc.kind === 'expression'){
@@ -1996,15 +1937,15 @@ function buildCard(sc, opt, idx, n){
         el('div', {class:'placeholder-meta'}, 'Face · ' + (opt.slug||'tba'))
       ])
     ]);
-    return el('button', {class: base + ' kind-figure kind-expression', onclick:onSelect, type:'button'}, [
+    return withBadge(el('button', {class: base + ' kind-figure kind-expression', onclick:onSelect, type:'button'}, [
       eframe,
       el('div', {class:'figure-body'}, [
         el('div', {class:'figure-name'}, opt.name)
       ])
-    ]);
+    ]));
   }
 
-  return el('button', {class: base, onclick:onSelect, type:'button'}, opt.label || opt.name || '');
+  return withBadge(el('button', {class: base, onclick:onSelect, type:'button'}, opt.label || opt.name || ''));
 }
 
 function renderLoading(){
@@ -2197,11 +2138,17 @@ function renderResults(){
     ]));
   }
 
-  // Fingerprint
+  // Fingerprint — uses each exercise's #1 ranked pick
   results.appendChild(divider('·', 'Diagnostic Fingerprint'));
-  var tone = SCREENS[0].opts[S.answers[1]];
-  var motivation = SCREENS[4].opts[S.answers[5]];
-  var fear = SCREENS[6].opts[S.answers[7]];
+  function topPick(n){
+    var a = S.answers[n];
+    if (Array.isArray(a) && a.length) return SCREENS[n-1].opts[a[0]];
+    if (typeof a === 'number') return SCREENS[n-1].opts[a];
+    return null;
+  }
+  var tone = topPick(1);
+  var motivation = topPick(5);
+  var fear = topPick(7);
   results.appendChild(el('div', {class:'r-meta'}, [
     metaCell('Tone register', tone ? tone.label : '—'),
     metaCell('Core motivation', motivation ? motivation.label : '—'),
@@ -2338,19 +2285,28 @@ function metaCell(lbl, val){
 }
 
 /* ============================== SCORING ============================== */
+// Each ranking exercise contributes a weighted Borda vote per pick:
+//   #1 → 3 points, #2 → 2 points, #3 → 1 point.
+// Quadrant exercise contributes +1.5 per archetype in the chosen quadrant
+// (kept on the same scale as before; quadrant is single-pick of 4).
+var RANK_WEIGHTS = [3, 2, 1];
+
 function tally(){
   var votes = {};
   Object.keys(ARCHETYPES).forEach(function(k){ votes[k] = 0; });
 
   [1,2,3,4,5,7,8,9,10].forEach(function(n){
-    var idx = S.answers[n];
-    if (idx === undefined) return;
-    var o = SCREENS[n-1].opts[idx];
-    if (o && o.a) votes[o.a] += 1;
+    var picks = S.answers[n];
+    if (!Array.isArray(picks)) return;
+    picks.forEach(function(idx, i){
+      var o = SCREENS[n-1].opts[idx];
+      var w = RANK_WEIGHTS[i] || 0;
+      if (o && o.a && w) votes[o.a] += w;
+    });
   });
 
   var qIdx = S.answers[6];
-  if (qIdx !== undefined){
+  if (qIdx !== undefined && qIdx !== null && !Array.isArray(qIdx)){
     var q = SCREENS[5].opts[qIdx].q;
     QUADRANT_ARCHETYPES[q].forEach(function(a){ votes[a] += 1.5; });
   }
@@ -2417,17 +2373,49 @@ function runSynthesis(isRefinement){
 }
 
 /* --- Call /api/claude proxy (not direct Anthropic) --- */
+function optChoiceLabel(o){
+  if (!o) return '';
+  if (o.label) return o.label;
+  if (o.name) return o.name;
+  if (o.peers) return o.peers.map(function(p){ return typeof p === 'string' ? p : p.name; }).join(', ');
+  if (o.words) return o.words.join(' · ');
+  return '';
+}
+
 function callClaude(scored, isRefinement){
   var answers = {};
   for (var n = 1; n <= 10; n++){
-    var idx = S.answers[n];
-    if (idx === undefined) continue;
-    var o = SCREENS[n-1].opts[idx];
-    answers[n] = {
-      question: SCREENS[n-1].title,
-      choice: o.label || o.name || (o.peers && o.peers.join(', ')) || (o.words && o.words.join(' · ')) || '',
-      mappedTo: o.a ? ARCHETYPES[o.a].name : (o.q ? 'quadrant: ' + o.q : '')
-    };
+    var a = S.answers[n];
+    if (a === undefined || a === null) continue;
+    var sc = SCREENS[n-1];
+
+    if (Array.isArray(a)){
+      // Ranking exercise — top 3 in order
+      var ranked = a.map(function(idx, i){
+        var o = sc.opts[idx];
+        return {
+          rank: i + 1,
+          choice: optChoiceLabel(o),
+          mappedTo: o && o.a ? ARCHETYPES[o.a].name : ''
+        };
+      });
+      answers[n] = {
+        question: sc.title,
+        format: 'ranked-top-3',
+        ranked: ranked,
+        choice: ranked.map(function(r){ return '#' + r.rank + ' ' + r.choice; }).join(' → '),
+        mappedTo: ranked.map(function(r){ return '#' + r.rank + ' ' + r.mappedTo; }).join(' → ')
+      };
+    } else {
+      // Single-pick (quadrant)
+      var o = sc.opts[a];
+      answers[n] = {
+        question: sc.title,
+        format: 'single-pick',
+        choice: optChoiceLabel(o),
+        mappedTo: o && o.a ? ARCHETYPES[o.a].name : (o && o.q ? 'quadrant: ' + o.q : '')
+      };
+    }
   }
 
   var brandName = QBP.brandName || 'this brand';
@@ -2460,7 +2448,7 @@ function callClaude(scored, isRefinement){
     + 'Essence: ' + (brandEssence || '(not yet defined — work from diagnostic alone)') + '\n'
     + 'Spark: ' + (spark || '(not yet defined)') + '\n'
     + 'Core Offer: ' + (offer || '(not yet defined)') + '\n\n'
-    + 'DIAGNOSTIC SCORING (raw archetype vote tally · 9 single-vote exercises + quadrant weight)\n'
+    + 'DIAGNOSTIC SCORING (weighted Borda tally · 9 ranking exercises score #1=3pts / #2=2pts / #3=1pt + quadrant +1.5 per archetype in chosen quadrant)\n'
     + scored.votes.map(function(v){ return ARCHETYPES[v.a].name.padEnd(20) + ' ' + v.v + ' votes'; }).join('\n') + '\n\n'
     + 'DETECTED TRINITY\n'
     + 'PRIMARY:   ' + p.name + ' · ref: ' + p.brand + ' · gift: ' + p.gift + ' · shadow: ' + p.shadow + '\n'
@@ -2657,9 +2645,15 @@ function saveToQBP(){
   if (!S.result) return;
   var r = S.result;
 
-  var tone = SCREENS[0].opts[S.answers[1]];
-  var motivation = SCREENS[4].opts[S.answers[5]];
-  var fear = SCREENS[6].opts[S.answers[7]];
+  function topPickQBP(n){
+    var a = S.answers[n];
+    if (Array.isArray(a) && a.length) return SCREENS[n-1].opts[a[0]];
+    if (typeof a === 'number') return SCREENS[n-1].opts[a];
+    return null;
+  }
+  var tone = topPickQBP(1);
+  var motivation = topPickQBP(5);
+  var fear = topPickQBP(7);
 
   var existing = {};
   try { Object.assign(existing, JSON.parse(localStorage.getItem('qb_qbp') || '{}')); } catch(e){}
