@@ -23,6 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+<script src="/qb-cloud.js"></script>
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -661,11 +662,12 @@ function render() {
   }
 
   // ── SECTION 06: Buyer Personas (from Casting Floor) ──────────────────────
-  const castingDone = !!(qbp.castingFloorComplete || qbp.nowPersona || qbp.nextPersona || qbp.northStarPersona);
+  const castingDone    = cloudCompleted('casting-floor') || !!qbp.castingFloorComplete;
+  const castingHasData = !!(qbp.nowPersona || qbp.nextPersona || qbp.northStarPersona);
   document.getElementById('personas-status').className = 'status-badge ' + (castingDone ? 'status-done' : 'status-pending');
   document.getElementById('personas-status').innerHTML = castingDone ? completeBadge : pendingBadge;
 
-  if (castingDone) {
+  if (castingHasData) {
     const personaBlock = (label, p) => {
       if (!p || typeof p !== 'object') {
         return '<div class="doc-field"><div class="doc-field-label">' + escHtml(label) + '</div><div class="doc-field-value empty">Persona not yet generated — return to Casting Floor to complete this brief</div></div>';
@@ -693,6 +695,8 @@ function render() {
       personaBlock('NOW persona',         qbp.nowPersona) +
       personaBlock('NEXT persona',        qbp.nextPersona) +
       personaBlock('NORTH STAR persona',  qbp.northStarPersona);
+  } else if (castingDone) {
+    document.getElementById('personas-content').innerHTML = pendingSynthesisSection('Casting Floor', 'casting-floor.html');
   } else {
     document.getElementById('personas-content').innerHTML = emptySection('Casting Floor', 'casting-floor.html');
   }
@@ -786,10 +790,18 @@ async function downloadDoc() {
   }
 }
 
-render();
+// On init: if authed, await a cloud pull so tool_completions + qbp reflect
+// the latest state across devices before the first render. Falls through
+// instantly when anonymous or when qb-cloud.js failed to load.
+(async function init(){
+  if (window.QB && QB.isAuthed && QB.isAuthed() && QB.pullQBPFromCloud) {
+    try { await QB.pullQBPFromCloud(); } catch(e){}
+  }
+  render();
+})();
 
 window.addEventListener('storage', function(e) {
-  if (e.key === 'qb_qbp') render();
+  if (e.key === 'qb_qbp' || e.key === 'qb_completions') render();
 });
 
 // FIX S-01: Origin check prevents untrusted windows from triggering re-renders

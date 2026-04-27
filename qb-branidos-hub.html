@@ -790,14 +790,21 @@ function computeToolStates() {
   const isPh4Unlocked = health.isCoreComplete && S.completedTools.includes('instagram');
   const isPh5Unlocked = health.isCoreComplete;
 
+  // Bug-2 fix: cloud-truth completion (QB.getCompletions) is now the primary
+  // signal. QBP-field fallbacks remain so pre-funnel users with populated
+  // qbp but no completions JSON still show as done. Mirrors the same
+  // precedence used in journey-guide.html → isStepDone().
+  const cloudCompletions = (window.QB && QB.getCompletions) ? QB.getCompletions() : {};
   TOOLS.forEach(tool => {
-    let isCompleted = S.completedTools.includes(tool.id);
+    let isCompleted = !!(cloudCompletions && cloudCompletions[tool.id])
+                   || S.completedTools.includes(tool.id);
 
     if (tool.id === 'archetype-compass' && S.qbp.archetypeCompassComplete) isCompleted = true;
-    if (tool.id === 'soul-map'   && S.qbp.brandEssence)     isCompleted = true;
-    if (tool.id === 'sensescape' && S.qbp.colorTerritory)   isCompleted = true;
-    // Consistent with Journey Guide: visual-dna completion reads qbp.visualReferences
-    if (tool.id === 'visual-dna' && S.qbp.visualReferences) isCompleted = true;
+    if (tool.id === 'soul-map'   && (S.qbp.brandEssence || S.qbp.soulMapComplete))            isCompleted = true;
+    if (tool.id === 'sensescape' && (S.qbp.colorTerritory || S.qbp.sensescapeCompletedAt))    isCompleted = true;
+    if (tool.id === 'visual-dna' && (S.qbp.visualDnaCompletedAt || S.qbp.visualReferences))   isCompleted = true;
+    if (tool.id === 'war-table'  && (S.qbp.warTableCompletedAt  || S.qbp.warTableBrief))      isCompleted = true;
+    if (tool.id === 'casting-floor' && (S.qbp.castingFloorComplete || S.qbp.nowPersona))      isCompleted = true;
 
     let isUnlocked =
       tool.ph === 1 ? isPh1Unlocked :
@@ -1113,8 +1120,16 @@ function render() {
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-load();
-render();
+// Pull cloud state (qbp + tool_completions) before first render when authed
+// so the per-card status reflects the latest cross-device truth.
+(async function init(){
+  load();
+  if (window.QB && QB.isAuthed && QB.isAuthed() && QB.pullQBPFromCloud) {
+    try { await QB.pullQBPFromCloud(); } catch(e){}
+    load(); // re-read localStorage after pull populated it
+  }
+  render();
+})();
 </script>
 </body>
 </html>
