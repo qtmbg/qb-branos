@@ -3333,7 +3333,8 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       // Cloud-aware write: mirrors to Supabase if user is authed, no-op otherwise
       if (window.QB && QB.setQBP) { QB.setQBP(updated); }
       else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
-      localStorage.setItem('qb_soul_map_done', '1');
+      // Note: qb_soul_map_done legacy flag removed — completion is recorded
+      // by QB.openGate() → QB.recordCompletion() below as the single source.
       try {
         if (window.parent && window.parent !== window){
           window.parent.postMessage({ type:'QB_PHASE_COMPLETE', phase:1, tool:'soul-map', qbp:updated }, window.location.origin || '*');

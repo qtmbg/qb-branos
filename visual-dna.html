@@ -1705,7 +1705,8 @@ body.immersive{ overflow:hidden; }
       // Cloud-aware write: mirrors to Supabase if user is authed
       if (window.QB && QB.setQBP) { QB.setQBP(updated); }
       else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
-      localStorage.setItem('qb_visual_dna_done', '1');
+      // Note: qb_visual_dna_done legacy flag removed — completion is recorded
+      // by QB.openGate() → QB.recordCompletion() below as the single source.
       // Open soft gate (no-op if already authed)
       try {
         if (window.QB && QB.openGate){

@@ -1750,7 +1750,8 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         // Cloud-aware write: mirrors to Supabase if user is authed
         if (window.QB && QB.setQBP) { QB.setQBP(updated); }
         else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
-        localStorage.setItem('qb_war_table_done', '1');
+        // Note: qb_war_table_done legacy flag removed — completion is recorded
+        // by QB.openGate() → QB.recordCompletion() after dossier renders.
         setTimeout(function(){
           if (!document.getElementById('qb-float-results')){
             var btn = document.createElement('button');

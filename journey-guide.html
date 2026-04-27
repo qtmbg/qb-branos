@@ -657,9 +657,14 @@ JOURNEY.forEach(phase => {
 
 
 // ── STATE ──
+// Source of truth for completion is QB.getCompletions() (which mirrors cloud
+// state via qb-cloud.js). The qbp-field fallbacks below cover users whose
+// completions wrote QBP fields but bypassed QB.recordCompletion (e.g. legacy
+// pre-funnel runs, or partial syncs where the completions JSON didn't ship).
+// The old legacy-flag read (`localStorage.getItem(step.storageKey)`) was
+// removed because it was a parallel source of truth that survived admin
+// resets and cloud-pull updates, causing the journey-guide to lie.
 function isStepDone(step) {
-  if (localStorage.getItem(step.storageKey)) return true;
-  // Cloud-synced completions written by qb-cloud.js (cross-device persistence)
   if (window.QB && QB.getCompletions) {
     const completions = QB.getCompletions();
     if (completions && completions[step.id]) return true;
@@ -669,20 +674,29 @@ function isStepDone(step) {
     if (qbpStr) {
       const qbp = JSON.parse(qbpStr);
       if (step.id === 'archetype-compass' && qbp.archetypeCompassComplete) return true;
-      if (step.id === 'soul-map' && qbp.brandEssence) return true;
-      if (step.id === 'sensescape' && qbp.colorTerritory) return true;
-      // FIX #5: Was qbp.exemplarWords (a Voice Guide field) — corrected to qbp.visualReferences
-      if (step.id === 'visual-dna' && qbp.visualReferences) return true;
-      if (step.id === 'war-table' && (qbp.strategicPriorities || qbp.warTableBrief)) return true;
+      if (step.id === 'soul-map'   && (qbp.brandEssence || qbp.soulMapComplete)) return true;
+      if (step.id === 'sensescape' && (qbp.colorTerritory || qbp.sensescapeCompletedAt)) return true;
+      if (step.id === 'visual-dna' && (qbp.visualDnaCompletedAt || qbp.visualReferences)) return true;
+      if (step.id === 'war-table'  && (qbp.warTableCompletedAt || qbp.strategicPriorities || qbp.warTableBrief)) return true;
     }
   } catch(e) {}
+  // Defense-in-depth: respect a manually-set legacy flag for any users who
+  // hit "Mark Complete" before this version shipped. Not the primary source.
+  if (localStorage.getItem(step.storageKey)) return true;
   return false;
 }
 
 
 function markDone(stepId) {
-  const step = ALL_STEPS.find(s => s.id === stepId);
-  if (step) localStorage.setItem(step.storageKey, '1');
+  // Route through cloud so manual "Mark Complete" syncs across devices and
+  // shows up in admin dashboards. Falls back to the legacy flag if QB is not
+  // loaded for some reason (cloud module fetch blocked, etc).
+  if (window.QB && QB.recordCompletion) {
+    QB.recordCompletion(stepId);
+  } else {
+    const step = ALL_STEPS.find(s => s.id === stepId);
+    if (step) localStorage.setItem(step.storageKey, '1');
+  }
   render();
 }
 
