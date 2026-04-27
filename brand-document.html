@@ -425,12 +425,12 @@ input:focus, textarea:focus {
       <div id="strategy-content"></div>
     </div>
 
-    <!-- Section 06: Buyer Personas (from Casting Floor) -->
+    <!-- Section 06: Buyer Personas (from The Profiles) -->
     <div class="doc-section" id="section-personas">
       <div class="doc-section-header">
         <div class="doc-section-num">06</div>
         <div class="doc-section-title">Buyer Personas</div>
-        <div class="doc-section-phase">Casting Floor</div>
+        <div class="doc-section-phase">The Profiles</div>
         <div class="status-badge" id="personas-status" role="status">Status</div>
       </div>
       <div id="personas-content"></div>
@@ -661,44 +661,51 @@ function render() {
     document.getElementById('strategy-content').innerHTML = emptySection('War Table', 'war-table.html');
   }
 
-  // ── SECTION 06: Buyer Personas (from Casting Floor) ──────────────────────
-  const castingDone    = cloudCompleted('casting-floor') || !!qbp.castingFloorComplete;
-  const castingHasData = !!(qbp.nowPersona || qbp.nextPersona || qbp.northStarPersona);
-  document.getElementById('personas-status').className = 'status-badge ' + (castingDone ? 'status-done' : 'status-pending');
-  document.getElementById('personas-status').innerHTML = castingDone ? completeBadge : pendingBadge;
+  // ── SECTION 06: Buyer Personas (from The Profiles) ───────────────────────
+  const profilesDone    = cloudCompleted('profiles') || !!qbp.profilesComplete;
+  const profilesArr     = Array.isArray(qbp.personaProfiles) ? qbp.personaProfiles : [];
+  const profilesHasData = profilesArr.length > 0;
+  document.getElementById('personas-status').className = 'status-badge ' + (profilesDone ? 'status-done' : 'status-pending');
+  document.getElementById('personas-status').innerHTML = profilesDone ? completeBadge : pendingBadge;
 
-  if (castingHasData) {
-    const personaBlock = (label, p) => {
-      if (!p || typeof p !== 'object') {
-        return '<div class="doc-field"><div class="doc-field-label">' + escHtml(label) + '</div><div class="doc-field-value empty">Persona not yet generated — return to Casting Floor to complete this brief</div></div>';
-      }
-      const angles = Array.isArray(p.angles) ? p.angles : [];
-      const proof  = Array.isArray(p.proof)  ? p.proof  : [];
+  if (profilesHasData) {
+    const personaBlock = (p, idx) => {
+      if (!p || typeof p !== 'object') return '';
+      const label = 'Persona ' + (idx + 1);
+      const pain = Array.isArray(p.painPoints) ? p.painPoints : [];
+      const moves = Array.isArray(p.marketingApproach) ? p.marketingApproach : [];
+      const takeaways = Array.isArray(p.keyTakeaways) ? p.keyTakeaways : [];
       return '<div class="doc-field">' +
         '<div class="doc-field-label">' + escHtml(label) + (p.name ? ' — ' + escHtml(p.name) : '') + '</div>' +
-        (p.oneLine ? '<div class="doc-field-value">' + escHtml(p.oneLine) + '</div>' : '') +
+        (p.role ? '<div class="doc-field-value">' + escHtml(p.role) + '</div>' : '') +
         '</div>' +
         (p.hook ? field('Hook', p.hook, true) : '') +
-        (angles.length ? '<div class="doc-field"><div class="doc-field-label">Three angles</div><div class="tag-grid">' +
-          angles.map(a => '<div class="doc-tag">' + escHtml(a) + '</div>').join('') +
+        (p.mindset ? field('Mindset', p.mindset) : '') +
+        (pain.length ? '<div class="doc-field"><div class="doc-field-label">Pain points</div><div class="tag-grid">' +
+          pain.map(pp => '<div class="doc-tag">' + escHtml((pp && pp.category) ? pp.category : '') + '</div>').join('') +
           '</div></div>' : '') +
-        (proof.length ? '<div class="doc-field"><div class="doc-field-label">Proof points</div><div class="tag-grid">' +
-          proof.map(a => '<div class="doc-tag">' + escHtml(a) + '</div>').join('') +
+        (moves.length ? '<div class="doc-field"><div class="doc-field-label">Marketing approach</div><div class="tag-grid">' +
+          moves.map(m => '<div class="doc-tag">' + escHtml(m) + '</div>').join('') +
           '</div></div>' : '') +
-        fieldGrid([
-          ['Channel', p.channel],
-          ['Their language', p.language],
-          ['Anti-targeting rule', p.antiRule]
-        ]);
+        (takeaways.length ? '<div class="doc-field"><div class="doc-field-label">Key takeaways</div><div class="tag-grid">' +
+          takeaways.map(t => '<div class="doc-tag">' + escHtml(t) + '</div>').join('') +
+          '</div></div>' : '');
     };
+    const themes = Array.isArray(qbp.commonThemes) ? qbp.commonThemes : [];
+    const sharedTake = Array.isArray(qbp.sharedKeyTakeaways) ? qbp.sharedKeyTakeaways : [];
     document.getElementById('personas-content').innerHTML =
-      personaBlock('NOW persona',         qbp.nowPersona) +
-      personaBlock('NEXT persona',        qbp.nextPersona) +
-      personaBlock('NORTH STAR persona',  qbp.northStarPersona);
-  } else if (castingDone) {
-    document.getElementById('personas-content').innerHTML = pendingSynthesisSection('Casting Floor', 'casting-floor.html');
+      profilesArr.map(personaBlock).join('') +
+      (qbp.bindingInsight ? field('Binding insight', qbp.bindingInsight, true) : '') +
+      (themes.length ? '<div class="doc-field"><div class="doc-field-label">Common themes across all three</div><div class="tag-grid">' +
+        themes.map(t => '<div class="doc-tag">' + escHtml(t) + '</div>').join('') +
+        '</div></div>' : '') +
+      (sharedTake.length ? '<div class="doc-field"><div class="doc-field-label">Shared key takeaways</div><div class="tag-grid">' +
+        sharedTake.map(t => '<div class="doc-tag">' + escHtml(t) + '</div>').join('') +
+        '</div></div>' : '');
+  } else if (profilesDone) {
+    document.getElementById('personas-content').innerHTML = pendingSynthesisSection('The Profiles', 'the-profiles.html');
   } else {
-    document.getElementById('personas-content').innerHTML = emptySection('Casting Floor', 'casting-floor.html');
+    document.getElementById('personas-content').innerHTML = emptySection('The Profiles', 'the-profiles.html');
   }
 
   // ── SECTION 07: QBP Summary — FIX M-02: now uses fieldGrid() like all other sections ──
@@ -718,7 +725,7 @@ function render() {
     { label: 'Sensescape',   done: sensDone },
     { label: 'Visual DNA',   done: visDone },
     { label: 'War Table',    done: warDone },
-    { label: 'Casting Floor', done: castingDone },
+    { label: 'The Profiles', done: profilesDone },
   ];
   const doneCt = sections.filter(s => s.done).length;
   const pct = Math.round((doneCt / sections.length) * 100);

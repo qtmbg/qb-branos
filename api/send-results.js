@@ -11,7 +11,7 @@ const TOOL_LABELS = {
   'sensescape': 'Sensescape — Sensory World',
   'visual-dna': 'Visual DNA',
   'war-table': 'War Table',
-  'casting-floor': 'The Casting Floor',
+  'profiles': 'The Profiles',
   'brand-document': 'Brand Document',
 };
 

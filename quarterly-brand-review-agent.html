@@ -739,14 +739,15 @@ function App() {
 
   const isValid = () => brandName.trim() && brandEssence.trim() && quarter && (whatWorked.trim() || topPerformers.trim() || keyMetrics.trim());
 
-  const fmtPersona = (label, p) => {
-    if (!p || typeof p !== 'object') return `${label}: not specified`;
-    const parts = [p.name, p.oneLine].filter(Boolean).join(' — ');
-    const hook  = p.hook ? ` Hook: "${p.hook}"` : '';
-    const ch    = p.channel ? ` Channel: ${p.channel}.` : '';
-    return `${label}: ${parts || 'not specified'}.${hook}${ch}`;
+  const fmtProfile = (idx, p) => {
+    if (!p || typeof p !== 'object') return `Persona ${idx + 1}: not specified`;
+    const head = [p.name, p.role].filter(Boolean).join(' — ');
+    const hook = p.hook ? ` Hook: "${p.hook}"` : '';
+    const mind = p.mindset ? ` Mindset: ${p.mindset}` : '';
+    return `Persona ${idx + 1}: ${head || 'not specified'}.${hook}${mind}`;
   };
   const qbpRef = (typeof window !== 'undefined' && window.QB_QBP) || {};
+  const personaProfiles = Array.isArray(qbpRef.personaProfiles) ? qbpRef.personaProfiles : [];
 
   const buildUserData = () => `CURRENT QUANTUM BRAND PROFILE:
 Brand: ${brandName}
@@ -757,9 +758,8 @@ Archetype: ${archetype||'not specified'}
 Manifesto: ${manifesto||'not specified'}
 Anti-Brand: ${antiBrand||'not specified'}
 Primary Persona: ${primaryPersona||'not specified'}
-${fmtPersona('NOW Persona',         qbpRef.nowPersona)}
-${fmtPersona('NEXT Persona',        qbpRef.nextPersona)}
-${fmtPersona('NORTH STAR Persona',  qbpRef.northStarPersona)}
+${personaProfiles.length ? personaProfiles.map((p, i) => fmtProfile(i, p)).join('\n') : 'Persona profiles: not specified (run The Profiles to populate)'}
+${qbpRef.bindingInsight ? 'Binding insight: ' + qbpRef.bindingInsight : ''}
 Core Offer: ${offer||'not specified'}
 Voice Notes: ${voiceNotes||'not specified'}
 

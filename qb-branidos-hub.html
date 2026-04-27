@@ -702,7 +702,7 @@ const TOOLS = [
   { id: 'sensescape',  ph: 1, name: 'Sensescape',                  desc: 'Map the sensory universe of your brand across 47 spectrums.',             file: 'sensescape.html',                    icon: '◌' },
   { id: 'visual-dna',  ph: 1, name: 'Visual DNA',                  desc: 'Build your visual reference library through instinctive selection.',      file: 'visual-dna.html',                    icon: '◫' },
   { id: 'war-table',   ph: 1, name: 'The War Table',               desc: 'Strategic prioritization tool. Score initiatives across 6 dimensions.',   file: 'war-table.html',                     icon: '◧' },
-  { id: 'casting-floor', ph: 1, name: 'The Casting Floor',         desc: 'Build three personas in one journey — NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.', file: 'casting-floor.html',          icon: '◭' },
+  { id: 'profiles', ph: 1, name: 'The Profiles',         desc: 'Build three personas in one journey — NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.', file: 'the-profiles.html',          icon: '◭' },
   { id: 'brand-doc',   ph: 1, name: 'Brand Document',              desc: 'Compile all Phase 01 outputs into your master foundational document.',     file: 'brand-document.html',                icon: '■' },
 
   // Phase 02 — Brand Creation
@@ -804,7 +804,7 @@ function computeToolStates() {
     if (tool.id === 'sensescape' && (S.qbp.colorTerritory || S.qbp.sensescapeCompletedAt))    isCompleted = true;
     if (tool.id === 'visual-dna' && (S.qbp.visualDnaCompletedAt || S.qbp.visualReferences))   isCompleted = true;
     if (tool.id === 'war-table'  && (S.qbp.warTableCompletedAt  || S.qbp.warTableBrief))      isCompleted = true;
-    if (tool.id === 'casting-floor' && (S.qbp.castingFloorComplete || S.qbp.nowPersona))      isCompleted = true;
+    if (tool.id === 'profiles' && (S.qbp.profilesComplete || (Array.isArray(S.qbp.personaProfiles) && S.qbp.personaProfiles.length))) isCompleted = true;
 
     let isUnlocked =
       tool.ph === 1 ? isPh1Unlocked :
