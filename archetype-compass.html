@@ -382,79 +382,82 @@ textarea,input{ font-family:inherit; }
 
 /* ================== QUESTION SHELL ================== */
 .q-shell{
-  max-width:1160px; margin:0 auto;
-  padding:40px 24px 120px;
+  max-width:1180px; margin:0 auto;
+  padding:18px 24px 60px;
   animation:fadeIn .5s ease forwards;
   position:relative; z-index:3;
 }
-.q-head{ text-align:center; margin:0 auto 56px; max-width:820px; }
+.q-head{ text-align:center; margin:0 auto 18px; max-width:820px; }
 .q-head .kicker{
-  display:inline-flex; align-items:center; gap:12px;
-  font-family:var(--f-mono); font-size:10px;
-  text-transform:uppercase; letter-spacing:.3em;
-  color:var(--brass); margin-bottom:18px;
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--f-mono); font-size:9px;
+  text-transform:uppercase; letter-spacing:.28em;
+  color:var(--brass); margin-bottom:8px;
 }
-.q-head .kicker .sq{ width:10px; height:10px; border:1.5px solid var(--brass); display:inline-block; }
+.q-head .kicker .sq{ width:8px; height:8px; border:1.5px solid var(--brass); display:inline-block; }
 .q-head h2{
   font-family:var(--f-display); font-weight:500;
-  font-size:clamp(1.9rem,4vw,3rem);
-  letter-spacing:-.015em; line-height:1.12;
+  font-size:clamp(1.4rem,2.4vw,1.9rem);
+  letter-spacing:-.012em; line-height:1.15;
   color:var(--text-1);
 }
 .q-head .sub{
   font-family:var(--f-display); font-style:italic; font-weight:400;
-  font-size:clamp(1rem,1.6vw,1.2rem);
-  line-height:1.5; color:var(--text-2);
-  margin-top:16px; max-width:620px; margin-inline:auto;
+  font-size:clamp(.9rem,1.2vw,1rem);
+  line-height:1.4; color:var(--text-2);
+  margin-top:6px; max-width:620px; margin-inline:auto;
 }
 
 /* ============================================================
-   CARD GRID — responsive multi-column layout
-   The 12-option questions (cols-4) render as a wrapping grid
-   so all options are visible at once. Users rank their top 3.
-   The quadrant question (cols-2) keeps its 2×2 layout.
+   CARD GRID — compact responsive layout
+   Goal: all 12 ranking options on a single screen, no scrolling.
+   Desktop: 6 cols × 2 rows. Tablet: 4 × 3. Mobile: 3 × 4.
+   Quadrant question (cols-2) keeps its 2×2 layout.
    ============================================================ */
 .q-grid{
   display:grid;
-  grid-template-columns:repeat(4, 1fr);
-  gap:14px;
+  grid-template-columns:repeat(6, 1fr);
+  gap:10px;
   max-width:1180px;
   margin:0 auto;
-  padding:4px 0 8px;
+  padding:0;
 }
-@media(max-width:1024px){
-  .q-grid{ grid-template-columns:repeat(3, 1fr); }
+@media(max-width:1100px){
+  .q-grid{ grid-template-columns:repeat(4, 1fr); gap:10px; }
 }
 @media(max-width:720px){
-  .q-grid{ grid-template-columns:repeat(2, 1fr); gap:10px; }
+  .q-grid{ grid-template-columns:repeat(3, 1fr); gap:8px; }
+}
+@media(max-width:480px){
+  .q-grid{ grid-template-columns:repeat(2, 1fr); gap:8px; }
 }
 
-/* Ranking hint shown above the grid for top-3 exercises */
+/* Ranking hint — single inline row above the grid, minimal height */
 .q-rank-hint{
   display:flex; align-items:center; justify-content:space-between;
   gap:14px; flex-wrap:wrap;
-  max-width:1180px; margin:0 auto 14px;
-  padding:10px 14px;
+  max-width:1180px; margin:0 auto 10px;
+  padding:6px 12px;
   border:1px dashed var(--border-subtle);
-  border-radius:var(--r-card);
+  border-radius:14px;
   background:var(--bg-surface);
 }
 .q-rank-hint .rh-text{
-  font-family:var(--f-body); font-size:13px;
-  color:var(--text-2); line-height:1.45;
+  font-family:var(--f-body); font-size:12px;
+  color:var(--text-2); line-height:1.3;
 }
 .q-rank-hint .rh-text b{ color:var(--text-1); font-weight:600; }
 .q-rank-hint .rh-pips{
-  display:flex; align-items:center; gap:6px;
-  font-family:var(--f-mono); font-size:9px;
-  text-transform:uppercase; letter-spacing:.28em;
+  display:flex; align-items:center; gap:5px;
+  font-family:var(--f-mono); font-size:8px;
+  text-transform:uppercase; letter-spacing:.24em;
   color:var(--text-3);
 }
 .q-rank-hint .rh-pip{
-  width:18px; height:18px; border-radius:50%;
+  width:16px; height:16px; border-radius:50%;
   border:1px solid var(--border-medium);
   display:inline-flex; align-items:center; justify-content:center;
-  font-size:10px; color:var(--text-3);
+  font-size:9px; color:var(--text-3);
   background:var(--bg-base);
   transition:all .2s ease;
 }
@@ -467,26 +470,26 @@ textarea,input{ font-family:inherit; }
 .q-grid.cols-2{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:20px;
-  max-width:760px;
+  gap:16px;
+  max-width:680px;
 }
 @media(max-width:540px){
   .q-grid.cols-2{ grid-template-columns:1fr; }
 }
 
-/* Generic option card — sized for the responsive grid */
+/* Generic option card — compact */
 .q-opt{
   position:relative; display:flex; flex-direction:column;
   width:100%;
-  padding:18px 18px 16px;
+  padding:10px 10px 9px;
   background:var(--bg-surface);
   border:1px solid var(--border-subtle);
-  border-radius:var(--r-card);
+  border-radius:14px;
   cursor:pointer; text-align:left;
   transition:border-color .2s ease, background-color .2s ease, box-shadow .2s ease, transform .15s ease, opacity .25s ease;
   overflow:hidden;
-  min-height:220px;
-  gap:10px;
+  min-height:128px;
+  gap:6px;
 }
 .q-opt:hover{
   background:var(--bg-elevated);
@@ -499,19 +502,19 @@ textarea,input{ font-family:inherit; }
   box-shadow:0 0 0 1px var(--brass);
 }
 .q-opt.is-rank-1{ box-shadow:0 0 0 2px var(--brass); }
-.q-opt.is-dimmed{ opacity:.55; }
-.q-opt.is-dimmed:hover{ opacity:.9; }
+.q-opt.is-dimmed{ opacity:.5; }
+.q-opt.is-dimmed:hover{ opacity:.85; }
 
-/* Rank badge shown on selected ranking cards */
+/* Rank badge — small, top-right */
 .q-rank-badge{
-  position:absolute; top:10px; right:10px;
-  width:30px; height:30px; border-radius:50%;
+  position:absolute; top:6px; right:6px;
+  width:22px; height:22px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  font-family:var(--f-mono); font-size:11px; font-weight:600;
-  letter-spacing:.04em;
+  font-family:var(--f-mono); font-size:9px; font-weight:600;
+  letter-spacing:.02em;
   background:var(--brass); color:var(--cream);
-  border:2px solid var(--bg-base);
-  box-shadow:0 4px 12px -4px rgba(26,22,16,.35);
+  border:1.5px solid var(--bg-base);
+  box-shadow:0 3px 8px -3px rgba(26,22,16,.35);
   z-index:2;
 }
 .q-rank-badge.r-1{ background:var(--brass); }
@@ -519,32 +522,32 @@ textarea,input{ font-family:inherit; }
 .q-rank-badge.r-3{ background:var(--brass); opacity:.55; }
 .q-opt .arch-glyph{
   display:inline-flex; align-items:center; justify-content:center;
-  width:32px; height:32px; border-radius:50%;
+  width:24px; height:24px; border-radius:50%;
   background:var(--brass-faint); color:var(--brass);
-  font-size:16px; line-height:1;
+  font-size:12px; line-height:1;
   transition:all .3s ease;
 }
 .q-opt.is-selected .arch-glyph{
   background:var(--brass); color:var(--cream);
-  box-shadow:0 0 0 4px var(--brass-faint);
+  box-shadow:0 0 0 3px var(--brass-faint);
 }
 .q-opt .opt-text{
-  font-family:var(--f-body); font-weight:500; font-size:15px;
-  color:var(--text-1); line-height:1.45;
+  font-family:var(--f-body); font-weight:500; font-size:12px;
+  color:var(--text-1); line-height:1.35;
 }
 .q-opt .opt-sub{
-  font-family:var(--f-mono); font-size:9px;
-  text-transform:uppercase; letter-spacing:.22em;
+  font-family:var(--f-mono); font-size:8px;
+  text-transform:uppercase; letter-spacing:.18em;
   color:var(--text-3); margin-top:auto;
 }
 
 /* Text-only option (tone, keyword) */
-.q-opt.kind-text{ justify-content:space-between; text-align:left; }
-.q-opt.kind-keyword{ justify-content:center; align-items:flex-start; }
+.q-opt.kind-text{ justify-content:flex-start; text-align:left; }
+.q-opt.kind-keyword{ justify-content:flex-start; align-items:flex-start; }
 .q-opt.kind-keyword .opt-text{
   font-family:var(--f-display); font-weight:500;
-  font-size:clamp(1.6rem,2.4vw,2rem);
-  letter-spacing:-.014em;
+  font-size:clamp(1.05rem,1.4vw,1.3rem);
+  letter-spacing:-.01em;
   line-height:1.05;
   color:var(--text-1);
 }
@@ -552,36 +555,36 @@ textarea,input{ font-family:inherit; }
 /* Quote option */
 .q-opt.kind-quote{ }
 .q-opt.kind-quote .quote-mark{
-  font-family:var(--f-display); font-size:2.4rem;
+  font-family:var(--f-display); font-size:1.6rem;
   color:var(--brass); opacity:.35;
-  line-height:.5; margin-bottom:-4px;
+  line-height:.5; margin-bottom:-2px;
   transition:opacity .3s ease;
 }
 .q-opt.kind-quote.is-selected .quote-mark{ opacity:1; }
 .q-opt.kind-quote .opt-text{
   font-family:var(--f-display); font-style:italic; font-weight:400;
-  font-size:clamp(1.05rem,1.6vw,1.15rem);
-  color:var(--text-1); line-height:1.5;
+  font-size:clamp(.85rem,1.05vw,.95rem);
+  color:var(--text-1); line-height:1.4;
 }
 
-/* Quadrant (big typographic) */
+/* Quadrant (big typographic) — keeps generous treatment, only 4 cards */
 .q-opt.kind-quadrant{
-  min-height:220px;
-  padding:36px 28px;
+  min-height:180px;
+  padding:28px 22px;
   justify-content:center; align-items:center; text-align:center;
 }
 .q-opt.kind-quadrant .quad-title{
   font-family:var(--f-display); font-weight:500;
-  font-size:clamp(2rem,4vw,3rem);
+  font-size:clamp(1.8rem,3.4vw,2.6rem);
   letter-spacing:-.02em; line-height:.95;
   color:var(--text-1);
-  margin-bottom:14px;
+  margin-bottom:10px;
   transition:color .3s ease;
 }
 .q-opt.kind-quadrant.is-selected .quad-title{ color:var(--brass); }
 .q-opt.kind-quadrant .quad-sub{
-  font-family:var(--f-mono); font-size:10px;
-  text-transform:uppercase; letter-spacing:.3em;
+  font-family:var(--f-mono); font-size:9px;
+  text-transform:uppercase; letter-spacing:.28em;
   color:var(--text-3);
 }
 
@@ -591,7 +594,7 @@ textarea,input{ font-family:inherit; }
   justify-content:center; gap:18px;
 }
 .q-opt.kind-peers .peer-grid{
-  display:flex; flex-wrap:nowrap; gap:10px;
+  display:flex; flex-wrap:nowrap; gap:5px;
   width:100%;
   justify-content:center; align-items:center;
 }
@@ -600,7 +603,7 @@ textarea,input{ font-family:inherit; }
   flex:1 1 0; min-width:0;
 }
 .q-opt.kind-peers .peer-logo{
-  width:44px; height:44px; border-radius:50%;
+  width:28px; height:28px; border-radius:50%;
   background:#fff; border:1px solid var(--border-subtle);
   position:relative; overflow:hidden;
   display:flex; align-items:center; justify-content:center;
@@ -610,14 +613,14 @@ textarea,input{ font-family:inherit; }
 .q-opt.kind-peers .peer-logo img{
   position:absolute; inset:0;
   width:100%; height:100%; object-fit:contain;
-  padding:5px;
+  padding:3px;
   display:block;
 }
 .q-opt.kind-peers .peer-fallback{
-  font-family:var(--f-mono); font-size:7px; font-weight:600;
+  font-family:var(--f-mono); font-size:6px; font-weight:600;
   text-transform:uppercase; letter-spacing:.04em;
   color:var(--text-3);
-  text-align:center; padding:0 2px; line-height:1.05;
+  text-align:center; padding:0 1px; line-height:1.05;
 }
 /* Hide individual brand names on the card — the cluster reads as a single image */
 .q-opt.kind-peers .peer-name{ display:none; }
@@ -627,17 +630,18 @@ textarea,input{ font-family:inherit; }
 }
 /* Cluster archetype label — appears under the logo strip when selected */
 .q-opt.kind-peers .peer-meta{
-  font-family:var(--f-mono); font-size:9px; font-weight:500;
-  text-transform:uppercase; letter-spacing:.22em;
+  font-family:var(--f-mono); font-size:8px; font-weight:500;
+  text-transform:uppercase; letter-spacing:.18em;
   color:var(--text-3);
   text-align:center;
+  margin-top:2px;
   transition:color .25s ease;
 }
 .q-opt.kind-peers.is-selected .peer-meta,
 .q-opt.kind-peers:hover .peer-meta{ color:var(--text-2); }
-@media(max-width:720px){
-  .q-opt.kind-peers .peer-grid{ gap:6px; }
-  .q-opt.kind-peers .peer-logo{ width:32px; height:32px; }
+@media(max-width:480px){
+  .q-opt.kind-peers .peer-grid{ gap:4px; }
+  .q-opt.kind-peers .peer-logo{ width:22px; height:22px; }
 }
 
 /* Figure portrait — real image overlay (sits on top of placeholder) */
@@ -658,12 +662,12 @@ textarea,input{ font-family:inherit; }
 .q-opt.kind-fear{ }
 .q-opt.kind-fear .fear-words{
   font-family:var(--f-display); font-weight:500;
-  font-size:clamp(1.05rem,1.5vw,1.2rem);
-  color:var(--text-1); line-height:1.4;
-  letter-spacing:-.005em;
+  font-size:clamp(.85rem,1.05vw,.95rem);
+  color:var(--text-1); line-height:1.3;
+  letter-spacing:-.003em;
 }
 
-/* Figure (celebrity/metaphor/expression) — uses placeholder portrait frames */
+/* Figure (celebrity/metaphor/expression) — compact: small frame at top, name only */
 .q-opt.kind-figure{
   padding:0;
   display:flex; flex-direction:column;
@@ -671,8 +675,9 @@ textarea,input{ font-family:inherit; }
 }
 .q-opt.kind-figure .figure-frame{
   position:relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   width:100%;
+  max-height:80px;
   background:linear-gradient(135deg, var(--cream-deep) 0%, var(--cream-soft) 100%);
   display:flex; align-items:center; justify-content:center;
   overflow:hidden;
@@ -696,65 +701,49 @@ textarea,input{ font-family:inherit; }
   display:flex; flex-direction:column; align-items:center; gap:14px;
 }
 .q-opt.kind-figure .placeholder-ring{
-  width:88px; height:88px; border-radius:50%;
+  width:48px; height:48px; border-radius:50%;
   border:1.5px dashed var(--border-strong);
   display:flex; align-items:center; justify-content:center;
   color:var(--brass);
   background:var(--bg-overlay);
   transition:all .3s ease;
-  font-size:26px;
+  font-size:16px;
 }
 .q-opt.kind-figure:hover .placeholder-ring{ border-style:solid; }
 .q-opt.kind-figure.is-selected .placeholder-ring{
   border-color:var(--brass); border-style:solid;
-  box-shadow:0 0 0 5px var(--brass-faint);
+  box-shadow:0 0 0 3px var(--brass-faint);
   background:var(--bg-overlay);
 }
-.q-opt.kind-figure .placeholder-meta{
-  font-family:var(--f-mono); font-size:8.5px; font-weight:500;
-  text-transform:uppercase; letter-spacing:.32em;
-  color:var(--text-3);
-}
-.q-opt.kind-figure .figure-tag{
-  position:absolute; top:12px; left:12px;
-  font-family:var(--f-mono); font-size:8.5px;
-  text-transform:uppercase; letter-spacing:.24em;
-  padding:5px 10px;
-  background:var(--bg-overlay);
-  border:1px solid var(--border-subtle);
-  border-radius:999px;
-  color:var(--text-3);
-  backdrop-filter:blur(4px);
-}
+.q-opt.kind-figure .placeholder-meta{ display:none; }
+.q-opt.kind-figure .figure-tag{ display:none; }
 .q-opt.kind-figure .figure-body{
-  padding:18px 22px 22px;
-  display:flex; flex-direction:column; gap:6px;
+  padding:8px 10px 10px;
+  display:flex; flex-direction:column; gap:2px;
   flex:1;
 }
 .q-opt.kind-figure .figure-name{
   font-family:var(--f-display); font-weight:500;
-  font-size:1.15rem; color:var(--text-1);
+  font-size:.85rem; color:var(--text-1);
   letter-spacing:-.005em;
+  line-height:1.2;
 }
-.q-opt.kind-figure .figure-desc{
-  font-family:var(--f-display); font-style:italic; font-weight:400;
-  font-size:.92rem; line-height:1.45;
-  color:var(--text-2);
-}
+/* Hide the long descriptive line in compact mode — name carries the meaning */
+.q-opt.kind-figure .figure-desc{ display:none; }
 
 /* Expression (simpler figure — just face) */
-.q-opt.kind-expression{ min-height:200px; }
-.q-opt.kind-expression .figure-frame{ aspect-ratio: 1 / 1; }
-.q-opt.kind-expression .figure-body{ padding:16px 20px 20px; }
+.q-opt.kind-expression{ min-height:128px; }
+.q-opt.kind-expression .figure-frame{ aspect-ratio: 1 / 1; max-height:80px; }
+.q-opt.kind-expression .figure-body{ padding:8px 10px 10px; }
 .q-opt.kind-expression .figure-name{
   font-family:var(--f-body); font-weight:400; font-style:italic;
-  font-size:.92rem; line-height:1.4;
+  font-size:.82rem; line-height:1.3;
   color:var(--text-1);
 }
 
 /* ================== NAV BUTTONS ================== */
 .q-nav{
-  max-width:1160px; margin:32px auto 0;
+  max-width:1180px; margin:18px auto 0;
   display:flex; justify-content:space-between; align-items:center; gap:14px;
   padding:0 24px;
 }
