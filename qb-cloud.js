@@ -66,6 +66,68 @@
     return !!(s && s.token && s.userId);
   }
 
+  // ── JWT refresh + retry wrapper ───────────────────────────────────────────
+  // Supabase access tokens are 1-hour. Without refresh, every cloud write
+  // started silently 401-PGRST303-failing after expiry — local diverged from
+  // cloud invisibly until the user switched devices. Pattern: fire the
+  // request; if it 401s with a JWT-expired signal, hit /auth/v1/token with
+  // the refresh_token, persist the new access token, retry the original
+  // request once. Falls through silently on second failure (network down,
+  // refresh token invalid, user logged out elsewhere — let the caller no-op).
+  let _refreshing = null;
+  async function refreshAccessToken(){
+    // Single in-flight refresh shared across concurrent callers
+    if (_refreshing) return _refreshing;
+    const s = getSession();
+    if (!s || !s.refreshToken) return null;
+    _refreshing = (async () => {
+      try {
+        const res = await fetch(SUPA_URL + '/auth/v1/token?grant_type=refresh_token', {
+          method: 'POST',
+          headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh_token: s.refreshToken })
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!data || !data.access_token) return null;
+        const next = Object.assign({}, getSession(), {
+          token:        data.access_token,
+          refreshToken: data.refresh_token || s.refreshToken
+        });
+        setSession(next);
+        return data.access_token;
+      } catch(e){ return null; }
+      finally { _refreshing = null; }
+    })();
+    return _refreshing;
+  }
+  function isJwtExpiredResponse(res, body){
+    if (res.status !== 401) return false;
+    const code = body && (body.code || body.error_code);
+    const msg  = body && (body.message || body.msg || body.error_description || '');
+    return code === 'PGRST303' || /jwt expired/i.test(String(msg));
+  }
+  // cloudFetch(buildRequest): buildRequest receives the current access token
+  // and returns { url, init } so the retry can rebuild headers with the fresh
+  // token. Returns the second-attempt Response (or first if no retry needed).
+  async function cloudFetch(buildRequest){
+    if (!isAuthed()) return null;
+    const fire = async () => {
+      const tok = getSession().token;
+      const { url, init } = buildRequest(tok);
+      return fetch(url, init);
+    };
+    let res = await fire();
+    if (res.ok) return res;
+    // Only attempt refresh on JWT-expired signals; pass other 4xx/5xx through
+    let body = null;
+    try { body = await res.clone().json(); } catch(e){}
+    if (!isJwtExpiredResponse(res, body)) return res;
+    const newToken = await refreshAccessToken();
+    if (!newToken) return res;  // refresh failed — return original 401
+    return await fire();          // retry once with the fresh token
+  }
+
   // ── QBP read/write — local + cloud mirror ─────────────────────────────────
   function getQBP(){
     try { return JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }
@@ -86,36 +148,39 @@
   }
   async function syncQBPToCloud(qbp){
     if (!isAuthed()) return false;
-    const s = getSession();
+    const userId = getSession().userId;
     try {
-      const res = await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + s.userId, {
-        method: 'PATCH',
-        headers: {
-          'apikey': SUPA_KEY,
-          'Authorization': 'Bearer ' + s.token,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          qbp,
-          updated_at: new Date().toISOString(),
-          last_active_at: new Date().toISOString()
-        })
-      });
-      return res.ok;
+      const res = await cloudFetch(token => ({
+        url: SUPA_URL + '/rest/v1/profiles?id=eq.' + userId,
+        init: {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPA_KEY,
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            qbp,
+            updated_at: new Date().toISOString(),
+            last_active_at: new Date().toISOString()
+          })
+        }
+      }));
+      return !!(res && res.ok);
     } catch(e){ return false; }
   }
   async function pullQBPFromCloud(){
     if (!isAuthed()) return null;
-    const s = getSession();
+    const userId = getSession().userId;
     try {
-      const res = await fetch(SUPA_URL + '/rest/v1/profiles?select=qbp,first_name,tier,subscription_status,tool_completions&id=eq.' + s.userId, {
-        headers: {
-          'apikey': SUPA_KEY,
-          'Authorization': 'Bearer ' + s.token
+      const res = await cloudFetch(token => ({
+        url: SUPA_URL + '/rest/v1/profiles?select=qbp,first_name,tier,subscription_status,tool_completions&id=eq.' + userId,
+        init: {
+          headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
         }
-      });
-      if (!res.ok) return null;
+      }));
+      if (!res || !res.ok) return null;
       const data = await res.json();
       const profile = data && data[0];
       if (!profile) return null;
@@ -151,19 +216,22 @@
     completions[toolId] = new Date().toISOString();
     localStorage.setItem('qb_completions', JSON.stringify(completions));
 
-    // Cloud (only if authed)
+    // Cloud (only if authed) — JWT auto-refreshes via cloudFetch on 401
     if (isAuthed()) {
-      const s = getSession();
+      const userId = getSession().userId;
       try {
-        await fetch(SUPA_URL + '/rest/v1/rpc/record_tool_completion', {
-          method: 'POST',
-          headers: {
-            'apikey': SUPA_KEY,
-            'Authorization': 'Bearer ' + s.token,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ p_user_id: s.userId, p_tool_id: toolId })
-        });
+        await cloudFetch(token => ({
+          url: SUPA_URL + '/rest/v1/rpc/record_tool_completion',
+          init: {
+            method: 'POST',
+            headers: {
+              'apikey': SUPA_KEY,
+              'Authorization': 'Bearer ' + token,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ p_user_id: userId, p_tool_id: toolId })
+          }
+        }));
       } catch(e){ /* silent */ }
     }
 
@@ -364,6 +432,7 @@
     sendMagicLink, logout,
     hasAccess,
     syncKlaviyoProfile, sendKlaviyoEvent,
+    cloudFetch, refreshAccessToken,
     TOOL_NAMES, TOOL_FILES, PHASE_01_TOOLS
   };
 })();
