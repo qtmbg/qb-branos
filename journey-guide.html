@@ -657,18 +657,27 @@ JOURNEY.forEach(phase => {
 
 
 // ── STATE ──
-// Source of truth for completion is QB.getCompletions() (which mirrors cloud
-// state via qb-cloud.js). The qbp-field fallbacks below cover users whose
-// completions wrote QBP fields but bypassed QB.recordCompletion (e.g. legacy
-// pre-funnel runs, or partial syncs where the completions JSON didn't ship).
-// The old legacy-flag read (`localStorage.getItem(step.storageKey)`) was
-// removed because it was a parallel source of truth that survived admin
-// resets and cloud-pull updates, causing the journey-guide to lie.
+// Source of truth for completion is QB.getCompletions() (cloud-mirrored).
+// The previous version of this function ORed three checks together, which
+// meant a stale legacy flag could mask a cloud "not done" — admin resets
+// failed to propagate. New shape: when QB is loaded AND the step is a
+// Phase 01 tool that cloud is responsible for tracking, cloud is
+// AUTHORITATIVE; the legacy flag is bypassed entirely so the cloud signal
+// can return false. The legacy flag remains valid for:
+//   - Pages where qb-cloud.js failed to load
+//   - Phase 02+ steps (cloud completions not wired yet for those)
+//   - Any step not in QB.PHASE_01_TOOLS
 function isStepDone(step) {
-  if (window.QB && QB.getCompletions) {
+  const qbLoaded = !!(window.QB && QB.getCompletions);
+
+  // Primary: cloud-synced completions
+  if (qbLoaded) {
     const completions = QB.getCompletions();
     if (completions && completions[step.id]) return true;
   }
+
+  // Secondary: qbp field fallbacks (real user data, refreshed by pullQBPFromCloud
+  // on init, so admin resets that clear the qbp fields also propagate here)
   try {
     const qbpStr = localStorage.getItem('qb_qbp');
     if (qbpStr) {
@@ -680,9 +689,17 @@ function isStepDone(step) {
       if (step.id === 'war-table'  && (qbp.warTableCompletedAt || qbp.strategicPriorities || qbp.warTableBrief)) return true;
     }
   } catch(e) {}
-  // Defense-in-depth: respect a manually-set legacy flag for any users who
-  // hit "Mark Complete" before this version shipped. Not the primary source.
-  if (localStorage.getItem(step.storageKey)) return true;
+
+  // Tertiary: legacy qb_<tool>_done flag — gated.
+  // When QB is loaded and this step is one of the cloud-tracked Phase 01
+  // tools, the legacy flag is BYPASSED. Cloud is authoritative for those
+  // steps so admin resets, cross-device pulls, and gate-skip flows all
+  // propagate correctly. For Phase 02+ steps and pages without QB loaded,
+  // the legacy flag still wins as a fallback.
+  const isCloudTrackedPhase01 = qbLoaded
+    && Array.isArray(QB.PHASE_01_TOOLS)
+    && QB.PHASE_01_TOOLS.indexOf(step.id) !== -1;
+  if (!isCloudTrackedPhase01 && localStorage.getItem(step.storageKey)) return true;
   return false;
 }
 
