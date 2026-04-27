@@ -130,7 +130,7 @@ function openLogin(){
   QB.openGate({ toolId:'hub-login', toolName:'Welcome back', onClose: refreshState });
 }
 function mockComplete(toolId){
-  const names = { 'soul-map':'Brand Soul Map', 'sensescape':'Sensescape', 'visual-dna':'Visual DNA', 'war-table':'The War Table' };
+  const names = { 'soul-map':'Brand Soul Map', 'sensescape':'Sensescape', 'visual-dna':'Visual DNA', 'war-table':'The War Table', 'casting-floor':'The Casting Floor' };
   QB.mergeQBP({ brandName:'Verne', archetype:'The Magician + The Sage' });
   QB.recordCompletion(toolId);
   refreshState();
@@ -148,7 +148,7 @@ function clearLocal(){
   if (!confirm('Wipe all qb_* localStorage? This cannot be undone.')) return;
   ['qb_session','qb_qbp','qb_completions','qb_pending_signup','qb_first_name','qb_user_tier','qb_sub_status']
     .forEach(k => localStorage.removeItem(k));
-  ['soul-map','sensescape','visual-dna','war-table'].forEach(t => {
+  ['soul-map','sensescape','visual-dna','war-table','casting-floor'].forEach(t => {
     localStorage.removeItem('qb_' + t.replace(/-/g,'_') + '_done');
   });
   refreshState();

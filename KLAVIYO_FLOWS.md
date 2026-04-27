@@ -42,7 +42,7 @@ These get set automatically by `qb-cloud.js` → `syncKlaviyoProfile()` when a u
 |---|---|---|
 | `email` | string | Auto |
 | `first_name` | string | Auto |
-| `signup_source` | string | Which tool fired the gate: `soul-map`, `sensescape`, `visual-dna`, `war-table`, `hub-login` |
+| `signup_source` | string | Which tool fired the gate: `soul-map`, `sensescape`, `visual-dna`, `war-table`, `casting-floor`, `hub-login` |
 | `brand_name` | string | From QBP if available at signup time |
 | `archetype` | string | Primary + secondary archetype string from Compass/Soul Map |
 | `tools_completed_at_signup` | number | How many Phase 01 tools they had completed locally before saving |

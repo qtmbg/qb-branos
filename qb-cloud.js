@@ -37,16 +37,18 @@
     'soul-map':          'Brand Soul Map',
     'sensescape':        'Sensescape',
     'visual-dna':        'Visual DNA',
-    'war-table':         'The War Table'
+    'war-table':         'The War Table',
+    'casting-floor':     'The Casting Floor'
   };
   const TOOL_FILES = {
     'archetype-compass': 'archetype-compass.html',
     'soul-map':          'brand-soul-map.html',
     'sensescape':        'sensescape.html',
     'visual-dna':        'visual-dna.html',
-    'war-table':         'war-table.html'
+    'war-table':         'war-table.html',
+    'casting-floor':     'casting-floor.html'
   };
-  const PHASE_01_TOOLS = ['archetype-compass', 'soul-map', 'sensescape', 'visual-dna', 'war-table'];
+  const PHASE_01_TOOLS = ['archetype-compass', 'soul-map', 'sensescape', 'visual-dna', 'war-table', 'casting-floor'];
 
   // ── Session management ────────────────────────────────────────────────────
   function getSession(){

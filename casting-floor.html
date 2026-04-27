@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB — The Casting Floor</title>
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #000000;
+  --bg2: #0a0a0a;
+  --bg3: #141414;
+  --bg4: #1a1a1a;
+  --green: #4ade80;
+  --green2: rgba(74,222,128,0.1);
+  --green3: rgba(74,222,128,0.3);
+  --blue: #60a5fa;
+  --blue2: rgba(96,165,250,0.1);
+  --blue3: rgba(96,165,250,0.3);
+  --amber: #f59e0b;
+  --amber2: rgba(245,158,11,0.1);
+  --amber3: rgba(245,158,11,0.3);
+  --pink: #f472b6;
+  --teal: #2dd4bf;
+  --red: #ef4444;
+  --text: #ffffff;
+  --text2: #a1a1aa;
+  --text3: #71717a;
+  --text4: #52525b;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.12);
+  --border3: rgba(255,255,255,0.18);
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+button, input, textarea { font-family: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+img { max-width: 100%; display: block; }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulseSoft { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+@keyframes flipIn { 0% { transform: rotateY(90deg); opacity: 0; } 100% { transform: rotateY(0); opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(74,222,128,0.15); } 50% { box-shadow: 0 0 40px rgba(74,222,128,0.35); } }
+
+.fade-in { animation: fadeIn .5s ease forwards; }
+.slide-up { animation: slideUp .6s cubic-bezier(.2,.8,.2,1) forwards; }
+.flip-in { animation: flipIn .8s cubic-bezier(.2,.8,.2,1) forwards; backface-visibility: hidden; }
+.spin { animation: spin 1.4s linear infinite; }
+.pulse-soft { animation: pulseSoft 2s ease-in-out infinite; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Range / sliders */
+input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; width: 100%; }
+input[type=range]:focus { outline: none; }
+input[type=range]::-webkit-slider-runnable-track { height: 2px; background: rgba(255,255,255,0.15); border-radius: 1px; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--green); margin-top: -8px; cursor: pointer; box-shadow: 0 0 0 4px rgba(74,222,128,0.15); transition: box-shadow .15s; }
+input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px rgba(74,222,128,0.2); }
+input[type=range]::-moz-range-track { height: 2px; background: rgba(255,255,255,0.15); border-radius: 1px; }
+input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--green); border: none; cursor: pointer; }
+
+/* Reusable components */
+.mono { font-family: var(--mono); }
+.glass { background: rgba(255,255,255,0.04); border: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.glass-2 { background: rgba(255,255,255,0.06); border: 1px solid var(--border2); }
+.no-select { user-select: none; -webkit-user-select: none; }
+
+/* Header */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+  height: 56px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 100%; display: flex; align-items: center; justify-content: space-between; }
+.header-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text3); }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.progress-track { width: 128px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--green); transition: width 0.5s ease; }
+.progress-pct { font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em; color: var(--text3); }
+.icon-btn { color: var(--text3); transition: color .15s; padding: 4px; }
+.icon-btn:hover { color: var(--text2); }
+@media (max-width: 640px) { .progress-track { display: none; } }
+
+/* Persona badge */
+.persona-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500; }
+.persona-badge.sm { padding: 4px 8px; font-size: 9px; }
+.persona-now { background: var(--green2); border: 1px solid var(--green3); color: var(--green); }
+.persona-next { background: var(--amber2); border: 1px solid var(--amber3); color: var(--amber); }
+.persona-northStar { background: var(--blue2); border: 1px solid var(--blue3); color: var(--blue); }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; border-radius: 999px; transition: all .15s ease; }
+.btn:active { transform: scale(0.96); }
+.btn-md { padding: 14px 28px; font-size: 12px; }
+.btn-sm { padding: 8px 20px; font-size: 11px; }
+.btn-lg { padding: 16px 40px; font-size: 13px; }
+.btn-primary { background: var(--green); color: #000; }
+.btn-primary:hover { background: var(--text); }
+.btn-secondary { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border2); }
+.btn-secondary:hover { background: rgba(255,255,255,0.1); }
+.btn-ghost { color: var(--text3); }
+.btn-ghost:hover { color: var(--text); }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+.btn:disabled:hover { background: var(--green); }
+
+/* Layout */
+.screen { min-height: 100vh; padding-top: 80px; padding-bottom: 64px; padding-left: 24px; padding-right: 24px; }
+.screen-center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.container-sm { max-width: 480px; margin: 0 auto; width: 100%; }
+.container-md { max-width: 640px; margin: 0 auto; width: 100%; }
+.container-lg { max-width: 800px; margin: 0 auto; width: 100%; }
+.container-xl { max-width: 1080px; margin: 0 auto; width: 100%; }
+
+/* Typography */
+h1.display { font-size: clamp(40px, 7vw, 80px); font-weight: 900; letter-spacing: -0.03em; line-height: 0.95; }
+h2.display { font-size: clamp(28px, 4.5vw, 52px); font-weight: 900; letter-spacing: -0.025em; line-height: 1; }
+h3.display { font-size: clamp(20px, 3vw, 32px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.label-mono { font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 12px; display: block; }
+.text-lead { font-size: 18px; color: var(--text2); line-height: 1.6; }
+.text-body { font-size: 15px; color: var(--text2); line-height: 1.6; }
+.text-small { font-size: 13px; color: var(--text3); line-height: 1.5; }
+.text-tiny { font-size: 11px; color: var(--text3); }
+.muted { color: var(--text3); }
+.muted-2 { color: var(--text4); }
+
+/* Field */
+.field { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.field-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+.field-value { color: var(--text); line-height: 1.5; }
+.field-value.mono { font-family: var(--mono); font-size: 14px; }
+
+/* Casting Reel card stack */
+.reel-stack { position: relative; width: 100%; aspect-ratio: 3/4; max-width: 380px; margin: 0 auto; }
+.reel-card { position: absolute; inset: 0; border-radius: 18px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5); transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .3s; }
+.reel-card-bg { position: absolute; inset: 0; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); }
+.reel-card-bg.b1 { transform: translateY(8px) scale(0.96); opacity: 0.4; }
+.reel-card-bg.b2 { transform: translateY(4px) scale(0.98); opacity: 0.7; }
+.reel-card img { width: 100%; height: 100%; object-fit: cover; }
+.reel-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 30%; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); pointer-events: none; }
+.reel-keep { transform: translateX(120%) rotate(15deg); opacity: 0; }
+.reel-pass { transform: translateX(-120%) rotate(-15deg); opacity: 0; }
+.reel-actions { display: flex; justify-content: center; gap: 24px; margin-top: 24px; }
+.reel-btn { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.reel-btn:active { transform: scale(0.9); }
+.reel-btn-pass { background: rgba(255,255,255,0.05); border: 1px solid var(--border2); color: var(--text2); }
+.reel-btn-pass:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.4); color: var(--red); }
+.reel-btn-keep { background: var(--green); color: #000; }
+
+/* Habitat grid */
+.habitat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+@media (min-width: 640px) { .habitat-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 900px) { .habitat-grid { grid-template-columns: repeat(5, 1fr); } }
+.habitat-item { position: relative; aspect-ratio: 4/5; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform .2s; border: 2px solid transparent; }
+.habitat-item:hover { transform: translateY(-2px); }
+.habitat-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.habitat-item:hover img { transform: scale(1.05); }
+.habitat-item.selected { border-color: var(--green); }
+.habitat-item.selected::after { content: ''; position: absolute; inset: 0; background: rgba(74,222,128,0.15); pointer-events: none; }
+.habitat-check { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: #000; display: flex; align-items: center; justify-content: center; transform: scale(0); transition: transform .2s; }
+.habitat-item.selected .habitat-check { transform: scale(1); }
+.habitat-label { position: absolute; left: 8px; right: 8px; bottom: 8px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+
+/* Trigger Diorama */
+.diorama-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 640px) { .diorama-grid { grid-template-columns: 1fr 1fr; } }
+.diorama-card { display: flex; gap: 16px; padding: 20px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; text-align: left; }
+.diorama-card:hover { background: rgba(255,255,255,0.06); border-color: var(--border2); transform: translateY(-2px); }
+.diorama-card.selected { background: rgba(74,222,128,0.08); border-color: var(--green3); }
+.diorama-emoji { font-size: 28px; flex-shrink: 0; line-height: 1; }
+.diorama-title { font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.diorama-desc { font-size: 13px; color: var(--text3); line-height: 1.5; }
+
+/* Pulse sliders */
+.pulse-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+.pulse-row:last-child { border-bottom: 0; }
+.pulse-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
+.pulse-label-left { color: var(--text2); }
+.pulse-label-right { color: var(--text2); }
+.pulse-track-wrap { position: relative; padding: 6px 0; }
+.pulse-marks { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); display: flex; justify-content: space-between; pointer-events: none; }
+.pulse-mark { width: 1px; height: 8px; background: rgba(255,255,255,0.15); }
+
+/* Voice match */
+.voice-card { padding: 28px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
+.voice-card:hover { background: rgba(255,255,255,0.06); border-color: var(--border2); }
+.voice-card.selected { background: rgba(74,222,128,0.06); border-color: var(--green3); }
+.voice-quote { font-size: 17px; line-height: 1.6; color: var(--text); font-style: italic; }
+.voice-quote::before { content: '"'; color: var(--text4); margin-right: 4px; }
+.voice-quote::after { content: '"'; color: var(--text4); margin-left: 4px; }
+
+/* Fan letter cross-cut */
+.fan-line { padding: 20px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); margin-bottom: 16px; }
+.fan-line-text { font-size: 16px; line-height: 1.6; color: var(--text); margin-bottom: 16px; font-style: italic; }
+.fan-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.fan-option { padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.15s; }
+.fan-option:hover { background: rgba(255,255,255,0.08); }
+.fan-option.active.now { background: var(--green2); border-color: var(--green3); color: var(--green); }
+.fan-option.active.next { background: var(--amber2); border-color: var(--amber3); color: var(--amber); }
+.fan-option.active.northStar { background: var(--blue2); border-color: var(--blue3); color: var(--blue); }
+
+/* Refusal deck */
+.refusal-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 640px) { .refusal-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 900px) { .refusal-grid { grid-template-columns: 1fr 1fr 1fr; } }
+.refusal-card { padding: 18px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; text-align: left; }
+.refusal-card:hover { background: rgba(255,255,255,0.06); }
+.refusal-card.banned { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.3); }
+.refusal-card.banned .refusal-name { color: var(--red); text-decoration: line-through; }
+.refusal-name { font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.refusal-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
+
+/* Trigger map */
+.tmap { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.tmap-stage { padding: 18px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); }
+.tmap-stage-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+.tmap-stage-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text); }
+.tmap-stage-num { font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em; color: var(--text4); }
+.tmap-stage-desc { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
+.tmap-input { width: 100%; padding: 10px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px; transition: border-color 0.15s; }
+.tmap-input:focus { outline: none; border-color: var(--green3); }
+.tmap-input::placeholder { color: var(--text4); }
+
+/* Reveal cards */
+.reveal-card { padding: 28px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid var(--border2); margin-bottom: 16px; opacity: 0; animation: slideUp .8s cubic-bezier(.2,.8,.2,1) forwards; }
+.reveal-card.now { border-color: var(--green3); }
+.reveal-card.next { border-color: var(--amber3); }
+.reveal-card.northStar { border-color: var(--blue3); }
+.reveal-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.reveal-card-title { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.reveal-section { margin-bottom: 18px; }
+.reveal-section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+.reveal-hook { font-size: 19px; font-weight: 700; line-height: 1.4; color: var(--text); margin-bottom: 4px; font-style: italic; }
+.reveal-list { padding-left: 20px; color: var(--text2); }
+.reveal-list li { margin-bottom: 5px; line-height: 1.5; }
+.reveal-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.reveal-pill { padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 999px; font-family: var(--mono); font-size: 11px; }
+
+/* Approval buttons */
+.approval-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.approval-btn { padding: 8px 16px; border-radius: 999px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; transition: all 0.15s; }
+.approval-approve { background: var(--green); color: #000; }
+.approval-refine { background: rgba(255,255,255,0.05); border: 1px solid var(--border2); color: var(--text); }
+.approval-refine:hover { background: rgba(255,255,255,0.1); }
+.approval-approved { background: var(--green2); color: var(--green); border: 1px solid var(--green3); cursor: default; }
+
+/* Refine modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; max-width: 520px; width: 100%; padding: 28px; }
+.modal-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.modal-textarea { width: 100%; min-height: 120px; padding: 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 14px; resize: vertical; margin: 16px 0; }
+.modal-textarea:focus { outline: none; border-color: var(--green3); }
+
+/* Loader */
+.loader-container { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 60px 20px; }
+.loader-orbit { position: relative; width: 64px; height: 64px; }
+.loader-ring { position: absolute; inset: 0; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 1.4s linear infinite; }
+.loader-ring.r2 { inset: 8px; border: 1px solid var(--border); border-right-color: var(--amber); animation: spin 0.6s linear infinite reverse; }
+.loader-ring.r3 { inset: 18px; border: 1px solid var(--border); border-bottom-color: var(--blue); animation: spin 1.4s linear infinite; }
+
+/* Intro persona cards */
+.intro-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 32px 0 40px; text-align: left; }
+@media (min-width: 720px) { .intro-grid { grid-template-columns: 1fr 1fr 1fr; } }
+.intro-card { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+.intro-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.intro-card-text { font-size: 14px; color: var(--text); line-height: 1.4; }
+
+/* Notice */
+.notice { background: rgba(255,255,255,0.06); border: 1px solid var(--border2); border-radius: 12px; padding: 14px 16px; max-width: 520px; margin: 0 auto 24px; display: flex; gap: 12px; align-items: flex-start; text-align: left; }
+.notice-icon { color: var(--amber); flex-shrink: 0; margin-top: 2px; }
+.notice-text { font-size: 14px; color: var(--text2); line-height: 1.5; }
+
+/* Footer nav */
+.footer-nav { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px 24px; background: linear-gradient(to top, var(--bg) 60%, transparent); display: flex; justify-content: center; gap: 12px; z-index: 30; }
+
+/* API key gate */
+.gate { max-width: 460px; margin: 0 auto; padding: 32px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 18px; }
+.gate-input { width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--mono); font-size: 13px; margin: 12px 0; }
+.gate-input:focus { outline: none; border-color: var(--green3); }
+.gate-toggle { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text3); cursor: pointer; }
+
+.error-banner { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; }
+
+/* Misc */
+.center { text-align: center; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+.mt-8 { margin-top: 32px; }
+.mt-10 { margin-top: 40px; }
+.mt-12 { margin-top: 48px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+.mb-8 { margin-bottom: 32px; }
+.w-full { width: 100%; }
+.full-bleed { padding-left: 0; padding-right: 0; }
+.hidden { display: none; }
+
+/* Counter pill */
+.counter-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 999px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: var(--text2); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+
+// ============================================================================
+// CONSTANTS / DATA
+// ============================================================================
+
+var FACE_IDS = [];
+for (var i = 1; i <= 70; i++) FACE_IDS.push(i);
+
+var HABITAT_DATA = [
+  { seed: "loft01", label: "City loft" },
+  { seed: "studio02", label: "Warehouse studio" },
+  { seed: "cafe03", label: "Quiet cafe" },
+  { seed: "cowork04", label: "Co-working" },
+  { seed: "kitchen05", label: "Kitchen office" },
+  { seed: "lobby06", label: "Hotel lobby" },
+  { seed: "travel07", label: "Private travel" },
+  { seed: "beach08", label: "Beach house" },
+  { seed: "cabin09", label: "Mountain cabin" },
+  { seed: "farm10", label: "Country farmhouse" },
+  { seed: "pent11", label: "Penthouse view" },
+  { seed: "minbed12", label: "Minimal bedroom" },
+  { seed: "lib13", label: "Old library" },
+  { seed: "gym14", label: "Private gym" },
+  { seed: "yoga15", label: "Yoga studio" },
+  { seed: "gallery16", label: "Art gallery" },
+  { seed: "tesla17", label: "Tesla dashboard" },
+  { seed: "vintage18", label: "Vintage car" },
+  { seed: "subway19", label: "Subway commute" },
+  { seed: "uber20", label: "Back of an Uber" },
+  { seed: "lounge21", label: "Airport lounge" },
+  { seed: "board22", label: "Glass boardroom" },
+  { seed: "hotdesk23", label: "Hot desk" },
+  { seed: "schoolrun24", label: "School pickup" },
+  { seed: "fine25", label: "Fine dining" },
+  { seed: "bar26", label: "Neighborhood bar" },
+  { seed: "park27", label: "Running in park" },
+  { seed: "vinyl28", label: "Record shop" },
+  { seed: "books29", label: "Bookstore" },
+  { seed: "rooftop30", label: "Concrete rooftop" }
+];
+
+var TRIGGER_SCENES = [
+  { id: "3am-scroll", emoji: "\u{1F312}", title: "The 3am scroll", desc: "Awake, restless, scrolling. Their current life is missing something they cannot name." },
+  { id: "meeting-bombed", emoji: "\u{1F4BC}", title: "A meeting that went wrong", desc: "Lost the room. Fumbled the pitch. The drive home is the moment they decide to fix this." },
+  { id: "quiet-success", emoji: "\u{1FA9E}", title: "A quiet success no one saw", desc: "They won. No one congratulated them. Their brand is not visible enough to match what they have built." },
+  { id: "failed-launch", emoji: "\u{1F4C9}", title: "A launch that flopped", desc: "Crickets. They suspect the problem is positioning. They need help diagnosing it." },
+  { id: "sunday-dread", emoji: "\u2601\uFE0F", title: "The Sunday dread", desc: "Another week of work they no longer want. The brand they have does not match who they have become." },
+  { id: "competitor-win", emoji: "\u{1F441}", title: "Watching a competitor win", desc: "Someone with less talent and a louder brand is taking the market. The injustice is the trigger." },
+  { id: "milestone-hollow", emoji: "\u{1F3C6}", title: "A milestone that felt hollow", desc: "Hit the number. Did not feel the way they imagined. Identity outgrew the brand wrapper." },
+  { id: "compliment-wrong", emoji: "\u{1F32B}\uFE0F", title: "A compliment that landed wrong", desc: "Someone described their work in a way they did not recognize. The mirror is broken." }
+];
+
+var PULSE_DIMENSIONS = [
+  { id: "success", left: "Hides success", right: "Performs success" },
+  { id: "trust", left: "Trusts experts", right: "Trusts peers" },
+  { id: "decision", left: "Sits with decisions", right: "Decides fast" },
+  { id: "media", left: "Reads everything", right: "Watches everything" },
+  { id: "buying", left: "Private buyer", right: "Public buyer" },
+  { id: "framing", left: "Pragmatic framer", right: "Aspirational framer" },
+  { id: "deciding", left: "Solo decider", right: "Consensus seeker" },
+  { id: "taste", left: "Niche follower", right: "Mainstream follower" },
+  { id: "risk", left: "Risk-averse", right: "Risk-loving" },
+  { id: "drive", left: "Status motivated", right: "Mastery motivated" }
+];
+
+var VOICE_SAMPLES = [
+  { id: "a", text: "I do not need another course. I have done the courses. I need someone to look at what I have built and tell me what is actually working and what is just noise. I am tired of guessing." },
+  { id: "b", text: "Everyone says my brand looks great. But the right people are not finding me. There is a gap between how I show up and what I am actually capable of, and I cannot see it from inside." },
+  { id: "c", text: "I am ready to stop performing. I have been wearing a brand that fit me three years ago. I want to build the next version of this. The one that matches who I have become." }
+];
+
+var REFUSAL_CARDS = [
+  { id: "loud-skeptic", name: "The Loud Skeptic", desc: "Drains energy in DMs, never buys, leaves bad reviews preemptively." },
+  { id: "slow-yes", name: "The Slow Yes", desc: "Asks twelve questions over six months, finally buys the cheapest tier." },
+  { id: "bargain-hunter", name: "The Bargain Hunter", desc: "Waits for every discount, never buys at full price, never refers." },
+  { id: "status-buyer", name: "The Status Buyer", desc: "Buys for the logo. Never engages. Cancels when the next shiny thing appears." },
+  { id: "lurker", name: "The Lurker", desc: "Three years on the list. Reads every email. Never buys, never unsubscribes." },
+  { id: "weekend-researcher", name: "The Weekend Researcher", desc: "Spends Saturdays reading everything. Never makes a move." },
+  { id: "free-extractor", name: "The Free Extractor", desc: "Mines free content, books a free call, ghosts the proposal." },
+  { id: "rescue-buyer", name: "The Rescue Buyer", desc: "Wants you to fix what they broke. Will not change behavior. Blames you when results stall." },
+  { id: "validator", name: "The Validator", desc: "Wants reassurance, not transformation. Loves the vibe, will not do the work." },
+  { id: "scope-creep", name: "The Scope Creeper", desc: "One yes turns into seventy-two requests. Pays once, expects forever." },
+  { id: "trend-chaser", name: "The Trend Chaser", desc: "Buys what is hot this month. Bored by month two. Quiet by month three." },
+  { id: "tire-kicker", name: "The Tire Kicker", desc: "Always almost ready, never ready. Years pass. Nothing changes." }
+];
+
+var JOURNEY_STAGES = [
+  { id: "trigger", label: "Trigger event", desc: "What pushes them to look for a solution" },
+  { id: "signal", label: "First signal", desc: "Where they first notice you" },
+  { id: "research", label: "Research", desc: "How they validate before buying" },
+  { id: "decision", label: "Decision moment", desc: "What makes them finally move" }
+];
+
+var PERSONA_KEYS = ["now", "next", "northStar"];
+var PERSONA_LABELS = { now: "NOW", next: "NEXT", northStar: "NORTH STAR" };
+var PERSONA_DESC = {
+  now: "The buyer paying you today",
+  next: "The growth lane, twelve months out",
+  northStar: "The buyer you build toward in three years"
+};
+var PERSONA_COLOR = { now: "var(--green)", next: "var(--amber)", northStar: "var(--blue)" };
+var PERSONA_ICON = {
+  now: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  next: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+  northStar: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+};
+
+// Total step count for progress
+var TOTAL_STEPS = 17;
+
+// ============================================================================
+// STATE
+// ============================================================================
+
+var state = {
+  step: 0,
+  qbp: {},
+  apiKey: "",
+  faceSwipes: { now: {}, northStar: {} },
+  habitatSelections: [],
+  triggerScene: null,
+  pulse: { now: {}, next: {}, northStar: {} },
+  voiceMatch: null,
+  fanLetterAssignment: {},
+  refusalDeck: [],
+  triggerMaps: { now: {}, next: {}, northStar: {} },
+  synthesis: null,
+  approved: { now: false, next: false, northStar: false },
+  refineRound: { now: 0, next: 0, northStar: 0 },
+  loading: false,
+  error: null
+};
+
+function setState(patch) {
+  Object.assign(state, patch);
+  saveProgress();
+  render();
+}
+
+var TRANSIENT_KEYS = { apiKey: 1, loading: 1, error: 1, _extractionPhase: 1, _showKey: 1 };
+function isTransientReelKey(k) { return k.indexOf("_reelAnim_") === 0; }
+function saveProgress() {
+  try {
+    var copy = {};
+    var keys = Object.keys(state);
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      if (TRANSIENT_KEYS[k] || isTransientReelKey(k)) continue;
+      copy[k] = state[k];
+    }
+    localStorage.setItem("qb_casting_floor_state", JSON.stringify(copy));
+  } catch (e) {}
+}
+
+function loadProgress() {
+  try {
+    var saved = localStorage.getItem("qb_casting_floor_state");
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      Object.assign(state, parsed);
+    }
+  } catch (e) {}
+}
+
+function clearProgress() {
+  try { localStorage.removeItem("qb_casting_floor_state"); } catch (e) {}
+}
+
+// ============================================================================
+// QBP READ / WRITE
+// ============================================================================
+
+function readQBP() {
+  // 1. URL parameter ?qbp=base64json
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var qbpParam = params.get("qbp");
+    if (qbpParam) {
+      var decoded = atob(qbpParam);
+      return JSON.parse(decoded);
+    }
+  } catch (e) {}
+  // 2. localStorage qb_qbp
+  try {
+    var stored = localStorage.getItem("qb_qbp");
+    if (stored) return JSON.parse(stored);
+  } catch (e) {}
+  // 3. Brand Soul Map output
+  try {
+    var bsm = localStorage.getItem("qb_brand_soul_map_output");
+    if (bsm) return JSON.parse(bsm);
+  } catch (e) {}
+  return {};
+}
+
+function writeQBP(updates) {
+  try {
+    var current = JSON.parse(localStorage.getItem("qb_qbp") || "{}");
+    Object.assign(current, updates);
+    // Cloud-aware write: mirrors to Supabase if user is authed
+    if (window.QB && QB.setQBP) { QB.setQBP(current); }
+    else { localStorage.setItem("qb_qbp", JSON.stringify(current)); }
+    // Notify other tools (postMessage pattern used elsewhere)
+    try { window.postMessage({ type: "qb_qbp_update", payload: current }, "*"); } catch (e) {}
+    return current;
+  } catch (e) { return null; }
+}
+
+function readApiKey() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var fromUrl = params.get("apikey");
+    if (fromUrl) return fromUrl;
+  } catch (e) {}
+  try {
+    var stored = localStorage.getItem("qb_anthropic_key");
+    if (stored) return stored;
+  } catch (e) {}
+  return "";
+}
+
+function saveApiKey(key) {
+  try { localStorage.setItem("qb_anthropic_key", key); } catch (e) {}
+  state.apiKey = key;
+}
+
+// ============================================================================
+// DOM HELPERS
+// ============================================================================
+
+function h(tag, props) {
+  var el = document.createElement(tag);
+  if (props) {
+    for (var k in props) {
+      if (!props.hasOwnProperty(k)) continue;
+      var v = props[k];
+      if (v == null || v === false) continue;
+      if (k === "class" || k === "className") el.className = v;
+      else if (k === "style" && typeof v === "object") {
+        for (var sk in v) if (v.hasOwnProperty(sk)) el.style[sk] = v[sk];
+      }
+      else if (k === "html") el.innerHTML = v;
+      else if (k === "text") el.textContent = v;
+      else if (k.indexOf("on") === 0 && typeof v === "function") {
+        el.addEventListener(k.substring(2).toLowerCase(), v);
+      }
+      else el.setAttribute(k, v);
+    }
+  }
+  for (var i = 2; i < arguments.length; i++) {
+    var c = arguments[i];
+    if (c == null || c === false) continue;
+    if (Array.isArray(c)) {
+      for (var j = 0; j < c.length; j++) {
+        var cc = c[j];
+        if (cc == null || cc === false) continue;
+        el.appendChild(typeof cc === "string" || typeof cc === "number" ? document.createTextNode(String(cc)) : cc);
+      }
+    } else {
+      el.appendChild(typeof c === "string" || typeof c === "number" ? document.createTextNode(String(c)) : c);
+    }
+  }
+  return el;
+}
+
+function svg(d, size) {
+  size = size || 16;
+  var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("width", size); s.setAttribute("height", size);
+  s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("fill", "none");
+  s.setAttribute("stroke", "currentColor"); s.setAttribute("stroke-width", "2");
+  s.setAttribute("stroke-linecap", "round"); s.setAttribute("stroke-linejoin", "round");
+  s.innerHTML = d;
+  return s;
+}
+var ICONS = {
+  arrowRight: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+  arrowLeft: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  sparkles: '<path d="M12 3l1.9 5.8L20 10l-5.8 1.9L12 18l-1.9-5.8L4 10l5.8-1.9z"/>',
+  alert: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+  refresh: '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+  zap: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  compass: '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
+  star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'
+};
+function ico(name, size) { return svg(ICONS[name], size); }
+
+// ============================================================================
+// SHARED RENDERS
+// ============================================================================
+
+function renderHeader(persona) {
+  var pct = Math.round((state.step / TOTAL_STEPS) * 100);
+  var children = [
+    h("div", { class: "flex items-center gap-3" },
+      h("div", { class: "header-tag", text: "QB · Casting Floor" }),
+      persona ? renderPersonaBadge(persona, "sm") : null
+    ),
+    h("div", { class: "header-right" },
+      h("div", { class: "progress-track" }, h("div", { class: "progress-bar", style: { width: pct + "%" } })),
+      h("div", { class: "progress-pct", text: pct + "%" }),
+      h("button", { class: "icon-btn", title: "Save and exit", onclick: function() { saveProgress(); alert("Progress saved. You can return any time."); } }, ico("save", 14))
+    )
+  ];
+  return h("header", { class: "header" }, h("div", { class: "header-inner" }, children));
+}
+
+function renderPersonaBadge(persona, size) {
+  var sizeClass = size === "sm" ? "sm" : "";
+  var badge = h("div", { class: "persona-badge persona-" + persona + " " + sizeClass });
+  badge.innerHTML = PERSONA_ICON[persona] + " " + PERSONA_LABELS[persona];
+  return badge;
+}
+
+function renderBtn(label, opts) {
+  opts = opts || {};
+  var variant = opts.variant || "primary";
+  var size = opts.size || "md";
+  var btn = h("button", {
+    class: "btn btn-" + variant + " btn-" + size,
+    onclick: opts.onClick,
+    disabled: opts.disabled
+  });
+  if (opts.icon) {
+    var ic = ico(opts.icon, 13);
+    btn.appendChild(ic);
+  }
+  btn.appendChild(document.createTextNode(label));
+  if (opts.iconRight) {
+    var ir = ico(opts.iconRight, 13);
+    btn.appendChild(ir);
+  }
+  return btn;
+}
+
+function renderLoader(message) {
+  return h("div", { class: "loader-container" },
+    h("div", { class: "loader-orbit" },
+      h("div", { class: "loader-ring" }),
+      h("div", { class: "loader-ring r2" }),
+      h("div", { class: "loader-ring r3" })
+    ),
+    h("div", { class: "label-mono", style: { color: "var(--green)" }, text: "// " + (message || "Working") })
+  );
+}
+
+function renderError(msg) {
+  if (!msg) return null;
+  return h("div", { class: "error-banner", text: msg });
+}
+
+// ============================================================================
+// API CALL
+// ============================================================================
+
+async function callAnthropic(messages, system, maxTokens) {
+  if (!state.apiKey) throw new Error("No API key configured");
+  var res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": state.apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: maxTokens || 4000,
+      system: system,
+      messages: messages
+    })
+  });
+  if (!res.ok) {
+    var errText = await res.text();
+    throw new Error("API " + res.status + ": " + errText.substring(0, 200));
+  }
+  var data = await res.json();
+  return data.content[0].text;
+}
+
+// ============================================================================
+// ROUTING
+// ============================================================================
+
+var STEPS = [
+  "intro",         // 0
+  "extraction",    // 1
+  "reel-now",      // 2
+  "reel-northStar",// 3
+  "habitat",       // 4
+  "diorama",       // 5
+  "pulse-now",     // 6
+  "pulse-next",    // 7
+  "pulse-northStar",//8
+  "voice",         // 9
+  "fanletter",     //10
+  "refusal",       //11
+  "tmap-now",      //12
+  "tmap-next",     //13
+  "tmap-northStar",//14
+  "synthesis",     //15
+  "reveal"         //16
+];
+
+function goNext() { setState({ step: state.step + 1 }); window.scrollTo(0, 0); }
+function goPrev() { if (state.step > 0) setState({ step: state.step - 1 }); window.scrollTo(0, 0); }
+function goToStep(n) { setState({ step: n }); window.scrollTo(0, 0); }
+
+// ============================================================================
+// RENDER DISPATCHER
+// ============================================================================
+
+function render() {
+  var app = document.getElementById("app");
+  app.innerHTML = "";
+
+  var stepName = STEPS[state.step];
+
+  // Show API key gate before Synthesis step if no key
+  if (stepName === "synthesis" && !state.apiKey) {
+    app.appendChild(renderApiKeyGate());
+    return;
+  }
+
+  // Determine persona for header
+  var personaForHeader = null;
+  if (stepName === "reel-now" || stepName === "pulse-now" || stepName === "tmap-now") personaForHeader = "now";
+  else if (stepName === "reel-northStar" || stepName === "pulse-northStar" || stepName === "tmap-northStar") personaForHeader = "northStar";
+  else if (stepName === "pulse-next" || stepName === "tmap-next") personaForHeader = "next";
+
+  if (stepName !== "intro") app.appendChild(renderHeader(personaForHeader));
+
+  var screen;
+  switch (stepName) {
+    case "intro": screen = renderIntro(); break;
+    case "extraction": screen = renderExtraction(); break;
+    case "reel-now": screen = renderReel("now"); break;
+    case "reel-northStar": screen = renderReel("northStar"); break;
+    case "habitat": screen = renderHabitat(); break;
+    case "diorama": screen = renderDiorama(); break;
+    case "pulse-now": screen = renderPulse("now"); break;
+    case "pulse-next": screen = renderPulse("next"); break;
+    case "pulse-northStar": screen = renderPulse("northStar"); break;
+    case "voice": screen = renderVoice(); break;
+    case "fanletter": screen = renderFanLetter(); break;
+    case "refusal": screen = renderRefusal(); break;
+    case "tmap-now": screen = renderTriggerMap("now"); break;
+    case "tmap-next": screen = renderTriggerMap("next"); break;
+    case "tmap-northStar": screen = renderTriggerMap("northStar"); break;
+    case "synthesis": screen = renderSynthesis(); break;
+    case "reveal": screen = renderReveal(); break;
+    default: screen = renderIntro();
+  }
+  app.appendChild(screen);
+}
+
+// ============================================================================
+// STEP 0: INTRO
+// ============================================================================
+
+function renderIntro() {
+  var hasQbp = state.qbp && (state.qbp.brandName || state.qbp.archetype || state.qbp.brandEssence);
+
+  var personaCards = PERSONA_KEYS.map(function(k) {
+    var card = h("div", { class: "intro-card" });
+    var head = h("div", { class: "intro-card-head" });
+    head.innerHTML = '<span style="color:' + PERSONA_COLOR[k] + '">' + PERSONA_ICON[k] + '</span>' +
+      '<span class="mono" style="font-size:10px;letter-spacing:0.25em;color:' + PERSONA_COLOR[k] + '">' + PERSONA_LABELS[k] + '</span>';
+    card.appendChild(head);
+    card.appendChild(h("div", { class: "intro-card-text", text: PERSONA_DESC[k] }));
+    return card;
+  });
+
+  var notice = !hasQbp ? h("div", { class: "notice" },
+    h("div", { class: "notice-icon" }, ico("alert", 16)),
+    h("div", { class: "notice-text", text: "No Brand Soul Map detected. The Casting Floor works best after Brand Soul Map. You can continue, but the Fan Letter pass will use generic prompts." })
+  ) : null;
+
+  return h("div", { class: "screen screen-center fade-in" },
+    h("div", { class: "container-lg center" },
+      h("div", { class: "label-mono", style: { color: "var(--green)" }, text: "// Phase 01 · The Casting Floor" }),
+      h("h1", { class: "display", style: { marginBottom: "24px" }, html: 'Three buyers.<br><span style="color:var(--text3)">One journey.</span>' }),
+      h("p", { class: "text-lead", style: { maxWidth: "560px", margin: "0 auto 24px" }, text: "Most personas are the same human at three different angles. Yours will not be. You will leave with three buyers who live in three different time zones of your business." }),
+      h("div", { class: "intro-grid" }, personaCards),
+      notice,
+      h("div", { class: "flex justify-center gap-3", style: { flexWrap: "wrap" } },
+        renderBtn("Begin · 30 minutes", { size: "lg", iconRight: "arrowRight", onClick: goNext }),
+        state.step > 0 || hasSavedProgress() ? renderBtn("Reset", { size: "md", variant: "ghost", onClick: function() {
+          if (confirm("Clear all saved progress and start over?")) {
+            clearProgress();
+            window.location.reload();
+          }
+        } }) : null
+      ),
+      h("div", { class: "mt-12", style: { fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--text4)" }, text: "Nine exercises · One master plan · Ad targeting ready" })
+    )
+  );
+}
+
+function hasSavedProgress() {
+  try { return !!localStorage.getItem("qb_casting_floor_state"); } catch (e) { return false; }
+}
+
+// ============================================================================
+// STEP 1: EXTRACTION
+// ============================================================================
+
+var extractionTimer = null;
+function renderExtraction() {
+  var phase = state._extractionPhase || "loading";
+
+  if (phase === "loading") {
+    if (!extractionTimer) {
+      extractionTimer = setTimeout(function() {
+        extractionTimer = null;
+        state._extractionPhase = "reveal";
+        render();
+      }, 2200);
+    }
+    return h("div", { class: "screen screen-center" },
+      h("div", { class: "container-md center fade-in" },
+        renderLoader("Reading your QBP"),
+        h("div", { class: "text-body center", text: "Pulling identity, archetype, and Fan Letter..." })
+      )
+    );
+  }
+
+  // Reveal
+  var qbp = state.qbp || {};
+  var fanLetter = qbp.fanLetter || qbp.fan_letter || qbp.fanLetterText || "";
+  var fanExcerpt = "";
+  if (fanLetter && fanLetter.length > 60) {
+    fanExcerpt = fanLetter.split(/[.!?]/).filter(function(s) { return s.trim().length > 30; }).slice(0, 2).join(". ").substring(0, 280) + "...";
+  }
+
+  var fields = [];
+  if (qbp.brandName) fields.push(field("Brand", qbp.brandName, true));
+  if (qbp.archetype) fields.push(field("Primary archetype", qbp.archetype, true));
+  if (qbp.brandEssence || qbp.essence) fields.push(field("Brand essence", qbp.brandEssence || qbp.essence));
+  if (qbp.manifesto) fields.push(field("Manifesto", qbp.manifesto));
+  if (qbp.primaryPersona) fields.push(field("Primary persona (current)", qbp.primaryPersona));
+  if (fanExcerpt) fields.push(field("Fan Letter fragment", fanExcerpt));
+
+  if (fields.length === 0) {
+    fields.push(h("div", { class: "field text-body", text: "No QBP detected. The system will work from your inputs in this session." }));
+  }
+
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md slide-up" },
+      h("div", { class: "label-mono", style: { color: "var(--green)" }, text: "// Pattern extracted" }),
+      h("h2", { class: "display", style: { marginBottom: "20px" }, text: "The seed." }),
+      h("p", { class: "text-body", style: { marginBottom: "32px" }, text: "This is what we already know about your brand. Three personas will branch from this same root." }),
+      h("div", { style: { display: "flex", flexDirection: "column", gap: "12px" } }, fields),
+      h("div", { class: "flex justify-center mt-12" },
+        renderBtn("Continue", { size: "lg", iconRight: "arrowRight", onClick: function() { state._extractionPhase = null; goNext(); } })
+      )
+    )
+  );
+}
+
+function field(label, value, mono) {
+  return h("div", { class: "field" },
+    h("div", { class: "field-label", text: label }),
+    h("div", { class: "field-value " + (mono ? "mono" : ""), text: value })
+  );
+}
+
+// ============================================================================
+// STEPS 2/3: CASTING REEL
+// ============================================================================
+
+function renderReel(persona) {
+  var idx = state["_reelIdx_" + persona] || 0;
+  var animating = state["_reelAnim_" + persona] || null;
+  var swipes = state.faceSwipes[persona] || {};
+
+  var total = 18;
+  var offset = persona === "now" ? 0 : 30;
+  var faceIds = [];
+  for (var i = 0; i < total; i++) faceIds.push(((i + offset) % FACE_IDS.length) + 1);
+
+  var question = persona === "now"
+    ? "Could this person be paying you today?"
+    : "Could this person be your dream client in three years?";
+
+  function swipe(decision) {
+    if (state["_reelAnim_" + persona]) return;
+    state["_reelAnim_" + persona] = decision;
+    render();
+    setTimeout(function() {
+      var newSwipes = Object.assign({}, swipes);
+      newSwipes[faceIds[idx]] = decision;
+      state.faceSwipes[persona] = newSwipes;
+      state["_reelAnim_" + persona] = null;
+      if (idx + 1 >= total) {
+        state["_reelIdx_" + persona] = 0;
+        goNext();
+      } else {
+        state["_reelIdx_" + persona] = idx + 1;
+        setState({});
+      }
+    }, 300);
+  }
+
+  function back() {
+    if (idx === 0 || state["_reelAnim_" + persona]) return;
+    var newSwipes = Object.assign({}, swipes);
+    delete newSwipes[faceIds[idx - 1]];
+    state.faceSwipes[persona] = newSwipes;
+    state["_reelIdx_" + persona] = idx - 1;
+    setState({});
+  }
+
+  var animClass = animating === "keep" ? " reel-keep" : animating === "pass" ? " reel-pass" : "";
+  var img = h("img", {
+    src: "https://i.pravatar.cc/600?img=" + faceIds[idx],
+    alt: "",
+    draggable: "false"
+  });
+
+  return h("div", { class: "screen screen-center no-select" },
+    h("div", { class: "container-sm fade-in" },
+      h("div", { class: "center mb-6" },
+        h("div", { class: "flex justify-center mb-4" }, renderPersonaBadge(persona)),
+        h("div", { class: "label-mono", style: { color: "var(--text3)" }, text: "// Exercise 1 · The Casting Reel" }),
+        h("h2", { class: "display", style: { fontSize: "26px", marginBottom: "12px" }, text: question }),
+        h("div", { class: "counter-pill" }, "Trust your gut · " + (idx + 1) + " of " + total)
+      ),
+      h("div", { class: "reel-stack mb-4" },
+        h("div", { class: "reel-card-bg b1" }),
+        h("div", { class: "reel-card-bg b2" }),
+        h("div", { class: "reel-card" + animClass },
+          img,
+          h("div", { class: "reel-fade" })
+        )
+      ),
+      h("div", { class: "reel-actions" },
+        h("button", { class: "reel-btn reel-btn-pass", onclick: function() { swipe("pass"); } }, ico("x", 22)),
+        h("button", { class: "reel-btn reel-btn-keep", onclick: function() { swipe("keep"); } }, ico("check", 22))
+      ),
+      h("div", { class: "center mt-4" },
+        h("button", {
+          onclick: back,
+          disabled: idx === 0,
+          style: { fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase", color: idx === 0 ? "var(--text4)" : "var(--text3)", cursor: idx === 0 ? "default" : "pointer" }
+        }, "← Back")
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 4: HABITAT
+// ============================================================================
+
+function renderHabitat() {
+  var max = 5;
+  var selected = state.habitatSelections || [];
+
+  function toggle(seed) {
+    var newSel;
+    if (selected.indexOf(seed) >= 0) {
+      newSel = selected.filter(function(s) { return s !== seed; });
+    } else if (selected.length < max) {
+      newSel = selected.concat([seed]);
+    } else {
+      return;
+    }
+    setState({ habitatSelections: newSel });
+  }
+
+  var grid = h("div", { class: "habitat-grid" }, HABITAT_DATA.map(function(item) {
+    var isSelected = selected.indexOf(item.seed) >= 0;
+    var card = h("div", {
+      class: "habitat-item" + (isSelected ? " selected" : ""),
+      onclick: function() { toggle(item.seed); }
+    },
+      h("img", { src: "https://picsum.photos/seed/qbcf-" + item.seed + "/400/500", alt: "", loading: "lazy" }),
+      h("div", { class: "habitat-check" }, ico("check", 14)),
+      h("div", { class: "habitat-label", text: item.label })
+    );
+    return card;
+  }));
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-xl fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "label-mono", style: { color: "var(--text3)" }, text: "// Exercise 2 · The Habitat" }),
+        h("h2", { class: "display", style: { marginBottom: "12px" }, text: "Where do they actually live?" }),
+        h("p", { class: "text-body", style: { maxWidth: "560px", margin: "0 auto 12px" }, text: "Pick the five environments where your master persona spends real time. Not where they should be. Where they are." }),
+        h("div", { class: "counter-pill" }, selected.length + " of " + max + " selected")
+      ),
+      grid,
+      h("div", { class: "center mt-8 flex justify-center gap-3" },
+        renderBtn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        renderBtn("Continue", { iconRight: "arrowRight", onClick: goNext, disabled: selected.length < max })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 5: TRIGGER DIORAMA
+// ============================================================================
+
+function renderDiorama() {
+  function pick(id) { setState({ triggerScene: id }); }
+  var grid = h("div", { class: "diorama-grid" }, TRIGGER_SCENES.map(function(s) {
+    var isSel = state.triggerScene === s.id;
+    return h("button", {
+      class: "diorama-card" + (isSel ? " selected" : ""),
+      onclick: function() { pick(s.id); }
+    },
+      h("div", { class: "diorama-emoji", text: s.emoji }),
+      h("div", null,
+        h("div", { class: "diorama-title", text: s.title }),
+        h("div", { class: "diorama-desc", text: s.desc })
+      )
+    );
+  }));
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-lg fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "label-mono", style: { color: "var(--text3)" }, text: "// Exercise 3 · The Trigger Diorama" }),
+        h("h2", { class: "display", style: { marginBottom: "12px" }, text: "Which moment pushes them to look?" }),
+        h("p", { class: "text-body", style: { maxWidth: "560px", margin: "0 auto" }, text: "The inciting event. The exact moment your buyer decides their current life will not do. Pick one." })
+      ),
+      grid,
+      h("div", { class: "center mt-8 flex justify-center gap-3" },
+        renderBtn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        renderBtn("Continue", { iconRight: "arrowRight", onClick: goNext, disabled: !state.triggerScene })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEPS 6/7/8: PULSE SLIDERS
+// ============================================================================
+
+function renderPulse(persona) {
+  var pulse = state.pulse[persona] || {};
+  var dimensionLabel = persona === "now" ? "today" : persona === "next" ? "in twelve months" : "in three years";
+
+  function setVal(id, val) {
+    var newPulse = Object.assign({}, pulse);
+    newPulse[id] = val;
+    var allPulse = Object.assign({}, state.pulse);
+    allPulse[persona] = newPulse;
+    setState({ pulse: allPulse });
+  }
+
+  var rows = PULSE_DIMENSIONS.map(function(d) {
+    var current = pulse[d.id] != null ? pulse[d.id] : 50;
+    return h("div", { class: "pulse-row" },
+      h("div", { class: "pulse-labels" },
+        h("span", { class: "pulse-label-left", text: d.left }),
+        h("span", { class: "pulse-label-right", text: d.right })
+      ),
+      h("input", {
+        type: "range", min: "0", max: "100", value: String(current),
+        oninput: function(e) { setVal(d.id, Number(e.target.value)); }
+      })
+    );
+  });
+
+  var allFilled = PULSE_DIMENSIONS.every(function(d) { return pulse[d.id] != null; });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "flex justify-center mb-4" }, renderPersonaBadge(persona)),
+        h("div", { class: "label-mono", style: { color: "var(--text3)" }, text: "// Exercise 4 · The Pulse" }),
+        h("h2", { class: "display", style: { marginBottom: "12px" }, text: "How does this buyer behave " + dimensionLabel + "?" }),
+        h("p", { class: "text-body", style: { maxWidth: "520px", margin: "0 auto" }, text: "Drag each slider toward the side that feels true. Move once if you are sure, halfway if you are not. Each one is a small bet." })
+      ),
+      h("div", { class: "glass", style: { borderRadius: "16px", padding: "8px 24px" } }, rows),
+      h("div", { class: "center mt-8 flex justify-center gap-3" },
+        renderBtn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        renderBtn("Continue", { iconRight: "arrowRight", onClick: function() { allFilled || PULSE_DIMENSIONS.forEach(function(d) { if (pulse[d.id] == null) setVal(d.id, 50); }); goNext(); } })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 9: VOICE MATCH
+// ============================================================================
+
+function renderVoice() {
+  function pick(id) { setState({ voiceMatch: id }); }
+  var cards = VOICE_SAMPLES.map(function(s) {
+    var isSel = state.voiceMatch === s.id;
+    return h("button", {
+      class: "voice-card" + (isSel ? " selected" : ""),
+      onclick: function() { pick(s.id); },
+      style: { textAlign: "left", width: "100%", display: "block" }
+    },
+      h("div", { class: "voice-quote", text: s.text })
+    );
+  });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "label-mono", style: { color: "var(--text3)" }, text: "// Exercise 5 · The Voice Match" }),
+        h("h2", { class: "display", style: { marginBottom: "12px" }, text: "Which inner monologue is theirs?" }),
+        h("p", { class: "text-body", style: { maxWidth: "520px", margin: "0 auto" }, text: "Three voices. Each is a different buyer right before they decide to act. Pick the one that sounds like your master persona." })
+      ),
+      h("div", null, cards),
+      h("div", { class: "center mt-8 flex justify-center gap-3" },
+        renderBtn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        renderBtn("Continue", { iconRight: "arrowRight", onClick: goNext, disabled: !state.voiceMatch })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 10: FAN LETTER CROSS-CUT
+// ============================================================================
+
+function getFanLetterLines() {
+  var qbp = state.qbp || {};
+  var fanLetter = qbp.fanLetter || qbp.fan_letter || qbp.fanLetterText || "";
+  if (fanLetter && fanLetter.length > 100) {
+    var sentences = fanLetter.split(/[.!?]/).filter(function(s) { return s.trim().length > 40; });
+    if (sentences.length >= 3) {
+      return [sentences[0].trim() + ".", sentences[Math.floor(sentences.length / 2)].trim() + ".", sentences[sentences.length - 1].trim() + "."];
+    }
+  }
+  // Fallback generic lines (used when no Fan Letter)
+  return [
+    "When I found you, I was tired of looking. I had bought every other version of this and none of it stuck.",
+    "I do not know exactly when it happened, but somewhere along the way I stopped trying to be impressive and started trying to be real. That is on you.",
+    "I send people to you now without thinking about it. Not because of what you taught me, but because of who I became while you were teaching me."
+  ];
+}
+
+function renderFanLetter() {
+  var lines = getFanLetterLines();
+  var assignments = state.fanLetterAssignment || {};
+
+  function assign(lineIdx, persona) {
+    var newAssign = Object.assign({}, assignments);
+    // Remove any existing assignment of that persona
+    Object.keys(newAssign).forEach(function(k) { if (newAssign[k] === persona) delete newAssign[k]; });
+    newAssign[lineIdx] = persona;
+    setState({ fanLetterAssignment: newAssign });
+  }
+
+  var lineEls = lines.map(function(line, idx) {
+    var assigned = assignments[idx];
+    var optionEls = PERSONA_KEYS.map(function(p) {
+      return h("button", {
+        class: "fan-option" + (assigned === p ? " active " + p : ""),
+        onclick: function() { assign(idx, p); }
+      }, PERSONA_LABELS[p]);
+    });
+    return h("div", { class: "fan-line" },
+      h("div", { class: "fan-line-text", text: line }),
+      h("div", { class: "fan-options" }, optionEls)
+    );
+  });
+
+  var assignedCount = Object.keys(assignments).length;
+  var allAssigned = assignedCount === 3 && new Set(Object.values(assignments)).size === 3;
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "label-mono", style: { color: "var(--text3)" }, text: "// Exercise 6 · The Fan Letter Cross-Cut" }),
+        h("h2", { class: "display", style: { marginBottom: "12px" }, text: "Who is writing each line?" }),
+        h("p", { class: "text-body", style: { maxWidth: "520px", margin: "0 auto" }, text: "Three sentences from your Fan Letter. Assign each to a persona. The same letter is being written by three different buyers." })
+      ),
+      h("div", null, lineEls),
+      h("div", { class: "center mt-8 flex justify-center gap-3" },
+        renderBtn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        renderBtn("Continue", { iconRight: "arrowRight", onClick: goNext, disabled: !allAssigned })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 11: REFUSAL DECK
+// ============================================================================
+
+function renderRefusal() {
+  var refused = state.refusalDeck || [];
+  var max = 3;
+
+  function toggle(id) {
+    var newR;
+    if (refused.indexOf(id) >= 0) {
+      newR = refused.filter(function(r) { return r !== id; });
+    } else if (refused.length < max) {
+      newR = refused.concat([id]);
+    } else {
+      return;
+    }
+    setState({ refusalDeck: newR });
+  }
+
+  var grid = h("div", { class: "refusal-grid" }, REFUSAL_CARDS.map(function(c) {
+    var isBanned = refused.indexOf(c.id) >= 0;
+    return h("button", {
+      class: "refusal-card" + (isBanned ? " banned" : ""),
+      onclick: function() { toggle(c.id); }
+    },
+      h("div", { class: "refusal-name", text: c.name }),
+      h("div", { class: "refusal-desc", text: c.desc })
+    );
+  }));
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-xl fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "label-mono", style: { color: "var(--text3)" }, text: "// Exercise 7 · The Refusal Deck" }),
+        h("h2", { class: "display", style: { marginBottom: "12px" }, text: "Pick three buyers you refuse to serve." }),
+        h("p", { class: "text-body", style: { maxWidth: "560px", margin: "0 auto 12px" }, text: "Anti-personas built from real damage. Pick the three that have cost you the most. They become your hard exclusion rules for ad targeting." }),
+        h("div", { class: "counter-pill" }, refused.length + " of " + max + " banned")
+      ),
+      grid,
+      h("div", { class: "center mt-8 flex justify-center gap-3" },
+        renderBtn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        renderBtn("Continue", { iconRight: "arrowRight", onClick: goNext, disabled: refused.length < max })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEPS 12/13/14: TRIGGER MAP
+// ============================================================================
+
+function renderTriggerMap(persona) {
+  var tmap = state.triggerMaps[persona] || {};
+
+  function setStage(stageId, val) {
+    var newTmap = Object.assign({}, tmap);
+    newTmap[stageId] = val;
+    var allMaps = Object.assign({}, state.triggerMaps);
+    allMaps[persona] = newTmap;
+    setState({ triggerMaps: allMaps });
+  }
+
+  var placeholders = {
+    trigger: persona === "now" ? "e.g. Their last launch flopped" : persona === "next" ? "e.g. They hit a revenue ceiling they cannot break" : "e.g. They want to be referenced as the standard in their field",
+    signal: persona === "now" ? "e.g. A founder friend mentions you on a call" : persona === "next" ? "e.g. They see you cited in a publication they respect" : "e.g. A peer they admire works with you publicly",
+    research: persona === "now" ? "e.g. Reads two case studies, scans your site" : persona === "next" ? "e.g. Reads everything you have published, watches your talks" : "e.g. Studies your client roster and your point of view for months",
+    decision: persona === "now" ? "e.g. They book a call within 48 hours" : persona === "next" ? "e.g. They wait for the right offer at the right moment" : "e.g. They invest only when they feel they have earned the room"
+  };
+
+  var stages = JOURNEY_STAGES.map(function(s, idx) {
+    return h("div", { class: "tmap-stage" },
+      h("div", { class: "tmap-stage-header" },
+        h("div", { class: "tmap-stage-title", text: s.label }),
+        h("div", { class: "tmap-stage-num", text: "0" + (idx + 1) })
+      ),
+      h("div", { class: "tmap-stage-desc", text: s.desc }),
+      h("input", {
+        class: "tmap-input",
+        type: "text",
+        value: tmap[s.id] || "",
+        placeholder: placeholders[s.id],
+        oninput: function(e) { setStage(s.id, e.target.value); }
+      })
+    );
+  });
+
+  var allFilled = JOURNEY_STAGES.every(function(s) { return tmap[s.id] && tmap[s.id].trim().length > 3; });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "flex justify-center mb-4" }, renderPersonaBadge(persona)),
+        h("div", { class: "label-mono", style: { color: "var(--text3)" }, text: "// Exercise 8 · The Trigger Map" }),
+        h("h2", { class: "display", style: { marginBottom: "12px" }, text: "Map their path to you." }),
+        h("p", { class: "text-body", style: { maxWidth: "520px", margin: "0 auto" }, text: "Four stages from trigger to decision. Be specific. This becomes the ad sequence we will run for this persona." })
+      ),
+      h("div", { class: "tmap" }, stages),
+      h("div", { class: "center mt-8 flex justify-center gap-3" },
+        renderBtn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        renderBtn("Continue", { iconRight: "arrowRight", onClick: goNext, disabled: !allFilled })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 15: SYNTHESIS (API call)
+// ============================================================================
+
+function renderApiKeyGate() {
+  var showKey = state._showKey || false;
+  var input;
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "gate" },
+        h("div", { class: "label-mono", style: { color: "var(--green)" }, text: "// API key required" }),
+        h("h2", { class: "display", style: { fontSize: "26px", marginBottom: "12px" }, text: "Anthropic key needed" }),
+        h("p", { class: "text-body", style: { marginBottom: "16px" }, text: "The synthesis step calls Claude to assemble your three persona briefs. Paste your Anthropic API key. It is stored locally only and never sent anywhere except to Anthropic." }),
+        input = h("input", {
+          class: "gate-input",
+          type: showKey ? "text" : "password",
+          placeholder: "sk-ant-...",
+          value: state.apiKey || ""
+        }),
+        h("div", { class: "flex justify-between items-center mt-2" },
+          h("button", {
+            class: "gate-toggle",
+            onclick: function() { state._showKey = !showKey; render(); }
+          }, showKey ? "Hide" : "Show"),
+          renderBtn("Save and continue", {
+            size: "sm",
+            onClick: function() {
+              var k = input.value.trim();
+              if (!k) return;
+              saveApiKey(k);
+              state._showKey = false;
+              render();
+            }
+          })
+        )
+      )
+    )
+  );
+}
+
+function buildSynthesisPrompt() {
+  var qbp = state.qbp || {};
+  var habitatSelected = HABITAT_DATA.filter(function(h) { return state.habitatSelections.indexOf(h.seed) >= 0; }).map(function(h) { return h.label; });
+  var triggerScene = TRIGGER_SCENES.find(function(t) { return t.id === state.triggerScene; });
+  var refusedNames = REFUSAL_CARDS.filter(function(c) { return state.refusalDeck.indexOf(c.id) >= 0; }).map(function(c) { return c.name + " (" + c.desc + ")"; });
+  var voiceText = (VOICE_SAMPLES.find(function(v) { return v.id === state.voiceMatch; }) || {}).text || "";
+
+  function pulseSummary(p) {
+    return PULSE_DIMENSIONS.map(function(d) {
+      var v = state.pulse[p][d.id];
+      if (v == null) return null;
+      var leaning = v < 30 ? d.left : v > 70 ? d.right : "balanced (" + d.left + "/" + d.right + ")";
+      return "- " + d.left + " / " + d.right + ": " + v + "% (" + leaning + ")";
+    }).filter(Boolean).join("\n");
+  }
+
+  function tmapSummary(p) {
+    return JOURNEY_STAGES.map(function(s) {
+      var v = state.triggerMaps[p][s.id] || "(blank)";
+      return "- " + s.label + ": " + v;
+    }).join("\n");
+  }
+
+  var fanAssignments = Object.keys(state.fanLetterAssignment).map(function(idx) {
+    return state.fanLetterAssignment[idx] + ": \"" + getFanLetterLines()[idx] + "\"";
+  }).join("\n");
+
+  var prompt = "You are synthesizing persona research from a tactile diagnostic exercise. Output three buyer profiles: NOW, NEXT, NORTH STAR. Each must be ad-ready.\n\n" +
+    "BRAND CONTEXT:\n" +
+    (qbp.brandName ? "- Brand: " + qbp.brandName + "\n" : "") +
+    (qbp.archetype ? "- Archetype: " + qbp.archetype + "\n" : "") +
+    (qbp.brandEssence || qbp.essence ? "- Essence: " + (qbp.brandEssence || qbp.essence) + "\n" : "") +
+    (qbp.manifesto ? "- Manifesto: " + qbp.manifesto + "\n" : "") +
+    (qbp.primaryPersona ? "- Primary persona (existing): " + qbp.primaryPersona + "\n" : "") +
+    "\nSHARED INPUTS (apply to all three personas):\n" +
+    "- Habitats: " + habitatSelected.join(", ") + "\n" +
+    "- Trigger scene: " + (triggerScene ? triggerScene.title + " - " + triggerScene.desc : "(none)") + "\n" +
+    "- Voice match (their inner monologue): \"" + voiceText + "\"\n" +
+    "- Anti-personas to exclude from targeting: " + refusedNames.join("; ") + "\n" +
+    "- Fan Letter assignments:\n" + fanAssignments + "\n\n" +
+    "PER-PERSONA INPUTS:\n\n" +
+    "NOW persona pulse:\n" + pulseSummary("now") + "\n" +
+    "NOW persona journey:\n" + tmapSummary("now") + "\n\n" +
+    "NEXT persona pulse:\n" + pulseSummary("next") + "\n" +
+    "NEXT persona journey:\n" + tmapSummary("next") + "\n\n" +
+    "NORTH STAR persona pulse:\n" + pulseSummary("northStar") + "\n" +
+    "NORTH STAR persona journey:\n" + tmapSummary("northStar") + "\n\n" +
+    "OUTPUT REQUIREMENTS:\n" +
+    "Return ONLY valid JSON, no preamble, no markdown fences. Schema:\n" +
+    "{\n" +
+    "  \"now\": {\n" +
+    "    \"name\": \"Persona name (3-5 words, evocative not generic)\",\n" +
+    "    \"oneLine\": \"One-sentence description of who this person is in their inner life\",\n" +
+    "    \"hook\": \"Ad-grade hook line in their voice, under 15 words\",\n" +
+    "    \"angles\": [\"Angle 1\", \"Angle 2\", \"Angle 3\"],\n" +
+    "    \"proof\": [\"Proof point 1\", \"Proof point 2\", \"Proof point 3\"],\n" +
+    "    \"channel\": \"Primary channel where they live and where this ad runs\",\n" +
+    "    \"language\": \"Three to five phrases in their actual words, comma separated\",\n" +
+    "    \"antiRule\": \"One sentence rule for who to exclude from targeting based on the anti-personas\"\n" +
+    "  },\n" +
+    "  \"next\": { same schema },\n" +
+    "  \"northStar\": { same schema }\n" +
+    "}\n\n" +
+    "Hooks must be specific, not generic. Angles must be different from each other. Channels must be one named channel each. Anti-rules must be exclusionary criteria for ad targeting.";
+
+  return prompt;
+}
+
+async function runSynthesis() {
+  state.loading = true;
+  state.error = null;
+  render();
+  try {
+    var prompt = buildSynthesisPrompt();
+    var raw = await callAnthropic(
+      [{ role: "user", content: prompt }],
+      "You are a senior brand strategist and direct-response specialist. You produce ad-ready persona briefs that work in real campaigns. You write in the voice of the buyer, not about the buyer. You return only valid JSON.",
+      4000
+    );
+    var cleaned = raw.replace(/```json|```/g, "").trim();
+    var firstBrace = cleaned.indexOf("{");
+    var lastBrace = cleaned.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+    }
+    var parsed = JSON.parse(cleaned);
+    state.synthesis = parsed;
+    state.loading = false;
+    state.error = null;
+    goNext();
+  } catch (e) {
+    state.loading = false;
+    state.error = e.message || "Synthesis failed. Check API key and try again.";
+    render();
+  }
+}
+
+function renderSynthesis() {
+  if (state.synthesis) {
+    // Already done, jump to reveal
+    setTimeout(goNext, 100);
+    return h("div");
+  }
+  if (state.loading) {
+    return h("div", { class: "screen screen-center" },
+      h("div", { class: "container-md center fade-in" },
+        renderLoader("Synthesizing"),
+        h("div", { class: "text-body center", text: "Reading every signal you generated. Building three buyer profiles." }),
+        h("div", { class: "text-tiny center mt-4 muted-2", text: "This usually takes 15 to 30 seconds." })
+      )
+    );
+  }
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md fade-in" },
+      state.error ? renderError(state.error) : null,
+      h("div", { class: "center" },
+        h("div", { class: "label-mono", style: { color: "var(--green)" }, text: "// Ready to synthesize" }),
+        h("h2", { class: "display", style: { marginBottom: "20px" }, text: "Build the three briefs." }),
+        h("p", { class: "text-body", style: { marginBottom: "32px" }, text: "Every signal you gave is now ready to be assembled into three ad-grade buyer profiles. One click." }),
+        h("div", { class: "flex justify-center gap-3" },
+          renderBtn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+          renderBtn("Run synthesis", { size: "lg", icon: "sparkles", onClick: runSynthesis })
+        )
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 16: REVEAL + APPROVAL
+// ============================================================================
+
+function renderReveal() {
+  if (!state.synthesis) {
+    return h("div", { class: "screen screen-center" },
+      h("div", { class: "container-md center" },
+        h("p", { class: "text-body", text: "No synthesis yet." }),
+        renderBtn("Back to synthesis", { onClick: function() { goToStep(15); } })
+      )
+    );
+  }
+
+  var s = state.synthesis;
+  var allApproved = state.approved.now && state.approved.next && state.approved.northStar;
+
+  function renderPersonaCard(p) {
+    var data = s[p];
+    if (!data) return null;
+    var isApproved = state.approved[p];
+    var round = state.refineRound[p] || 0;
+    var canRefine = round < 3;
+
+    var actions;
+    if (isApproved) {
+      actions = h("div", { class: "approval-row" },
+        h("button", { class: "approval-btn approval-approved", disabled: true }, "✓ Approved")
+      );
+    } else {
+      actions = h("div", { class: "approval-row" },
+        h("button", {
+          class: "approval-btn approval-approve",
+          onclick: function() {
+            var newApproved = Object.assign({}, state.approved);
+            newApproved[p] = true;
+            setState({ approved: newApproved });
+          }
+        }, "Approve"),
+        canRefine ? h("button", {
+          class: "approval-btn approval-refine",
+          onclick: function() { openRefineModal(p); }
+        }, "Refine · round " + (round + 1) + " of 3") : h("span", { class: "text-tiny muted-2", text: "Refinement limit reached" })
+      );
+    }
+
+    return h("div", { class: "reveal-card " + p, style: { animationDelay: (p === "now" ? "0s" : p === "next" ? "0.2s" : "0.4s") } },
+      h("div", { class: "reveal-card-header" },
+        h("div", null,
+          renderPersonaBadge(p),
+          h("div", { class: "reveal-card-title", style: { marginTop: "10px" }, text: data.name || "—" })
+        )
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Who they are" }),
+        h("div", { class: "text-body", text: data.oneLine || "" })
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Hook" }),
+        h("div", { class: "reveal-hook", text: data.hook || "" })
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Three angles" }),
+        h("ul", { class: "reveal-list" }, (data.angles || []).map(function(a) { return h("li", { text: a }); }))
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Proof points" }),
+        h("ul", { class: "reveal-list" }, (data.proof || []).map(function(a) { return h("li", { text: a }); }))
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-row" },
+          h("div", null,
+            h("div", { class: "reveal-section-label", text: "Channel" }),
+            h("div", { class: "reveal-pill", text: data.channel || "" })
+          ),
+          h("div", { style: { flex: "1" } },
+            h("div", { class: "reveal-section-label", text: "Their language" }),
+            h("div", { class: "text-body", text: data.language || "" })
+          )
+        )
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Anti-targeting rule" }),
+        h("div", { class: "text-body", text: data.antiRule || "" })
+      ),
+      actions
+    );
+  }
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "label-mono", style: { color: "var(--green)" }, text: "// The Reveal" }),
+        h("h2", { class: "display", style: { marginBottom: "12px" }, text: "Your three buyers." }),
+        h("p", { class: "text-body", style: { maxWidth: "520px", margin: "0 auto" }, text: "Each card is ad-grade. Approve when it lands. Refine if it needs sharpening. Up to three rounds per persona." }),
+        state.error ? h("div", { style: { marginTop: "16px" } }, renderError(state.error)) : null
+      ),
+      h("div", null,
+        renderPersonaCard("now"),
+        renderPersonaCard("next"),
+        renderPersonaCard("northStar")
+      ),
+      h("div", { class: "center mt-12" },
+        allApproved ? renderBtn("Save to QBP and finish", { size: "lg", icon: "save", onClick: finalSave }) : h("div", { class: "text-tiny muted", text: "Approve all three to save and finish" })
+      )
+    )
+  );
+}
+
+function openRefineModal(persona) {
+  var existing = document.getElementById("refine-modal");
+  if (existing) existing.remove();
+  var feedbackInput;
+  var modal = h("div", { id: "refine-modal", class: "modal-overlay", onclick: function(e) { if (e.target === modal) modal.remove(); } },
+    h("div", { class: "modal" },
+      h("div", { class: "modal-title", text: "Refine " + PERSONA_LABELS[persona] }),
+      h("p", { class: "text-body", text: "What is wrong, missing, or off? One sharp paragraph. Claude will rebuild this persona based on your note." }),
+      feedbackInput = h("textarea", { class: "modal-textarea", placeholder: "e.g. The hook is too generic. They are not 'tired of guessing' — they are tired of being underestimated. Rewrite around that..." }),
+      h("div", { class: "flex gap-3 justify-between" },
+        h("button", { class: "btn btn-ghost btn-sm", onclick: function() { modal.remove(); } }, "Cancel"),
+        h("button", {
+          class: "btn btn-primary btn-sm",
+          onclick: function() {
+            var feedback = feedbackInput.value.trim();
+            if (!feedback) return;
+            modal.remove();
+            runRefine(persona, feedback);
+          }
+        }, "Rebuild this persona")
+      )
+    )
+  );
+  document.body.appendChild(modal);
+  feedbackInput.focus();
+}
+
+async function runRefine(persona, feedback) {
+  state.loading = true;
+  state.error = null;
+  render();
+  try {
+    var prevJson = JSON.stringify(state.synthesis[persona]);
+    var brandLine = state.qbp.brandName ? "Brand: " + state.qbp.brandName + ". " : "";
+    if (state.qbp.archetype) brandLine += "Archetype: " + state.qbp.archetype + ". ";
+    if (state.qbp.brandEssence || state.qbp.essence) brandLine += "Essence: " + (state.qbp.brandEssence || state.qbp.essence) + ".";
+
+    var prompt = "Refine this " + PERSONA_LABELS[persona] + " persona based on the user's feedback. Keep the same JSON schema. Return ONLY the new JSON object for this single persona.\n\n" +
+      "Brand context: " + brandLine + "\n\n" +
+      "PREVIOUS VERSION:\n" + prevJson + "\n\n" +
+      "USER FEEDBACK:\n" + feedback + "\n\n" +
+      "Output: same JSON schema as before, just for this single persona. Schema: { name, oneLine, hook, angles[3], proof[3], channel, language, antiRule }. No preamble, no fences.";
+
+    var raw = await callAnthropic(
+      [{ role: "user", content: prompt }],
+      "You are a senior brand strategist refining a persona brief. Apply the user's feedback faithfully. Return only valid JSON.",
+      2000
+    );
+    var cleaned = raw.replace(/```json|```/g, "").trim();
+    var firstBrace = cleaned.indexOf("{");
+    var lastBrace = cleaned.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+    }
+    var refined = JSON.parse(cleaned);
+    var newSynth = Object.assign({}, state.synthesis);
+    newSynth[persona] = refined;
+    var newRound = Object.assign({}, state.refineRound);
+    newRound[persona] = (newRound[persona] || 0) + 1;
+    state.synthesis = newSynth;
+    state.refineRound = newRound;
+    state.loading = false;
+    state.error = null;
+    render();
+  } catch (e) {
+    state.loading = false;
+    state.error = "Refine failed: " + (e.message || "Try again.");
+    render();
+  }
+}
+
+function finalSave() {
+  // Write to QBP (cloud-aware via writeQBP → QB.setQBP)
+  var s = state.synthesis;
+  if (s) {
+    writeQBP({
+      nowPersona: s.now,
+      nextPersona: s.next,
+      northStarPersona: s.northStar,
+      castingFloorComplete: true,
+      castingFloorTimestamp: new Date().toISOString()
+    });
+    // Note: legacy qb_casting_floor_done flag dropped — completion is recorded
+    // by QB.openGate() → QB.recordCompletion() below as the single source.
+    try { localStorage.setItem("qb_casting_floor_output", JSON.stringify(s)); } catch (e) {}
+  }
+  // Show finish screen
+  state._finished = true;
+  render();
+  // Open soft gate (no-op if already authed; records local + cloud completion either way)
+  try {
+    if (window.QB && QB.openGate) {
+      var qbp = QB.getQBP ? QB.getQBP() : {};
+      QB.openGate({ toolId: "casting-floor", toolName: "The Casting Floor", brandName: (qbp && qbp.brandName) || "" });
+    }
+  } catch (e) { console.warn("QB gate:", e); }
+}
+
+// Override render dispatch for finished state
+var _origRender = render;
+render = function() {
+  if (state._finished) {
+    var app = document.getElementById("app");
+    app.innerHTML = "";
+    app.appendChild(renderHeader(null));
+    app.appendChild(renderFinish());
+    return;
+  }
+  _origRender();
+};
+
+function renderFinish() {
+  function downloadJSON() {
+    var blob = new Blob([JSON.stringify(state.synthesis, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "casting-floor-personas.json";
+    a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+  }
+  function downloadMD() {
+    var s = state.synthesis;
+    var md = "# Casting Floor — Three Personas\n\n";
+    PERSONA_KEYS.forEach(function(k) {
+      var d = s[k];
+      md += "## " + PERSONA_LABELS[k] + ": " + (d.name || "") + "\n\n";
+      md += "**Who they are.** " + (d.oneLine || "") + "\n\n";
+      md += "**Hook.** " + (d.hook || "") + "\n\n";
+      md += "**Three angles.**\n";
+      (d.angles || []).forEach(function(a) { md += "- " + a + "\n"; });
+      md += "\n**Proof points.**\n";
+      (d.proof || []).forEach(function(a) { md += "- " + a + "\n"; });
+      md += "\n**Channel.** " + (d.channel || "") + "\n\n";
+      md += "**Their language.** " + (d.language || "") + "\n\n";
+      md += "**Anti-targeting rule.** " + (d.antiRule || "") + "\n\n---\n\n";
+    });
+    var blob = new Blob([md], { type: "text/markdown" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "casting-floor-personas.md";
+    a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md center fade-in" },
+      h("div", { class: "label-mono", style: { color: "var(--green)" }, text: "// Saved to QBP" }),
+      h("h2", { class: "display", style: { marginBottom: "20px" }, text: "Done." }),
+      h("p", { class: "text-body", style: { marginBottom: "32px", maxWidth: "480px", margin: "0 auto 32px" }, text: "Three personas written into your QBP as nowPersona, nextPersona, and northStarPersona. Every downstream tool now has structured input. War Table, Voice Guide, and Predictive Panel will read this automatically." }),
+      h("div", { class: "flex justify-center gap-3", style: { flexWrap: "wrap" } },
+        renderBtn("Download JSON", { icon: "download", variant: "secondary", onClick: downloadJSON }),
+        renderBtn("Download Markdown", { icon: "download", variant: "secondary", onClick: downloadMD }),
+        renderBtn("Open the Hub", { iconRight: "arrowRight", onClick: function() { window.location.href = "qb-branidos-hub.html"; } })
+      ),
+      h("div", { class: "mt-8" },
+        h("button", {
+          class: "btn btn-ghost btn-sm",
+          onclick: function() {
+            if (confirm("Run the Casting Floor again? Your saved personas will remain in QBP, but progress in this tool will reset.")) {
+              clearProgress();
+              window.location.reload();
+            }
+          }
+        }, "Start over")
+      )
+    )
+  );
+}
+
+// ============================================================================
+// INIT
+// ============================================================================
+
+(function init() {
+  state.qbp = readQBP();
+  state.apiKey = readApiKey();
+  loadProgress();
+  render();
+})();
+
+</script>
+</body>
+</html>

@@ -536,6 +536,13 @@ const JOURNEY = [
         desc: 'Strategic prioritization across 6 dimensions. Takes all your potential moves and outputs a ranked 60-day action plan with a full Strategic Command Document.',
         outputs: ['Ranked initiative list with scores', '60-day field plan', 'Strategic Command Document', 'Trade-off analysis'],
         file: 'war-table.html', phase: 1
+      },
+      {
+        id: 'casting-floor', name: 'The Casting Floor', storageKey: 'qb_casting_floor_done',
+        time: '25–35 min',
+        desc: 'Build three personas in one journey — NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.',
+        outputs: ['NOW persona — ad-ready brief', 'NEXT persona — growth lane brief', 'NORTH STAR persona — long-arc brief', 'Anti-targeting exclusions per persona', 'Trigger Map per persona for ad sequencing'],
+        file: 'casting-floor.html', phase: 1
       }
     ]
   },
@@ -687,6 +694,7 @@ function isStepDone(step) {
       if (step.id === 'sensescape' && (qbp.colorTerritory || qbp.sensescapeCompletedAt)) return true;
       if (step.id === 'visual-dna' && (qbp.visualDnaCompletedAt || qbp.visualReferences)) return true;
       if (step.id === 'war-table'  && (qbp.warTableCompletedAt || qbp.strategicPriorities || qbp.warTableBrief)) return true;
+      if (step.id === 'casting-floor' && (qbp.castingFloorComplete || qbp.nowPersona || qbp.nextPersona || qbp.northStarPersona)) return true;
     }
   } catch(e) {}
 
