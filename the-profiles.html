@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QB BrandOS — The Profiles</title>
+<meta name="description" content="The Profiles · QB BrandOS Phase 01 — three full buyer personas built across biography, pain, journey, and psychology.">
+<script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{ margin:0; padding:0; box-sizing:border-box }
+:root{
+  --cream:          #F4F0EB;
+  --cream-soft:     #EDE8E2;
+  --cream-deep:     #E6E0D8;
+  --cream-edge:     rgba(100,80,50,0.10);
+  --cream-line:     rgba(100,80,50,0.14);
+  --bg-void:        var(--cream);
+  --bg-deep:        var(--cream-soft);
+  --bg-base:        var(--cream-deep);
+  --bg-surface:     rgba(100,80,50,0.04);
+  --bg-elevated:    rgba(100,80,50,0.07);
+  --bg-overlay:     rgba(244,240,235,0.9);
+  --border-subtle:  rgba(100,80,50,0.08);
+  --border-medium:  rgba(100,80,50,0.14);
+  --border-strong:  rgba(100,80,50,0.22);
+  --ink:            #1A1610;
+  --ink-soft:       #5A5040;
+  --ink-mute:       #8A7E70;
+  --ink-faint:      #B8AEA0;
+  --text-1:         var(--ink);
+  --text-2:         var(--ink-soft);
+  --text-3:         var(--ink-mute);
+  --text-4:         var(--ink-faint);
+  --patina:         #3A5F4A;
+  --patina-lit:     #4A7A5E;
+  --patina-dim:     rgba(58,95,74,0.15);
+  --patina-faint:   rgba(58,95,74,0.06);
+  --patina-deep:    #0E1C17;
+  --brass:          #A8903E;
+  --brass-lit:      #C4A84E;
+  --brass-dim:      rgba(168,144,62,0.15);
+  --brass-faint:    rgba(168,144,62,0.06);
+  --terra:          #C4654A;
+  --terra-lit:      #D4785E;
+  --plum:           #7A5A6E;
+  --plum-lit:       #9A7A8E;
+  --plum-dim:       rgba(122,90,110,0.18);
+  --plum-faint:     rgba(122,90,110,0.07);
+  --warmred:        #8A4A4A;
+  --pill-bg:        #F3E9C9;
+  --pill-bg-hover:  #EFE1B4;
+  --pill-border:    #A8903E;
+  --pill-ink:       #1A1610;
+  --f-display:      'EB Garamond','Cormorant Garamond',Georgia,serif;
+  --f-body:         'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --f-mono:         'JetBrains Mono',ui-monospace,monospace;
+  --f-script:       'Caveat',cursive;
+  --ease:           cubic-bezier(.22,1,.36,1);
+  --r-pill:         999px;
+  --r-card:         16px;
+  --r-card-lg:      24px;
+  /* Persona triad — patina/plum/brass — coherent with brand */
+  --p1:             var(--patina);
+  --p1-2:           var(--patina-faint);
+  --p1-3:           var(--patina-dim);
+  --p2:             var(--plum);
+  --p2-2:           var(--plum-faint);
+  --p2-3:           var(--plum-dim);
+  --p3:             var(--brass);
+  --p3-2:           var(--brass-faint);
+  --p3-3:           var(--brass-dim);
+  /* Legacy aliases preserved so JS inline styles continue to resolve */
+  --bg:             var(--bg-void);
+  --bg2:            var(--bg-surface);
+  --bg3:            var(--bg-elevated);
+  --bg4:            var(--cream-deep);
+  --text:           var(--text-1);
+  --text2:          var(--text-2);
+  --text3:          var(--text-3);
+  --text4:          var(--text-4);
+  --border:         var(--border-subtle);
+  --border2:        var(--border-medium);
+  --border3:        var(--border-strong);
+  --green:          var(--patina);
+  --green2:         var(--patina-faint);
+  --green3:         var(--patina-dim);
+  --red:            var(--terra);
+  --mono:           var(--f-mono);
+  --sans:           var(--f-body);
+}
+[data-theme="dark"]{
+  --cream:          #080604;
+  --cream-soft:     #0A0806;
+  --cream-deep:     #12100C;
+  --cream-edge:     rgba(140,110,70,0.06);
+  --cream-line:     rgba(140,110,70,0.11);
+  --bg-void:        var(--cream);
+  --bg-deep:        var(--cream-soft);
+  --bg-base:        var(--cream-deep);
+  --bg-surface:     rgba(140,110,70,0.045);
+  --bg-elevated:    rgba(140,110,70,0.07);
+  --bg-overlay:     rgba(18,15,10,0.85);
+  --border-subtle:  rgba(140,110,70,0.06);
+  --border-medium:  rgba(140,110,70,0.11);
+  --border-strong:  rgba(140,110,70,0.18);
+  --ink:            #EEE5D2;
+  --ink-soft:       #A8A092;
+  --ink-mute:       #6F6A5E;
+  --ink-faint:      #3E3830;
+  --text-1:         var(--ink);
+  --text-2:         var(--ink-soft);
+  --text-3:         var(--ink-mute);
+  --text-4:         var(--ink-faint);
+  --patina-dim:     rgba(58,95,74,0.2);
+  --patina-faint:   rgba(58,95,74,0.08);
+  --brass-dim:      rgba(168,144,62,0.18);
+  --plum-dim:       rgba(122,90,110,0.22);
+  --plum-faint:     rgba(122,90,110,0.09);
+  --warmred:        #B06767;
+  --pill-bg:        #2A2318;
+  --pill-bg-hover:  #3A2E1F;
+  --pill-border:    #A8903E;
+  --pill-ink:       #EEE5D2;
+}
+html{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior:smooth; background:var(--bg-void); }
+body{
+  font-family:var(--f-body); font-weight:400;
+  background:var(--bg-void); color:var(--text-2);
+  font-size:16px; line-height:1.55;
+  min-height:100vh; position:relative; overflow-x:hidden;
+  transition:background .5s ease, color .3s ease;
+}
+body::after{
+  content:''; position:fixed; inset:0; z-index:9999;
+  pointer-events:none; opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] body::after{ opacity:.05; }
+a{ color:inherit; text-decoration:none; }
+img{ display:block; max-width:100%; }
+button, input, textarea, select { font-family:inherit; color:inherit; }
+button { cursor:pointer; border:none; background:none; }
+textarea { resize:vertical; }
+
+.vignette{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200,190,175,0.08) 100%);
+}
+[data-theme="dark"] .vignette{
+  background:radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8,6,4,0.35) 100%);
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulseSoft { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes pulseDot{ 0%,100%{ transform:scale(1); box-shadow:0 0 0 3px var(--brass-faint); } 50%{ transform:scale(1.15); box-shadow:0 0 0 5px rgba(168,144,62,.05); } }
+@keyframes ecoSpin{ to{ --eco-angle:360deg; } }
+.fade-in { animation: fadeIn .5s ease forwards; }
+.slide-up { animation: slideUp .6s cubic-bezier(.2,.8,.2,1) forwards; }
+.spin { animation: spin 1.4s linear infinite; }
+.pulse-soft { animation: pulseSoft 2s ease-in-out infinite; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--cream-line); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+.mono { font-family: var(--f-mono); }
+.glass { background: var(--bg-surface); border: 1px solid var(--border-subtle); }
+.glass-2 { background: var(--bg-elevated); border: 1px solid var(--border-medium); }
+.no-select { user-select: none; -webkit-user-select: none; }
+
+/* ================== NAV (pill, war-table SOT parity) ================== */
+.nav-spacer{ height:28px; width:100%; flex-shrink:0; }
+.nav{ position:sticky; top:18px; z-index:50; padding:0 20px; width:100%; }
+.nav-inner{
+  max-width:1160px; margin-inline:auto;
+  background:var(--cream);
+  border:1px solid var(--cream-line);
+  border-radius:var(--r-pill);
+  padding:8px 10px 8px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:20px;
+  box-shadow:0 6px 30px -18px rgba(26,22,16,.18);
+}
+.nav-brand{ display:flex; align-items:center; gap:10px; font-family:var(--f-display); font-size:1.25rem; color:var(--ink); font-weight:500; padding:6px 0; }
+.nav-brand .dot{ width:10px; height:10px; border-radius:50%; background:var(--brass); box-shadow:0 0 0 3px var(--brass-faint); animation:pulseDot 3s var(--ease) infinite; }
+.nav-links{ display:flex; align-items:center; gap:4px; list-style:none; }
+.nav-links a{ padding:10px 16px; border-radius:var(--r-pill); font-size:.92rem; font-weight:500; color:var(--ink-soft); transition:all .2s var(--ease); }
+.nav-links a:hover{ background:var(--cream-deep); color:var(--ink); }
+.nav-actions{ display:flex; align-items:center; gap:6px; }
+.theme-toggle{ width:36px; height:36px; border-radius:50%; border:1px solid var(--cream-line); display:flex; align-items:center; justify-content:center; font-size:1rem; color:var(--ink-mute); cursor:pointer; background:transparent; flex-shrink:0; transition:all .25s var(--ease); }
+.theme-toggle:hover{ border-color:var(--brass); color:var(--brass); background:var(--brass-faint); }
+.hamburger{ display:none; width:42px; height:42px; border-radius:var(--r-pill); border:1px solid var(--cream-line); background:transparent; cursor:pointer; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+.hamburger span{ display:block; width:18px; height:1.5px; background:var(--ink); transition:.25s; }
+.hamburger.open span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; }
+.hamburger.open span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
+@media(max-width:960px){
+  .nav-links, .nav .btn-ghost-link{ display:none; }
+  .hamburger{ display:flex; }
+  .nav-brand{ font-size:1.1rem; }
+  .nav-inner{ padding:8px 8px 8px 20px; }
+}
+.mmenu{ position:fixed; inset:0; z-index:100; background:var(--cream); display:none; flex-direction:column; padding:28px; }
+.mmenu.open{ display:flex; }
+.mmenu-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
+.mmenu-close{ width:42px; height:42px; border-radius:50%; border:1px solid var(--cream-line); background:transparent; font-size:1.2rem; color:var(--ink); cursor:pointer; }
+.mmenu-list{ display:flex; flex-direction:column; gap:6px; }
+.mmenu-list a{ font-family:var(--f-display); font-size:2rem; padding:10px 0; color:var(--ink); border-bottom:1px solid var(--cream-line); }
+.mmenu-foot{ margin-top:auto; padding-top:28px; }
+[data-theme="dark"] .nav-inner{ background:rgba(18,15,10,.85); border-color:rgba(140,110,70,.15); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+[data-theme="dark"] .nav-links a{ color:var(--ink-mute); }
+[data-theme="dark"] .nav-links a:hover{ background:rgba(140,110,70,.08); color:var(--ink); }
+
+/* Per-exercise progress ribbon (sits under the global pill nav) */
+.header { position:static; height:auto; background:transparent; backdrop-filter:none; -webkit-backdrop-filter:none; border-bottom:0; margin-top:24px; }
+.header-inner { max-width:1160px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; gap:18px; background:var(--bg-overlay); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); border:1px solid var(--border-medium); border-radius:999px; flex-wrap:wrap; }
+.header-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.header-tag { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-3); white-space: nowrap; }
+.header-phase { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-1); padding: 5px 11px; background: var(--bg-elevated); border: 1px solid var(--border-medium); border-radius: 999px; white-space: nowrap; }
+.header-right { display: flex; align-items: center; gap: 14px; }
+.progress-track { width: 140px; height: 2px; background: var(--cream-line); border-radius: 1px; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--patina); transition: width 0.5s ease; }
+.progress-pct { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.25em; color: var(--text-3); }
+.icon-btn { color: var(--text-3); transition: color .15s; padding: 4px; cursor: pointer; }
+.icon-btn:hover { color: var(--text-2); }
+@media (max-width: 720px) { .progress-track { display: none; } .header-phase { display: none; } }
+
+/* Persona badge */
+.pbadge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; }
+.pbadge.sm { padding: 3px 8px; font-size: 9px; }
+.pbadge.p1 { background: var(--p1-2); border: 1px solid var(--p1-3); color: var(--p1); }
+.pbadge.p2 { background: var(--p2-2); border: 1px solid var(--p2-3); color: var(--p2); }
+.pbadge.p3 { background: var(--p3-2); border: 1px solid var(--p3-3); color: var(--p3); }
+.pbadge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ================== Buttons (war-table SOT parity) ================== */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:.55em;
+  font-family:var(--f-body); font-weight:500; font-size:.94rem;
+  padding:14px 24px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--ink);
+  background:transparent; color:var(--ink);
+  transition:all .25s var(--ease);
+  white-space:nowrap; text-decoration:none !important;
+  cursor:pointer; text-transform:none; letter-spacing:0;
+}
+.btn:hover{ background:var(--ink); color:var(--cream); }
+@property --eco-angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
+.btn-primary{
+  background:var(--pill-bg) !important;
+  border-color:var(--pill-border) !important;
+  color:var(--pill-ink) !important;
+  position:relative; isolation:isolate;
+}
+.btn-primary::before{
+  content:''; position:absolute; inset:-3px;
+  background:conic-gradient(from var(--eco-angle), var(--patina), var(--brass), var(--terra), var(--plum), var(--patina));
+  border-radius:999px; z-index:-1; opacity:0;
+  transition:opacity .4s ease;
+  animation:ecoSpin 6s linear infinite;
+  filter:blur(10px);
+}
+.btn-primary:hover::before{ opacity:.75; }
+.btn-primary:hover{
+  background:var(--pill-bg-hover) !important;
+  border-color:var(--pill-ink) !important;
+  transform:translateY(-1px);
+  box-shadow:0 14px 40px -12px rgba(168,144,62,.35) !important;
+}
+.btn-primary:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+.btn-primary:disabled::before{ display:none; }
+.btn-ghost{ border-color:transparent; color:var(--ink-soft); }
+.btn-ghost:hover{ background:transparent; color:var(--ink); text-decoration:underline !important; text-underline-offset:4px; }
+.btn-secondary{
+  display:inline-flex; align-items:center; justify-content:center; gap:.55em;
+  padding:12px 20px;
+  border-radius:8px;
+  border:1px solid var(--border-strong);
+  background:transparent;
+  color:var(--text-1);
+  font-family:var(--f-mono); font-size:10px;
+  text-transform:uppercase; letter-spacing:.22em;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-secondary:hover{ background:var(--bg-surface); border-color:var(--brass); color:var(--brass); }
+.btn-md{ padding:14px 24px; font-size:.94rem; }
+.btn-sm{ padding:10px 18px; font-size:.85rem; }
+.btn-lg{ padding:17px 30px; font-size:1rem; }
+.btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+[data-theme="dark"] .btn{ border-color:rgba(140,110,70,.2); color:var(--ink); }
+[data-theme="dark"] .btn:hover{ background:var(--ink); color:var(--cream); }
+[data-theme="dark"] .btn-ghost{ color:var(--ink-soft); }
+
+/* Layout */
+.screen { min-height: calc(100vh - 120px); padding: 24px 24px 140px; position:relative; z-index:2; }
+.screen-center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.container-sm { max-width: 520px; margin: 0 auto; width: 100%; }
+.container-md { max-width: 720px; margin: 0 auto; width: 100%; }
+.container-lg { max-width: 920px; margin: 0 auto; width: 100%; }
+.container-xl { max-width: 1200px; margin: 0 auto; width: 100%; }
+.container-xxl { max-width: 1400px; margin: 0 auto; width: 100%; }
+
+/* Typography — war-table SOT parity */
+h1.display, h2.display, h3.display, .headline {
+  font-family: var(--f-display); font-weight: 500; color: var(--text-1);
+  letter-spacing: -.015em; line-height: 1.04;
+}
+h1.display { font-size: clamp(3rem, 7vw, 5.5rem); letter-spacing: -.025em; line-height: .98; }
+h2.display { font-size: clamp(2rem, 4.5vw, 3.25rem); letter-spacing: -.02em; line-height: 1.02; }
+h3.display { font-size: clamp(1.4rem, 3vw, 1.9rem); letter-spacing: -.012em; line-height: 1.15; }
+.hook { font-family: var(--f-display); font-style: italic; color: var(--text-2); font-size: clamp(1.1rem, 2.2vw, 1.4rem); line-height: 1.5; }
+.kicker { font-family: var(--f-mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .3em; color: var(--brass); display: block; margin-bottom: 10px; }
+.label-mono { font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--text-3); }
+.pill-mono { display: inline-block; font-family: var(--f-mono); font-size: 9px; text-transform: uppercase; letter-spacing: .22em; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-2); }
+.lead { font-size: 18px; color: var(--text-2); line-height: 1.6; }
+.body { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+.small { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+.tiny { font-size: 11px; color: var(--text-3); }
+
+/* Inputs */
+.input, .textarea { width: 100%; padding: 12px 14px; background: var(--cream); border: 1px solid var(--border-medium); border-radius: 8px; color: var(--text-1); font-size: 14px; line-height: 1.55; transition: border-color 0.15s, box-shadow 0.15s; font-family: inherit; }
+.textarea { padding: 12px 14px; min-height: 80px; }
+.input:focus, .textarea:focus { outline: none; border-color: var(--patina-dim); box-shadow: 0 0 0 3px var(--patina-faint); }
+.input::placeholder, .textarea::placeholder { color: var(--text-4); font-style: italic; }
+.input.p1:focus, .textarea.p1:focus { border-color: var(--p1-3); box-shadow: 0 0 0 3px var(--p1-2); }
+.input.p2:focus, .textarea.p2:focus { border-color: var(--p2-3); box-shadow: 0 0 0 3px var(--p2-2); }
+.input.p3:focus, .textarea.p3:focus { border-color: var(--p3-3); box-shadow: 0 0 0 3px var(--p3-2); }
+.field-label { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
+.field-hint { font-size: 12px; color: var(--text-4); margin-top: 6px; line-height: 1.5; }
+.field-block { margin-bottom: 18px; }
+
+/* The Three Seats grid */
+.seats-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 900px) { .seats-grid { grid-template-columns: 1fr 1fr 1fr; } }
+.seat-card { padding: 22px; border-radius: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle); }
+.seat-card.p1 { border-top: 3px solid var(--p1); }
+.seat-card.p2 { border-top: 3px solid var(--p2); }
+.seat-card.p3 { border-top: 3px solid var(--p3); }
+.seat-card-num { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 14px; }
+.seat-card.p1 .seat-card-num { color: var(--p1); }
+.seat-card.p2 .seat-card-num { color: var(--p2); }
+.seat-card.p3 .seat-card-num { color: var(--p3); }
+
+/* Profile build screen */
+.profile-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.persona-strip { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; background: var(--bg-surface); border: 1px solid var(--border-subtle); margin-bottom: 24px; }
+.persona-strip-name { font-family: var(--f-display); font-style: italic; font-weight: 500; font-size: 26px; letter-spacing: -0.01em; color: var(--text-1); }
+.persona-strip-role { color: var(--text-3); font-size: 13px; }
+
+/* Hook 3-pass */
+.hook-pass { padding: 18px; border-radius: 12px; background: var(--bg-surface); border: 1px solid var(--border-subtle); margin-bottom: 14px; }
+.hook-pass-num { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+.hook-pass-prompt { font-size: 14px; color: var(--text-1); margin-bottom: 8px; line-height: 1.5; }
+.hook-pass.locked { opacity: 0.5; pointer-events: none; }
+.hook-pass.active { border-color: var(--patina-dim); background: var(--patina-faint); }
+
+/* Pain Map grid */
+.pain-grid { display: grid; grid-template-columns: 200px 1fr 1fr 1fr; gap: 12px; }
+@media (max-width: 1100px) { .pain-grid { grid-template-columns: 1fr; gap: 10px; } .pain-grid > .pain-row-header { display: block; } }
+.pain-row { display: contents; }
+.pain-row-header { padding: 16px 0; }
+.pain-row-label { font-family: var(--f-display); font-style: italic; font-weight: 500; font-size: 18px; color: var(--text-1); margin-bottom: 4px; }
+.pain-row-desc { font-size: 12px; color: var(--text-4); line-height: 1.45; }
+.pain-cell { padding: 10px 0; }
+@media (max-width: 1100px) {
+  .pain-cell { padding: 8px 0 12px; border-left: 2px solid var(--border-subtle); padding-left: 12px; margin-left: 12px; }
+  .pain-cell.p1 { border-left-color: var(--p1); }
+  .pain-cell.p2 { border-left-color: var(--p2); }
+  .pain-cell.p3 { border-left-color: var(--p3); }
+  .pain-cell-name { display: block !important; }
+}
+.pain-cell-name { display: none; font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px; }
+.pain-cell.p1 .pain-cell-name { color: var(--p1); }
+.pain-cell.p2 .pain-cell-name { color: var(--p2); }
+.pain-cell.p3 .pain-cell-name { color: var(--p3); }
+.pain-divider { grid-column: 1 / -1; height: 1px; background: var(--border-subtle); margin: 4px 0; }
+.pain-header-row { display: contents; }
+.pain-header-cell { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-3); padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle); }
+@media (max-width: 1100px) { .pain-header-row { display: none; } }
+
+/* Journey grid */
+.journey-grid { display: grid; grid-template-columns: 160px 1fr 1fr 1fr; gap: 14px; }
+@media (max-width: 1100px) { .journey-grid { grid-template-columns: 1fr; } }
+.journey-stage-info { padding: 18px; border-radius: 12px; background: var(--bg-surface); border: 1px solid var(--border-subtle); }
+.journey-stage-num { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.3em; color: var(--text-4); margin-bottom: 8px; }
+.journey-stage-label { font-family: var(--f-display); font-style: italic; font-weight: 500; font-size: 22px; margin-bottom: 6px; line-height: 1.2; color: var(--text-1); }
+.journey-stage-desc { font-size: 12px; color: var(--text-3); line-height: 1.5; }
+.journey-persona-col { padding: 16px; border-radius: 12px; background: var(--bg-surface); border: 1px solid var(--border-subtle); }
+.journey-persona-col.p1 { border-top: 2px solid var(--p1); }
+.journey-persona-col.p2 { border-top: 2px solid var(--p2); }
+.journey-persona-col.p3 { border-top: 2px solid var(--p3); }
+
+/* X-Ray tabs */
+.tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.tab { padding: 10px 18px; border-radius: 999px; background: var(--bg-surface); border: 1px solid var(--border-subtle); cursor: pointer; transition: all .15s; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-2); }
+.tab:hover { background: var(--bg-elevated); }
+.tab.active.p1 { background: var(--p1-2); border-color: var(--p1-3); color: var(--p1); }
+.tab.active.p2 { background: var(--p2-2); border-color: var(--p2-3); color: var(--p2); }
+.tab.active.p3 { background: var(--p3-2); border-color: var(--p3-3); color: var(--p3); }
+
+/* Common Themes */
+.theme-row { display: flex; gap: 10px; align-items: flex-start; padding: 14px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 10px; margin-bottom: 10px; }
+.theme-num { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.2em; color: var(--text-3); padding: 6px 0; min-width: 18px; }
+.theme-input { flex: 1; background: transparent; border: none; color: var(--text-1); font-size: 14px; line-height: 1.5; padding: 6px 0; resize: none; outline: none; min-height: 24px; font-family: inherit; }
+.theme-input:focus { color: var(--text-1); }
+.theme-remove { color: var(--text-4); padding: 4px; cursor: pointer; transition: color .15s; }
+.theme-remove:hover { color: var(--terra); }
+
+/* Reveal */
+.reveal-card { padding: 28px; border-radius: 18px; background: var(--bg-surface); border: 1px solid var(--border-medium); margin-bottom: 18px; opacity: 0; animation: slideUp .8s cubic-bezier(.2,.8,.2,1) forwards; }
+.reveal-card.p1 { border-color: var(--p1-3); border-left: 3px solid var(--p1); }
+.reveal-card.p2 { border-color: var(--p2-3); border-left: 3px solid var(--p2); }
+.reveal-card.p3 { border-color: var(--p3-3); border-left: 3px solid var(--p3); }
+.reveal-section { margin-bottom: 20px; }
+.reveal-section:last-child { margin-bottom: 0; }
+.reveal-section-label { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
+.reveal-bio { font-size: 15px; line-height: 1.65; color: var(--text-1); }
+.reveal-mindset { font-family: var(--f-display); font-size: 17px; font-style: italic; color: var(--text-1); border-left: 2px solid var(--border-medium); padding-left: 14px; line-height: 1.55; }
+.reveal-hook { font-family: var(--f-display); font-style: italic; font-size: 26px; font-weight: 500; line-height: 1.3; color: var(--text-1); }
+.reveal-list { padding-left: 18px; color: var(--text-1); line-height: 1.65; }
+.reveal-list li { margin-bottom: 6px; }
+.reveal-name { font-family: var(--f-display); font-style: italic; font-size: 32px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.1; margin-top: 8px; color: var(--text-1); }
+.reveal-role { font-size: 14px; color: var(--text-3); margin-top: 4px; }
+
+/* Journey table in reveal */
+.j-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.j-table th, .j-table td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--border-subtle); }
+.j-table th { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-3); font-weight: 600; padding-bottom: 12px; }
+.j-table td:first-child { font-weight: 600; color: var(--text-1); width: 130px; }
+.j-table td { color: var(--text-2); line-height: 1.5; }
+
+/* Approval row */
+.approval-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-subtle); }
+.approval-btn { padding: 9px 18px; border-radius: 999px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; transition: all 0.15s; cursor: pointer; }
+.approval-approve { background: var(--patina); color: var(--cream); border: none; }
+.approval-approve:hover { background: var(--patina-lit); }
+.approval-refine { background: var(--bg-surface); border: 1px solid var(--border-medium); color: var(--text-1); }
+.approval-refine:hover { background: var(--bg-elevated); }
+.approval-approved { background: var(--patina-faint); color: var(--patina); border: 1px solid var(--patina-dim); cursor: default; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(26,22,16,0.45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.modal { background: var(--cream); border: 1px solid var(--border-medium); border-radius: 16px; max-width: 560px; width: 100%; padding: 28px; box-shadow: 0 30px 80px rgba(26,22,16,0.25); }
+.modal-title { font-family: var(--f-display); font-style: italic; font-weight: 500; font-size: 26px; margin-bottom: 8px; color: var(--text-1); }
+.modal-textarea { width: 100%; min-height: 140px; padding: 14px; background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: 8px; color: var(--text-1); font-family: inherit; font-size: 14px; resize: vertical; margin: 16px 0; line-height: 1.55; }
+.modal-textarea:focus { outline: none; border-color: var(--patina-dim); box-shadow: 0 0 0 3px var(--patina-faint); }
+
+/* Loader */
+.loader-container { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 40px 20px; }
+.loader-orbit { position: relative; width: 64px; height: 64px; }
+.loader-ring { position: absolute; inset: 0; border: 2px solid var(--border-subtle); border-top-color: var(--patina); border-radius: 50%; animation: spin 1.4s linear infinite; }
+.loader-ring.r2 { inset: 8px; border: 1px solid var(--border-subtle); border-right-color: var(--plum); animation: spin 0.8s linear infinite reverse; }
+.loader-ring.r3 { inset: 18px; border: 1px solid var(--border-subtle); border-bottom-color: var(--brass); animation: spin 1.4s linear infinite; }
+
+/* Notice */
+.notice { background: var(--bg-elevated); border: 1px solid var(--border-medium); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; }
+.notice-icon { color: var(--patina); flex-shrink: 0; margin-top: 2px; }
+.notice-text { font-size: 13px; color: var(--text-2); line-height: 1.55; }
+.notice.warn .notice-icon { color: var(--brass); }
+
+/* Counter pill */
+.counter-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 999px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.2em; color: var(--text-2); }
+
+/* Intro */
+.intro-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 32px 0 32px; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto; }
+@media (min-width: 720px) { .intro-grid { grid-template-columns: 1fr 1fr; } }
+.intro-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 18px; }
+.intro-card-num { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.3em; color: var(--brass); margin-bottom: 6px; }
+.intro-card-title { font-family: var(--f-display); font-style: italic; font-weight: 500; color: var(--text-1); margin-bottom: 6px; font-size: 19px; }
+.intro-card-time { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.2em; color: var(--text-4); margin-bottom: 8px; }
+.intro-card-desc { font-size: 13px; color: var(--text-3); line-height: 1.55; }
+
+/* Gate */
+.gate { max-width: 460px; margin: 0 auto; padding: 32px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; }
+.gate-input { width: 100%; padding: 12px 14px; background: var(--cream); border: 1px solid var(--border-medium); border-radius: 8px; color: var(--text-1); font-family: var(--f-mono); font-size: 13px; margin: 12px 0; }
+.gate-input:focus { outline: none; border-color: var(--patina-dim); box-shadow: 0 0 0 3px var(--patina-faint); }
+.gate-toggle { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-3); cursor: pointer; }
+
+.error-banner { background: rgba(196,101,74,0.08); border: 1px solid rgba(196,101,74,0.30); color: var(--terra); padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; }
+
+/* Misc */
+.center { text-align: center; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+.mt-8 { margin-top: 32px; }
+.mt-10 { margin-top: 40px; }
+.mt-12 { margin-top: 48px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+.mb-8 { margin-bottom: 32px; }
+.w-full { width: 100%; }
+.muted { color: var(--text3); }
+.muted-2 { color: var(--text4); }
+
+/* Print / Export brand format */
+@media print {
+  .header, .btn, .approval-row, .icon-btn, .footer-nav { display: none !important; }
+  body { background: white !important; color: black !important; }
+}
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+<div class="nav-spacer"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="dot"></span>Quantum Branding
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="ecosystem.html">Ecosystem</a></li>
+        <li><a href="ecosystem.html#pricing">Pricing</a></li>
+        <li><a href="ecosystem.html#about">About</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Toggle theme"><span id="toggleIcon">&#9789;</span></button>
+      <a href="https://app.quantumbranding.ai" class="btn btn-ghost btn-sm btn-ghost-link">Sign in</a>
+      <a href="qb-branidos-hub.html" class="btn btn-primary btn-sm">Open the Hub</a>
+      <button class="hamburger" type="button" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-head">
+    <div class="nav-brand"><span class="dot"></span>Quantum Branding</div>
+    <button class="mmenu-close" type="button" id="mmenuClose" aria-label="Close menu">&#10005;</button>
+  </div>
+  <nav class="mmenu-list">
+    <a href="tools.html">Tools</a>
+    <a href="ecosystem.html">Ecosystem</a>
+    <a href="ecosystem.html#pricing">Pricing</a>
+    <a href="ecosystem.html#about">About</a>
+  </nav>
+  <div class="mmenu-foot">
+    <a href="qb-branidos-hub.html" class="btn btn-primary" style="width:100%">Enter QB BrandOS</a>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<script>
+/* ============================== NAV WIRING (war-table SOT parity) ============================== */
+(function(){
+  var toggle = document.getElementById('themeToggle');
+  var icon   = document.getElementById('toggleIcon');
+  function setIcon(){ if(!icon) return; icon.innerHTML = document.documentElement.getAttribute('data-theme') === 'dark' ? '&#9728;' : '&#9789;'; }
+  setIcon();
+  if(toggle) toggle.addEventListener('click', function(){
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('qb-theme', next); }catch(e){}
+    setIcon();
+  });
+  var ham = document.getElementById('hamburger');
+  var mmenu = document.getElementById('mmenu');
+  var mClose = document.getElementById('mmenuClose');
+  if(ham && mmenu) ham.addEventListener('click', function(){ ham.classList.toggle('open'); mmenu.classList.toggle('open'); });
+  if(mClose && mmenu) mClose.addEventListener('click', function(){ if(ham) ham.classList.remove('open'); mmenu.classList.remove('open'); });
+  if(mmenu) mmenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ if(ham) ham.classList.remove('open'); mmenu.classList.remove('open'); }); });
+})();
+</script>
+
+<script>
+"use strict";
+
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
+var PERSONA_KEYS = ["p1", "p2", "p3"];
+var PERSONA_INDEX = { p1: 0, p2: 1, p3: 2 };
+
+var PAIN_CATEGORIES = [
+  { id: "time", label: "Time and capacity", desc: "What never has enough hours, what compresses their attention" },
+  { id: "compliance", label: "Compliance and reputation", desc: "What could damage their standing or their work's standing if it goes wrong" },
+  { id: "stakeholder", label: "Stakeholder orchestration", desc: "Who they have to align, manage, escalate to, protect from each other" },
+  { id: "vendor", label: "Vendor and dependency", desc: "What they cannot do alone, where outside players control their outcome" },
+  { id: "existential", label: "The existential pain underneath", desc: "The fear under the official story. The thing they would not say in a meeting" }
+];
+
+var JOURNEY_STAGES = [
+  { id: "awareness", label: "Awareness", desc: "They realize something is off but have not identified the root cause" },
+  { id: "realization", label: "Realization of need", desc: "They acknowledge they need to do something but are unsure of the path" },
+  { id: "shopping", label: "Shopping and comparing", desc: "They start looking for solutions but are skeptical" },
+  { id: "engage", label: "Engage and delight", desc: "They take the first step but need reinforcement" },
+  { id: "share", label: "Share and return", desc: "They become an advocate but only on their terms" }
+];
+
+var JOURNEY_COLUMNS = [
+  { id: "event", label: "Initiating event", placeholder: "What specifically triggers this stage" },
+  { id: "feeling", label: "Feeling and emotion", placeholder: "What they feel beneath the surface" },
+  { id: "touchpoint", label: "Touchpoint and channel", placeholder: "Where the brand can be present" },
+  { id: "strategy", label: "Communication and strategy", placeholder: "How the brand should show up here" }
+];
+
+var XRAY_FIELDS = [
+  { id: "microControl", label: "Micro-behaviors of control", desc: "What they obsessively organize. The routines they cling to. The dashboards they build." },
+  { id: "rationalizations", label: "Rationalizations", desc: "What they tell themselves to keep going. The story they repeat when the cost is mounting." },
+  { id: "hiddenDrivers", label: "Hidden drivers", desc: "What really moves them under the official story. Validation, fear, legacy, recognition." },
+  { id: "defenseMech", label: "Defense mechanisms", desc: "What they reach for when exposed. Jargon, process, deflection, busyness." },
+  { id: "emotionalContradiction", label: "Emotional contradiction", desc: "The gap between outward composure and inward state. The thing they would never say in a meeting." },
+  { id: "aspirationalUndercurrent", label: "Aspirational undercurrent", desc: "What they want to be remembered for. The legacy under the work." }
+];
+
+var PHASES = [
+  { phase: "I", label: "Three Seats", steps: [1] },
+  { phase: "II", label: "Biographies + Hooks", steps: [2, 3, 4] },
+  { phase: "III", label: "Pain Map", steps: [5] },
+  { phase: "IV", label: "Journey Map", steps: [6, 7, 8, 9, 10] },
+  { phase: "V", label: "Psychological X-Ray", steps: [11, 12] },
+  { phase: "VI", label: "Common Thread", steps: [13, 14] },
+  { phase: "VII", label: "Synthesis", steps: [15, 16] }
+];
+
+var STEPS = [
+  "intro", "seats",
+  "profile-1", "profile-2", "profile-3",
+  "pain-map",
+  "journey-1", "journey-2", "journey-3", "journey-4", "journey-5",
+  "xray-generate", "xray-edit",
+  "common-generate", "common-edit",
+  "synthesize", "reveal"
+];
+
+var TOTAL_STEPS = STEPS.length - 1;
+
+// ============================================================================
+// STATE
+// ============================================================================
+
+function makeEmptyState() {
+  return {
+    step: 0,
+    qbp: {},
+    apiKey: "",
+    seats: [
+      { name: "", role: "", opening: "" },
+      { name: "", role: "", opening: "" },
+      { name: "", role: "", opening: "" }
+    ],
+    profiles: [
+      { formalRole: "", undertaking: "", teamSays: "", prideAndPressure: "", mindset: "", hookInstinct: "", hookCut: "", hookFinal: "" },
+      { formalRole: "", undertaking: "", teamSays: "", prideAndPressure: "", mindset: "", hookInstinct: "", hookCut: "", hookFinal: "" },
+      { formalRole: "", undertaking: "", teamSays: "", prideAndPressure: "", mindset: "", hookInstinct: "", hookCut: "", hookFinal: "" }
+    ],
+    painMap: { time: ["", "", ""], compliance: ["", "", ""], stakeholder: ["", "", ""], vendor: ["", "", ""], existential: ["", "", ""] },
+    journey: {
+      awareness: [emptyJourneyCell(), emptyJourneyCell(), emptyJourneyCell()],
+      realization: [emptyJourneyCell(), emptyJourneyCell(), emptyJourneyCell()],
+      shopping: [emptyJourneyCell(), emptyJourneyCell(), emptyJourneyCell()],
+      engage: [emptyJourneyCell(), emptyJourneyCell(), emptyJourneyCell()],
+      share: [emptyJourneyCell(), emptyJourneyCell(), emptyJourneyCell()]
+    },
+    xray: [emptyXrayCell(), emptyXrayCell(), emptyXrayCell()],
+    commonThemes: ["", "", "", ""],
+    bindingInsight: "",
+    synthesis: null,
+    approved: [false, false, false],
+    refineRound: [0, 0, 0],
+    loading: false,
+    error: null,
+    _activePersona: 0,
+    _xrayDone: false,
+    _commonDone: false
+  };
+}
+function emptyJourneyCell() { return { event: "", feeling: "", touchpoint: "", strategy: "" }; }
+function emptyXrayCell() {
+  var o = {};
+  for (var i = 0; i < XRAY_FIELDS.length; i++) o[XRAY_FIELDS[i].id] = "";
+  return o;
+}
+
+var state = makeEmptyState();
+
+function setState(patch) {
+  if (patch) Object.assign(state, patch);
+  saveProgress();
+  render();
+}
+
+var TRANSIENT = { apiKey: 1, loading: 1, error: 1 };
+function saveProgress() {
+  try {
+    var copy = {};
+    for (var k in state) if (state.hasOwnProperty(k) && !TRANSIENT[k]) copy[k] = state[k];
+    localStorage.setItem("qb_profiles_state", JSON.stringify(copy));
+  } catch (e) {}
+}
+function loadProgress() {
+  try {
+    var saved = localStorage.getItem("qb_profiles_state");
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      Object.assign(state, parsed);
+    }
+  } catch (e) {}
+}
+function clearProgress() {
+  try { localStorage.removeItem("qb_profiles_state"); } catch (e) {}
+}
+function hasSavedProgress() {
+  try { return !!localStorage.getItem("qb_profiles_state"); } catch (e) { return false; }
+}
+
+// ============================================================================
+// QBP
+// ============================================================================
+
+function readQBP() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var qbpParam = params.get("qbp");
+    if (qbpParam) return JSON.parse(atob(qbpParam));
+  } catch (e) {}
+  try {
+    var stored = localStorage.getItem("qb_qbp");
+    if (stored) return JSON.parse(stored);
+  } catch (e) {}
+  return {};
+}
+function writeQBP(updates) {
+  try {
+    var current = JSON.parse(localStorage.getItem("qb_qbp") || "{}");
+    Object.assign(current, updates);
+    localStorage.setItem("qb_qbp", JSON.stringify(current));
+    try { window.postMessage({ type: "qb_qbp_update", payload: current }, "*"); } catch (e) {}
+    return current;
+  } catch (e) { return null; }
+}
+function readApiKey() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var fromUrl = params.get("apikey");
+    if (fromUrl) return fromUrl;
+  } catch (e) {}
+  try { var s = localStorage.getItem("qb_anthropic_key"); if (s) return s; } catch (e) {}
+  return "";
+}
+function saveApiKey(key) {
+  try { localStorage.setItem("qb_anthropic_key", key); } catch (e) {}
+  state.apiKey = key;
+}
+
+// ============================================================================
+// DOM HELPERS
+// ============================================================================
+
+function h(tag, props) {
+  var el = document.createElement(tag);
+  if (props) {
+    for (var k in props) {
+      if (!props.hasOwnProperty(k)) continue;
+      var v = props[k];
+      if (v == null || v === false) continue;
+      if (k === "class" || k === "className") el.className = v;
+      else if (k === "style" && typeof v === "object") {
+        for (var sk in v) if (v.hasOwnProperty(sk)) el.style[sk] = v[sk];
+      }
+      else if (k === "html") el.innerHTML = v;
+      else if (k === "text") el.textContent = v;
+      else if (k.indexOf("on") === 0 && typeof v === "function") {
+        el.addEventListener(k.substring(2).toLowerCase(), v);
+      }
+      else el.setAttribute(k, v);
+    }
+  }
+  for (var i = 2; i < arguments.length; i++) {
+    var c = arguments[i];
+    if (c == null || c === false) continue;
+    if (Array.isArray(c)) {
+      for (var j = 0; j < c.length; j++) {
+        var cc = c[j];
+        if (cc == null || cc === false) continue;
+        el.appendChild(typeof cc === "string" || typeof cc === "number" ? document.createTextNode(String(cc)) : cc);
+      }
+    } else {
+      el.appendChild(typeof c === "string" || typeof c === "number" ? document.createTextNode(String(c)) : c);
+    }
+  }
+  return el;
+}
+
+function svg(d, size) {
+  size = size || 16;
+  var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("width", size); s.setAttribute("height", size);
+  s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("fill", "none");
+  s.setAttribute("stroke", "currentColor"); s.setAttribute("stroke-width", "2");
+  s.setAttribute("stroke-linecap", "round"); s.setAttribute("stroke-linejoin", "round");
+  s.innerHTML = d;
+  return s;
+}
+var ICONS = {
+  arrowRight: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+  arrowLeft: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  sparkles: '<path d="M12 3l1.9 5.8L20 10l-5.8 1.9L12 18l-1.9-5.8L4 10l5.8-1.9z"/>',
+  alert: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+  print: '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+  add: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'
+};
+function ico(name, size) { return svg(ICONS[name], size); }
+
+// ============================================================================
+// SHARED RENDERS
+// ============================================================================
+
+function renderHeader(phaseLabel) {
+  var pct = Math.round((state.step / TOTAL_STEPS) * 100);
+  var phase = currentPhase();
+  return h("div", { class: "header" },
+    h("div", { class: "header-inner" },
+      h("div", { class: "header-left" },
+        h("div", { class: "header-tag", text: "Phase 01 · The Profiles" }),
+        phase ? h("div", { class: "header-phase", text: "Chapter " + phase.phase + " · " + phase.label }) : null
+      ),
+      h("div", { class: "header-right" },
+        h("div", { class: "progress-track" }, h("div", { class: "progress-bar", style: { width: pct + "%" } })),
+        h("div", { class: "progress-pct", text: pct + "%" }),
+        h("button", { class: "icon-btn", title: "Save and exit", onclick: function() { saveProgress(); flash("Progress saved. You can return any time."); } }, ico("save", 14))
+      )
+    )
+  );
+}
+
+function currentPhase() {
+  var s = state.step;
+  for (var i = 0; i < PHASES.length; i++) if (PHASES[i].steps.indexOf(s) >= 0) return PHASES[i];
+  return null;
+}
+
+function flash(msg) {
+  var existing = document.getElementById("qb-flash");
+  if (existing) existing.remove();
+  var f = h("div", { id: "qb-flash", style: { position: "fixed", bottom: "24px", left: "50%", transform: "translateX(-50%)", background: "rgba(0,0,0,0.9)", border: "1px solid var(--green3)", color: "var(--green)", padding: "12px 20px", borderRadius: "10px", fontFamily: "var(--mono)", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", zIndex: 100 }, text: msg });
+  document.body.appendChild(f);
+  setTimeout(function() { f.remove(); }, 2400);
+}
+
+function pbadge(personaIdx, opts) {
+  opts = opts || {};
+  var key = PERSONA_KEYS[personaIdx];
+  var name = (state.seats[personaIdx] && state.seats[personaIdx].name) || ("Persona " + (personaIdx + 1));
+  return h("div", { class: "pbadge " + key + (opts.size === "sm" ? " sm" : "") },
+    h("span", { class: "pbadge-dot" }),
+    name
+  );
+}
+
+function btn(label, opts) {
+  opts = opts || {};
+  var variant = opts.variant || "primary";
+  var size = opts.size || "md";
+  var b = h("button", { class: "btn btn-" + variant + " btn-" + size, onclick: opts.onClick, disabled: opts.disabled });
+  if (opts.icon) b.appendChild(ico(opts.icon, 13));
+  b.appendChild(document.createTextNode(label));
+  if (opts.iconRight) b.appendChild(ico(opts.iconRight, 13));
+  return b;
+}
+
+function loaderBlock(label, sub) {
+  return h("div", { class: "loader-container" },
+    h("div", { class: "loader-orbit" },
+      h("div", { class: "loader-ring" }),
+      h("div", { class: "loader-ring r2" }),
+      h("div", { class: "loader-ring r3" })
+    ),
+    h("div", { class: "label-mono", style: { color: "var(--green)" }, text: "// " + (label || "Working") }),
+    sub ? h("div", { class: "body center", style: { maxWidth: "440px" }, text: sub }) : null
+  );
+}
+
+function errorBanner(msg) {
+  if (!msg) return null;
+  return h("div", { class: "error-banner", text: msg });
+}
+
+function autoresize(ta) {
+  ta.style.height = "auto";
+  ta.style.height = (ta.scrollHeight + 2) + "px";
+}
+
+function textarea(opts) {
+  var t = h("textarea", {
+    class: "textarea " + (opts.persona || ""),
+    placeholder: opts.placeholder || "",
+    rows: opts.rows || 3,
+    value: opts.value || ""
+  });
+  t.value = opts.value || "";
+  t.addEventListener("input", function(e) {
+    autoresize(t);
+    if (opts.onChange) opts.onChange(t.value);
+  });
+  setTimeout(function() { autoresize(t); }, 0);
+  return t;
+}
+
+function input(opts) {
+  var i = h("input", {
+    type: opts.type || "text",
+    class: "input " + (opts.persona || ""),
+    placeholder: opts.placeholder || "",
+    value: opts.value || ""
+  });
+  i.value = opts.value || "";
+  i.addEventListener("input", function(e) {
+    if (opts.onChange) opts.onChange(i.value);
+  });
+  return i;
+}
+
+function fieldBlock(label, hint, child) {
+  return h("div", { class: "field-block" },
+    h("div", { class: "field-label", text: label }),
+    child,
+    hint ? h("div", { class: "field-hint", text: hint }) : null
+  );
+}
+
+// ============================================================================
+// API
+// ============================================================================
+
+async function callAnthropic(messages, system, maxTokens) {
+  if (!state.apiKey) throw new Error("No API key configured");
+  var res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": state.apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: maxTokens || 4000,
+      system: system,
+      messages: messages
+    })
+  });
+  if (!res.ok) {
+    var errText = await res.text();
+    throw new Error("API " + res.status + ": " + errText.substring(0, 200));
+  }
+  var data = await res.json();
+  return data.content[0].text;
+}
+
+function extractJSON(raw) {
+  var cleaned = raw.replace(/```json|```/g, "").trim();
+  var firstBrace = cleaned.indexOf("{");
+  var lastBrace = cleaned.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+  return JSON.parse(cleaned);
+}
+
+// ============================================================================
+// NAVIGATION
+// ============================================================================
+
+function goNext() { setState({ step: state.step + 1 }); window.scrollTo(0, 0); }
+function goPrev() { if (state.step > 0) setState({ step: state.step - 1 }); window.scrollTo(0, 0); }
+function goToStep(n) { setState({ step: n }); window.scrollTo(0, 0); }
+
+// ============================================================================
+// RENDER DISPATCHER
+// ============================================================================
+
+function render() {
+  var app = document.getElementById("app");
+  app.innerHTML = "";
+  var stepName = STEPS[state.step];
+
+  // API key gate before any API-call step
+  if ((stepName === "xray-generate" || stepName === "common-generate" || stepName === "synthesize") && !state.apiKey) {
+    app.appendChild(renderHeader());
+    app.appendChild(renderApiKeyGate());
+    return;
+  }
+
+  if (stepName !== "intro") app.appendChild(renderHeader());
+
+  var screen;
+  switch (stepName) {
+    case "intro": screen = renderIntro(); break;
+    case "seats": screen = renderSeats(); break;
+    case "profile-1": screen = renderProfile(0); break;
+    case "profile-2": screen = renderProfile(1); break;
+    case "profile-3": screen = renderProfile(2); break;
+    case "pain-map": screen = renderPainMap(); break;
+    case "journey-1": screen = renderJourney(0); break;
+    case "journey-2": screen = renderJourney(1); break;
+    case "journey-3": screen = renderJourney(2); break;
+    case "journey-4": screen = renderJourney(3); break;
+    case "journey-5": screen = renderJourney(4); break;
+    case "xray-generate": screen = renderXrayGenerate(); break;
+    case "xray-edit": screen = renderXrayEdit(); break;
+    case "common-generate": screen = renderCommonGenerate(); break;
+    case "common-edit": screen = renderCommonEdit(); break;
+    case "synthesize": screen = renderSynthesize(); break;
+    case "reveal": screen = renderReveal(); break;
+    default: screen = renderIntro();
+  }
+  app.appendChild(screen);
+}
+
+// ============================================================================
+// STEP 0: INTRO
+// ============================================================================
+
+function renderIntro() {
+  var phaseList = [
+    { num: "I", title: "Three Seats", time: "5 min", desc: "Three names. Three roles. The three humans your brand serves." },
+    { num: "II", title: "Biographies and Hooks", time: "18 min", desc: "Build each persona from the inside out. Identity, mindset, and the line that captures their situation." },
+    { num: "III", title: "The Pain Map", time: "10 min", desc: "Five pain categories across all three personas. Cross-cutting, side by side." },
+    { num: "IV", title: "The Journey Map", time: "15 min", desc: "Five stages from awareness to advocacy. Four columns. Built one stage at a time." },
+    { num: "V", title: "Psychological X-Ray", time: "8 min", desc: "Six psychological patterns per persona. Generated from your inputs. You sharpen." },
+    { num: "VI", title: "The Common Thread", time: "3 min", desc: "What runs through all three. The single insight that becomes your strategic core." },
+    { num: "VII", title: "The Synthesis", time: "5 min", desc: "Final deliverable assembled. Three full persona briefs. Ready to share." }
+  ];
+  var cards = phaseList.map(function(p) {
+    return h("div", { class: "intro-card" },
+      h("div", { class: "intro-card-num", text: "PHASE " + p.num }),
+      h("div", { class: "intro-card-title", text: p.title }),
+      h("div", { class: "intro-card-time", text: p.time }),
+      h("div", { class: "intro-card-desc", text: p.desc })
+    );
+  });
+
+  var resumeNotice = hasSavedProgress() && state.step > 0 ? h("div", { class: "notice" },
+    h("div", { class: "notice-icon" }, ico("info", 16)),
+    h("div", { class: "notice-text" },
+      "Saved progress detected. ",
+      h("button", { style: { color: "var(--green)", textDecoration: "underline", cursor: "pointer" }, onclick: function() { goToStep(state.step); } }, "Resume where you left off"),
+      " or start over below."
+    )
+  ) : null;
+
+  return h("div", { class: "screen screen-center fade-in" },
+    h("div", { class: "container-lg center" },
+      h("div", { class: "kicker", text: 'Phase 01 · The Profiles' }),
+      h("h1", { class: "display", style: { marginBottom: "20px" } },
+        "Three buyers."
+      ),
+      h("div", { style: { width: "96px", height: "1px", background: "var(--brass)", margin: "0 auto 28px", opacity: "0.6" } }),
+      h("p", { class: "hook", style: { maxWidth: "640px", margin: "0 auto 12px" }, text: "An hour of structured depth. Identity, pain, journey, psychology. By the end you will have three complete persona briefs in the format your strategy work demands." }),
+      h("p", { class: "small", style: { maxWidth: "560px", margin: "0 auto 16px" }, text: "Built in coherence with Brand Soul Map. Reads from your QBP. Writes back when complete." }),
+      resumeNotice,
+      h("div", { class: "intro-grid" }, cards),
+      h("div", { class: "flex justify-center gap-3 flex-wrap" },
+        btn("Begin · 60 minutes", { size: "lg", iconRight: "arrowRight", onClick: function() { if (state.step === 0) goNext(); else goToStep(1); } }),
+        hasSavedProgress() ? btn("Reset", { size: "md", variant: "ghost", onClick: function() {
+          if (confirm("Clear all saved progress and start over?")) {
+            clearProgress();
+            window.location.reload();
+          }
+        } }) : null
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 1: THREE SEATS (Phase I)
+// ============================================================================
+
+function renderSeats() {
+  function setSeat(i, field, val) {
+    var newSeats = state.seats.slice();
+    newSeats[i] = Object.assign({}, newSeats[i]);
+    newSeats[i][field] = val;
+    setState({ seats: newSeats });
+  }
+  var allFilled = state.seats.every(function(s) { return s.name.trim() && s.role.trim() && s.opening.trim().length > 10; });
+
+  var cards = state.seats.map(function(seat, i) {
+    var key = PERSONA_KEYS[i];
+    return h("div", { class: "seat-card " + key },
+      h("div", { class: "seat-card-num", text: "Seat " + (i + 1) }),
+      fieldBlock("First name", "Real-feeling. Not 'CEO Type A'. Pick a name your client could say out loud.",
+        input({ persona: key, placeholder: i === 0 ? "Paul" : i === 1 ? "Jess" : "Sam", value: seat.name, onChange: function(v) { setSeat(i, "name", v); } })
+      ),
+      fieldBlock("Role and context", "Specific job title plus the situation they are in. Not a category.",
+        input({ persona: key, placeholder: "e.g. Director of Planning, Design and Construction at a major academic medical center", value: seat.role, onChange: function(v) { setSeat(i, "role", v); } })
+      ),
+      fieldBlock("What is on their mind", "One sentence. What is occupying them when they walk into a meeting today.",
+        textarea({ persona: key, rows: 2, placeholder: "e.g. Racing seismic compliance deadlines while orchestrating a billion-dollar greenfield hospital", value: seat.opening, onChange: function(v) { setSeat(i, "opening", v); } })
+      )
+    );
+  });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-xl fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "kicker", text: 'Phase I · The Three Seats' }),
+        h("h2", { class: "display mt-2 mb-3", text: "Who is in the room?" }),
+        h("p", { class: "body", style: { maxWidth: "620px", margin: "0 auto" }, text: "Three buyers. Three names. Three roles. Three opening lines. Begin specific. The rest of the hour builds on whatever you write here, so do not generalize." })
+      ),
+      h("div", { class: "seats-grid" }, cards),
+      h("div", { class: "center mt-10 flex justify-center gap-3" },
+        btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        btn("Continue", { iconRight: "arrowRight", onClick: goNext, disabled: !allFilled })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEPS 2-4: PROFILE BUILD (Phase II)
+// ============================================================================
+
+function renderProfile(idx) {
+  var key = PERSONA_KEYS[idx];
+  var seat = state.seats[idx];
+  var profile = state.profiles[idx];
+
+  function setProfile(field, val) {
+    var newProfiles = state.profiles.slice();
+    newProfiles[idx] = Object.assign({}, newProfiles[idx]);
+    newProfiles[idx][field] = val;
+    setState({ profiles: newProfiles });
+  }
+
+  var instinctValid = profile.hookInstinct.trim().length > 5;
+  var cutValid = profile.hookCut.trim().length > 5;
+  var finalValid = profile.hookFinal.trim().length > 5 && profile.hookFinal.trim().split(/\s+/).length <= 15;
+
+  var allValid = profile.formalRole.trim() && profile.undertaking.trim().length > 20 && profile.teamSays.trim().length > 10 && profile.prideAndPressure.trim().length > 20 && profile.mindset.trim().length > 10 && finalValid;
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "persona-strip " + key },
+        h("div", { style: { width: "8px", height: "44px", background: "var(--" + key + ")", borderRadius: "4px" } }),
+        h("div", { style: { flex: 1 } },
+          h("div", { class: "persona-strip-name", text: seat.name || "Persona " + (idx + 1) }),
+          h("div", { class: "persona-strip-role", text: seat.role || "" })
+        ),
+        h("div", { style: { fontFamily: "var(--mono)", fontSize: "11px", letterSpacing: "0.25em", color: "var(--text3)" }, text: (idx + 1) + " of 3" })
+      ),
+      h("div", { class: "label-mono muted mb-3", text: "// Phase II · Biography and Hook" }),
+      h("h2", { class: "display", style: { fontSize: "32px", marginBottom: "12px" }, text: "Build " + (seat.name || "this persona") + "'s profile." }),
+      h("p", { class: "body mb-8", text: "Five fields of biography, then a three-pass writing exercise to land their hook. Write as if you are introducing them to a new strategist." }),
+
+      fieldBlock("Formal role", "Their official title and what their organization does. One sentence.",
+        input({ persona: key, value: profile.formalRole, placeholder: "e.g. Director of Planning, Design and Construction at UCI Health", onChange: function(v) { setProfile("formalRole", v); } })
+      ),
+      fieldBlock("Their largest current undertaking", "What is the biggest thing they are leading right now. Be concrete. Numbers if you have them.",
+        textarea({ persona: key, rows: 3, value: profile.undertaking, placeholder: "e.g. Leading a 7-story, 144-bed greenfield hospital plus three multi-campus seismic retrofits, all running on overlapping timelines", onChange: function(v) { setProfile("undertaking", v); } })
+      ),
+      fieldBlock("What their team would say about them", "One line. The shorthand. What people who work with them call out first.",
+        textarea({ persona: key, rows: 2, value: profile.teamSays, placeholder: "e.g. The one who actually walks the site every Friday", onChange: function(v) { setProfile("teamSays", v); } })
+      ),
+      fieldBlock("Their proudest achievement and biggest pressure", "One sentence that captures both. The thing they are proud of is also the thing under threat.",
+        textarea({ persona: key, rows: 3, value: profile.prideAndPressure, placeholder: "e.g. Delivered the world's first all-electric hospital, and now every choice is measured against that same carbon-neutrality bar", onChange: function(v) { setProfile("prideAndPressure", v); } })
+      ),
+      fieldBlock("Their professional mindset", "One sentence. The philosophical operating system they bring to every decision.",
+        textarea({ persona: key, rows: 2, value: profile.mindset, placeholder: "e.g. Design must serve clinical operations. Sustainability is non-negotiable. Long-term partnerships beat transactional contracts.", onChange: function(v) { setProfile("mindset", v); } })
+      ),
+
+      h("div", { class: "mt-10 mb-4" },
+        h("h3", { class: "display mb-2", text: "The hook." }),
+        h("p", { class: "body", text: "Three writing passes. Each pass tightens the line. Do not skip ahead. The discipline is the point." })
+      ),
+
+      h("div", { class: "hook-pass " + (!instinctValid ? "active " + key : "") },
+        h("div", { class: "hook-pass-num" }, "Pass 1 · First instinct"),
+        h("div", { class: "hook-pass-prompt", text: "Write the situation they are in. Under 25 words. Do not edit. Just write it." }),
+        textarea({ persona: key, rows: 2, value: profile.hookInstinct, placeholder: "e.g. Managing billion-dollar projects while racing seismic compliance deadlines and meeting the carbon commitments he made publicly", onChange: function(v) { setProfile("hookInstinct", v); } })
+      ),
+      h("div", { class: "hook-pass " + (!instinctValid ? "locked" : !cutValid ? "active " + key : "") },
+        h("div", { class: "hook-pass-num" }, "Pass 2 · Cut every adjective"),
+        h("div", { class: "hook-pass-prompt", text: "Take pass 1. Remove every adjective. Keep only nouns and verbs. Notice what survives." }),
+        textarea({ persona: key, rows: 2, value: profile.hookCut, placeholder: instinctValid ? "Rewrite pass 1 with no adjectives" : "Complete pass 1 first", onChange: function(v) { setProfile("hookCut", v); } })
+      ),
+      h("div", { class: "hook-pass " + (!cutValid ? "locked" : "active " + key) },
+        h("div", { class: "hook-pass-num" }, "Pass 3 · Active and under 15 words"),
+        h("div", { class: "hook-pass-prompt", text: "Make it about their doing, not their being. Active form. Under 15 words. Final hook." }),
+        textarea({ persona: key, rows: 2, value: profile.hookFinal, placeholder: cutValid ? "The final hook, under 15 words" : "Complete pass 2 first", onChange: function(v) { setProfile("hookFinal", v); } }),
+        finalValid ? h("div", { class: "field-hint", style: { color: "var(--green)" }, text: "✓ " + profile.hookFinal.trim().split(/\s+/).length + " words" }) : profile.hookFinal.trim() ? h("div", { class: "field-hint", style: { color: "var(--p3)" }, text: profile.hookFinal.trim().split(/\s+/).length + " words. Cut to under 15." }) : null
+      ),
+
+      h("div", { class: "center mt-10 flex justify-center gap-3" },
+        btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        btn(idx < 2 ? "Next persona" : "Continue to Pain Map", { iconRight: "arrowRight", onClick: goNext, disabled: !allValid })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 5: PAIN MAP (Phase III)
+// ============================================================================
+
+function renderPainMap() {
+  function setPain(category, personaIdx, val) {
+    var newMap = Object.assign({}, state.painMap);
+    newMap[category] = newMap[category].slice();
+    newMap[category][personaIdx] = val;
+    setState({ painMap: newMap });
+  }
+
+  var headerRow = h("div", { class: "pain-header-row" },
+    h("div", { class: "pain-header-cell", text: "Pain category" }),
+    h("div", { class: "pain-header-cell" }, pbadge(0, { size: "sm" })),
+    h("div", { class: "pain-header-cell" }, pbadge(1, { size: "sm" })),
+    h("div", { class: "pain-header-cell" }, pbadge(2, { size: "sm" }))
+  );
+
+  var rows = [];
+  PAIN_CATEGORIES.forEach(function(cat, ci) {
+    rows.push(h("div", { class: "pain-row" },
+      h("div", { class: "pain-row-header" },
+        h("div", { class: "pain-row-label", text: cat.label }),
+        h("div", { class: "pain-row-desc", text: cat.desc })
+      ),
+      h("div", { class: "pain-cell p1" },
+        h("div", { class: "pain-cell-name", text: state.seats[0].name || "Persona 1" }),
+        textarea({ persona: "p1", rows: 2, value: state.painMap[cat.id][0], placeholder: "Be specific. Not 'too busy'. The actual situation.", onChange: function(v) { setPain(cat.id, 0, v); } })
+      ),
+      h("div", { class: "pain-cell p2" },
+        h("div", { class: "pain-cell-name", text: state.seats[1].name || "Persona 2" }),
+        textarea({ persona: "p2", rows: 2, value: state.painMap[cat.id][1], placeholder: "Different from persona 1. Same category, different shape.", onChange: function(v) { setPain(cat.id, 1, v); } })
+      ),
+      h("div", { class: "pain-cell p3" },
+        h("div", { class: "pain-cell-name", text: state.seats[2].name || "Persona 3" }),
+        textarea({ persona: "p3", rows: 2, value: state.painMap[cat.id][2], placeholder: "Different from the other two. Sharpen the contrast.", onChange: function(v) { setPain(cat.id, 2, v); } })
+      ),
+      ci < PAIN_CATEGORIES.length - 1 ? h("div", { class: "pain-divider" }) : null
+    ));
+  });
+
+  var allFilled = PAIN_CATEGORIES.every(function(cat) {
+    return state.painMap[cat.id].every(function(v) { return v.trim().length > 8; });
+  });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-xxl fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "kicker", text: 'Phase III · The Pain Map' }),
+        h("h2", { class: "display mt-2 mb-3", text: "Five pains. Three buyers. Side by side." }),
+        h("p", { class: "body", style: { maxWidth: "640px", margin: "0 auto" }, text: "Cross-cutting, not sequential. Read each row across all three personas. If two cells in a row say the same thing, sharpen them until they do not." })
+      ),
+      h("div", { class: "notice warn" },
+        h("div", { class: "notice-icon" }, ico("alert", 16)),
+        h("div", { class: "notice-text", text: "After each row, step back. If two cells could swap and the row would still make sense, you have not differentiated yet. The pains should point to different solutions." })
+      ),
+      h("div", { class: "pain-grid" }, headerRow, rows),
+      h("div", { class: "center mt-10 flex justify-center gap-3" },
+        btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        btn("Continue to Journey Map", { iconRight: "arrowRight", onClick: goNext, disabled: !allFilled })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEPS 6-10: JOURNEY MAP (Phase IV)
+// ============================================================================
+
+function renderJourney(stageIdx) {
+  var stage = JOURNEY_STAGES[stageIdx];
+  var rows = state.journey[stage.id];
+
+  function setCell(personaIdx, col, val) {
+    var newJ = Object.assign({}, state.journey);
+    newJ[stage.id] = newJ[stage.id].slice();
+    newJ[stage.id][personaIdx] = Object.assign({}, newJ[stage.id][personaIdx]);
+    newJ[stage.id][personaIdx][col] = val;
+    setState({ journey: newJ });
+  }
+
+  var personaCols = PERSONA_KEYS.map(function(key, pIdx) {
+    var cell = rows[pIdx];
+    var fieldEls = JOURNEY_COLUMNS.map(function(col) {
+      return h("div", { class: "field-block" },
+        h("div", { class: "field-label", text: col.label }),
+        textarea({ persona: key, rows: 2, value: cell[col.id], placeholder: col.placeholder, onChange: function(v) { setCell(pIdx, col.id, v); } })
+      );
+    });
+    return h("div", { class: "journey-persona-col " + key },
+      h("div", { style: { marginBottom: "14px" } }, pbadge(pIdx, { size: "sm" })),
+      fieldEls
+    );
+  });
+
+  var allFilled = rows.every(function(cell) {
+    return JOURNEY_COLUMNS.every(function(col) { return cell[col.id].trim().length > 5; });
+  });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-xxl fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "label-mono muted", text: "// Phase IV · Journey Map · Stage " + (stageIdx + 1) + " of 5" }),
+        h("h2", { class: "display mt-2 mb-3", text: stage.label }),
+        h("p", { class: "body", style: { maxWidth: "620px", margin: "0 auto" }, text: stage.desc })
+      ),
+      h("div", { class: "journey-grid" },
+        h("div", { class: "journey-stage-info" },
+          h("div", { class: "journey-stage-num", text: "STAGE 0" + (stageIdx + 1) }),
+          h("div", { class: "journey-stage-label", text: stage.label }),
+          h("div", { class: "journey-stage-desc", text: stage.desc }),
+          h("div", { style: { marginTop: "20px", fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text4)" }, text: "Fill 4 fields per persona" })
+        ),
+        personaCols
+      ),
+      h("div", { class: "center mt-10 flex justify-center gap-3" },
+        btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+        btn(stageIdx < 4 ? "Next stage" : "Continue to Psychology", { iconRight: "arrowRight", onClick: goNext, disabled: !allFilled })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 11: X-RAY GENERATE (Phase V part 1)
+// ============================================================================
+
+function renderXrayGenerate() {
+  if (state._xrayDone) {
+    setTimeout(goNext, 100);
+    return h("div");
+  }
+  if (state.loading) {
+    return h("div", { class: "screen screen-center" },
+      h("div", { class: "container-md center fade-in" },
+        loaderBlock("Generating psychological X-Ray", "Reading every input you have given. Naming the patterns underneath. Six fields per persona, eighteen in total.")
+      )
+    );
+  }
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md fade-in" },
+      state.error ? errorBanner(state.error) : null,
+      h("div", { class: "center" },
+        h("div", { class: "kicker", text: 'Phase V · The Psychological X-Ray' }),
+        h("h2", { class: "display mt-2 mb-4", text: "Now the layer underneath." }),
+        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 12px" }, text: "Six psychological patterns per persona. Drawn from the biography, mindset, pain, and journey you have built so far. Claude proposes. You sharpen." }),
+        h("p", { class: "small", style: { maxWidth: "520px", margin: "0 auto 32px" }, text: "Micro-behaviors of control. Rationalizations. Hidden drivers. Defense mechanisms. Emotional contradiction. Aspirational undercurrent." }),
+        h("div", { class: "flex justify-center gap-3" },
+          btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+          btn("Generate", { size: "lg", icon: "sparkles", onClick: runXrayGenerate })
+        )
+      )
+    )
+  );
+}
+
+async function runXrayGenerate() {
+  state.loading = true; state.error = null; render();
+  try {
+    var prompt = buildXrayPrompt();
+    var raw = await callAnthropic(
+      [{ role: "user", content: prompt }],
+      "You are a senior brand strategist with deep psychological literacy. You read between the lines of professional language to surface the unspoken patterns that shape how someone actually behaves. You write each pattern in two to four crisp sentences. You return only valid JSON.",
+      4000
+    );
+    var parsed = extractJSON(raw);
+    state.xray = [parsed.p1 || emptyXrayCell(), parsed.p2 || emptyXrayCell(), parsed.p3 || emptyXrayCell()];
+    state._xrayDone = true;
+    state.loading = false;
+    state.error = null;
+    goNext();
+  } catch (e) {
+    state.loading = false;
+    state.error = "X-Ray generation failed: " + (e.message || "try again");
+    render();
+  }
+}
+
+function buildXrayPrompt() {
+  var s = "";
+  PERSONA_KEYS.forEach(function(key, i) {
+    var seat = state.seats[i];
+    var prof = state.profiles[i];
+    s += "PERSONA " + (i + 1) + " (" + seat.name + "):\n";
+    s += "Role: " + seat.role + "\n";
+    s += "Opening line: " + seat.opening + "\n";
+    s += "Formal role: " + prof.formalRole + "\n";
+    s += "Largest undertaking: " + prof.undertaking + "\n";
+    s += "What their team says: " + prof.teamSays + "\n";
+    s += "Pride and pressure: " + prof.prideAndPressure + "\n";
+    s += "Mindset: " + prof.mindset + "\n";
+    s += "Hook: " + prof.hookFinal + "\n";
+    s += "Pain points:\n";
+    PAIN_CATEGORIES.forEach(function(cat) {
+      s += "  - " + cat.label + ": " + state.painMap[cat.id][i] + "\n";
+    });
+    s += "Journey:\n";
+    JOURNEY_STAGES.forEach(function(stage) {
+      var cell = state.journey[stage.id][i];
+      s += "  " + stage.label + ":\n";
+      JOURNEY_COLUMNS.forEach(function(col) {
+        s += "    " + col.label + ": " + cell[col.id] + "\n";
+      });
+    });
+    s += "\n";
+  });
+
+  return "Read these three personas. For each one, surface six psychological patterns based on what is written and what is implied between the lines. Each pattern is two to four sentences. Specific to this person. No generic statements.\n\nINPUTS:\n\n" + s + "\n\nFor each persona, write:\n\n" +
+    "- microControl: What they obsessively organize. The routines and dashboards and checklists they cling to.\n" +
+    "- rationalizations: What they tell themselves to keep going. The story they repeat when the cost is mounting.\n" +
+    "- hiddenDrivers: What really moves them under the official story. Validation, fear, legacy, recognition, vindication.\n" +
+    "- defenseMech: What they reach for when they feel exposed. Jargon, process, deflection, busyness, escalation.\n" +
+    "- emotionalContradiction: The gap between outward composure and inward state. The thing they would never say in a meeting.\n" +
+    "- aspirationalUndercurrent: What they want to be remembered for. The legacy under the work.\n\n" +
+    "Return ONLY valid JSON. No preamble. No fences. Schema:\n" +
+    "{\n  \"p1\": { \"microControl\": \"...\", \"rationalizations\": \"...\", \"hiddenDrivers\": \"...\", \"defenseMech\": \"...\", \"emotionalContradiction\": \"...\", \"aspirationalUndercurrent\": \"...\" },\n  \"p2\": { same fields },\n  \"p3\": { same fields }\n}";
+}
+
+// ============================================================================
+// STEP 12: X-RAY EDIT (Phase V part 2)
+// ============================================================================
+
+function renderXrayEdit() {
+  var active = state._activePersona || 0;
+
+  function setActive(i) {
+    state._activePersona = i;
+    render();
+  }
+
+  function setField(personaIdx, fieldId, val) {
+    var newXray = state.xray.slice();
+    newXray[personaIdx] = Object.assign({}, newXray[personaIdx]);
+    newXray[personaIdx][fieldId] = val;
+    setState({ xray: newXray });
+  }
+
+  var tabs = h("div", { class: "tabs" }, PERSONA_KEYS.map(function(key, i) {
+    var name = state.seats[i].name || "Persona " + (i + 1);
+    return h("button", {
+      class: "tab " + (active === i ? "active " + key : ""),
+      onclick: function() { setActive(i); }
+    }, name);
+  }));
+
+  var fields = XRAY_FIELDS.map(function(f) {
+    return h("div", { class: "field-block" },
+      h("div", { class: "field-label", text: f.label }),
+      h("div", { class: "field-hint", style: { marginTop: "0", marginBottom: "8px" }, text: f.desc }),
+      textarea({ persona: PERSONA_KEYS[active], rows: 4, value: state.xray[active][f.id], onChange: function(v) { setField(active, f.id, v); } })
+    );
+  });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "kicker", text: 'Phase V · The Psychological X-Ray' }),
+        h("h2", { class: "display mt-2 mb-3", text: "Sharpen the language." }),
+        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto" }, text: "Six patterns per persona. Edit each one until it reads true. If a sentence does not sound like this person, rewrite it." })
+      ),
+      tabs,
+      fields,
+      h("div", { class: "center mt-10 flex justify-center gap-3" },
+        btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: function() { state._xrayDone = false; goPrev(); } }),
+        btn("Continue to Common Thread", { iconRight: "arrowRight", onClick: goNext })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 13: COMMON GENERATE (Phase VI part 1)
+// ============================================================================
+
+function renderCommonGenerate() {
+  if (state._commonDone) {
+    setTimeout(goNext, 100);
+    return h("div");
+  }
+  if (state.loading) {
+    return h("div", { class: "screen screen-center" },
+      h("div", { class: "container-md center fade-in" },
+        loaderBlock("Finding the common thread", "Reading across all three psychological X-Rays. Naming what runs through all of them. Surfacing the binding insight.")
+      )
+    );
+  }
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md fade-in" },
+      state.error ? errorBanner(state.error) : null,
+      h("div", { class: "center" },
+        h("div", { class: "kicker", text: 'Phase VI · The Common Thread' }),
+        h("h2", { class: "display mt-2 mb-4", text: "What runs through all three?" }),
+        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 32px" }, text: "Different roles, different pains, different journeys. But underneath, a pattern. The single insight that becomes your strategic core." }),
+        h("div", { class: "flex justify-center gap-3" },
+          btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+          btn("Generate", { size: "lg", icon: "sparkles", onClick: runCommonGenerate })
+        )
+      )
+    )
+  );
+}
+
+async function runCommonGenerate() {
+  state.loading = true; state.error = null; render();
+  try {
+    var prompt = buildCommonPrompt();
+    var raw = await callAnthropic(
+      [{ role: "user", content: prompt }],
+      "You are a senior brand strategist. You read across personas to find the strategic constants. You write themes that are precise, not platitudes. You return only valid JSON.",
+      2500
+    );
+    var parsed = extractJSON(raw);
+    state.commonThemes = (parsed.themes || []).slice(0, 5);
+    while (state.commonThemes.length < 3) state.commonThemes.push("");
+    state.bindingInsight = parsed.bindingInsight || "";
+    state._commonDone = true;
+    state.loading = false;
+    state.error = null;
+    goNext();
+  } catch (e) {
+    state.loading = false;
+    state.error = "Common thread generation failed: " + (e.message || "try again");
+    render();
+  }
+}
+
+function buildCommonPrompt() {
+  var s = "Three personas have been profiled. Their X-Ray patterns are:\n\n";
+  PERSONA_KEYS.forEach(function(key, i) {
+    var seat = state.seats[i];
+    var x = state.xray[i];
+    s += "PERSONA " + (i + 1) + " (" + seat.name + " · " + seat.role + "):\n";
+    XRAY_FIELDS.forEach(function(f) {
+      s += "  " + f.label + ": " + x[f.id] + "\n";
+    });
+    s += "\n";
+  });
+
+  return s + "\nWhat runs through all three? Identify three to five common themes that are TRUE of all three personas, written as observations not platitudes. Then write the single binding insight: the one sentence that captures what unites these three buyers strategically.\n\nReturn ONLY valid JSON:\n{\n  \"themes\": [\n    \"Theme 1: a precise observation, two sentences\",\n    \"Theme 2: ...\",\n    \"Theme 3: ...\",\n    \"Theme 4 (optional): ...\",\n    \"Theme 5 (optional): ...\"\n  ],\n  \"bindingInsight\": \"The single sentence that captures the strategic thread. Specific. Not 'they want value'. Something that could only be said about these three.\"\n}";
+}
+
+// ============================================================================
+// STEP 14: COMMON EDIT (Phase VI part 2)
+// ============================================================================
+
+function renderCommonEdit() {
+  function setTheme(i, val) {
+    var newThemes = state.commonThemes.slice();
+    newThemes[i] = val;
+    setState({ commonThemes: newThemes });
+  }
+  function addTheme() {
+    if (state.commonThemes.length >= 5) return;
+    setState({ commonThemes: state.commonThemes.concat([""]) });
+  }
+  function removeTheme(i) {
+    if (state.commonThemes.length <= 3) return;
+    var newThemes = state.commonThemes.slice();
+    newThemes.splice(i, 1);
+    setState({ commonThemes: newThemes });
+  }
+
+  var themeRows = state.commonThemes.map(function(t, i) {
+    var ta = h("textarea", { class: "theme-input", rows: 2, placeholder: "Theme " + (i + 1) });
+    ta.value = t;
+    ta.addEventListener("input", function() { autoresize(ta); setTheme(i, ta.value); });
+    setTimeout(function() { autoresize(ta); }, 0);
+    return h("div", { class: "theme-row" },
+      h("div", { class: "theme-num", text: String(i + 1).padStart(2, "0") }),
+      ta,
+      state.commonThemes.length > 3 ? h("button", { class: "theme-remove", onclick: function() { removeTheme(i); } }, ico("x", 14)) : null
+    );
+  });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "kicker", text: 'Phase VI · The Common Thread' }),
+        h("h2", { class: "display mt-2 mb-3", text: "Sharpen the constants." }),
+        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto" }, text: "Three to five common themes plus the one binding insight. These are the strategic constants that travel across every audience." })
+      ),
+      h("div", { class: "field-block" },
+        h("div", { class: "field-label", text: "Common themes" }),
+        themeRows,
+        state.commonThemes.length < 5 ? h("button", { class: "btn btn-secondary btn-sm", style: { marginTop: "8px" }, onclick: addTheme }, ico("add", 12), "Add theme") : null
+      ),
+      h("div", { class: "field-block mt-8" },
+        h("div", { class: "field-label", text: "The binding insight" }),
+        h("div", { class: "field-hint", style: { marginTop: "0", marginBottom: "8px" }, text: "One sentence. The strategic thread that runs through all three. The thing your brand exists to address across every buyer." }),
+        textarea({ rows: 3, value: state.bindingInsight, placeholder: "All three buyers operate in regulated, high-stakes systems where one missed signal can damage decades of credibility — they buy partners who absorb that signal load on their behalf.", onChange: function(v) { setState({ bindingInsight: v }); } })
+      ),
+      h("div", { class: "center mt-10 flex justify-center gap-3" },
+        btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: function() { state._commonDone = false; goPrev(); } }),
+        btn("Build the deliverable", { iconRight: "arrowRight", onClick: goNext, disabled: !state.bindingInsight.trim() || state.commonThemes.filter(function(t) { return t.trim(); }).length < 3 })
+      )
+    )
+  );
+}
+
+// ============================================================================
+// STEP 15: SYNTHESIZE (Phase VII)
+// ============================================================================
+
+function renderSynthesize() {
+  if (state.synthesis) {
+    setTimeout(goNext, 100);
+    return h("div");
+  }
+  if (state.loading) {
+    return h("div", { class: "screen screen-center" },
+      h("div", { class: "container-md center fade-in" },
+        loaderBlock("Assembling the deliverable", "Three full persona briefs. Marketing approach. Key takeaways. Common themes. Binding insight. Detailed patterns. The complete document.")
+      )
+    );
+  }
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md fade-in" },
+      state.error ? errorBanner(state.error) : null,
+      h("div", { class: "center" },
+        h("div", { class: "kicker", text: 'Phase VII · Synthesis' }),
+        h("h2", { class: "display mt-2 mb-4", text: "Final assembly." }),
+        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 32px" }, text: "Claude assembles your work into the full deliverable: three persona briefs in your strategy format, plus the cross-cutting layers. You review, refine if needed, then save." }),
+        h("div", { class: "flex justify-center gap-3" },
+          btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
+          btn("Build deliverable", { size: "lg", icon: "sparkles", onClick: runSynthesis })
+        )
+      )
+    )
+  );
+}
+
+async function runSynthesis() {
+  state.loading = true; state.error = null; render();
+  try {
+    var prompt = buildSynthesisPrompt();
+    var raw = await callAnthropic(
+      [{ role: "user", content: prompt }],
+      "You are a senior brand strategist assembling the final persona deliverable. You write in the brand strategist's voice: precise, observational, no fluff. You generate Marketing Approach (5 strategic moves) and Key Takeaways (5 strategic principles) per persona based on everything that has been built. You return only valid JSON.",
+      6000
+    );
+    var parsed = extractJSON(raw);
+    state.synthesis = parsed;
+    state.loading = false;
+    state.error = null;
+    goNext();
+  } catch (e) {
+    state.loading = false;
+    state.error = "Synthesis failed: " + (e.message || "try again");
+    render();
+  }
+}
+
+function buildSynthesisPrompt() {
+  var s = "";
+  PERSONA_KEYS.forEach(function(key, i) {
+    var seat = state.seats[i];
+    var prof = state.profiles[i];
+    var x = state.xray[i];
+    s += "PERSONA " + (i + 1) + ": " + seat.name + "\n";
+    s += "Role: " + seat.role + " · Opening: " + seat.opening + "\n";
+    s += "Formal role: " + prof.formalRole + "\n";
+    s += "Undertaking: " + prof.undertaking + "\n";
+    s += "Team says: " + prof.teamSays + "\n";
+    s += "Pride and pressure: " + prof.prideAndPressure + "\n";
+    s += "Mindset: " + prof.mindset + "\n";
+    s += "Hook: " + prof.hookFinal + "\n";
+    s += "Pain points:\n";
+    PAIN_CATEGORIES.forEach(function(cat) {
+      s += "  - " + cat.label + ": " + state.painMap[cat.id][i] + "\n";
+    });
+    s += "Journey:\n";
+    JOURNEY_STAGES.forEach(function(stage) {
+      var cell = state.journey[stage.id][i];
+      s += "  " + stage.label + ": event=" + cell.event + " | feeling=" + cell.feeling + " | touchpoint=" + cell.touchpoint + " | strategy=" + cell.strategy + "\n";
+    });
+    s += "Psychological X-Ray:\n";
+    XRAY_FIELDS.forEach(function(f) {
+      s += "  - " + f.label + ": " + x[f.id] + "\n";
+    });
+    s += "\n";
+  });
+
+  s += "COMMON THEMES (across all three):\n";
+  state.commonThemes.filter(function(t) { return t.trim(); }).forEach(function(t, i) { s += (i + 1) + ". " + t + "\n"; });
+  s += "\nBINDING INSIGHT: " + state.bindingInsight + "\n\n";
+
+  return s + "Build the final deliverable. For each persona, generate two new sections that have not been written yet:\n\n" +
+    "1. MARKETING APPROACH: Five strategic moves the brand should make to win this buyer. Each move is one tight sentence beginning with a verb. Read directly from this persona's pain, mindset, and journey.\n" +
+    "2. KEY TAKEAWAYS: Five strategic principles distilled from this persona. Each is a one-line headline followed by a short clause (e.g., 'Healthcare depth first → Partners must speak clinical workflow not just construction').\n\n" +
+    "Also generate the SHARED KEY TAKEAWAYS across all three personas: 5 strategic principles that apply to the brand's overall stance, derived from the common themes and binding insight.\n\n" +
+    "Return ONLY valid JSON:\n" +
+    "{\n" +
+    "  \"profiles\": [\n" +
+    "    {\n" +
+    "      \"marketingApproach\": [\"Move 1\", \"Move 2\", \"Move 3\", \"Move 4\", \"Move 5\"],\n" +
+    "      \"keyTakeaways\": [\"Headline → clause\", \"...\", \"...\", \"...\", \"...\"]\n" +
+    "    },\n" +
+    "    { same for persona 2 },\n" +
+    "    { same for persona 3 }\n" +
+    "  ],\n" +
+    "  \"sharedKeyTakeaways\": [\"Headline → clause\", \"...\", \"...\", \"...\", \"...\"]\n" +
+    "}";
+}
+
+// ============================================================================
+// STEP 16: REVEAL (Phase VII display)
+// ============================================================================
+
+function renderReveal() {
+  if (!state.synthesis) {
+    return h("div", { class: "screen screen-center" },
+      h("div", { class: "container-md center" },
+        h("p", { class: "body", text: "No synthesis. Go back and run it." }),
+        btn("Back", { onClick: function() { goToStep(15); } })
+      )
+    );
+  }
+
+  var allApproved = state.approved[0] && state.approved[1] && state.approved[2];
+
+  function approveCard(i) {
+    var newApproved = state.approved.slice();
+    newApproved[i] = true;
+    setState({ approved: newApproved });
+  }
+
+  function renderPersonaCard(i) {
+    var key = PERSONA_KEYS[i];
+    var seat = state.seats[i];
+    var prof = state.profiles[i];
+    var x = state.xray[i];
+    var s = state.synthesis.profiles[i] || {};
+    var isApproved = state.approved[i];
+    var round = state.refineRound[i];
+    var canRefine = round < 3;
+
+    var bio = prof.formalRole + " " + prof.undertaking + " " + prof.teamSays + " " + prof.prideAndPressure;
+
+    var painList = PAIN_CATEGORIES.map(function(cat) {
+      return h("li", null, h("strong", { text: cat.label + ": " }), state.painMap[cat.id][i]);
+    });
+
+    var marketingList = (s.marketingApproach || []).map(function(m) { return h("li", { text: m }); });
+    var takeawayList = (s.keyTakeaways || []).map(function(t) { return h("li", { text: t }); });
+
+    var journeyRows = JOURNEY_STAGES.map(function(stage) {
+      var cell = state.journey[stage.id][i];
+      return h("tr", null,
+        h("td", { text: stage.label }),
+        h("td", { text: cell.event }),
+        h("td", { text: cell.feeling }),
+        h("td", { text: cell.touchpoint }),
+        h("td", { text: cell.strategy })
+      );
+    });
+
+    var actions;
+    if (isApproved) {
+      actions = h("div", { class: "approval-row" }, h("span", { class: "approval-btn approval-approved" }, "✓ Approved"));
+    } else {
+      actions = h("div", { class: "approval-row" },
+        h("button", { class: "approval-btn approval-approve", onclick: function() { approveCard(i); } }, "Approve"),
+        canRefine ? h("button", { class: "approval-btn approval-refine", onclick: function() { openRefineModal(i); } }, "Refine · round " + (round + 1) + " of 3") : h("span", { class: "small muted-2", text: "Refinement limit reached" })
+      );
+    }
+
+    return h("div", { class: "reveal-card " + key, style: { animationDelay: (i * 0.15) + "s" } },
+      h("div", { class: "flex items-center justify-between flex-wrap gap-3 mb-4" },
+        h("div", null,
+          pbadge(i, { size: "sm" }),
+          h("div", { class: "reveal-name", text: seat.name }),
+          h("div", { class: "reveal-role", text: prof.formalRole })
+        )
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Core Identity" }),
+        h("div", { class: "reveal-bio", text: bio })
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Professional Mindset" }),
+        h("div", { class: "reveal-mindset", text: prof.mindset })
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "The Hook" }),
+        h("div", { class: "reveal-hook", text: '"' + prof.hookFinal + '"' })
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Pain Points" }),
+        h("ul", { class: "reveal-list" }, painList)
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Marketing Approach" }),
+        h("ul", { class: "reveal-list" }, marketingList)
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Customer Journey" }),
+        h("div", { style: { overflowX: "auto" } },
+          h("table", { class: "j-table" },
+            h("thead", null,
+              h("tr", null,
+                h("th", { text: "Stage" }),
+                h("th", { text: "Initiating event" }),
+                h("th", { text: "Feeling" }),
+                h("th", { text: "Touchpoint" }),
+                h("th", { text: "Strategy" })
+              )
+            ),
+            h("tbody", null, journeyRows)
+          )
+        )
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Psychological X-Ray" }),
+        h("ul", { class: "reveal-list" }, XRAY_FIELDS.map(function(f) {
+          return h("li", null, h("strong", { text: f.label + ": " }), x[f.id]);
+        }))
+      ),
+      h("div", { class: "reveal-section" },
+        h("div", { class: "reveal-section-label", text: "Key Takeaways" }),
+        h("ul", { class: "reveal-list" }, takeawayList)
+      ),
+      actions
+    );
+  }
+
+  var sharedTakeawayList = (state.synthesis.sharedKeyTakeaways || []).map(function(t) { return h("li", { text: t }); });
+
+  return h("div", { class: "screen" },
+    h("div", { class: "container-lg fade-in" },
+      h("div", { class: "center mb-8" },
+        h("div", { class: "kicker", text: 'The Profiles' }),
+        h("h2", { class: "display mt-2 mb-3", text: "Your three buyers." }),
+        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto" }, text: "Three full briefs. Approve when each lands. Refine if needed. Three rounds per persona." }),
+        state.error ? h("div", { class: "mt-4" }, errorBanner(state.error)) : null
+      ),
+      h("div", null, [renderPersonaCard(0), renderPersonaCard(1), renderPersonaCard(2)]),
+
+      h("div", { class: "reveal-card", style: { animationDelay: "0.6s", borderColor: "var(--green3)" } },
+        h("div", { class: "kicker", text: 'Cross-cutting layer' }),
+        h("div", { class: "reveal-section" },
+          h("div", { class: "reveal-section-label", text: "Common Themes" }),
+          h("ul", { class: "reveal-list" }, state.commonThemes.filter(function(t) { return t.trim(); }).map(function(t) { return h("li", { text: t }); }))
+        ),
+        h("div", { class: "reveal-section" },
+          h("div", { class: "reveal-section-label", text: "The Binding Insight" }),
+          h("div", { class: "reveal-mindset", text: state.bindingInsight })
+        ),
+        h("div", { class: "reveal-section" },
+          h("div", { class: "reveal-section-label", text: "Shared Key Takeaways" }),
+          h("ul", { class: "reveal-list" }, sharedTakeawayList)
+        )
+      ),
+
+      h("div", { class: "center mt-12" },
+        allApproved ? h("div", { class: "flex justify-center gap-3 flex-wrap" },
+          btn("Save and finish", { size: "lg", icon: "save", onClick: finalSave })
+        ) : h("div", { class: "small muted", text: "Approve all three personas to save and finish" })
+      )
+    )
+  );
+}
+
+function openRefineModal(personaIdx) {
+  var existing = document.getElementById("refine-modal");
+  if (existing) existing.remove();
+  var feedbackInput;
+  var modal = h("div", { id: "refine-modal", class: "modal-overlay", onclick: function(e) { if (e.target === modal) modal.remove(); } },
+    h("div", { class: "modal" },
+      h("div", { class: "modal-title", text: "Refine " + state.seats[personaIdx].name }),
+      h("p", { class: "body", text: "What needs to change? Marketing approach? Takeaways? X-Ray pattern? One paragraph of direction. Claude will rebuild this persona's brief." }),
+      feedbackInput = h("textarea", { class: "modal-textarea", placeholder: "e.g. The marketing approach is too tactical. Lift it to ecosystem-level moves. The third takeaway is correct but the language is generic — make it specific to academic medical centers." }),
+      h("div", { class: "flex gap-3 justify-between" },
+        h("button", { class: "btn btn-ghost btn-sm", onclick: function() { modal.remove(); } }, "Cancel"),
+        h("button", { class: "btn btn-primary btn-sm", onclick: function() {
+          var fb = feedbackInput.value.trim();
+          if (!fb) return;
+          modal.remove();
+          runRefine(personaIdx, fb);
+        } }, "Rebuild this persona")
+      )
+    )
+  );
+  document.body.appendChild(modal);
+  feedbackInput.focus();
+}
+
+async function runRefine(personaIdx, feedback) {
+  state.loading = true; state.error = null; render();
+  try {
+    var seat = state.seats[personaIdx];
+    var prof = state.profiles[personaIdx];
+    var x = state.xray[personaIdx];
+    var prev = state.synthesis.profiles[personaIdx];
+
+    var prompt = "Refine the marketing approach and key takeaways for this persona based on the user's feedback.\n\n" +
+      "PERSONA: " + seat.name + " · " + seat.role + "\n" +
+      "Hook: " + prof.hookFinal + "\n" +
+      "Mindset: " + prof.mindset + "\n" +
+      "Pride and pressure: " + prof.prideAndPressure + "\n" +
+      "Hidden drivers: " + x.hiddenDrivers + "\n" +
+      "Aspirational undercurrent: " + x.aspirationalUndercurrent + "\n\n" +
+      "PREVIOUS VERSION:\n" + JSON.stringify(prev) + "\n\n" +
+      "USER FEEDBACK:\n" + feedback + "\n\n" +
+      "Return ONLY valid JSON: { \"marketingApproach\": [5 strings], \"keyTakeaways\": [5 strings each headline + clause] }";
+
+    var raw = await callAnthropic(
+      [{ role: "user", content: prompt }],
+      "You are a senior brand strategist refining a persona brief based on direct feedback. Apply the feedback faithfully. Return only valid JSON.",
+      2000
+    );
+    var refined = extractJSON(raw);
+    var newSynth = Object.assign({}, state.synthesis);
+    newSynth.profiles = newSynth.profiles.slice();
+    newSynth.profiles[personaIdx] = refined;
+    var newRound = state.refineRound.slice();
+    newRound[personaIdx] = newRound[personaIdx] + 1;
+    state.synthesis = newSynth;
+    state.refineRound = newRound;
+    state.loading = false;
+    state.error = null;
+    render();
+  } catch (e) {
+    state.loading = false;
+    state.error = "Refine failed: " + (e.message || "try again");
+    render();
+  }
+}
+
+// ============================================================================
+// FINAL SAVE + EXPORTS
+// ============================================================================
+
+function finalSave() {
+  // Build complete output
+  var output = buildCompleteOutput();
+  writeQBP({
+    personaProfiles: output.profiles,
+    commonThemes: state.commonThemes.filter(function(t) { return t.trim(); }),
+    bindingInsight: state.bindingInsight,
+    sharedKeyTakeaways: state.synthesis.sharedKeyTakeaways || [],
+    profilesComplete: true,
+    profilesTimestamp: new Date().toISOString()
+  });
+  try { localStorage.setItem("qb_profiles_done", "1"); } catch (e) {}
+  try { localStorage.setItem("qb_profiles_output", JSON.stringify(output)); } catch (e) {}
+  state._finished = true;
+  render();
+  // Open soft gate (no-op if already authed; records local + cloud completion either way)
+  try {
+    if (window.QB && QB.openGate) {
+      var qbp = QB.getQBP ? QB.getQBP() : {};
+      QB.openGate({ toolId: "profiles", toolName: "The Profiles", brandName: (qbp && qbp.brandName) || "" });
+    }
+  } catch (e) { console.warn("QB gate:", e); }
+}
+
+function buildCompleteOutput() {
+  var profiles = PERSONA_KEYS.map(function(key, i) {
+    var seat = state.seats[i];
+    var prof = state.profiles[i];
+    var x = state.xray[i];
+    var s = (state.synthesis.profiles && state.synthesis.profiles[i]) || {};
+    return {
+      name: seat.name,
+      role: seat.role,
+      opening: seat.opening,
+      coreIdentity: prof.formalRole + " " + prof.undertaking + " " + prof.teamSays + " " + prof.prideAndPressure,
+      mindset: prof.mindset,
+      hook: prof.hookFinal,
+      painPoints: PAIN_CATEGORIES.map(function(cat) { return { category: cat.label, pain: state.painMap[cat.id][i] }; }),
+      marketingApproach: s.marketingApproach || [],
+      journey: JOURNEY_STAGES.map(function(stage) {
+        var cell = state.journey[stage.id][i];
+        return { stage: stage.label, event: cell.event, feeling: cell.feeling, touchpoint: cell.touchpoint, strategy: cell.strategy };
+      }),
+      xray: XRAY_FIELDS.reduce(function(acc, f) { acc[f.id] = x[f.id]; return acc; }, {}),
+      keyTakeaways: s.keyTakeaways || []
+    };
+  });
+  return {
+    profiles: profiles,
+    commonThemes: state.commonThemes.filter(function(t) { return t.trim(); }),
+    bindingInsight: state.bindingInsight,
+    sharedKeyTakeaways: (state.synthesis && state.synthesis.sharedKeyTakeaways) || []
+  };
+}
+
+// Override render dispatch for finished state
+var _origRender = render;
+render = function() {
+  if (state._finished) {
+    var app = document.getElementById("app");
+    app.innerHTML = "";
+    app.appendChild(renderHeader());
+    app.appendChild(renderFinish());
+    return;
+  }
+  _origRender();
+};
+
+function renderFinish() {
+  var output = buildCompleteOutput();
+
+  function downloadJSON() {
+    var blob = new Blob([JSON.stringify(output, null, 2)], { type: "application/json" });
+    triggerDownload(blob, "the-profiles.json");
+  }
+  function downloadMD() {
+    var md = buildMarkdown(output);
+    var blob = new Blob([md], { type: "text/markdown" });
+    triggerDownload(blob, "the-profiles.md");
+  }
+  function openBrandedExport() {
+    var html = buildBrandedHTML(output);
+    var w = window.open("", "_blank");
+    w.document.write(html);
+    w.document.close();
+  }
+
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md center fade-in" },
+      h("div", { class: "kicker", text: 'Saved to QBP' }),
+      h("h2", { class: "display mt-2 mb-4", text: "Done." }),
+      h("p", { class: "body", style: { marginBottom: "32px", maxWidth: "520px", marginLeft: "auto", marginRight: "auto" }, text: "Three full persona briefs written into your QBP. War Table, Voice Guide, and Predictive Panel will read this automatically. Below: download formats and the branded export that mirrors your strategy deck." }),
+      h("div", { class: "flex justify-center gap-3 flex-wrap" },
+        btn("Branded export (PDF)", { icon: "print", onClick: openBrandedExport }),
+        btn("Download JSON", { icon: "download", variant: "secondary", onClick: downloadJSON }),
+        btn("Download Markdown", { icon: "download", variant: "secondary", onClick: downloadMD })
+      ),
+      h("div", { class: "mt-8 flex justify-center gap-3 flex-wrap" },
+        btn("Open the Hub", { iconRight: "arrowRight", variant: "ghost", onClick: function() { window.location.href = "qb-branidos-hub.html"; } }),
+        btn("Start over", { variant: "ghost", onClick: function() {
+          if (confirm("Run The Profiles again? Saved profiles remain in QBP. Tool progress resets.")) {
+            clearProgress();
+            window.location.reload();
+          }
+        } })
+      )
+    )
+  );
+}
+
+function triggerDownload(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
+function buildMarkdown(out) {
+  var md = "# The Profiles\n\n";
+  out.profiles.forEach(function(p, i) {
+    md += "## Persona " + (i + 1) + ": " + p.name + " — " + (p.role || "") + "\n\n";
+    md += "### Core Identity\n" + p.coreIdentity + "\n\n";
+    md += "### Professional Mindset\n" + p.mindset + "\n\n";
+    md += "### Hook\n> " + p.hook + "\n\n";
+    md += "### Pain Points\n";
+    p.painPoints.forEach(function(pp) { md += "- **" + pp.category + ":** " + pp.pain + "\n"; });
+    md += "\n### Marketing Approach\n";
+    p.marketingApproach.forEach(function(m) { md += "- " + m + "\n"; });
+    md += "\n### Customer Journey\n\n";
+    md += "| Stage | Initiating Event | Feeling | Touchpoint | Strategy |\n|---|---|---|---|---|\n";
+    p.journey.forEach(function(j) {
+      md += "| " + j.stage + " | " + j.event + " | " + j.feeling + " | " + j.touchpoint + " | " + j.strategy + " |\n";
+    });
+    md += "\n### Psychological X-Ray\n";
+    XRAY_FIELDS.forEach(function(f) { md += "- **" + f.label + ":** " + p.xray[f.id] + "\n"; });
+    md += "\n### Key Takeaways\n";
+    p.keyTakeaways.forEach(function(t) { md += "- " + t + "\n"; });
+    md += "\n---\n\n";
+  });
+  md += "## Common Themes\n\n";
+  out.commonThemes.forEach(function(t, i) { md += (i + 1) + ". " + t + "\n"; });
+  md += "\n## The Binding Insight\n\n> " + out.bindingInsight + "\n\n";
+  md += "## Shared Key Takeaways\n\n";
+  out.sharedKeyTakeaways.forEach(function(t) { md += "- " + t + "\n"; });
+  return md;
+}
+
+// ============================================================================
+// BRANDED HTML EXPORT (matches PDF look)
+// ============================================================================
+
+function buildBrandedHTML(out) {
+  function esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function initial(name) { return (name || "?").trim().charAt(0).toUpperCase(); }
+
+  var profileSections = out.profiles.map(function(p, i) {
+    var painList = p.painPoints.map(function(pp) {
+      return "<li><strong>" + esc(pp.category) + ":</strong> " + esc(pp.pain) + "</li>";
+    }).join("");
+    var marketingList = p.marketingApproach.map(function(m) { return "<li>" + esc(m) + "</li>"; }).join("");
+    var takeawayList = p.keyTakeaways.map(function(t) { return "<li>" + esc(t) + "</li>"; }).join("");
+    var xrayList = XRAY_FIELDS.map(function(f) {
+      return "<li><strong>" + esc(f.label) + ":</strong> " + esc(p.xray[f.id]) + "</li>";
+    }).join("");
+    var journeyRows = p.journey.map(function(j) {
+      return "<tr><td>" + esc(j.stage) + "</td><td>" + esc(j.event) + "</td><td>" + esc(j.feeling) + "</td><td>" + esc(j.touchpoint) + "</td><td>" + esc(j.strategy) + "</td></tr>";
+    }).join("");
+
+    return [
+      // Identity card
+      '<section class="page identity-page">' +
+        '<div class="identity-grid">' +
+          '<div class="identity-photo"><div class="initial">' + esc(initial(p.name)) + '</div></div>' +
+          '<div class="identity-body">' +
+            '<h3>Core Identity</h3>' +
+            '<p>' + esc(p.coreIdentity) + '</p>' +
+            '<h3 class="mt">Professional Mindset</h3>' +
+            '<p>' + esc(p.mindset) + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ribbon">' + esc(p.name) + '</div>' +
+      '</section>',
+
+      // Pain Points page
+      '<section class="page pain-page">' +
+        '<div class="identity-grid">' +
+          '<div class="identity-photo"><div class="initial">' + esc(initial(p.name)) + '</div></div>' +
+          '<div class="identity-body">' +
+            '<h3>Pain Points</h3>' +
+            '<ul>' + painList + '</ul>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ribbon">' + esc(p.name) + '</div>' +
+      '</section>',
+
+      // Marketing Approach
+      '<section class="page approach-page">' +
+        '<div class="identity-grid">' +
+          '<div class="identity-photo"><div class="initial">' + esc(initial(p.name)) + '</div></div>' +
+          '<div class="identity-body">' +
+            '<h3>Marketing Approach</h3>' +
+            '<ul>' + marketingList + '</ul>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ribbon">' + esc(p.name) + '</div>' +
+      '</section>',
+
+      // Hook page
+      '<section class="page hook-page">' +
+        '<h2>' + esc(p.name.split(" ")[0]) + "'s hook</h2>" +
+        '<blockquote>"' + esc(p.hook) + '"</blockquote>' +
+      '</section>',
+
+      // Journey table
+      '<section class="page journey-page">' +
+        '<table class="jtable">' +
+          '<thead><tr><th>Stage</th><th>Initiating Event</th><th>Feeling</th><th>Touchpoint</th><th>Strategy</th></tr></thead>' +
+          '<tbody>' + journeyRows + '</tbody>' +
+        '</table>' +
+      '</section>',
+
+      // X-Ray
+      '<section class="page xray-page">' +
+        '<div class="identity-grid">' +
+          '<div class="identity-photo"><div class="initial">' + esc(initial(p.name)) + '</div></div>' +
+          '<div class="identity-body">' +
+            '<h3>Psychological X-Ray</h3>' +
+            '<ul>' + xrayList + '</ul>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ribbon">' + esc(p.name) + '</div>' +
+      '</section>',
+
+      // Key Takeaways
+      '<section class="page takeaways-page">' +
+        '<h3 class="key-h">Key Takeaways</h3>' +
+        '<h4 class="sub">' + esc(p.name) + '</h4>' +
+        '<ul class="key-list">' + takeawayList + '</ul>' +
+      '</section>'
+    ].join("");
+  }).join("");
+
+  var commonList = out.commonThemes.map(function(t, i) {
+    return '<li><strong>' + (i + 1) + '. </strong>' + esc(t) + '</li>';
+  }).join("");
+  var sharedList = out.sharedKeyTakeaways.map(function(t) { return "<li>" + esc(t) + "</li>"; }).join("");
+
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>The Profiles</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">' +
+    '<style>' +
+    '* { margin: 0; padding: 0; box-sizing: border-box; }' +
+    'body { font-family: Inter, sans-serif; color: #fff; background: #000; -webkit-font-smoothing: antialiased; }' +
+    '.page { min-height: 100vh; padding: 80px 60px; page-break-after: always; position: relative; }' +
+    '.cover { background: linear-gradient(180deg, #2a0033 0%, #d11ad1 100%); display: flex; align-items: center; justify-content: center; }' +
+    '.cover h1 { font-size: 120px; font-weight: 900; letter-spacing: -0.02em; color: #fff; text-shadow: 4px 4px 0 rgba(0,0,0,0.2); }' +
+    '.identity-page, .pain-page, .approach-page, .xray-page { background: #fff; color: #000; }' +
+    '.identity-grid { display: grid; grid-template-columns: 380px 1fr; gap: 40px; align-items: stretch; min-height: 70vh; }' +
+    '.identity-photo { background: #f4f4f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; }' +
+    '.initial { font-size: 180px; font-weight: 900; color: #d11ad1; }' +
+    '.identity-body { background: linear-gradient(135deg, #d11ad1 0%, #8b1b8b 100%); color: #fff; padding: 40px; border-radius: 8px; }' +
+    '.identity-body h3 { font-size: 22px; font-weight: 900; margin-bottom: 12px; }' +
+    '.identity-body h3.mt { margin-top: 24px; }' +
+    '.identity-body p { font-size: 16px; line-height: 1.6; margin-bottom: 12px; }' +
+    '.identity-body ul { padding-left: 20px; }' +
+    '.identity-body li { font-size: 15px; line-height: 1.6; margin-bottom: 10px; }' +
+    '.ribbon { position: absolute; bottom: 30px; left: 60px; background: #fce7f3; color: #000; font-weight: 900; font-size: 16px; padding: 10px 18px; }' +
+    '.hook-page { background: #000; color: #fff; display: flex; flex-direction: column; justify-content: center; }' +
+    '.hook-page h2 { font-size: 64px; font-weight: 400; margin-bottom: 60px; }' +
+    '.hook-page blockquote { font-size: 32px; font-weight: 700; line-height: 1.3; max-width: 80%; }' +
+    '.journey-page { background: #fff; color: #000; padding: 40px; }' +
+    '.jtable { width: 100%; border-collapse: collapse; font-size: 11px; line-height: 1.4; }' +
+    '.jtable th, .jtable td { text-align: left; vertical-align: top; padding: 10px; border-bottom: 1px solid #e5e7eb; }' +
+    '.jtable th { background: #f4f4f5; font-weight: 700; font-size: 11px; }' +
+    '.jtable td:first-child { font-weight: 700; width: 18%; }' +
+    '.takeaways-page { background: #000; color: #fff; }' +
+    '.takeaways-page .key-h { color: #d11ad1; font-size: 28px; font-weight: 900; margin-bottom: 24px; }' +
+    '.takeaways-page .sub { color: #fce7f3; font-size: 14px; font-weight: 400; margin-bottom: 30px; }' +
+    '.key-list { list-style: none; padding: 0; }' +
+    '.key-list li { font-size: 18px; font-weight: 700; line-height: 1.5; margin-bottom: 16px; padding-left: 24px; position: relative; }' +
+    '.key-list li:before { content: "•"; position: absolute; left: 0; color: #d11ad1; }' +
+    '.themes-page { background: #000; color: #fff; }' +
+    '.themes-page h2 { color: #d11ad1; font-size: 56px; font-weight: 900; line-height: 1; margin-bottom: 40px; }' +
+    '.themes-list { list-style: none; padding: 0; }' +
+    '.themes-list li { font-size: 18px; font-weight: 500; line-height: 1.6; margin-bottom: 20px; padding-left: 36px; position: relative; }' +
+    '.binding { background: #fff; color: #000; padding: 60px; }' +
+    '.binding h3 { font-size: 14px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: #d11ad1; margin-bottom: 20px; }' +
+    '.binding blockquote { font-size: 36px; font-weight: 700; line-height: 1.3; max-width: 80%; }' +
+    '@media print { .page { page-break-after: always; } body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }' +
+    '.print-btn { position: fixed; top: 20px; right: 20px; background: #d11ad1; color: #fff; border: none; padding: 12px 20px; font-weight: 900; font-family: inherit; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 999px; cursor: pointer; z-index: 100; }' +
+    '@media print { .print-btn { display: none; } }' +
+    '</style></head><body>' +
+    '<button class="print-btn" onclick="window.print()">Print to PDF</button>' +
+    '<section class="page cover"><h1>THE PROFILES</h1></section>' +
+    profileSections +
+    '<section class="page themes-page"><h2>COMMON<br>THEMES<br>ACROSS<br>ALL PERSONAS</h2><ul class="themes-list">' + commonList + '</ul></section>' +
+    '<section class="page binding"><h3>The binding insight</h3><blockquote>"' + esc(out.bindingInsight) + '"</blockquote></section>' +
+    '<section class="page takeaways-page"><h3 class="key-h">Shared Key Takeaways</h3><h4 class="sub">Across all three personas</h4><ul class="key-list">' + sharedList + '</ul></section>' +
+    '</body></html>';
+}
+
+// ============================================================================
+// API KEY GATE
+// ============================================================================
+
+function renderApiKeyGate() {
+  var inputEl;
+  return h("div", { class: "screen screen-center" },
+    h("div", { class: "container-md fade-in" },
+      h("div", { class: "gate" },
+        h("div", { class: "kicker", text: 'API key required' }),
+        h("h2", { class: "display", style: { fontSize: "26px", marginBottom: "12px", marginTop: "8px" }, text: "Anthropic key needed" }),
+        h("p", { class: "body", style: { marginBottom: "16px" }, text: "Used for the X-Ray, Common Thread, and Synthesis steps. Stored locally only. Never sent anywhere except to Anthropic." }),
+        inputEl = h("input", { class: "gate-input", type: "password", placeholder: "sk-ant-...", value: state.apiKey || "" }),
+        h("div", { class: "flex justify-end mt-2" },
+          btn("Save and continue", { size: "sm", onClick: function() {
+            var k = inputEl.value.trim();
+            if (!k) return;
+            saveApiKey(k);
+            render();
+          } })
+        )
+      )
+    )
+  );
+}
+
+// ============================================================================
+// INIT
+// ============================================================================
+
+(function init() {
+  state.qbp = readQBP();
+  state.apiKey = readApiKey();
+  loadProgress();
+  render();
+})();
+
+</script>
+</body>
+</html>
