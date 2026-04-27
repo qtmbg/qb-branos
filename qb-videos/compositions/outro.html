@@ -1,0 +1,105 @@
+<template id="outro-template">
+  <div
+    data-composition-id="outro"
+    data-width="1920"
+    data-height="1080"
+    data-start="0"
+    data-duration="4"
+  >
+    <div class="o-stage">
+      <div class="o-mark">
+        <span class="o-dot"></span>
+        <span class="o-wm">Quantum Branding</span>
+      </div>
+      <h2 class="o-line">
+        Build the brand.<br /><em>Operate the system.</em>
+      </h2>
+      <div class="o-rule"></div>
+      <div class="o-url">quantumbranding.ai</div>
+    </div>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap");
+
+      [data-composition-id="outro"] {
+        --ink: #1a1610;
+        --ink-soft: #5a5040;
+        --patina: #3a5f4a;
+        --brass: #a8903e;
+      }
+      [data-composition-id="outro"] .o-stage {
+        width: 100%;
+        height: 100%;
+        padding: 200px 200px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 32px;
+        text-align: center;
+        font-family: "Figtree", sans-serif;
+      }
+      [data-composition-id="outro"] .o-mark {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-family: "EB Garamond", serif;
+        font-size: 32px;
+        color: var(--ink-soft);
+        opacity: 0;
+      }
+      [data-composition-id="outro"] .o-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--brass);
+      }
+      [data-composition-id="outro"] .o-line {
+        font-family: "EB Garamond", serif;
+        font-weight: 600;
+        font-size: 132px;
+        line-height: 1;
+        letter-spacing: -2px;
+        color: var(--ink);
+        margin: 0;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      [data-composition-id="outro"] .o-line em {
+        font-style: italic;
+        font-weight: 500;
+        color: var(--patina);
+      }
+      [data-composition-id="outro"] .o-rule {
+        width: 0;
+        height: 2px;
+        background: var(--brass);
+      }
+      [data-composition-id="outro"] .o-url {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 28px;
+        letter-spacing: 4px;
+        color: var(--ink);
+        text-transform: lowercase;
+        opacity: 0;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        const sel = (s) => '[data-composition-id="outro"] ' + s;
+
+        tl.to(sel(".o-mark"), { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.1)
+          .to(sel(".o-line"), { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.4)
+          .to(sel(".o-rule"), { width: 240, duration: 0.6, ease: "power2.out" }, 1.0)
+          .to(sel(".o-url"), { opacity: 1, duration: 0.6, ease: "power2.out" }, 1.4);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["outro"] = tl;
+      })();
+    </script>
+  </div>
+</template>

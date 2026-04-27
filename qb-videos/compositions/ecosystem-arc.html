@@ -1,0 +1,218 @@
+<template id="ecosystem-arc-template">
+  <div
+    data-composition-id="ecosystem-arc"
+    data-width="1920"
+    data-height="1080"
+    data-start="0"
+    data-duration="8"
+  >
+    <div class="eco-stage">
+      <div class="eco-left">
+        <div class="eco-eyebrow">The Brand Operating System</div>
+        <h2 class="eco-title">
+          Five phases.<br />
+          <em>One brain.</em>
+        </h2>
+        <p class="eco-caption">
+          From discovery to intelligence — every QB tool feeds the same Quantum Brand Profile.
+        </p>
+      </div>
+
+      <div class="eco-right">
+        <svg viewBox="0 0 800 800" class="eco-svg" preserveAspectRatio="xMidYMid meet">
+          <!-- 5 concentric arcs, each ~270deg, increasing radius -->
+          <g transform="translate(400 400) rotate(-135)">
+            <circle class="ring r1" r="120" fill="none" stroke-width="6" stroke-linecap="round" />
+            <circle class="ring r2" r="180" fill="none" stroke-width="6" stroke-linecap="round" />
+            <circle class="ring r3" r="240" fill="none" stroke-width="6" stroke-linecap="round" />
+            <circle class="ring r4" r="300" fill="none" stroke-width="6" stroke-linecap="round" />
+            <circle class="ring r5" r="360" fill="none" stroke-width="6" stroke-linecap="round" />
+          </g>
+          <!-- Center QBP dot -->
+          <circle class="eco-core" cx="400" cy="400" r="14" />
+        </svg>
+
+        <!-- Phase labels positioned around the rings -->
+        <div class="eco-labels">
+          <div class="eco-label l1"><span class="num">01</span><span>Discovery</span></div>
+          <div class="eco-label l2"><span class="num">02</span><span>Brand&nbsp;Creation</span></div>
+          <div class="eco-label l3"><span class="num">03</span><span>Content</span></div>
+          <div class="eco-label l4"><span class="num">04</span><span>Execution</span></div>
+          <div class="eco-label l5"><span class="num">05</span><span>Intelligence</span></div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Figtree:wght@400;500;600&display=swap");
+
+      [data-composition-id="ecosystem-arc"] {
+        --ink: #1a1610;
+        --ink-soft: #5a5040;
+        --brass: #a8903e;
+        --p1: #4a7a5e;
+        --p2: #4a7a8a;
+        --p3: #8a5a5a;
+        --p4: #5a7a6a;
+        --p5: #a8903e;
+      }
+      [data-composition-id="ecosystem-arc"] .eco-stage {
+        width: 100%;
+        height: 100%;
+        padding: 120px 140px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 80px;
+        font-family: "Figtree", sans-serif;
+      }
+      [data-composition-id="ecosystem-arc"] .eco-left {
+        flex: 0 0 720px;
+      }
+      [data-composition-id="ecosystem-arc"] .eco-right {
+        flex: 1;
+        position: relative;
+        height: 800px;
+        max-width: 800px;
+      }
+
+      [data-composition-id="ecosystem-arc"] .eco-eyebrow {
+        font-family: "Figtree", sans-serif;
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--brass);
+        margin-bottom: 28px;
+        opacity: 0;
+      }
+      [data-composition-id="ecosystem-arc"] .eco-title {
+        font-family: "EB Garamond", serif;
+        font-weight: 600;
+        font-size: 132px;
+        line-height: 0.95;
+        letter-spacing: -2px;
+        color: var(--ink);
+        margin: 0 0 32px;
+      }
+      [data-composition-id="ecosystem-arc"] .eco-title em {
+        font-style: italic;
+        font-weight: 500;
+        color: var(--p1);
+        opacity: 0;
+      }
+      [data-composition-id="ecosystem-arc"] .eco-title > br + em,
+      [data-composition-id="ecosystem-arc"] .eco-title > * {
+        display: inline-block;
+      }
+      [data-composition-id="ecosystem-arc"] .eco-caption {
+        font-size: 28px;
+        line-height: 1.4;
+        color: var(--ink-soft);
+        max-width: 560px;
+        margin: 0;
+        opacity: 0;
+      }
+
+      [data-composition-id="ecosystem-arc"] .eco-svg {
+        width: 100%;
+        height: 100%;
+      }
+      [data-composition-id="ecosystem-arc"] .ring {
+        stroke-dasharray: 2200;
+        stroke-dashoffset: 2200;
+      }
+      [data-composition-id="ecosystem-arc"] .r1 { stroke: var(--p1); }
+      [data-composition-id="ecosystem-arc"] .r2 { stroke: var(--p2); }
+      [data-composition-id="ecosystem-arc"] .r3 { stroke: var(--p3); }
+      [data-composition-id="ecosystem-arc"] .r4 { stroke: var(--p4); }
+      [data-composition-id="ecosystem-arc"] .r5 { stroke: var(--p5); }
+
+      [data-composition-id="ecosystem-arc"] .eco-core {
+        fill: var(--brass);
+        opacity: 0;
+        transform-origin: 400px 400px;
+        transform: scale(0);
+      }
+
+      [data-composition-id="ecosystem-arc"] .eco-labels {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      [data-composition-id="ecosystem-arc"] .eco-label {
+        position: absolute;
+        font-family: "EB Garamond", serif;
+        font-size: 24px;
+        color: var(--ink);
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        opacity: 0;
+        transform: translateX(-12px);
+      }
+      [data-composition-id="ecosystem-arc"] .eco-label .num {
+        font-family: "Figtree", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: var(--brass);
+      }
+      [data-composition-id="ecosystem-arc"] .l1 { top: 47%; left: -2%; }
+      [data-composition-id="ecosystem-arc"] .l2 { top: 32%; left: 4%; }
+      [data-composition-id="ecosystem-arc"] .l3 { top: 18%; left: 14%; }
+      [data-composition-id="ecosystem-arc"] .l4 { top: 6%;  left: 30%; }
+      [data-composition-id="ecosystem-arc"] .l5 { top: -2%; left: 50%; }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        const sel = (s) => '[data-composition-id="ecosystem-arc"] ' + s;
+
+        // Left column reveal
+        tl.to(sel(".eco-eyebrow"), { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.1)
+          .from(
+            sel(".eco-title"),
+            { y: 24, opacity: 0, duration: 0.7, ease: "power3.out" },
+            0.3,
+          )
+          .to(sel(".eco-title em"), { opacity: 1, duration: 0.6, ease: "power2.out" }, 1.0)
+          .to(sel(".eco-caption"), { opacity: 1, duration: 0.6, ease: "power2.out" }, 1.3);
+
+        // Rings draw in sequence
+        const rings = [".r1", ".r2", ".r3", ".r4", ".r5"];
+        rings.forEach((r, i) => {
+          tl.to(
+            sel(r),
+            { strokeDashoffset: 600, duration: 0.7, ease: "power2.out" },
+            0.6 + i * 0.35,
+          );
+        });
+
+        // Phase labels fade in alongside their ring
+        ["l1", "l2", "l3", "l4", "l5"].forEach((cls, i) => {
+          tl.to(
+            sel("." + cls),
+            { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
+            0.9 + i * 0.35,
+          );
+        });
+
+        // Core dot pulse
+        tl.to(
+          sel(".eco-core"),
+          { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out", transformOrigin: "400px 400px" },
+          3.2,
+        );
+
+        // Soft exit
+        tl.to(sel(".eco-stage"), { opacity: 0, duration: 0.5, ease: "power2.in" }, 7.4);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["ecosystem-arc"] = tl;
+      })();
+    </script>
+  </div>
+</template>

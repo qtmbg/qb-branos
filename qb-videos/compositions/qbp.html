@@ -1,0 +1,233 @@
+<template id="qbp-template">
+  <div
+    data-composition-id="qbp"
+    data-width="1920"
+    data-height="1080"
+    data-start="0"
+    data-duration="6"
+  >
+    <div class="q-stage">
+      <svg viewBox="0 0 1920 1080" class="q-svg" preserveAspectRatio="xMidYMid meet">
+        <!-- 5 connection lines from center to phase pods -->
+        <g stroke-linecap="round" stroke-width="2" fill="none">
+          <line class="q-line ln1" x1="960" y1="540" x2="380" y2="320" />
+          <line class="q-line ln2" x1="960" y1="540" x2="380" y2="760" />
+          <line class="q-line ln3" x1="960" y1="540" x2="960" y2="160" />
+          <line class="q-line ln4" x1="960" y1="540" x2="1540" y2="320" />
+          <line class="q-line ln5" x1="960" y1="540" x2="1540" y2="760" />
+        </g>
+
+        <!-- 5 phase pods -->
+        <g class="q-pod p1"><circle cx="380" cy="320" r="36" /></g>
+        <g class="q-pod p2"><circle cx="380" cy="760" r="36" /></g>
+        <g class="q-pod p3"><circle cx="960" cy="160" r="36" /></g>
+        <g class="q-pod p4"><circle cx="1540" cy="320" r="36" /></g>
+        <g class="q-pod p5"><circle cx="1540" cy="760" r="36" /></g>
+
+        <!-- Central QBP hex -->
+        <g class="q-core" transform="translate(960 540)">
+          <polygon
+            points="0,-90 78,-45 78,45 0,90 -78,45 -78,-45"
+            class="q-hex"
+          />
+          <polygon
+            points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30"
+            class="q-hex-inner"
+          />
+        </g>
+      </svg>
+
+      <!-- Pod labels -->
+      <div class="q-pod-label l1"><span class="num">01</span><span>Discovery</span></div>
+      <div class="q-pod-label l2"><span class="num">02</span><span>Brand Creation</span></div>
+      <div class="q-pod-label l3"><span class="num">03</span><span>Content</span></div>
+      <div class="q-pod-label l4"><span class="num">04</span><span>Execution</span></div>
+      <div class="q-pod-label l5"><span class="num">05</span><span>Intelligence</span></div>
+
+      <!-- Center label -->
+      <div class="q-center">
+        <div class="q-eyebrow">The brain</div>
+        <h2 class="q-title">Quantum Brand<br /><em>Profile</em></h2>
+      </div>
+    </div>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Figtree:wght@400;500;600&display=swap");
+
+      [data-composition-id="qbp"] {
+        --ink: #1a1610;
+        --ink-soft: #5a5040;
+        --ink-mute: #8a7e70;
+        --brass: #a8903e;
+        --brass-lit: #c4a84e;
+        --p1: #4a7a5e;
+        --p2: #4a7a8a;
+        --p3: #8a5a5a;
+        --p4: #5a7a6a;
+        --p5: #a8903e;
+      }
+      [data-composition-id="qbp"] .q-stage {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        font-family: "Figtree", sans-serif;
+      }
+      [data-composition-id="qbp"] .q-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      [data-composition-id="qbp"] .q-line {
+        stroke-dasharray: 800;
+        stroke-dashoffset: 800;
+      }
+      [data-composition-id="qbp"] .ln1 { stroke: var(--p1); }
+      [data-composition-id="qbp"] .ln2 { stroke: var(--p2); }
+      [data-composition-id="qbp"] .ln3 { stroke: var(--p3); }
+      [data-composition-id="qbp"] .ln4 { stroke: var(--p4); }
+      [data-composition-id="qbp"] .ln5 { stroke: var(--p5); }
+
+      [data-composition-id="qbp"] .q-pod circle {
+        opacity: 0;
+        transform-origin: center;
+      }
+      [data-composition-id="qbp"] .q-pod.p1 circle { fill: var(--p1); }
+      [data-composition-id="qbp"] .q-pod.p2 circle { fill: var(--p2); }
+      [data-composition-id="qbp"] .q-pod.p3 circle { fill: var(--p3); }
+      [data-composition-id="qbp"] .q-pod.p4 circle { fill: var(--p4); }
+      [data-composition-id="qbp"] .q-pod.p5 circle { fill: var(--p5); }
+
+      [data-composition-id="qbp"] .q-core {
+        opacity: 0;
+      }
+      [data-composition-id="qbp"] .q-hex {
+        fill: var(--ink);
+        stroke: var(--brass);
+        stroke-width: 2;
+      }
+      [data-composition-id="qbp"] .q-hex-inner {
+        fill: var(--brass);
+        opacity: 0.9;
+      }
+
+      [data-composition-id="qbp"] .q-pod-label {
+        position: absolute;
+        font-family: "EB Garamond", serif;
+        font-size: 26px;
+        color: var(--ink);
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        opacity: 0;
+      }
+      [data-composition-id="qbp"] .q-pod-label .num {
+        font-family: "Figtree", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: var(--brass);
+      }
+      [data-composition-id="qbp"] .l1 { left: 4%;  top: 24%; }
+      [data-composition-id="qbp"] .l2 { left: 4%;  top: 70%; }
+      [data-composition-id="qbp"] .l3 { left: 50%; top: 8%;  transform: translateX(-50%); }
+      [data-composition-id="qbp"] .l4 { right: 4%; top: 24%; text-align: right; }
+      [data-composition-id="qbp"] .l5 { right: 4%; top: 70%; text-align: right; }
+
+      [data-composition-id="qbp"] .q-center {
+        position: absolute;
+        left: 50%;
+        top: 56%;
+        transform: translate(-50%, 0);
+        text-align: center;
+        margin-top: 110px;
+        opacity: 0;
+      }
+      [data-composition-id="qbp"] .q-eyebrow {
+        font-family: "Figtree", sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--brass);
+        margin-bottom: 12px;
+      }
+      [data-composition-id="qbp"] .q-title {
+        font-family: "EB Garamond", serif;
+        font-weight: 600;
+        font-size: 78px;
+        line-height: 1;
+        letter-spacing: -1px;
+        color: var(--ink);
+        margin: 0;
+      }
+      [data-composition-id="qbp"] .q-title em {
+        font-style: italic;
+        font-weight: 500;
+        color: var(--brass);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        const sel = (s) => '[data-composition-id="qbp"] ' + s;
+
+        // Core hex appears first
+        tl.to(sel(".q-core"), { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.1);
+
+        // Lines draw outward
+        ["ln1", "ln2", "ln3", "ln4", "ln5"].forEach((cls, i) => {
+          tl.to(
+            sel("." + cls),
+            { strokeDashoffset: 200, duration: 0.8, ease: "power2.out" },
+            0.5 + i * 0.12,
+          );
+        });
+
+        // Pods pop in with their lines
+        ["p1", "p2", "p3", "p4", "p5"].forEach((cls, i) => {
+          tl.fromTo(
+            sel("." + cls + " circle"),
+            { opacity: 0, scale: 0 },
+            {
+              opacity: 1,
+              scale: 1,
+              duration: 0.5,
+              ease: "power2.out",
+              transformOrigin: "center",
+            },
+            0.9 + i * 0.12,
+          );
+        });
+
+        // Pod labels
+        ["l1", "l2", "l3", "l4", "l5"].forEach((cls, i) => {
+          tl.to(
+            sel("." + cls),
+            { opacity: 1, duration: 0.5, ease: "power2.out" },
+            1.2 + i * 0.12,
+          );
+        });
+
+        // Center label
+        tl.to(sel(".q-center"), { opacity: 1, duration: 0.7, ease: "power2.out" }, 2.6);
+
+        // Gentle pulse on core (subtle, no elastic)
+        tl.to(
+          sel(".q-hex-inner"),
+          { opacity: 1, scale: 1.08, duration: 1.2, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "center" },
+          3.4,
+        );
+
+        // Soft exit
+        tl.to(sel(".q-stage"), { opacity: 0, duration: 0.5, ease: "power2.in" }, 5.5);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["qbp"] = tl;
+      })();
+    </script>
+  </div>
+</template>
