@@ -488,6 +488,25 @@ function emptySection(toolName, file) {
     '<button onclick="openTool(\'' + safeFile + '\')" class="btn-primary">' +
     'Open ' + safeName + ' \u2192</button></div>';
 }
+// "Tool was completed but synthesis output isn't in QBP yet" \u2014 happens when a
+// user hit the gate's "Maybe later" before synthesis ran, or when an old
+// session recorded completion via legacy paths that didn't write the QBP
+// fields. Distinct from emptySection() so the user knows the funnel state.
+function pendingSynthesisSection(toolName, file) {
+  const safeName = escHtml(toolName);
+  const safeFile = escHtml(file);
+  return '<div class="empty-section">' +
+    '<div class="empty-section-text"><span style="color:var(--text-1)">' + safeName + '</span> is recorded as complete, but the synthesis output isn\'t in your profile yet. Re-run to generate it.</div>' +
+    '<button onclick="openTool(\'' + safeFile + '\')" class="btn-primary">' +
+    'Re-run ' + safeName + ' \u2192</button></div>';
+}
+// Cloud-truth completion check. Falls through to false if QB module isn't
+// loaded so existing pages without qb-cloud.js continue to work.
+function cloudCompleted(toolId) {
+  if (!toolId || !window.QB || !window.QB.getCompletions) return false;
+  const c = QB.getCompletions();
+  return !!(c && c[toolId]);
+}
 
 // FIX B-02: unescape() replaced with TextEncoder — modern, spec-compliant Unicode encoding
 function openTool(file) {
@@ -518,11 +537,15 @@ function render() {
   const completeBadge = '\u2713 Complete';
 
   // ── SECTION 01: Archetype Trinity (from Compass) ──────────────────────────
-  const compassDone = !!(qbp.archetypeCompassComplete);
+  // Bug-2 fix: completion sourced from cloud truth (QB.getCompletions); QBP
+  // fields determine whether we have synthesis output to render. Three states
+  // per section: not-started / done-no-synthesis / done-with-synthesis.
+  const compassDone    = cloudCompleted('archetype-compass') || !!qbp.archetypeCompassComplete;
+  const compassHasData = !!(qbp.archetypeHeadline || qbp.archetypePrimary || qbp.archetypeFusion);
   document.getElementById('compass-status').className = 'status-badge ' + (compassDone ? 'status-done' : 'status-pending');
   document.getElementById('compass-status').innerHTML = compassDone ? completeBadge : pendingBadge;
 
-  if (compassDone) {
+  if (compassHasData) {
     const paradox = qbp.archetypeCentralParadox || {};
     document.getElementById('compass-content').innerHTML =
       field('Headline', qbp.archetypeHeadline, true) +
@@ -540,12 +563,14 @@ function render() {
       (paradox.statement ? field('Central Paradox', paradox.statement) : '') +
       field('Decision Filter',    qbp.archetypeDecisionFilter) +
       field('First Move (this week)', qbp.archetypeFirstMove);
+  } else if (compassDone) {
+    document.getElementById('compass-content').innerHTML = pendingSynthesisSection('Archetype Compass', 'archetype-compass.html');
   } else {
     document.getElementById('compass-content').innerHTML = emptySection('Archetype Compass', 'archetype-compass.html');
   }
 
   // ── SECTION 02: Identity Core ──────────────────────────────────────────────
-  const idDone = !!(qbp.brandEssence);
+  const idDone    = cloudCompleted('soul-map') || !!qbp.soulMapComplete || !!qbp.brandEssence;
   const idHasData = !!(qbp.brandEssence || qbp.spark);
   document.getElementById('identity-status').className = 'status-badge ' + (idDone ? 'status-done' : 'status-pending');
   document.getElementById('identity-status').innerHTML = idDone ? completeBadge : pendingBadge;
@@ -564,16 +589,19 @@ function render() {
       ]) +
       field('Always / Never', qbp.alwaysNever) +
       field('Primary Persona', qbp.primaryPersona);
+  } else if (idDone) {
+    document.getElementById('identity-content').innerHTML = pendingSynthesisSection('Brand Soul Map', 'brand-soul-map.html');
   } else {
     document.getElementById('identity-content').innerHTML = emptySection('Brand Soul Map', 'brand-soul-map.html');
   }
 
   // ── SECTION 03: Sensory Universe ──────────────────────────────────────────
-  const sensDone = !!(qbp.colorTerritory);
+  const sensDone    = cloudCompleted('sensescape') || !!qbp.sensescapeCompletedAt || !!qbp.colorTerritory;
+  const sensHasData = !!qbp.colorTerritory;
   document.getElementById('sensory-status').className = 'status-badge ' + (sensDone ? 'status-done' : 'status-pending');
   document.getElementById('sensory-status').innerHTML = sensDone ? completeBadge : pendingBadge;
 
-  if (sensDone) {
+  if (sensHasData) {
     document.getElementById('sensory-content').innerHTML =
       field('Color Territory', qbp.colorTerritory, true) +
       fieldGrid([
@@ -581,16 +609,19 @@ function render() {
         ['Typography Direction', qbp.typographyNote],
       ]) +
       field('Brand Object + Moment', qbp.exemplarWords);
+  } else if (sensDone) {
+    document.getElementById('sensory-content').innerHTML = pendingSynthesisSection('Sensescape', 'sensescape.html');
   } else {
     document.getElementById('sensory-content').innerHTML = emptySection('Sensescape', 'sensescape.html');
   }
 
   // ── SECTION 04: Visual DNA ──────────────────────────────────────────────
-  const visDone = !!(qbp.visualDnaCompletedAt);
+  const visDone    = cloudCompleted('visual-dna') || !!qbp.visualDnaCompletedAt;
+  const visHasData = !!(qbp.visualDnaCompletedAt || qbp.visualDnaKeptImages || qbp.visualDnaKeepCount);
   document.getElementById('visual-status').className = 'status-badge ' + (visDone ? 'status-done' : 'status-pending');
   document.getElementById('visual-status').innerHTML = visDone ? completeBadge : pendingBadge;
 
-  if (visDone) {
+  if (visHasData) {
     const keepCount = qbp.visualDnaKeepCount || 0;
     const discardRate = qbp.visualDnaDiscardRate || 0;
     document.getElementById('visual-content').innerHTML =
@@ -601,16 +632,19 @@ function render() {
       (qbp.visualDnaFastDiscards && qbp.visualDnaFastDiscards.length ?
         '<div class="doc-field"><div class="doc-field-label">Fast Discards \u2014 Your Visual Blocklist</div><div class="doc-field-value">Images rejected in under 3 seconds \u2014 these define what the brand is NOT. Provide this list to your designer as a negative reference.</div></div>' : '') +
       '<div class="doc-field"><div class="doc-field-label">Designer Note</div><div class="doc-field-value">Your Visual DNA Brief is complete. The kept images define your visual world. The fast discards define your visual blocklist. Share both sets with your designer or use them as Midjourney reference images.</div></div>';
+  } else if (visDone) {
+    document.getElementById('visual-content').innerHTML = pendingSynthesisSection('Visual DNA', 'visual-dna.html');
   } else {
     document.getElementById('visual-content').innerHTML = emptySection('Visual DNA', 'visual-dna.html');
   }
 
   // ── SECTION 05: Strategic Direction ──────────────────────────────────────
-  const warDone = !!(qbp.warTableCompletedAt);
+  const warDone    = cloudCompleted('war-table') || !!qbp.warTableCompletedAt;
+  const warHasData = !!(qbp.warTableCompletedAt || qbp.warTableBrief || (qbp.warTableTopInitiatives && qbp.warTableTopInitiatives.length));
   document.getElementById('strategy-status').className = 'status-badge ' + (warDone ? 'status-done' : 'status-pending');
   document.getElementById('strategy-status').innerHTML = warDone ? completeBadge : pendingBadge;
 
-  if (warDone) {
+  if (warHasData) {
     const initiatives = qbp.warTableTopInitiatives || [];
     const brief = qbp.warTableBrief || {};
     document.getElementById('strategy-content').innerHTML =
@@ -620,6 +654,8 @@ function render() {
         initiatives.map(i => '<div class="doc-tag">' + escHtml(i) + '</div>').join('') +
         '</div></div>' : '') +
       '<div class="doc-field"><div class="doc-field-label">Status</div><div class="doc-field-value">War Table complete. Your full 60-day field plan and Strategic Command Document are available in the War Table tool.</div></div>';
+  } else if (warDone) {
+    document.getElementById('strategy-content').innerHTML = pendingSynthesisSection('War Table', 'war-table.html');
   } else {
     document.getElementById('strategy-content').innerHTML = emptySection('War Table', 'war-table.html');
   }

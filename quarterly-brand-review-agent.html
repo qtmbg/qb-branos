@@ -739,6 +739,15 @@ function App() {
 
   const isValid = () => brandName.trim() && brandEssence.trim() && quarter && (whatWorked.trim() || topPerformers.trim() || keyMetrics.trim());
 
+  const fmtPersona = (label, p) => {
+    if (!p || typeof p !== 'object') return `${label}: not specified`;
+    const parts = [p.name, p.oneLine].filter(Boolean).join(' — ');
+    const hook  = p.hook ? ` Hook: "${p.hook}"` : '';
+    const ch    = p.channel ? ` Channel: ${p.channel}.` : '';
+    return `${label}: ${parts || 'not specified'}.${hook}${ch}`;
+  };
+  const qbpRef = (typeof window !== 'undefined' && window.QB_QBP) || {};
+
   const buildUserData = () => `CURRENT QUANTUM BRAND PROFILE:
 Brand: ${brandName}
 Essence: ${brandEssence}
@@ -748,6 +757,9 @@ Archetype: ${archetype||'not specified'}
 Manifesto: ${manifesto||'not specified'}
 Anti-Brand: ${antiBrand||'not specified'}
 Primary Persona: ${primaryPersona||'not specified'}
+${fmtPersona('NOW Persona',         qbpRef.nowPersona)}
+${fmtPersona('NEXT Persona',        qbpRef.nextPersona)}
+${fmtPersona('NORTH STAR Persona',  qbpRef.northStarPersona)}
 Core Offer: ${offer||'not specified'}
 Voice Notes: ${voiceNotes||'not specified'}
 
