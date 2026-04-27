@@ -10,6 +10,24 @@
   const SUPA_URL = 'https://yushbxjwfhuokaezoioe.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0';
 
+  // ── Canonical host enforcement ────────────────────────────────────────────
+  // Defense against the www/non-www split: if a user lands on www.<host>,
+  // redirect to the bare <host> immediately so localStorage lives under the
+  // same origin the magic-link redirect targets. Hash + query are preserved
+  // (so this is safe to run on /auth-callback.html which reads the JWT from
+  // the URL fragment). Only applies to www.quantumbranding.ai — leaves the
+  // app subdomain and localhost alone.
+  const CANONICAL_HOST = 'quantumbranding.ai';
+  if (typeof window !== 'undefined' && window.location.host === 'www.' + CANONICAL_HOST) {
+    window.location.replace(
+      'https://' + CANONICAL_HOST
+      + window.location.pathname
+      + window.location.search
+      + window.location.hash
+    );
+    return; // The redirect interrupts the rest of this module. Re-runs on the canonical host.
+  }
+
   // ── Tool registry ──────────────────────────────────────────────────────────
   const TOOL_NAMES = {
     'soul-map':   'Brand Soul Map',
@@ -173,30 +191,42 @@
   }
 
   // ── Magic-link auth ───────────────────────────────────────────────────────
+  // The gotrue REST API for /auth/v1/otp expects:
+  //   - body: email, create_user, data { ...metadata }     (top-level, no `options` wrapper)
+  //   - query: redirect_to                                   (not a body field)
+  // The `options` wrapper is a Supabase JS SDK convention — it gets unwrapped
+  // before the SDK sends. When calling REST directly you must flatten.
+  // Force the canonical host in the redirect target so it always lands on the
+  // same origin where localStorage was written (defense alongside the early
+  // host redirect at the top of this module).
   async function sendMagicLink(email, firstName, sourceTool){
     if (!email) return { ok:false, error:'Email is required.' };
-    const redirectTo = window.location.origin
+    const canonicalOrigin = (window.location.host === 'app.' + CANONICAL_HOST)
+      ? window.location.origin                     // app subdomain stays itself
+      : 'https://' + CANONICAL_HOST;               // everything else → canonical root
+    const returnUrl = window.location.href.replace('://www.', '://');
+    const redirectTo = canonicalOrigin
       + '/auth-callback.html?return_to='
-      + encodeURIComponent(window.location.href);
+      + encodeURIComponent(returnUrl);
     try {
-      const res = await fetch(SUPA_URL + '/auth/v1/otp', {
-        method: 'POST',
-        headers: {
-          'apikey': SUPA_KEY,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email,
-          create_user: true,
-          options: {
-            email_redirect_to: redirectTo,
+      const res = await fetch(
+        SUPA_URL + '/auth/v1/otp?redirect_to=' + encodeURIComponent(redirectTo),
+        {
+          method: 'POST',
+          headers: {
+            'apikey': SUPA_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email,
+            create_user: true,
             data: {
               first_name:    firstName || '',
               signup_source: sourceTool || 'unknown'
             }
-          }
-        })
-      });
+          })
+        }
+      );
       if (!res.ok) {
         let msg = 'Email send failed';
         try {

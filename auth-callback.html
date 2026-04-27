@@ -51,7 +51,11 @@
   const accessToken = params.get('access_token');
   const refreshToken = params.get('refresh_token');
   const queryParams = new URLSearchParams(window.location.search);
-  const returnTo = queryParams.get('return_to') || '/';
+  // Always strip www. from return_to — the canonicalizer in qb-cloud.js will
+  // send www visitors to non-www on the next page load anyway, but doing it
+  // here too avoids one round-trip + a flash of the wrong host.
+  const rawReturnTo = queryParams.get('return_to') || '/';
+  const returnTo = rawReturnTo.replace('://www.', '://');
 
   if (!accessToken) {
     showError('No token in the URL. The link may have expired or already been used.');
