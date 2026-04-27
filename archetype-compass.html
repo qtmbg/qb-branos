@@ -6,6 +6,8 @@
 <title>QB BrandOS — Archetype Compass</title>
 <meta name="description" content="Archetype Compass · QB BrandOS Phase 01 — the first step. A 10-exercise diagnostic that reads your brand's archetype trinity.">
 <script>(function(){try{var legacy=localStorage.getItem('qb_theme');if(legacy){localStorage.setItem('qb-theme',legacy);localStorage.removeItem('qb_theme');}var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&family=Lora:wght@500&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
@@ -2679,7 +2681,9 @@ function saveToQBP(){
   });
 
   try {
-    localStorage.setItem('qb_qbp', JSON.stringify(updated));
+    // Cloud-aware write: mirrors to Supabase if user is authed
+    if (window.QB && QB.setQBP) { QB.setQBP(updated); }
+    else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
     S.saved = true;
     QBP = updated;
     try {
@@ -2688,6 +2692,12 @@ function saveToQBP(){
       }));
     } catch(e){}
     render();
+    // Open soft gate (no-op if already authed; records local + cloud completion either way)
+    try {
+      if (window.QB && QB.openGate){
+        QB.openGate({ toolId:'archetype-compass', toolName:'Archetype Compass', brandName: updated.brandName || '' });
+      }
+    } catch(e){ console.warn('QB gate:', e); }
   } catch(err){
     alert('Could not save to localStorage. Check browser settings.');
   }

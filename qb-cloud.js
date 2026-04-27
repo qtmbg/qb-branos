@@ -29,19 +29,24 @@
   }
 
   // ── Tool registry ──────────────────────────────────────────────────────────
+  // PHASE_01_TOOLS lists every tool that counts toward Phase 01 progress.
+  // Order matters: nextRecommendedTool() returns the first incomplete one,
+  // so list them in journey order. Compass is the entry point.
   const TOOL_NAMES = {
-    'soul-map':   'Brand Soul Map',
-    'sensescape': 'Sensescape',
-    'visual-dna': 'Visual DNA',
-    'war-table':  'The War Table'
+    'archetype-compass': 'Archetype Compass',
+    'soul-map':          'Brand Soul Map',
+    'sensescape':        'Sensescape',
+    'visual-dna':        'Visual DNA',
+    'war-table':         'The War Table'
   };
   const TOOL_FILES = {
-    'soul-map':   'brand-soul-map.html',
-    'sensescape': 'sensescape.html',
-    'visual-dna': 'visual-dna.html',
-    'war-table':  'war-table.html'
+    'archetype-compass': 'archetype-compass.html',
+    'soul-map':          'brand-soul-map.html',
+    'sensescape':        'sensescape.html',
+    'visual-dna':        'visual-dna.html',
+    'war-table':         'war-table.html'
   };
-  const PHASE_01_TOOLS = ['soul-map', 'sensescape', 'visual-dna', 'war-table'];
+  const PHASE_01_TOOLS = ['archetype-compass', 'soul-map', 'sensescape', 'visual-dna', 'war-table'];
 
   // ── Session management ────────────────────────────────────────────────────
   function getSession(){

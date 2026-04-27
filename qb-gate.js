@@ -89,7 +89,9 @@
           + escapeHtml((toolName || '').toUpperCase()) + ' · COMPLETE'
         + '</div>'
         + '<div class="qb-gate-progress" aria-label="Phase 01 progress">'
-          + [0,1,2,3].map(i => '<div class="qb-gate-pip ' + (i < pipsLit ? 'done' : '') + '"></div>').join('')
+          + Array.from({ length: progressNow.total }, function(_, i){
+              return '<div class="qb-gate-pip ' + (i < pipsLit ? 'done' : '') + '"></div>';
+            }).join('')
         + '</div>'
         + '<div class="qb-gate-label">Save your Brand Profile</div>'
         + '<h2 id="qb-gate-title" class="qb-gate-title">' + titleText + '</h2>'

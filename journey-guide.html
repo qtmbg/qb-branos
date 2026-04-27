@@ -730,6 +730,12 @@ function renderReturnBanner(progress, currentStep, allDone) {
     msg = 'You\'ve completed every step of the journey. Open the OS to revisit any tool.';
     ctaLabel = 'Open OS →';
     ctaHref = 'qb-branidos-hub.html';
+  } else if (phase01.percent === 100 && currentStep && currentStep.phase > 1) {
+    // Phase 01 just hit 100%. Phase 02+ is unlocked but not yet started.
+    // Celebratory state — pivot the user toward the OS rather than the next tool.
+    msg = 'Phase 01 is complete. Phase 02 unlocks ' + currentStep.name + ' next — visit the OS to see everything that’s now available.';
+    ctaLabel = 'Open OS →';
+    ctaHref = 'qb-branidos-hub.html';
   } else if (phase01.percent < 100 && currentStep && currentStep.phase === 1) {
     msg = 'Phase 01 is ' + phase01.percent + '% complete. ' + currentStep.name + ' compounds next.';
     ctaHref = currentStep.file;
