@@ -58,7 +58,7 @@ Three custom events fired by `qb-cloud.js`. Klaviyo creates them automatically t
 |---|---|---|
 | `Brand Profile Saved` | After magic-link click + session created (in `auth-callback.html`) | `source_tool`, `tools_completed` |
 | `Tool Completed` | After every Phase 01 synthesis (gate or skip both) | `tool_id`, `tool_name` |
-| `Phase 01 Complete` | When all four Phase 01 tools done — fires exactly once on the transition | `total_time_days` |
+| `Phase 01 Complete` | When all six Phase 01 tools done — fires exactly once on the transition | `total_time_days` |
 
 After each event has fired at least once, you'll see them in **Analytics → Metrics**. They take 5–10 min to register first time.
 
@@ -87,7 +87,7 @@ After each event has fired at least once, you'll see them in **Analytics → Met
   <h1 style="font-size:22px;font-weight:600;line-height:1.3;margin:0 0 18px">Hi {{ first_name|default:"there" }},</h1>
   <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">Your Brand Profile is saved. The next time you open any QB tool, your profile is already there. No re-entering anything.</p>
   <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">Here's why this matters:</p>
-  <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">The four Phase 01 tools — Brand Soul Map, Sensescape, Visual DNA, The War Table — each surface a different layer of your brand. Identity. Senses. Visual language. Strategic priorities. Run alone, each gives you a useful artifact. Run together, they compound into something most founders never reach: a brand profile that's actually operational.</p>
+  <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">The six Phase 01 tools — Archetype Compass, Brand Soul Map, Sensescape, Visual DNA, The War Table, The Profiles — each surface a different layer of your brand. Trinity. Identity. Senses. Visual language. Strategic priorities. Buyer personas. Run alone, each gives you a useful artifact. Run together, they compound into something most founders never reach: a brand profile that's actually operational.</p>
   <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 28px">The fastest move from here is the next tool you haven't run yet.</p>
   <a href="https://app.quantumbranding.ai/journey-guide.html" style="display:inline-block;background:#0a0a0a;color:#fff;text-decoration:none;padding:14px 28px;border-radius:6px;font-size:14px;font-weight:500">See what compounds next →</a>
   <p style="font-size:13px;line-height:1.55;color:#888;margin:32px 0 8px;font-style:italic">Takes 15–30 minutes. Builds directly on what you just did.</p>
@@ -133,12 +133,14 @@ After each event has fired at least once, you'll see them in **Analytics → Met
   <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">{{ first_name|default:"Hi" }},</p>
   <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">I'll be direct.</p>
   <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">Your Brand Profile right now is one slice. Useful. Incomplete. And the value of every Phase 02+ tool — voice, logo direction, content, all of it — depends on the depth of the profile underneath.</p>
-  <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">If you ran all four Phase 01 tools, you'd have:</p>
+  <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">If you ran all six Phase 01 tools, you'd have:</p>
   <ul style="font-size:15px;line-height:1.7;color:#222;margin:0 0 16px;padding-left:20px">
+    <li>An Archetype Trinity (your primary, secondary, tension)</li>
     <li>A Soul Map (your identity)</li>
     <li>A Sensescape (the world you operate in)</li>
     <li>A Visual DNA (your aesthetic language)</li>
     <li>A War Table (what to actually do this quarter)</li>
+    <li>Three Profiles (NOW, NEXT, NORTH STAR personas)</li>
   </ul>
   <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 16px">Together: about 90 minutes of focused work. After that, every other tool in the system reads from this and writes back to it. Nothing has to be re-explained.</p>
   <p style="font-size:15px;line-height:1.6;color:#222;margin:0 0 28px">If 90 minutes isn't on the table, even the next 20 will move you forward.</p>
