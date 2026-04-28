@@ -7,6 +7,14 @@
 (function(){
   'use strict';
 
+  // Klaviyo public client-side config — intentionally embedded in client JS.
+  // The public key is designed for browser-side event ingestion; the list ID
+  // is the QB BrandOS subscriber list. Neither grants any read/write access
+  // to existing profiles or campaigns. Mutating Klaviyo state requires the
+  // private key, which never appears in client code.
+  window.QB_KLAVIYO_KEY = 'XnAGuL';
+  window.QB_KLAVIYO_LIST_ID = 'WSfkyj';
+
   const SUPA_URL = 'https://yushbxjwfhuokaezoioe.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0';
 
