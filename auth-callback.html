@@ -151,6 +151,21 @@
         source_tool:     pending.sourceTool || 'unknown',
         tools_completed: Object.keys(localCompletions || {}).length
       });
+
+      // Catch-up Tool Completed events for any pre-signup completions.
+      // recordCompletion() fires Tool Completed inline, but pre-signup it
+      // drops silently because sendKlaviyoEvent reads the email from
+      // qb_session and there's no session yet. Without this loop the metric
+      // never increments for the first tool, which breaks the Welcome
+      // dampening filters and the re-engagement segment.
+      for (const toolId of Object.keys(localCompletions || {})) {
+        try {
+          await QB.sendKlaviyoEvent('Tool Completed', {
+            tool_id:   toolId,
+            tool_name: (QB.TOOL_NAMES && QB.TOOL_NAMES[toolId]) || toolId
+          });
+        } catch(e){}
+      }
     } catch(e){}
 
     // Success → redirect back
