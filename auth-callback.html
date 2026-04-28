@@ -62,6 +62,19 @@
     return;
   }
 
+  // Idempotency: if this access_token has already been processed in this
+  // browser (back-button, slow-refresh, double-clicked link), skip the
+  // cloud writes and just bounce back to return_to. Prevents the local
+  // QBP from being re-merged over a freshly-changed cloud state.
+  const existingSession = QB.getSession();
+  if (existingSession && existingSession.token === accessToken) {
+    $('spinner').style.display = 'none';
+    $('title').textContent = "You're in.";
+    $('msg').innerHTML = 'Already signed in. Taking you back…';
+    setTimeout(() => { window.location.href = returnTo; }, 400);
+    return;
+  }
+
   try {
     // Verify the session by fetching the user
     const userRes = await fetch(QB.SUPA_URL + '/auth/v1/user', {
@@ -91,40 +104,36 @@
     localStorage.removeItem('qb_pending_signup');
     if (pending.firstName) localStorage.setItem('qb_first_name', pending.firstName);
 
-    // Push pre-signup local QBP to cloud so the user's work is persisted
+    // Push pre-signup local QBP to cloud so the user's work is persisted.
+    // Uses merge_qbp RPC instead of full-row PATCH so any cloud-side keys
+    // from a prior session aren't blown away by this merge.
     const localQBP = QB.getQBP();
     if (localQBP && Object.keys(localQBP).length > 0) {
       try {
-        await fetch(QB.SUPA_URL + '/rest/v1/profiles?id=eq.' + user.id, {
-          method: 'PATCH',
+        await fetch(QB.SUPA_URL + '/rest/v1/rpc/merge_qbp', {
+          method: 'POST',
           headers: {
             'apikey': QB.SUPA_KEY,
             'Authorization': 'Bearer ' + accessToken,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            qbp: localQBP,
-            updated_at: new Date().toISOString(),
-            last_active_at: new Date().toISOString()
-          })
+          body: JSON.stringify({ p_user_id: user.id, p_patch: localQBP })
         });
       } catch(e){}
     }
 
-    // Push pre-signup local completions to cloud
+    // Push pre-signup local completions to cloud — same merge semantics
     const localCompletions = QB.getCompletions();
     if (localCompletions && Object.keys(localCompletions).length > 0) {
       try {
-        await fetch(QB.SUPA_URL + '/rest/v1/profiles?id=eq.' + user.id, {
-          method: 'PATCH',
+        await fetch(QB.SUPA_URL + '/rest/v1/rpc/merge_completions', {
+          method: 'POST',
           headers: {
             'apikey': QB.SUPA_KEY,
             'Authorization': 'Bearer ' + accessToken,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ tool_completions: localCompletions })
+          body: JSON.stringify({ p_user_id: user.id, p_patch: localCompletions })
         });
       } catch(e){}
     }

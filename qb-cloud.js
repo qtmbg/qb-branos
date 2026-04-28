@@ -146,25 +146,29 @@
     const next = Object.assign({}, getQBP(), cleanPatch);
     return setQBP(next);
   }
+  // Cloud QBP sync: routes through the merge_qbp RPC so concurrent writers
+  // (other tabs, other devices, the user's phone) can't silently overwrite
+  // each other's keys. Server-side jsonb || preserves any key in cloud not
+  // present in the patch — a Tab A that sets {essence:"x"} and a Tab B that
+  // sets {persona:"y"} both land safely instead of last-writer-wins.
+  // We send the full local qbp as the patch (top-level shallow merge), so
+  // any key the local just wrote replaces the cloud's value for that key,
+  // and any cloud-only key survives. Net effect: local additive writes
+  // never lose remote-only data.
   async function syncQBPToCloud(qbp){
     if (!isAuthed()) return false;
     const userId = getSession().userId;
     try {
       const res = await cloudFetch(token => ({
-        url: SUPA_URL + '/rest/v1/profiles?id=eq.' + userId,
+        url: SUPA_URL + '/rest/v1/rpc/merge_qbp',
         init: {
-          method: 'PATCH',
+          method: 'POST',
           headers: {
             'apikey': SUPA_KEY,
             'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            qbp,
-            updated_at: new Date().toISOString(),
-            last_active_at: new Date().toISOString()
-          })
+          body: JSON.stringify({ p_user_id: userId, p_patch: qbp || {} })
         }
       }));
       return !!(res && res.ok);
@@ -416,6 +420,35 @@
         })
       });
     } catch(e){ /* silent */ }
+  }
+
+  // ── Cross-tab state sync ──────────────────────────────────────────────────
+  // The browser fires `storage` events in OTHER tabs of the same origin when
+  // localStorage changes. We bridge those into a single `qb:state-changed`
+  // CustomEvent so pages can listen to one thing instead of N keys.
+  // Tab B's localStorage is auto-updated by the browser before the event
+  // fires, so a re-render reads fresh local values immediately.
+  // Pages should listen via:
+  //   window.addEventListener('qb:state-changed', e => { /* re-render */ });
+  // The event detail is { key, scope } where scope is one of
+  // 'qbp' | 'completions' | 'session' | 'profile' | 'other'.
+  const QB_KEY_SCOPES = {
+    'qb_qbp':            'qbp',
+    'qb_completions':    'completions',
+    'qb_session':        'session',
+    'qb_first_name':     'profile',
+    'qb_user_tier':      'profile',
+    'qb_sub_status':     'profile'
+  };
+  if (typeof window !== 'undefined') {
+    window.addEventListener('storage', function(e){
+      if (!e || !e.key || !QB_KEY_SCOPES[e.key]) return;
+      try {
+        window.dispatchEvent(new CustomEvent('qb:state-changed', {
+          detail: { key: e.key, scope: QB_KEY_SCOPES[e.key] }
+        }));
+      } catch(err){}
+    });
   }
 
   // ── Bootstrap on load ─────────────────────────────────────────────────────

@@ -114,6 +114,61 @@ $$ language plpgsql security definer;
 
 grant execute on function public.record_tool_completion(uuid, text) to authenticated;
 
+-- 4b. RPC: merge_qbp ────────────────────────────────────────────────────────
+-- Atomic shallow merge of a QBP patch into the existing qbp jsonb.
+-- Postgres jsonb || is a top-level shallow merge (RHS wins on overlap;
+-- LHS keys not in RHS survive). Replaces the old "PATCH the whole qbp"
+-- pattern that was racy across concurrent tabs/devices — last writer
+-- silently won and the other writer's keys were lost. With this RPC,
+-- two tabs writing different keys both land safely.
+--
+-- Caller must be authenticated as the same user (defense in depth on
+-- top of RLS). Touches updated_at + last_active_at for free.
+create or replace function public.merge_qbp(
+  p_user_id uuid,
+  p_patch jsonb
+)
+returns void as $$
+begin
+  if auth.uid() is null or auth.uid() <> p_user_id then
+    raise exception 'unauthorized';
+  end if;
+
+  update public.profiles
+  set
+    qbp = coalesce(qbp, '{}'::jsonb) || coalesce(p_patch, '{}'::jsonb),
+    updated_at = now(),
+    last_active_at = now()
+  where id = p_user_id;
+end;
+$$ language plpgsql security definer;
+
+grant execute on function public.merge_qbp(uuid, jsonb) to authenticated;
+
+-- 4c. RPC: merge_completions ───────────────────────────────────────────────
+-- Bulk variant of record_tool_completion. Used by auth-callback.html when
+-- pushing pre-signup local completions to cloud in a single call. Same
+-- safety as merge_qbp — keys in cloud not in p_patch survive.
+create or replace function public.merge_completions(
+  p_user_id uuid,
+  p_patch jsonb
+)
+returns void as $$
+begin
+  if auth.uid() is null or auth.uid() <> p_user_id then
+    raise exception 'unauthorized';
+  end if;
+
+  update public.profiles
+  set
+    tool_completions = coalesce(tool_completions, '{}'::jsonb) || coalesce(p_patch, '{}'::jsonb),
+    last_active_at = now()
+  where id = p_user_id;
+end;
+$$ language plpgsql security definer;
+
+grant execute on function public.merge_completions(uuid, jsonb) to authenticated;
+
 -- 5. updated_at TRIGGER ─────────────────────────────────────────────────────
 create or replace function public.set_updated_at()
 returns trigger as $$
