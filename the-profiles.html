@@ -8,6 +8,7 @@
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
 <script src="/qb-gate.js"></script>
+<script src="/qb-pptx-export.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -2041,6 +2042,23 @@ function renderFinish() {
     w.document.write(html);
     w.document.close();
   }
+  function downloadPPTX() {
+    if (!window.QB_exportPPTX) {
+      alert("PPTX export still loading — try again in a second.");
+      return;
+    }
+    var qbp = {};
+    try { qbp = JSON.parse(localStorage.getItem("qb_qbp") || "{}"); } catch (e) {}
+    var brand = (qbp && qbp.brandName) || "Brand";
+    window.QB_exportPPTX("the-profiles", output, {
+      brandName: brand,
+      filename: "the-profiles-" + brand,
+      deckTitle: "The Profiles"
+    }).catch(function (err) {
+      console.error("[QB PPTX]", err);
+      alert("Could not generate the PPTX. Check the console for details.");
+    });
+  }
 
   return h("div", { class: "screen screen-center" },
     h("div", { class: "container-md center fade-in" },
@@ -2049,6 +2067,7 @@ function renderFinish() {
       h("p", { class: "body", style: { marginBottom: "32px", maxWidth: "520px", marginLeft: "auto", marginRight: "auto" }, text: "Three full persona briefs written into your QBP. War Table, Voice Guide, and Predictive Panel will read this automatically. Below: download formats and the branded export that mirrors your strategy deck." }),
       h("div", { class: "flex justify-center gap-3 flex-wrap" },
         btn("Branded export (PDF)", { icon: "print", onClick: openBrandedExport }),
+        btn("Download PPTX", { icon: "download", onClick: downloadPPTX }),
         btn("Download JSON", { icon: "download", variant: "secondary", onClick: downloadJSON }),
         btn("Download Markdown", { icon: "download", variant: "secondary", onClick: downloadMD })
       ),
