@@ -424,56 +424,105 @@
   }
 
   /* =====================================================
-     DARK DEMONSTRATION SECTION
+     ARCHITECTURE SPREAD (Pomegranate-style asymmetric editorial)
+     Cream-warm canvas, text left, illustration right, thick ink borders,
+     hard offset shadow on the illustration card, chunky Fraunces headline
+     with italic spotlight.
      ===================================================== */
   .dark-demo {
-    background: var(--ink);
-    color: var(--cream);
+    background: var(--cream-warm);
+    color: var(--ink);
     padding-block: var(--space-2xl) var(--space-2xl-3xl);
     overflow: hidden;
+    border-block: 2px solid var(--ink);
   }
-  .dark-demo_eye { display: flex; justify-content: center; }
-  .phase-pills {
-    display: flex; flex-wrap: wrap; gap: 0.55rem;
-    justify-content: center;
-    margin-bottom: var(--space-l);
+
+  .arch-spread {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-l-xl);
+    align-items: center;
   }
-  .phase-pill {
+  @media (min-width: 980px) {
+    .arch-spread { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--space-2xl); }
+  }
+
+  .arch-copy { display: flex; flex-direction: column; gap: var(--space-s); }
+  .arch-copy_h {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    /* Pomegranate-style chunky display: heavy weight, large optical size, soft + wonky on for the bubbly terminals */
+    font-variation-settings: "wght" 800, "opsz" 144, "SOFT" 100, "WONK" 1;
+    font-size: clamp(2.6rem, 5.5vw + 0.5rem, 4.6rem);
+    line-height: 0.95em;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+  .arch-copy_h em {
+    font-style: italic;
+    font-variation-settings: "wght" 800, "opsz" 144, "SOFT" 100, "WONK" 1;
+    color: var(--rose-deep);
+  }
+  .arch-copy_body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--step-0);
+    line-height: 1.55;
+    color: var(--ink-75);
+    margin: 0;
+    max-width: 44ch;
+  }
+
+  .arch-chips { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: var(--space-2xs); }
+  .arch-chip {
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: var(--cream);
     border: 2px solid var(--ink);
     border-radius: 9999px;
-    padding: 0.5em 1.1em;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: var(--step--2);
-    letter-spacing: 0.1em;
+    padding: 0.5em 1em;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--ink);
   }
-  .phase-pill_dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rose); flex-shrink: 0; }
+  .arch-chip_dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--accent, var(--gold)); }
 
-  .dark-demo_h2 {
-    font-family: 'Fraunces', 'Times New Roman', serif;
-    font-variation-settings: "wght" 500, "opsz" 96, "SOFT" 60, "WONK" 0;
-    font-size: var(--step-5);
-    line-height: 1.05em;
-    letter-spacing: -0.01em;
-    color: var(--cream);
-    text-align: center;
-    text-wrap: balance;
+  .arch-cta { margin-top: var(--space-s); }
+
+  /* Illustration card — Pomegranate "sticker on cream paper" treatment */
+  .arch-illust {
+    position: relative;
+    background: var(--cream);
+    border: 4px solid var(--ink);
+    border-radius: 36px;
+    padding: var(--space-m) var(--space-m) var(--space-s);
+    box-shadow: 0 12px var(--ink);
+    transform: rotate(-1.2deg);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .dark-demo_sub {
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: var(--step-0);
-    line-height: 1.4;
-    color: var(--cream);
-    opacity: 0.82;
+  @media (min-width: 640px) {
+    .arch-illust { box-shadow: 0 18px var(--ink); border-radius: 44px; padding: var(--space-l); }
+  }
+  .arch-illust:hover { transform: rotate(0deg) translateY(-4px); }
+  .arch-illust img,
+  .arch-illust video {
+    display: block;
+    width: 100%; height: auto;
+    border-radius: 24px;
+  }
+  .arch-illust_caption {
+    margin-top: var(--space-s);
+    padding-top: var(--space-xs);
+    border-top: 1px dashed var(--ink-25);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-50);
     text-align: center;
-    max-width: 640px;
-    margin: var(--space-s) auto 0;
-    text-wrap: pretty;
   }
 
   /* ─── Canonical v3.2 pattern (ported from ecosystem.html "Three steps") ─── */
@@ -772,56 +821,27 @@
   <section class="dark-demo">
     <div class="qb-x">
 
-      <header class="section_header">
-        <span class="qb-tag on-dark"><span class="qb-tag_content">The architecture</span></span>
-        <h2 class="dark-demo_h2 qb-type-balance reveal">20 agents. Four phases. <em>One operating system.</em></h2>
-      </header>
+      <div class="arch-spread">
 
-      <div class="how-grid">
-
-        <!-- 01 Discovery -->
-        <article class="how-card reveal">
-          <div class="how-card_doodle">
-            <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 8l3 8-3 8-3-8z"/></svg>
+        <div class="arch-copy reveal">
+          <span class="qb-tag"><span class="qb-tag_content">The architecture</span></span>
+          <h2 class="arch-copy_h">Twenty agents. <em>One brain.</em></h2>
+          <p class="arch-copy_body">A connected system, not a toolkit. The output of every tool becomes the intelligence that powers the next — so nothing has to be re-explained, ever.</p>
+          <div class="arch-chips">
+            <span class="arch-chip" style="--accent: var(--phase-discovery);"><span class="arch-chip_dot"></span>Discovery</span>
+            <span class="arch-chip" style="--accent: var(--phase-creation);"><span class="arch-chip_dot"></span>Positioning</span>
+            <span class="arch-chip" style="--accent: var(--phase-content);"><span class="arch-chip_dot"></span>Content</span>
+            <span class="arch-chip" style="--accent: var(--phase-intelligence);"><span class="arch-chip_dot"></span>Intelligence</span>
           </div>
-          <div class="how-card_num">01 · Discovery</div>
-          <h3 class="how-card_title">The brand discovers itself.</h3>
-          <p class="qb-type-text">Six diagnostic tools surface identity, senses, visual language, and strategy.</p>
-          <div class="how-card_result">Result · Brand profile, 90 min</div>
-        </article>
-
-        <!-- 02 Positioning -->
-        <article class="how-card reveal rd1">
-          <div class="how-card_doodle is-rose">
-            <svg viewBox="0 0 32 32"><path d="M5 10c0-2 1-3 3-3h16c2 0 3 1 3 3v8c0 2-1 3-3 3h-9l-5 4v-4H8c-2 0-3-1-3-3z"/></svg>
+          <div class="arch-cta">
+            <a href="ecosystem.html" class="qb-button is-primary is-lg"><span class="qb-button_content">See how it connects</span></a>
           </div>
-          <div class="how-card_num">02 · Positioning</div>
-          <h3 class="how-card_title">The brand finds its voice.</h3>
-          <p class="qb-type-text">Voice spine and visual direction. The named perspective every downstream agent reads.</p>
-          <div class="how-card_result">Result · Voice + visual</div>
-        </article>
+        </div>
 
-        <!-- 03 Content -->
-        <article class="how-card reveal rd2">
-          <div class="how-card_doodle is-teal">
-            <svg viewBox="0 0 32 32"><path d="M6 6h20M6 12h16M6 18h20M6 24h14"/></svg>
-          </div>
-          <div class="how-card_num">03 · Content</div>
-          <h3 class="how-card_title">The brand creates daily.</h3>
-          <p class="qb-type-text">One profile drives every channel. Drafted in your voice, ready for approval.</p>
-          <div class="how-card_result">Result · Channels, daily</div>
-        </article>
-
-        <!-- 04 Intelligence -->
-        <article class="how-card reveal rd3">
-          <div class="how-card_doodle is-pink">
-            <svg viewBox="0 0 32 32"><path d="M2 16Q16 6 30 16Q16 26 2 16Z"/><circle cx="16" cy="16" r="4"/></svg>
-          </div>
-          <div class="how-card_num">04 · Intelligence</div>
-          <h3 class="how-card_title">The brand reads itself.</h3>
-          <p class="qb-type-text">Performance signals loop back into the profile each quarter. The system learns.</p>
-          <div class="how-card_result">Result · Self-tuning</div>
-        </article>
+        <figure class="arch-illust reveal rd2">
+          <img src="img/synergy.png" alt="The QB BrandOS ecosystem — figures connected through a shared brand profile" loading="lazy">
+          <figcaption class="arch-illust_caption">One profile · Twenty agents · Six phases</figcaption>
+        </figure>
 
       </div>
     </div>
