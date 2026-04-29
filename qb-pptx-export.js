@@ -13,23 +13,57 @@
 (function () {
   var PPTX_CDN = "https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js";
 
-  // ---------- Brand tokens ----------
-  var TOKENS = {
-    bgBase:    "0E0C09",
-    bgDeep:    "0A0806",
-    bgVoid:    "080604",
-    brass:     "A8903E",
-    brassLit:  "C4A84E",
-    patina:    "3A5F4A",
-    patinaLit: "4A7A5E",
-    text1:     "DDD4C4",
-    text2:     "A89A88",
-    text3:     "6A5E50",
-    text4:     "3E3830",
-    serif: "DM Serif Display",
-    sans:  "Inter",
-    mono:  "JetBrains Mono"
+  // ---------- Brand tokens (two-mode SOT) ----------
+  // QB BrandOS v3.2 has two locked surfaces:
+  //   studio    — app side (the-profiles, brand-soul-map, war-table, brand-document):
+  //               warm-dark + brass + patina. Default for client deliverables.
+  //   editorial — marketing side (ecosystem, index): cream + gold + rose + teal +
+  //               aubergine. For pitch decks / printed leave-behinds.
+  // Hex values come straight from the locked :root blocks (do not invent).
+  // Same semantic keys in both modes so deck builders close over a single TOKENS ref.
+  var THEMES = {
+    studio: {
+      mode:      "studio",
+      bgBase:    "0E0C09",  // app dark: --cream (dark mode)
+      bgDeep:    "0A0806",
+      bgVoid:    "080604",
+      brass:     "A8903E",  // --brass
+      brassLit:  "C4A84E",
+      patina:    "3A5F4A",  // --patina (used for big serif open-quote glyph)
+      patinaLit: "4A7A5E",
+      text1:     "DDD4C4",  // body
+      text2:     "A89A88",
+      text3:     "6A5E50",  // eyebrows / footers
+      text4:     "3E3830",
+      serif: "DM Serif Display",
+      sans:  "Inter",
+      mono:  "JetBrains Mono"
+    },
+    editorial: {
+      mode:      "editorial",
+      bgBase:    "FBF5E6",  // --cream
+      bgDeep:    "F2EBD3",  // --cream-card (elevated)
+      bgVoid:    "ECDDB8",  // --cream-warm (cover plates)
+      brass:     "B58840",  // --gold-deep (primary accent — darker for contrast on cream)
+      brassLit:  "CA6180",  // --rose (punchier highlight)
+      patina:    "5BA8B5",  // --teal-deep (secondary accent)
+      patinaLit: "4A2B3A",  // --aubergine (big serif open-quote glyph — rich contrast)
+      text1:     "2D1521",  // --ink (body)
+      text2:     "604D52",  // ink @ 75% flattened on cream
+      text3:     "948584",  // ink @ 50% flattened on cream (eyebrows / footers)
+      text4:     "B7ABA6",  // ink @ 33% flattened
+      serif: "DM Serif Display",
+      sans:  "Inter",
+      mono:  "JetBrains Mono"
+    }
   };
+  // Active token bag — mutated in place by setMode so closures stay valid.
+  var TOKENS = {};
+  function setMode(mode) {
+    var t = THEMES[mode] || THEMES.studio;
+    for (var k in t) if (t.hasOwnProperty(k)) TOKENS[k] = t[k];
+  }
+  setMode("studio");
   // 16:9 slide = 13.333 x 7.5 in (PptxGenJS LAYOUT_WIDE)
   var W = 13.333, H = 7.5;
   var GUTTER = 0.7;
@@ -89,9 +123,9 @@
               fontFace: TOKENS.mono, fontSize: 8, color: TOKENS.brass,
               charSpacing: 4, bold: false, valign: "middle" }
         }},
-        // page brand right
+        // page brand right (mode-aware framing)
         { text: {
-            text: "QB BRANDOS  ·  PHASE 01",
+            text: TOKENS.mode === "editorial" ? "QUANTUM BRANDING  ·  EDITORIAL" : "QB BRANDOS  ·  PHASE 01",
             options: { x: W - GUTTER - 5, y: 0.28, w: 5, h: 0.28,
               fontFace: TOKENS.mono, fontSize: 8, color: TOKENS.text3,
               charSpacing: 3, align: "right", valign: "middle" }
@@ -1006,8 +1040,14 @@
   }
 
   // ---------- Public API ----------
+  // opts:
+  //   brandName  string   used for cover title + filename
+  //   filename   string   override file base (sanitized; .pptx appended)
+  //   deckTitle  string   embedded as PPTX metadata title
+  //   mode       string   "studio" (default, app-side warm-dark) | "editorial" (cream marketing)
   function exportPPTX(toolId, data, opts) {
     opts = opts || {};
+    setMode(opts.mode === "editorial" ? "editorial" : "studio");
     var filenameBase = opts.filename || (toolId + (opts.brandName ? "-" + opts.brandName : ""));
     var filename = sanitizeFilename(filenameBase) + ".pptx";
 
