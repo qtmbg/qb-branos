@@ -11,87 +11,182 @@
 <script src="/qb-pptx-export.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box }
 :root{
-  --cream:          #F4F0EB;
-  --cream-soft:     #EDE8E2;
-  --cream-deep:     #E6E0D8;
-  --cream-line:     rgba(100,80,50,0.14);
+  /* QB BRANDOS DESIGN SYSTEM v3.2 — TOKENS (canonical, mirrors ecosystem.html / index.html)
+     Variable names retained from prior local system so existing rules continue to resolve.
+     Phase 01 = Discovery → sage green accent (--phase-discovery).
+  */
+
+  /* Cream surface ladder */
+  --cream:          #FBF5E6;
+  --cream-soft:     #F2EBD3;          /* aka cream-card */
+  --cream-deep:     #ECDDB8;          /* aka cream-warm */
+  --cream-line:     rgba(45,21,33,0.14);
+  --cream-card:     #F2EBD3;
+  --cream-warm:     #ECDDB8;
+  --cream-edge:     #DBD4C0;
+  --cream-rose:     #F4D9DD;
+  --white:          #FFFEF8;
   --bg-void:        var(--cream);
   --bg-deep:        var(--cream-soft);
   --bg-base:        var(--cream-deep);
-  --bg-surface:     rgba(100,80,50,0.04);
-  --bg-elevated:    rgba(100,80,50,0.07);
-  --bg-overlay:     rgba(244,240,235,0.9);
-  --border-subtle:  rgba(100,80,50,0.08);
-  --border-medium:  rgba(100,80,50,0.14);
-  --border-strong:  rgba(100,80,50,0.22);
-  --ink:            #1A1610;
-  --ink-soft:       #5A5040;
-  --ink-mute:       #8A7E70;
-  --ink-faint:      #B8AEA0;
+  --bg-surface:     rgba(45,21,33,0.04);
+  --bg-elevated:    rgba(45,21,33,0.07);
+  --bg-overlay:     rgba(251,245,230,0.92);
+  --border-subtle:  rgba(45,21,33,0.10);
+  --border-medium:  rgba(45,21,33,0.18);
+  --border-strong:  rgba(45,21,33,0.30);
+
+  /* Ink ladder */
+  --ink:            #2D1521;
+  --ink-soft:       rgba(45,21,33,0.75);
+  --ink-mute:       rgba(45,21,33,0.50);
+  --ink-faint:      rgba(45,21,33,0.33);
+  --ink-75:         rgba(45,21,33,0.75);
+  --ink-50:         rgba(45,21,33,0.50);
+  --ink-33:         rgba(45,21,33,0.33);
+  --ink-25:         rgba(45,21,33,0.25);
   --text-1:         var(--ink);
   --text-2:         var(--ink-soft);
   --text-3:         var(--ink-mute);
   --text-4:         var(--ink-faint);
-  --patina:         #3A5F4A;
-  --patina-lit:     #4A7A5E;
-  --patina-dim:     rgba(58,95,74,0.15);
-  --patina-faint:   rgba(58,95,74,0.06);
-  --brass:          #A8903E;
-  --brass-lit:      #C4A84E;
-  --brass-dim:      rgba(168,144,62,0.15);
-  --brass-faint:    rgba(168,144,62,0.06);
-  --terra:          #C4654A;
-  --plum:           #7A5A6E;
-  --warmred:        #8A4A4A;
-  --error:          #8A4A4A;
-  --error-faint:    rgba(138,74,74,0.06);
-  --pill-bg:        #F3E9C9;
-  --pill-bg-hover:  #EFE1B4;
-  --pill-border:    #A8903E;
-  --pill-ink:       #1A1610;
-  --f-display:      'EB Garamond',Georgia,serif;
-  --f-body:         'Figtree',-apple-system,BlinkMacSystemFont,sans-serif;
+
+  /* v3.2 accents — gold / rose / teal / aubergine */
+  --gold:           #E0B069;
+  --gold-deep:      #B58840;
+  --rose:           #CA6180;
+  --rose-deep:      #8E3F58;
+  --teal:           #9ED3DC;
+  --teal-deep:      #5BA8B5;
+  --aubergine:      #4A2B3A;
+  --pink:           #FCB7C7;
+  --butter:         #FEFD99;
+  --teal-soft:      #C5E5E9;
+  --rose-soft:      #ECC4D0;
+
+  /* Phase colors (this tool = Phase 01 Discovery) */
+  --phase-discovery:    #9CC4A2;
+  --phase-creation:     #B5C8E5;
+  --phase-content:      #FCB7C7;
+  --phase-execution:    #E89380;
+  --phase-intelligence: #B080A0;
+  --accent:             var(--phase-discovery);
+
+  /* Legacy accent names retargeted onto v3.2 palette so existing CSS keeps working */
+  --patina:         #5A8A6A;            /* deeper sage for text/UI */
+  --patina-lit:     var(--phase-discovery);
+  --patina-dim:     rgba(156,196,162,0.28);
+  --patina-faint:   rgba(156,196,162,0.10);
+  --brass:          var(--gold-deep);
+  --brass-lit:      var(--gold);
+  --brass-dim:      rgba(224,176,105,0.28);
+  --brass-faint:    rgba(224,176,105,0.10);
+  --terra:          var(--rose);
+  --plum:           var(--aubergine);
+  --warmred:        var(--rose-deep);
+  --error:          var(--rose-deep);
+  --error-faint:    rgba(142,63,88,0.08);
+
+  /* Pill button surface (legacy hooks; v3.2 .qb-button ships separately below) */
+  --pill-bg:        var(--gold);
+  --pill-bg-hover:  var(--gold-deep);
+  --pill-border:    var(--ink);
+  --pill-ink:       var(--ink);
+
+  /* Type stack — Fraunces display, Inter body, JetBrains Mono labels */
+  --f-display:      'Fraunces','Times New Roman',serif;
+  --f-body:         'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --f-mono:         'JetBrains Mono',ui-monospace,monospace;
+
+  /* Fluid type scale (v3.2) */
+  --step--2:clamp(0.7813rem,0.7546rem + 0.1254vw,0.88rem);
+  --step--1:clamp(0.9375rem,0.8937rem + 0.2063vw,1.1rem);
+  --step-0: clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+  --step-1: clamp(1.35rem,1.2505rem + 0.4683vw,1.7188rem);
+  --step-2: clamp(1.62rem,1.4773rem + 0.6714vw,2.1488rem);
+  --step-3: clamp(1.9438rem,1.7436rem + 0.9421vw,2.6856rem);
+  --step-4: clamp(2.3325rem,2.0561rem + 1.3008vw,3.3569rem);
+  --step-5: clamp(2.7994rem,2.4224rem + 1.7738vw,4.1963rem);
+  --step-6: clamp(3.3594rem,2.8506rem + 2.3944vw,5.245rem);
+  --step-7: clamp(4.0313rem,3.3499rem + 3.2063vw,6.5563rem);
+
+  /* Fluid spacing scale (v3.2) */
+  --space-3xs:clamp(0.5625rem,0.5288rem + 0.1587vw,0.6875rem);
+  --space-2xs:clamp(0.5625rem,0.5288rem + 0.1587vw,0.6875rem);
+  --space-xs: clamp(0.875rem,0.8244rem + 0.2381vw,1.0625rem);
+  --space-s:  clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+  --space-m:  clamp(1.6875rem,1.5863rem + 0.4762vw,2.0625rem);
+  --space-l:  clamp(2.25rem,2.1151rem + 0.6349vw,2.75rem);
+  --space-xl: clamp(3.375rem,3.1726rem + 0.9524vw,4.125rem);
+  --space-2xl:clamp(4.5rem,4.2302rem + 1.2698vw,5.5rem);
+  --space-3xl:clamp(6.75rem,6.3452rem + 1.9048vw,8.25rem);
+  --space-m-l:clamp(1.6875rem,1.4008rem + 1.3492vw,2.75rem);
+  --space-l-xl:clamp(2.25rem,1.744rem + 2.381vw,4.125rem);
+
+  /* Easing */
   --ease:           cubic-bezier(.22,1,.36,1);
-  --r-pill:         999px;
+  --ease-qb:        cubic-bezier(0.19,1,0.22,1);
+  --ease-spring:    cubic-bezier(0.175,0.885,0.32,1.275);
+
+  /* Radii */
+  --r-pill:         9999px;
   --r-card:         14px;
+  --r-card-lg:      32px;
 }
 [data-theme="dark"]{
-  --cream:          #080604;
-  --cream-soft:     #0A0806;
-  --cream-deep:     #12100C;
-  --cream-line:     rgba(140,110,70,0.11);
+  /* Dark mode — aubergine ground, cream text, same accent palette inverted */
+  --cream:          #1A0E15;            /* deep aubergine ground */
+  --cream-soft:     #221220;
+  --cream-deep:     #2A1828;
+  --cream-line:     rgba(251,245,230,0.11);
+  --cream-card:     #221220;
+  --cream-warm:     #2A1828;
+  --cream-edge:     #3A1F36;
+  --white:          #FBF5E6;
   --bg-void:        var(--cream);
   --bg-deep:        var(--cream-soft);
   --bg-base:        var(--cream-deep);
-  --bg-surface:     rgba(140,110,70,0.045);
-  --bg-elevated:    rgba(140,110,70,0.07);
-  --bg-overlay:     rgba(18,15,10,0.85);
-  --border-subtle:  rgba(140,110,70,0.06);
-  --border-medium:  rgba(140,110,70,0.11);
-  --border-strong:  rgba(140,110,70,0.18);
-  --ink:            #EEE5D2;
-  --ink-soft:       #A8A092;
-  --ink-mute:       #6F6A5E;
-  --ink-faint:      #3E3830;
+  --bg-surface:     rgba(251,245,230,0.045);
+  --bg-elevated:    rgba(251,245,230,0.08);
+  --bg-overlay:     rgba(26,14,21,0.88);
+  --border-subtle:  rgba(251,245,230,0.10);
+  --border-medium:  rgba(251,245,230,0.18);
+  --border-strong:  rgba(251,245,230,0.30);
+
+  --ink:            #FBF5E6;            /* cream becomes the text color */
+  --ink-soft:       rgba(251,245,230,0.78);
+  --ink-mute:       rgba(251,245,230,0.55);
+  --ink-faint:      rgba(251,245,230,0.34);
+  --ink-75:         var(--ink-soft);
+  --ink-50:         var(--ink-mute);
+  --ink-33:         var(--ink-faint);
   --text-1:         var(--ink);
   --text-2:         var(--ink-soft);
   --text-3:         var(--ink-mute);
   --text-4:         var(--ink-faint);
-  --patina-dim:     rgba(58,95,74,0.2);
-  --patina-faint:   rgba(58,95,74,0.08);
-  --brass-dim:      rgba(168,144,62,0.18);
-  --warmred:        #B06767;
-  --error:          #B06767;
-  --error-faint:    rgba(176,103,103,0.08);
-  --pill-bg:        #2A2318;
-  --pill-bg-hover:  #3A2E1F;
-  --pill-border:    #A8903E;
-  --pill-ink:       #EEE5D2;
+
+  /* Accents lift slightly in dark mode for legibility */
+  --patina:         #B6D8BC;
+  --patina-lit:     var(--phase-discovery);
+  --patina-dim:     rgba(156,196,162,0.30);
+  --patina-faint:   rgba(156,196,162,0.12);
+  --brass:          var(--gold);
+  --brass-lit:      #F2C97D;
+  --brass-dim:      rgba(224,176,105,0.30);
+  --brass-faint:    rgba(224,176,105,0.12);
+  --terra:          var(--rose);
+  --plum:           #B080A0;
+  --warmred:        #D88A9E;
+  --error:          #D88A9E;
+  --error-faint:    rgba(216,138,158,0.10);
+
+  --pill-bg:        var(--gold);
+  --pill-bg-hover:  #F2C97D;
+  --pill-border:    var(--cream);
+  --pill-ink:       var(--cream);
 }
 html{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior:smooth; background:var(--bg-void); }
 body{
@@ -110,47 +205,123 @@ a{ color:inherit; text-decoration:none; }
 img{ display:block; max-width:100%; }
 button{ font-family:inherit; cursor:pointer; }
 
-/* ================== BUTTONS (ecosystem parity) ================== */
+/* ================== BUTTONS — v3.2 + pomegranate two-layer pill ==================
+   Markup:
+     <button class="btn btn-primary"><span class="btn_content">CLICK ME</span></button>
+   Mechanic:
+     - .btn is the invisible wrapper (no bg, no border, no padding).
+     - ::before is the STATIC ink-pill shadow that NEVER moves.
+     - .btn_content is the visible pill that rises on hover and slams on click.
+   This produces the crisp tactile feel from quantumbranding.ai / pomegranate.health.
+*/
 .btn{
+  position:relative;
   display:inline-flex; align-items:center; justify-content:center;
-  gap:.55em;
-  font-family:var(--f-body); font-weight:500; font-size:.94rem;
-  padding:14px 24px;
-  border-radius:var(--r-pill);
-  border:1px solid var(--ink);
-  background:transparent; color:var(--ink);
-  transition:all .25s var(--ease);
-  white-space:nowrap; text-decoration:none !important;
+  background:transparent; border:0; padding:0;
+  font-size:var(--space-m);              /* the em base for all child sizing */
   cursor:pointer;
+  isolation:isolate;
+  text-decoration:none !important;
+  color:inherit;
+  font-family:inherit;
 }
-.btn:hover{ background:var(--ink); color:var(--cream); }
-@property --eco-angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
-.btn-primary{
-  background:var(--pill-bg) !important;
-  border-color:var(--pill-border) !important;
-  color:var(--pill-ink) !important;
-  position:relative; isolation:isolate;
+
+/* STATIC shadow layer — planted, never moves under interaction */
+.btn::before{
+  content:'';
+  position:absolute; top:0; right:0; bottom:0; left:0;
+  border-radius:var(--r-pill);
+  background:var(--ink);
+  transform:translateY(0.17em) scale(0.99);
+  z-index:-1;
 }
-.btn-primary::before{
-  content:''; position:absolute; inset:-3px;
-  background:conic-gradient(from var(--eco-angle), var(--patina), var(--brass), var(--terra), var(--plum), var(--patina));
-  border-radius:999px; z-index:-1; opacity:0;
-  transition:opacity .4s ease;
-  animation:ecoSpin 6s linear infinite;
-  filter:blur(10px);
+
+/* Inner pill — the only thing that moves */
+.btn_content{
+  position:relative;
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:0.5em;
+  width:100%; height:100%;
+  border:2px solid var(--ink);
+  border-radius:var(--r-pill);
+  background:var(--cream);
+  color:var(--ink);
+  padding:1.1em 1.5em;
+  font-family:var(--f-body); font-weight:700;
+  font-size:0.5em; line-height:1.5em;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  white-space:pre-wrap;
+  user-select:none;
+  transform:translateY(-0.17em);
+  transition:transform .4s var(--ease-qb),
+             filter .4s var(--ease-qb),
+             background-color .4s var(--ease-qb),
+             color .4s var(--ease-qb),
+             border-color .4s var(--ease-qb);
+  will-change:transform;
 }
-@keyframes ecoSpin{ to{ --eco-angle:360deg; } }
-.btn-primary:hover::before{ opacity:.75; }
-.btn-primary:hover{
-  background:var(--pill-bg-hover) !important;
-  border-color:var(--pill-ink) !important;
-  transform:translateY(-1px);
-  box-shadow:0 14px 40px -12px rgba(168,144,62,.35) !important;
+
+/* Hover/focus — content rises higher; shadow stays planted */
+@media (hover:hover){
+  .btn:not(:disabled):hover .btn_content,
+  .btn:not(:disabled):focus-visible .btn_content{
+    transform:translateY(-0.35em);
+    filter:brightness(1.05);
+  }
 }
-.btn-primary:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
-.btn-primary:disabled::before{ display:none; }
-.btn-sm{ padding:10px 18px; font-size:.85rem; }
-.btn-lg{ padding:17px 30px; font-size:1rem; }
+
+/* Active/click — content slams down through the shadow */
+.btn:not(:disabled):active .btn_content{
+  transform:translateY(0.28em) scale(0.99);
+  filter:brightness(0.9);
+}
+
+/* Disabled */
+.btn:disabled{ cursor:not-allowed; }
+.btn:disabled .btn_content{ color:var(--ink-33); filter:brightness(0.95); }
+
+/* ============ VARIANTS ============ */
+
+/* Primary — gold pill */
+.btn-primary .btn_content{ background:var(--gold); color:var(--ink); }
+
+/* Secondary — rose-deep on cream (contrast / destructive) */
+.btn-secondary .btn_content{ background:var(--rose-deep); color:var(--cream); }
+
+/* Phase accent — sage green for Phase 01 (Discovery) */
+.btn-phase .btn_content{ background:var(--phase-discovery); color:var(--ink); }
+
+/* Active/toggled — sits depressed with white inner ring (selected state) */
+.btn-active .btn_content{
+  background:var(--rose);
+  color:var(--cream);
+  transform:translateY(0.10em);
+  box-shadow:inset 0 0 0 0.20em var(--cream);
+}
+
+/* Sizes — em-based so they cascade off .btn font-size */
+.btn-sm{ font-size:calc(var(--space-m) * 0.78); }
+.btn-sm::before{ transform:translateY(0.10em) scale(0.99); }
+.btn-sm .btn_content{ padding:0.8em 1.4em; font-size:0.4em; transform:translateY(-0.10em); }
+.btn-sm:not(:disabled):hover .btn_content,
+.btn-sm:not(:disabled):focus-visible .btn_content{ transform:translateY(-0.22em); }
+.btn-sm:not(:disabled):active .btn_content{ transform:translateY(0.16em) scale(0.99); }
+
+.btn-lg .btn_content{ font-size:0.6em; }
+
+/* Round / icon-only */
+.btn-round::before{ inset:0; }
+.btn-round .btn_content{ aspect-ratio:1/1; width:fit-content; padding:1.1em; }
+
+/* Expand to container */
+.btn-expand,
+.btn-expand .btn_content{ width:100%; }
+
+/* On-dark variant — invert pill, ink shadow becomes cream shadow */
+.btn-on-dark::before{ background:var(--cream); }
+.btn-on-dark .btn_content{ background:var(--cream); border-color:var(--cream); color:var(--ink); }
+.btn-on-dark.btn-primary .btn_content{ background:var(--gold); border-color:var(--gold); color:var(--ink); }
 
 /* ================== LAYOUT ================== */
 .app{
@@ -237,7 +408,7 @@ button{ font-family:inherit; cursor:pointer; }
 
 /* Mobile nav */
 .mobile-header{ display:none; }
-.mobile-overlay{ display:none; position:fixed; inset:0; background:rgba(8,6,4,.55); z-index:80; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
+.mobile-overlay{ display:none; position:fixed; inset:0; background:rgba(45,21,33,0.50); z-index:80; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
 @media(max-width:960px){
   .mobile-header{
     display:flex; position:fixed; top:0; left:0; right:0; z-index:60;
@@ -297,7 +468,7 @@ button{ font-family:inherit; cursor:pointer; }
   backdrop-filter:blur(20px);
   border:1px solid var(--border-medium);
   border-radius:var(--r-pill);
-  box-shadow:0 20px 50px -20px rgba(26,22,16,.3);
+  box-shadow:0 9px var(--ink);
   position:relative; overflow:hidden;
 }
 .dock-progress-bg{ position:absolute; top:0; left:0; right:0; height:2px; background:var(--border-subtle); }
@@ -381,10 +552,10 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
 .visual-header img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(.1) contrast(1.02); }
 .visual-header::after{
   content:''; position:absolute; inset:0;
-  background:linear-gradient(to top, rgba(8,6,4,.9) 0%, rgba(8,6,4,.55) 40%, transparent 100%);
+  background:linear-gradient(to top, rgba(45,21,33,0.85) 0%, rgba(45,21,33,0.45) 40%, transparent 100%);
 }
 [data-theme="light"] .visual-header::after{
-  background:linear-gradient(to top, rgba(244,240,235,.92) 0%, rgba(244,240,235,.4) 40%, transparent 100%);
+  background:linear-gradient(to top, rgba(251,245,230,0.92) 0%, rgba(251,245,230,0.40) 40%, transparent 100%);
 }
 .visual-header .overlay{
   position:absolute; inset:0; z-index:2;
@@ -1463,7 +1634,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         <button class="dock-prev" id="dockPrev" type="button">← Prev</button>
         <div class="dock-next-row">
           <span class="dock-hint" id="dockHint"></span>
-          <button class="btn btn-primary btn-sm" id="dockNext" type="button">Next →</button>
+          <button class="btn btn-primary btn-sm" id="dockNext" type="button"><span class="btn_content">Next →</span></button>
         </div>
       </div>
     </div>
@@ -1723,6 +1894,8 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
 
   function el(tag, attrs, kids){
     var node = document.createElement(tag);
+    var cls = attrs && typeof attrs.class === 'string' ? attrs.class : '';
+    var isPillBtn = tag === 'button' && /(^|\s)btn(\s|$)/.test(cls);
     if (attrs){
       for (var k in attrs){
         if (!attrs.hasOwnProperty(k)) continue;
@@ -1744,10 +1917,26 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
           else flat.push(c);
         });
       })(kids);
-      flat.forEach(function(c){
-        if (c == null || c === false) return;
-        node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
-      });
+      // Pill buttons: wrap children inside a .btn_content span so the
+      // two-layer pomegranate pill animation works (static shadow + moving content).
+      // If a child is already a .btn_content span, leave it alone.
+      var alreadyWrapped = isPillBtn && flat.length === 1
+        && flat[0] && flat[0].nodeType === 1
+        && flat[0].classList && flat[0].classList.contains('btn_content');
+      if (isPillBtn && !alreadyWrapped){
+        var inner = document.createElement('span');
+        inner.className = 'btn_content';
+        flat.forEach(function(c){
+          if (c == null || c === false) return;
+          inner.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+        });
+        node.appendChild(inner);
+      } else {
+        flat.forEach(function(c){
+          if (c == null || c === false) return;
+          node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+        });
+      }
     }
     return node;
   }
@@ -3492,7 +3681,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       try { $app.appendChild(fn()); }
       catch(err){
         console.error('[Soul Map] render failed:', err);
-        $app.innerHTML = '<div style="padding:80px 24px; text-align:center"><h1 style="font-family:var(--f-display); font-size:2rem; margin-bottom:16px">Something broke.</h1><p style="color:var(--text-3); margin-bottom:24px">Open the console for details. Clearing local storage usually fixes it.</p><button onclick="localStorage.removeItem(\'qb-soul-map-local\');location.reload()" class="btn btn-primary btn-sm">Reset & reload</button></div>';
+        $app.innerHTML = '<div style="padding:80px 24px; text-align:center"><h1 style="font-family:var(--f-display); font-size:2rem; margin-bottom:16px">Something broke.</h1><p style="color:var(--text-3); margin-bottom:24px">Open the console for details. Clearing local storage usually fixes it.</p><button onclick="localStorage.removeItem(\'qb-soul-map-local\');location.reload()" class="btn btn-primary btn-sm"><span class="btn_content">Reset &amp; reload</span></button></div>';
       }
     }
     paintStepNav();
