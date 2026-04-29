@@ -476,174 +476,97 @@
     text-wrap: pretty;
   }
 
-  /* 2-column layout: apps cloud left, phone right */
-  .dark-demo_grid {
+  /* Phase pillars — four editorial cards, scroll-staggered reveal */
+  .dark-demo_pillars {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-l-xl);
-    align-items: center;
+    gap: var(--space-m);
     margin-top: var(--space-xl-2xl);
-  }
-  @media (min-width: 900px) {
-    .dark-demo_grid { grid-template-columns: 1.5fr 1fr; }
-  }
-
-  .apps-cloud {
-    position: relative;
-    min-height: 600px;
     width: 100%;
   }
-  @media (max-width: 899px) { .apps-cloud { min-height: 520px; } }
-
-  .app-icon {
-    position: absolute;
-    top: var(--top); left: var(--left, auto); right: var(--right, auto);
-    width: var(--size); height: var(--size);
-    border: 2px solid var(--ink);
-    border-radius: 18px;
-    box-shadow: 0 8px var(--ink);
-    display: inline-flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    background: var(--bg, var(--cream));
-    background-image: var(--bg-image, none);
-    animation: app-float var(--d, 7s) ease-in-out var(--dl, 0s) infinite;
-    will-change: transform;
-    z-index: 1;
+  @media (min-width: 700px) {
+    .dark-demo_pillars { grid-template-columns: repeat(2, 1fr); gap: var(--space-l); }
   }
-  .app-icon svg { width: 56%; height: 56%; display: block; }
-  @keyframes app-float {
-    0%, 100% { transform: translate(0, 0); }
-    25%      { transform: translate(3px, -5px); }
-    50%      { transform: translate(-2px, 4px); }
-    75%      { transform: translate(-4px, -3px); }
+  @media (min-width: 1100px) {
+    .dark-demo_pillars { grid-template-columns: repeat(4, 1fr); gap: var(--space-m); }
   }
 
-  /* iPhone Air 17 chat mockup — phone "move up" handled by GSAP ScrollTrigger
-     at the bottom of this file (scroll-scrubbed y: 280 → 0). Don't override
-     transform / opacity here or GSAP can't drive the entrance. */
-  .chat-card {
+  .pillar {
     position: relative;
-    width: 100%;
-    max-width: 320px;
-    aspect-ratio: 9 / 19.2;
-    margin-inline: auto;
-    background: var(--ink);
-    border: 2px solid var(--ink);
-    border-radius: 46px;
-    box-shadow: 0 16px var(--ink);
-    padding: 11px;
+    background: var(--cream);
+    border: 2px solid var(--cream);
+    border-radius: 22px;
+    padding: var(--space-m);
+    color: var(--ink);
     display: flex; flex-direction: column;
+    box-shadow: 0 12px 0 rgba(255,255,255,0.06);
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease-out,
+                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s ease-out;
+    transition-delay: var(--reveal-delay, 0s);
     will-change: transform, opacity;
   }
-  @media (max-width: 899px) {
-    .chat-card { max-width: 280px; }
-  }
-  .chat-card_island {
-    position: absolute;
-    top: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 36%;
-    height: 28px;
-    background: #000;
-    border-radius: 9999px;
-    z-index: 3;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
-  }
-  .chat-card_screen {
-    flex: 1;
-    background: var(--cream);
-    border-radius: 36px;
-    padding: 60px 14px 18px;
-    display: flex; flex-direction: column;
-    gap: 0.5rem;
-    overflow: hidden;
-    position: relative;
-  }
-  .chat-card_head {
-    display: flex; align-items: center; gap: 0.55rem;
-    padding-bottom: 0.55rem;
-    border-bottom: 1px solid var(--ink-25);
-  }
-  .chat-avatar {
-    width: 32px; height: 32px;
-    border-radius: 9999px;
-    background: var(--rose-soft);
-    border: 2px solid var(--ink);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-family: 'Fraunces', serif;
-    font-variation-settings: "wght" 700, "opsz" 36, "SOFT" 80;
-    font-style: italic;
-    font-size: 0.98rem;
-    color: var(--ink);
-    flex-shrink: 0;
-  }
-  .chat-meta { display: flex; flex-direction: column; gap: 3px; }
-  .chat-name {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--ink);
-    line-height: 1;
-  }
-  .chat-status {
-    display: inline-flex; align-items: center; gap: 0.3rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-50);
-  }
-  .chat-status_dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--phase-discovery);
-    box-shadow: 0 0 0 2px rgba(156,196,162,0.3);
-  }
-  .chat-body {
-    display: flex; flex-direction: column;
-    gap: 0.55rem;
-    padding-top: 0.4rem;
-  }
-  .chat-msg-wrap {
-    display: flex; flex-direction: column; max-width: 90%;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-    transition-delay: var(--reveal-delay, 0s);
-  }
-  .chat-msg-wrap.is-user { align-self: flex-end; align-items: flex-end; }
-  .chat-msg-wrap.is-ai   { align-self: flex-start; align-items: flex-start; }
-  /* Chat reveals message-by-message once the section enters view */
-  .dark-demo.is-revealed .chat-msg-wrap {
+  .dark-demo.is-revealed .pillar {
     opacity: 1;
     transform: translateY(0);
   }
-  .chat-msg-name {
+  @media (hover: hover) {
+    .dark-demo.is-revealed .pillar:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 0 rgba(255,255,255,0.12);
+    }
+  }
+
+  .pillar_accent {
+    width: 56px;
+    height: 4px;
+    background: var(--accent, var(--gold));
+    border-radius: 9999px;
+    margin-bottom: var(--space-s);
+  }
+  .pillar_glyph {
+    width: 64px;
+    height: 64px;
+    color: var(--ink);
+    margin-bottom: var(--space-xs);
+  }
+  .pillar_glyph svg {
+    width: 100%; height: 100%; display: block;
+  }
+  .pillar_label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.52rem;
+    font-size: var(--step--2);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--ink-50);
-    margin-bottom: 3px; padding: 0 4px;
+    margin-bottom: 2px;
   }
-  .chat-bubble {
-    border: 1.5px solid var(--ink);
-    padding: 9px 11px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.74rem;
-    line-height: 1.35;
+  .pillar_h {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 600, "opsz" 96, "SOFT" 60, "WONK" 0;
+    font-size: var(--step-3);
+    line-height: 1.05;
     color: var(--ink);
+    margin: 0 0 var(--space-xs);
   }
-  .chat-bubble.is-user {
-    background: var(--gold);
-    border-radius: 16px 16px 4px 16px;
-    max-width: 88%;
+  .pillar_body {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--ink-75);
+    margin: 0 0 var(--space-s);
   }
-  .chat-bubble.is-ai {
-    background: var(--cream-card);
-    border-radius: 16px 16px 16px 4px;
-    max-width: 92%;
+  .pillar_meta {
+    margin-top: auto;
+    padding-top: var(--space-s);
+    border-top: 1px solid var(--ink-25);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--step--2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-50);
   }
 
   /* =====================================================
@@ -759,8 +682,7 @@
     }
     .qb-button:hover .qb-button_content,
     .qb-button:active .qb-button_content { transform: none; }
-    .app-icon { animation: none; transform: none; }
-    .chat-msg-wrap { opacity: 1; transform: none; transition: none; }
+    .pillar { opacity: 1; transform: none; transition: none; }
     .featured-track { animation: none; }
   }
 </style>
@@ -845,116 +767,72 @@
         <span class="phase-pill"><span class="phase-pill_dot"></span>Intelligence</span>
       </div>
 
-      <h2 class="dark-demo_h2">20 tools. One brand operating system.</h2>
-      <p class="dark-demo_sub">Brand intelligence in flow, across all your favourite apps.</p>
+      <h2 class="dark-demo_h2">20 agents. Four phases. One operating system.</h2>
+      <p class="dark-demo_sub">From idea to orbit — across the full arc of intelligent brand operation.</p>
 
-      <div class="dark-demo_grid">
+      <div class="dark-demo_pillars">
 
-        <!-- LEFT: floating real-app cloud (the channels QB BrandOS publishes to) -->
-        <div class="apps-cloud" aria-hidden="true">
-
-          <!-- 1. Instagram -->
-          <span class="app-icon" style="--top:5%; --left:6%; --size:64px; --bg-image:linear-gradient(135deg,#FEDA77 0%,#F58529 25%,#DD2A7B 60%,#8134AF 85%,#515BD4 100%); --d:7s; --dl:0s">
-            <svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="6" y="6" width="20" height="20" rx="6"/><circle cx="16" cy="16" r="5"/><circle cx="22.5" cy="9.5" r="1.4" fill="#fff" stroke="none"/></svg>
-          </span>
-
-          <!-- 2. Facebook -->
-          <span class="app-icon" style="--top:14%; --left:32%; --size:50px; --bg:#1877F2; --d:8s; --dl:-1.2s">
-            <svg viewBox="0 0 32 32" fill="#fff"><path d="M19 11h3.5l.5-4H19V5.4c0-1 .3-1.6 1.7-1.6H23V0h-3c-3.3 0-5 1.7-5 4.8V7h-3v4h3v15h4V11z"/></svg>
-          </span>
-
-          <!-- 3. X -->
-          <span class="app-icon" style="--top:4%; --left:58%; --size:48px; --bg:#000; --d:9s; --dl:-2.4s">
-            <svg viewBox="0 0 32 32" fill="#fff"><path d="M19.5 4h3.4l-7.4 8.5L24 28h-6.8l-5.3-7-6.1 7H2.4L10.3 19l-8-15h7l4.8 6.5L19.5 4zm-1.2 22h1.9L9.8 6h-2L18.3 26z"/></svg>
-          </span>
-
-          <!-- 4. Pinterest -->
-          <span class="app-icon" style="--top:18%; --left:82%; --size:56px; --bg:#E60023; --d:7.5s; --dl:-0.5s">
-            <svg viewBox="0 0 32 32" fill="#fff"><path d="M16 4C9.4 4 6 8.7 6 13.6c0 3 1.1 5.4 3.5 6.5.4.2.7 0 .8-.4l.3-1.3c.1-.4.1-.5-.2-.8-.6-.7-1-1.6-1-2.9 0-3.7 2.8-7.1 7.4-7.1 4 0 6.2 2.5 6.2 5.7 0 4.3-1.9 7.9-4.7 7.9-1.6 0-2.7-1.3-2.4-2.9.4-2 1.4-4.1 1.4-5.5 0-1.3-.7-2.4-2.1-2.4-1.7 0-3 1.7-3 4 0 1.4.5 2.4.5 2.4l-2 8.4c-.6 2.3-.1 5.3 0 5.6 0 .2.2.2.3.1.1-.2 2-2.5 2.7-4.8.2-.7 1.1-4.2 1.1-4.2.5 1 2 1.9 3.6 1.9 4.7 0 7.9-4.3 7.9-10C26 8.9 21.7 4 16 4z"/></svg>
-          </span>
-
-          <!-- 5. LinkedIn -->
-          <span class="app-icon" style="--top:32%; --left:14%; --size:62px; --bg:#0A66C2; --d:8.5s; --dl:-3s">
-            <svg viewBox="0 0 32 32" fill="#fff"><path d="M9 11h3.6v15H9V11zm1.8-5C9.4 6 8.3 7.1 8.3 8.5S9.4 11 10.8 11s2.5-1.1 2.5-2.5S12.2 6 10.8 6zM15 11h3.4v2h.1c.5-.9 1.7-1.9 3.6-1.9 3.8 0 4.5 2.4 4.5 5.6V26h-3.6v-7.6c0-1.8 0-4.1-2.5-4.1s-2.9 1.9-2.9 4V26H15V11z"/></svg>
-          </span>
-
-          <!-- 6. TikTok -->
-          <span class="app-icon" style="--top:36%; --left:42%; --size:46px; --bg:#000; --d:7.2s; --dl:-1.8s">
-            <svg viewBox="0 0 32 32" fill="#fff"><path d="M22 4h-4v17.5c0 1.4-1.1 2.5-2.5 2.5S13 22.9 13 21.5s1.1-2.5 2.5-2.5c.5 0 .9.1 1.3.3v-4.1c-.4-.1-.9-.1-1.3-.1-3.6 0-6.5 2.9-6.5 6.5s2.9 6.5 6.5 6.5 6.5-2.9 6.5-6.5V12c1.5 1.1 3.4 1.7 5.5 1.7v-4c-1.7 0-3.2-.6-4.4-1.6C22.5 7.1 22 5.6 22 4z"/></svg>
-          </span>
-
-          <!-- 7. YouTube -->
-          <span class="app-icon" style="--top:30%; --left:67%; --size:58px; --bg:#FF0000; --d:6.5s; --dl:-2.2s">
-            <svg viewBox="0 0 32 32" fill="#fff"><path d="M28 9c-.3-1.2-1.2-2.1-2.4-2.4C23.4 6 16 6 16 6s-7.4 0-9.6.6C5.2 6.9 4.3 7.8 4 9c-.6 2.2-.6 7-.6 7s0 4.8.6 7c.3 1.2 1.2 2.1 2.4 2.4C8.6 26 16 26 16 26s7.4 0 9.6-.6c1.2-.3 2.1-1.2 2.4-2.4.6-2.2.6-7 .6-7s0-4.8-.6-7zM13 20V12l7 4-7 4z"/></svg>
-          </span>
-
-          <!-- 8. Snapchat -->
-          <span class="app-icon" style="--top:50%; --left:5%; --size:50px; --bg:#FFFC00; --d:7.8s; --dl:-3.6s">
-            <svg viewBox="0 0 32 32" fill="#000"><path d="M16 4c-4.5 0-7 3.5-7 8 0 1 .1 2 .1 3-.5 0-1-.2-1.5-.5-.5-.3-1.5-.4-1.7.4-.2.7.3 1.5 1 2 .8.6 2 1 2.5 1.5-.3 1-1.5 2.5-3 3-.5.2-.5 1 0 1.2 2 .8 4 .8 5 2 .3.4 0 1 .5 1.5 1 1 3.5-1 4.5-1 1 0 3.5 2 4.5 1 .5-.5.2-1.1.5-1.5 1-1.2 3-1.2 5-2 .5-.2.5-1 0-1.2-1.5-.5-2.7-2-3-3 .5-.5 1.7-.9 2.5-1.5.7-.5 1.2-1.3 1-2-.2-.8-1.2-.7-1.7-.4-.5.3-1 .5-1.5.5 0-1 .1-2 .1-3 0-4.5-2.5-8-7-8z"/></svg>
-          </span>
-
-          <!-- 9. WhatsApp -->
-          <span class="app-icon" style="--top:54%; --left:34%; --size:68px; --bg:#25D366; --d:8.2s; --dl:-0.8s">
-            <svg viewBox="0 0 32 32" fill="#fff"><path d="M16 4C9.5 4 4.2 9.3 4.2 15.7c0 2.3.6 4.5 1.8 6.4L4 28.5l6.6-1.7c1.8 1 3.8 1.5 5.8 1.5 6.5 0 11.8-5.3 11.8-11.7S22.5 4 16 4zm6 16.7c-.3.7-1.5 1.4-2 1.5-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-5-4.4-5.2-4.6-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1.1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .5 0 .7.5.2.6.8 2.1.9 2.2.1.2.1.4 0 .6-.1.2-.2.3-.4.5l-.4.5c-.1.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1.2-.2.8-.9 1-1.2.2-.3.4-.3.7-.2.3.1 2 1 2.4 1.2.4.2.6.3.7.4.1.4.1 1-.2 1.7z"/></svg>
-          </span>
-
-          <!-- 10. Threads -->
-          <span class="app-icon" style="--top:60%; --left:60%; --size:48px; --bg:#000; --d:7s; --dl:-2.8s">
-            <svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="16" cy="16" r="11"/><path d="M11 19c1.5 1.6 4 1.6 5.5 0 1-1 1.5-2.6.5-4-.7-1-2-1.5-3-1.5-1.5 0-3 .8-3.5 2.5"/><path d="M16 11c2.5 0 4.5 2 4.5 4.5 0 4-3 7-7 7"/></svg>
-          </span>
-
-          <!-- 11. Spotify -->
-          <span class="app-icon" style="--top:55%; --left:86%; --size:52px; --bg:#1ED760; --d:9s; --dl:-1.4s">
-            <svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M9 12c5-2 13-2 18 1M9 17c4-1.5 11-1.5 15 1M10 21c3-1 8-1 11 .5"/></svg>
-          </span>
-
-          <!-- 12. Reddit -->
-          <span class="app-icon" style="--top:75%; --left:18%; --size:56px; --bg:#FF4500; --d:6.8s; --dl:-3.2s">
-            <svg viewBox="0 0 32 32"><circle cx="16" cy="18" r="9" fill="#fff"/><circle cx="12.5" cy="18" r="1.4" fill="#FF4500"/><circle cx="19.5" cy="18" r="1.4" fill="#FF4500"/><path d="M11.5 21.5c1.5 1.4 7.5 1.4 9 0" fill="none" stroke="#FF4500" stroke-width="1.6" stroke-linecap="round"/><circle cx="16" cy="9" r="1.6" fill="#fff"/><path d="M16 10v3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </span>
-
-          <!-- 13. Substack -->
-          <span class="app-icon" style="--top:78%; --left:50%; --size:60px; --bg:#FF6719; --d:7.5s; --dl:-2s">
-            <svg viewBox="0 0 32 32" fill="#fff"><rect x="6" y="6" width="20" height="3"/><rect x="6" y="12" width="20" height="3"/><path d="M6 18h20v10l-10-5-10 5z"/></svg>
-          </span>
-
-          <!-- 14. Discord -->
-          <span class="app-icon" style="--top:80%; --left:76%; --size:48px; --bg:#5865F2; --d:6.5s; --dl:-1.6s">
-            <svg viewBox="0 0 32 32" fill="#fff"><path d="M25 8c-2-1-4-1.5-6-1.5l-.3.6c2 .3 3 .8 4.5 1.6-2-.9-4-1.4-6.2-1.4-2.2 0-4.2.5-6.2 1.4 1.5-.8 2.6-1.3 4.5-1.6L15 6.5C13 6.5 11 7 9 8c-2.5 4-3 8-2.7 12 1.7 1.4 4 2.4 6 2.5l.7-1c-1.2-.4-2.4-1-3.4-1.7.3.2.6.4.9.5 3.2 1.4 6.5 1.4 9.7 0 .3-.1.6-.3.9-.5-1 .7-2.2 1.3-3.4 1.7l.7 1c2.2-.1 4.4-1.1 6-2.5.4-4.5-.6-8.5-2.7-12zM12 17.5c-1 0-1.7-1-1.7-2s.7-2 1.7-2 1.7 1 1.7 2-.7 2-1.7 2zm8 0c-1 0-1.7-1-1.7-2s.7-2 1.7-2 1.7 1 1.7 2-.7 2-1.7 2z"/></svg>
-          </span>
-        </div>
-
-        <!-- RIGHT: live chat in iPhone Air 17 — slides up + reveals message-by-message on scroll -->
-        <aside class="chat-card" aria-label="Live conversation with QB agent Pat">
-          <span class="chat-card_island" aria-hidden="true"></span>
-          <div class="chat-card_screen">
-            <header class="chat-card_head">
-              <span class="chat-avatar">P</span>
-              <div class="chat-meta">
-                <span class="chat-name">Pat</span>
-                <span class="chat-status"><span class="chat-status_dot"></span>Online</span>
-              </div>
-            </header>
-            <div class="chat-body">
-              <div class="chat-msg-wrap is-user" style="--reveal-delay:1.2s">
-                <span class="chat-msg-name">Drazicq</span>
-                <div class="chat-bubble is-user">I have a luxury jewellery brand but our positioning feels off. We look like everyone else.</div>
-              </div>
-              <div class="chat-msg-wrap is-ai" style="--reveal-delay:2.2s">
-                <span class="chat-msg-name">Pat</span>
-                <div class="chat-bubble is-ai">Let me run a Signal Scan. Based on your Brand Profile, there is a gap between your identity and how you show up.</div>
-              </div>
-              <div class="chat-msg-wrap is-user" style="--reveal-delay:3.4s">
-                <span class="chat-msg-name">Drazicq</span>
-                <div class="chat-bubble is-user">That is exactly what I feel. What do I do?</div>
-              </div>
-              <div class="chat-msg-wrap is-ai" style="--reveal-delay:4.4s">
-                <span class="chat-msg-name">Pat</span>
-                <div class="chat-bubble is-ai">Voice Guide recommends shifting to first-person storytelling. Sensescape suggests warmer tones. I have drafted 12 posts ready for your approval.</div>
-              </div>
-            </div>
+        <!-- 1. Discovery -->
+        <article class="pillar" style="--accent: var(--phase-discovery); --reveal-delay: 0s;">
+          <div class="pillar_accent"></div>
+          <div class="pillar_glyph" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="32" cy="32" r="22"/>
+              <path d="M32 14 L38 32 L32 50 L26 32 Z" fill="currentColor" stroke="none"/>
+            </svg>
           </div>
-        </aside>
+          <span class="pillar_label">Phase 01</span>
+          <h3 class="pillar_h">Discovery</h3>
+          <p class="pillar_body">Six tools turn a raw idea into an operational brand profile. Identity, senses, visuals, strategy, buyers.</p>
+          <span class="pillar_meta">Brand profile · ~90 min</span>
+        </article>
+
+        <!-- 2. Positioning -->
+        <article class="pillar" style="--accent: var(--phase-creation); --reveal-delay: 0.15s;">
+          <div class="pillar_accent"></div>
+          <div class="pillar_glyph" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="10" y="22" width="44" height="20" rx="10"/>
+              <circle cx="20" cy="32" r="3" fill="currentColor" stroke="none"/>
+              <path d="M30 28 L46 28 M30 36 L42 36"/>
+            </svg>
+          </div>
+          <span class="pillar_label">Phase 02</span>
+          <h3 class="pillar_h">Positioning</h3>
+          <p class="pillar_body">How your brand sounds, looks, and shows up. Voice spine, visual direction, the named perspective.</p>
+          <span class="pillar_meta">Voice + visual</span>
+        </article>
+
+        <!-- 3. Content -->
+        <article class="pillar" style="--accent: var(--phase-content); --reveal-delay: 0.3s;">
+          <div class="pillar_accent"></div>
+          <div class="pillar_glyph" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <path d="M14 14 H50 M14 24 H46 M14 34 H50 M14 44 H42 M14 54 H38"/>
+            </svg>
+          </div>
+          <span class="pillar_label">Phase 03</span>
+          <h3 class="pillar_h">Content</h3>
+          <p class="pillar_body">Daily fuel for every channel you publish to. Drafted in your voice, ready for approval.</p>
+          <span class="pillar_meta">Channels, daily</span>
+        </article>
+
+        <!-- 4. Intelligence -->
+        <article class="pillar" style="--accent: var(--phase-intelligence); --reveal-delay: 0.45s;">
+          <div class="pillar_accent"></div>
+          <div class="pillar_glyph" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <path d="M14 46 A18 18 0 0 1 50 46"/>
+              <path d="M22 46 A10 10 0 0 1 42 46"/>
+              <circle cx="32" cy="46" r="3" fill="currentColor" stroke="none"/>
+              <path d="M32 46 L46 22"/>
+            </svg>
+          </div>
+          <span class="pillar_label">Phase 04</span>
+          <h3 class="pillar_h">Intelligence</h3>
+          <p class="pillar_body">The brand reads itself. Performance signals loop back into the profile each quarter.</p>
+          <span class="pillar_meta">Quarterly cadence</span>
+        </article>
 
       </div>
     </div>
@@ -1059,30 +937,6 @@
       });
     }, { threshold: 0.25 });
     io.observe(dd);
-  })();
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script>
-  // iPhone scroll-in: slides up + fades in as the dark demo enters viewport.
-  // Same pattern as the legacy initPhoneScroll: y:280 → 0, opacity 0 → 1, scrubbed.
-  (function () {
-    if (!window.gsap || !window.ScrollTrigger) return;
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.fromTo('.chat-card',
-      { y: 280, opacity: 0 },
-      {
-        y: 0, opacity: 1, ease: 'none',
-        scrollTrigger: {
-          trigger: '.dark-demo',
-          start: 'top 85%',
-          end: 'top 25%',
-          scrub: 1.2
-        }
-      }
-    );
   })();
 </script>
 
