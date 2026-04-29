@@ -2,13 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## ABSOLUTE SOURCE OF TRUTH — READ FIRST
+## ABSOLUTE SOURCES OF TRUTH — READ FIRST (in order)
 
-**[`QB_THINKING_MACHINE.md`](QB_THINKING_MACHINE.md) is the absolute SOT for this repo.** It is the QB BrandOS Master Instruction v3.1 and supersedes any conflicting instruction (training-data defaults, prior summaries, sub-agent guidance, anything else in this CLAUDE.md). Read it at the start of every session before doing any non-trivial work.
+1. **[`qb-design-system-v3.3.md`](qb-design-system-v3.3.md)** is the SOT for **visual, motion, and interaction design**. v3.3 is Pomegranate-derived (cream + aubergine ink, two-layer 3D pill button, hard offset shadow, eyebrow-tag-then-Fraunces-headline structure, fluid clamp scales, New Yorker editorial illustrations inside cream-card frames). It supersedes v3.0/v3.1/v3.2 and the design block in Part 5 of `QB_THINKING_MACHINE.md`. Drop in the full `:root` block from Part 11 verbatim — no deviation. Components (`qb-button`, `qb-tag`, `qb-card`, `qb-field`, `qb-switch`, `qb-bubble`, `qb-illus-card`, `qb-hover-video`, `qb-marquee`, `qb-faq`, `qb-phone`, `qb-mock-card`, `qb-progress`) live in Parts 9, 17.5, 18, 19. Migration plan + waves live in Part 13.
 
-That document defines: the operator identity (The Quantum Branding Thinking Machine), product architecture (QBP, four doors, six phases, weakest persona principle), the v3.2 design system (cream + ink tokens, 3D pill button, hard offset shadow, Fraunces+Inter+JetBrains Mono, fluid clamp scale), the illustration asset library (11 PNGs in `/img`, three-style cohesion map, palette-normalization status), pricing tiers, code production standards (vanilla JS, self-contained files, CSS variables only, mobile-first, reduced-motion respected, Anthropic API via `claude-sonnet-4-20250514`), and the operating principles (diagnose before answering, challenge before validating, full agency, no quality-speed tradeoffs, no invented social proof).
+2. **[`QB_THINKING_MACHINE.md`](QB_THINKING_MACHINE.md)** is the SOT for **product, identity, strategy, operations**: the Quantum Branding Thinking Machine identity, QBP, four doors, six phases, weakest persona principle, illustration asset library (Part 6), pricing tiers, code production standards (vanilla JS, self-contained files, mobile-first, reduced-motion, localStorage, Anthropic API), and operating principles. The design block in Part 5 of this doc is **superseded by v3.3** — when they disagree on visual / motion / interaction, v3.3 wins.
 
-When something below contradicts `QB_THINKING_MACHINE.md`, the master doc wins — and update this file.
+When something below contradicts either SOT, the SOT wins — and update this file.
+
+**Model note:** the v3.3 spec's Part 15 prompt mentions `claude-sonnet-4-20250514`; that is stale. The locked default in `api/claude.js` is `claude-sonnet-4-6` (the retired ID is kept in `ALLOWED_MODELS` only for transition). Do not change API code based on the v3.3 prompt.
 
 ## Project
 
@@ -46,11 +48,11 @@ QB BrandOS — a Brand Operating System by Quantum Branding (built by Nizzar Ben
 
 **Assets:** `/img` holds the 11-illustration library inventoried in Part 6 of `QB_THINKING_MACHINE.md`. Always reference an illustration by filename — never invent. If a slot needs an illustration that does not exist in the inventory, flag it as missing rather than substituting an unrelated one.
 
-## Conventions when editing (locked — see `QB_THINKING_MACHINE.md` Part 15 for the full standard)
+## Conventions when editing (locked — see `qb-design-system-v3.3.md` for design, `QB_THINKING_MACHINE.md` Part 15 for code/product)
 
 - **Agent count is 20.** Not 19. Update every visible reference if you touch a page that mentions it.
 - **Live `quantumbranding.ai` is the SOT** for marketing copy, section ordering, pricing, testimonials. Diff before inventing.
-- **CSS variables only.** No hardcoded color or spacing values outside the `:root` block.
+- **`:root` block from v3.3 Part 11 is verbatim.** Drop it into every HTML file `<style>` head — no deviation, no inventing token names. CSS variables only outside that block.
 - **Vanilla JS only.** No framework. No JSX. No build step.
 - **Self-contained files.** No external deps beyond Google Fonts.
 - **Mobile-first responsive. Always.**
