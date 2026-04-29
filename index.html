@@ -476,98 +476,110 @@
     text-wrap: pretty;
   }
 
-  /* Phase pillars — four editorial cards, scroll-staggered reveal */
-  .dark-demo_pillars {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-m);
-    margin-top: var(--space-xl-2xl);
-    width: 100%;
-  }
-  @media (min-width: 700px) {
-    .dark-demo_pillars { grid-template-columns: repeat(2, 1fr); gap: var(--space-l); }
-  }
-  @media (min-width: 1100px) {
-    .dark-demo_pillars { grid-template-columns: repeat(4, 1fr); gap: var(--space-m); }
-  }
+  /* ─── Canonical v3.2 pattern (ported from ecosystem.html "Three steps") ─── */
 
-  .pillar {
-    position: relative;
-    background: var(--cream);
-    border: 2px solid var(--cream);
-    border-radius: 22px;
-    padding: var(--space-m);
-    color: var(--ink);
-    display: flex; flex-direction: column;
-    box-shadow: 0 12px 0 rgba(255,255,255,0.06);
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.7s ease-out,
-                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 0.25s ease-out;
-    transition-delay: var(--reveal-delay, 0s);
-    will-change: transform, opacity;
-  }
-  .dark-demo.is-revealed .pillar {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  @media (hover: hover) {
-    .dark-demo.is-revealed .pillar:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 0 rgba(255,255,255,0.12);
-    }
-  }
-
-  .pillar_accent {
-    width: 56px;
-    height: 4px;
-    background: var(--accent, var(--gold));
-    border-radius: 9999px;
-    margin-bottom: var(--space-s);
-  }
-  .pillar_glyph {
-    width: 64px;
-    height: 64px;
-    color: var(--ink);
-    margin-bottom: var(--space-xs);
-  }
-  .pillar_glyph svg {
-    width: 100%; height: 100%; display: block;
-  }
-  .pillar_label {
+  /* Eyebrow tag — required opener for every section */
+  .qb-tag { display: inline-flex; }
+  .qb-tag_content {
     font-family: 'JetBrains Mono', monospace;
-    font-size: var(--step--2);
-    letter-spacing: 0.14em;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.95rem;
+    border: 1.5px solid var(--ink);
+    border-radius: 9999px;
+    background: var(--cream-card);
+    color: var(--ink);
+    line-height: 1;
+  }
+  .qb-tag.on-dark .qb-tag_content {
+    background: rgba(244, 240, 235, 0.06);
+    color: var(--cream);
+    border-color: rgba(244, 240, 235, 0.45);
+  }
+
+  /* Section header — eyebrow + headline stack */
+  .section_header { text-align: center; }
+  .section_header > * + * { margin-top: var(--space-s); }
+
+  /* Type utilities used by the canonical pattern */
+  .qb-type-balance { text-wrap: balance; }
+  .qb-type-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--step--1);
+    line-height: 1.6em;
+    color: var(--ink);
+  }
+
+  /* "How" grid — 4 phase cards on this page */
+  .how-grid {
+    display: grid; grid-template-columns: 1fr; gap: var(--space-m-l);
+    margin-top: var(--space-xl-2xl);
+  }
+  @media (min-width: 700px)  { .how-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .how-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .how-card {
+    background: var(--cream-card);
+    border: 2px solid var(--ink);
+    border-radius: 32px;
+    padding: var(--space-m-l);
+    display: flex; flex-direction: column; gap: var(--space-xs);
+    box-shadow: 0 9px var(--ink);
+    color: var(--ink);
+  }
+  @media (min-width: 640px) { .how-card { box-shadow: 0 16px var(--ink); } }
+
+  .how-card_doodle {
+    width: 64px; height: 64px;
+    border: 2px solid var(--ink);
+    border-radius: 9999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--butter);
+    color: var(--ink);
+    margin-bottom: var(--space-2xs);
+  }
+  .how-card_doodle.is-rose { background: var(--rose-soft); }
+  .how-card_doodle.is-teal { background: var(--teal-soft); }
+  .how-card_doodle.is-pink { background: var(--pink); }
+  .how-card_doodle svg {
+    width: 32px; height: 32px;
+    stroke: var(--ink); fill: none;
+    stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .how-card_num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--ink-50);
-    margin-bottom: 2px;
   }
-  .pillar_h {
+  .how-card_title {
     font-family: 'Fraunces', serif;
-    font-variation-settings: "wght" 600, "opsz" 96, "SOFT" 60, "WONK" 0;
-    font-size: var(--step-3);
+    font-variation-settings: "wght" 600, "opsz" 60, "SOFT" 70;
+    font-size: var(--step-2);
     line-height: 1.05;
     color: var(--ink);
-    margin: 0 0 var(--space-xs);
   }
-  .pillar_body {
-    font-family: 'Inter', sans-serif;
-    font-size: var(--step--1);
-    line-height: 1.5;
-    color: var(--ink-75);
-    margin: 0 0 var(--space-s);
-  }
-  .pillar_meta {
+  .how-card_result {
     margin-top: auto;
     padding-top: var(--space-s);
-    border-top: 1px solid var(--ink-25);
+    border-top: 1px dashed var(--ink-25);
     font-family: 'JetBrains Mono', monospace;
     font-size: var(--step--2);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-75);
   }
+
+  /* Scroll-triggered reveal — IntersectionObserver toggles .in */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .rd1 { transition-delay: 0.1s; }
+  .rd2 { transition-delay: 0.2s; }
+  .rd3 { transition-delay: 0.3s; }
 
   /* =====================================================
      FEATURED-BY STRIP
@@ -682,7 +694,7 @@
     }
     .qb-button:hover .qb-button_content,
     .qb-button:active .qb-button_content { transform: none; }
-    .pillar { opacity: 1; transform: none; transition: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
     .featured-track { animation: none; }
   }
 </style>
@@ -760,78 +772,55 @@
   <section class="dark-demo">
     <div class="qb-x">
 
-      <div class="phase-pills">
-        <span class="phase-pill"><span class="phase-pill_dot"></span>Discovery</span>
-        <span class="phase-pill"><span class="phase-pill_dot"></span>Positioning</span>
-        <span class="phase-pill"><span class="phase-pill_dot"></span>Content</span>
-        <span class="phase-pill"><span class="phase-pill_dot"></span>Intelligence</span>
-      </div>
+      <header class="section_header">
+        <span class="qb-tag on-dark"><span class="qb-tag_content">The architecture</span></span>
+        <h2 class="dark-demo_h2 qb-type-balance reveal">20 agents. Four phases. <em>One operating system.</em></h2>
+      </header>
 
-      <h2 class="dark-demo_h2">20 agents. Four phases. One operating system.</h2>
-      <p class="dark-demo_sub">From idea to orbit — across the full arc of intelligent brand operation.</p>
+      <div class="how-grid">
 
-      <div class="dark-demo_pillars">
-
-        <!-- 1. Discovery -->
-        <article class="pillar" style="--accent: var(--phase-discovery); --reveal-delay: 0s;">
-          <div class="pillar_accent"></div>
-          <div class="pillar_glyph" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="32" cy="32" r="22"/>
-              <path d="M32 14 L38 32 L32 50 L26 32 Z" fill="currentColor" stroke="none"/>
-            </svg>
+        <!-- 01 Discovery -->
+        <article class="how-card reveal">
+          <div class="how-card_doodle">
+            <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 8l3 8-3 8-3-8z"/></svg>
           </div>
-          <span class="pillar_label">Phase 01</span>
-          <h3 class="pillar_h">Discovery</h3>
-          <p class="pillar_body">Six tools turn a raw idea into an operational brand profile. Identity, senses, visuals, strategy, buyers.</p>
-          <span class="pillar_meta">Brand profile · ~90 min</span>
+          <div class="how-card_num">01 · Discovery</div>
+          <h3 class="how-card_title">The brand discovers itself.</h3>
+          <p class="qb-type-text">Six diagnostic tools surface identity, senses, visual language, and strategy.</p>
+          <div class="how-card_result">Result · Brand profile, 90 min</div>
         </article>
 
-        <!-- 2. Positioning -->
-        <article class="pillar" style="--accent: var(--phase-creation); --reveal-delay: 0.15s;">
-          <div class="pillar_accent"></div>
-          <div class="pillar_glyph" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="10" y="22" width="44" height="20" rx="10"/>
-              <circle cx="20" cy="32" r="3" fill="currentColor" stroke="none"/>
-              <path d="M30 28 L46 28 M30 36 L42 36"/>
-            </svg>
+        <!-- 02 Positioning -->
+        <article class="how-card reveal rd1">
+          <div class="how-card_doodle is-rose">
+            <svg viewBox="0 0 32 32"><path d="M5 10c0-2 1-3 3-3h16c2 0 3 1 3 3v8c0 2-1 3-3 3h-9l-5 4v-4H8c-2 0-3-1-3-3z"/></svg>
           </div>
-          <span class="pillar_label">Phase 02</span>
-          <h3 class="pillar_h">Positioning</h3>
-          <p class="pillar_body">How your brand sounds, looks, and shows up. Voice spine, visual direction, the named perspective.</p>
-          <span class="pillar_meta">Voice + visual</span>
+          <div class="how-card_num">02 · Positioning</div>
+          <h3 class="how-card_title">The brand finds its voice.</h3>
+          <p class="qb-type-text">Voice spine and visual direction. The named perspective every downstream agent reads.</p>
+          <div class="how-card_result">Result · Voice + visual</div>
         </article>
 
-        <!-- 3. Content -->
-        <article class="pillar" style="--accent: var(--phase-content); --reveal-delay: 0.3s;">
-          <div class="pillar_accent"></div>
-          <div class="pillar_glyph" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-              <path d="M14 14 H50 M14 24 H46 M14 34 H50 M14 44 H42 M14 54 H38"/>
-            </svg>
+        <!-- 03 Content -->
+        <article class="how-card reveal rd2">
+          <div class="how-card_doodle is-teal">
+            <svg viewBox="0 0 32 32"><path d="M6 6h20M6 12h16M6 18h20M6 24h14"/></svg>
           </div>
-          <span class="pillar_label">Phase 03</span>
-          <h3 class="pillar_h">Content</h3>
-          <p class="pillar_body">Daily fuel for every channel you publish to. Drafted in your voice, ready for approval.</p>
-          <span class="pillar_meta">Channels, daily</span>
+          <div class="how-card_num">03 · Content</div>
+          <h3 class="how-card_title">The brand creates daily.</h3>
+          <p class="qb-type-text">One profile drives every channel. Drafted in your voice, ready for approval.</p>
+          <div class="how-card_result">Result · Channels, daily</div>
         </article>
 
-        <!-- 4. Intelligence -->
-        <article class="pillar" style="--accent: var(--phase-intelligence); --reveal-delay: 0.45s;">
-          <div class="pillar_accent"></div>
-          <div class="pillar_glyph" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-              <path d="M14 46 A18 18 0 0 1 50 46"/>
-              <path d="M22 46 A10 10 0 0 1 42 46"/>
-              <circle cx="32" cy="46" r="3" fill="currentColor" stroke="none"/>
-              <path d="M32 46 L46 22"/>
-            </svg>
+        <!-- 04 Intelligence -->
+        <article class="how-card reveal rd3">
+          <div class="how-card_doodle is-pink">
+            <svg viewBox="0 0 32 32"><path d="M2 16Q16 6 30 16Q16 26 2 16Z"/><circle cx="16" cy="16" r="4"/></svg>
           </div>
-          <span class="pillar_label">Phase 04</span>
-          <h3 class="pillar_h">Intelligence</h3>
-          <p class="pillar_body">The brand reads itself. Performance signals loop back into the profile each quarter.</p>
-          <span class="pillar_meta">Quarterly cadence</span>
+          <div class="how-card_num">04 · Intelligence</div>
+          <h3 class="how-card_title">The brand reads itself.</h3>
+          <p class="qb-type-text">Performance signals loop back into the profile each quarter. The system learns.</p>
+          <div class="how-card_result">Result · Self-tuning</div>
         </article>
 
       </div>
@@ -918,25 +907,28 @@
     track.innerHTML = track.innerHTML + track.innerHTML;
   })();
 
-  // Dark-demo reveal: stagger chat messages in as section scrolls into view.
-  // Chat-msg-wraps each carry a --reveal-delay; flipping `.is-revealed` on the
-  // section unlocks their CSS transition.
+  // Canonical scroll reveal — toggles `.in` on every `.reveal` element when it
+  // enters the viewport. Same pattern as ecosystem.html. Honors reduced-motion.
   (function () {
-    var dd = document.querySelector('.dark-demo');
-    if (!dd) return;
+    var els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
     if (!('IntersectionObserver' in window)) {
-      dd.classList.add('is-revealed');
+      els.forEach(function (el) { el.classList.add('in'); });
       return;
     }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
-          dd.classList.add('is-revealed');
-          io.unobserve(dd);
+          e.target.classList.add('in');
+          io.unobserve(e.target);
         }
       });
-    }, { threshold: 0.25 });
-    io.observe(dd);
+    }, { threshold: 0.18 });
+    els.forEach(function (el) { io.observe(el); });
   })();
 </script>
 
