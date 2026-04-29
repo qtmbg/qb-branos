@@ -341,6 +341,7 @@ input:focus, textarea:focus {
       <!-- FIX M-03: Guard history.back() — avoids blank page when opened directly -->
       <button class="btn-ghost" onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'index.html'" aria-label="Go back">← Back</button>
       <button class="btn-ghost" onclick="downloadDocPPTX()" id="dl-pptx-btn" aria-label="Download brand document as PPTX">↓ Download PPTX</button>
+      <button class="btn-ghost" onclick="downloadDocMarketingDeck()" id="dl-marketing-btn" aria-label="Download brand document as marketing-style PPTX">↓ Marketing deck</button>
       <button class="btn-primary" onclick="downloadDoc()" id="dl-btn" aria-label="Download brand document as PDF">↓ Download PDF</button>
     </div>
   </div>
@@ -799,27 +800,31 @@ async function downloadDoc() {
   }
 }
 
-async function downloadDocPPTX() {
-  const btn = document.getElementById('dl-pptx-btn');
+async function exportDocPPTXMode(mode, btnId, idleLabel) {
+  const btn = document.getElementById(btnId);
   if (!window.QB_exportPPTX) {
     alert('PPTX export still loading — try again in a second.');
     return;
   }
   if (btn) { btn.disabled = true; btn.textContent = 'Generating…'; }
   const qbp = getQBP();
+  const suffix = mode === 'editorial' ? '-marketing' : '';
   try {
     await window.QB_exportPPTX('brand-document', qbp, {
       brandName: qbp.brandName || 'Brand',
-      filename: (qbp.brandName || 'brand') + '-quantum-brand-profile',
-      deckTitle: 'Quantum Brand Profile'
+      filename: (qbp.brandName || 'brand') + '-quantum-brand-profile' + suffix,
+      deckTitle: 'Quantum Brand Profile',
+      mode: mode
     });
   } catch (err) {
     console.error('[QB PPTX]', err);
     alert('PPTX generation failed. See console for details.');
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '↓ Download PPTX'; }
+    if (btn) { btn.disabled = false; btn.textContent = idleLabel; }
   }
 }
+async function downloadDocPPTX()           { return exportDocPPTXMode('studio',    'dl-pptx-btn',         '↓ Download PPTX'); }
+async function downloadDocMarketingDeck()  { return exportDocPPTXMode('editorial', 'dl-marketing-btn',    '↓ Marketing deck'); }
 
 // On init: if authed, await a cloud pull so tool_completions + qbp reflect
 // the latest state across devices before the first render. Falls through

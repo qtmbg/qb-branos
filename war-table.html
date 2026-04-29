@@ -2104,21 +2104,25 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     }
   }
 
-  function downloadDossierPPTX(){
+  function exportDossierPPTX(mode){
     if (!window.QB_exportPPTX){
       showToast('PPTX export still loading — try again in a second.', 'error');
       return;
     }
     var brand = state.brandInfo.brandName || 'Brand';
+    var suffix = mode === 'editorial' ? '-marketing' : '';
     window.QB_exportPPTX('war-table', state.dossier || {}, {
       brandName: brand,
-      filename: 'war-table-' + brand,
-      deckTitle: 'War Table  ·  Strategic Command Dossier'
+      filename: 'war-table-' + brand + suffix,
+      deckTitle: 'War Table  ·  Strategic Command Dossier',
+      mode: mode
     }).catch(function(err){
       console.error('[QB PPTX]', err);
       showToast('Could not generate the PPTX. Check the console.', 'error');
     });
   }
+  function downloadDossierPPTX(){             exportDossierPPTX('studio');    }
+  function downloadDossierMarketingDeck(){    exportDossierPPTX('editorial'); }
 
   function emailDossierToSelf(){
     var md = dossierToMarkdown();
@@ -2761,6 +2765,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         el('button', { class:'btn btn-sm', type:'button', onclick: copyDossierMarkdown }, 'Copy as Markdown'),
         el('button', { class:'btn btn-sm', type:'button', onclick:function(){ try{ window.print(); }catch(e){} } }, 'Download as PDF'),
         el('button', { class:'btn btn-sm', type:'button', onclick: downloadDossierPPTX }, 'Download PPTX'),
+        el('button', { class:'btn btn-sm', type:'button', onclick: downloadDossierMarketingDeck }, 'Marketing deck'),
         el('button', { class:'btn btn-sm', type:'button', onclick: emailDossierToSelf }, 'Email to self'),
         el('button', { class:'btn btn-primary btn-sm', type:'button', onclick: triggerDossierGeneration }, 'Regenerate')
       ])

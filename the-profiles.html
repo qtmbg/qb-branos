@@ -2042,7 +2042,7 @@ function renderFinish() {
     w.document.write(html);
     w.document.close();
   }
-  function downloadPPTX() {
+  function exportPPTXMode(mode) {
     if (!window.QB_exportPPTX) {
       alert("PPTX export still loading — try again in a second.");
       return;
@@ -2050,15 +2050,19 @@ function renderFinish() {
     var qbp = {};
     try { qbp = JSON.parse(localStorage.getItem("qb_qbp") || "{}"); } catch (e) {}
     var brand = (qbp && qbp.brandName) || "Brand";
+    var suffix = mode === "editorial" ? "-marketing" : "";
     window.QB_exportPPTX("the-profiles", output, {
       brandName: brand,
-      filename: "the-profiles-" + brand,
-      deckTitle: "The Profiles"
+      filename: "the-profiles-" + brand + suffix,
+      deckTitle: "The Profiles",
+      mode: mode
     }).catch(function (err) {
       console.error("[QB PPTX]", err);
       alert("Could not generate the PPTX. Check the console for details.");
     });
   }
+  function downloadPPTX()         { exportPPTXMode("studio");    }
+  function downloadMarketingDeck(){ exportPPTXMode("editorial"); }
 
   return h("div", { class: "screen screen-center" },
     h("div", { class: "container-md center fade-in" },
@@ -2068,6 +2072,7 @@ function renderFinish() {
       h("div", { class: "flex justify-center gap-3 flex-wrap" },
         btn("Branded export (PDF)", { icon: "print", onClick: openBrandedExport }),
         btn("Download PPTX", { icon: "download", onClick: downloadPPTX }),
+        btn("Marketing deck", { icon: "download", onClick: downloadMarketingDeck }),
         btn("Download JSON", { icon: "download", variant: "secondary", onClick: downloadJSON }),
         btn("Download Markdown", { icon: "download", variant: "secondary", onClick: downloadMD })
       ),

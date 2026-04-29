@@ -2597,20 +2597,24 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     ]);
 
     // Actions
-    function downloadCodexPPTX(){
+    function exportCodexPPTX(mode){
       if (!window.QB_exportPPTX){
         alert('PPTX export still loading — try again in a second.');
         return;
       }
+      var suffix = mode === 'editorial' ? '-marketing' : '';
       window.QB_exportPPTX('brand-soul-map', state.codex || {}, {
         brandName: brand,
-        filename: 'brand-soul-map-' + brand,
-        deckTitle: 'Brand Soul Map'
+        filename: 'brand-soul-map-' + brand + suffix,
+        deckTitle: 'Brand Soul Map',
+        mode: mode
       }).catch(function(err){
         console.error('[QB PPTX]', err);
         alert('Could not generate the PPTX. Check the console for details.');
       });
     }
+    function downloadCodexPPTX(){            exportCodexPPTX('studio');    }
+    function downloadCodexMarketingDeck(){   exportCodexPPTX('editorial'); }
     var actions = el('div', { class:'codex-actions' }, [
       el('div', { class:'meta' }, [
         el('span', { class:'dot' }),
@@ -2619,6 +2623,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       el('button', { class:'btn btn-sm', type:'button', onclick: copyCodexMarkdown }, 'Copy as Markdown'),
       el('button', { class:'btn btn-sm', type:'button', onclick:function(){ try{ window.print(); }catch(e){} } }, 'Download as PDF'),
       el('button', { class:'btn btn-sm', type:'button', onclick: downloadCodexPPTX }, 'Download PPTX'),
+      el('button', { class:'btn btn-sm', type:'button', onclick: downloadCodexMarketingDeck }, 'Marketing deck'),
       el('button', { class:'btn btn-primary btn-sm', type:'button', onclick: triggerCodexGeneration }, 'Regenerate')
     ]);
 
