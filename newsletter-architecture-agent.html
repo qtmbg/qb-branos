@@ -403,7 +403,7 @@ button { cursor: pointer; font-family: var(--font-sans); border: none; outline: 
   window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
     maxTokens = maxTokens || 4000;
     var body = {
-      model: 'claude-3-7-sonnet-20250219',
+      model: 'claude-sonnet-4-6',
       max_tokens: Math.min(maxTokens, 8000),
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }]
@@ -849,7 +849,7 @@ REQUIREMENTS:
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-3-7-sonnet-20250219',
+          model: 'claude-sonnet-4-6',
           max_tokens: 8000,
           system: 'You are the Newsletter Architecture Agent inside the Quantum Branding BrandOS ecosystem. Return ONLY valid JSON — no markdown, no preamble.',
           messages: [{role: 'user', content: buildPrompt()}]

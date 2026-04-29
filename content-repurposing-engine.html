@@ -296,7 +296,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outlin
   if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(decodeURIComponent(urlQBP))); }catch(e){} }
   try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
   
-  window.QB_MODEL = 'claude-sonnet-4-20250514';
+  window.QB_MODEL = 'claude-sonnet-4-6';
 
   window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
     maxTokens = maxTokens || 4000;

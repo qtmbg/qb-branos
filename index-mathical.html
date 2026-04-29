@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantum Branding — Idea in, brand out</title>
+<meta name="description" content="The AI brand operating system that turns your answers into a complete, living brand. 19 agents working 24/7.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,100..900,0..100,0..1&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+  /* =====================================================
+     QB BRANDOS DESIGN SYSTEM v3.2 — TOKENS (Part 11)
+     ===================================================== */
+  :root {
+    /* Core neutrals */
+    --cream:        #FBF5E6;
+    --cream-card:   #F2EBD3;
+    --cream-warm:   #ECDDB8;
+    --cream-edge:   #DBD4C0;
+    --cream-rose:   #F4D9DD;
+    --white:        #FFFEF8;
+
+    /* Ink */
+    --ink:     #2D1521;
+    --ink-75:  rgba(45,21,33,0.75);
+    --ink-50:  rgba(45,21,33,0.50);
+    --ink-33:  rgba(45,21,33,0.33);
+    --ink-25:  rgba(45,21,33,0.25);
+
+    /* QB Triad */
+    --gold:    #E0B069;
+    --rose:    #CA6180;
+    --teal:    #9ED3DC;
+
+    /* Secondary */
+    --rose-deep: #8E3F58;
+    --teal-deep: #5BA8B5;
+    --gold-deep: #B58840;
+    --aubergine: #4A2B3A;
+
+    /* Accents */
+    --pink:      #FCB7C7;
+    --butter:    #FEFD99;
+    --teal-soft: #C5E5E9;
+    --rose-soft: #ECC4D0;
+
+    /* Phase */
+    --phase-discovery:    #9CC4A2;
+    --phase-creation:     #B5C8E5;
+    --phase-content:      #FCB7C7;
+    --phase-execution:    #E89380;
+    --phase-intelligence: #B080A0;
+
+    /* Functional */
+    --scrim:        rgba(251,245,230,0.90);
+    --skeleton:     rgba(224,176,105,0.33);
+
+    /* Type scale */
+    --step--2: clamp(0.7813rem, 0.7546rem + 0.1254vw, 0.88rem);
+    --step--1: clamp(0.9375rem, 0.8937rem + 0.2063vw, 1.1rem);
+    --step-0:  clamp(1.125rem,  1.0575rem + 0.3175vw, 1.375rem);
+    --step-1:  clamp(1.35rem,   1.2505rem + 0.4683vw, 1.7188rem);
+    --step-2:  clamp(1.62rem,   1.4773rem + 0.6714vw, 2.1488rem);
+    --step-3:  clamp(1.9438rem, 1.7436rem + 0.9421vw, 2.6856rem);
+    --step-4:  clamp(2.3325rem, 2.0561rem + 1.3008vw, 3.3569rem);
+    --step-5:  clamp(2.7994rem, 2.4224rem + 1.7738vw, 4.1963rem);
+    --step-6:  clamp(3.3594rem, 2.8506rem + 2.3944vw, 5.245rem);
+    --step-7:  clamp(4.0313rem, 3.3499rem + 3.2063vw, 6.5563rem);
+
+    /* Space scale */
+    --space-3xs:    clamp(0.5625rem, 0.5288rem + 0.1587vw, 0.6875rem);
+    --space-2xs:    clamp(0.5625rem, 0.5288rem + 0.1587vw, 0.6875rem);
+    --space-xs:     clamp(0.875rem,  0.8244rem + 0.2381vw, 1.0625rem);
+    --space-s:      clamp(1.125rem,  1.0575rem + 0.3175vw, 1.375rem);
+    --space-m:      clamp(1.6875rem, 1.5863rem + 0.4762vw, 2.0625rem);
+    --space-l:      clamp(2.25rem,   2.1151rem + 0.6349vw, 2.75rem);
+    --space-xl:     clamp(3.375rem,  3.1726rem + 0.9524vw, 4.125rem);
+    --space-2xl:    clamp(4.5rem,    4.2302rem + 1.2698vw, 5.5rem);
+    --space-3xl:    clamp(6.75rem,   6.3452rem + 1.9048vw, 8.25rem);
+    --space-3xs-2xs:clamp(0.5625rem, 0.5288rem + 0.1587vw, 0.6875rem);
+    --space-xs-s:   clamp(0.875rem,  0.7401rem + 0.6349vw, 1.375rem);
+    --space-s-m:    clamp(1.125rem,  0.872rem  + 1.1905vw, 2.0625rem);
+    --space-m-l:    clamp(1.6875rem, 1.4008rem + 1.3492vw, 2.75rem);
+    --space-l-xl:   clamp(2.25rem,   1.744rem  + 2.381vw,  4.125rem);
+    --space-xl-2xl: clamp(3.375rem,  2.8016rem + 2.6984vw, 5.5rem);
+    --space-2xl-3xl:clamp(4.5rem,    3.4881rem + 4.7619vw, 8.25rem);
+
+    /* Easings */
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-qb:       cubic-bezier(0.19, 1, 0.22, 1);
+    --ease-spring:   cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-sharp:    cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    --ease-glow:     cubic-bezier(0.455, 0.03, 0.515, 0.955);
+
+    --qb-scrollbar-w: 10px;
+    --qb-scrollbar-r: 20px;
+  }
+
+  /* =====================================================
+     RESET + BASE
+     ===================================================== */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+  img, svg, video { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; }
+  a { color: inherit; }
+
+  html, body {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--cream);
+    overflow-y: scroll;
+    line-height: 1.5;
+  }
+  body { min-height: 100vh; }
+  main { display: block; }
+
+  ::-webkit-scrollbar { width: var(--qb-scrollbar-w); height: var(--qb-scrollbar-w); }
+  ::-webkit-scrollbar-track { background: var(--cream); }
+  ::-webkit-scrollbar-thumb { background: var(--cream-warm); border-radius: var(--qb-scrollbar-r); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+  ::selection { background: var(--teal); color: var(--ink); }
+
+  /* =====================================================
+     TYPOGRAPHY (Part 3.3)
+     ===================================================== */
+  .qb-type-heading {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-variation-settings: "wght" 600, "opsz" 96, "SOFT" 60, "WONK" 0;
+    font-size: var(--step-6);
+    line-height: 0.98em;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .qb-type-subheading {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-variation-settings: "wght" 500, "opsz" 72, "SOFT" 60, "WONK" 0;
+    font-size: var(--step-5);
+    line-height: 1.05em;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .qb-type-title {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-variation-settings: "wght" 500, "opsz" 48, "SOFT" 70, "WONK" 0;
+    font-size: var(--step-4);
+    line-height: 1.05em;
+    color: var(--ink);
+  }
+  .qb-type-subtitle {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-variation-settings: "wght" 500, "opsz" 24, "SOFT" 60, "WONK" 0;
+    font-size: var(--step-1);
+    line-height: 1.1em;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  .qb-type-opening {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: var(--step-0);
+    line-height: 1.4em;
+    color: var(--ink);
+  }
+  .qb-type-text {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: var(--step--1);
+    line-height: 1.6em;
+    color: var(--ink);
+  }
+  .qb-type-subtext {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: var(--step--2);
+    line-height: 1.7em;
+    color: var(--ink);
+  }
+  .qb-type-nav {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: var(--step--2);
+    line-height: 1.5em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.4s var(--ease-qb);
+  }
+  .qb-type-nav:hover { color: var(--gold); }
+  .qb-type-nav.is-active { color: var(--rose); }
+
+  .qb-type-spot-1 { color: var(--gold); }
+  .qb-type-spot-2 { color: var(--rose); }
+  .qb-type-spot-3 { color: var(--teal-deep); }
+
+  .qb-type-center  { text-align: center; }
+  .qb-type-balance { text-wrap: balance; }
+  .qb-type-pretty  { text-wrap: pretty; }
+  .qb-type-upper   { text-transform: uppercase; }
+
+  /* =====================================================
+     LAYOUT
+     ===================================================== */
+  .qb-x        { max-width: 1240px; margin-inline: auto; padding-inline: var(--space-m-l); }
+  .qb-x-narrow { max-width:  890px; margin-inline: auto; padding-inline: var(--space-m-l); }
+  @media (min-width: 640px) {
+    .qb-x, .qb-x-narrow { padding-inline: var(--space-l-xl); }
+  }
+
+  .qb-stack-s  > * + * { margin-top: var(--space-s); }
+  .qb-stack-m  > * + * { margin-top: var(--space-m); }
+  .qb-stack-l  > * + * { margin-top: var(--space-l); }
+
+  .qb-block-grid {
+    display: grid; grid-template-columns: 1fr; gap: var(--space-m-l);
+  }
+  @media (min-width: 768px)  { .qb-block-grid.is-grid-2 { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .qb-block-grid.is-grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1024px) { .qb-block-grid.is-grid-3-md { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 768px)  { .qb-block-grid.is-grid-3-md { grid-template-columns: repeat(2, 1fr); } }
+
+  .qb-block-feature {
+    display: grid; grid-template-columns: 1fr; gap: var(--space-xl-2xl);
+    align-items: center;
+  }
+  @media (min-width: 900px) { .qb-block-feature { grid-template-columns: 1fr 1fr; } }
+
+  /* =====================================================
+     SHADOWS (Part 7)
+     ===================================================== */
+  .qb-shadow    { box-shadow: 0 9px var(--ink); }
+  .qb-shadow-sm { box-shadow: 0 9px var(--ink); }
+  @media (min-width: 640px) { .qb-shadow { box-shadow: 0 16px var(--ink); } }
+
+  /* =====================================================
+     BUTTON (Part 9.1) — two-layer 3D pill
+     ===================================================== */
+  .qb-button {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; border: 0; padding: 0;
+    font-size: var(--space-m);
+    cursor: pointer;
+    isolation: isolate;
+    text-decoration: none;
+    color: inherit;
+  }
+  .qb-button::before {
+    content: ''; position: absolute; inset: 0;
+    border-radius: 9999px; background: var(--ink);
+    transform: translateY(0.17em) scale(0.99);
+    transition: transform 0.4s var(--ease-qb);
+    z-index: -1;
+  }
+  .qb-button_content {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5em;
+    border: 2px solid var(--ink); border-radius: 9999px;
+    background: var(--white); color: var(--ink);
+    padding: 1.1em 1.5em;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700; font-size: 0.5em; line-height: 1.5em;
+    letter-spacing: 0.02em;
+    transform: translateY(-0.17em);
+    transition: transform 0.4s var(--ease-qb), filter 0.4s var(--ease-qb), background 0.4s var(--ease-qb), color 0.4s var(--ease-qb);
+    will-change: transform;
+    white-space: nowrap;
+  }
+  @media (hover: hover) {
+    .qb-button:hover .qb-button_content { transform: translateY(-0.35em); filter: brightness(1.05); }
+  }
+  .qb-button:active .qb-button_content { transform: translateY(0.28em) scale(0.99); filter: brightness(0.9); }
+  .qb-button.is-primary   .qb-button_content { background: var(--gold);      color: var(--ink); }
+  .qb-button.is-secondary .qb-button_content { background: var(--rose-deep); color: var(--cream); }
+  .qb-button.is-active    .qb-button_content { background: var(--teal-deep); color: var(--ink); transform: translateY(0.1em); box-shadow: inset 0 0 0 0.2em var(--ink); }
+  .qb-button.is-sm        .qb-button_content { padding: 0.8em 1.4em; font-size: 0.4em; }
+  .qb-button.is-sm::before { transform: translateY(0.1em) scale(0.99); }
+  .qb-button.is-lg        .qb-button_content { font-size: 0.6em; }
+  .qb-button.is-expand { width: 100%; }
+  .qb-button.is-expand .qb-button_content { width: 100%; }
+
+  /* =====================================================
+     TAG (Part 9.2)
+     ===================================================== */
+  .qb-tag { display: inline-flex; font-size: var(--space-m); }
+  .qb-tag_content {
+    border: 1px solid var(--ink); background: var(--cream);
+    border-radius: 9999px; padding: 0.55em 1.3em;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.42em; font-weight: 500; line-height: 1.55em;
+    letter-spacing: 0.08em; color: var(--ink-75);
+    text-transform: uppercase;
+  }
+  .qb-tag.is-rose   .qb-tag_content { border-width: 2px; background: var(--rose);   color: var(--cream); }
+  .qb-tag.is-teal   .qb-tag_content { border-width: 2px; background: var(--teal);   color: var(--ink); }
+  .qb-tag.is-pink   .qb-tag_content { border-width: 2px; background: var(--pink);   color: var(--ink); }
+  .qb-tag.is-butter .qb-tag_content { border-width: 2px; background: var(--butter); color: var(--ink); }
+  .qb-tag.is-soft   .qb-tag_content { background: var(--cream-card); }
+
+  /* =====================================================
+     CARD (Part 9.3)
+     ===================================================== */
+  .qb-card {
+    border: 2px solid var(--ink);
+    border-radius: 32px;
+    background: var(--cream-card);
+    overflow: hidden;
+    box-shadow: 0 9px var(--ink);
+    transition: transform 0.4s var(--ease-qb), box-shadow 0.4s var(--ease-qb);
+  }
+  @media (min-width: 640px) {
+    .qb-card { box-shadow: 0 16px var(--ink); }
+  }
+  .qb-card.is-soft { background: var(--cream); }
+  .qb-card.is-warm { background: var(--cream-warm); }
+  .qb-card.is-rose-soft { background: var(--rose-soft); }
+  .qb-card.is-teal-soft { background: var(--teal-soft); }
+  .qb-card_content {
+    padding: var(--space-m-l);
+    padding-bottom: var(--space-l-xl);
+  }
+  @media (min-width: 640px) {
+    .qb-card_content { padding-inline: var(--space-l-xl); padding-bottom: var(--space-xl-2xl); }
+  }
+  @media (hover: hover) {
+    .qb-card.is-interactive:hover { transform: translateY(-6px); box-shadow: 0 22px var(--ink); }
+  }
+
+  /* =====================================================
+     LOADING BAR (Part 10.4)
+     ===================================================== */
+  .qb-loading-bar {
+    position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 100; pointer-events: none;
+    background: linear-gradient(to right, rgba(158,211,220,0) 0%, var(--teal) 50%, rgba(158,211,220,0) 100%);
+    animation: qb-loading-bar 1s linear infinite;
+    opacity: 1;
+    transition: opacity 0.75s ease 0.5s;
+  }
+  .qb-loading-bar[data-state="idle"] { opacity: 0; }
+  @keyframes qb-loading-bar {
+    0%, 100% { transform: translateX(-100%); }
+    99.99%   { transform: translateX(100%); }
+  }
+
+  /* =====================================================
+     BANNER + NAV
+     ===================================================== */
+  .banner {
+    background: var(--ink);
+    color: var(--cream);
+    text-align: center;
+    padding: 0.7em var(--space-m-l);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .banner a { color: var(--gold); text-decoration: none; font-weight: 600; margin-left: 0.5em; }
+  .banner a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  .nav-wrap { padding: var(--space-s) var(--space-m-l); }
+  .nav {
+    max-width: 1320px;
+    margin-inline: auto;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-m);
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    border-radius: 9999px;
+    padding: 0.6rem 0.6rem 0.6rem 1.4rem;
+    box-shadow: 0 6px var(--ink);
+  }
+  .nav-brand {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 600, "opsz" 36, "SOFT" 70, "WONK" 0;
+    font-size: var(--step-0);
+    color: var(--ink);
+    text-decoration: none;
+    line-height: 1;
+  }
+  .nav-brand_dot {
+    width: 0.65em; height: 0.65em; border-radius: 50%;
+    background: var(--rose);
+    display: inline-block;
+    box-shadow: 0 0 0 3px rgba(202,97,128,0.18);
+    animation: nav-dot-pulse 2.4s var(--ease-qb) infinite;
+  }
+  @keyframes nav-dot-pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.18); }
+  }
+  .nav-links { display: none; align-items: center; gap: var(--space-s); }
+  @media (min-width: 900px) { .nav-links { display: inline-flex; } }
+  .nav-actions { display: inline-flex; align-items: center; gap: 0.5rem; }
+
+  .hamburger {
+    display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; width: 44px; height: 44px;
+    border: 2px solid var(--ink); border-radius: 9999px;
+    background: var(--cream); cursor: pointer; padding: 0;
+  }
+  @media (min-width: 900px) { .hamburger { display: none; } }
+  .hamburger span { display: block; width: 18px; height: 2px; background: var(--ink); border-radius: 2px; }
+
+  .mobile-menu {
+    position: fixed; inset: 0; z-index: 90;
+    background: var(--cream);
+    padding: var(--space-l) var(--space-m-l);
+    display: none; flex-direction: column;
+  }
+  .mobile-menu[data-open="true"] { display: flex; }
+  .mobile-menu_head { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-l); }
+  .mobile-menu_close {
+    width: 44px; height: 44px; border-radius: 9999px;
+    border: 2px solid var(--ink); background: var(--cream);
+    font-size: 1.1rem; cursor: pointer;
+  }
+  .mobile-menu_list { display: flex; flex-direction: column; gap: var(--space-s); }
+  .mobile-menu_list a {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 500, "opsz" 72, "SOFT" 70;
+    font-size: var(--step-3); color: var(--ink); text-decoration: none;
+    border-bottom: 1px solid var(--ink-25); padding: 0.5em 0;
+  }
+  .mobile-menu_foot { margin-top: auto; padding-top: var(--space-l); }
+
+  /* =====================================================
+     HERO
+     ===================================================== */
+  .hero {
+    padding-block: var(--space-2xl) var(--space-2xl-3xl);
+  }
+  .hero_grid {
+    display: grid; grid-template-columns: 1fr; gap: var(--space-xl-2xl);
+    align-items: center;
+  }
+  @media (min-width: 1000px) {
+    .hero_grid { grid-template-columns: 1.05fr 1fr; }
+  }
+  .hero_text > * + * { margin-top: var(--space-s); }
+  .hero_h1 { margin-top: var(--space-xs) !important; }
+  .hero_cta { display: flex; gap: var(--space-xs); flex-wrap: wrap; align-items: center; margin-top: var(--space-m) !important; }
+  .hero_meta {
+    margin-top: var(--space-s) !important;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: var(--step--2);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+  }
+
+  /* Phone triptych */
+  .triptych {
+    position: relative;
+    aspect-ratio: 1 / 0.95;
+    max-width: 540px;
+    margin-inline: auto;
+    width: 100%;
+  }
+  .phone {
+    position: absolute;
+    background: var(--white);
+    border: 2px solid var(--ink);
+    border-radius: 32px;
+    box-shadow: 0 9px var(--ink);
+    overflow: hidden;
+    width: 38%;
+    aspect-ratio: 9 / 16;
+  }
+  @media (min-width: 640px) {
+    .phone { box-shadow: 0 14px var(--ink); }
+  }
+  .phone.is-left   { left: 0;            top: 14%; transform: rotate(-7deg); background: var(--rose-soft); z-index: 1; }
+  .phone.is-center { left: 50%;          top: 0;   transform: translateX(-50%); width: 42%; aspect-ratio: 9 / 18; z-index: 3; }
+  .phone.is-right  { right: 0;           top: 12%; transform: rotate(8deg);  background: var(--teal-soft); z-index: 2; }
+  @keyframes phone-bob {
+    0%, 100% { transform: translate(-50%, 0); }
+    50%      { transform: translate(-50%, -8px); }
+  }
+  .phone.is-center { animation: phone-bob 4s var(--ease-qb) infinite; }
+
+  .phone_screen {
+    height: 100%; width: 100%;
+    padding: 12% 9% 10%;
+    display: flex; flex-direction: column;
+    gap: 0.6rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+  }
+  .phone_screen.is-bordered {
+    background: var(--cream);
+  }
+  .phone_notch {
+    width: 36%; height: 6px; border-radius: 9999px;
+    background: var(--ink); margin: 0 auto 0.4rem;
+  }
+  .phone_score {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 700, "opsz" 96, "SOFT" 60;
+    font-size: 2.6rem; line-height: 1;
+    color: var(--ink);
+    text-align: center;
+  }
+  .phone_score sub { font-size: 0.7rem; color: var(--ink-50); margin-left: 4px; vertical-align: top; }
+  .phone_label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-50);
+    text-align: center;
+  }
+  .phone_bar { height: 8px; border-radius: 9999px; background: var(--cream-warm); overflow: hidden; }
+  .phone_bar > span { display: block; height: 100%; background: var(--gold); }
+  .phone_pill {
+    display: inline-flex; padding: 4px 10px;
+    border: 1px solid var(--ink); border-radius: 9999px;
+    font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-75);
+    background: var(--cream); align-self: flex-start;
+  }
+  .phone_h {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 600, "opsz" 48, "SOFT" 70;
+    font-size: 1.15rem; line-height: 1.05; color: var(--ink);
+  }
+  .phone_msg {
+    padding: 8px 10px; border-radius: 12px;
+    font-size: 0.6rem; line-height: 1.3;
+    border: 1.5px solid var(--ink);
+  }
+  .phone_msg.is-user { background: var(--gold); align-self: flex-end; max-width: 85%; }
+  .phone_msg.is-ai   { background: var(--white); align-self: flex-start; max-width: 90%; }
+
+  /* =====================================================
+     SECTIONS
+     ===================================================== */
+  .section { padding-block: var(--space-xl-2xl); }
+  .section.is-tight { padding-block: var(--space-l-xl); }
+  .section_header {
+    text-align: center;
+    max-width: 740px;
+    margin: 0 auto var(--space-l-xl);
+  }
+  .section_header > * + * { margin-top: var(--space-s); }
+
+  /* Voice cards (founder quotes) */
+  .voice-card .qb-card_content { padding-bottom: var(--space-m-l); }
+  .voice-head {
+    display: flex; align-items: center; gap: var(--space-xs);
+    margin-bottom: var(--space-s);
+  }
+  .voice-avatar {
+    width: 48px; height: 48px; border-radius: 9999px;
+    border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 700, "opsz" 36, "SOFT" 70;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .voice-meta_name { font-family: 'Inter', sans-serif; font-weight: 700; font-size: var(--step--1); color: var(--ink); line-height: 1.1; }
+  .voice-meta_role { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-50); margin-top: 4px; }
+  .voice-quote {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 500, "opsz" 48, "SOFT" 70;
+    font-size: var(--step-1);
+    line-height: 1.25em;
+    color: var(--ink);
+  }
+  .voice-quote em { font-style: italic; color: var(--rose); }
+
+  /* Tool cards (the 6-tool grid) */
+  .tool-card { display: flex; flex-direction: column; }
+  .tool-card .qb-card_content { padding-block: var(--space-m); display: flex; flex-direction: column; gap: var(--space-xs); height: 100%; }
+  .tool-card_icon {
+    width: 56px; height: 56px;
+    border: 2px solid var(--ink); border-radius: 9999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tool-card_icon svg { width: 26px; height: 26px; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .tool-card_title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 600, "opsz" 48, "SOFT" 70;
+    font-size: var(--step-2);
+    line-height: 1.05;
+    color: var(--ink);
+  }
+  .tool-card_phase {
+    align-self: flex-start;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-75);
+    border: 1px solid var(--ink);
+    background: var(--cream);
+    padding: 4px 12px;
+    border-radius: 9999px;
+  }
+  .tool-card_phase.is-discovery    { background: var(--phase-discovery); }
+  .tool-card_phase.is-creation     { background: var(--phase-creation); }
+  .tool-card_phase.is-content      { background: var(--phase-content); }
+  .tool-card_phase.is-execution    { background: var(--phase-execution); }
+  .tool-card_phase.is-intelligence { background: var(--phase-intelligence); }
+
+  .tool-card_link {
+    margin-top: auto; padding-top: var(--space-s);
+    font-family: 'Inter', sans-serif; font-weight: 700;
+    font-size: var(--step--1);
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.4em;
+    border-top: 1px solid var(--ink-25);
+    transition: gap 0.4s var(--ease-qb), color 0.4s var(--ease-qb);
+  }
+  .tool-card_link:hover { gap: 0.7em; color: var(--rose); }
+
+  /* Proof cards (3 detailed) */
+  .proof-card .qb-card_content { display: flex; flex-direction: column; gap: var(--space-s); padding-block: var(--space-m-l); }
+  .proof-card_head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-xs); }
+  .proof-card_head .qb-tag { font-size: var(--space-s); }
+  .proof-card_eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-50);
+  }
+  .proof-card_title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 600, "opsz" 60, "SOFT" 70;
+    font-size: var(--step-3);
+    line-height: 1.0;
+    color: var(--ink);
+    margin-top: 0.2em;
+  }
+  .proof-card_sub {
+    font-family: 'Inter', sans-serif; font-size: var(--step--1); color: var(--ink-75);
+    margin-top: 0.4em;
+  }
+
+  /* Score viz */
+  .score-num {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 60;
+    font-size: clamp(3.5rem, 4rem + 2vw, 5.5rem);
+    line-height: 0.9;
+    color: var(--ink);
+  }
+  .score-num sub {
+    font-size: 0.4em;
+    color: var(--ink-50);
+    margin-left: 0.2em;
+    vertical-align: top;
+  }
+  .score-bars { display: flex; flex-direction: column; gap: 0.7em; margin-top: var(--space-xs); }
+  .score-bar { display: grid; grid-template-columns: 7em 1fr 2em; gap: 0.6em; align-items: center; font-size: var(--step--1); }
+  .score-bar_label { font-weight: 600; color: var(--ink); }
+  .score-bar_track { height: 10px; background: var(--cream-warm); border-radius: 9999px; border: 1.5px solid var(--ink); overflow: hidden; }
+  .score-bar_fill { display: block; height: 100%; border-radius: 9999px; }
+  .score-bar_val { font-family: 'JetBrains Mono', monospace; font-size: var(--step--1); text-align: right; color: var(--ink); }
+
+  /* Archetype card */
+  .archetype {
+    display: flex; align-items: center; justify-content: center;
+    padding: var(--space-s) 0;
+  }
+  .archetype-medallion {
+    width: 200px; height: 200px;
+    border-radius: 9999px;
+    border: 2px solid var(--ink);
+    background: var(--butter);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 9px var(--ink);
+    text-align: center;
+  }
+  .archetype-medallion_eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-50);
+  }
+  .archetype-medallion_name {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 600, "opsz" 72, "SOFT" 80;
+    font-size: var(--step-3);
+    color: var(--ink);
+    line-height: 1;
+    margin-top: 0.3em;
+  }
+  .traits { display: flex; flex-wrap: wrap; gap: 0.5em; justify-content: center; margin-top: var(--space-xs); }
+  .trait {
+    font-family: 'Inter', sans-serif; font-size: 0.78rem;
+    padding: 0.4em 0.9em; border-radius: 9999px;
+    border: 1px solid var(--ink); background: var(--cream);
+    color: var(--ink-75);
+  }
+  .essence {
+    margin-top: var(--space-s);
+    padding: var(--space-s);
+    background: var(--cream-rose);
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 500, "opsz" 36, "SOFT" 70;
+    font-style: italic;
+    font-size: var(--step-0);
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .essence cite {
+    display: block; margin-top: 0.6em;
+    font-style: normal;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-50);
+  }
+
+  /* Calendar viz */
+  .cal { display: flex; flex-direction: column; gap: 0.6em; }
+  .cal-row {
+    display: flex; align-items: center; gap: 0.6em;
+    padding: 0.6em 0.9em;
+    background: var(--cream); border: 1.5px solid var(--ink); border-radius: 12px;
+  }
+  .cal-day {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-75); width: 2.5em; flex-shrink: 0;
+  }
+  .cal-tile { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--ink); }
+  .cal-tile.is-ig   { background: linear-gradient(135deg, var(--rose), var(--gold)); }
+  .cal-tile.is-li   { background: var(--teal-deep); }
+  .cal-tile.is-yt   { background: var(--phase-execution); }
+  .cal-tile.is-news { background: var(--phase-intelligence); }
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 0.8em; margin-top: var(--space-xs); padding-top: var(--space-xs); border-top: 1px dashed var(--ink-25); }
+  .cal-legend-item { display: inline-flex; align-items: center; gap: 0.4em; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-75); }
+  .cal-legend-dot { width: 12px; height: 12px; border-radius: 4px; border: 1.5px solid var(--ink); }
+
+  /* "7 layers deep" closer */
+  .layers-statement {
+    background: var(--cream);
+    padding-block: var(--space-2xl-3xl);
+    text-align: center;
+  }
+  .layers-statement_h {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 600, "opsz" 144, "SOFT" 60;
+    font-size: var(--step-6);
+    line-height: 0.98em;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .layers-statement_h .underlined {
+    background-image: linear-gradient(transparent 75%, var(--gold) 75%, var(--gold) 95%, transparent 95%);
+    padding: 0 0.05em;
+  }
+
+  /* Final CTA */
+  .final-cta {
+    background: var(--cream-card);
+    border-block: 2px solid var(--ink);
+    padding-block: var(--space-2xl-3xl);
+    text-align: center;
+  }
+  .final-cta > * + * { margin-top: var(--space-s); }
+  .final-cta .qb-button { margin-top: var(--space-m) !important; }
+
+  /* Footer */
+  .footer {
+    background: var(--cream);
+    padding: var(--space-l) var(--space-m-l);
+    border-top: 2px solid var(--ink);
+  }
+  .footer_inner {
+    max-width: 1240px; margin-inline: auto;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: var(--space-m);
+  }
+  .footer_brand { display: inline-flex; align-items: center; gap: 0.5em; font-family: 'Fraunces', serif; font-variation-settings: "wght" 600, "opsz" 36; font-size: var(--step-0); color: var(--ink); }
+  .footer_links { display: inline-flex; gap: var(--space-m); flex-wrap: wrap; }
+  .footer_links a { color: var(--ink-75); text-decoration: none; font-size: var(--step--1); }
+  .footer_links a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* =====================================================
+     REDUCED MOTION
+     ===================================================== */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .qb-button:hover .qb-button_content,
+    .qb-button:active .qb-button_content { transform: none; }
+    .phone.is-center { animation: none; transform: translateX(-50%); }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="qb-loading-bar" id="qbLoadingBar"></div>
+
+<div class="banner">
+  <strong>Signal Scan is live.</strong> Free brand diagnostic. 5 minutes to your first insight.
+  <a href="https://app.quantumbranding.ai/signal-scan.html">Run yours →</a>
+</div>
+
+<div class="nav-wrap">
+  <header class="nav">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-brand_dot" aria-hidden="true"></span>
+      Quantum Branding
+    </a>
+    <nav class="nav-links">
+      <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
+      <a href="tools.html" class="qb-type-nav">Tools</a>
+      <a href="ecosystem.html#pricing" class="qb-type-nav">Pricing</a>
+      <a href="ecosystem.html#about" class="qb-type-nav">About</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="https://app.quantumbranding.ai" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-sm"><span class="qb-button_content">Start free</span></a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu_head">
+    <span class="nav-brand"><span class="nav-brand_dot"></span>Quantum Branding</span>
+    <button class="mobile-menu_close" id="mobileMenuClose" aria-label="Close menu">×</button>
+  </div>
+  <nav class="mobile-menu_list">
+    <a href="ecosystem.html">Ecosystem</a>
+    <a href="tools.html">Tools</a>
+    <a href="ecosystem.html#pricing">Pricing</a>
+    <a href="ecosystem.html#about">About</a>
+  </nav>
+  <div class="mobile-menu_foot">
+    <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+  </div>
+</div>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="qb-x">
+      <div class="hero_grid">
+        <div class="hero_text">
+          <span class="qb-tag"><span class="qb-tag_content">Introducing QB BrandOS</span></span>
+          <h1 class="qb-type-heading qb-type-balance hero_h1">
+            Idea in, <em><span class="qb-type-spot-1">brand out</span></em>
+          </h1>
+          <p class="qb-type-opening qb-type-pretty">
+            The AI brand operating system that turns your answers into a complete, living brand. Nineteen agents, working twenty-four seven.
+          </p>
+          <div class="hero_cta">
+            <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Start free</span></a>
+            <a href="ecosystem.html" class="qb-button is-lg"><span class="qb-button_content">See how it works</span></a>
+          </div>
+          <div class="hero_meta">
+            Free forever tier · No credit card · 5 min to first result
+          </div>
+        </div>
+
+        <div class="hero_media">
+          <div class="triptych" aria-hidden="true">
+            <!-- LEFT phone — Brand Soul Map archetype -->
+            <div class="phone is-left">
+              <div class="phone_screen">
+                <div class="phone_notch"></div>
+                <div class="phone_pill">Soul Map</div>
+                <div style="text-align:center; padding:1.4rem 0 0.8rem;">
+                  <div style="width:78px; height:78px; border:2px solid var(--ink); border-radius:9999px; background:var(--butter); margin:0 auto; display:inline-flex; align-items:center; justify-content:center;">
+                    <span style="font-family:'Fraunces',serif; font-variation-settings:'wght' 700, 'SOFT' 80; font-style:italic; font-size:0.8rem;">Artisan</span>
+                  </div>
+                </div>
+                <div class="phone_h" style="text-align:center; font-size:0.85rem;">The Artisan</div>
+                <div class="phone_label">Crafted · Patient · Quiet</div>
+              </div>
+            </div>
+
+            <!-- CENTER phone — Signal Scan score -->
+            <div class="phone is-center">
+              <div class="phone_screen is-bordered">
+                <div class="phone_notch"></div>
+                <div class="phone_pill" style="margin:0 auto;">Signal Scan</div>
+                <div style="text-align:center; margin-top:0.8rem;">
+                  <div class="phone_score">78<sub>/100</sub></div>
+                  <div class="phone_label">Brand clarity</div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:0.6rem;">
+                  <div class="phone_bar"><span style="width:82%;"></span></div>
+                  <div class="phone_bar"><span style="width:74%; background:var(--rose);"></span></div>
+                  <div class="phone_bar"><span style="width:88%; background:var(--teal-deep);"></span></div>
+                  <div class="phone_bar"><span style="width:68%; background:var(--phase-execution);"></span></div>
+                </div>
+                <div style="margin-top:auto;">
+                  <div class="phone_msg is-ai" style="font-size:0.55rem;">Voice: Artisan · 12 posts ready</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT phone — Content Engine -->
+            <div class="phone is-right">
+              <div class="phone_screen">
+                <div class="phone_notch"></div>
+                <div class="phone_pill">Content</div>
+                <div class="phone_h" style="font-size:0.9rem;">12 posts<br>ready.</div>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:0.4rem;">
+                  <span style="aspect-ratio:1; background:linear-gradient(135deg, var(--rose), var(--gold)); border:1.5px solid var(--ink); border-radius:5px;"></span>
+                  <span style="aspect-ratio:1; background:var(--teal-deep); border:1.5px solid var(--ink); border-radius:5px;"></span>
+                  <span style="aspect-ratio:1; background:var(--phase-execution); border:1.5px solid var(--ink); border-radius:5px;"></span>
+                  <span style="aspect-ratio:1; background:var(--phase-intelligence); border:1.5px solid var(--ink); border-radius:5px;"></span>
+                  <span style="aspect-ratio:1; background:var(--teal-deep); border:1.5px solid var(--ink); border-radius:5px;"></span>
+                  <span style="aspect-ratio:1; background:linear-gradient(135deg, var(--rose), var(--gold)); border:1.5px solid var(--ink); border-radius:5px;"></span>
+                  <span style="aspect-ratio:1; background:var(--phase-intelligence); border:1.5px solid var(--ink); border-radius:5px;"></span>
+                  <span style="aspect-ratio:1; background:var(--phase-execution); border:1.5px solid var(--ink); border-radius:5px;"></span>
+                </div>
+                <div class="phone_label" style="margin-top:0.6rem;">Voice locked ✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDER VOICES -->
+  <section class="section">
+    <div class="qb-x">
+      <header class="section_header">
+        <span class="qb-tag"><span class="qb-tag_content">What founders tell us</span></span>
+        <h2 class="qb-type-subheading qb-type-balance">Sound familiar?</h2>
+        <p class="qb-type-opening qb-type-pretty">The same three pains. Different industries, same diagnosis.</p>
+      </header>
+
+      <div class="qb-block-grid is-grid-3">
+        <article class="qb-card voice-card">
+          <div class="qb-card_content">
+            <div class="voice-head">
+              <span class="voice-avatar" style="background:var(--rose-soft);">M</span>
+              <div>
+                <div class="voice-meta_name">Maya, jewelry founder</div>
+                <div class="voice-meta_role">Founder · 4 yrs</div>
+              </div>
+            </div>
+            <p class="voice-quote">&ldquo;We have a logo but no <em>positioning</em>. We look like everyone else in the category.&rdquo;</p>
+          </div>
+        </article>
+
+        <article class="qb-card voice-card is-rose-soft">
+          <div class="qb-card_content">
+            <div class="voice-head">
+              <span class="voice-avatar" style="background:var(--butter);">D</span>
+              <div>
+                <div class="voice-meta_name">Daniel, agency CEO</div>
+                <div class="voice-meta_role">CEO · 8 yrs</div>
+              </div>
+            </div>
+            <p class="voice-quote">&ldquo;A website but no <em>strategy</em>. Content goes out, but there&rsquo;s no voice holding it together.&rdquo;</p>
+          </div>
+        </article>
+
+        <article class="qb-card voice-card is-teal-soft">
+          <div class="qb-card_content">
+            <div class="voice-head">
+              <span class="voice-avatar" style="background:var(--cream-warm);">S</span>
+              <div>
+                <div class="voice-meta_name">Sarah, SaaS marketer</div>
+                <div class="voice-meta_role">Head of Growth</div>
+              </div>
+            </div>
+            <p class="voice-quote">&ldquo;Followers but no <em>conversion</em>. Honestly, I&rsquo;m not sure what the brand even stands for anymore.&rdquo;</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS GRID -->
+  <section class="section">
+    <div class="qb-x">
+      <header class="section_header">
+        <span class="qb-tag is-soft"><span class="qb-tag_content">Nineteen agents, one brand OS</span></span>
+        <h2 class="qb-type-subheading qb-type-balance">Brand intelligence in flow.</h2>
+        <p class="qb-type-opening qb-type-pretty">Every agent specialises in one craft. Together they make a brand that thinks, speaks, and ships.</p>
+      </header>
+
+      <div class="qb-block-grid is-grid-3-md">
+
+        <a href="signal-scan.html" class="qb-card is-interactive tool-card" style="text-decoration:none;">
+          <div class="qb-card_content">
+            <div class="tool-card_icon" style="background:var(--phase-discovery);">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg>
+            </div>
+            <span class="tool-card_phase is-discovery">Phase 01 · Discovery</span>
+            <h3 class="tool-card_title">Signal Scan</h3>
+            <p class="qb-type-text">A five-minute brand diagnostic. Score your clarity, voice, visual, conversion.</p>
+            <span class="tool-card_link">Run scan →</span>
+          </div>
+        </a>
+
+        <a href="brand-soul-map.html" class="qb-card is-interactive tool-card" style="text-decoration:none;">
+          <div class="qb-card_content">
+            <div class="tool-card_icon" style="background:var(--butter);">
+              <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"/></svg>
+            </div>
+            <span class="tool-card_phase is-discovery">Phase 01 · Discovery</span>
+            <h3 class="tool-card_title">Brand Soul Map</h3>
+            <p class="qb-type-text">Decode your archetype. Surface your essence. Write the manifesto your brand has been hiding.</p>
+            <span class="tool-card_link">Map my brand →</span>
+          </div>
+        </a>
+
+        <a href="war-table.html" class="qb-card is-interactive tool-card" style="text-decoration:none;">
+          <div class="qb-card_content">
+            <div class="tool-card_icon" style="background:var(--phase-creation);">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>
+            </div>
+            <span class="tool-card_phase is-creation">Phase 02 · Creation</span>
+            <h3 class="tool-card_title">War Table</h3>
+            <p class="qb-type-text">Strategic priorities, mapped. The brief your team has been waiting for.</p>
+            <span class="tool-card_link">Open the table →</span>
+          </div>
+        </a>
+
+        <a href="visual-dna.html" class="qb-card is-interactive tool-card" style="text-decoration:none;">
+          <div class="qb-card_content">
+            <div class="tool-card_icon" style="background:var(--rose-soft);">
+              <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="13.5" r="2.5"/><circle cx="6.5" cy="13.5" r="2.5"/><circle cx="10.5" cy="20.5" r="2.5"/><path d="M12 3v18"/></svg>
+            </div>
+            <span class="tool-card_phase is-creation">Phase 02 · Creation</span>
+            <h3 class="tool-card_title">Visual DNA</h3>
+            <p class="qb-type-text">Palette, type, motion grammar. Your visual system, codified.</p>
+            <span class="tool-card_link">Generate system →</span>
+          </div>
+        </a>
+
+        <a href="content-bridge.html" class="qb-card is-interactive tool-card" style="text-decoration:none;">
+          <div class="qb-card_content">
+            <div class="tool-card_icon" style="background:var(--phase-content);">
+              <svg viewBox="0 0 24 24"><path d="M3 8h18M3 16h18M8 3v18M16 3v18"/></svg>
+            </div>
+            <span class="tool-card_phase is-content">Phase 03 · Content</span>
+            <h3 class="tool-card_title">Content Engine</h3>
+            <p class="qb-type-text">Twelve posts, voice-locked, channel-shaped. Approve, schedule, ship.</p>
+            <span class="tool-card_link">Open my engine →</span>
+          </div>
+        </a>
+
+        <a href="brand-performance-dashboard.html" class="qb-card is-interactive tool-card" style="text-decoration:none;">
+          <div class="qb-card_content">
+            <div class="tool-card_icon" style="background:var(--phase-intelligence);">
+              <svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+            </div>
+            <span class="tool-card_phase is-intelligence">Phase 05 · Intelligence</span>
+            <h3 class="tool-card_title">Brand Performance</h3>
+            <p class="qb-type-text">What is your brand actually doing? Live signal, daily digest.</p>
+            <span class="tool-card_link">Watch the signal →</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF / TOOL PREVIEWS -->
+  <section class="section">
+    <div class="qb-x">
+      <header class="section_header">
+        <span class="qb-tag is-rose"><span class="qb-tag_content">What you get back, in days</span></span>
+        <h2 class="qb-type-subheading qb-type-balance">From diagnosis to deploy.</h2>
+        <p class="qb-type-opening qb-type-pretty">Three tools, three days. The same arc every brand needs.</p>
+      </header>
+
+      <div class="qb-block-grid is-grid-3">
+
+        <article class="qb-card proof-card">
+          <div class="qb-card_content">
+            <div class="proof-card_head">
+              <div>
+                <div class="proof-card_eyebrow">01 · Diagnose</div>
+                <h3 class="proof-card_title">Signal Scan</h3>
+                <p class="proof-card_sub">Brand clarity score · 5 min input</p>
+              </div>
+              <span class="qb-tag is-teal"><span class="qb-tag_content">Live</span></span>
+            </div>
+
+            <div>
+              <div class="score-num">78<sub>/100</sub></div>
+              <div class="proof-card_eyebrow" style="margin-top:0.4em;">Brand clarity index</div>
+            </div>
+
+            <ul class="score-bars">
+              <li class="score-bar"><span class="score-bar_label">Positioning</span><span class="score-bar_track"><span class="score-bar_fill" style="width:82%; background:var(--gold);"></span></span><span class="score-bar_val">82</span></li>
+              <li class="score-bar"><span class="score-bar_label">Voice</span><span class="score-bar_track"><span class="score-bar_fill" style="width:74%; background:var(--rose);"></span></span><span class="score-bar_val">74</span></li>
+              <li class="score-bar"><span class="score-bar_label">Visual</span><span class="score-bar_track"><span class="score-bar_fill" style="width:88%; background:var(--teal-deep);"></span></span><span class="score-bar_val">88</span></li>
+              <li class="score-bar"><span class="score-bar_label">Conversion</span><span class="score-bar_track"><span class="score-bar_fill" style="width:68%; background:var(--phase-execution);"></span></span><span class="score-bar_val">68</span></li>
+            </ul>
+
+            <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-sm is-expand"><span class="qb-button_content">Run my scan</span></a>
+          </div>
+        </article>
+
+        <article class="qb-card proof-card is-rose-soft">
+          <div class="qb-card_content">
+            <div class="proof-card_head">
+              <div>
+                <div class="proof-card_eyebrow">02 · Decode</div>
+                <h3 class="proof-card_title">Brand Soul Map</h3>
+                <p class="proof-card_sub">Archetype + essence + manifesto</p>
+              </div>
+              <span class="qb-tag is-butter"><span class="qb-tag_content">Auto</span></span>
+            </div>
+
+            <div class="archetype">
+              <div class="archetype-medallion">
+                <span class="archetype-medallion_eyebrow">Archetype</span>
+                <span class="archetype-medallion_name"><em>The Artisan</em></span>
+              </div>
+            </div>
+
+            <div class="traits">
+              <span class="trait">Crafted</span>
+              <span class="trait">Quiet luxury</span>
+              <span class="trait">Patient</span>
+              <span class="trait">Hand-finished</span>
+            </div>
+
+            <blockquote class="essence">
+              &ldquo;We don&rsquo;t make jewellery. We make heirlooms that outlive us.&rdquo;
+              <cite>— brand essence, generated</cite>
+            </blockquote>
+
+            <a href="brand-soul-map.html" class="qb-button is-secondary is-sm is-expand"><span class="qb-button_content">Map my brand</span></a>
+          </div>
+        </article>
+
+        <article class="qb-card proof-card is-teal-soft">
+          <div class="qb-card_content">
+            <div class="proof-card_head">
+              <div>
+                <div class="proof-card_eyebrow">03 · Deploy</div>
+                <h3 class="proof-card_title">Content Engine</h3>
+                <p class="proof-card_sub">12 posts · voice-locked · ready</p>
+              </div>
+              <span class="qb-tag is-pink"><span class="qb-tag_content">7 days</span></span>
+            </div>
+
+            <div class="cal">
+              <div class="cal-row"><span class="cal-day">Mon</span><span class="cal-tile is-ig"></span><span class="cal-tile is-li"></span></div>
+              <div class="cal-row"><span class="cal-day">Tue</span><span class="cal-tile is-li"></span></div>
+              <div class="cal-row"><span class="cal-day">Wed</span><span class="cal-tile is-ig"></span><span class="cal-tile is-yt"></span></div>
+              <div class="cal-row"><span class="cal-day">Thu</span><span class="cal-tile is-li"></span><span class="cal-tile is-ig"></span></div>
+              <div class="cal-row"><span class="cal-day">Fri</span><span class="cal-tile is-ig"></span><span class="cal-tile is-li"></span><span class="cal-tile is-news"></span></div>
+            </div>
+            <div class="cal-legend">
+              <span class="cal-legend-item"><span class="cal-legend-dot is-ig"></span>Instagram</span>
+              <span class="cal-legend-item"><span class="cal-legend-dot is-li"></span>LinkedIn</span>
+              <span class="cal-legend-item"><span class="cal-legend-dot is-yt"></span>YouTube</span>
+              <span class="cal-legend-item"><span class="cal-legend-dot is-news"></span>Newsletter</span>
+            </div>
+
+            <a href="content-bridge.html" class="qb-button is-sm is-expand"><span class="qb-button_content">Open my engine</span></a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 LAYERS DEEP -->
+  <section class="layers-statement">
+    <div class="qb-x-narrow">
+      <h2 class="layers-statement_h">
+        <span class="underlined">Seven layers deep</span> before a single pixel moves.
+      </h2>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="qb-x-narrow">
+      <span class="qb-tag is-butter"><span class="qb-tag_content">Free forever tier</span></span>
+      <h2 class="qb-type-subheading qb-type-balance">Run your first Signal Scan.</h2>
+      <p class="qb-type-opening qb-type-pretty">Five minutes. No credit card. A real brand diagnosis at the end.</p>
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Start free</span></a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer_inner">
+    <a href="index.html" class="footer_brand">
+      <span class="nav-brand_dot" aria-hidden="true"></span>
+      Quantum Branding
+    </a>
+    <nav class="footer_links">
+      <a href="ecosystem.html#about">About</a>
+      <a href="ecosystem.html#pricing">Pricing</a>
+      <a href="tools.html">Tools</a>
+      <a href="mailto:hello@quantumbranding.ai">Contact</a>
+    </nav>
+    <div class="qb-type-subtext" style="color:var(--ink-50);">© Quantum Branding · Built by Nizzar Ben Chekroune</div>
+  </div>
+</footer>
+
+<script>
+  // Loading bar idle on load
+  window.addEventListener('load', function () {
+    var bar = document.getElementById('qbLoadingBar');
+    if (bar) setTimeout(function () { bar.dataset.state = 'idle'; }, 400);
+  });
+
+  // Mobile menu
+  var ham = document.getElementById('hamburger');
+  var mm = document.getElementById('mobileMenu');
+  var mc = document.getElementById('mobileMenuClose');
+  function closeMM() { mm.dataset.open = 'false'; document.body.style.overflow = ''; }
+  if (ham && mm && mc) {
+    ham.addEventListener('click', function () { mm.dataset.open = 'true'; document.body.style.overflow = 'hidden'; });
+    mc.addEventListener('click', closeMM);
+    Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
+  }
+</script>
+
+</body>
+</html>

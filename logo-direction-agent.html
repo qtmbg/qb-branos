@@ -199,7 +199,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); box-shad
     maxTok = maxTok || 4000;
     var res = await fetch('/api/claude', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTok, system: sys, messages: [{ role: 'user', content: usr }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTok, system: sys, messages: [{ role: 'user', content: usr }] })
     });
     var d = await res.json();
     if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
