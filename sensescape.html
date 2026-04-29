@@ -3697,6 +3697,7 @@ body.phase-intro{ overflow:hidden; }
       '  "firstCampaign": {\n' +
       '    "title": string (a distinctive campaign name — not "Launch" or "Introducing X"),\n' +
       '    "premise": string (one sentence — the campaign idea),\n' +
+      '    "heroSvg": string (a complete inline SVG for the campaign hero — see SVG RULES below),\n' +
       '    "scenes": [ { "title":string, "copy":string, "visualDirection":string } × 4 ]\n' +
       '  },\n' +
       '  "sprint30": [\n' +
@@ -3714,6 +3715,14 @@ body.phase-intro{ overflow:hidden; }
       '- Competitors must be real, named, and plausibly in the client\'s adjacent space.\n' +
       '- Taglines must not resemble any existing famous tagline.\n' +
       '- Write like a senior brand strategist who has read their diagnostic carefully and has a point of view.\n\n' +
+      'SVG RULES (firstCampaign.heroSvg)\n' +
+      '- Output a complete <svg>…</svg> string, viewBox="0 0 600 340", xmlns="http://www.w3.org/2000/svg", preserveAspectRatio="xMidYMid slice".\n' +
+      '- Use ONLY these hex codes for fills/strokes/gradients: ' + paletteLine + '. No other colors. No "white"/"black" keywords (use the palette\'s Surface/Shadow). No CSS named colors.\n' +
+      '- Make it abstract and atmospheric — geometric shapes, gradients, lines, simple silhouettes — illustrating the campaign premise. Not a photo. Not text-heavy. The shape character of this brand is: radius ' + derived.shape.radius + '%, ' + derived.shape.dims.map(function(d){ return d.k+':'+d.v; }).join(' / ') + ' — let it inform corner-rounding and form language.\n' +
+      '- Allowed elements: rect, circle, ellipse, line, polygon, polyline, path, g, defs, linearGradient, radialGradient, stop, mask, clipPath, use, symbol, title, desc.\n' +
+      '- FORBIDDEN: <script>, <foreignObject>, <image> (no external assets), <style> (use attributes), any on* event handlers, any href/xlink:href starting with "javascript:" or pointing to an external URL.\n' +
+      '- Keep total markup under 4500 characters. Single-line if possible. No comments. No CDATA.\n' +
+      '- The SVG must validly parse on its own — escape any " inside attribute values, use self-closing tags where appropriate.\n\n' +
       'Return ONLY the JSON object. Begin your response with { and end with }.';
 
     return promptBody;
@@ -3727,7 +3736,7 @@ body.phase-intro{ overflow:hidden; }
       headers:{ 'Content-Type':'application/json' },
       body:JSON.stringify({
         model:'claude-opus-4-7',
-        max_tokens:7500,
+        max_tokens:8000,
         messages:[{ role:'user', content: prompt }]
       })
     }).then(function(res){
@@ -4294,6 +4303,50 @@ body.phase-intro{ overflow:hidden; }
       ]);
     }
     function hasClaude(key){ return claudeOut && claudeOut[key]; }
+
+    // Sanitize Claude-authored SVG before inlining: parse it, drop <script>
+    // and <foreignObject>, strip on* event attributes and any href that smells
+    // like javascript: or an external URL. Returns a safe SVG string, or '' if
+    // the input doesn't parse to a single <svg> root.
+    function sanitizeSvg(raw){
+      if (typeof raw !== 'string' || raw.length < 30 || raw.length > 12000) return '';
+      var src = raw.trim();
+      // If Claude wrapped it in a code fence or prose, extract the <svg>…</svg>.
+      var m = src.match(/<svg[\s\S]*?<\/svg\s*>/i);
+      if (!m) return '';
+      try {
+        var doc = new DOMParser().parseFromString(m[0], 'image/svg+xml');
+        if (!doc || doc.getElementsByTagName('parsererror').length) return '';
+        var svg = doc.documentElement;
+        if (!svg || svg.nodeName.toLowerCase() !== 'svg') return '';
+        var BAD_TAGS = { script:1, foreignobject:1, image:1, style:1 };
+        // Walk and clean
+        (function walk(node){
+          var children = Array.from(node.childNodes || []);
+          for (var i = 0; i < children.length; i++){
+            var c = children[i];
+            if (c.nodeType !== 1) continue; // only elements
+            var tag = c.nodeName.toLowerCase();
+            if (BAD_TAGS[tag]) { node.removeChild(c); continue; }
+            // Strip on* and javascript: hrefs
+            var attrs = Array.from(c.attributes || []);
+            for (var j = 0; j < attrs.length; j++){
+              var name = attrs[j].name.toLowerCase();
+              var val  = (attrs[j].value || '').trim();
+              if (name.indexOf('on') === 0) c.removeAttribute(attrs[j].name);
+              else if ((name === 'href' || name === 'xlink:href') &&
+                       (/^\s*javascript:/i.test(val) || /^\s*data:text\/html/i.test(val))) {
+                c.removeAttribute(attrs[j].name);
+              }
+            }
+            walk(c);
+          }
+        })(svg);
+        // Force xmlns + viewBox so it renders correctly when injected.
+        if (!svg.getAttribute('xmlns')) svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        return svg.outerHTML || '';
+      } catch(e){ return ''; }
+    }
 
     // ---- 00 Brand Identity Card (THE hero — their brand rendered in their system) ----
     var heroPrimary   = palette.chips[0];
@@ -4964,11 +5017,36 @@ body.phase-intro{ overflow:hidden; }
     // ---- 13 First Campaign (Claude) ----
     var secCampaign = hasClaude('firstCampaign') ? (function(){
       var c = claudeOut.firstCampaign;
+      // Build the inline-SVG hero. sanitizeSvg() returns '' for unsafe/missing
+      // input; in that case we just don't render the figure (text-only fallback).
+      var safeSvg = sanitizeSvg(c.heroSvg);
+      var heroEl  = null;
+      if (safeSvg) {
+        heroEl = el('div', {
+          class: 'cdx-campaign-hero',
+          style: {
+            margin: '18px 0 6px',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            aspectRatio: '600 / 340',
+            background: (palette && palette.chips && palette.chips[3] && palette.chips[3].hex) || 'rgba(0,0,0,0.04)'
+          }
+        });
+        heroEl.innerHTML = safeSvg;
+        // Make the inlined <svg> fill the figure.
+        var svgEl = heroEl.querySelector('svg');
+        if (svgEl) {
+          svgEl.setAttribute('width',  '100%');
+          svgEl.setAttribute('height', '100%');
+          svgEl.style.display = 'block';
+        }
+      }
       return el('section', { class:'cdx-section' }, [
         sectionHeader('13.', 'The First Campaign', 'FOUR-SCENE LAUNCH BRIEF'),
         el('div', { class:'glass-card cdx-campaign' }, [
           el('h3', { text: c.title || 'Untitled Campaign' }),
           c.premise ? el('p', { class:'cdx-body', style:{ fontStyle:'italic' }, text: c.premise }) : null,
+          heroEl,
           el('div', { class:'cdx-campaign-scenes' },
             (Array.isArray(c.scenes) ? c.scenes : []).slice(0, 4).map(function(s, i){
               return el('div', { class:'cdx-campaign-scene' }, [
