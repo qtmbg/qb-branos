@@ -138,35 +138,33 @@
       } catch(e){}
     }
 
-    // Klaviyo: identify the profile + record the signup event
+    // Klaviyo: identify profile + record events via server-side route.
+    // /api/klaviyo-signup uses the Klaviyo private key on the server,
+    // bypassing the public-client bot protection that silently dropped
+    // browser-originated POSTs. Fires:
+    //   - profile create/update (with first_name + properties)
+    //   - subscription to list WSfkyj
+    //   - Brand Profile Saved event
+    //   - Tool Completed event for each pre-signup completion
     try {
-      await QB.syncKlaviyoProfile(user.email, pending.firstName || '', {
-        signup_source: pending.sourceTool || 'unknown',
-        brand_name:    localQBP.brandName    || '',
-        archetype:     localQBP.archetype    || '',
-        tools_completed_at_signup: Object.keys(localCompletions || {}).length,
-        signup_date:   new Date().toISOString().split('T')[0]
+      const r = await fetch('/api/klaviyo-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email:      user.email,
+          firstName:  pending.firstName || '',
+          sourceTool: pending.sourceTool || 'unknown',
+          completions: localCompletions || {},
+          qbp:         localQBP || {}
+        })
       });
-      await QB.sendKlaviyoEvent('Brand Profile Saved', {
-        source_tool:     pending.sourceTool || 'unknown',
-        tools_completed: Object.keys(localCompletions || {}).length
-      });
-
-      // Catch-up Tool Completed events for any pre-signup completions.
-      // recordCompletion() fires Tool Completed inline, but pre-signup it
-      // drops silently because sendKlaviyoEvent reads the email from
-      // qb_session and there's no session yet. Without this loop the metric
-      // never increments for the first tool, which breaks the Welcome
-      // dampening filters and the re-engagement segment.
-      for (const toolId of Object.keys(localCompletions || {})) {
-        try {
-          await QB.sendKlaviyoEvent('Tool Completed', {
-            tool_id:   toolId,
-            tool_name: (QB.TOOL_NAMES && QB.TOOL_NAMES[toolId]) || toolId
-          });
-        } catch(e){}
+      if (!r.ok) {
+        const body = await r.text().catch(() => '');
+        console.warn('[auth-callback] klaviyo-signup non-OK', r.status, body);
       }
-    } catch(e){}
+    } catch (e) {
+      console.warn('[auth-callback] klaviyo-signup threw', e && e.message);
+    }
 
     // Success → redirect back
     $('spinner').style.display = 'none';
