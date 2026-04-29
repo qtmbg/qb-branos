@@ -663,6 +663,348 @@
     });
   }
 
+  function buildWarTableDeck(pres, data, opts) {
+    var brandName = txt(opts && opts.brandName) || "Brand";
+    var d = data || {};
+    defineMasters(pres, "WAR TABLE  ·  " + brandName);
+
+    addCoverSlide(pres, {
+      eyebrow: "PHASE 06  ·  WAR TABLE",
+      title: brandName + "\nStrategic command dossier.",
+      subtitle: "Diagnosis. Posture. Field plan. The next 60 days, sequenced."
+    });
+
+    // 01 · Diagnosis (4-up body)
+    var dx = d.diagnosis || {};
+    if (txt(dx.posture) || txt(dx.hiddenPattern) || txt(dx.glossedGap) || txt(dx.challenge)) {
+      var dxBody = "";
+      if (txt(dx.posture))        dxBody += "POSTURE  ·  " + txt(dx.posture) + "\n\n";
+      if (txt(dx.hiddenPattern))  dxBody += "HIDDEN PATTERN  ·  " + txt(dx.hiddenPattern) + "\n\n";
+      if (txt(dx.glossedGap))     dxBody += "GLOSSED GAP  ·  " + txt(dx.glossedGap) + "\n\n";
+      if (txt(dx.challenge))      dxBody += "CHALLENGE  ·  " + txt(dx.challenge);
+      addBodySlide(pres, {
+        kicker: "01  ·  DIAGNOSIS",
+        title: "What is actually true",
+        body: dxBody.trim()
+      });
+    }
+
+    // 02 · Posture statement
+    if (txt(d.postureStatement)) {
+      addQuoteSlide(pres, {
+        kicker: "02  ·  POSTURE STATEMENT",
+        quote: txt(d.postureStatement),
+        attribution: brandName + "  ·  the next 60 days"
+      });
+    }
+
+    // 03 · Field plan (one slide per week)
+    if (Array.isArray(d.fieldPlan) && d.fieldPlan.length) {
+      addSectionDivider(pres, {
+        kicker: "03  ·  FIELD PLAN",
+        title: "What we ship, week by week",
+        note: "One initiative per row. Owner, leading indicator, kill condition."
+      });
+      d.fieldPlan.forEach(function (w) {
+        var initiatives = (w.initiatives || []).filter(function (i) { return txt(i && i.name); });
+        if (!initiatives.length) return;
+        addTableSlide(pres, {
+          kicker: "03  ·  WEEK " + pad2(w.week),
+          title: "Initiatives",
+          headers: ["Initiative", "Action", "Owner", "Leading indicator", "Kill condition"],
+          rows: initiatives.map(function (i) {
+            return [txt(i.name), txt(i.action), txt(i.owner), txt(i.leadingIndicator), txt(i.killCondition)];
+          })
+        });
+      });
+    }
+
+    // 04 · Queues (Next / Later / Park) — one bullet slide each
+    var queues = [
+      { key: "nextList",  kicker: "04  ·  NEXT",  title: "Queued behind a trigger",
+        fmt: function (i) { return txt(i.name) + (txt(i.prerequisite) ? " — " + txt(i.prerequisite) : "") + (txt(i.triggerMilestone) ? "  (trigger: " + txt(i.triggerMilestone) + ")" : ""); } },
+      { key: "laterList", kicker: "04  ·  LATER", title: "Move when conditions change",
+        fmt: function (i) { return txt(i.name) + (txt(i.conditionToMove) ? " — " + txt(i.conditionToMove) : ""); } },
+      { key: "parkList",  kicker: "04  ·  PARK",  title: "Honestly parked",
+        fmt: function (i) { return txt(i.name) + (txt(i.honestReason) ? " — " + txt(i.honestReason) : "") + (txt(i.revisitWhen) ? "  (revisit: " + txt(i.revisitWhen) + ")" : ""); } }
+    ];
+    queues.forEach(function (q) {
+      var arr = Array.isArray(d[q.key]) ? d[q.key].filter(function (i) { return i && txt(i.name); }) : [];
+      if (!arr.length) return;
+      addBulletsSlide(pres, {
+        kicker: q.kicker,
+        title: q.title,
+        items: arr.map(q.fmt)
+      });
+    });
+
+    // 05 · Principles
+    if (Array.isArray(d.principles) && nonEmpty(d.principles).length) {
+      addBulletsSlide(pres, {
+        kicker: "05  ·  PRINCIPLES",
+        title: "How we make calls when the plan breaks",
+        items: d.principles
+      });
+    }
+
+    // 06 · Persona contract
+    if (txt(d.personaContract)) {
+      addBodySlide(pres, {
+        kicker: "06  ·  PERSONA CONTRACT  ·  DAY 61",
+        title: "What our buyer should be able to say about us",
+        body: txt(d.personaContract)
+      });
+    }
+
+    // 07 · Accountability pack
+    var ap = d.accountabilityPack || {};
+    if (ap.kickoffEmail && (txt(ap.kickoffEmail.subject) || txt(ap.kickoffEmail.body))) {
+      var kickoffBody = "";
+      if (txt(ap.kickoffEmail.subject)) kickoffBody += "SUBJECT  ·  " + txt(ap.kickoffEmail.subject) + "\n\n";
+      if (txt(ap.kickoffEmail.body))    kickoffBody += txt(ap.kickoffEmail.body);
+      addBodySlide(pres, {
+        kicker: "07  ·  ACCOUNTABILITY PACK",
+        title: "Monday kickoff email",
+        body: kickoffBody.trim()
+      });
+    }
+    if (Array.isArray(ap.weeklyRitual) && nonEmpty(ap.weeklyRitual).length) {
+      addBulletsSlide(pres, {
+        kicker: "07  ·  ACCOUNTABILITY PACK",
+        title: "Friday ritual  ·  15 minutes",
+        items: ap.weeklyRitual
+      });
+    }
+    if (Array.isArray(ap.day60Retro) && nonEmpty(ap.day60Retro).length) {
+      addBulletsSlide(pres, {
+        kicker: "07  ·  ACCOUNTABILITY PACK",
+        title: "Day-60 retrospective",
+        items: ap.day60Retro
+      });
+    }
+
+    // 08 · Handoffs
+    if (Array.isArray(d.handoffs) && d.handoffs.length) {
+      addTableSlide(pres, {
+        kicker: "08  ·  HANDOFFS",
+        title: "Where this dossier hands off next",
+        headers: ["Tool", "Priority", "Why"],
+        rows: d.handoffs.map(function (h) {
+          return [txt(h.toolLabel || h.tool), txt(h.priority), txt(h.reason)];
+        }),
+        colW: [3.4, 1.6, COL_W - 5.0]
+      });
+    }
+
+    addClosingSlide(pres, {
+      kicker: "END OF DECK",
+      title: "Diagnose.  Posture.  Ship.",
+      note: "Generated by QB BrandOS  ·  app.quantumbranding.ai"
+    });
+  }
+
+  function buildBrandDocumentDeck(pres, data, opts) {
+    var qbp = data || {};
+    var brandName = txt(qbp.brandName) || txt(opts && opts.brandName) || "Brand";
+    defineMasters(pres, "BRAND DOCUMENT  ·  " + brandName);
+
+    addCoverSlide(pres, {
+      eyebrow: "QUANTUM BRAND PROFILE  ·  EXECUTIVE SUMMARY",
+      title: brandName,
+      subtitle: "The full Brand OS in one deck — soul, archetype, sensescape,\nvisual DNA, war table and the three buyers."
+    });
+
+    // ── 01 · ARCHETYPE COMPASS ──
+    if (txt(qbp.archetypeHeadline) || txt(qbp.archetypePrimary) || txt(qbp.archetypeFusion)) {
+      addSectionDivider(pres, {
+        kicker: "01  ·  ARCHETYPE COMPASS",
+        title: txt(qbp.archetypeHeadline) || "Archetype",
+        note: txt(qbp.archetypeFusion)
+      });
+      var arcRows = [];
+      if (txt(qbp.archetypePrimary))      arcRows.push(["Primary",   txt(qbp.archetypePrimary)]);
+      if (txt(qbp.archetypeSecondary))    arcRows.push(["Secondary", txt(qbp.archetypeSecondary)]);
+      if (txt(qbp.archetypeTension))      arcRows.push(["Tension",   txt(qbp.archetypeTension)]);
+      if (txt(qbp.archetypeCoreMotivation)) arcRows.push(["Core motivation", txt(qbp.archetypeCoreMotivation)]);
+      if (txt(qbp.archetypeCoreFear))     arcRows.push(["Core fear",        txt(qbp.archetypeCoreFear)]);
+      if (txt(qbp.archetypeToneRegister)) arcRows.push(["Tone register",    txt(qbp.archetypeToneRegister)]);
+      if (arcRows.length) {
+        addTableSlide(pres, {
+          kicker: "01  ·  ARCHETYPE COMPASS",
+          title: "The three archetypes",
+          headers: ["Role", "Archetype"],
+          rows: arcRows,
+          colW: [3.0, COL_W - 3.0]
+        });
+      }
+      if (txt(qbp.archetypeDecisionFilter) || txt(qbp.archetypeFirstMove)) {
+        addTwoColSlide(pres, {
+          kicker: "01  ·  ARCHETYPE COMPASS",
+          title: "What it tells us to do",
+          leftLabel: "DECISION FILTER",
+          left: txt(qbp.archetypeDecisionFilter),
+          rightLabel: "FIRST MOVE  ·  THIS WEEK",
+          right: txt(qbp.archetypeFirstMove)
+        });
+      }
+    }
+
+    // ── 02 · BRAND SOUL MAP (lite) ──
+    if (txt(qbp.brandEssence) || txt(qbp.spark) || txt(qbp.manifesto)) {
+      addSectionDivider(pres, {
+        kicker: "02  ·  BRAND SOUL MAP",
+        title: "The soul",
+        note: "Essence, spark, manifesto. The irreducible truth."
+      });
+      if (txt(qbp.brandEssence)) {
+        addQuoteSlide(pres, { kicker: "02  ·  ESSENCE", quote: txt(qbp.brandEssence), attribution: brandName });
+      }
+      if (txt(qbp.spark)) {
+        addBodySlide(pres, { kicker: "02  ·  THE SPARK", title: "Why this brand exists", body: txt(qbp.spark) });
+      }
+      if (txt(qbp.manifesto)) {
+        addQuoteSlide(pres, { kicker: "02  ·  MANIFESTO", quote: txt(qbp.manifesto), attribution: brandName });
+      }
+      var soulRows = [];
+      if (txt(qbp.archetype))    soulRows.push(["Primary archetype",  txt(qbp.archetype)]);
+      if (txt(qbp.naturalForce)) soulRows.push(["Natural force",      txt(qbp.naturalForce)]);
+      if (txt(qbp.offer))        soulRows.push(["Offer",              txt(qbp.offer)]);
+      if (txt(qbp.antiBrand))    soulRows.push(["Anti-brand",         txt(qbp.antiBrand)]);
+      if (txt(qbp.paradox))      soulRows.push(["Central paradox",    txt(qbp.paradox)]);
+      if (txt(qbp.alwaysNever))  soulRows.push(["Always / never",     txt(qbp.alwaysNever)]);
+      if (txt(qbp.primaryPersona)) soulRows.push(["Primary persona",  txt(qbp.primaryPersona)]);
+      if (soulRows.length) {
+        addTableSlide(pres, {
+          kicker: "02  ·  BRAND SOUL MAP",
+          title: "Foundations",
+          headers: ["Field", "Truth"],
+          rows: soulRows,
+          colW: [3.0, COL_W - 3.0]
+        });
+      }
+    }
+
+    // ── 03 · SENSESCAPE ──
+    if (txt(qbp.colorTerritory) || txt(qbp.visualTerritoryNote) || txt(qbp.typographyNote) || txt(qbp.exemplarWords)) {
+      addSectionDivider(pres, {
+        kicker: "03  ·  SENSESCAPE",
+        title: "How the brand feels",
+        note: "Color territory, visual notes, typography direction, exemplar object & moment."
+      });
+      var sensBody = "";
+      if (txt(qbp.colorTerritory))      sensBody += "COLOR TERRITORY  ·  " + txt(qbp.colorTerritory) + "\n\n";
+      if (txt(qbp.visualTerritoryNote)) sensBody += "VISUAL TERRITORY  ·  " + txt(qbp.visualTerritoryNote) + "\n\n";
+      if (txt(qbp.typographyNote))      sensBody += "TYPOGRAPHY  ·  " + txt(qbp.typographyNote) + "\n\n";
+      if (txt(qbp.exemplarWords))       sensBody += "EXEMPLAR OBJECT + MOMENT  ·  " + txt(qbp.exemplarWords);
+      addBodySlide(pres, {
+        kicker: "03  ·  SENSESCAPE",
+        title: "The territory",
+        body: sensBody.trim()
+      });
+    }
+
+    // ── 04 · VISUAL DNA ──
+    if (qbp.visualDnaKeepCount != null || qbp.visualDnaDiscardRate != null) {
+      var vdRows = [];
+      if (qbp.visualDnaKeepCount    != null) vdRows.push(["Images kept",        String(qbp.visualDnaKeepCount)]);
+      if (qbp.visualDnaFastDiscards != null) vdRows.push(["Fast discards",      String(qbp.visualDnaFastDiscards)]);
+      if (qbp.visualDnaDiscardRate  != null) vdRows.push(["Discard rate",       String(qbp.visualDnaDiscardRate) + "%"]);
+      addTableSlide(pres, {
+        kicker: "04  ·  VISUAL DNA",
+        title: "What the eye accepts",
+        headers: ["Signal", "Value"],
+        rows: vdRows,
+        colW: [3.0, COL_W - 3.0]
+      });
+    }
+
+    // ── 05 · WAR TABLE ──
+    if (qbp.warTableBrief || (Array.isArray(qbp.warTableTopInitiatives) && qbp.warTableTopInitiatives.length)) {
+      addSectionDivider(pres, {
+        kicker: "05  ·  WAR TABLE",
+        title: "Strategic priorities",
+        note: "The bottleneck, the goal, the constraint, and the top three moves."
+      });
+      var wb = qbp.warTableBrief || {};
+      var wbRows = [];
+      if (txt(wb.challenge))  wbRows.push(["Bottleneck", txt(wb.challenge)]);
+      if (txt(wb.goal))       wbRows.push(["Next-month goal", txt(wb.goal)]);
+      if (txt(wb.constraint)) wbRows.push(["Constraint", txt(wb.constraint)]);
+      if (wbRows.length) {
+        addTableSlide(pres, {
+          kicker: "05  ·  WAR TABLE",
+          title: "Brief",
+          headers: ["Field", "Truth"],
+          rows: wbRows,
+          colW: [3.0, COL_W - 3.0]
+        });
+      }
+      if (Array.isArray(qbp.warTableTopInitiatives) && qbp.warTableTopInitiatives.length) {
+        addBulletsSlide(pres, {
+          kicker: "05  ·  WAR TABLE",
+          title: "Top three initiatives",
+          items: qbp.warTableTopInitiatives
+        });
+      }
+    }
+
+    // ── 06 · THE PROFILES ──
+    if (Array.isArray(qbp.personaProfiles) && qbp.personaProfiles.length) {
+      addSectionDivider(pres, {
+        kicker: "06  ·  THE PROFILES",
+        title: "Three buyers",
+        note: "One slide per persona. Identity + hook + key takeaways."
+      });
+      qbp.personaProfiles.forEach(function (p, i) {
+        var n = pad2(i + 1);
+        var idBody = "";
+        if (txt(p.coreIdentity)) idBody += "WHO THEY ARE  ·  " + txt(p.coreIdentity) + "\n\n";
+        if (txt(p.mindset))      idBody += "MINDSET  ·  " + txt(p.mindset) + "\n\n";
+        if (txt(p.hook))         idBody += "HOOK  ·  " + txt(p.hook);
+        addBodySlide(pres, {
+          kicker: "06  ·  PERSONA " + n,
+          title: txt(p.name) + (txt(p.role) ? "  ·  " + txt(p.role) : ""),
+          body: idBody.trim()
+        });
+        if (Array.isArray(p.keyTakeaways) && nonEmpty(p.keyTakeaways).length) {
+          addBulletsSlide(pres, {
+            kicker: "06  ·  PERSONA " + n,
+            title: "Key takeaways",
+            items: p.keyTakeaways
+          });
+        }
+      });
+
+      if (txt(qbp.bindingInsight)) {
+        addQuoteSlide(pres, {
+          kicker: "06  ·  THE BINDING INSIGHT",
+          quote: txt(qbp.bindingInsight),
+          attribution: "What runs through all three"
+        });
+      }
+      if (Array.isArray(qbp.commonThemes) && nonEmpty(qbp.commonThemes).length) {
+        addBulletsSlide(pres, {
+          kicker: "06  ·  COMMON THEMES",
+          title: "Cross-cutting",
+          items: qbp.commonThemes
+        });
+      }
+      if (Array.isArray(qbp.sharedKeyTakeaways) && nonEmpty(qbp.sharedKeyTakeaways).length) {
+        addBulletsSlide(pres, {
+          kicker: "06  ·  SHARED TAKEAWAYS",
+          title: "What is true of all three",
+          items: qbp.sharedKeyTakeaways
+        });
+      }
+    }
+
+    addClosingSlide(pres, {
+      kicker: "END OF DOCUMENT",
+      title: brandName + "  ·  the operating logic, made visible.",
+      note: "Generated by QB BrandOS  ·  app.quantumbranding.ai"
+    });
+  }
+
   // ---------- Public API ----------
   function exportPPTX(toolId, data, opts) {
     opts = opts || {};
@@ -681,6 +1023,10 @@
           buildProfilesDeck(pres, data, opts); break;
         case "brand-soul-map":
           buildSoulMapDeck(pres, data, opts); break;
+        case "war-table":
+          buildWarTableDeck(pres, data, opts); break;
+        case "brand-document":
+          buildBrandDocumentDeck(pres, data, opts); break;
         default:
           throw new Error("Unknown tool for PPTX export: " + toolId);
       }
