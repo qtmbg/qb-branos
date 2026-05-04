@@ -580,35 +580,51 @@
   .scanner-panel .qb-button { margin-top:var(--space-m); }
 
   /* =====================================================
-     5-PHASE MOSAIC
+     5-PHASE EDITORIAL SPREADS (Pomegranate-style)
+     One stacked row per phase: text on one side, phone mock
+     on the other. Alternating zig-zag at >=900px.
      ===================================================== */
-  .phase-mosaic {
-    display:grid; gap:var(--space-m-l);
-    grid-template-columns:1fr;
+  .phase-spreads {
+    display:flex; flex-direction:column;
+    gap:var(--space-xl);
     margin-top:var(--space-l-xl);
   }
+  @media (min-width:900px) { .phase-spreads { gap:var(--space-2xl); } }
+
+  .phase-spread {
+    display:grid; grid-template-columns:1fr; gap:var(--space-l);
+    align-items:center;
+  }
   @media (min-width:900px) {
-    .phase-mosaic {
-      grid-template-columns:repeat(2,1fr);
-      grid-template-areas: "p1 p2" "p3 p4" "p5 p5";
+    .phase-spread {
+      grid-template-columns:1.05fr 0.95fr;
+      gap:var(--space-xl);
     }
-    .phase-card.is-p1 { grid-area:p1; }
-    .phase-card.is-p2 { grid-area:p2; }
-    .phase-card.is-p3 { grid-area:p3; }
-    .phase-card.is-p4 { grid-area:p4; }
-    .phase-card.is-p5 { grid-area:p5; }
+    .phase-spread:nth-child(even) .phase-spread_visual { order:-1; }
   }
-  .phase-card {
-    background:var(--cream-card); border:2px solid var(--ink); border-radius:32px;
-    padding:var(--space-m-l); box-shadow:0 9px var(--ink);
-    display:flex; flex-direction:column; gap:var(--space-s);
+
+  .phase-spread_text {
+    display:flex; flex-direction:column;
+    gap:var(--space-xs);
+    max-width:520px;
   }
-  @media (min-width:640px) { .phase-card { box-shadow:0 16px var(--ink); } }
-  .phase-card.is-p1 { background:var(--cream); }
-  .phase-card.is-p2 { background:var(--cream-card); }
-  .phase-card.is-p3 { background:var(--rose-soft); }
-  .phase-card.is-p4 { background:var(--cream); }
-  .phase-card.is-p5 { background:var(--teal-soft); }
+  .phase-spread_text > * + .phase-spread_h { margin-top:var(--space-2xs); }
+  .phase-spread_text > * + p,
+  .phase-spread_text > p + .qb-button { margin-top:var(--space-xs); }
+  .phase-spread_text .qb-button { align-self:flex-start; margin-top:var(--space-s); }
+
+  .phase-spread_h {
+    font-family:'Fraunces',serif;
+    font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 60,"WONK" 0;
+    font-size:clamp(2rem,4.6vw,3.2rem);
+    line-height:1.0; letter-spacing:-0.01em; color:var(--ink);
+    text-wrap:balance;
+  }
+  .phase-spread_h em {
+    font-style:italic;
+    font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 80,"WONK" 1;
+  }
+
   .phase-card_eye {
     align-self:flex-start;
     display:inline-flex; align-items:center; gap:0.4rem;
@@ -618,60 +634,129 @@
     text-transform:uppercase; color:var(--ink-75);
   }
   .phase-card_eye_dot { width:8px; height:8px; border-radius:50%; }
-  .phase-card_eye.is-discovery .phase-card_eye_dot    { background:var(--phase-discovery); }
-  .phase-card_eye.is-creation  .phase-card_eye_dot    { background:var(--phase-creation); }
-  .phase-card_eye.is-content   .phase-card_eye_dot    { background:var(--phase-content); }
-  .phase-card_eye.is-execution .phase-card_eye_dot    { background:var(--phase-execution); }
-  .phase-card_eye.is-intel     .phase-card_eye_dot    { background:var(--phase-intelligence); }
-  .phase-card_h {
-    font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 600,"opsz" 72,"SOFT" 70;
-    font-size:var(--step-3); line-height:1; color:var(--ink);
+  .phase-card_eye.is-discovery .phase-card_eye_dot { background:var(--phase-discovery); }
+  .phase-card_eye.is-creation  .phase-card_eye_dot { background:var(--phase-creation); }
+  .phase-card_eye.is-content   .phase-card_eye_dot { background:var(--phase-content); }
+  .phase-card_eye.is-execution .phase-card_eye_dot { background:var(--phase-execution); }
+  .phase-card_eye.is-intel     .phase-card_eye_dot { background:var(--phase-intelligence); }
+
+  /* Phone mock — Pomegranate-style frame with simulated app screen */
+  .phase-spread_visual {
+    display:flex; align-items:center; justify-content:center;
+    padding:var(--space-s) 0;
   }
-  .phase-mock-note {
-    background:var(--cream); border:1.5px solid var(--ink); border-radius:14px;
-    padding:0.8rem 1rem;
+  .qb-phone {
+    aspect-ratio:9 / 19;
+    border:2px solid var(--ink); border-radius:32px;
+    background:var(--ink); padding:6px;
+    box-shadow:0 9px var(--ink);
+    width:100%; max-width:260px;
+    transition:transform 0.5s var(--ease-qb);
+  }
+  @media (min-width:640px) { .qb-phone { box-shadow:0 16px var(--ink); } }
+  @media (hover:hover) { .phase-spread:hover .qb-phone { transform:translateY(-6px); } }
+  .qb-phone_screen {
+    width:100%; height:100%;
+    border-radius:26px; overflow:hidden;
+    background:var(--cream); position:relative;
+    display:flex; flex-direction:column;
+  }
+  .qb-phone_status {
+    flex:0 0 auto;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:0.7rem 1rem 0.4rem;
+    font-family:'Inter',sans-serif; font-size:0.65rem; font-weight:600;
+    color:var(--ink);
+  }
+  .qb-phone_status::before {
+    content:''; position:absolute;
+    top:0.45rem; left:50%; transform:translateX(-50%);
+    width:32%; height:18px; background:var(--ink);
+    border-radius:0 0 12px 12px;
+  }
+  .qb-phone_body {
+    flex:1; padding:0.9rem 1rem 1.1rem;
+    display:flex; flex-direction:column; gap:0.6rem;
+    overflow:hidden;
+  }
+  .qb-phone.is-discovery .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-discovery) 100%); }
+  .qb-phone.is-creation  .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-creation) 100%); }
+  .qb-phone.is-content   .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-content) 100%); }
+  .qb-phone.is-execution .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-execution) 100%); }
+  .qb-phone.is-intel     .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-intelligence) 100%); }
+
+  .pm_eye {
+    font-family:'JetBrains Mono',monospace; font-size:0.52rem;
+    letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-75);
+  }
+  .pm_h {
+    font-family:'Fraunces',serif;
+    font-variation-settings:"wght" 600,"opsz" 48,"SOFT" 70;
+    font-size:1.25rem; line-height:1.05; color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .pm_quote {
     font-family:'Fraunces',serif; font-style:italic;
-    font-variation-settings:"wght" 500,"opsz" 36,"SOFT" 70;
-    font-size:var(--step-0); color:var(--ink);
+    font-variation-settings:"wght" 500,"opsz" 24,"SOFT" 70;
+    font-size:0.85rem; line-height:1.35; color:var(--ink);
+    background:var(--cream); border:1.5px solid var(--ink);
+    border-radius:10px; padding:0.55rem 0.7rem;
   }
-  .phase-tags { display:flex; flex-wrap:wrap; gap:0.45rem; }
-  .phase-tag {
-    font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500;
-    padding:0.35em 0.9em; border-radius:9999px;
-    border:1.5px solid var(--ink); background:var(--cream); color:var(--ink-75);
+  .pm_tags { display:flex; flex-wrap:wrap; gap:0.28rem; }
+  .pm_tags span {
+    font-family:'Inter',sans-serif; font-size:0.55rem; font-weight:600;
+    padding:0.22em 0.6em; border-radius:9999px;
+    border:1.2px solid var(--ink); background:var(--cream); color:var(--ink-75);
   }
-  .phase-swatch-row { display:flex; gap:8px; flex-wrap:wrap; }
-  .phase-swatch {
-    width:64px; height:64px; border-radius:14px; border:2px solid var(--ink);
-    box-shadow:0 4px var(--ink);
+  .pm_swatches { display:grid; grid-template-columns:repeat(6,1fr); gap:4px; }
+  .pm_swatch { aspect-ratio:1; border:1.2px solid var(--ink); border-radius:5px; }
+  .pm_grid9 { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+  .pm_grid9 div {
+    aspect-ratio:1; border-radius:4px; border:1px solid var(--ink-25);
   }
-  .phase-claim {
+  .pm_grid9 div:nth-child(1) { background:var(--phase-content); }
+  .pm_grid9 div:nth-child(2) { background:var(--cream-card); }
+  .pm_grid9 div:nth-child(3) { background:var(--rose-soft); }
+  .pm_grid9 div:nth-child(4) { background:var(--cream-warm); }
+  .pm_grid9 div:nth-child(5) { background:var(--phase-content); }
+  .pm_grid9 div:nth-child(6) { background:var(--cream-card); }
+  .pm_grid9 div:nth-child(7) { background:var(--rose-soft); }
+  .pm_grid9 div:nth-child(8) { background:var(--cream-warm); }
+  .pm_grid9 div:nth-child(9) { background:var(--phase-content); }
+  .pm_chips { display:flex; flex-direction:column; gap:0.25rem; }
+  .pm_chip {
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--cream); border:1.2px solid var(--ink); border-radius:8px;
+    padding:0.32rem 0.55rem;
+    font-family:'Inter',sans-serif; font-size:0.65rem; font-weight:500; color:var(--ink);
+  }
+  .pm_chip_v {
+    font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:var(--ink-50);
+    letter-spacing:0.06em;
+  }
+  .pm_stats { display:grid; grid-template-columns:repeat(2,1fr); gap:5px; }
+  .pm_stat {
+    background:var(--cream); border:1.2px solid var(--ink); border-radius:8px;
+    padding:0.4rem 0.4rem; text-align:center;
+  }
+  .pm_stat_v {
     font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 500,"opsz" 60,"SOFT" 70;
-    font-size:var(--step-1); line-height:1.3; color:var(--ink);
+    font-variation-settings:"wght" 700,"opsz" 36,"SOFT" 70;
+    font-size:1rem; line-height:1; color:var(--ink);
   }
-  .phase-claim em { font-style:italic; color:var(--rose); }
-  .phase-video {
-    border:2px solid var(--ink); border-radius:18px; overflow:hidden;
-    aspect-ratio:16/10; background:var(--ink);
+  .pm_stat_l {
+    font-family:'JetBrains Mono',monospace; font-size:0.46rem;
+    letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-50);
+    margin-top:0.2em;
   }
-  .phase-video video { width:100%; height:100%; object-fit:cover; }
-  .phase-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:var(--space-xs); }
-  @media (min-width:600px) { .phase-stats { grid-template-columns:repeat(4,1fr); } }
-  .phase-stat {
-    background:var(--cream); border:1.5px solid var(--ink); border-radius:18px;
-    padding:0.9rem; text-align:center;
+  .pm_next {
+    margin-top:auto;
+    background:var(--ink); color:var(--cream);
+    border-radius:8px; padding:0.45rem 0.6rem;
+    font-family:'Inter',sans-serif; font-size:0.62rem; font-weight:500;
+    line-height:1.4;
   }
-  .phase-stat_v {
-    font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 700,"opsz" 60,"SOFT" 70;
-    font-size:var(--step-3); line-height:1; color:var(--ink);
-  }
-  .phase-stat_l {
-    font-family:'JetBrains Mono',monospace; font-size:0.62rem; letter-spacing:0.12em;
-    text-transform:uppercase; color:var(--ink-50); margin-top:0.4em;
-  }
+  .pm_next strong { font-weight:700; color:var(--gold); margin-right:0.3em; }
 
   /* =====================================================
      PERSONAS — tab switcher on dark
@@ -1439,73 +1524,146 @@
         <h2 class="qb-type-heading qb-type-balance reveal">Everything your brand needs, <em>built step by step.</em></h2>
       </header>
 
-      <div class="phase-mosaic">
+      <div class="phase-spreads">
 
-        <!-- Phase 01 -->
-        <article class="phase-card is-p1 reveal">
-          <span class="phase-card_eye is-discovery"><span class="phase-card_eye_dot"></span>Phase 01 · Discovery</span>
-          <h3 class="phase-card_h">Your identity, articulated.</h3>
-          <p class="qb-type-text">Signal Scan, Archetype Compass, Brand Soul Map, Sensescape. Four agents take you from idea to a complete Brand Profile that names what you stand for and how you sound.</p>
-          <div class="phase-mock-note">Every loaf is a love letter to slow mornings.</div>
-          <div class="phase-tags">
-            <span class="phase-tag">The Caregiver</span>
-            <span class="phase-tag">Warm / Golden</span>
-            <span class="phase-tag">Wildfire energy</span>
+        <!-- Phase 01 — Discovery -->
+        <article class="phase-spread reveal">
+          <div class="phase-spread_text">
+            <span class="phase-card_eye is-discovery"><span class="phase-card_eye_dot"></span>Phase 01 · Discovery</span>
+            <h3 class="phase-spread_h">Your identity, <em>articulated.</em></h3>
+            <p class="qb-type-text">Signal Scan, Archetype Compass, Brand Soul Map, Sensescape. Four agents take you from idea to a Brand Profile that names what you stand for and how you sound.</p>
+            <a href="brand-soul-map.html" class="qb-button is-sm"><span class="qb-button_content">Open Brand Soul Map →</span></a>
+          </div>
+          <div class="phase-spread_visual">
+            <div class="qb-phone is-discovery">
+              <div class="qb-phone_screen">
+                <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
+                <div class="qb-phone_body">
+                  <div class="pm_eye">Brand Profile · Live</div>
+                  <div class="pm_h">Maya Bakery,<br>Casablanca</div>
+                  <div class="pm_quote">Every loaf is a love letter to slow mornings.</div>
+                  <div class="pm_tags">
+                    <span>Caregiver</span>
+                    <span>Warm / Golden</span>
+                    <span>Wildfire</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </article>
 
-        <!-- Phase 02 -->
-        <article class="phase-card is-p2 reveal rd1">
-          <span class="phase-card_eye is-creation"><span class="phase-card_eye_dot"></span>Phase 02 · Creation</span>
-          <h3 class="phase-card_h">Logo direction <em>+ voice guide.</em></h3>
-          <p class="qb-type-text">Visual DNA, War Table, Logo Direction, Logo Evaluation, Voice Guide. The brand becomes visible. A palette that holds. A voice that prints.</p>
-          <div class="phase-swatch-row">
-            <span class="phase-swatch" style="background:#E0B069"></span>
-            <span class="phase-swatch" style="background:#9CC4A2"></span>
-            <span class="phase-swatch" style="background:#E89380"></span>
-            <span class="phase-swatch" style="background:#B080A0"></span>
-            <span class="phase-swatch" style="background:#F2EBD3"></span>
-            <span class="phase-swatch" style="background:#2D1521"></span>
+        <!-- Phase 02 — Creation -->
+        <article class="phase-spread reveal">
+          <div class="phase-spread_text">
+            <span class="phase-card_eye is-creation"><span class="phase-card_eye_dot"></span>Phase 02 · Creation</span>
+            <h3 class="phase-spread_h">Logo direction <em>+ voice guide.</em></h3>
+            <p class="qb-type-text">Visual DNA, War Table, Logo Direction, Logo Evaluation, Voice Guide. The brand becomes visible. A palette that holds. A voice that prints.</p>
+            <a href="voice-guide-agent.html" class="qb-button is-sm"><span class="qb-button_content">Open Voice Guide →</span></a>
+          </div>
+          <div class="phase-spread_visual">
+            <div class="qb-phone is-creation">
+              <div class="qb-phone_screen">
+                <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
+                <div class="qb-phone_body">
+                  <div class="pm_eye">Visual DNA</div>
+                  <div class="pm_h">Your palette,<br>locked.</div>
+                  <div class="pm_swatches">
+                    <span class="pm_swatch" style="background:#E0B069"></span>
+                    <span class="pm_swatch" style="background:#9CC4A2"></span>
+                    <span class="pm_swatch" style="background:#E89380"></span>
+                    <span class="pm_swatch" style="background:#B080A0"></span>
+                    <span class="pm_swatch" style="background:#F2EBD3"></span>
+                    <span class="pm_swatch" style="background:#2D1521"></span>
+                  </div>
+                  <div class="pm_quote">The brand becomes visible.</div>
+                </div>
+              </div>
+            </div>
           </div>
         </article>
 
-        <!-- Phase 03 -->
-        <article class="phase-card is-p3 reveal">
-          <span class="phase-card_eye is-content"><span class="phase-card_eye_dot"></span>Phase 03 · Content</span>
-          <h3 class="phase-card_h">Your first month, <em>written.</em></h3>
-          <p class="phase-claim"><em>12</em> Instagram posts, <em>20</em> LinkedIn posts, <em>6</em> YouTube scripts, a full newsletter plan.</p>
-          <p class="qb-type-text">Instagram, LinkedIn, YouTube, Newsletter, Content Bridge, Repurposing Engine. Channel-shaped, voice-locked, ready for approval.</p>
+        <!-- Phase 03 — Content -->
+        <article class="phase-spread reveal">
+          <div class="phase-spread_text">
+            <span class="phase-card_eye is-content"><span class="phase-card_eye_dot"></span>Phase 03 · Content</span>
+            <h3 class="phase-spread_h">Your first month, <em>written.</em></h3>
+            <p class="qb-type-text">Instagram, LinkedIn, YouTube, Newsletter, Content Bridge. Twelve posts, twenty articles, six scripts, a full newsletter plan. Channel-shaped, voice-locked.</p>
+            <a href="instagram-seed-agent.html" class="qb-button is-sm"><span class="qb-button_content">Open Instagram Seed →</span></a>
+          </div>
+          <div class="phase-spread_visual">
+            <div class="qb-phone is-content">
+              <div class="qb-phone_screen">
+                <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
+                <div class="qb-phone_body">
+                  <div class="pm_eye">Instagram Seed · Week 1</div>
+                  <div class="pm_h">12 posts<br>ready.</div>
+                  <div class="pm_grid9"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                  <div class="pm_tags">
+                    <span>Hooks</span>
+                    <span>Captions</span>
+                    <span>Visuals</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </article>
 
-        <!-- Phase 04 -->
-        <article class="phase-card is-p4 reveal rd1">
-          <span class="phase-card_eye is-execution"><span class="phase-card_eye_dot"></span>Phase 04 · Execution</span>
-          <h3 class="phase-card_h">Multiply <em>everything.</em></h3>
-          <div class="phase-video">
-            <video src="img/execution-phase-04.mov" muted loop playsinline preload="metadata" data-hover-play></video>
+        <!-- Phase 04 — Execution -->
+        <article class="phase-spread reveal">
+          <div class="phase-spread_text">
+            <span class="phase-card_eye is-execution"><span class="phase-card_eye_dot"></span>Phase 04 · Execution</span>
+            <h3 class="phase-spread_h">Multiply <em>everything.</em></h3>
+            <p class="qb-type-text">Repurposing Engine and Content Scheduler. One long-form piece becomes up to 25 platform-native assets across 10 channels. All on brand, all ready to ship.</p>
+            <a href="content-repurposing-engine.html" class="qb-button is-sm"><span class="qb-button_content">Open Repurposing Engine →</span></a>
           </div>
-          <p class="qb-type-text">One piece becomes up to <strong>25</strong> across <strong>10</strong> platforms.</p>
-          <div class="phase-tags">
-            <span class="phase-tag">Instagram</span>
-            <span class="phase-tag">LinkedIn</span>
-            <span class="phase-tag">Threads</span>
-            <span class="phase-tag">Newsletter</span>
-            <span class="phase-tag">Stories</span>
+          <div class="phase-spread_visual">
+            <div class="qb-phone is-execution">
+              <div class="qb-phone_screen">
+                <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
+                <div class="qb-phone_body">
+                  <div class="pm_eye">Repurposing · Q2 Brief</div>
+                  <div class="pm_h">1 piece<br>→ 25 ready.</div>
+                  <div class="pm_chips">
+                    <div class="pm_chip"><span>Instagram</span><span class="pm_chip_v">5/5</span></div>
+                    <div class="pm_chip"><span>LinkedIn</span><span class="pm_chip_v">6/6</span></div>
+                    <div class="pm_chip"><span>YouTube short</span><span class="pm_chip_v">3/3</span></div>
+                    <div class="pm_chip"><span>Newsletter</span><span class="pm_chip_v">1/1</span></div>
+                    <div class="pm_chip"><span>Threads</span><span class="pm_chip_v">10/10</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </article>
 
-        <!-- Phase 05 -->
-        <article class="phase-card is-p5 reveal">
-          <span class="phase-card_eye is-intel"><span class="phase-card_eye_dot"></span>Phase 05 · Intelligence</span>
-          <h3 class="phase-card_h">Smarter <em>every 90 days.</em></h3>
-          <p class="qb-type-text">Brand Performance Dashboard, Quarterly Review, Predictive Panel, BrandOS Hub. The system measures itself and tells you what to scale, fix, kill.</p>
-          <div class="phase-stats">
-            <div class="phase-stat"><div class="phase-stat_v">B+</div><div class="phase-stat_l">Q1 Health</div></div>
-            <div class="phase-stat"><div class="phase-stat_v">92%</div><div class="phase-stat_l">Voice match</div></div>
-            <div class="phase-stat"><div class="phase-stat_v">+34%</div><div class="phase-stat_l">Content reach</div></div>
-            <div class="phase-stat"><div class="phase-stat_v">A-</div><div class="phase-stat_l">Q2 Target</div></div>
+        <!-- Phase 05 — Intelligence -->
+        <article class="phase-spread reveal">
+          <div class="phase-spread_text">
+            <span class="phase-card_eye is-intel"><span class="phase-card_eye_dot"></span>Phase 05 · Intelligence</span>
+            <h3 class="phase-spread_h">Smarter <em>every 90 days.</em></h3>
+            <p class="qb-type-text">Performance Dashboard, Quarterly Review, Predictive Panel, BrandOS Hub. The system measures itself and tells you what to scale, fix, kill.</p>
+            <a href="brand-performance-dashboard.html" class="qb-button is-sm"><span class="qb-button_content">Open Dashboard →</span></a>
           </div>
-          <p class="qb-type-subtext" style="color:var(--ink-50)"><strong>Next ·</strong> Scale LinkedIn. Test paid.</p>
+          <div class="phase-spread_visual">
+            <div class="qb-phone is-intel">
+              <div class="qb-phone_screen">
+                <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
+                <div class="qb-phone_body">
+                  <div class="pm_eye">Brand Health · Q2</div>
+                  <div class="pm_h">B+ → A-</div>
+                  <div class="pm_stats">
+                    <div class="pm_stat"><div class="pm_stat_v">B+</div><div class="pm_stat_l">Q1 Health</div></div>
+                    <div class="pm_stat"><div class="pm_stat_v">92%</div><div class="pm_stat_l">Voice match</div></div>
+                    <div class="pm_stat"><div class="pm_stat_v">+34%</div><div class="pm_stat_l">Reach</div></div>
+                    <div class="pm_stat"><div class="pm_stat_v">A-</div><div class="pm_stat_l">Q2 Target</div></div>
+                  </div>
+                  <div class="pm_next"><strong>Next</strong>Scale LinkedIn. Test paid.</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </article>
       </div>
     </div>
