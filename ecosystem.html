@@ -429,16 +429,47 @@
      HOW IT WORKS - 3 step cards on dark
      ===================================================== */
   .how-grid {
-    display:grid; grid-template-columns:1fr; gap:var(--space-s-m);
+    display:grid; grid-template-columns:1fr; gap:var(--space-m);
     margin-top:var(--space-l-xl);
   }
   @media (min-width:900px) { .how-grid { grid-template-columns:repeat(3,1fr); } }
+  /* Three-layer 3D stack: each how-card sits in front of two tinted shadow cards */
   .how-card {
+    position:relative;
     background:var(--cream-card); border:2px solid var(--ink); border-radius:24px;
     padding:var(--space-s-m); display:flex; flex-direction:column; gap:var(--space-2xs);
-    box-shadow:0 9px var(--ink); color:var(--ink);
+    color:var(--ink); z-index:2;
+    box-shadow:0 9px var(--ink);
+    transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
   }
   @media (min-width:640px) { .how-card { box-shadow:0 16px var(--ink); } }
+  .how-card::before,
+  .how-card::after {
+    content:''; position:absolute; inset:0;
+    border:2px solid var(--ink); border-radius:24px;
+    pointer-events:none;
+    transition:transform 0.5s var(--ease-qb);
+  }
+  .how-card::before {
+    background:var(--rose-soft);
+    transform:translate(8px,8px); z-index:1;
+  }
+  .how-card::after {
+    background:var(--phase-discovery);
+    transform:translate(16px,16px); z-index:0;
+  }
+  /* Per-card layer color rotation so each step reads distinct */
+  .how-card:nth-child(1)::before { background:var(--phase-discovery); }
+  .how-card:nth-child(1)::after  { background:var(--gold); }
+  .how-card:nth-child(2)::before { background:var(--rose-soft); }
+  .how-card:nth-child(2)::after  { background:var(--rose); }
+  .how-card:nth-child(3)::before { background:var(--teal-soft); }
+  .how-card:nth-child(3)::after  { background:var(--teal); }
+  @media (hover:hover) {
+    .how-card:hover { transform:translate(-6px,-6px); }
+    .how-card:hover::before { transform:translate(14px,14px); }
+    .how-card:hover::after  { transform:translate(26px,26px); }
+  }
   .how-card_num {
     font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.16em;
     text-transform:uppercase; color:var(--ink-50);
@@ -520,8 +551,13 @@
     background:var(--cream-card); border:2px solid var(--ink); border-radius:24px;
     padding:var(--space-s-m); box-shadow:0 9px var(--ink);
     display:flex; flex-direction:column; gap:var(--space-xs);
+    transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
   }
   @media (min-width:640px) { .mock-card { box-shadow:0 16px var(--ink); padding:var(--space-m); } }
+  @media (hover:hover) {
+    .mock-card:hover { transform:translateY(-8px) rotate(-0.5deg); }
+    .mock-card:hover .progress-fill { filter:brightness(1.1); }
+  }
   .mock-card_eyebrow {
     font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.14em;
     text-transform:uppercase; color:var(--ink-50);
@@ -814,9 +850,18 @@
     opacity:0; transition:opacity 0.5s var(--ease-qb);
     padding:8%;
   }
-  .persona-avatar.active { opacity:1; }
+  .persona-avatar.active {
+    opacity:1;
+    animation:qb-float-tilt 8s ease-in-out infinite;
+  }
   .persona-avatar img,
   .persona-avatar .persona-svg { max-width:100%; max-height:100%; width:100%; height:100%; object-fit:contain; }
+  .persona-stage {
+    transition:transform 0.6s var(--ease-qb), border-color 0.6s var(--ease-qb);
+  }
+  @media (hover:hover) {
+    .persona-stage:hover { transform:translateY(-6px) rotate(-0.8deg); border-color:var(--gold); }
+  }
   .persona-stage_tag {
     position:absolute; left:50%; bottom:1rem; transform:translateX(-50%);
     background:var(--cream); color:var(--ink);
@@ -976,8 +1021,15 @@
   }
   @media (min-width:640px) { .founder-portrait { width:240px; height:240px; box-shadow:0 12px rgba(251,245,230,0.18); } }
   .founder-portrait video,
+  .founder-portrait img,
   .founder-portrait_fallback {
     width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .founder-portrait {
+    transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
+  }
+  @media (hover:hover) {
+    .founder-portrait:hover { transform:translateY(-6px) rotate(-1.5deg); }
   }
   .founder-portrait_fallback {
     display:flex; align-items:center; justify-content:center;
@@ -1098,14 +1150,87 @@
   .footer_bottom_links a:hover { color:var(--ink); }
 
   /* =====================================================
-     REVEAL ON SCROLL
+     REVEAL ON SCROLL (richer entrance: fade + lift + scale + blur)
      ===================================================== */
-  .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.7s var(--ease-qb),transform 0.7s var(--ease-qb); }
-  .reveal.in { opacity:1; transform:translateY(0); }
+  .reveal {
+    opacity:0; transform:translateY(36px) scale(0.97);
+    filter:blur(4px);
+    transition:opacity 0.9s var(--ease-qb), transform 0.9s var(--ease-qb), filter 0.9s var(--ease-qb);
+  }
+  .reveal.in { opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
   .rd1 { transition-delay:0.1s; }
   .rd2 { transition-delay:0.2s; }
   .rd3 { transition-delay:0.3s; }
   .rd4 { transition-delay:0.4s; }
+
+  /* Reveal flavors for variety */
+  .reveal.is-left  { transform:translate(-40px,16px) scale(0.97); }
+  .reveal.is-right { transform:translate(40px,16px) scale(0.97); }
+  .reveal.is-zoom  { transform:translateY(0) scale(0.92); }
+  .reveal.is-tilt  { transform:translateY(36px) scale(0.97) rotate(-2deg); }
+  .reveal.in.is-left, .reveal.in.is-right, .reveal.in.is-zoom, .reveal.in.is-tilt {
+    transform:none;
+  }
+
+  /* =====================================================
+     IDLE FLOAT MOTION on cards and illustrations
+     ===================================================== */
+  @keyframes qb-float-y {
+    0%, 100% { transform:translateY(0); }
+    50%      { transform:translateY(-10px); }
+  }
+  @keyframes qb-float-tilt {
+    0%, 100% { transform:translateY(0) rotate(-0.6deg); }
+    50%      { transform:translateY(-8px) rotate(0.6deg); }
+  }
+  @keyframes qb-pulse-soft {
+    0%, 100% { transform:scale(1); opacity:0.95; }
+    50%      { transform:scale(1.04); opacity:1; }
+  }
+  .qb-illus-card.in {
+    animation:qb-float-tilt 9s ease-in-out infinite;
+  }
+  .phase-spread:nth-child(odd) .qb-illus-card.in {
+    animation:qb-float-y 8.5s ease-in-out infinite;
+  }
+  .phase-spread:nth-child(2) .qb-phone,
+  .phase-spread:nth-child(4) .qb-phone {
+    animation:qb-float-y 7s ease-in-out 1.2s infinite;
+  }
+  .phase-spread:nth-child(1) .qb-phone,
+  .phase-spread:nth-child(3) .qb-phone,
+  .phase-spread:nth-child(5) .qb-phone {
+    animation:qb-float-tilt 8s ease-in-out 0.6s infinite;
+  }
+
+  /* Image float for illustrations inside qb-illus-card */
+  .qb-illus-card.in img {
+    transition:transform 0.6s var(--ease-qb);
+  }
+  @media (hover:hover) {
+    .qb-illus-card:hover img { transform:scale(1.04) rotate(0.5deg); }
+  }
+
+  /* Founder portrait gentle bob */
+  .founder-portrait img {
+    animation:qb-float-y 10s ease-in-out infinite;
+  }
+
+  /* Synergy hover-video and feature-media drift */
+  .feature-media.reveal.in { animation:qb-float-y 10s ease-in-out 1.5s infinite; }
+
+  /* Hero h1 gentle scale-in once on load */
+  @keyframes qb-hero-pop {
+    0%   { opacity:0; transform:translateY(28px) scale(0.96); filter:blur(6px); }
+    100% { opacity:1; transform:none;                       filter:blur(0); }
+  }
+  .hero_h1, .hero_body, .hero_cta, .hero_meta, .agent-cluster {
+    animation:qb-hero-pop 0.9s var(--ease-qb) both;
+  }
+  .hero_body  { animation-delay:0.1s; }
+  .hero_cta   { animation-delay:0.2s; }
+  .hero_meta  { animation-delay:0.3s; }
+  .agent-cluster { animation-delay:0.4s; }
 
   /* =====================================================
      REDUCED MOTION
@@ -1119,7 +1244,9 @@
     }
     .qb-button:hover .qb-button_content,.qb-button:active .qb-button_content { transform:none; }
     .agent-pill,.featured-track,.nav-brand_dot,.persona-avatar { animation:none; }
-    .reveal { opacity:1; transform:none; }
+    .reveal { opacity:1; transform:none; filter:none; }
+    .qb-illus-card, .qb-phone, .founder-portrait img, .feature-media { animation:none !important; }
+    .hero_h1, .hero_body, .hero_cta, .hero_meta, .agent-cluster { animation:none !important; opacity:1; }
   }
 </style>
 </head>
@@ -1438,7 +1565,7 @@
       </header>
 
       <div class="how-grid">
-        <article class="how-card reveal">
+        <article class="how-card reveal is-left">
           <div class="how-card_doodle">
             <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M11 17l3.5 3.5L22 13"/></svg>
           </div>
@@ -1448,7 +1575,7 @@
           <div class="how-card_result">Result · Your Brand Profile</div>
         </article>
 
-        <article class="how-card reveal rd1">
+        <article class="how-card reveal rd1 is-zoom">
           <div class="how-card_doodle is-rose">
             <svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" rx="2"/><path d="M5 22l8-8 6 6 8-8"/><circle cx="11" cy="11" r="2"/></svg>
           </div>
@@ -1458,7 +1585,7 @@
           <div class="how-card_result">Result · Logo · Voice · 30+ posts</div>
         </article>
 
-        <article class="how-card reveal rd2">
+        <article class="how-card reveal rd2 is-right">
           <div class="how-card_doodle is-teal">
             <svg viewBox="0 0 32 32"><path d="M16 4v18M9 11l7-7 7 7M5 28h22"/></svg>
           </div>
@@ -1548,7 +1675,7 @@
       <div class="phase-spreads">
 
         <!-- Phase 01 - Discovery -->
-        <article class="phase-spread reveal">
+        <article class="phase-spread reveal is-left">
           <div class="phase-spread_text">
             <span class="phase-card_eye is-discovery"><span class="phase-card_eye_dot"></span>Phase 01 · Discovery</span>
             <h3 class="phase-spread_h">Your identity, <em>articulated.</em></h3>
@@ -1579,7 +1706,7 @@
         </article>
 
         <!-- Phase 02 - Creation -->
-        <article class="phase-spread reveal">
+        <article class="phase-spread reveal is-right">
           <div class="phase-spread_text">
             <span class="phase-card_eye is-creation"><span class="phase-card_eye_dot"></span>Phase 02 · Creation</span>
             <h3 class="phase-spread_h">Logo direction <em>+ voice guide.</em></h3>
@@ -1614,7 +1741,7 @@
         </article>
 
         <!-- Phase 03 - Content -->
-        <article class="phase-spread reveal">
+        <article class="phase-spread reveal is-left">
           <div class="phase-spread_text">
             <span class="phase-card_eye is-content"><span class="phase-card_eye_dot"></span>Phase 03 · Content</span>
             <h3 class="phase-spread_h">Your first month, <em>written.</em></h3>
@@ -1641,7 +1768,7 @@
         </article>
 
         <!-- Phase 04 - Execution -->
-        <article class="phase-spread reveal">
+        <article class="phase-spread reveal is-right">
           <div class="phase-spread_text">
             <span class="phase-card_eye is-execution"><span class="phase-card_eye_dot"></span>Phase 04 · Execution</span>
             <h3 class="phase-spread_h">Multiply <em>everything.</em></h3>
@@ -1656,7 +1783,7 @@
         </article>
 
         <!-- Phase 05 - Intelligence -->
-        <article class="phase-spread reveal">
+        <article class="phase-spread reveal is-zoom">
           <div class="phase-spread_text">
             <span class="phase-card_eye is-intel"><span class="phase-card_eye_dot"></span>Phase 05 · Intelligence</span>
             <h3 class="phase-spread_h">Smarter <em>every 90 days.</em></h3>
@@ -1691,16 +1818,16 @@
       <div class="persona-shell">
         <div class="persona-stage">
           <div class="persona-avatar active" data-avatar="0">
-            <svg class="persona-svg" viewBox="0 0 240 280" role="img" aria-label="The Blank Slate"><use href="#char-think"/></svg>
+            <img src="img/illus/blank-slate.png" alt="The Blank Slate. Solo skater with coffee, drink-in-hand pose." loading="lazy">
           </div>
           <div class="persona-avatar" data-avatar="1">
-            <svg class="persona-svg" viewBox="0 0 220 320" role="img" aria-label="The Doubter"><use href="#char-notebook"/></svg>
+            <img src="img/illus/doubter.png" alt="The Doubter. Seated figure at cafe table, hand-on-chin contemplative." loading="lazy">
           </div>
           <div class="persona-avatar" data-avatar="2">
-            <svg class="persona-svg" viewBox="0 0 280 240" role="img" aria-label="The Player"><use href="#char-speak"/></svg>
+            <img src="img/illus/player.png" alt="The Player. Runner with dog on leash, forward motion." loading="lazy">
           </div>
           <div class="persona-avatar" data-avatar="3">
-            <svg class="persona-svg" viewBox="0 0 300 280" role="img" aria-label="The Multi-Brand Guide"><use href="#char-cheer"/></svg>
+            <img src="img/illus/multi-brand.png" alt="The Multi-Brand. Figure holding oversized framed portrait." loading="lazy">
           </div>
           <div class="persona-stage_tag" id="personaStageTag">01 · The Blank Slate</div>
         </div>
@@ -1929,7 +2056,7 @@
     <div class="qb-x-narrow">
       <div class="founder-grid">
         <div class="founder-portrait">
-          <video src="img/nizzarfounder.mov" muted loop playsinline preload="metadata" data-hover-play></video>
+          <img src="img/illus/founder-portrait.png" alt="Nizzar Ben Chekroune at his desk with headphones, world map behind." loading="lazy">
         </div>
         <div>
           <span class="qb-tag on-dark"><span class="qb-tag_content">From the founder</span></span>
