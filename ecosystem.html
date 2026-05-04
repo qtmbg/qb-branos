@@ -844,7 +844,8 @@
   .persona-shell {
     display:grid; gap:var(--space-l-xl);
     grid-template-columns:1fr;
-    align-items:stretch;
+    align-items:start;
+    justify-items:center;
     margin-top:var(--space-l);
   }
   @media (min-width:900px) {
@@ -876,15 +877,14 @@
     transition:transform 0.6s var(--ease-qb);
   }
 
-  /* Stage holds the illustration. Aspect square so all 4 personas
-     read at identical visual weight regardless of PNG aspect. */
+  /* Stage holds the illustration. Both stage and detail share the same
+     square aspect so the cards are pixel-identical in size. */
   .persona-stage {
     aspect-ratio:1/1;
+    width:100%;
     background:var(--cream);
     overflow:visible;
     z-index:1;
-    /* Two-layer offset shadow stack baked into box-shadow so it never
-       gets clipped, regardless of overflow rules on this element. */
     box-shadow:
       14px 14px 0 var(--gold),
       28px 28px 0 var(--rose);
@@ -935,9 +935,11 @@
     z-index:5;
   }
 
-  /* Detail card matches the stage exactly: same border, same radius,
-     same offset shadow so the pair looks like one balanced statement. */
+  /* Detail card matches the stage to the pixel: same aspect 1/1, same
+     border, same offset shadow. The pair reads as one balanced statement. */
   .persona-detail {
+    aspect-ratio:1/1;
+    width:100%;
     background:var(--ink);
     color:var(--cream);
     padding:var(--space-m);
@@ -946,6 +948,7 @@
       28px 28px 0 var(--gold);
     display:flex; flex-direction:column; gap:var(--space-s);
     justify-content:center;
+    overflow:hidden;
   }
   @media (min-width:640px) { .persona-detail { padding:var(--space-l); } }
   @media (hover:hover) {
