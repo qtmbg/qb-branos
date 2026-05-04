@@ -1,0 +1,130 @@
+<!--
+  QB BrandOS · Chassis markup snippet
+  Drop these blocks into the <body> of every page in this order:
+    1. Loading bar
+    2. Banner (verbatim copy — never paraphrase)
+    3. Nav-wrap + Mobile menu
+    [page content]
+    4. Footer
+    5. Scripts (loading bar, mobile menu, reveal observer)
+
+  Marketing surfaces use the floating pill nav below.
+  App surfaces (qb-branidos-hub.html and tools) may use a sticky variant
+  per Design System v3.4 Part 20.14 — substitute the .nav-wrap markup
+  with the sticky version when migrating those files.
+-->
+
+
+<!-- ============ 1. LOADING BAR ============ -->
+<div class="qb-loading-bar" id="qbLoadingBar"></div>
+
+
+<!-- ============ 2. BANNER — verbatim copy ============ -->
+<div class="banner">
+  <strong>Signal Scan is live.</strong> Free brand diagnostic. 5 minutes to your first insight.
+  <a href="https://app.quantumbranding.ai/signal-scan.html">Run yours →</a>
+</div>
+
+
+<!-- ============ 3. NAV (marketing pill) ============ -->
+<div class="nav-wrap">
+  <header class="nav">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-brand_dot" aria-hidden="true"></span>
+      Quantum Branding
+    </a>
+    <nav class="nav-links">
+      <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
+      <a href="tools.html" class="qb-type-nav">Tools</a>
+      <a href="ecosystem.html#pricing" class="qb-type-nav">Pricing</a>
+      <a href="ecosystem.html#about" class="qb-type-nav">About</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="https://app.quantumbranding.ai" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
+      <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-sm"><span class="qb-button_content">Start free</span></a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu_head">
+    <span class="nav-brand"><span class="nav-brand_dot"></span>Quantum Branding</span>
+    <button class="mobile-menu_close" id="mobileMenuClose" aria-label="Close menu">×</button>
+  </div>
+  <nav class="mobile-menu_list">
+    <a href="ecosystem.html">Ecosystem</a>
+    <a href="tools.html">Tools</a>
+    <a href="ecosystem.html#pricing">Pricing</a>
+    <a href="ecosystem.html#about">About</a>
+  </nav>
+  <div class="mobile-menu_foot">
+    <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+  </div>
+</div>
+
+
+<!-- ============ 4. FOOTER (compact, one row) ============ -->
+<footer class="footer">
+  <div class="footer_inner">
+    <a href="index.html" class="footer_brand">
+      <span class="nav-brand_dot" aria-hidden="true"></span>
+      Quantum Branding
+    </a>
+    <nav class="footer_links">
+      <a href="ecosystem.html#about">About</a>
+      <a href="ecosystem.html#pricing">Pricing</a>
+      <a href="tools.html">Tools</a>
+      <a href="mailto:hello@quantumbranding.ai">Contact</a>
+    </nav>
+    <div class="qb-type-subtext" style="color:var(--ink-50);">© Quantum Branding · Built by Nizzar Ben Chekroune</div>
+  </div>
+</footer>
+
+
+<!-- ============ 5. SCRIPTS — loading bar, mobile menu, reveal observer ============ -->
+<script>
+  // Loading bar idle on load
+  window.addEventListener('load', function () {
+    var bar = document.getElementById('qbLoadingBar');
+    if (bar) setTimeout(function () { bar.dataset.state = 'idle'; }, 400);
+  });
+
+  // Mobile menu
+  (function () {
+    var ham = document.getElementById('hamburger');
+    var mm = document.getElementById('mobileMenu');
+    var mc = document.getElementById('mobileMenuClose');
+    if (!ham || !mm || !mc) return;
+    function closeMM() { mm.dataset.open = 'false'; document.body.style.overflow = ''; }
+    ham.addEventListener('click', function () { mm.dataset.open = 'true'; document.body.style.overflow = 'hidden'; });
+    mc.addEventListener('click', closeMM);
+    Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
+  })();
+
+  // Canonical scroll reveal — toggles `.in` on every `.reveal` element when it
+  // enters the viewport. Honors reduced-motion.
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.18 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
