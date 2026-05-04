@@ -890,11 +890,14 @@
       14px 14px 0 var(--gold),
       28px 28px 0 var(--rose);
   }
-  /* Tinted backdrop per active persona drives the colour rotation. */
-  .persona-stage[data-p="0"] { background:var(--phase-discovery); box-shadow:14px 14px 0 var(--gold), 28px 28px 0 var(--rose); }
-  .persona-stage[data-p="1"] { background:var(--rose-soft);       box-shadow:14px 14px 0 var(--phase-creation), 28px 28px 0 var(--gold); }
-  .persona-stage[data-p="2"] { background:var(--phase-creation);  box-shadow:14px 14px 0 var(--phase-content), 28px 28px 0 var(--rose); }
-  .persona-stage[data-p="3"] { background:var(--butter);          box-shadow:14px 14px 0 var(--phase-discovery), 28px 28px 0 var(--phase-execution); }
+  /* Tinted backdrop per active persona drives the colour rotation.
+     Each frame background is aligned to the PNG's own canvas colour
+     so the illustration and the frame read as one continuous surface,
+     no leak around the edges. */
+  .persona-stage[data-p="0"] { background:var(--butter);           box-shadow:14px 14px 0 var(--rose-soft),     28px 28px 0 var(--phase-discovery); } /* blank-slate: mustard yellow PNG */
+  .persona-stage[data-p="1"] { background:var(--rose-soft);        box-shadow:14px 14px 0 var(--phase-creation),28px 28px 0 var(--gold); }            /* doubter: pink PNG */
+  .persona-stage[data-p="2"] { background:var(--illus-lavender);   box-shadow:14px 14px 0 var(--gold),          28px 28px 0 var(--phase-content); }   /* player: lavender PNG */
+  .persona-stage[data-p="3"] { background:var(--phase-discovery);  box-shadow:14px 14px 0 var(--rose),          28px 28px 0 var(--gold); }            /* multi-brand: green PNG */
   @media (hover:hover) {
     .persona-stage:hover { transform:translate(-6px,-6px); }
   }
@@ -918,19 +921,18 @@
     opacity:1;
     animation:qb-float-tilt 8s ease-in-out infinite;
   }
-  /* Fill the frame edge-to-edge so the figure merges with its tinted
-     backdrop instead of floating as a PNG inside it. The transparent
-     edges of the illustration let the frame tint bleed through, and
-     anchoring the bottom keeps the figure grounded against the rule. */
+  /* Fill the frame edge-to-edge so the illustration merges with its
+     backdrop. The frame tint matches the PNG canvas colour, and a
+     1.08 upscale eliminates any sub-pixel transparency leak at the
+     image edges. */
   .persona-avatar img,
   .persona-avatar .persona-svg {
     width:100%; height:100%;
     object-fit:cover;
-    object-position:center bottom;
+    object-position:center center;
     display:block;
-    /* Slight upscale for a more grounded, full-frame composition */
-    transform:scale(1.04);
-    transform-origin:center bottom;
+    transform:scale(1.08);
+    transform-origin:center center;
   }
   .persona-stage_tag {
     position:absolute; left:50%; bottom:-18px; transform:translateX(-50%);
