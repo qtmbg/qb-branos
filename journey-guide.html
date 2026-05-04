@@ -2,659 +2,729 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — Journey Guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Journey Guide · QB BrandOS</title>
+<meta name="description" content="Your guided journey through the QB BrandOS. Twenty agents across six phases. Pick up where you left off.">
 
+<meta name="theme-color" content="#2D1521">
+<meta name="color-scheme" content="light">
 
-<!-- Flash Prevention Script -->
-<script>
-(function(){
-  var t = localStorage.getItem('qb-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-  document.documentElement.setAttribute('data-theme', t);
-})();
-</script>
+<link rel="icon" type="image/svg+xml" href="/img/brand/web/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/brand/web/favicon-32x32.png">
+<link rel="shortcut icon" href="/img/brand/web/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+<link rel="manifest" href="/img/brand/web/site.webmanifest">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Quantum Branding">
+<meta property="og:title" content="Journey Guide · QB BrandOS">
+<meta property="og:description" content="Your guided journey through the brand operating system.">
+<meta property="og:image" content="https://quantumbranding.ai/img/brand/og/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
 <script src="/qb-cloud.js"></script>
-<style>html:not([data-theme]){background:#080604;color:#A89A88}</style>
-
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap">
 
 <style>
-/* ── DESIGN SYSTEM: ENTANGLED TIME ── */
-
-
-:root, [data-theme="dark"] {
-  /* Backgrounds — walnut-black */
-  --bg-void: #080604;
-  --bg-deep: #0A0806;
-  --bg-base: #0E0C09;
-  --bg-surface: rgba(140, 110, 70, 0.045);
-  --bg-elevated: rgba(140, 110, 70, 0.07);
-  --bg-overlay: rgba(18, 15, 10, 0.85);
-
-
-  /* Borders — warm-tinted */
-  --border-subtle: rgba(140, 110, 70, 0.06);
-  --border-medium: rgba(140, 110, 70, 0.11);
-  --border-strong: rgba(140, 110, 70, 0.18);
-
-
-  /* Patina (Structure, Action) */
-  --patina: #3A5F4A;
-  --patina-lit: #4A7A5E;
-  --patina-dim: rgba(58, 95, 74, 0.2);
-  --patina-faint: rgba(58, 95, 74, 0.08);
-
-
-  /* Brass (Life, Heartbeat) */
-  --brass: #A8903E;
-  --brass-lit: #C4A84E;
-  --brass-dim: rgba(168, 144, 62, 0.18);
-  --brass-faint: rgba(168, 144, 62, 0.06);
-
-
-  /* Text — cream */
-  --text-1: #DDD4C4;
-  --text-2: #A89A88;
-  --text-3: #6A5E50;
-  --text-4: #3E3830;
-
-
-  /* Phases */
-  --phase-1: #4A7A5E;
-  --phase-2: #4A7A8A;
-  --phase-3: #8A5A5A;
-  --phase-4: #5A7A6A;
-  --phase-5: #A8903E;
-}
-
-
-[data-theme="light"] {
-  /* Backgrounds — warm parchment */
-  --bg-void: #F4F0EB;
-  --bg-deep: #EDE8E2;
-  --bg-base: #E6E0D8;
-  --bg-surface: rgba(100, 80, 50, 0.04);
-  --bg-elevated: rgba(100, 80, 50, 0.07);
-  --bg-overlay: rgba(244, 240, 235, 0.9);
-
-
-  /* Borders */
-  --border-subtle: rgba(100, 80, 50, 0.08);
-  --border-medium: rgba(100, 80, 50, 0.14);
-  --border-strong: rgba(100, 80, 50, 0.22);
-
-
-  /* Patina */
-  --patina: #2E4E3C;
-  --patina-lit: #3A6A4E;
-  --patina-dim: rgba(46, 78, 60, 0.15);
-  --patina-faint: rgba(46, 78, 60, 0.06);
-
-
-  /* Brass */
-  --brass: #8A7430;
-  --brass-lit: #A08A3A;
-  --brass-dim: rgba(138, 116, 48, 0.15);
-  --brass-faint: rgba(138, 116, 48, 0.05);
-
-
-  /* Text — dark ink */
-  --text-1: #1A1610;
-  --text-2: #5A5040;
-  --text-3: #8A7E70;
-  --text-4: #B8AEA0;
-
-
-  /* Phases */
-  --phase-1: #2E5A42;
-  --phase-2: #2E5A6A;
-  --phase-3: #6A3A3A;
-  --phase-4: #3A5A4A;
-  --phase-5: #8A7430;
-}
-
-
 :root {
-  --font-serif: 'DM Serif Display', Georgia, serif;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  
-  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --cream:#FBF5E6; --cream-card:#F2EBD3; --cream-warm:#ECDDB8; --cream-edge:#DBD4C0;
+  --cream-rose:#F4D9DD; --white:#FFFEF8;
+  --ink:#2D1521;
+  --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.50);
+  --ink-33:rgba(45,21,33,0.33); --ink-25:rgba(45,21,33,0.25);
+  --gold:#E0B069; --rose:#CA6180; --teal:#9ED3DC;
+  --rose-deep:#8E3F58; --teal-deep:#5BA8B5; --gold-deep:#B58840; --aubergine:#4A2B3A;
+  --pink:#FCB7C7; --butter:#FEFD99; --teal-soft:#C5E5E9; --rose-soft:#ECC4D0;
+  --phase-acquisition:#C5E5E9;
+  --phase-discovery:#9CC4A2;
+  --phase-creation:#B5C8E5;
+  --phase-content:#FCB7C7;
+  --phase-execution:#E89380;
+  --phase-intelligence:#B080A0;
+  --illus-forest:#5B7E6A; --illus-peach:#E89380; --illus-coral:#DC6B52;
+  --illus-mustard:#D4B85A; --illus-rust:#B8704D; --illus-lavender:#B8A0C7;
+  --illus-pink-soft:#F4C4D0;
+  --scrim:rgba(251,245,230,0.90); --skeleton:rgba(224,176,105,0.33);
+
+  --step--2:clamp(0.7813rem,0.7546rem + 0.1254vw,0.88rem);
+  --step--1:clamp(0.9375rem,0.8937rem + 0.2063vw,1.1rem);
+  --step-0:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+  --step-1:clamp(1.35rem,1.2505rem + 0.4683vw,1.7188rem);
+  --step-2:clamp(1.62rem,1.4773rem + 0.6714vw,2.1488rem);
+  --step-3:clamp(1.9438rem,1.7436rem + 0.9421vw,2.6856rem);
+  --step-4:clamp(2.3325rem,2.0561rem + 1.3008vw,3.3569rem);
+  --step-5:clamp(2.7994rem,2.4224rem + 1.7738vw,4.1963rem);
+  --step-6:clamp(3.3594rem,2.8506rem + 2.3944vw,5.245rem);
+  --step-7:clamp(4.0313rem,3.3499rem + 3.2063vw,6.5563rem);
+  --space-3xs:clamp(0.5625rem,0.5288rem + 0.1587vw,0.6875rem);
+  --space-2xs:clamp(0.5625rem,0.5288rem + 0.1587vw,0.6875rem);
+  --space-xs:clamp(0.875rem,0.8244rem + 0.2381vw,1.0625rem);
+  --space-s:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+  --space-m:clamp(1.6875rem,1.5863rem + 0.4762vw,2.0625rem);
+  --space-l:clamp(2.25rem,2.1151rem + 0.6349vw,2.75rem);
+  --space-xl:clamp(3.375rem,3.1726rem + 0.9524vw,4.125rem);
+  --space-2xl:clamp(4.5rem,4.2302rem + 1.2698vw,5.5rem);
+  --space-3xl:clamp(6.75rem,6.3452rem + 1.9048vw,8.25rem);
+  --space-3xs-2xs:clamp(0.5625rem,0.5288rem + 0.1587vw,0.6875rem);
+  --space-xs-s:clamp(0.875rem,0.7401rem + 0.6349vw,1.375rem);
+  --space-s-m:clamp(1.125rem,0.872rem + 1.1905vw,2.0625rem);
+  --space-m-l:clamp(1.6875rem,1.4008rem + 1.3492vw,2.75rem);
+  --space-l-xl:clamp(2.25rem,1.744rem + 2.381vw,4.125rem);
+  --space-xl-2xl:clamp(3.375rem,2.8016rem + 2.6984vw,5.5rem);
+  --space-2xl-3xl:clamp(4.5rem,3.4881rem + 4.7619vw,8.25rem);
+  --ease-standard:cubic-bezier(0.4,0,0.2,1);
+  --ease-qb:cubic-bezier(0.19,1,0.22,1);
+  --ease-spring:cubic-bezier(0.175,0.885,0.32,1.275);
+  --ease-sharp:cubic-bezier(0.55,0.085,0.68,0.53);
+  --ease-glow:cubic-bezier(0.455,0.03,0.515,0.955);
+  --qb-scrollbar-w:10px; --qb-scrollbar-r:20px;
+
+  /* Tool-internal aliases */
+  --f-display:'Fraunces','Times New Roman',serif;
+  --f-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,monospace;
+  --bg-void:var(--cream);
+  --bg-deep:var(--cream-card);
+  --bg-base:var(--cream);
+  --bg-surface:var(--cream-card);
+  --bg-elevated:var(--white);
+  --bg-overlay:var(--white);
+  --border-subtle:var(--ink-25);
+  --border-medium:var(--ink-33);
+  --border-strong:var(--ink-50);
+  --text-1:var(--ink);
+  --text-2:var(--ink-75);
+  --text-3:var(--ink-50);
+  --text-4:var(--ink-33);
+  --patina:var(--phase-discovery);
+  --patina-lit:var(--illus-forest);
+  --brass:var(--gold);
+  --brass-lit:var(--gold-deep);
+  --phase-1:var(--phase-discovery);
+  --phase-2:var(--phase-creation);
+  --phase-3:var(--phase-content);
+  --phase-4:var(--phase-execution);
+  --phase-5:var(--phase-intelligence);
 }
 
-
-/* Light mode specific adjustments */
-[data-theme="light"] body::after { opacity: 0.02; }
-[data-theme="light"] .vignette {
-  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(200, 190, 175, 0.15) 100%);
+*,*::before,*::after { box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,figure,blockquote { margin:0; }
+ul,ol { padding:0; list-style:none; }
+img,svg,video { display:block; max-width:100%; }
+button { font:inherit; color:inherit; cursor:pointer; border:none; outline:none; background:transparent; }
+a { color:inherit; text-decoration:none; }
+html,body {
+  font-family:var(--f-body); font-weight:500;
+  color:var(--ink); background:var(--cream);
+  overflow-y:scroll; line-height:1.5;
 }
+body { min-height:100vh; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+::-webkit-scrollbar { width:var(--qb-scrollbar-w); }
+::-webkit-scrollbar-track { background:var(--cream); }
+::-webkit-scrollbar-thumb { background:var(--cream-warm); border-radius:var(--qb-scrollbar-r); }
+::-webkit-scrollbar-thumb:hover { background:var(--gold); }
+::selection { background:var(--teal); color:var(--ink); }
 
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-
-body { 
-  background: var(--bg-void); 
-  color: var(--text-2); 
-  font-family: var(--font-sans); 
-  min-height: 100vh; 
-  overflow-x: hidden; 
-  -webkit-font-smoothing: antialiased; 
+.qb-type-nav {
+  font-family:var(--f-body); font-weight:600; font-size:var(--step--2);
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--ink); text-decoration:none;
+  transition:color 0.4s var(--ease-qb);
 }
+.qb-type-nav:hover { color:var(--gold); }
+.qb-type-subtext { font-family:var(--f-body); font-weight:500; font-size:var(--step--2); color:var(--ink); }
+em { font-style:italic; }
 
-
-/* 1. Film Grain Overlay */
-body::after {
-  content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 256px 256px;
+/* BUTTON */
+.qb-button {
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  background:transparent; border:0; padding:0; font-size:var(--space-m); cursor:pointer;
+  isolation:isolate; text-decoration:none; color:inherit;
 }
-
-
-/* 8. Warm Vignette */
-.vignette {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(ellipse 70% 60% at 50% 35%, transparent 0%, rgba(8, 6, 4, 0.4) 100%);
+.qb-button::before {
+  content:''; position:absolute; inset:0; border-radius:9999px; background:var(--ink);
+  transform:translateY(0.17em) scale(0.99);
+  transition:transform 0.4s var(--ease-qb); z-index:-1;
 }
-
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-void); }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
-
-
-/* FIX #7: Removed blanket outline:none; focus rings now handled by :focus-visible below */
-button, a { cursor: pointer; border: none; background: none; text-decoration: none; color: inherit; font-family: inherit; }
-
-/* FIX #7: Explicit, on-brand focus rings for keyboard navigation (WCAG 2.4.7) */
-a:focus-visible, button:focus-visible {
-  outline: 2px solid var(--patina);
-  outline-offset: 3px;
-  border-radius: 3px;
+.qb-button_content {
+  position:relative; display:inline-flex; align-items:center; justify-content:center; gap:0.5em;
+  border:2px solid var(--ink); border-radius:9999px;
+  background:var(--white); color:var(--ink);
+  padding:1.1em 1.5em;
+  font-family:var(--f-body); font-weight:700; font-size:0.5em; line-height:1.5em;
+  letter-spacing:0.02em;
+  transform:translateY(-0.17em);
+  transition:transform 0.4s var(--ease-qb),filter 0.4s var(--ease-qb),background 0.4s var(--ease-qb),color 0.4s var(--ease-qb);
+  white-space:nowrap;
 }
-
-
-/* Typography Globals */
-h1, h2, h3, .serif-title { font-family: var(--font-serif); color: var(--text-1); font-weight: 400; letter-spacing: -0.015em; }
-p, .sans-body { font-family: var(--font-sans); color: var(--text-2); line-height: 1.7; }
-.mono-label { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-3); }
-
-
-/* 5. Input / Textarea Focus — outline:none is intentional for form fields only */
-input:focus, textarea:focus {
-  border-color: var(--patina);
-  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
-  outline: none;
+@media (hover:hover) {
+  .qb-button:hover .qb-button_content { transform:translateY(-0.35em); filter:brightness(1.05); }
 }
-/* Button focus-visible: shadow supplement only — outline comes from fix #7 rule above */
-button:focus-visible {
-  border-color: var(--patina);
-  box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
+.qb-button:active .qb-button_content { transform:translateY(0.28em) scale(0.99); filter:brightness(0.9); }
+.qb-button.is-primary   .qb-button_content { background:var(--gold); color:var(--ink); }
+.qb-button.is-sm        .qb-button_content { padding:0.8em 1.4em; font-size:0.4em; }
+.qb-button.is-sm::before { transform:translateY(0.1em) scale(0.99); }
+.qb-button.is-expand { width:100%; }
+.qb-button.is-expand .qb-button_content { width:100%; }
+
+/* LOADING BAR */
+.qb-loading-bar {
+  position:fixed; top:0; left:0; right:0; height:4px; z-index:100; pointer-events:none;
+  background:linear-gradient(to right,rgba(158,211,220,0) 0%,var(--teal) 50%,rgba(158,211,220,0) 100%);
+  animation:qb-loading-bar 1s linear infinite;
+  opacity:1; transition:opacity 0.75s ease 0.5s;
 }
+.qb-loading-bar[data-state="idle"] { opacity:0; }
+@keyframes qb-loading-bar { 0%,100% { transform:translateX(-100%); } 99.99% { transform:translateX(100%); } }
 
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-.fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-
-/* FIX #9: Respect OS-level reduced-motion preference */
-@media (prefers-reduced-motion: reduce) {
-  .pulse-dot { animation: none; }
-  .fade-in { animation: none; opacity: 1; }
+/* BANNER */
+.banner {
+  background:var(--ink); color:var(--cream); text-align:center;
+  padding:0.7em var(--space-m-l);
+  font-family:var(--f-body); font-size:var(--step--2); font-weight:500; letter-spacing:0.04em;
 }
+.banner a { color:var(--gold); text-decoration:none; font-weight:600; margin-left:0.5em; }
+.banner a:hover { text-decoration:underline; text-underline-offset:3px; }
 
+/* NAV */
+.nav-wrap { padding:var(--space-s) var(--space-m-l); }
+.nav {
+  max-width:1320px; margin-inline:auto;
+  display:flex; align-items:center; justify-content:space-between; gap:var(--space-m);
+  background:var(--cream); border:2px solid var(--ink); border-radius:9999px;
+  padding:0.6rem 0.6rem 0.6rem 1.4rem; box-shadow:0 6px var(--ink);
+}
+.nav-brand {
+  display:inline-flex; align-items:center; gap:0.6rem;
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 600,"opsz" 36,"SOFT" 70,"WONK" 0;
+  font-size:var(--step-0); color:var(--ink); text-decoration:none; line-height:1;
+}
+.nav-brand_dot {
+  width:0.65em; height:0.65em; border-radius:50%; background:var(--rose);
+  display:inline-block; box-shadow:0 0 0 3px rgba(202,97,128,0.18);
+  animation:nav-dot-pulse 2.4s var(--ease-qb) infinite;
+}
+@keyframes nav-dot-pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.18); } }
+.nav-links { display:none; align-items:center; gap:var(--space-s); }
+@media (min-width:1000px) { .nav-links { display:inline-flex; } }
+.nav-actions { display:inline-flex; align-items:center; gap:0.5rem; }
+.hamburger {
+  display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  width:44px; height:44px; border:2px solid var(--ink); border-radius:9999px;
+  background:var(--cream); cursor:pointer; padding:0;
+}
+@media (min-width:1000px) { .hamburger { display:none; } }
+.hamburger span { display:block; width:18px; height:2px; background:var(--ink); }
 
-/* ── PROGRESS BAR ── */
+/* MOBILE MENU */
+.mobile-menu {
+  position:fixed; inset:0; z-index:90; background:var(--cream);
+  padding:var(--space-l) var(--space-m-l);
+  display:none; flex-direction:column;
+}
+.mobile-menu[data-open="true"] { display:flex; }
+.mobile-menu_head { display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-l); }
+.mobile-menu_close {
+  width:44px; height:44px; border-radius:9999px; border:2px solid var(--ink); background:var(--cream);
+  font-size:1.1rem; cursor:pointer;
+}
+.mobile-menu_list { display:flex; flex-direction:column; gap:var(--space-s); }
+.mobile-menu_list a {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 500,"opsz" 72,"SOFT" 70;
+  font-size:var(--step-3); color:var(--ink); text-decoration:none;
+  border-bottom:1px solid var(--ink-25); padding:0.5em 0;
+}
+.mobile-menu_foot { margin-top:auto; padding-top:var(--space-l); }
+
+/* FOOTER */
+.footer {
+  background:var(--cream);
+  padding:var(--space-l) var(--space-m-l);
+  border-top:2px solid var(--ink);
+  margin-top:var(--space-2xl);
+}
+.footer_inner {
+  max-width:1240px; margin-inline:auto;
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:var(--space-m);
+}
+.footer_brand {
+  display:inline-flex; align-items:center; gap:0.5em;
+  font-family:var(--f-display); font-variation-settings:"wght" 600,"opsz" 36;
+  font-size:var(--step-0); color:var(--ink); text-decoration:none;
+}
+.footer_links { display:inline-flex; gap:var(--space-m); flex-wrap:wrap; }
+.footer_links a { color:var(--ink-75); text-decoration:none; font-size:var(--step--1); }
+.footer_links a:hover { color:var(--ink); text-decoration:underline; text-underline-offset:4px; }
+
+/* ============ JOURNEY GUIDE — page-specific ============ */
 #progress-bar-wrap {
-  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200;
-  background: var(--bg-deep);
+  position:fixed; top:0; left:0; right:0; height:3px; z-index:50;
+  background:var(--ink-25);
 }
 .progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--patina), var(--brass));
-  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 0 2px 2px 0;
-  width: 0%;
+  height:100%;
+  background:linear-gradient(90deg,var(--gold),var(--phase-discovery));
+  transition:width 0.6s var(--ease-qb);
 }
 
-
-/* ── HEADER ── */
-header {
-  position: fixed; top: 3px; left: 0; right: 0; height: 56px;
-  background: color-mix(in srgb, var(--bg-void) 85%, transparent);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-subtle); z-index: 100;
-  display: flex; align-items: center;
+.journey-head {
+  max-width:1100px; margin:0 auto;
+  padding:var(--space-l) var(--space-m-l);
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:var(--space-m);
 }
-.header-inner {
-  max-width: 900px; margin: 0 auto; width: 100%; padding: 0 28px;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+.journey-head .badge-guide {
+  display:inline-flex; align-items:center; gap:0.4em;
+  background:var(--cream); border:1px solid var(--ink); border-radius:9999px;
+  padding:0.4em 1em;
+  font-family:var(--f-mono); font-size:0.7rem; font-weight:600;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-75);
 }
-.header-left { display: flex; align-items: center; gap: 16px; }
-.logo { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-1); letter-spacing: 0.12em; transition: color 0.3s ease; }
-.logo:hover { color: var(--patina-lit); }
-.badge-guide {
-  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.15em;
-  background: var(--bg-surface); color: var(--text-3); padding: 5px 10px;
-  border-radius: 4px; border: 1px solid var(--border-subtle);
+.journey-head .step-counter {
+  font-family:var(--f-mono); font-size:0.85rem; color:var(--ink-75);
+  letter-spacing:0.04em;
 }
-.header-right { display: flex; align-items: center; gap: 24px; }
-.step-counter { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.05em; }
-.step-counter span { color: var(--text-1); font-weight: 500; }
 
-
-.theme-toggle {
-  width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-  color: var(--text-3); transition: all 0.3s ease; border: 1px solid transparent;
+.mono-label {
+  font-family:var(--f-mono); font-size:0.7rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-50);
 }
-.theme-toggle:hover { background: var(--bg-surface); color: var(--text-1); border-color: var(--border-subtle); }
-[data-theme="dark"] .icon-sun { display: block; }
-[data-theme="dark"] .icon-moon { display: none; }
-[data-theme="light"] .icon-sun { display: none; }
-[data-theme="light"] .icon-moon { display: block; }
 
+main.journey {
+  max-width:1100px; margin:0 auto;
+  padding:var(--space-m) var(--space-m-l) var(--space-2xl);
+}
 
-/* ── MAIN ── */
-main { position: relative; z-index: 10; max-width: 740px; margin: 0 auto; padding: 120px 24px 120px; }
+#return-banner {
+  background:var(--phase-discovery); color:var(--ink);
+  border:2px solid var(--ink); border-radius:18px;
+  padding:var(--space-s) var(--space-m); margin-bottom:var(--space-m);
+  display:none; align-items:center; justify-content:space-between; gap:var(--space-s); flex-wrap:wrap;
+  box-shadow:0 6px var(--ink);
+}
+#return-banner #rb-eyebrow { font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink); margin-bottom:4px; }
+#return-banner #rb-msg { font-size:var(--step--1); line-height:1.5; color:var(--ink); }
+#return-banner #rb-cta {
+  background:var(--ink); color:var(--cream);
+  border:2px solid var(--ink); border-radius:9999px;
+  padding:0.7em 1.4em;
+  font-family:var(--f-body); font-size:0.8rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+  cursor:pointer; white-space:nowrap;
+  transition:transform 0.3s var(--ease-qb);
+}
+#return-banner #rb-cta:hover { transform:translateY(-2px); }
 
-
-/* 2. Warm Glass Cards */
 .glass-card {
-  background: var(--bg-overlay);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px; position: relative; overflow: hidden;
+  background:var(--cream-card);
+  border:2px solid var(--ink); border-radius:24px;
+  padding:var(--space-m);
+  box-shadow:0 6px var(--ink);
+  position:relative;
+  overflow:hidden;
 }
-.glass-card::before {
-  content: ''; position: absolute; top: -30%; left: -10%; width: 60%; height: 60%;
-  background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%);
-  pointer-events: none;
+@media (min-width:640px) { .glass-card { box-shadow:0 9px var(--ink); padding:var(--space-l); } }
+
+#current-step-hero { margin-bottom:var(--space-l); }
+.csh-eyebrow {
+  display:inline-flex; align-items:center; gap:0.5em;
+  font-family:var(--f-mono); font-size:0.7rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-75);
+  margin-bottom:var(--space-s);
+}
+.csh-title {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 60,"WONK" 0;
+  font-size:clamp(2rem,5vw,3.5rem);
+  line-height:1.05; letter-spacing:-0.01em;
+  color:var(--ink);
+  margin-bottom:var(--space-s);
+}
+.csh-desc {
+  font-size:var(--step-0); line-height:1.55;
+  color:var(--ink-75);
+  margin-bottom:var(--space-s);
+  max-width:720px;
+}
+.csh-time {
+  display:inline-flex; align-items:center; gap:0.5em;
+  font-family:var(--f-mono); font-size:0.75rem;
+  color:var(--ink-50); letter-spacing:0.06em;
+  margin-bottom:var(--space-m);
 }
 
+.manifesto-block {
+  position:relative;
+  padding:var(--space-s) var(--space-s) var(--space-s) var(--space-m);
+  margin-top:var(--space-s);
+  border-left:3px solid var(--gold);
+  background:rgba(224,176,105,0.10);
+  border-radius:0 12px 12px 0;
+}
+.csh-output-label { margin-bottom:var(--space-2xs); }
+.csh-output-item {
+  display:flex; align-items:flex-start; gap:0.6em;
+  padding:0.4em 0;
+  font-size:var(--step--1); color:var(--ink-75); line-height:1.5;
+}
+.csh-output-dot { color:var(--gold); flex-shrink:0; }
 
-/* 6. Primary Button */
 .btn-primary {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  background: var(--patina); color: #E6DDD0; font-family: var(--font-sans);
-  font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 14px 32px; border-radius: 7px; border: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display:inline-flex; align-items:center; gap:0.4em;
+  background:var(--gold); color:var(--ink);
+  border:2px solid var(--ink); border-radius:9999px;
+  padding:1em 1.8em;
+  font-family:var(--f-body); font-weight:700; font-size:0.85rem;
+  letter-spacing:0.04em; text-transform:uppercase;
+  box-shadow:0 4px var(--ink);
+  transition:transform 0.3s var(--ease-qb),box-shadow 0.3s var(--ease-qb);
+  cursor:pointer; margin-top:var(--space-s);
 }
-.btn-primary:hover {
-  background: var(--patina-lit); transform: translateY(-1px);
-  box-shadow: 0 4px 24px -4px var(--patina-dim), 0 0 0 1px var(--brass-faint);
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px var(--ink); }
+.btn-primary:active { transform:translateY(2px); box-shadow:0 2px var(--ink); }
+
+.btn-secondary {
+  display:inline-flex; align-items:center; gap:0.4em;
+  background:transparent; color:var(--ink);
+  border:2px solid var(--ink); border-radius:9999px;
+  padding:0.85em 1.6em;
+  font-family:var(--f-body); font-weight:600; font-size:0.78rem;
+  letter-spacing:0.04em; text-transform:uppercase;
+  transition:background 0.3s var(--ease-qb),color 0.3s var(--ease-qb);
+  cursor:pointer;
+}
+.btn-secondary:hover { background:var(--ink); color:var(--cream); }
+
+#journey-map { display:flex; flex-direction:column; gap:var(--space-m); margin-top:var(--space-m); }
+
+.progress-summary {
+  display:flex; align-items:center; gap:var(--space-m);
+  padding:var(--space-m);
+}
+.ps-number {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 600,"opsz" 144";
+  font-size:clamp(3rem,7vw,5rem);
+  line-height:1; letter-spacing:-0.02em;
+}
+.ps-text { display:flex; flex-direction:column; gap:0.4em; }
+.ps-title {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 500,"opsz" 48";
+  font-size:var(--step-2);
+  color:var(--ink);
+}
+.ps-sub { font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-50); }
+
+.phase-zone {
+  background:var(--cream-card);
+  border:2px solid var(--ink); border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 6px var(--ink);
+}
+@media (min-width:640px) { .phase-zone { box-shadow:0 9px var(--ink); } }
+.phase-header {
+  width:100%;
+  display:flex; align-items:center; gap:var(--space-s);
+  padding:var(--space-s) var(--space-m);
+  text-align:left;
+  background:transparent;
+  cursor:pointer;
+}
+.phase-header:hover { background:rgba(45,21,33,0.04); }
+.phase-dot {
+  width:44px; height:44px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-mono); font-size:0.85rem; font-weight:700;
+  flex-shrink:0;
+}
+.phase-title {
+  flex:1;
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 600,"opsz" 48";
+  font-size:var(--step-1);
+  color:var(--ink);
+}
+.phase-status {
+  font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase;
+  border:1px solid var(--ink-25); border-radius:9999px;
+  padding:0.4em 0.9em;
+  white-space:nowrap;
+}
+.phase-chevron { color:var(--ink-50); transition:transform 0.3s var(--ease-qb); flex-shrink:0; }
+.phase-chevron.open { transform:rotate(180deg); }
+
+.steps-container { padding:0 var(--space-m) var(--space-m); display:flex; flex-direction:column; gap:var(--space-s); }
+.step-card {
+  background:var(--cream); border:2px solid var(--ink-25); border-radius:18px;
+  padding:var(--space-s) var(--space-m);
+  transition:border-color 0.3s var(--ease-qb),transform 0.3s var(--ease-qb);
+}
+.step-card.active-step { border-color:var(--ink); border-width:2px; box-shadow:0 4px var(--ink); }
+.step-card.done-step { background:rgba(156,196,162,0.18); }
+.step-card.locked-step { opacity:0.5; }
+.step-header { display:flex; gap:var(--space-s); align-items:flex-start; }
+.step-num {
+  font-family:var(--f-mono); font-size:0.85rem; font-weight:700;
+  width:36px; flex-shrink:0; padding-top:0.2em;
+}
+.step-body { flex:1; }
+.step-name {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 600,"opsz" 48";
+  font-size:var(--step-1); color:var(--ink); line-height:1.15;
+  margin-bottom:0.4em;
+}
+.step-desc {
+  font-size:var(--step--1); line-height:1.55;
+  color:var(--ink-75);
+  margin-bottom:var(--space-s);
+}
+.step-meta { display:flex; flex-wrap:wrap; gap:0.5em; margin-bottom:var(--space-s); }
+.step-tag {
+  font-family:var(--f-mono); font-size:0.65rem; font-weight:600;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--ink-75);
+  background:var(--cream-card);
+  border:1px solid var(--ink-25); border-radius:9999px;
+  padding:0.35em 0.85em;
+}
+.step-action { display:flex; gap:0.5em; flex-wrap:wrap; margin-top:var(--space-xs); }
+.step-done-badge {
+  font-family:var(--f-mono); font-size:0.75rem; font-weight:700;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--phase-discovery);
 }
 
+.completion-card { text-align:center; padding:var(--space-2xl) var(--space-m); }
+.completion-check {
+  width:64px; height:64px; margin:0 auto var(--space-m);
+  background:var(--phase-discovery); color:var(--ink);
+  border:2px solid var(--ink); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+}
+.completion-sub {
+  font-size:var(--step-0); color:var(--ink-75); line-height:1.55;
+  max-width:560px; margin:var(--space-s) auto var(--space-m);
+}
+.completion-ctas { display:flex; gap:var(--space-s); justify-content:center; flex-wrap:wrap; }
 
-/* 3. Brass Heartbeat Pulse */
+.fade-in { animation:fadeIn 0.5s var(--ease-qb) both; }
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:none; }
+}
+
 .pulse-dot {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--brass); flex-shrink: 0;
-  box-shadow: 0 0 8px rgba(168, 144, 62, 0.7), 0 0 2px rgba(168, 144, 62, 1);
-  animation: beat 3s ease infinite;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--gold);
+  animation:beat 3s ease infinite;
+  display:inline-block;
 }
 @keyframes beat {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  12% { transform: scale(1.35); opacity: 1; }
-  24% { transform: scale(0.95); opacity: 0.6; }
-  36% { transform: scale(1.15); opacity: 1; }
-  48% { transform: scale(1); opacity: 0.7; }
+  0%,100% { transform:scale(1); opacity:1; }
+  50% { transform:scale(1.3); opacity:0.7; }
 }
 
-
-/* ── HERO ── */
-#current-step-hero { padding: 40px; margin-bottom: 48px; box-shadow: var(--shadow-soft); }
-.csh-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; color: var(--brass); }
-.csh-title { font-size: 40px; line-height: 1.15; margin-bottom: 16px; }
-.csh-desc { max-width: 90%; margin-bottom: 28px; font-size: 15px; }
-.csh-time { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; color: var(--text-3); font-size: 11px; font-family: var(--font-mono); }
-
-
-/* 4. Manifesto Block (Outputs) */
-.manifesto-block {
-  position: relative; padding: 20px 0 20px 24px; margin-bottom: 32px; background: transparent;
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .qb-button:hover .qb-button_content,
+  .qb-button:active .qb-button_content { transform:none; }
+  .nav-brand_dot, .pulse-dot { animation:none; }
+  .fade-in { animation:none; opacity:1; transform:none; }
 }
-.manifesto-block::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2.5px;
-  background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
-  border-radius: 2px; box-shadow: 0 0 8px var(--brass-dim);
-}
-.csh-output-label { margin-bottom: 12px; color: var(--text-2); }
-.csh-output-item { font-size: 14px; color: var(--text-1); display: flex; gap: 12px; padding: 5px 0; align-items: flex-start; }
-.csh-output-dot { color: var(--brass); font-family: var(--font-serif); font-size: 16px; line-height: 1; margin-top: 2px; }
-
-
-/* ── PROGRESS SUMMARY ── */
-.progress-summary {
-  display: flex; align-items: center; gap: 24px; margin-bottom: 40px; padding: 28px 32px;
-}
-.ps-number { font-family: var(--font-serif); font-size: 48px; color: var(--text-1); line-height: 1; }
-.ps-text { flex: 1; }
-.ps-title { font-size: 16px; color: var(--text-1); margin-bottom: 6px; font-weight: 500; }
-.ps-sub { color: var(--text-3); }
-
-
-/* ── PHASE ZONES ── */
-.phase-zone {
-  border: 1px solid var(--border-subtle); border-radius: 12px; margin-bottom: 24px;
-  background: var(--bg-deep); transition: all 0.4s ease; overflow: hidden;
-}
-.phase-header {
-  display: flex; align-items: center; gap: 20px; padding: 24px 28px; cursor: pointer;
-  background: transparent; transition: background 0.3s ease;
-  /* FIX #8: width:100% so the button fills the zone row */
-  width: 100%; text-align: left;
-}
-.phase-header:hover { background: var(--bg-surface); }
-.phase-dot {
-  width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600; flex-shrink: 0; transition: all 0.4s ease;
-}
-.phase-title { font-family: var(--font-serif); font-size: 22px; color: var(--text-1); flex: 1; letter-spacing: -0.01em; }
-.phase-status {
-  padding: 6px 12px; border-radius: 6px; flex-shrink: 0; border: 1px solid var(--border-subtle);
-}
-.phase-chevron { color: var(--text-3); font-size: 14px; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); flex-shrink: 0; }
-.phase-chevron.open { transform: rotate(180deg); }
-
-
-/* ── STEPS ── */
-.steps-container { padding: 0 28px 28px 28px; }
-.step-card {
-  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 10px;
-  padding: 32px; margin-bottom: 16px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative;
-}
-.step-card:last-child { margin-bottom: 0; }
-.step-card:hover:not(.locked-step) { background: var(--bg-elevated); transform: translateY(-2px); }
-
-
-.step-card.active-step { background: var(--bg-elevated); box-shadow: var(--shadow-soft); }
-.step-card.done-step { opacity: 0.6; filter: grayscale(40%); }
-.step-card.locked-step { opacity: 0.3; filter: grayscale(100%); pointer-events: none; }
-
-
-.step-header { display: flex; align-items: flex-start; gap: 20px; }
-.step-num { font-family: var(--font-serif); font-size: 20px; width: 32px; flex-shrink: 0; line-height: 1.2; }
-.step-body { flex: 1; }
-.step-name { font-family: var(--font-serif); font-size: 22px; color: var(--text-1); margin-bottom: 10px; line-height: 1.3; }
-.step-desc { margin-bottom: 20px; }
-.step-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-.step-tag {
-  padding: 5px 12px; border-radius: 4px; background: var(--bg-deep); border: 1px solid var(--border-subtle);
-}
-
-
-.step-action { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-.btn-secondary {
-  display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text-2);
-  font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 13px 24px;
-  border-radius: 7px; cursor: pointer; transition: all 0.3s ease; border: 1px solid var(--border-medium); font-family: var(--font-sans);
-}
-.btn-secondary:hover { background: var(--bg-surface); color: var(--text-1); border-color: var(--brass-dim); }
-.step-done-badge { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--text-3); }
-
-
-/* ── COMPLETION CARD ── */
-.completion-card {
-  padding: 56px 40px; text-align: center; margin-top: 48px; border-radius: 16px;
-}
-.completion-check {
-  width: 72px; height: 72px; background: var(--patina); color: #E6DDD0; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; margin: 0 auto 32px;
-  box-shadow: 0 0 40px var(--patina-dim);
-}
-.completion-sub { font-size: 16px; max-width: 520px; margin: 0 auto 40px; }
-.completion-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-
-
 </style>
 </head>
+
 <body>
 
+<div class="qb-loading-bar" id="qbLoadingBar"></div>
 
-<div class="vignette"></div>
-<div id="progress-bar-wrap"><div class="progress-fill" id="progress-bar-fill"></div></div>
+<div class="banner">
+  <strong>Signal Scan is live.</strong> Free brand diagnostic. 5 minutes to your first insight.
+  <a href="signal-scan.html">Run yours →</a>
+</div>
 
-
-<header>
-  <div class="header-inner">
-    <div class="header-left">
-      <!-- FIX #1: Corrected filename typo branidos → brandos -->
-      <a href="qb-brandos-hub.html" class="logo">QB_BRANDOS</a>
-      <span class="badge-guide">JOURNEY GUIDE</span>
-    </div>
-    <div class="header-right">
-      <div class="step-counter">Step <span id="current-step-display">-</span> of <span id="total-steps-display">-</span></div>
-      <div id="phase-display" class="mono-label"></div>
-      <button type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+<div class="nav-wrap">
+  <header class="nav">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-brand_dot" aria-hidden="true"></span>
+      Quantum Branding
+    </a>
+    <nav class="nav-links">
+      <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
+      <a href="tools.html" class="qb-type-nav">Tools</a>
+      <a href="qb-branidos-hub.html" class="qb-type-nav" style="color:var(--gold);">Hub</a>
+      <a href="ecosystem.html#about" class="qb-type-nav">About</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="https://app.quantumbranding.ai" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
+      <a href="signal-scan.html" class="qb-button is-primary is-sm"><span class="qb-button_content">Start free</span></a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
       </button>
     </div>
+  </header>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu_head">
+    <span class="nav-brand"><span class="nav-brand_dot"></span>Quantum Branding</span>
+    <button class="mobile-menu_close" id="mobileMenuClose" aria-label="Close menu">×</button>
   </div>
-</header>
+  <nav class="mobile-menu_list">
+    <a href="ecosystem.html">Ecosystem</a>
+    <a href="tools.html">Tools</a>
+    <a href="qb-branidos-hub.html">Hub</a>
+    <a href="ecosystem.html#about">About</a>
+    <a href="signal-scan.html">Free scan</a>
+  </nav>
+  <div class="mobile-menu_foot">
+    <a href="signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+  </div>
+</div>
 
+<div id="progress-bar-wrap"><div class="progress-fill" id="progress-bar-fill"></div></div>
 
-<main>
-  <!-- Returning-user banner — injected by render() when authed -->
-  <div id="return-banner" style="display:none;background:linear-gradient(90deg,rgba(74,222,128,0.10),rgba(74,222,128,0.02) 70%,transparent);border:1px solid rgba(74,222,128,0.22);border-radius:12px;padding:14px 18px;margin-bottom:18px;display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
-    <div style="flex:1;min-width:240px">
-      <div id="rb-eyebrow" style="font-family:var(--f-mono,monospace);font-size:10px;letter-spacing:.16em;color:#4ade80;margin-bottom:4px;text-transform:uppercase">WELCOME BACK</div>
-      <div id="rb-msg" style="font-size:14px;line-height:1.5;color:var(--text-1)">Phase 01 is in progress.</div>
+<section class="journey-head">
+  <span class="badge-guide">
+    <span class="pulse-dot"></span>
+    Journey Guide
+  </span>
+  <div class="step-counter">Step <span id="current-step-display">-</span> of <span id="total-steps-display">-</span> · <span id="phase-display"></span></div>
+</section>
+
+<main class="journey">
+
+  <div id="return-banner">
+    <div style="flex:1; min-width:240px;">
+      <div id="rb-eyebrow">Welcome back</div>
+      <div id="rb-msg">Phase 01 is in progress.</div>
     </div>
-    <button id="rb-cta" type="button" style="background:#4ade80;color:#000;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Continue →</button>
+    <button id="rb-cta" type="button">Continue →</button>
   </div>
 
-  <!-- Current Step Hero -->
-  <div id="current-step-hero" class="glass-card fade-in" style="animation-delay: 0.1s">
-    <div class="csh-eyebrow mono-label" id="hero-eyebrow">Your next step</div>
+  <div id="current-step-hero" class="glass-card fade-in">
+    <div class="csh-eyebrow" id="hero-eyebrow"><span class="pulse-dot"></span>Your next step</div>
     <h1 class="csh-title" id="hero-title">Loading your journey…</h1>
     <p class="csh-desc" id="hero-desc"></p>
     <div class="csh-time">
       <span>⏱</span>
       <span id="hero-time"></span>
     </div>
-    <div class="manifesto-block" id="hero-output" style="display:none">
-      <!-- FIX #13: Removed orphaned id="hero-output-label" — never referenced by JS -->
+    <div class="manifesto-block" id="hero-output" style="display:none;">
       <div class="csh-output-label mono-label">You will get</div>
       <div id="hero-output-items"></div>
     </div>
-    <button type="button" class="btn-primary" onclick="openCurrentStep()">Open Tool →</button>
+    <button type="button" class="btn-primary" onclick="openCurrentStep()">Open tool →</button>
   </div>
 
-
-  <!-- Journey Map -->
   <div id="journey-map"></div>
 
-
-  <!-- Completion -->
-  <!-- FIX #10: Removed fade-in class from static HTML; animation is triggered in JS after display:block -->
-  <div id="completion-card" class="glass-card completion-card" style="display:none">
-    <!-- FIX #17: Replaced raw ✓ unicode with inline SVG for consistent cross-OS rendering -->
+  <div id="completion-card" class="glass-card completion-card" style="display:none;">
     <div class="completion-check">
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
     </div>
     <h1 class="csh-title">Your brand is built.</h1>
     <p class="completion-sub">You have completed the full QB BrandOS journey. Your QBP is fully populated, your brand system is live, and the intelligence cycle begins. Every quarter, the system gets smarter.</p>
     <div class="completion-ctas">
-      <!-- FIX #1: Corrected filename typo branidos → brandos -->
-      <a href="qb-brandos-hub.html" class="btn-secondary">Return to Hub</a>
-      <a href="brand-performance-dashboard.html" class="btn-primary">Start Review</a>
+      <a href="qb-branidos-hub.html" class="btn-secondary">Return to hub</a>
+      <a href="brand-performance-dashboard.html" class="btn-primary">Start review</a>
     </div>
   </div>
 </main>
 
+<footer class="footer">
+  <div class="footer_inner">
+    <a href="index.html" class="footer_brand">
+      <span class="nav-brand_dot" aria-hidden="true"></span>
+      Quantum Branding
+    </a>
+    <nav class="footer_links">
+      <a href="ecosystem.html#about">About</a>
+      <a href="ecosystem.html#pricing">Pricing</a>
+      <a href="tools.html">Tools</a>
+      <a href="mailto:hello@quantumbranding.ai">Contact</a>
+    </nav>
+    <div class="qb-type-subtext" style="color:var(--ink-50);">© Quantum Branding · Built by Nizzar Ben Chekroune</div>
+  </div>
+</footer>
 
 <script>
-// ── THEME TOGGLE ──
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('qb-theme', next);
-}
+window.addEventListener('load', function () {
+  var bar = document.getElementById('qbLoadingBar');
+  if (bar) setTimeout(function () { bar.dataset.state = 'idle'; }, 400);
+});
 
+(function () {
+  var ham = document.getElementById('hamburger');
+  var mm = document.getElementById('mobileMenu');
+  var mc = document.getElementById('mobileMenuClose');
+  if (!ham || !mm || !mc) return;
+  function closeMM() { mm.dataset.open = 'false'; document.body.style.overflow = ''; }
+  ham.addEventListener('click', function () { mm.dataset.open = 'true'; document.body.style.overflow = 'hidden'; });
+  mc.addEventListener('click', closeMM);
+  Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
+})();
 
-// ── JOURNEY DEFINITION ──
 const JOURNEY = [
   {
-    phase: 1, phaseLabel: 'Discovery', phaseColor: 'var(--phase-1)',
+    phase: 1, phaseLabel: 'Discovery', phaseColor: 'var(--phase-discovery)',
     steps: [
-      {
-        id: 'archetype-compass', name: 'Archetype Compass', storageKey: 'qb_archetype_compass_done',
-        time: '5–10 min',
-        desc: 'The first step. 10 exercises read your brand\'s archetype trinity — primary identity, secondary texture, and the tension you must manage. Everything downstream sharpens once this is set.',
-        outputs: ['Archetype trinity (primary · secondary · tension)', 'Central paradox statement', 'Strategic moat and open-space read', 'Operating mode (decision style · rhythm · yes/no)', '13-section strategic reading'],
-        file: 'archetype-compass.html', phase: 1
-      },
-      {
-        id: 'soul-map', name: 'Brand Soul Map', storageKey: 'qb_soul_map_done',
-        time: '45–60 min',
-        desc: 'Uncover your brand\'s irreducible truth. 12 modules. 15 exercises. The foundational identity document that every other tool in the system reads from.',
-        outputs: ['Your Brand Essence — one precise sentence', 'The Spark — your full brand narrative', 'Primary + Secondary Archetype', 'Manifesto line and Anti-Brand', 'Your primary persona defined'],
-        file: 'brand-soul-map.html', phase: 1
-      },
-      {
-        id: 'sensescape', name: 'Sensescape', storageKey: 'qb_sensescape_done',
-        time: '30–40 min',
-        desc: 'Map the sensory universe of your brand through 47 spectrums across 7 chapters — color, type, form, motion, texture. Produces the Designer Brief and Sensescape Codex.',
-        outputs: ['Color territory with emotional logic', 'Typography direction and weight', 'Designer Brief ready to send', 'Visual paradoxes identified'],
-        file: 'sensescape.html', phase: 1
-      },
-      {
-        id: 'visual-dna', name: 'Visual DNA', storageKey: 'qb_visual_dna_done',
-        time: '20–30 min',
-        desc: 'Three rounds of instinctive image selection build your visual reference library. What you keep reveals the brand\'s true visual personality — faster and more accurate than any mood board exercise.',
-        outputs: ['10 reference images defining your visual world', 'Visual DNA Brief for your designer', 'Fast-discard blocklist — what to avoid', 'Texture and form vocabulary'],
-        file: 'visual-dna.html', phase: 1
-      },
-      {
-        id: 'war-table', name: 'The War Table', storageKey: 'qb_war_table_done',
-        time: '30–45 min',
-        desc: 'Strategic prioritization across 6 dimensions. Takes all your potential moves and outputs a ranked 60-day action plan with a full Strategic Command Document.',
-        outputs: ['Ranked initiative list with scores', '60-day field plan', 'Strategic Command Document', 'Trade-off analysis'],
-        file: 'war-table.html', phase: 1
-      },
-      {
-        id: 'profiles', name: 'The Profiles', storageKey: 'qb_profiles_done',
-        time: '25–35 min',
-        desc: 'Build three personas in one journey — NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.',
-        outputs: ['NOW persona — ad-ready brief', 'NEXT persona — growth lane brief', 'NORTH STAR persona — long-arc brief', 'Anti-targeting exclusions per persona', 'Trigger Map per persona for ad sequencing'],
-        file: 'the-profiles.html', phase: 1
-      }
+      { id: 'archetype-compass', name: 'Archetype Compass', storageKey: 'qb_archetype_compass_done', time: '5–10 min', desc: 'The first step. 10 exercises read your brand\'s archetype trinity. Primary identity, secondary texture, and the tension you must manage. Everything downstream sharpens once this is set.', outputs: ['Archetype trinity (primary · secondary · tension)','Central paradox statement','Strategic moat and open-space read','Operating mode (decision style · rhythm · yes/no)','13-section strategic reading'], file: 'archetype-compass.html', phase: 1 },
+      { id: 'soul-map', name: 'Brand Soul Map', storageKey: 'qb_soul_map_done', time: '45–60 min', desc: 'Uncover your brand\'s irreducible truth. 12 modules. 15 exercises. The foundational identity document that every other tool in the system reads from.', outputs: ['Your Brand Essence: one precise sentence','The Spark: your full brand narrative','Primary + Secondary Archetype','Manifesto line and Anti-Brand','Your primary persona defined'], file: 'brand-soul-map.html', phase: 1 },
+      { id: 'sensescape', name: 'Sensescape', storageKey: 'qb_sensescape_done', time: '30–40 min', desc: 'Map the sensory universe of your brand through 47 spectrums across 7 chapters. Color, type, form, motion, texture. Produces the Designer Brief and Sensescape Codex.', outputs: ['Color territory with emotional logic','Typography direction and weight','Designer Brief ready to send','Visual paradoxes identified'], file: 'sensescape.html', phase: 1 },
+      { id: 'visual-dna', name: 'Visual DNA', storageKey: 'qb_visual_dna_done', time: '20–30 min', desc: 'Three rounds of instinctive image selection build your visual reference library. What you keep reveals the brand\'s true visual personality. Faster and more accurate than any mood board exercise.', outputs: ['10 reference images defining your visual world','Visual DNA Brief for your designer','Fast-discard blocklist: what to avoid','Texture and form vocabulary'], file: 'visual-dna.html', phase: 1 },
+      { id: 'war-table', name: 'The War Table', storageKey: 'qb_war_table_done', time: '30–45 min', desc: 'Strategic prioritization across 6 dimensions. Takes all your potential moves and outputs a ranked 60-day action plan with a full Strategic Command Document.', outputs: ['Ranked initiative list with scores','60-day field plan','Strategic Command Document','Trade-off analysis'], file: 'war-table.html', phase: 1 },
+      { id: 'profiles', name: 'The Profiles', storageKey: 'qb_profiles_done', time: '25–35 min', desc: 'Build three personas in one journey. NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.', outputs: ['NOW persona: ad-ready brief','NEXT persona: growth lane brief','NORTH STAR persona: long-arc brief','Anti-targeting exclusions per persona','Trigger Map per persona for ad sequencing'], file: 'the-profiles.html', phase: 1 }
     ]
   },
   {
-    phase: 2, phaseLabel: 'Brand Creation', phaseColor: 'var(--phase-2)',
+    phase: 2, phaseLabel: 'Brand Creation', phaseColor: 'var(--phase-creation)',
     steps: [
-      {
-        id: 'logo-direction', name: 'Logo Direction Agent', storageKey: 'qb_logo_dir_done',
-        time: '15–20 min',
-        desc: 'The AI reads your complete QBP and produces a full logo brief — visual direction, reference examples, and exact Midjourney/Ideogram prompts ready to generate your logo concepts.',
-        outputs: ['Complete logo brief', '3 directional concepts', 'Midjourney + Ideogram prompts', 'Typography shortlist', 'Color application guide'],
-        file: 'logo-direction-agent.html', phase: 2
-      },
-      {
-        id: 'logo-evaluation', name: 'Logo Evaluation Agent', storageKey: 'qb_logo_eval_done',
-        time: '10–15 min',
-        desc: 'Upload your logo concepts. The agent scores each one against your QBP identity — pass, refine, or reject — with detailed reasoning so you know exactly why and what to do next.',
-        outputs: ['Per-concept verdict (pass/refine/reject)', 'Identity alignment score', 'Specific revision directions', 'Final selection recommendation'],
-        file: 'logo-evaluation-agent.html', phase: 2
-      },
-      {
-        id: 'voice-guide', name: 'Voice Guide Agent', storageKey: 'qb_voice_done',
-        time: '20–25 min',
-        desc: 'Your complete verbal identity system — voice DNA, writing rules, tone modes per platform, brand vocabulary, and a live copy generator that writes in your exact voice.',
-        outputs: ['Voice DNA document', 'Platform-specific tone modes', 'Writing rules and examples', '10 brand vocabulary words', 'Live copy generator'],
-        file: 'voice-guide-agent.html', phase: 2
-      }
+      { id: 'logo-direction', name: 'Logo Direction Agent', storageKey: 'qb_logo_dir_done', time: '15–20 min', desc: 'The AI reads your complete QBP and produces a full logo brief: visual direction, reference examples, and exact Midjourney/Ideogram prompts ready to generate your logo concepts.', outputs: ['Complete logo brief','3 directional concepts','Midjourney + Ideogram prompts','Typography shortlist','Color application guide'], file: 'logo-direction-agent.html', phase: 2 },
+      { id: 'logo-evaluation', name: 'Logo Evaluation Agent', storageKey: 'qb_logo_eval_done', time: '10–15 min', desc: 'Upload your logo concepts. The agent scores each one against your QBP identity (pass, refine, or reject) with detailed reasoning so you know exactly why and what to do next.', outputs: ['Per-concept verdict (pass/refine/reject)','Identity alignment score','Specific revision directions','Final selection recommendation'], file: 'logo-evaluation-agent.html', phase: 2 },
+      { id: 'voice-guide', name: 'Voice Guide Agent', storageKey: 'qb_voice_done', time: '20–25 min', desc: 'Your complete verbal identity system. Voice DNA, writing rules, tone modes per platform, brand vocabulary, and a live copy generator that writes in your exact voice.', outputs: ['Voice DNA document','Platform-specific tone modes','Writing rules and examples','10 brand vocabulary words','Live copy generator'], file: 'voice-guide-agent.html', phase: 2 }
     ]
   },
   {
-    phase: 3, phaseLabel: 'Content Creation', phaseColor: 'var(--phase-3)',
+    phase: 3, phaseLabel: 'Content Creation', phaseColor: 'var(--phase-content)',
     steps: [
-      {
-        id: 'instagram', name: 'Instagram Seed Agent', storageKey: 'qb_ig_done',
-        time: '15–20 min',
-        desc: 'First 12 posts built on a 4-arc strategic sequence. Each post has a caption, visual brief, Midjourney prompt, hook, and hashtag set. Your Instagram is live-ready.',
-        outputs: ['12 complete post packs', 'Grid strategy and arc sequence', 'Visual briefs for each post', 'Midjourney prompts', 'Hashtag strategy'],
-        file: 'instagram-seed-agent.html', phase: 3
-      },
-      {
-        id: 'linkedin', name: 'LinkedIn Strategy Agent', storageKey: 'qb_li_done',
-        time: '20–25 min',
-        desc: 'Rewrites your personal profile and company page. Scripts 12 founder posts and 8 brand posts across 4 themed weeks. Your LinkedIn is positioned and stocked.',
-        outputs: ['Rewritten personal profile', 'Rewritten company page', '12 founder posts scripted', '8 brand posts scripted', '4-week content calendar'],
-        file: 'linkedin-strategy-agent.html', phase: 3
-      },
-      {
-        id: 'youtube', name: 'YouTube Strategy Agent', storageKey: 'qb_yt_done',
-        time: '20–25 min',
-        desc: 'Channel strategy, positioning, and 6 full video scripts — each with hook, structure, talking points, and a short-form repurpose brief. Your YouTube channel is ready to launch.',
-        outputs: ['Channel positioning and about text', '6 full video scripts', 'Short-form repurpose briefs', 'Thumbnail direction per video', 'Upload cadence strategy'],
-        file: 'youtube-strategy-agent.html', phase: 3
-      },
-      {
-        id: 'newsletter', name: 'Newsletter Architecture', storageKey: 'qb_nl_done',
-        time: '15–20 min',
-        desc: 'The newsletter as a publishing platform — name, structure, cadence, recurring sections, and first 4 issues fully drafted and ready to send.',
-        outputs: ['Newsletter name and positioning', 'Issue structure template', 'First 4 issues drafted', 'Welcome email written', 'Growth strategy'],
-        file: 'newsletter-architecture-agent.html', phase: 3
-      },
-      {
-        id: 'content-bridge', name: 'Content Bridge', storageKey: 'qb_bridge_done',
-        time: '20–30 min',
-        desc: 'Takes your scripts and produces platform-ready production briefs for HeyGen (video), Creatify (UGC ads), or Canva (static posts). Step-by-step instructions for each platform.',
-        outputs: ['Production brief per piece', 'Formatted script with pacing marks', 'Platform settings and export specs', 'Brand application guide', 'Quality checklist'],
-        file: 'content-bridge.html', phase: 3
-      }
+      { id: 'instagram', name: 'Instagram Seed Agent', storageKey: 'qb_ig_done', time: '15–20 min', desc: 'First 12 posts built on a 4-arc strategic sequence. Each post has a caption, visual brief, Midjourney prompt, hook, and hashtag set. Your Instagram is live-ready.', outputs: ['12 complete post packs','Grid strategy and arc sequence','Visual briefs for each post','Midjourney prompts','Hashtag strategy'], file: 'instagram-seed-agent.html', phase: 3 },
+      { id: 'linkedin', name: 'LinkedIn Strategy Agent', storageKey: 'qb_li_done', time: '20–25 min', desc: 'Rewrites your personal profile and company page. Scripts 12 founder posts and 8 brand posts across 4 themed weeks. Your LinkedIn is positioned and stocked.', outputs: ['Rewritten personal profile','Rewritten company page','12 founder posts scripted','8 brand posts scripted','4-week content calendar'], file: 'linkedin-strategy-agent.html', phase: 3 },
+      { id: 'youtube', name: 'YouTube Strategy Agent', storageKey: 'qb_yt_done', time: '20–25 min', desc: 'Channel strategy, positioning, and 6 full video scripts. Each with hook, structure, talking points, and a short-form repurpose brief. Your YouTube channel is ready to launch.', outputs: ['Channel positioning and about text','6 full video scripts','Short-form repurpose briefs','Thumbnail direction per video','Upload cadence strategy'], file: 'youtube-strategy-agent.html', phase: 3 },
+      { id: 'newsletter', name: 'Newsletter Architecture', storageKey: 'qb_nl_done', time: '15–20 min', desc: 'The newsletter as a publishing platform. Name, structure, cadence, recurring sections, and first 4 issues fully drafted and ready to send.', outputs: ['Newsletter name and positioning','Issue structure template','First 4 issues drafted','Welcome email written','Growth strategy'], file: 'newsletter-architecture-agent.html', phase: 3 },
+      { id: 'content-bridge', name: 'Content Bridge', storageKey: 'qb_bridge_done', time: '20–30 min', desc: 'Takes your scripts and produces platform-ready production briefs for HeyGen (video), Creatify (UGC ads), or Canva (static posts). Step-by-step instructions for each platform.', outputs: ['Production brief per piece','Formatted script with pacing marks','Platform settings and export specs','Brand application guide','Quality checklist'], file: 'content-bridge.html', phase: 3 }
     ]
   },
   {
-    phase: 4, phaseLabel: 'Execution', phaseColor: 'var(--phase-4)',
+    phase: 4, phaseLabel: 'Execution', phaseColor: 'var(--phase-execution)',
     steps: [
-      {
-        id: 'repurposing', name: 'Content Repurposing Engine', storageKey: 'qb_rep_done',
-        time: '10–15 min',
-        desc: 'Paste one piece of long-form content. The engine rebuilds it natively across 10 platforms — up to 25 pieces, all on-brand, all platform-specific in format and tone.',
-        outputs: ['25 platform-adapted pieces', 'LinkedIn article version', 'Twitter/X thread', 'Instagram carousel script', 'Email newsletter version', 'YouTube short script'],
-        file: 'content-repurposing-engine.html', phase: 4
-      },
-      {
-        id: 'scheduler', name: 'Content Scheduler', storageKey: 'qb_scheduler_done',
-        // FIX #11: Changed hyphen to en-dash for consistency with all other time ranges
-        time: '15–20 min',
-        desc: 'Organize, tag, and map your generated content to a publishing timeline via Buffer integration.',
-        outputs: ['Content calendar', 'Platform-specific scheduling', 'Buffer API integration', 'Publishing queue'],
-        file: 'content-scheduler.html', phase: 4
-      }
+      { id: 'repurposing', name: 'Content Repurposing Engine', storageKey: 'qb_rep_done', time: '10–15 min', desc: 'Paste one piece of long-form content. The engine rebuilds it natively across 10 platforms (up to 25 pieces) all on-brand, all platform-specific in format and tone.', outputs: ['25 platform-adapted pieces','LinkedIn article version','Twitter/X thread','Instagram carousel script','Email newsletter version','YouTube short script'], file: 'content-repurposing-engine.html', phase: 4 },
+      { id: 'scheduler', name: 'Content Scheduler', storageKey: 'qb_scheduler_done', time: '15–20 min', desc: 'Organize, tag, and map your generated content to a publishing timeline via Buffer integration.', outputs: ['Content calendar','Platform-specific scheduling','Buffer API integration','Publishing queue'], file: 'content-scheduler.html', phase: 4 }
     ]
   },
   {
-    phase: 5, phaseLabel: 'Intelligence', phaseColor: 'var(--phase-5)',
+    phase: 5, phaseLabel: 'Intelligence', phaseColor: 'var(--phase-intelligence)',
     steps: [
-      {
-        id: 'performance', name: 'Brand Performance Dashboard', storageKey: 'qb_perf_done',
-        time: '20–30 min',
-        desc: 'Bring your platform analytics. The dashboard reads them as brand signals — not metrics. Returns health scores across 5 dimensions, signal cards with specific actions, and strategic directions.',
-        outputs: ['5-dimension health score', 'Signal cards with actions', 'Audience alignment analysis', '3 strategic directions', 'Next 30 days plan'],
-        file: 'brand-performance-dashboard.html', phase: 5
-      },
-      {
-        id: 'quarterly', name: 'Quarterly Brand Review', storageKey: 'qb_qr_done',
-        time: '30–40 min',
-        desc: 'The tool that makes the system self-evolving. Updates your QBP from what was learned, grades the quarter across 5 dimensions, and sets the full strategic direction for the next 90 days.',
-        outputs: ['Updated QBP with learnings', 'Quarter grade across 5 dimensions', 'Quarter narrative', 'Next quarter theme + north star', 'Full War Table for Q+1'],
-        file: 'quarterly-brand-review-agent.html', phase: 5
-      }
+      { id: 'performance', name: 'Brand Performance Dashboard', storageKey: 'qb_perf_done', time: '20–30 min', desc: 'Bring your platform analytics. The dashboard reads them as brand signals, not metrics. Returns health scores across 5 dimensions, signal cards with specific actions, and strategic directions.', outputs: ['5-dimension health score','Signal cards with actions','Audience alignment analysis','3 strategic directions','Next 30 days plan'], file: 'brand-performance-dashboard.html', phase: 5 },
+      { id: 'quarterly', name: 'Quarterly Brand Review', storageKey: 'qb_qr_done', time: '30–40 min', desc: 'The tool that makes the system self-evolving. Updates your QBP from what was learned, grades the quarter across 5 dimensions, and sets the full strategic direction for the next 90 days.', outputs: ['Updated QBP with learnings','Quarter grade across 5 dimensions','Quarter narrative','Next quarter theme + north star','Full War Table for Q+1'], file: 'quarterly-brand-review-agent.html', phase: 5 }
     ]
   }
 ];
 
-
-// Flatten all steps
 const ALL_STEPS = [];
 JOURNEY.forEach(phase => {
   phase.steps.forEach(step => {
@@ -662,29 +732,12 @@ JOURNEY.forEach(phase => {
   });
 });
 
-
-// ── STATE ──
-// Source of truth for completion is QB.getCompletions() (cloud-mirrored).
-// The previous version of this function ORed three checks together, which
-// meant a stale legacy flag could mask a cloud "not done" — admin resets
-// failed to propagate. New shape: when QB is loaded AND the step is a
-// Phase 01 tool that cloud is responsible for tracking, cloud is
-// AUTHORITATIVE; the legacy flag is bypassed entirely so the cloud signal
-// can return false. The legacy flag remains valid for:
-//   - Pages where qb-cloud.js failed to load
-//   - Phase 02+ steps (cloud completions not wired yet for those)
-//   - Any step not in QB.PHASE_01_TOOLS
 function isStepDone(step) {
   const qbLoaded = !!(window.QB && QB.getCompletions);
-
-  // Primary: cloud-synced completions
   if (qbLoaded) {
     const completions = QB.getCompletions();
     if (completions && completions[step.id]) return true;
   }
-
-  // Secondary: qbp field fallbacks (real user data, refreshed by pullQBPFromCloud
-  // on init, so admin resets that clear the qbp fields also propagate here)
   try {
     const qbpStr = localStorage.getItem('qb_qbp');
     if (qbpStr) {
@@ -697,25 +750,12 @@ function isStepDone(step) {
       if (step.id === 'profiles' && (qbp.profilesComplete || (Array.isArray(qbp.personaProfiles) && qbp.personaProfiles.length))) return true;
     }
   } catch(e) {}
-
-  // Tertiary: legacy qb_<tool>_done flag — gated.
-  // When QB is loaded and this step is one of the cloud-tracked Phase 01
-  // tools, the legacy flag is BYPASSED. Cloud is authoritative for those
-  // steps so admin resets, cross-device pulls, and gate-skip flows all
-  // propagate correctly. For Phase 02+ steps and pages without QB loaded,
-  // the legacy flag still wins as a fallback.
-  const isCloudTrackedPhase01 = qbLoaded
-    && Array.isArray(QB.PHASE_01_TOOLS)
-    && QB.PHASE_01_TOOLS.indexOf(step.id) !== -1;
+  const isCloudTrackedPhase01 = qbLoaded && Array.isArray(QB.PHASE_01_TOOLS) && QB.PHASE_01_TOOLS.indexOf(step.id) !== -1;
   if (!isCloudTrackedPhase01 && localStorage.getItem(step.storageKey)) return true;
   return false;
 }
 
-
 function markDone(stepId) {
-  // Route through cloud so manual "Mark Complete" syncs across devices and
-  // shows up in admin dashboards. Falls back to the legacy flag if QB is not
-  // loaded for some reason (cloud module fetch blocked, etc).
   if (window.QB && QB.recordCompletion) {
     QB.recordCompletion(stepId);
   } else {
@@ -725,7 +765,6 @@ function markDone(stepId) {
   render();
 }
 
-
 function getCurrentStep() {
   for (let i = 0; i < ALL_STEPS.length; i++) {
     if (!isStepDone(ALL_STEPS[i])) return i;
@@ -733,30 +772,22 @@ function getCurrentStep() {
   return ALL_STEPS.length;
 }
 
-
 function getProgress() {
   const done = ALL_STEPS.filter(s => isStepDone(s)).length;
   return { done, total: ALL_STEPS.length, pct: Math.round((done / ALL_STEPS.length) * 100) };
 }
 
-
 function openStep(step) {
-  // FIX #4: API key no longer passed via URL (exposed in address bar / history / logs).
-  // Tool pages read qb_apikey directly from localStorage on the same origin.
   const provider = localStorage.getItem('qb_provider') || 'anthropic';
   const url = step.file + '?provider=' + provider;
-  // FIX #2: Added noopener,noreferrer to prevent reverse tabnapping via window.opener
   window.open(url, '_blank', 'noopener,noreferrer');
 }
-
 
 function openCurrentStep() {
   const idx = getCurrentStep();
   if (idx < ALL_STEPS.length) openStep(ALL_STEPS[idx]);
 }
 
-
-// ── RENDER ──
 function renderReturnBanner(progress, currentStep, allDone) {
   const wrap = document.getElementById('return-banner');
   if (!wrap) return;
@@ -766,13 +797,11 @@ function renderReturnBanner(progress, currentStep, allDone) {
   const eyebrow = 'WELCOME BACK' + (firstName ? ' · ' + firstName.toUpperCase() : '');
   let msg, ctaLabel = 'Continue →', ctaHref = null;
   if (allDone) {
-    msg = 'You\'ve completed every step of the journey. Open the OS to revisit any tool.';
+    msg = 'You have completed every step of the journey. Open the OS to revisit any tool.';
     ctaLabel = 'Open OS →';
     ctaHref = 'qb-branidos-hub.html';
   } else if (phase01.percent === 100 && currentStep && currentStep.phase > 1) {
-    // Phase 01 just hit 100%. Phase 02+ is unlocked but not yet started.
-    // Celebratory state — pivot the user toward the OS rather than the next tool.
-    msg = 'Phase 01 is complete. Phase 02 unlocks ' + currentStep.name + ' next — visit the OS to see everything that’s now available.';
+    msg = 'Phase 01 is complete. Phase 02 unlocks ' + currentStep.name + ' next. Visit the OS to see everything that is now available.';
     ctaLabel = 'Open OS →';
     ctaHref = 'qb-branidos-hub.html';
   } else if (phase01.percent < 100 && currentStep && currentStep.phase === 1) {
@@ -799,57 +828,39 @@ function render() {
   const allDone = currentIdx >= ALL_STEPS.length;
   renderReturnBanner(progress, currentStep, allDone);
 
-  // FIX #14: delayCounter starts at 1 (0.05s offset) to gently stagger after
-  // the hero card's hardcoded 0.1s animation-delay, with explicit intent comment.
-  let delayCounter = 1; // starts at 1 so first map element animates at 0.05s (after hero at 0.1s)
+  let delayCounter = 1;
 
-
-  // Global Progress Bar
   document.getElementById('progress-bar-fill').style.width = progress.pct + '%';
 
-
-  // Header Counters
   document.getElementById('current-step-display').textContent = Math.min(currentIdx + 1, progress.total);
   document.getElementById('total-steps-display').textContent = progress.total;
   if (currentStep) {
-    // FIX #15: Use padStart instead of string concatenation for phase numbers
-    document.getElementById('phase-display').textContent = 'Phase ' + String(currentStep.phase).padStart(2, '0') + ' — ' + currentStep.phaseLabel;
-    document.getElementById('phase-display').style.color = currentStep.phaseColor;
+    document.getElementById('phase-display').textContent = 'Phase ' + String(currentStep.phase).padStart(2, '0') + ' · ' + currentStep.phaseLabel;
   } else {
-    document.getElementById('phase-display').textContent = 'Journey Complete';
-    document.getElementById('phase-display').style.color = 'var(--text-3)';
+    document.getElementById('phase-display').textContent = 'Journey complete';
   }
 
-
-  // Hero Card
   if (allDone) {
     document.getElementById('current-step-hero').style.display = 'none';
-    // FIX #10: Trigger fade-in animation after display:block via class toggle + setTimeout
     const card = document.getElementById('completion-card');
     card.style.display = 'block';
     setTimeout(() => card.classList.add('fade-in'), 10);
   } else {
     document.getElementById('current-step-hero').style.display = 'block';
-    // FIX #10: Reset completion card in case user un-completes steps
     const card = document.getElementById('completion-card');
     card.style.display = 'none';
     card.classList.remove('fade-in');
-    
-    const hero = document.getElementById('current-step-hero');
-    hero.style.borderColor = `color-mix(in srgb, ${currentStep.phaseColor} 30%, transparent)`;
-    
-    const eyebrow = document.getElementById('hero-eyebrow');
-    // FIX #15: padStart for phase number in hero eyebrow
-    eyebrow.innerHTML = `<div class="pulse-dot"></div><span>Phase ${String(currentStep.phase).padStart(2, '0')} · Step ${currentIdx + 1} of ${progress.total}</span>`;
 
+    const eyebrow = document.getElementById('hero-eyebrow');
+    eyebrow.innerHTML = `<span class="pulse-dot"></span><span>Phase ${String(currentStep.phase).padStart(2, '0')} · Step ${currentIdx + 1} of ${progress.total}</span>`;
 
     document.getElementById('hero-title').textContent = currentStep.name;
     document.getElementById('hero-desc').textContent = currentStep.desc;
     document.getElementById('hero-time').textContent = currentStep.time + ' · Opens in new tab';
-    
+
     const outputBox = document.getElementById('hero-output');
     const outputItems = document.getElementById('hero-output-items');
-    
+
     if (currentStep.outputs && currentStep.outputs.length) {
       outputBox.style.display = 'block';
       outputItems.innerHTML = currentStep.outputs.map(o =>
@@ -860,118 +871,90 @@ function render() {
     }
   }
 
-
   const map = document.getElementById('journey-map');
   map.innerHTML = '';
 
-
-  // Progress Banner
   const summary = document.createElement('div');
   summary.className = 'glass-card progress-summary fade-in';
   summary.style.animationDelay = (delayCounter++ * 0.05) + 's';
   summary.innerHTML = `
-    <div class="ps-number" style="color: var(--patina);">${progress.done}</div>
+    <div class="ps-number" style="color:var(--phase-discovery);">${progress.done}</div>
     <div class="ps-text">
       <div class="ps-title">Steps completed</div>
-      <div class="ps-sub mono-label" style="font-size: 9px;">${progress.pct}% through your journey</div>
+      <div class="ps-sub">${progress.pct}% through your journey</div>
     </div>
   `;
   map.appendChild(summary);
 
-
-  // Phases
   JOURNEY.forEach(phase => {
     const phDone = phase.steps.every(s => isStepDone(s));
-
-    // FIX #6: phActive now correctly gates on the previous phase being fully complete
     const phaseAccessible = phase.phase === 1 || JOURNEY[phase.phase - 2].steps.every(s => isStepDone(s));
     const phActive = phaseAccessible && !phDone && phase.steps.some(s => !isStepDone(s) && (
       phase.steps.indexOf(s) === 0 ||
       isStepDone(phase.steps[phase.steps.indexOf(s) - 1])
     ));
 
-
     const section = document.createElement('div');
     section.className = 'phase-zone fade-in';
     section.style.animationDelay = (delayCounter++ * 0.05) + 's';
 
-
-    if (phActive) {
-      section.style.borderColor = `color-mix(in srgb, ${phase.phaseColor} 20%, transparent)`;
-      section.style.background = `color-mix(in srgb, ${phase.phaseColor} 3%, var(--bg-deep))`;
-    }
-
-    // FIX #8: Use <button> instead of <div> so phase headers are keyboard-accessible
     const header = document.createElement('button');
     header.type = 'button';
     header.className = 'phase-header';
     header.setAttribute('aria-expanded', String(phActive || phDone));
-    header.setAttribute('aria-label', `Toggle Phase ${String(phase.phase).padStart(2, '0')} — ${phase.phaseLabel}`);
-
+    header.setAttribute('aria-label', `Toggle Phase ${String(phase.phase).padStart(2, '0')} ${phase.phaseLabel}`);
 
     const dot = document.createElement('div');
     dot.className = 'phase-dot';
-    // FIX #15: padStart for phase dot number
     dot.textContent = phDone ? '✓' : String(phase.phase).padStart(2, '0');
-    
     if (phDone) {
-      dot.style.background = `color-mix(in srgb, ${phase.phaseColor} 10%, transparent)`;
-      dot.style.color = phase.phaseColor;
-      dot.style.border = `1px solid color-mix(in srgb, ${phase.phaseColor} 25%, transparent)`;
+      dot.style.background = phase.phaseColor;
+      dot.style.color = 'var(--ink)';
+      dot.style.border = '2px solid var(--ink)';
     } else if (phActive) {
       dot.style.background = phase.phaseColor;
-      dot.style.color = 'var(--bg-void)';
-      dot.style.boxShadow = `0 0 16px color-mix(in srgb, ${phase.phaseColor} 40%, transparent)`;
-      dot.style.border = '1px solid transparent';
+      dot.style.color = 'var(--ink)';
+      dot.style.border = '2px solid var(--ink)';
     } else {
-      dot.style.background = 'var(--bg-surface)';
-      dot.style.color = 'var(--text-3)';
-      dot.style.border = '1px solid var(--border-subtle)';
+      dot.style.background = 'var(--cream)';
+      dot.style.color = 'var(--ink-50)';
+      dot.style.border = '2px solid var(--ink-25)';
     }
-
 
     const title = document.createElement('div');
     title.className = 'phase-title';
     title.textContent = phase.phaseLabel;
-    if (!phDone && !phActive) title.style.color = 'var(--text-3)';
-
+    if (!phDone && !phActive) title.style.color = 'var(--ink-50)';
 
     const statusEl = document.createElement('div');
-    statusEl.className = 'phase-status mono-label';
+    statusEl.className = 'phase-status';
     const doneCt = phase.steps.filter(s => isStepDone(s)).length;
-    
     if (phDone) {
       statusEl.textContent = 'Complete';
-      statusEl.style.color = phase.phaseColor;
-      statusEl.style.background = `color-mix(in srgb, ${phase.phaseColor} 8%, transparent)`;
-      statusEl.style.borderColor = `color-mix(in srgb, ${phase.phaseColor} 20%, transparent)`;
+      statusEl.style.background = phase.phaseColor;
+      statusEl.style.color = 'var(--ink)';
+      statusEl.style.borderColor = 'var(--ink)';
     } else if (phActive) {
       statusEl.textContent = doneCt + ' / ' + phase.steps.length;
-      statusEl.style.color = 'var(--text-1)';
-      statusEl.style.background = 'var(--bg-surface)';
+      statusEl.style.color = 'var(--ink)';
+      statusEl.style.background = 'var(--cream-card)';
     } else {
       statusEl.textContent = 'Locked';
-      statusEl.style.color = 'var(--text-4)';
-      statusEl.style.background = 'transparent';
-      statusEl.style.borderColor = 'transparent';
+      statusEl.style.color = 'var(--ink-33)';
     }
-
 
     const chevron = document.createElement('div');
     chevron.className = 'phase-chevron' + (phActive || phDone ? ' open' : '');
     chevron.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-
 
     header.appendChild(dot);
     header.appendChild(title);
     header.appendChild(statusEl);
     header.appendChild(chevron);
 
-
     const stepsContainer = document.createElement('div');
     stepsContainer.className = 'steps-container';
     if (!phActive && !phDone) stepsContainer.style.display = 'none';
-
 
     header.addEventListener('click', () => {
       const isOpen = stepsContainer.style.display !== 'none';
@@ -980,125 +963,82 @@ function render() {
       header.setAttribute('aria-expanded', String(!isOpen));
     });
 
-
     phase.steps.forEach((step, stepIdx) => {
       const done = isStepDone(step);
-      // FIX #12: Simplified isCurrentStep — single traversal with findIndex
       const isCurrentStep = ALL_STEPS.findIndex(s => s.id === step.id) === currentIdx;
-
-
       const prevStep = phase.steps[stepIdx - 1];
       const accessible = stepIdx === 0 || (prevStep && isStepDone(prevStep));
       const phaseAccessible = phase.phase === 1 || JOURNEY[phase.phase - 2].steps.every(s => isStepDone(s));
       const canOpen = phaseAccessible && accessible;
 
-
       const card = document.createElement('div');
       card.className = 'step-card ' + (done ? 'done-step' : isCurrentStep ? 'active-step' : !canOpen ? 'locked-step' : '');
-      
-      if (isCurrentStep) {
-        card.style.borderColor = `color-mix(in srgb, ${phase.phaseColor} 40%, transparent)`;
-      }
-
 
       const h = document.createElement('div');
       h.className = 'step-header';
 
-
       const num = document.createElement('div');
       num.className = 'step-num';
       num.textContent = String(ALL_STEPS.findIndex(s => s.id === step.id) + 1).padStart(2, '0');
-      if (done || isCurrentStep) num.style.color = phase.phaseColor;
-      else num.style.color = 'var(--text-4)';
-
+      if (done || isCurrentStep) num.style.color = 'var(--ink)';
+      else num.style.color = 'var(--ink-33)';
 
       const body = document.createElement('div');
       body.className = 'step-body';
 
-
       const name = document.createElement('div');
       name.className = 'step-name';
       name.textContent = step.name;
-      if (done) name.style.color = phase.phaseColor;
-
 
       const desc = document.createElement('p');
       desc.className = 'step-desc';
       desc.textContent = step.desc;
 
-
       const meta = document.createElement('div');
       meta.className = 'step-meta';
-      
+
       const timeTag = document.createElement('span');
-      timeTag.className = 'step-tag mono-label';
+      timeTag.className = 'step-tag';
       timeTag.textContent = '⏱ ' + step.time;
       meta.appendChild(timeTag);
-      
-      const phaseTag = document.createElement('span');
-      phaseTag.className = 'step-tag mono-label';
-      // FIX #15: padStart for phase tag number
-      phaseTag.textContent = 'Phase ' + String(step.phase).padStart(2, '0');
-      phaseTag.style.color = phase.phaseColor;
-      phaseTag.style.borderColor = `color-mix(in srgb, ${phase.phaseColor} 20%, transparent)`;
-      phaseTag.style.background = `color-mix(in srgb, ${phase.phaseColor} 5%, transparent)`;
-      meta.appendChild(phaseTag);
 
+      const phaseTag = document.createElement('span');
+      phaseTag.className = 'step-tag';
+      phaseTag.textContent = 'Phase ' + String(step.phase).padStart(2, '0');
+      phaseTag.style.background = phase.phaseColor;
+      phaseTag.style.borderColor = 'var(--ink)';
+      phaseTag.style.color = 'var(--ink)';
+      meta.appendChild(phaseTag);
 
       body.appendChild(name);
       body.appendChild(desc);
       body.appendChild(meta);
 
-
-      if (step.outputs && step.outputs.length && !done) {
-        const outputBox = document.createElement('div');
-        outputBox.className = 'manifesto-block';
-        outputBox.innerHTML = `<div class="csh-output-label mono-label" style="color:${phase.phaseColor}">You will get</div>` +
-          step.outputs.slice(0, 3).map(o => `<div class="csh-output-item"><span style="color:${phase.phaseColor}">✦</span><span>${o}</span></div>`).join('') +
-          (step.outputs.length > 3 ? `<div class="mono-label" style="margin-top:12px; color:var(--text-4)">+${step.outputs.length - 3} more outputs</div>` : '');
-        body.appendChild(outputBox);
-      }
-
-
       if (!done) {
         const actions = document.createElement('div');
         actions.className = 'step-action';
-
-
         if (canOpen) {
-          // FIX #16: Added type="button" to all dynamically created buttons
           const goBtn = document.createElement('button');
           goBtn.type = 'button';
           goBtn.className = isCurrentStep ? 'btn-primary' : 'btn-secondary';
-          goBtn.textContent = isCurrentStep ? 'Open Now →' : 'Open →';
+          goBtn.textContent = isCurrentStep ? 'Open now →' : 'Open →';
           goBtn.addEventListener('click', () => openStep(step));
-          
-          if (isCurrentStep) {
-            goBtn.style.background = phase.phaseColor;
-          }
           actions.appendChild(goBtn);
 
-
-          // FIX #16: Added type="button"
           const doneBtn = document.createElement('button');
           doneBtn.type = 'button';
           doneBtn.className = 'btn-secondary';
-          doneBtn.style.borderColor = 'transparent';
-          doneBtn.textContent = '✓ Mark Complete';
+          doneBtn.textContent = '✓ Mark complete';
           doneBtn.addEventListener('click', () => markDone(step.id));
           actions.appendChild(doneBtn);
         }
-
-
         body.appendChild(actions);
       } else {
         const doneBadge = document.createElement('div');
         doneBadge.className = 'step-done-badge';
-        doneBadge.style.color = phase.phaseColor;
         doneBadge.textContent = '✓ Complete';
         body.appendChild(doneBadge);
       }
-
 
       h.appendChild(num);
       h.appendChild(body);
@@ -1106,20 +1046,12 @@ function render() {
       stepsContainer.appendChild(card);
     });
 
-
     section.appendChild(header);
     section.appendChild(stepsContainer);
     map.appendChild(section);
   });
 }
 
-
-// Inter-window communication via storage event
-// postMessage cannot be used because window.open with noopener sets window.opener = null
-// in tool pages, so they cannot call window.opener.postMessage().
-// The storage event fires in all other same-origin tabs when localStorage changes —
-// no window reference needed, and same-origin by spec so no extra origin check is required.
-// Debounced 300ms so rapid auto-saves from tool pages don't cause repeated re-renders and animation flicker.
 let renderDebounce;
 window.addEventListener('storage', function(e) {
   if (e.key && e.key.startsWith('qb_')) {
@@ -1128,8 +1060,6 @@ window.addEventListener('storage', function(e) {
   }
 });
 
-
-// Initialization — if authed, pull cloud QBP + completions before first render
 (async function initJourney(){
   if (window.QB && QB.isAuthed()) {
     try { await QB.pullQBPFromCloud(); } catch(e) {}
