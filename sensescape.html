@@ -10,28 +10,37 @@
 <script src="/qb-gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&family=Lora:wght@500&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box }
 :root{
-  --cream:          #F4F0EB;
-  --cream-soft:     #EDE8E2;
-  --cream-deep:     #E6E0D8;
-  --cream-edge:     rgba(100,80,50,0.10);
-  --cream-line:     rgba(100,80,50,0.14);
+  --cream:          #FBF5E6;
+  --cream-soft:     #F2EBD3;
+  --cream-deep:     #ECDDB8;
+  --cream-edge:     rgba(45,21,33,0.10);
+  --cream-line:     rgba(45,21,33,0.14);
+  --cream-card:     #F2EBD3;
+  --cream-warm:     #ECDDB8;
+  --phase-acquisition:#C5E5E9; --phase-discovery:#9CC4A2; --phase-creation:#B5C8E5;
+  --phase-content:#FCB7C7; --phase-execution:#E89380; --phase-intelligence:#B080A0;
+  --illus-forest:#5B7E6A; --illus-peach:#E89380; --illus-coral:#DC6B52;
+  --illus-mustard:#D4B85A; --illus-rust:#B8704D; --illus-lavender:#B8A0C7;
+  --illus-pink-soft:#F4C4D0;
+  --gold:#E0B069; --gold-deep:#B58840; --rose:#CA6180; --rose-deep:#8E3F58;
+  --teal:#9ED3DC; --teal-deep:#5BA8B5; --aubergine:#4A2B3A;
   --bg-void:        var(--cream);
   --bg-deep:        var(--cream-soft);
   --bg-base:        var(--cream-deep);
-  --bg-surface:     rgba(100,80,50,0.04);
-  --bg-elevated:    rgba(100,80,50,0.07);
-  --bg-overlay:     rgba(244,240,235,0.9);
-  --border-subtle:  rgba(100,80,50,0.08);
-  --border-medium:  rgba(100,80,50,0.14);
-  --border-strong:  rgba(100,80,50,0.22);
-  --ink:            #1A1610;
-  --ink-soft:       #5A5040;
-  --ink-mute:       #8A7E70;
-  --ink-faint:      #B8AEA0;
+  --bg-surface:     rgba(45,21,33,0.04);
+  --bg-elevated:    rgba(45,21,33,0.07);
+  --bg-overlay:     rgba(251,245,230,0.92);
+  --border-subtle:  rgba(45,21,33,0.10);
+  --border-medium:  rgba(45,21,33,0.18);
+  --border-strong:  rgba(45,21,33,0.30);
+  --ink:            #2D1521;
+  --ink-soft:       rgba(45,21,33,0.75);
+  --ink-mute:       rgba(45,21,33,0.50);
+  --ink-faint:      rgba(45,21,33,0.33);
   --text-1:         var(--ink);
   --text-2:         var(--ink-soft);
   --text-3:         var(--ink-mute);
@@ -54,8 +63,8 @@
   --pill-bg-hover:  #EFE1B4;
   --pill-border:    #A8903E;
   --pill-ink:       #1A1610;
-  --f-display:      'EB Garamond','Cormorant Garamond',Georgia,serif;
-  --f-body:         'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --f-display:      'Fraunces','Times New Roman',serif;
+  --f-body:         'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --f-mono:         'JetBrains Mono',ui-monospace,monospace;
   --ease:           cubic-bezier(.22,1,.36,1);
   --r-pill:         999px;
@@ -2156,6 +2165,12 @@ body.phase-intro{ overflow:hidden; }
 </style>
 </head>
 <body>
+
+<!-- Banner (verbatim copy) -->
+<div style="background:var(--ink); color:var(--cream); text-align:center; padding:0.7em 1.5rem; font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; letter-spacing:0.04em; position:relative; z-index:120;">
+  <strong>Signal Scan is live.</strong> Free brand diagnostic. 5 minutes to your first insight.
+  <a href="signal-scan.html" style="color:var(--gold); text-decoration:none; font-weight:600; margin-left:0.5em;">Run yours →</a>
+</div>
 
 <!-- Ambient layers -->
 <div class="ambient-glow"></div>
