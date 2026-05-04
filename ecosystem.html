@@ -705,7 +705,7 @@
   .phase-card_eye.is-execution .phase-card_eye_dot { background:var(--phase-execution); }
   .phase-card_eye.is-intel     .phase-card_eye_dot { background:var(--phase-intelligence); }
 
-  /* Illustration card - wraps editorial PNG */
+  /* Illustration card - wraps editorial PNG or video */
   .qb-illus-card {
     background:var(--cream-card); border:2px solid var(--ink); border-radius:32px;
     padding:var(--space-s);
@@ -713,7 +713,8 @@
     width:100%; max-width:460px;
   }
   @media (min-width:640px) { .qb-illus-card { box-shadow:0 16px var(--ink); padding:var(--space-m); } }
-  .qb-illus-card img { width:100%; height:auto; display:block; border-radius:18px; }
+  .qb-illus-card img,
+  .qb-illus-card video { width:100%; height:auto; display:block; border-radius:18px; }
   .qb-illus-card.is-discovery { background:var(--phase-discovery); }
   .qb-illus-card.is-creation  { background:var(--phase-creation); }
   .qb-illus-card.is-content   { background:var(--phase-content); }
@@ -1284,6 +1285,60 @@
   .footer_bottom_links a:hover { color:var(--ink); }
 
   /* =====================================================
+     BIKE STRIP - rolls end-to-end across the screen, looping
+     ===================================================== */
+  .bike-strip {
+    position:relative;
+    background:var(--cream-warm);
+    border-block:2px solid var(--ink);
+    padding:var(--space-2xl) 0 var(--space-l);
+    overflow:hidden;
+    text-align:center;
+  }
+  .bike-strip_caption {
+    font-family:'Fraunces',serif;
+    font-variation-settings:"wght" 600,"opsz" 144,"SOFT" 60,"WONK" 0;
+    font-size:clamp(2.25rem,6vw,4.5rem);
+    line-height:1; letter-spacing:-0.01em;
+    color:var(--ink);
+    text-wrap:balance;
+    max-width:920px; margin:0 auto;
+    padding:0 var(--space-m-l);
+  }
+  .bike-strip_caption em {
+    font-style:italic;
+    font-variation-settings:"wght" 600,"opsz" 144,"SOFT" 80,"WONK" 1;
+    color:var(--rose);
+  }
+  .bike-strip_track {
+    position:relative;
+    height:clamp(140px,18vw,260px);
+    margin-top:var(--space-l);
+    overflow:visible;
+  }
+  .bike-strip_road {
+    position:absolute; left:0; right:0; bottom:0;
+    height:3px; background:var(--ink);
+  }
+  .bike-strip_bike {
+    position:absolute;
+    bottom:0;
+    height:100%; width:auto;
+    transform-origin:center bottom;
+    animation:bike-roll 14s linear infinite, bike-bob 0.55s ease-in-out infinite;
+    will-change:transform, left;
+    pointer-events:none;
+  }
+  @keyframes bike-roll {
+    0%   { left:-30%; }
+    100% { left:100%; }
+  }
+  @keyframes bike-bob {
+    0%, 100% { transform:translateY(0) rotate(-0.6deg); }
+    50%      { transform:translateY(-3px) rotate(0.6deg); }
+  }
+
+  /* =====================================================
      REVEAL ON SCROLL (richer entrance: fade + lift + scale + blur)
      ===================================================== */
   .reveal {
@@ -1381,6 +1436,7 @@
     .reveal { opacity:1; transform:none; filter:none; }
     .qb-illus-card, .qb-phone, .founder-portrait img, .feature-media { animation:none !important; }
     .hero_h1, .hero_body, .hero_cta, .hero_meta, .agent-cluster { animation:none !important; opacity:1; }
+    .bike-strip_bike { animation:none !important; left:30% !important; transform:none !important; }
   }
 </style>
 </head>
@@ -1916,7 +1972,7 @@
           </div>
           <div class="phase-spread_visual">
             <figure class="qb-illus-card is-execution">
-              <img src="img/illus/phase-04.png" alt="Phase 04 Execution scene. Production studio with crew, spotlights, and sticky notes." loading="lazy">
+              <video src="img/illus/phase-04.mov" autoplay muted loop playsinline preload="metadata" aria-label="Phase 04 Execution scene. Production studio with crew, spotlights, and sticky notes."></video>
             </figure>
           </div>
         </article>
@@ -2291,6 +2347,15 @@
         <a href="https://app.quantumbranding.ai" class="qb-button is-lg"><span class="qb-button_content">Enter QB BrandOS</span></a>
       </div>
       <div class="hero_meta">Available on any device · No download · No credit card</div>
+    </div>
+  </section>
+
+  <!-- BIKE STRIP - From idea to orbit. The two riders roll across the page, end to end, looping. -->
+  <section class="bike-strip" aria-label="From idea to orbit">
+    <p class="bike-strip_caption">From idea, <em>to orbit.</em></p>
+    <div class="bike-strip_track">
+      <div class="bike-strip_road" aria-hidden="true"></div>
+      <img class="bike-strip_bike" src="img/illus/start-building.png" alt="Two riders on a tandem bicycle, rolling forward together." loading="lazy">
     </div>
   </section>
 
