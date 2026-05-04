@@ -429,37 +429,38 @@
      HOW IT WORKS — 3 step cards on dark
      ===================================================== */
   .how-grid {
-    display:grid; grid-template-columns:1fr; gap:var(--space-m-l);
-    margin-top:var(--space-xl-2xl);
+    display:grid; grid-template-columns:1fr; gap:var(--space-s-m);
+    margin-top:var(--space-l-xl);
   }
   @media (min-width:900px) { .how-grid { grid-template-columns:repeat(3,1fr); } }
   .how-card {
-    background:var(--cream-card); border:2px solid var(--ink); border-radius:32px;
-    padding:var(--space-m-l); display:flex; flex-direction:column; gap:var(--space-xs);
+    background:var(--cream-card); border:2px solid var(--ink); border-radius:24px;
+    padding:var(--space-s-m); display:flex; flex-direction:column; gap:var(--space-2xs);
     box-shadow:0 9px var(--ink); color:var(--ink);
   }
   @media (min-width:640px) { .how-card { box-shadow:0 16px var(--ink); } }
   .how-card_num {
-    font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.16em;
+    font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.16em;
     text-transform:uppercase; color:var(--ink-50);
   }
   .how-card_title {
     font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 600,"opsz" 60,"SOFT" 70;
-    font-size:var(--step-2); line-height:1.05; color:var(--ink);
+    font-variation-settings:"wght" 600,"opsz" 48,"SOFT" 70;
+    font-size:var(--step-1); line-height:1.1; color:var(--ink);
   }
   .how-card_doodle {
-    width:64px; height:64px; border:2px solid var(--ink); border-radius:9999px;
+    width:48px; height:48px; border:2px solid var(--ink); border-radius:9999px;
     display:inline-flex; align-items:center; justify-content:center;
     background:var(--butter); color:var(--ink); margin-bottom:var(--space-2xs);
   }
   .how-card_doodle.is-rose { background:var(--rose-soft); }
   .how-card_doodle.is-teal { background:var(--teal-soft); }
-  .how-card_doodle svg { width:32px; height:32px; stroke:var(--ink); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .how-card_doodle svg { width:24px; height:24px; stroke:var(--ink); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .how-card p.qb-type-text { font-size:var(--step--1); line-height:1.5; color:var(--ink-75); }
   .how-card_result {
-    margin-top:auto; padding-top:var(--space-s);
+    margin-top:auto; padding-top:var(--space-xs);
     border-top:1px dashed var(--ink-25);
-    font-family:'JetBrains Mono',monospace; font-size:var(--step--2); letter-spacing:0.08em;
+    font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.08em;
     text-transform:uppercase; color:var(--ink-75);
   }
 
@@ -506,19 +507,19 @@
 
   /* Mock card surface (Brand Profile mock + Predictive Panel mock) */
   .mock-card {
-    background:var(--cream-card); border:2px solid var(--ink); border-radius:32px;
-    padding:var(--space-m); box-shadow:0 9px var(--ink);
-    display:flex; flex-direction:column; gap:var(--space-s);
+    background:var(--cream-card); border:2px solid var(--ink); border-radius:24px;
+    padding:var(--space-s-m); box-shadow:0 9px var(--ink);
+    display:flex; flex-direction:column; gap:var(--space-xs);
   }
-  @media (min-width:640px) { .mock-card { box-shadow:0 16px var(--ink); padding:var(--space-l); } }
+  @media (min-width:640px) { .mock-card { box-shadow:0 16px var(--ink); padding:var(--space-m); } }
   .mock-card_eyebrow {
-    font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.14em;
+    font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.14em;
     text-transform:uppercase; color:var(--ink-50);
   }
   .mock-card_h {
     font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 600,"opsz" 60,"SOFT" 70;
-    font-size:var(--step-2); line-height:1.05; color:var(--ink);
+    font-variation-settings:"wght" 600,"opsz" 48,"SOFT" 70;
+    font-size:var(--step-1); line-height:1.05; color:var(--ink);
   }
   .progress-row { display:grid; grid-template-columns:7em 1fr 3em; gap:0.6rem; align-items:center; font-size:var(--step--1); }
   .progress-label { font-weight:600; color:var(--ink); }
@@ -640,6 +641,21 @@
   .phase-card_eye.is-execution .phase-card_eye_dot { background:var(--phase-execution); }
   .phase-card_eye.is-intel     .phase-card_eye_dot { background:var(--phase-intelligence); }
 
+  /* Illustration card — wraps editorial PNG */
+  .qb-illus-card {
+    background:var(--cream-card); border:2px solid var(--ink); border-radius:32px;
+    padding:var(--space-s);
+    box-shadow:0 9px var(--ink); overflow:hidden;
+    width:100%; max-width:460px;
+  }
+  @media (min-width:640px) { .qb-illus-card { box-shadow:0 16px var(--ink); padding:var(--space-m); } }
+  .qb-illus-card img { width:100%; height:auto; display:block; border-radius:18px; }
+  .qb-illus-card.is-discovery { background:var(--phase-discovery); }
+  .qb-illus-card.is-creation  { background:var(--phase-creation); }
+  .qb-illus-card.is-content   { background:var(--phase-content); }
+  .qb-illus-card.is-execution { background:var(--phase-execution); }
+  .qb-illus-card.is-intel     { background:var(--phase-intelligence); }
+
   /* Phone mock — Pomegranate-style frame with simulated app screen */
   .phase-spread_visual {
     display:flex; align-items:center; justify-content:center;
@@ -648,9 +664,9 @@
   .qb-phone {
     aspect-ratio:9 / 19;
     border:2px solid var(--ink); border-radius:32px;
-    background:var(--ink); padding:6px;
+    background:var(--ink); padding:5px;
     box-shadow:0 9px var(--ink);
-    width:100%; max-width:260px;
+    width:100%; max-width:240px;
     transition:transform 0.5s var(--ease-qb);
   }
   @media (min-width:640px) { .qb-phone { box-shadow:0 16px var(--ink); } }
@@ -675,8 +691,8 @@
     border-radius:0 0 12px 12px;
   }
   .qb-phone_body {
-    flex:1; padding:0.9rem 1rem 1.1rem;
-    display:flex; flex-direction:column; gap:0.6rem;
+    flex:1; padding:0.7rem 0.85rem 0.85rem;
+    display:flex; flex-direction:column; gap:0.5rem;
     overflow:hidden;
   }
   .qb-phone.is-discovery .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-discovery) 100%); }
@@ -890,47 +906,47 @@
     font-size:0.65rem; letter-spacing:0.05em;
   }
   .price-grid {
-    display:grid; grid-template-columns:1fr; gap:var(--space-m);
-    margin-top:var(--space-xl);
+    display:grid; grid-template-columns:1fr; gap:var(--space-s-m);
+    margin-top:var(--space-l);
   }
   @media (min-width:700px)  { .price-grid { grid-template-columns:repeat(2,1fr); } }
   @media (min-width:1100px) { .price-grid { grid-template-columns:repeat(4,1fr); } }
   .price-card {
-    background:var(--cream-card); border:2px solid var(--ink); border-radius:32px;
-    padding:var(--space-m-l); display:flex; flex-direction:column; gap:var(--space-s);
+    background:var(--cream-card); border:2px solid var(--ink); border-radius:24px;
+    padding:var(--space-s-m); display:flex; flex-direction:column; gap:var(--space-xs);
     box-shadow:0 9px var(--ink);
   }
   @media (min-width:640px) { .price-card { box-shadow:0 16px var(--ink); } }
   .price-card.is-feat { background:var(--butter); position:relative; }
   .price-name {
-    display:flex; align-items:center; gap:0.55rem; flex-wrap:wrap;
+    display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;
     font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 600,"opsz" 60,"SOFT" 70;
-    font-size:var(--step-2); color:var(--ink); line-height:1;
+    font-variation-settings:"wght" 600,"opsz" 48,"SOFT" 70;
+    font-size:var(--step-1); color:var(--ink); line-height:1;
   }
   .price-tag {
     background:var(--rose); color:var(--cream);
-    font-family:'JetBrains Mono',monospace; font-size:0.6rem; letter-spacing:0.1em;
-    text-transform:uppercase; padding:0.3em 0.7em; border-radius:9999px;
+    font-family:'JetBrains Mono',monospace; font-size:0.55rem; letter-spacing:0.1em;
+    text-transform:uppercase; padding:0.25em 0.6em; border-radius:9999px;
   }
   .price-num { display:flex; align-items:baseline; gap:0.3rem; flex-wrap:wrap; }
   .price-amount {
     font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 60;
-    font-size:var(--step-5); color:var(--ink); line-height:1;
+    font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 60;
+    font-size:var(--step-4); color:var(--ink); line-height:1;
   }
-  .price-period { font-family:'Inter',sans-serif; font-weight:500; font-size:var(--step--1); color:var(--ink-75); }
-  .price-desc { font-family:'Inter',sans-serif; font-size:var(--step--1); color:var(--ink-75); line-height:1.5; }
-  .price-feats { display:flex; flex-direction:column; gap:0.55rem; }
+  .price-period { font-family:'Inter',sans-serif; font-weight:500; font-size:var(--step--2); color:var(--ink-75); }
+  .price-desc { font-family:'Inter',sans-serif; font-size:var(--step--2); color:var(--ink-75); line-height:1.5; }
+  .price-feats { display:flex; flex-direction:column; gap:0.4rem; }
   .price-feat {
-    display:flex; align-items:flex-start; gap:0.55rem;
-    font-family:'Inter',sans-serif; font-size:var(--step--1); color:var(--ink); line-height:1.4;
+    display:flex; align-items:flex-start; gap:0.5rem;
+    font-family:'Inter',sans-serif; font-size:var(--step--2); color:var(--ink); line-height:1.4;
   }
   .price-feat::before {
-    content:''; width:8px; height:8px; border-radius:50%;
+    content:''; width:6px; height:6px; border-radius:50%;
     background:var(--gold); margin-top:0.55em; flex-shrink:0;
   }
-  .price-card .qb-button { margin-top:auto; }
+  .price-card .qb-button { margin-top:auto; padding-top:var(--space-2xs); }
 
   /* =====================================================
      FOUNDER (dark)
@@ -1472,16 +1488,11 @@
           <div class="mock-card">
             <div class="mock-card_eyebrow">Brand Soul Map · Live</div>
             <h3 class="mock-card_h">Maya Bakery, Casablanca</h3>
-            <div style="display:flex;flex-direction:column;gap:0.7rem">
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
               <div class="progress-row">
                 <span class="progress-label">Brand essence</span>
                 <span class="progress-track"><span class="progress-fill" data-w="95%"></span></span>
                 <span class="progress-val">95%</span>
-              </div>
-              <div class="progress-row">
-                <span class="progress-label">Natural force</span>
-                <span class="progress-track"><span class="progress-fill is-rose" data-w="82%"></span></span>
-                <span class="progress-val">82%</span>
               </div>
               <div class="progress-row">
                 <span class="progress-label">Archetype</span>
@@ -1489,12 +1500,12 @@
                 <span class="progress-val">88%</span>
               </div>
               <div class="progress-row">
-                <span class="progress-label">Primary persona</span>
-                <span class="progress-track"><span class="progress-fill is-coral" data-w="76%"></span></span>
-                <span class="progress-val">76%</span>
+                <span class="progress-label">Persona</span>
+                <span class="progress-track"><span class="progress-fill is-rose" data-w="82%"></span></span>
+                <span class="progress-val">82%</span>
               </div>
             </div>
-            <div class="progress-note">"The intersection of craft and ambition." Wildfire energy. The Alchemist. Founders who outgrew their brand.</div>
+            <div class="progress-note">"The intersection of craft and ambition." The Caregiver. Wildfire energy.</div>
           </div>
         </div>
       </div>
@@ -1542,9 +1553,13 @@
                   <div class="pm_eye">Brand Profile · Live</div>
                   <div class="pm_h">Maya Bakery,<br>Casablanca</div>
                   <div class="pm_quote">Every loaf is a love letter to slow mornings.</div>
+                  <div class="pm_chips">
+                    <div class="pm_chip"><span>Brand essence</span><span class="pm_chip_v">95%</span></div>
+                    <div class="pm_chip"><span>Archetype</span><span class="pm_chip_v">Caregiver</span></div>
+                    <div class="pm_chip"><span>Sensory map</span><span class="pm_chip_v">Warm/Gold</span></div>
+                  </div>
                   <div class="pm_tags">
                     <span>Caregiver</span>
-                    <span>Warm / Golden</span>
                     <span>Wildfire</span>
                   </div>
                 </div>
@@ -1566,7 +1581,7 @@
               <div class="qb-phone_screen">
                 <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
                 <div class="qb-phone_body">
-                  <div class="pm_eye">Visual DNA</div>
+                  <div class="pm_eye">Visual DNA · v1</div>
                   <div class="pm_h">Your palette,<br>locked.</div>
                   <div class="pm_swatches">
                     <span class="pm_swatch" style="background:#E0B069"></span>
@@ -1577,6 +1592,11 @@
                     <span class="pm_swatch" style="background:#2D1521"></span>
                   </div>
                   <div class="pm_quote">The brand becomes visible.</div>
+                  <div class="pm_chips">
+                    <div class="pm_chip"><span>Type · Display</span><span class="pm_chip_v">Fraunces</span></div>
+                    <div class="pm_chip"><span>Type · Body</span><span class="pm_chip_v">Inter</span></div>
+                    <div class="pm_chip"><span>Logo brief</span><span class="pm_chip_v">Ready</span></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1599,10 +1619,10 @@
                   <div class="pm_eye">Instagram Seed · Week 1</div>
                   <div class="pm_h">12 posts<br>ready.</div>
                   <div class="pm_grid9"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                  <div class="pm_tags">
-                    <span>Hooks</span>
-                    <span>Captions</span>
-                    <span>Visuals</span>
+                  <div class="pm_chips">
+                    <div class="pm_chip"><span>Captions</span><span class="pm_chip_v">12/12</span></div>
+                    <div class="pm_chip"><span>Visual briefs</span><span class="pm_chip_v">12/12</span></div>
+                    <div class="pm_chip"><span>Hashtags</span><span class="pm_chip_v">Set</span></div>
                   </div>
                 </div>
               </div>
@@ -1619,22 +1639,9 @@
             <a href="content-repurposing-engine.html" class="qb-button is-sm"><span class="qb-button_content">Open Repurposing Engine →</span></a>
           </div>
           <div class="phase-spread_visual">
-            <div class="qb-phone is-execution">
-              <div class="qb-phone_screen">
-                <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
-                <div class="qb-phone_body">
-                  <div class="pm_eye">Repurposing · Q2 Brief</div>
-                  <div class="pm_h">1 piece<br>→ 25 ready.</div>
-                  <div class="pm_chips">
-                    <div class="pm_chip"><span>Instagram</span><span class="pm_chip_v">5/5</span></div>
-                    <div class="pm_chip"><span>LinkedIn</span><span class="pm_chip_v">6/6</span></div>
-                    <div class="pm_chip"><span>YouTube short</span><span class="pm_chip_v">3/3</span></div>
-                    <div class="pm_chip"><span>Newsletter</span><span class="pm_chip_v">1/1</span></div>
-                    <div class="pm_chip"><span>Threads</span><span class="pm_chip_v">10/10</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <figure class="qb-illus-card is-execution">
+              <img src="img/illus/phase-04.png" alt="Phase 04 Execution scene. Production studio with crew, spotlights, and sticky notes." loading="lazy">
+            </figure>
           </div>
         </article>
 
@@ -1647,22 +1654,9 @@
             <a href="brand-performance-dashboard.html" class="qb-button is-sm"><span class="qb-button_content">Open Dashboard →</span></a>
           </div>
           <div class="phase-spread_visual">
-            <div class="qb-phone is-intel">
-              <div class="qb-phone_screen">
-                <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
-                <div class="qb-phone_body">
-                  <div class="pm_eye">Brand Health · Q2</div>
-                  <div class="pm_h">B+ → A-</div>
-                  <div class="pm_stats">
-                    <div class="pm_stat"><div class="pm_stat_v">B+</div><div class="pm_stat_l">Q1 Health</div></div>
-                    <div class="pm_stat"><div class="pm_stat_v">92%</div><div class="pm_stat_l">Voice match</div></div>
-                    <div class="pm_stat"><div class="pm_stat_v">+34%</div><div class="pm_stat_l">Reach</div></div>
-                    <div class="pm_stat"><div class="pm_stat_v">A-</div><div class="pm_stat_l">Q2 Target</div></div>
-                  </div>
-                  <div class="pm_next"><strong>Next</strong>Scale LinkedIn. Test paid.</div>
-                </div>
-              </div>
-            </div>
+            <figure class="qb-illus-card is-intel">
+              <img src="img/illus/phase-05.png" alt="Phase 05 Intelligence scene. Group in park reviewing analytics on phones." loading="lazy">
+            </figure>
           </div>
         </article>
       </div>
