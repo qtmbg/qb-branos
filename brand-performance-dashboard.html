@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Brand Performance Dashboard</title>
+<title>QB - Brand Performance Dashboard</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap">
 
 <script>
-  // Theme init — read from localStorage, default to dark. Prevents flash.
+  // Theme init - read from localStorage, default to dark. Prevents flash.
   (function() {
     try {
       var theme = localStorage.getItem('qb-theme') || 'light';
@@ -362,14 +362,14 @@ select option { background: var(--bg-deep); color: var(--text-1); }
 
 </style>
 <script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+// QB_SPINE v2 - API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
   // QBP
   var urlQBP = params.get('qbp');
   if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
   try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-  // Universal AI call — works with Anthropic or Gemini
+  // Universal AI call - works with Anthropic or Gemini
   window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
     maxTokens = maxTokens || 4000;
     var body = {
@@ -446,7 +446,7 @@ const SF = ({label, options, value, onChange}) => (
   <div style={{marginBottom: 24}}>
     <ML mb={10}>{label}</ML>
     <select value={value} onChange={e=>onChange(e.target.value)}>
-      <option value="">— select —</option>
+      <option value="">- select -</option>
       {options.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -613,10 +613,10 @@ function App() {
   const isValid = () => brandName && brandEssence && platforms.some(p => p.platform && (p.topPosts || p.metrics));
 
   const buildSystemPrompt = () => `You are the Brand Performance Intelligence Agent inside the Quantum Branding BrandOS ecosystem.
-Your function is to read performance data through the lens of the Quantum Brand Profile — not as a metrics analyst, but as a brand strategist.
+Your function is to read performance data through the lens of the Quantum Brand Profile - not as a metrics analyst, but as a brand strategist.
 Numbers are not your output. Brand signals are.
 You interpret what the data means for brand identity, positioning, voice coherence, and strategic direction.
-Return ONLY valid JSON — no markdown, no preamble.`;
+Return ONLY valid JSON - no markdown, no preamble.`;
 
   const buildUserPrompt = () => `QUANTUM BRAND PROFILE:
 Brand: ${brandName}
@@ -653,15 +653,15 @@ Analyze this performance data through the brand lens and return:
   "voiceConsistencyScore": number 0-100,
   "audienceAlignmentScore": number 0-100,
   "momentumScore": number 0-100,
-  "executiveSummary": "3-4 sentences. The real story this data tells about the brand — not metrics, brand health.",
+  "executiveSummary": "3-4 sentences. The real story this data tells about the brand - not metrics, brand health.",
   "signals": [
     {
-      "title": "signal name — specific, named phenomenon",
+      "title": "signal name - specific, named phenomenon",
       "type": "On-identity resonance | Off-identity engagement | Audience drift | Offer signal | Authority building | Voice drift warning | Persona mismatch | Breakthrough moment",
       "urgency": "High | Medium | Low",
       "finding": "2-3 sentences. What is actually happening. Specific to this brand's data.",
       "evidence": "specific data points from the input that support this signal",
-      "brandInterpretation": "what this means in brand identity terms — traced to QBP",
+      "brandInterpretation": "what this means in brand identity terms - traced to QBP",
       "recommendation": "the specific action to take. Concrete, not vague."
     }
   ],
@@ -676,13 +676,13 @@ Analyze this performance data through the brand lens and return:
     }
   ],
   "contentPatterns": {
-    "whatIsWorking": "specific content types/angles/formats performing well — with brand explanation",
+    "whatIsWorking": "specific content types/angles/formats performing well - with brand explanation",
     "whatIsDrifting": "content that gets engagement but pulls away from the brand's true identity",
-    "unexploredTension": "the brand's most powerful unexplored territory — what is the biggest content opportunity not yet tapped",
+    "unexploredTension": "the brand's most powerful unexplored territory - what is the biggest content opportunity not yet tapped",
     "voiceFindings": "observations about voice consistency or drift across the period"
   },
   "audienceSignals": {
-    "whoIsActuallyEngaging": "who is responding — does it match the primary persona?",
+    "whoIsActuallyEngaging": "who is responding - does it match the primary persona?",
     "personaAlignment": "high | medium | low",
     "personaAlignmentExplanation": "why and what to do about it",
     "emergingAudience": "any unexpected audience segment showing up in the data"
@@ -690,7 +690,7 @@ Analyze this performance data through the brand lens and return:
   "strategicDirections": [
     {
       "direction": "direction name",
-      "rationale": "why this direction — traced to performance signals",
+      "rationale": "why this direction - traced to performance signals",
       "implementation": "how to execute it in the next 30 days",
       "risk": "what this direction risks if taken"
     }
@@ -699,18 +699,18 @@ Analyze this performance data through the brand lens and return:
     "singleBiggestMove": "the one highest-leverage action for the next 30 days",
     "contentFocus": "what content direction to double down on",
     "platformFocus": "which platform deserves most attention and why",
-    "whatToStop": "what to stop doing — specifically",
+    "whatToStop": "what to stop doing - specifically",
     "whatToTest": "one new experiment to run"
   },
   "qbpUpdateFlags": [
-    "any finding that suggests the QBP itself needs updating — e.g. audience has shifted, new persona is emerging, voice has evolved"
+    "any finding that suggests the QBP itself needs updating - e.g. audience has shifted, new persona is emerging, voice has evolved"
   ]
 }
 
 Requirements:
-- signals: minimum 4, maximum 8 — each specific and actionable
+- signals: minimum 4, maximum 8 - each specific and actionable
 - platformReadings: one per platform in input data
-- strategicDirections: exactly 3 — different risk/reward profiles
+- strategicDirections: exactly 3 - different risk/reward profiles
 - All findings must be traced to specific data from the input OR to the QBP identity
 - Do not give generic marketing advice. Every insight must be specific to THIS brand.`;
 
@@ -765,7 +765,7 @@ Requirements:
                 <ML mb={0} c="var(--brass)">Intelligence Agent Ready</ML>
               </div>
               <h1 style={{fontSize:48, marginBottom:16}}>Brand Performance Dashboard</h1>
-              <p style={{color:'var(--text-2)', fontSize:16, maxWidth:600, margin:'0 auto', lineHeight: 1.7}}>Feed your performance data. The agent reads it through the brand lens — not as a metrics report, but as human intelligence.</p>
+              <p style={{color:'var(--text-2)', fontSize:16, maxWidth:600, margin:'0 auto', lineHeight: 1.7}}>Feed your performance data. The agent reads it through the brand lens - not as a metrics report, but as human intelligence.</p>
             </div>
 
             <Sec n={1} title="Brand Context" note="* required">
@@ -773,7 +773,7 @@ Requirements:
                 <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand under review" rows={1}/>
                 <SF label="Archetype" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
               </div>
-              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth — one sentence" rows={2}/>
+              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth - one sentence" rows={2}/>
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
                 <TF label="Primary Persona" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who this brand serves" rows={2}/>
                 <TF label="Core Offer" value={offer} onChange={setOffer} placeholder="What this brand sells" rows={2}/>
@@ -798,7 +798,7 @@ Requirements:
                       <button onClick={()=>removePlatform(i)} className="btn-remove-platform">×</button>
                     )}
                   </div>
-                  <TF label="Top performing posts / content" value={p.topPosts} onChange={v=>updatePlatform(i,'topPosts',v)} placeholder="Describe the posts that performed best — topic, format, angle, and rough numbers" rows={2}/>
+                  <TF label="Top performing posts / content" value={p.topPosts} onChange={v=>updatePlatform(i,'topPosts',v)} placeholder="Describe the posts that performed best - topic, format, angle, and rough numbers" rows={2}/>
                   <TF label="Low performing posts / content" value={p.lowPosts} onChange={v=>updatePlatform(i,'lowPosts',v)} placeholder="What underperformed and any patterns you noticed" rows={2}/>
                   <TF label="Key metrics" value={p.metrics} onChange={v=>updatePlatform(i,'metrics',v)} placeholder="e.g. Avg reach: 2.4K, Engagement rate: 4.2%, Followers gained: +180" rows={1}/>
                   <TF label="Your own observations" value={p.observations} onChange={v=>updatePlatform(i,'observations',v)} placeholder="What felt right? What felt off? Any patterns you noticed beyond the numbers?" rows={2}/>
@@ -811,9 +811,9 @@ Requirements:
 
             <Sec n={4} title="Additional Context">
               <TF label="Overall observations" value={overallObservations} onChange={setOverallObservations} placeholder="Anything that stood out across all platforms this period" rows={3}/>
-              <TF label="Unexpected findings" value={unexpectedFindings} onChange={setUnexpectedFindings} placeholder="Surprises — positive or negative — that the numbers don't fully explain" rows={2}/>
-              <TF label="Audience feedback / notable comments" value={audienceFeedback} onChange={setAudienceFeedback} placeholder="What people said — DMs, comments, replies that gave you signal about what landed" rows={2}/>
-              <TF label="Conversion / business data" value={conversionData} onChange={setConversionData} placeholder="Leads, calls booked, sales, email signups — connect content to commercial outcomes where possible" rows={2}/>
+              <TF label="Unexpected findings" value={unexpectedFindings} onChange={setUnexpectedFindings} placeholder="Surprises - positive or negative - that the numbers don't fully explain" rows={2}/>
+              <TF label="Audience feedback / notable comments" value={audienceFeedback} onChange={setAudienceFeedback} placeholder="What people said - DMs, comments, replies that gave you signal about what landed" rows={2}/>
+              <TF label="Conversion / business data" value={conversionData} onChange={setConversionData} placeholder="Leads, calls booked, sales, email signups - connect content to commercial outcomes where possible" rows={2}/>
             </Sec>
 
             {error && <div style={{background:'var(--error-dim)', border:'1px solid rgba(138,74,74,.3)', borderRadius:8, padding:'16px 20px', marginBottom:24, fontSize:14, color:'var(--error)'}}>{error}</div>}
@@ -900,7 +900,7 @@ Requirements:
                         <p style={{fontSize:14, color:'var(--text-2)', fontStyle:'italic'}}>{p.primarySignal}</p>
                       </div>
                       <div style={{textAlign:'center', flexShrink:0, padding:'10px 16px', background:'var(--bg-elevated)', borderRadius:8, border:'1px solid var(--border-subtle)'}}>
-                        <div style={{fontSize:24, fontWeight:400, color: healthColor(p.healthScore||50), fontFamily:'var(--font-mono)'}}>{p.healthScore||'—'}</div>
+                        <div style={{fontSize:24, fontWeight:400, color: healthColor(p.healthScore||50), fontFamily:'var(--font-mono)'}}>{p.healthScore||'-'}</div>
                         <div style={{fontSize:9, color:'var(--text-3)', letterSpacing:'.1em', textTransform:'uppercase', fontFamily:'var(--font-mono)', marginTop:4}}>health</div>
                       </div>
                     </div>
@@ -934,7 +934,7 @@ Requirements:
                 {[
                   {label:'What is working', key:'whatIsWorking', color:'var(--patina)', accent:'var(--patina)'},
                   {label:'What is drifting', key:'whatIsDrifting', color:'var(--brass)', accent:'var(--brass)'},
-                  {label:'Unexplored territory — biggest opportunity', key:'unexploredTension', color:'var(--creation)', accent:'var(--creation)'},
+                  {label:'Unexplored territory - biggest opportunity', key:'unexploredTension', color:'var(--creation)', accent:'var(--creation)'},
                   {label:'Voice findings', key:'voiceFindings', color:'var(--content)', accent:'var(--content)'},
                 ].map(item => (
                   <Card key={item.key} accent={item.accent}>
@@ -997,7 +997,7 @@ Requirements:
             {activeTab === 'next30' && result.next30Days && (
               <div className="fade-in" style={{display:'flex', flexDirection:'column', gap:16}}>
                 <div className="manifesto-block glass-card" style={{padding: '28px 32px'}}>
-                  <ML c="var(--brass)" mb={12}>Single biggest move — next 30 days</ML>
+                  <ML c="var(--brass)" mb={12}>Single biggest move - next 30 days</ML>
                   <p style={{fontFamily:'var(--font-display)', fontSize:24, color:'var(--text-1)', lineHeight:1.5}}>{result.next30Days.singleBiggestMove}</p>
                 </div>
                 <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
@@ -1015,7 +1015,7 @@ Requirements:
                 </div>
                 {result.qbpUpdateFlags?.length > 0 && (
                   <Card accent="var(--brass)">
-                    <ML c="var(--brass)" mb={16}>QBP Update Flags — Profile Evolution</ML>
+                    <ML c="var(--brass)" mb={16}>QBP Update Flags - Profile Evolution</ML>
                     {result.qbpUpdateFlags.map((f, i) => (
                       <div key={i} style={{display:'flex', gap:12, padding:'12px 0', borderBottom: i < result.qbpUpdateFlags.length-1 ? '1px solid var(--border-subtle)' : '', fontSize:14, color:'var(--text-2)', lineHeight:1.6}}>
                         <span style={{color:'var(--brass)', flexShrink:0, fontFamily:'var(--font-mono)', marginTop:2}}>→</span>

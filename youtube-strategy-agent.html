@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — YouTube Strategy Agent</title>
+<title>QB - YouTube Strategy Agent</title>
 
 <!-- Flash-free theme init -->
 <script>
@@ -392,7 +392,7 @@ button { cursor: pointer; font-family: var(--font-sans); border: none; outline: 
 </style>
 
 <script>
-// ── QB SPINE v2 — API Key + QBP + Multi-provider adapter ───────────────────
+// ── QB SPINE v2 - API Key + QBP + Multi-provider adapter ───────────────────
 (function(){
   var params = new URLSearchParams(window.location.search);
   var urlQBP = params.get('qbp');
@@ -475,7 +475,7 @@ const SF=({label,options,value,onChange})=>(
   <div style={{marginBottom:18}}>
     <ML>{label}</ML>
     <select value={value} onChange={e=>onChange(e.target.value)}>
-      <option value="">— select —</option>
+      <option value="">- select -</option>
       {options.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -552,13 +552,13 @@ const ScriptDetail=({video,index})=>{
 
       {tab==='script'&&(
         <div className="fade-in">
-          {video.hook&&<ScriptSection label="Hook — first 30 seconds" content={video.hook} color="var(--phase-content)"/>}
-          {video.intro&&<ScriptSection label="Intro — context + promise" content={video.intro} color="var(--phase-intel)"/>}
+          {video.hook&&<ScriptSection label="Hook - first 30 seconds" content={video.hook} color="var(--phase-content)"/>}
+          {video.intro&&<ScriptSection label="Intro - context + promise" content={video.intro} color="var(--phase-intel)"/>}
           {video.body&&video.body.map((s,i)=>(
-            <ScriptSection key={i} label={`Act ${i+1} — ${s.title||'Body section'}`} content={s.content} color="var(--phase-creation)"/>
+            <ScriptSection key={i} label={`Act ${i+1} - ${s.title||'Body section'}`} content={s.content} color="var(--phase-creation)"/>
           ))}
           {video.transition&&<ScriptSection label="Transition / midpoint" content={video.transition} color="var(--phase-execution)"/>}
-          {video.cta&&<ScriptSection label="CTA — end card" content={video.cta} color="var(--phase-discovery)"/>}
+          {video.cta&&<ScriptSection label="CTA - end card" content={video.cta} color="var(--phase-discovery)"/>}
         </div>
       )}
 
@@ -584,7 +584,7 @@ const ScriptDetail=({video,index})=>{
           </Card>
           {video.titleVariants&&(
             <Card>
-              <ML c="var(--text-2)">Title variants — A/B test these</ML>
+              <ML c="var(--text-2)">Title variants - A/B test these</ML>
               {video.titleVariants.map((t,i)=>(
                 <div key={i} style={{padding:'10px 0',borderBottom:i<video.titleVariants.length-1?'1px solid var(--border-subtle)':'',fontSize:14,color:'var(--text-1)'}}>{t}</div>
               ))}
@@ -600,7 +600,7 @@ const ScriptDetail=({video,index})=>{
           </div>
           {video.reels?.map((reel,i)=>(
             <Card key={i} accent="var(--border-strong)">
-              <ML c="var(--text-1)">Reel / Short {i+1} — {reel.angle}</ML>
+              <ML c="var(--text-1)">Reel / Short {i+1} - {reel.angle}</ML>
               <div style={{marginBottom:12}}>
                 <span className="pill pill-neutral">{reel.duration}</span>
                 <span className="pill pill-neutral">{reel.platform}</span>
@@ -618,13 +618,13 @@ const ScriptDetail=({video,index})=>{
           ))}
           {video.linkedinPost&&(
             <Card accent="var(--border-strong)">
-              <ML c="var(--text-1)">LinkedIn post — from this video</ML>
+              <ML c="var(--text-1)">LinkedIn post - from this video</ML>
               <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'12px 16px',fontSize:14,lineHeight:1.8,color:'var(--text-2)',whiteSpace:'pre-wrap',border:'1px solid var(--border-subtle)'}}>{video.linkedinPost}</div>
             </Card>
           )}
           {video.tweetThread&&(
             <Card accent="var(--border-strong)">
-              <ML c="var(--text-1)">Tweet thread — from this video</ML>
+              <ML c="var(--text-1)">Tweet thread - from this video</ML>
               <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'12px 16px',fontSize:14,lineHeight:1.8,color:'var(--text-2)',whiteSpace:'pre-wrap',border:'1px solid var(--border-subtle)'}}>{video.tweetThread}</div>
             </Card>
           )}
@@ -641,7 +641,7 @@ const ScriptDetail=({video,index})=>{
         <div className="fade-in">
           <Card style={{marginBottom:12}}>
             <ML c="var(--text-2)">Video description (YouTube)</ML>
-            <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'16px',fontSize:14,lineHeight:1.8,color:'var(--text-2)',whiteSpace:'pre-wrap',maxHeight:250,overflowY:'auto',border:'1px solid var(--border-subtle)'}}>{video.description||'—'}</div>
+            <div style={{background:'var(--bg-deep)',borderRadius:6,padding:'16px',fontSize:14,lineHeight:1.8,color:'var(--text-2)',whiteSpace:'pre-wrap',maxHeight:250,overflowY:'auto',border:'1px solid var(--border-subtle)'}}>{video.description||'-'}</div>
           </Card>
           {video.tags&&(
             <Card>
@@ -789,9 +789,9 @@ Existing Content: ${existingContent||'none'}
 Return a JSON object with EXACTLY this structure:
 {
   "channel": {
-    "positioningStatement": "one sentence — what this channel is, who it's for, why it exists",
+    "positioningStatement": "one sentence - what this channel is, who it's for, why it exists",
     "premise": "2-3 sentences on the channel's unique angle in the space",
-    "targetViewer": "specific viewer description — who watches, what they carry, what they seek",
+    "targetViewer": "specific viewer description - who watches, what they carry, what they seek",
     "series": [
       {
         "name": "series name",
@@ -807,24 +807,24 @@ Return a JSON object with EXACTLY this structure:
     {
       "videoNumber": 1,
       "series": "which series this belongs to",
-      "title": "the video title — SEO-aware but brand-voice-true",
+      "title": "the video title - SEO-aware but brand-voice-true",
       "premise": "one sentence on what this video is about",
       "format": "Talking head | Essay | Tutorial | Interview | Documentary | Manifesto",
       "duration": "estimated duration e.g. 8-12 min",
-      "hook": "the complete first 30 seconds — word for word",
-      "intro": "the next 60-90 seconds — context, stakes, what the viewer will get",
+      "hook": "the complete first 30 seconds - word for word",
+      "intro": "the next 60-90 seconds - context, stakes, what the viewer will get",
       "body": [
         {"title": "act/section title", "content": "complete word-for-word script"},
         {"title": "act/section title", "content": "complete word-for-word script"},
         {"title": "act/section title", "content": "complete word-for-word script"}
       ],
-      "transition": "midpoint transition — script",
-      "cta": "the end card — in brand voice",
+      "transition": "midpoint transition - script",
+      "cta": "the end card - in brand voice",
       "thumbnailConcept": "visual concept for the thumbnail",
       "thumbnailText": "the 2-5 word on-image text",
       "thumbnailMidjourney": "complete Midjourney v6 prompt for thumbnail visual",
       "titleVariants": ["variant A", "variant B", "variant C"],
-      "description": "full YouTube description — hook paragraph, bullets, CTA, hashtags",
+      "description": "full YouTube description - hook paragraph, bullets, CTA, hashtags",
       "tags": ["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8"],
       "reels": [
         {
@@ -844,11 +844,11 @@ Return a JSON object with EXACTLY this structure:
 }
 
 REQUIREMENTS:
-- Exactly 6 videos — 2 per series
+- Exactly 6 videos - 2 per series
 - Exactly 3 series
-- Every script section must be WORD FOR WORD — not bullet points, not directions
-- Hooks must be exceptional — the first 30 seconds determine 80% of retention. No generic intros.
-- Each video gets exactly 3 reels — one per platform (Instagram Reels, TikTok, YouTube Shorts)
+- Every script section must be WORD FOR WORD - not bullet points, not directions
+- Hooks must be exceptional - the first 30 seconds determine 80% of retention. No generic intros.
+- Each video gets exactly 3 reels - one per platform (Instagram Reels, TikTok, YouTube Shorts)
 - Voice must match the QBP voice notes throughout
 - Body sections: 3 acts per video minimum, each fully scripted
 - Series: exactly 3 distinct series with 2 videos each`;
@@ -883,15 +883,15 @@ REQUIREMENTS:
 
   const exportAll=()=>{
     if(!result) return;
-    const lines=[`YOUTUBE STRATEGY PACK — ${brandName}`,'Generated by QB BrandOS — YouTube Strategy Agent',''];
+    const lines=[`YOUTUBE STRATEGY PACK - ${brandName}`,'Generated by QB BrandOS - YouTube Strategy Agent',''];
     result.videos?.forEach(v=>{
       lines.push(`${'='.repeat(60)}`);
-      lines.push(`EP${String(v.videoNumber).padStart(2,'0')} — ${v.title}`);
+      lines.push(`EP${String(v.videoNumber).padStart(2,'0')} - ${v.title}`);
       lines.push(`Series: ${v.series} | Format: ${v.format} | ${v.duration}`);
       lines.push('');
       lines.push('HOOK:');lines.push(v.hook||'');lines.push('');
       lines.push('INTRO:');lines.push(v.intro||'');lines.push('');
-      v.body?.forEach((s,i)=>{lines.push(`ACT ${i+1} — ${s.title}:`);lines.push(s.content||'');lines.push('');});
+      v.body?.forEach((s,i)=>{lines.push(`ACT ${i+1} - ${s.title}:`);lines.push(s.content||'');lines.push('');});
       if(v.cta){lines.push('CTA:');lines.push(v.cta);lines.push('');}
       lines.push('REELS:');
       v.reels?.forEach((r,i)=>{lines.push(`Reel ${i+1} (${r.platform}): ${r.hook}`);lines.push(r.script||'');lines.push('');});
@@ -934,9 +934,9 @@ REQUIREMENTS:
         {step===0&&(
           <div className="fade-in">
             <div style={{marginBottom:48}}>
-              <ML c="var(--patina)">// Phase 03 — Content Creation</ML>
+              <ML c="var(--patina)">// Phase 03 - Content Creation</ML>
               <h1 className="font-serif" style={{fontSize:42,fontWeight:400,lineHeight:1.1,marginBottom:12,color:'var(--text-1)'}}>YouTube Strategy Agent</h1>
-              <p style={{color:'var(--text-2)',fontSize:15,lineHeight:1.8,maxWidth:680}}>Channel positioning, 3 series architectures, 6 fully scripted videos, and a repurpose pack for each — Reels, LinkedIn posts, and newsletter angles. One brand, every platform.</p>
+              <p style={{color:'var(--text-2)',fontSize:15,lineHeight:1.8,maxWidth:680}}>Channel positioning, 3 series architectures, 6 fully scripted videos, and a repurpose pack for each - Reels, LinkedIn posts, and newsletter angles. One brand, every platform.</p>
             </div>
 
             <Sec n={1} title="Brand & Channel Core" note="* required">
@@ -953,8 +953,8 @@ REQUIREMENTS:
             </Sec>
 
             <Sec n={2} title="Offer & Method">
-              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who watches — their role, struggle, desire. Specific." rows={3} hint="The more specific, the more precisely targeted every script will be"/>
-              <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What you sell — format and transformation" rows={2}/>
+              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who watches - their role, struggle, desire. Specific." rows={3} hint="The more specific, the more precisely targeted every script will be"/>
+              <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What you sell - format and transformation" rows={2}/>
               <TF label="Transformation" value={transformation} onChange={setTransformation} placeholder="Before → after" rows={1}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
                 <TF label="Method / Framework Name" value={methodName} onChange={setMethodName} placeholder="e.g. Quantum Branding, BrandOS" rows={1}/>
@@ -963,7 +963,7 @@ REQUIREMENTS:
             </Sec>
 
             <Sec n={3} title="Voice & Production">
-              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand talks on video — rhythm, tone, what it refuses to sound like" rows={2}/>
+              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand talks on video - rhythm, tone, what it refuses to sound like" rows={2}/>
               <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this channel refuses to be" rows={1}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
                 <TF label="Video Style Preference" value={videoStyle} onChange={setVideoStyle} placeholder="e.g. Talking head, B-roll heavy, essay style, documentary" rows={1}/>
@@ -999,7 +999,7 @@ REQUIREMENTS:
           <div className="fade-in">
             <div style={{marginBottom:32,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16}}>
               <div>
-                <ML c="var(--patina)">// YouTube Strategy — Complete</ML>
+                <ML c="var(--patina)">// YouTube Strategy - Complete</ML>
                 <h1 className="font-serif" style={{fontSize:32,fontWeight:400,marginBottom:8,color:'var(--text-1)'}}>{brandName}</h1>
                 <p style={{color:'var(--text-3)',fontSize:14}}>3 series · 6 videos · 18 reels · complete repurpose system</p>
               </div>
@@ -1019,7 +1019,7 @@ REQUIREMENTS:
             {mainTab==='videos'&&(
               <div style={{display:'grid',gridTemplateColumns:'280px 1fr',gap:32,alignItems:'start'}}>
                 <div>
-                  <ML c="var(--text-3)" mb={16}>6 videos — select to view</ML>
+                  <ML c="var(--text-3)" mb={16}>6 videos - select to view</ML>
                   {videos.map((v,i)=>{
                     const seriesColors=['var(--phase-creation)','var(--phase-creation)','var(--phase-intel)','var(--phase-intel)','var(--phase-execution)','var(--phase-execution)'];
                     const sc=seriesColors[i]||'var(--phase-creation)';
@@ -1094,7 +1094,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
   };
 
   const statusColor = {pending:'var(--text-3)', approved:'var(--patina)', removed:'var(--status-error)', revising:'var(--brass)', revised:'var(--phase-creation)'};
-  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — review again'};
+  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised - review again'};
 
   return (
     <div>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — LinkedIn Strategy Agent</title>
+<title>QB - LinkedIn Strategy Agent</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap">
 
 <script>
-  // Theme init — read from localStorage, default to dark. Prevents flash.
+  // Theme init - read from localStorage, default to dark. Prevents flash.
   (function() {
     try {
       var theme = localStorage.getItem('qb-theme') || 'light';
@@ -32,7 +32,7 @@
 </script>
 
 <style>
-/* ── DESIGN SYSTEM: QB BRANDOS — "Entangled Time" ── */
+/* ── DESIGN SYSTEM: QB BRANDOS - "Entangled Time" ── */
 *{box-sizing:border-box;margin:0;padding:0}
 
 :root, [data-theme="dark"] {
@@ -390,14 +390,14 @@ button { cursor: pointer; font-family: var(--font-sans); border: none; outline: 
 </style>
 
 <script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+// QB_SPINE v2 - API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
   // QBP
   var urlQBP = params.get('qbp');
   if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){} }
   try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
-  // Universal AI call — works with Anthropic or Gemini
+  // Universal AI call - works with Anthropic or Gemini
   window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
     maxTokens = maxTokens || 4000;
     var body = {
@@ -471,7 +471,7 @@ const SF=({label,options,value,onChange})=>(
   <div style={{marginBottom:18}}>
     <ML>{label}</ML>
     <select value={value} onChange={e=>onChange(e.target.value)}>
-      <option value="">— select —</option>
+      <option value="">- select -</option>
       {options.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -690,7 +690,7 @@ const StrategyOverview=({data,mode})=>{
       </div>
       {data.strategy.uniqueEdge&&(
         <Card accent={accent}>
-          <ML c={color}>Unique edge — what makes this account unmistakable</ML>
+          <ML c={color}>Unique edge - what makes this account unmistakable</ML>
           <p style={{fontSize:15,color:'var(--text-1)',lineHeight:1.7}}>{data.strategy.uniqueEdge}</p>
         </Card>
       )}
@@ -768,7 +768,7 @@ function App(){
 
   const isValid=()=>brandName&&brandEssence&&naturalForce&&archetype&&primaryPersona&&offer;
 
-  const buildPrompt=()=>`Produce two complete LinkedIn strategies — personal and company — as described in your instructions.
+  const buildPrompt=()=>`Produce two complete LinkedIn strategies - personal and company - as described in your instructions.
 
 QUANTUM BRAND PROFILE:
 Brand: ${brandName}
@@ -796,11 +796,11 @@ Return a JSON object with EXACTLY this structure:
 {
   "personal": {
     "profile": {
-      "headline": "the new headline — specific, positioning-forward, under 220 chars",
-      "about": "the full About section rewrite — narrative, authority-establishing, ends with CTA — 400-600 words, written in the founder's voice",
-      "featuredSection": "what to pin in featured — specific with reasoning",
+      "headline": "the new headline - specific, positioning-forward, under 220 chars",
+      "about": "the full About section rewrite - narrative, authority-establishing, ends with CTA - 400-600 words, written in the founder's voice",
+      "featuredSection": "what to pin in featured - specific with reasoning",
       "bannerDirection": "banner image visual brief",
-      "profilePhotoDirection": "profile photo brief — expression, framing, setting",
+      "profilePhotoDirection": "profile photo brief - expression, framing, setting",
       "experiencePositioning": "how to position the current role title and description",
       "connectionStrategy": "who to connect with, how to engage, growth approach"
     },
@@ -826,9 +826,9 @@ Return a JSON object with EXACTLY this structure:
         "postTitle": "short descriptive title",
         "postType": "Belief post | Contrarian take | Personal story | Framework reveal | etc",
         "contentPillar": "which pillar this serves",
-        "hook": "the exact opening line — no filler, stops the scroll",
+        "hook": "the exact opening line - no filler, stops the scroll",
         "hookType": "curiosity gap | bold statement | counter-intuitive | story open | direct challenge",
-        "fullPost": "the complete post exactly as it would be published — with line breaks, all sections, formatted for LinkedIn — 150-400 words",
+        "fullPost": "the complete post exactly as it would be published - with line breaks, all sections, formatted for LinkedIn - 150-400 words",
         "strategicPurpose": "what this post achieves in the 4-week arc",
         "cta": "the specific call to action",
         "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5"],
@@ -838,13 +838,13 @@ Return a JSON object with EXACTLY this structure:
   },
   "company": {
     "profile": {
-      "headline": "company page tagline — what ${brandName} does in one line",
-      "about": "company About section — product-focused, methodology-forward, outcome-driven — 200-400 words",
+      "headline": "company page tagline - what ${brandName} does in one line",
+      "about": "company About section - product-focused, methodology-forward, outcome-driven - 200-400 words",
       "featuredSection": "what to pin and why",
       "bannerDirection": "company banner visual brief",
       "profilePhotoDirection": "company logo display guidance",
       "experiencePositioning": "how to describe the company in team member profiles",
-      "connectionStrategy": "company page growth strategy — how to build followers"
+      "connectionStrategy": "company page growth strategy - how to build followers"
     },
     "strategy": {
       "positioning": "2-3 sentence company page strategic positioning",
@@ -870,7 +870,7 @@ Return a JSON object with EXACTLY this structure:
         "contentPillar": "which pillar this serves",
         "hook": "company page opening hook",
         "hookType": "type of hook",
-        "fullPost": "complete company page post — more structured, proof-forward, less personal than founder — 100-300 words",
+        "fullPost": "complete company page post - more structured, proof-forward, less personal than founder - 100-300 words",
         "strategicPurpose": "what this post achieves",
         "cta": "specific CTA",
         "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5"],
@@ -883,12 +883,12 @@ Return a JSON object with EXACTLY this structure:
 REQUIREMENTS:
 - personal.posts: exactly 12 posts across 4 weeks (3 per week). Each week has a distinct theme and clear intent.
 - company.posts: exactly 8 posts across 4 weeks (2 per week). Complementary to personal, never duplicate content.
-- Every post must be FULLY written — not outlined, not templated. Ready to copy-paste and publish.
+- Every post must be FULLY written - not outlined, not templated. Ready to copy-paste and publish.
 - Personal voice = founder authority, belief-driven, challenges the status quo, sounds like a person not a brand.
 - Company voice = product confidence, methodology-forward, outcome-focused, sounds like a practice not a person.
 - contentPillars: exactly 4 per account
 - weeklyThemes: exactly 4 per account (weeks 1-4)
-- All posts must reflect THIS brand's specific voice and methodology — not generic LinkedIn content
+- All posts must reflect THIS brand's specific voice and methodology - not generic LinkedIn content
 - Hooks must be specific, provocative, and persona-targeted. No "I want to talk about..." openers.`;
 
   const run=async()=>{
@@ -898,12 +898,12 @@ REQUIREMENTS:
       const systemPrompt=`You are the LinkedIn Strategy Agent inside the Quantum Branding BrandOS ecosystem.
 Your function is to produce two complete, ready-to-execute LinkedIn strategies from a Quantum Brand Profile.
 These are not outlines. Every post must be fully written, on-brand, and ready to publish.
-Return ONLY valid JSON — no markdown, no preamble, no explanation. Return nothing but the JSON object.`;
+Return ONLY valid JSON - no markdown, no preamble, no explanation. Return nothing but the JSON object.`;
       const raw=await window.QB_AI(systemPrompt, buildPrompt(), 12000);
       const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
       const parsed=JSON.parse(clean);
-      if(!parsed.personal||!parsed.company) throw new Error('Unexpected response structure — missing personal or company keys');
-      if(!Array.isArray(parsed.personal.posts)||!Array.isArray(parsed.company.posts)) throw new Error('Unexpected response structure — posts must be arrays');
+      if(!parsed.personal||!parsed.company) throw new Error('Unexpected response structure - missing personal or company keys');
+      if(!Array.isArray(parsed.personal.posts)||!Array.isArray(parsed.company.posts)) throw new Error('Unexpected response structure - posts must be arrays');
       setResult(parsed);
       setMode('personal');
       setModeTab('strategy');
@@ -914,19 +914,19 @@ Return ONLY valid JSON — no markdown, no preamble, no explanation. Return noth
 
   const exportAll=()=>{
     if(!result) return;
-    const lines=[`LINKEDIN STRATEGY PACK — ${brandName}`,'Generated by QB BrandOS — LinkedIn Strategy Agent',''];
+    const lines=[`LINKEDIN STRATEGY PACK - ${brandName}`,'Generated by QB BrandOS - LinkedIn Strategy Agent',''];
     ['personal','company'].forEach(m=>{
       const data=result[m];
       const postsToExport=approvedPosts[m]||data?.posts;
       if(!data) return;
       lines.push('='.repeat(60));
-      lines.push(m==='personal'?`PERSONAL PROFILE — ${founderName||'Founder'}`:`COMPANY PAGE — ${brandName}`);
+      lines.push(m==='personal'?`PERSONAL PROFILE - ${founderName||'Founder'}`:`COMPANY PAGE - ${brandName}`);
       lines.push('='.repeat(60),'');
       if(data.profile?.headline){ lines.push('HEADLINE:');lines.push(data.profile.headline);lines.push('');}
       if(data.profile?.about){ lines.push('ABOUT:');lines.push(data.profile.about);lines.push('');}
       lines.push('-'.repeat(40),'POSTS:','');
       postsToExport?.forEach(p=>{
-        lines.push(`Week ${p.week} · Post ${p.postNumber} — ${p.postTitle}`);
+        lines.push(`Week ${p.week} · Post ${p.postNumber} - ${p.postTitle}`);
         lines.push(`Type: ${p.postType}`);
         lines.push('');
         lines.push(p.fullPost);
@@ -977,7 +977,7 @@ Return ONLY valid JSON — no markdown, no preamble, no explanation. Return noth
         {step===0&&(
           <div className="fade-in">
             <div style={{marginBottom:48}}>
-              <ML c="var(--brass)" mb={12}>// Phase 03 — Content Creation</ML>
+              <ML c="var(--brass)" mb={12}>// Phase 03 - Content Creation</ML>
               <h1 className="serif-title" style={{fontSize:42,lineHeight:1.1,marginBottom:16}}>LinkedIn Strategy Agent<span style={{color:'var(--brass)'}}>.</span></h1>
               <p style={{color:'var(--text-2)',fontSize:16,lineHeight:1.8,maxWidth:680}}>Two complete LinkedIn systems from one QBP input. Personal profile rewrite + 4 weeks of founder posts. Company page rewrite + 4 weeks of brand posts. Every post fully written and ready to publish.</p>
             </div>
@@ -988,7 +988,7 @@ Return ONLY valid JSON — no markdown, no preamble, no explanation. Return noth
                 <TF label="Founder Name" value={founderName} onChange={setFounderName} placeholder="The personal profile owner" rows={1}/>
               </div>
               <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth" rows={2}/>
-              <TF label="The Spark — narrative synthesis" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what transformation it creates" rows={3}/>
+              <TF label="The Spark - narrative synthesis" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what transformation it creates" rows={3}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                 <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
                 <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
@@ -996,8 +996,8 @@ Return ONLY valid JSON — no markdown, no preamble, no explanation. Return noth
             </Section>
 
             <Section number={2} title="Offer + Transformation" note="* required">
-              <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What you sell — be specific about format, price tier, transformation" rows={2}/>
-              <TF label="Transformation — before → after" value={transformation} onChange={setTransformation} placeholder="e.g. Scattered identity + weak positioning → coherent brand system that commands premium" rows={2}/>
+              <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What you sell - be specific about format, price tier, transformation" rows={2}/>
+              <TF label="Transformation - before → after" value={transformation} onChange={setTransformation} placeholder="e.g. Scattered identity + weak positioning → coherent brand system that commands premium" rows={2}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                 <TF label="Method / Framework Name" value={methodName} onChange={setMethodName} placeholder="e.g. Quantum Branding, BrandOS, The Signal Scan" rows={1}/>
                 <TF label="Price Point" value={pricePoint} onChange={setPricePoint} placeholder="e.g. $997, $5K–$25K, $197/mo" rows={1}/>
@@ -1007,19 +1007,19 @@ Return ONLY valid JSON — no markdown, no preamble, no explanation. Return noth
             </Section>
 
             <Section number={3} title="Audience + Goals">
-              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who reads this LinkedIn — role, struggle, desire, what they carry. Specific." rows={3} hint="Specificity here determines how precisely the agent targets every post"/>
+              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who reads this LinkedIn - role, struggle, desire, what they carry. Specific." rows={3} hint="Specificity here determines how precisely the agent targets every post"/>
               <TF label="LinkedIn Goal" value={linkedinGoal} onChange={setLinkedinGoal} placeholder="e.g. Book discovery calls, build waitlist, establish thought leadership, sell course" rows={1}/>
             </Section>
 
             <Section number={4} title="Voice + Profile Context">
-              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand writes — rhythm, register, what it sounds like" rows={2}/>
-              <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="Writing rules — what this brand always does and never does in copy" rows={2}/>
-              <TF label="Founder Story — what brought you here" value={founderStory} onChange={setFounderStory} placeholder="The origin — what you escaped, what you discovered, what you're building instead" rows={3}/>
+              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand writes - rhythm, register, what it sounds like" rows={2}/>
+              <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="Writing rules - what this brand always does and never does in copy" rows={2}/>
+              <TF label="Founder Story - what brought you here" value={founderStory} onChange={setFounderStory} placeholder="The origin - what you escaped, what you discovered, what you're building instead" rows={3}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                 <TF label="Current Headline (to improve)" value={currentHeadline} onChange={setCurrentHeadline} placeholder="Paste current headline" rows={1}/>
                 <TF label="Company Tagline (to improve)" value={companyTagline} onChange={setCompanyTagline} placeholder="Current company page tagline" rows={1}/>
               </div>
-              <TF label="Current About (to rewrite)" value={currentAbout} onChange={setCurrentAbout} placeholder="Paste current About section — the agent will rewrite it" rows={3}/>
+              <TF label="Current About (to rewrite)" value={currentAbout} onChange={setCurrentAbout} placeholder="Paste current About section - the agent will rewrite it" rows={3}/>
             </Section>
 
             {error&&<div style={{background:'var(--color-error-bg)',border:'1px solid var(--color-error-border)',borderRadius:8,padding:'16px 20px',marginBottom:24,fontSize:14,color:'var(--color-error)'}}>{error}</div>}
@@ -1073,10 +1073,10 @@ Return ONLY valid JSON — no markdown, no preamble, no explanation. Return noth
             {/* Mode selector */}
             <div style={{display:'flex',gap:10,marginBottom:24}}>
               <button className={`tab-btn personal${mode==='personal'?' active':''}`} onClick={()=>{setMode('personal');setModeTab('strategy');}}>
-                {founderName||'Founder'} — Personal
+                {founderName||'Founder'} - Personal
               </button>
               <button className={`tab-btn company${mode==='company'?' active':''}`} onClick={()=>{setMode('company');setModeTab('strategy');}}>
-                {brandName} — Company
+                {brandName} - Company
               </button>
             </div>
 
@@ -1169,7 +1169,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved}) {
   };
 
   const statusColor = {pending:'var(--text-3)', approved:'var(--patina-lit)', removed:'var(--color-error)', revising:'var(--brass)', revised:'var(--blue)'};
-  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — review again'};
+  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised - review again'};
 
   return (
     <div>

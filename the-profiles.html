@@ -1424,7 +1424,7 @@ function renderCommonEdit() {
       h("div", { class: "field-block mt-8" },
         h("div", { class: "field-label", text: "The binding insight" }),
         h("div", { class: "field-hint", style: { marginTop: "0", marginBottom: "8px" }, text: "One sentence. The strategic thread that runs through all three. The thing your brand exists to address across every buyer." }),
-        textarea({ rows: 3, value: state.bindingInsight, placeholder: "All three buyers operate in regulated, high-stakes systems where one missed signal can damage decades of credibility — they buy partners who absorb that signal load on their behalf.", onChange: function(v) { setState({ bindingInsight: v }); } })
+        textarea({ rows: 3, value: state.bindingInsight, placeholder: "All three buyers operate in regulated, high-stakes systems where one missed signal can damage decades of credibility - they buy partners who absorb that signal load on their behalf.", onChange: function(v) { setState({ bindingInsight: v }); } })
       ),
       h("div", { class: "center mt-10 flex justify-center gap-3" },
         btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: function() { state._commonDone = false; goPrev(); } }),
@@ -1705,7 +1705,7 @@ function openRefineModal(personaIdx) {
     h("div", { class: "modal" },
       h("div", { class: "modal-title", text: "Refine " + state.seats[personaIdx].name }),
       h("p", { class: "body", text: "What needs to change? Marketing approach? Takeaways? X-Ray pattern? One paragraph of direction. Claude will rebuild this persona's brief." }),
-      feedbackInput = h("textarea", { class: "modal-textarea", placeholder: "e.g. The marketing approach is too tactical. Lift it to ecosystem-level moves. The third takeaway is correct but the language is generic — make it specific to academic medical centers." }),
+      feedbackInput = h("textarea", { class: "modal-textarea", placeholder: "e.g. The marketing approach is too tactical. Lift it to ecosystem-level moves. The third takeaway is correct but the language is generic - make it specific to academic medical centers." }),
       h("div", { class: "flex gap-3 justify-between" },
         h("button", { class: "btn btn-ghost btn-sm", onclick: function() { modal.remove(); } }, "Cancel"),
         h("button", { class: "btn btn-primary btn-sm", onclick: function() {
@@ -1855,7 +1855,7 @@ function renderFinish() {
   }
   function exportPPTXMode(mode) {
     if (!window.QB_exportPPTX) {
-      alert("PPTX export still loading — try again in a second.");
+      alert("PPTX export still loading - try again in a second.");
       return;
     }
     var qbp = {};
@@ -1912,7 +1912,7 @@ function triggerDownload(blob, filename) {
 function buildMarkdown(out) {
   var md = "# The Profiles\n\n";
   out.profiles.forEach(function(p, i) {
-    md += "## Persona " + (i + 1) + ": " + p.name + " — " + (p.role || "") + "\n\n";
+    md += "## Persona " + (i + 1) + ": " + p.name + " - " + (p.role || "") + "\n\n";
     md += "### Core Identity\n" + p.coreIdentity + "\n\n";
     md += "### Professional Mindset\n" + p.mindset + "\n\n";
     md += "### Hook\n> " + p.hook + "\n\n";

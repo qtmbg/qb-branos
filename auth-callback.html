@@ -51,7 +51,7 @@
   const accessToken = params.get('access_token');
   const refreshToken = params.get('refresh_token');
   const queryParams = new URLSearchParams(window.location.search);
-  // Always strip www. from return_to — the canonicalizer in qb-cloud.js will
+  // Always strip www. from return_to - the canonicalizer in qb-cloud.js will
   // send www visitors to non-www on the next page load anyway, but doing it
   // here too avoids one round-trip + a flash of the wrong host.
   const rawReturnTo = queryParams.get('return_to') || '/';
@@ -122,7 +122,7 @@
       } catch(e){}
     }
 
-    // Push pre-signup local completions to cloud — same merge semantics
+    // Push pre-signup local completions to cloud - same merge semantics
     const localCompletions = QB.getCompletions();
     if (localCompletions && Object.keys(localCompletions).length > 0) {
       try {

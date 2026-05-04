@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Newsletter Architecture Agent</title>
+<title>QB - Newsletter Architecture Agent</title>
 
 <!-- Theme Flash Prevention -->
 <script>
@@ -30,7 +30,7 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Entangled Time — Dark Theme (Default) */
+/* Entangled Time - Dark Theme (Default) */
 :root, [data-theme="dark"] {
   --bg-void: #080604;
   --bg-deep: #0A0806;
@@ -78,7 +78,7 @@
   --red: #8A4A4A; --red2: rgba(138,74,74,0.1);
 }
 
-/* Entangled Time — Light Theme */
+/* Entangled Time - Light Theme */
 [data-theme="light"] {
   --bg-void: #F4F0EB;
   --bg-deep: #EDE8E2;
@@ -425,12 +425,12 @@ button { cursor: pointer; font-family: var(--font-sans); border: none; outline: 
 </style>
 
 <script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+// QB_SPINE v2 - API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
   var urlQBP = params.get('qbp');
   if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(urlQBP)); }catch(e){ console.warn('[QB_SPINE] Failed to decode/store QBP token:', e.message); } }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ console.warn('[QB_SPINE] Failed to parse QBP — using empty profile:', e.message); window.QB_QBP = {}; }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ console.warn('[QB_SPINE] Failed to parse QBP - using empty profile:', e.message); window.QB_QBP = {}; }
   
   window.QB_AI = async function(systemPrompt, userPrompt, maxTokens){
     maxTokens = maxTokens || 4000;
@@ -520,7 +520,7 @@ const SF = ({ label, options, value, onChange }) => (
   <div style={{marginBottom:18}}>
     <ML>{label}</ML>
     <select value={value} onChange={e=>onChange(e.target.value)}>
-      <option value="">— select —</option>
+      <option value="">- select -</option>
       {options.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -640,7 +640,7 @@ const IssueDetail = ({ issue, index }) => {
 
       {tab==='issue' && (
         <div className="fade-in" style={{display:'flex', flexDirection:'column', gap:10}}>
-          {issue.opening && <SectionBlock label="Opening — the hook" content={issue.opening} color={c} defaultOpen={true}/>}
+          {issue.opening && <SectionBlock label="Opening - the hook" content={issue.opening} color={c} defaultOpen={true}/>}
           {issue.sections?.map((s,i)=>(
             <SectionBlock key={i} label={s.sectionName||`Section ${i+1}`} content={s.content} color={issueColors[(index+i+1)%4]}/>
           ))}
@@ -804,8 +804,8 @@ function App() {
 
   const buildPrompt = () => `You are the Newsletter Architecture Agent inside the Quantum Branding BrandOS ecosystem.
 Your function is to design a complete newsletter system and write the first 4 issues fully from a Quantum Brand Profile.
-The newsletter is the highest-leverage owned channel — no algorithm between the brand and the audience.
-Return ONLY valid JSON — no markdown, no preamble.
+The newsletter is the highest-leverage owned channel - no algorithm between the brand and the audience.
+Return ONLY valid JSON - no markdown, no preamble.
 
 QUANTUM BRAND PROFILE:
 Brand: ${brandName}
@@ -828,40 +828,40 @@ Newsletter Name Idea: ${newsletterName||'generate one'}
 Return a JSON object with EXACTLY this structure:
 {
   "architecture": {
-    "name": "the newsletter name — specific, memorable, brand-aligned",
+    "name": "the newsletter name - specific, memorable, brand-aligned",
     "tagline": "one-line positioning statement for the newsletter",
     "nameRationale": "2-3 sentences on why this name works for this brand",
-    "positioningStatement": "what this newsletter is, who it's for, and why it exists — one sentence",
-    "format": "2-3 sentences describing the format structure — length, feel, what a typical issue contains",
+    "positioningStatement": "what this newsletter is, who it's for, and why it exists - one sentence",
+    "format": "2-3 sentences describing the format structure - length, feel, what a typical issue contains",
     "sections": ["section name 1", "section name 2", "section name 3"],
     "cadence": "send frequency and day recommendation with reasoning",
     "idealReader": "specific description of who subscribes and why",
-    "toneRegister": "how this newsletter sounds — 2 sentences. Different from the brand's other channels how?",
-    "signatureElements": ["distinctive recurring element — e.g. opening ritual, sign-off phrase, section header style"],
-    "growthStrategy": "how to grow the list — first 100, first 1000, ongoing",
-    "platformRecommendation": "which platform to use and why — Beehiiv, Substack, ConvertKit, etc. specific reasoning",
-    "welcomeEmailOutline": "the welcome email sequence — what each email in the onboarding does"
+    "toneRegister": "how this newsletter sounds - 2 sentences. Different from the brand's other channels how?",
+    "signatureElements": ["distinctive recurring element - e.g. opening ritual, sign-off phrase, section header style"],
+    "growthStrategy": "how to grow the list - first 100, first 1000, ongoing",
+    "platformRecommendation": "which platform to use and why - Beehiiv, Substack, ConvertKit, etc. specific reasoning",
+    "welcomeEmailOutline": "the welcome email sequence - what each email in the onboarding does"
   },
   "issues": [
     {
       "issueNumber": 1,
       "issueType": "Manifesto | Deep dive | Framework | Story | Challenge | Observation",
-      "subjectLine": "the exact subject line — specific, not generic",
+      "subjectLine": "the exact subject line - specific, not generic",
       "subjectLineVariants": ["variant A", "variant B"],
-      "previewText": "the preview text that appears in inbox — 40-90 chars",
+      "previewText": "the preview text that appears in inbox - 40-90 chars",
       "premise": "what this issue is about in one sentence",
       "readTime": "e.g. 4 min read",
       "strategicPurpose": "what this issue achieves in the 4-issue arc",
-      "bestSendTime": "e.g. Tuesday 7am — with reasoning",
-      "opening": "the complete opening section — the hook paragraph or two that makes the reader stay. Written fully. On-brand voice. Not a generic introduction.",
+      "bestSendTime": "e.g. Tuesday 7am - with reasoning",
+      "opening": "the complete opening section - the hook paragraph or two that makes the reader stay. Written fully. On-brand voice. Not a generic introduction.",
       "sections": [
         {
           "sectionName": "section name / header",
-          "content": "complete section content — word for word, fully written, on-brand voice, as if ready to send. Every section should feel like the author is talking directly to the reader."
+          "content": "complete section content - word for word, fully written, on-brand voice, as if ready to send. Every section should feel like the author is talking directly to the reader."
         }
       ],
-      "closing": "the complete closing — the wrap, the one thing to remember, and the specific CTA. Not generic.",
-      "ps": "the P.S. — an afterthought, a human moment, or a secondary CTA. This is often the most-read part of any email.",
+      "closing": "the complete closing - the wrap, the one thing to remember, and the specific CTA. Not generic.",
+      "ps": "the P.S. - an afterthought, a human moment, or a secondary CTA. This is often the most-read part of any email.",
       "growthHook": "the referral or forward prompt embedded naturally in this issue",
       "repurposeAngles": ["LinkedIn post angle from this issue", "Instagram quote angle", "YouTube video angle"]
     }
@@ -869,14 +869,14 @@ Return a JSON object with EXACTLY this structure:
 }
 
 REQUIREMENTS:
-- 4 issues — each fully written. No placeholders, no summaries, no outlines.
-- Issue 1: Manifesto / Why this newsletter exists — sets the tone, establishes authority, makes a promise
-- Issue 2: A belief challenge — takes a contrarian position the persona needs to hear
-- Issue 3: A framework or method reveal — demonstrates expertise, gives real value
-- Issue 4: A transformation story or case — proves the method works, drives toward offer naturally
+- 4 issues - each fully written. No placeholders, no summaries, no outlines.
+- Issue 1: Manifesto / Why this newsletter exists - sets the tone, establishes authority, makes a promise
+- Issue 2: A belief challenge - takes a contrarian position the persona needs to hear
+- Issue 3: A framework or method reveal - demonstrates expertise, gives real value
+- Issue 4: A transformation story or case - proves the method works, drives toward offer naturally
 - Every section must be complete prose, not bullets or headers only
-- Voice must match the QBP voice notes — sounds like this specific person, not a generic newsletter
-- Opening hooks must earn the read — first paragraph determines everything
+- Voice must match the QBP voice notes - sounds like this specific person, not a generic newsletter
+- Opening hooks must earn the read - first paragraph determines everything
 - Architecture sections: exactly 3 recurring sections per issue (same structure each issue = signature format)
 - All 4 issues together tell a story that moves the reader from stranger to believer`;
 
@@ -890,7 +890,7 @@ REQUIREMENTS:
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
           max_tokens: 8000,
-          system: 'You are the Newsletter Architecture Agent inside the Quantum Branding BrandOS ecosystem. Return ONLY valid JSON — no markdown, no preamble.',
+          system: 'You are the Newsletter Architecture Agent inside the Quantum Branding BrandOS ecosystem. Return ONLY valid JSON - no markdown, no preamble.',
           messages: [{role: 'user', content: buildPrompt()}]
         })
       });
@@ -902,7 +902,7 @@ REQUIREMENTS:
       setResult(JSON.parse(jsonMatch[0]));
       setActiveIssue(0); setMainTab('architecture'); setStep(2);
     } catch(e) {
-      if (e instanceof SyntaxError) setError('Could not parse agent response — please try again.');
+      if (e instanceof SyntaxError) setError('Could not parse agent response - please try again.');
       else setError('Agent error: ' + e.message);
       setStep(0);
     }
@@ -912,13 +912,13 @@ REQUIREMENTS:
   const exportAll = () => {
     if(!result) return;
     const a = result.architecture;
-    const lines = [`NEWSLETTER PACK — ${a?.name||brandName}`, 'Generated by QB BrandOS — Newsletter Architecture Agent', ''];
+    const lines = [`NEWSLETTER PACK - ${a?.name||brandName}`, 'Generated by QB BrandOS - Newsletter Architecture Agent', ''];
     lines.push('ARCHITECTURE'); lines.push('='.repeat(60));
     lines.push(`Name: ${a?.name}`); lines.push(`Tagline: ${a?.tagline}`);
     lines.push(`Cadence: ${a?.cadence}`); lines.push('');
     result.issues?.forEach(issue => {
       lines.push('='.repeat(60));
-      lines.push(`ISSUE ${String(issue.issueNumber).padStart(2,'0')} — ${issue.issueType}`);
+      lines.push(`ISSUE ${String(issue.issueNumber).padStart(2,'0')} - ${issue.issueType}`);
       lines.push(`Subject: ${issue.subjectLine}`);
       lines.push(`Preview: ${issue.previewText}`); lines.push('');
       lines.push('OPENING:'); lines.push(issue.opening||''); lines.push('');
@@ -968,17 +968,17 @@ REQUIREMENTS:
         {step === 0 && (
           <div className="fade-in" style={{maxWidth: 800, margin: '0 auto'}}>
             <div style={{marginBottom:56, textAlign:'center'}}>
-              <ML c="var(--brass)" mb={16}>Phase 03 — Content Creation</ML>
+              <ML c="var(--brass)" mb={16}>Phase 03 - Content Creation</ML>
               <h1 className="font-serif" style={{fontSize:48, lineHeight:1.1, marginBottom:16}}>Newsletter Architecture Agent</h1>
               <p style={{color:'var(--text-2)', fontSize:16, lineHeight:1.7, maxWidth:640, margin:'0 auto'}}>
-                The highest-leverage owned channel — no algorithm, direct access to the audience. This agent designs the full newsletter system and writes the first 4 issues completely.
+                The highest-leverage owned channel - no algorithm, direct access to the audience. This agent designs the full newsletter system and writes the first 4 issues completely.
               </p>
             </div>
 
             <Sec n={1} title="Brand Core" note="* required" isManifesto={true}>
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:20}}>
                 <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand behind the newsletter" rows={1}/>
-                <TF label="Author Name" value={founderName} onChange={setFounderName} placeholder="Who writes it — the by-line" rows={1}/>
+                <TF label="Author Name" value={founderName} onChange={setFounderName} placeholder="Who writes it - the by-line" rows={1}/>
               </div>
               <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="Irreducible truth" rows={2}/>
               <TF label="The Spark" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what transformation it creates" rows={3}/>
@@ -989,8 +989,8 @@ REQUIREMENTS:
             </Sec>
 
             <Sec n={2} title="Audience + Offer" note="* required" isManifesto={true}>
-              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who subscribes — role, struggle, desire. Specific." rows={3} hint="The more specific, the more precisely the issues will speak to the right person"/>
-              <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What this brand sells — the newsletter must eventually lead here naturally" rows={2}/>
+              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who subscribes - role, struggle, desire. Specific." rows={3} hint="The more specific, the more precisely the issues will speak to the right person"/>
+              <TF label="Core Offer *" value={offer} onChange={setOffer} placeholder="What this brand sells - the newsletter must eventually lead here naturally" rows={2}/>
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:20}}>
                 <TF label="Transformation" value={transformation} onChange={setTransformation} placeholder="Before → after" rows={1}/>
                 <TF label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The one belief" rows={1}/>
@@ -998,7 +998,7 @@ REQUIREMENTS:
             </Sec>
 
             <Sec n={3} title="Voice + Context">
-              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand writes — rhythm, register, what it refuses to sound like" rows={2}/>
+              <TF label="Voice Notes" value={voiceNotes} onChange={setVoiceNotes} placeholder="How this brand writes - rhythm, register, what it refuses to sound like" rows={2}/>
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:20}}>
                 <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="Writing rules for copy" rows={2}/>
                 <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this newsletter refuses to be" rows={2}/>
@@ -1138,7 +1138,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
   };
 
   const statusColor = {pending:'var(--text-3)', approved:'var(--patina)', removed:'var(--red)', revising:'var(--brass)', revised:'var(--phase-creation)'};
-  const statusLabel = {pending:'Pending Review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — Review Again'};
+  const statusLabel = {pending:'Pending Review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised - Review Again'};
 
   return (
     <div>

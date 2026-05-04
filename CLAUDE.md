@@ -1,68 +1,253 @@
 # CLAUDE.md
+## QB BrandOS · Repository Instructions for Claude Code
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+You are working inside the Quantum Branding QB BrandOS codebase. This file is the entry point. It is read automatically at the start of every session in this directory.
 
-## ABSOLUTE SOURCES OF TRUTH — READ FIRST (in order)
+---
 
-1. **[`qb-design-system-v3.3.md`](qb-design-system-v3.3.md)** is the SOT for **visual, motion, and interaction design**. v3.3 is Pomegranate-derived (cream + aubergine ink, two-layer 3D pill button, hard offset shadow, eyebrow-tag-then-Fraunces-headline structure, fluid clamp scales, New Yorker editorial illustrations inside cream-card frames). It supersedes v3.0/v3.1/v3.2 and the design block in Part 5 of `QB_THINKING_MACHINE.md`. Drop in the full `:root` block from Part 11 verbatim — no deviation. Components (`qb-button`, `qb-tag`, `qb-card`, `qb-field`, `qb-switch`, `qb-bubble`, `qb-illus-card`, `qb-hover-video`, `qb-marquee`, `qb-faq`, `qb-phone`, `qb-mock-card`, `qb-progress`) live in Parts 9, 17.5, 18, 19. Migration plan + waves live in Part 13.
+## CRITICAL · Self-check before sending every response
 
-2. **[`QB_THINKING_MACHINE.md`](QB_THINKING_MACHINE.md)** is the SOT for **product, identity, strategy, operations**: the Quantum Branding Thinking Machine identity, QBP, four doors, six phases, weakest persona principle, illustration asset library (Part 6), pricing tiers, code production standards (vanilla JS, self-contained files, mobile-first, reduced-motion, localStorage, Anthropic API), and operating principles. The design block in Part 5 of this doc is **superseded by v3.3** — when they disagree on visual / motion / interaction, v3.3 wins.
+Before sending any response in this repository, run this five-point check on YOUR OWN draft. Not on the user's input. On the words you are about to send. If any check fails, rewrite the affected sentences before sending. Do not send the response and apologize for the violation afterward.
 
-When something below contradicts either SOT, the SOT wins — and update this file.
+This check applies to every response in this repository. It applies to chat replies, code comments, generated copy, documentation, error messages, commit messages, and explanations of the voice rules themselves. The codex is enforced on its own explanations. There is no exception.
 
-**Model note:** the v3.3 spec's Part 15 prompt mentions `claude-sonnet-4-20250514`; that is stale. The locked default in `api/claude.js` is `claude-sonnet-4-6` (the retired ID is kept in `ALLOWED_MODELS` only for transition). Do not change API code based on the v3.3 prompt.
+**Check 1. Em dashes.** Search your draft for the character `—` (em dash, U+2014). If present, rewrite. Replace with a period, a comma, or two sentences. The em dash is the AI tell of the moment. Its presence is a brand violation. This rule has no exceptions, including in sentences about the rule itself.
 
-## Project
+**Check 2. Banned phrases.** Search for: empower, unlock, supercharge, seamless, AI-powered, AI-driven, take to the next level, stand out from the crowd, in order to, at the end of the day, world-class, best-in-class, cutting-edge, robust, frictionless, effortless, leverage (as a verb), journey (as user path), really, very, just, literally. If any are present, rewrite.
 
-QB BrandOS — a Brand Operating System by Quantum Branding (built by Nizzar Ben Chekroune). Static, no-build multi-page site of 20 AI agents across 6 phases, backed by two Vercel Edge Functions. Sole product. Domain `quantumbranding.ai` (marketing) + `app.quantumbranding.ai` (the OS hub).
+**Check 3. Exclamation points.** Search for `!` outside literal in-product user-celebration moments. If any in marketing copy, prose, or explanation, remove.
 
-## Deploy / run
+**Check 4. Casing.** Confirm headlines are sentence case. Confirm "quantum branding" is lowercase italic, even at sentence start. Confirm "QB BrandOS" uses exact casing (never "QB Brandos," "QB Brand OS," "qb brandos").
 
-- No build step. `vercel.json` sets `buildCommand: null` and `outputDirectory: "."` — Vercel serves the repo root as-is.
-- Deploy: push to `main`. Vercel auto-deploys.
-- Local preview: open HTML files directly, or run any static server from the repo root (e.g. `python3 -m http.server 8000`). Routes like `/os`, `/scan`, `/panel`, `/tools` are Vercel rewrites (see `vercel.json`) and will not resolve under a plain static server — use the mapped `.html` filenames locally.
-- No tests, no linter, no package manager. There is no `package.json`.
+**Check 5. Voice register.** Read the draft aloud. If it sounds like a corporate explanation rather than a thoughtful founder, rewrite.
 
-## Architecture
+If you finish writing a response and realize a violation is in it, do not send the response and apologize. Edit the response and send the corrected version.
 
-**Pages are self-contained HTML files at the repo root.** Each tool/agent is one `*.html` file that inlines its own CSS (mix of Tailwind CDN + custom styles) and JS. Pages do not share a build pipeline; shared behavior is duplicated or pulled via `<script src="qb-results-modal.js">`.
+---
 
-**Routing is declarative in `vercel.json`:**
-- `app.quantumbranding.ai/` → `qb-branidos-hub.html` (app subdomain → the "OS" hub)
-- Root domain `/` → `index.html` (marketing site)
-- Friendly aliases: `/os`, `/scan`, `/panel`, `/tools`
-- SPA-style fallback: any unmatched path → `/index.html`
-- CSP allows inline scripts/styles, Tailwind CDN, Google Fonts, cdnjs, unpkg, and Klaviyo — add any new third-party origin here before using it.
-- `*-pdf.html` variants are print-optimized versions of the same tools (e.g. `sensescape.html` ↔ `sensescape-pdf.html`).
+## The canonical documents
 
-**Two Edge Functions in `/api`** (set `export const config = { runtime: 'edge' }`):
-- `api/claude.js` — proxy to Anthropic. All client-side tools POST to `/api/claude` so the `ANTHROPIC_API_KEY` never reaches the browser. Allowed models are whitelisted in `ALLOWED_MODELS` — update that array when adding a new model.
-- `api/send-results.js` — handles the "send me my results" flow: Resend email (required `RESEND_API_KEY`), optional Klaviyo lead sync (`KLAVIYO_PRIVATE_KEY`), optional Supabase logging (`SUPABASE_URL`, `SUPABASE_ANON_KEY`). Tool IDs are mapped to human labels in `TOOL_LABELS`; add new tools there.
+Read these in order on first session in this repo. Re-read on demand when working on relevant files.
 
-**Shared results modal:** `qb-results-modal.js` exposes `window.QB_showResultsModal({ toolId, qbp, results })`. Phase-01 tools load it via `<script src="qb-results-modal.js">` and call it to capture lead info → POST to `/api/send-results`. The `qbp` object is a shared Quantum Brand Profile payload passed between tools.
+1. `/docs/brand/qb-brand-codex-v1.md`. The absolute brand truth. Identity, beliefs, the QBP, six phases, four doors, voice summary, visual language summary, brand mark, colours, illustrations, personas, pricing, platform, public credentials.
 
-**QBP fields written by tools** (read via `localStorage["qb_qbp"]`; tools merge their outputs in):
-- Brand Soul Map: `brandName`, `archetype`, `brandEssence`, `manifesto`, `primaryPersona`, `fanLetter`
-- War Table: `warTableBrief`, `strategicPriorities`, `warTableCompletedAt`
-- The Profiles: `personaProfiles` — array of 3 buyer briefs, each `{ name, role, opening, coreIdentity, mindset, hook, painPoints[5], marketingApproach[5], journey[5], xray, keyTakeaways[5] }` — plus `commonThemes[]`, `bindingInsight`, `sharedKeyTakeaways[]`, `profilesComplete`, `profilesTimestamp`
+2. `/docs/brand/qb-design-system-v3.4.md`. The technical visual specification. Color tokens, typography, spacing, components, layout patterns. Part 21 contains the brand mark SVG paths.
 
-**Assets:** `/img` holds the 11-illustration library inventoried in Part 6 of `QB_THINKING_MACHINE.md`. Always reference an illustration by filename — never invent. If a slot needs an illustration that does not exist in the inventory, flag it as missing rather than substituting an unrelated one.
+3. `/docs/brand/qb-voice-codex-v1.md`. The written voice. Voice anchors, mechanics, banned word list, surface-by-surface guide, persona flexes, voice tests.
 
-## Conventions when editing (locked — see `qb-design-system-v3.3.md` for design, `QB_THINKING_MACHINE.md` Part 15 for code/product)
+4. `/docs/brand/qb-illustration-style-lock-v1.md`. Illustration generation rules. Master prompt for the Character Machine. Brand mark relationship.
 
-- **Agent count is 20.** Not 19. Update every visible reference if you touch a page that mentions it.
-- **Live `quantumbranding.ai` is the SOT** for marketing copy, section ordering, pricing, testimonials. Diff before inventing.
-- **`:root` block from v3.3 Part 11 is verbatim.** Drop it into every HTML file `<style>` head — no deviation, no inventing token names. CSS variables only outside that block.
-- **Vanilla JS only.** No framework. No JSX. No build step.
-- **Self-contained files.** No external deps beyond Google Fonts.
-- **Mobile-first responsive. Always.**
-- **Reduced-motion respected** on every animation.
-- **localStorage** is the persistence layer for tool state and the QBP.
-- **Never hardcode API keys** — proxy through `/api/claude` or `/api/send-results`.
-- **Anthropic model:** `claude-sonnet-4-6` (current default in `api/claude.js`). The retired `claude-sonnet-4-20250514` is kept in `ALLOWED_MODELS` for transition; do not write new code against it. Update `ALLOWED_MODELS` when adding any new model.
-- **No invented social proof.** Real testimonials verbatim, or honest placeholder, never fabricated.
-- **No chassis-without-soul.** A technically clean implementation that drops the editorial / illustration layer is a regression, not a refactor.
-- **Voice is aphoristic and declarative.** Reject folksy headlines (e.g. *"Free fries. Paid steaks."*).
-- **Banner copy** across pages: *"**Signal Scan is live.** Free brand diagnostic. 5 minutes to your first insight. Run yours →"* — older banners are deprecated.
-- **Illustration filenames** must come from the Part 6 inventory of `QB_THINKING_MACHINE.md`. Never invent filenames; never use the founder portrait outside the founder block.
-- **`predictive-panel..html`** has a real double-dot in the filename — `vercel.json` rewrite expects `predictive-panel.html` (single dot). Don't "fix" the typo.
+5. `/docs/brand/qb-master-instruction-v5.md`. The QB Thinking Machine system prompt. Strategic framing, tool inventory, ecosystem logic.
+
+When these documents conflict, the order above is the priority order. The Brand Codex is the highest authority.
+
+---
+
+## Critical rules (always apply, never override)
+
+These are the rules that are violated most often. They are non-negotiable.
+
+### Code
+
+- Vanilla HTML, CSS, and JavaScript only. No frameworks, no JSX in raw HTML, no build step required.
+- Every file is fully self-contained. No external dependencies beyond Google Fonts.
+- All colours come from the `:root` CSS variable block. Never hardcode a hex value outside `:root`.
+- All spacing comes from the `--space-*` clamp scale. Never hardcode rem or px values for spacing.
+- All type sizes come from the `--step-*` clamp scale. Never hardcode font sizes.
+- Mobile-first responsive. Always.
+- `localStorage` is the persistence layer for tool state and the QBP.
+- Reduced-motion is respected on every animation.
+- All tools accept `?apikey=`, `?provider=`, and `?qbp=` URL parameters. White-label entry points additionally accept `?brand=`, `?color=`, `?client=`. Signal Scan additionally accepts `?kpk=` and `?kli=`.
+- AI calls go to the Anthropic API with `claude-sonnet-4-20250514` or the latest Sonnet.
+- Every agent tool includes the Content Approval Loop (up to 3 revision rounds per output).
+
+### Voice
+
+The voice rules at the top of this file are mandatory and self-applied. The full Voice Codex at `/docs/brand/qb-voice-codex-v1.md` adds detail, surface-specific guidance, and persona flexes. Both apply at all times.
+
+Additional voice rules:
+
+- The user is "you." The system is the speaker. The company recedes.
+- The wordmark "quantum branding" is always lowercase italic Fraunces.
+- "QB BrandOS" is the product name with exact casing.
+- Sentence fragments with periods are encouraged. "Three steps. That's it." reads better than "Three steps; that is all there is."
+- Contractions are allowed and encouraged. "Don't" reads warmer than "do not."
+- Pronouns: "you" is the user, "we" is sparingly the company, "I" only in founder voice.
+
+### Brand mark
+
+- The brand mark SVG files live at `/img/brand/`. Do not invent paths. Do not redraw the mark.
+- Four colourways exist and only four: ink, gold, rose, reverse. Files: `mark-ink.svg`, `mark-gold.svg`, `mark-rose.svg`, `mark-reverse.svg`.
+- Two lockups exist: horizontal (mark left, wordmark right) and vertical (mark above, wordmark below). Files: `lockup-h-ink.svg`, `lockup-h-gold.svg`, `lockup-v-ink.svg`, `lockup-v-gold.svg`.
+- Clear space around the mark equals the wordmark x-height. Nothing crosses that boundary.
+- The wordmark is `quantum branding` set in Fraunces italic, weight 600, SOFT axis 60, lowercase.
+- Web favicon and OG share image assets live at `/img/brand/web/` and `/img/brand/og/`. Reference the head template at `/HEAD-SNIPPET.html` for canonical wiring.
+
+### Illustrations
+
+- Illustration palette is locked to seven colours: forest #5B7E6A, peach #E89380, coral #DC6B52, mustard #D4B85A, rust #B8704D, lavender #B8A0C7, pink-soft #F4C4D0.
+- Illustration outlines use ink #2D1521.
+- Five named characters anchor the universe: The Blank Slate, The Doubter, The Player, The Multi-Brand, The Guide.
+- New illustrations are generated through the QB Character Machine (the canonical generator). Manual additions follow the same Style Lock.
+- Illustrations sit inside `qb-illus-card` frames. They never appear as bare floating images.
+
+### Content production
+
+- No invented testimonials, client quotes, statistics, or brand engagements.
+- No manufactured urgency, countdown timers, or fake scarcity.
+- The featured-by list is verbatim: USAID, TV5 Monde, LA Lakers, UM6P, UNIDO, The New York Times, Time Magazine, Google Arts & Culture.
+- The banner copy is a system constant. Verbatim: "Signal Scan is live. Free brand diagnostic. 5 minutes to your first insight. Run yours →"
+
+### Filenames
+
+- `predictive-panel..html` has an intentional double-dot. Do not "fix" it.
+- Asset names are kebab-case. No version numbers in filenames. Versions live in the repo, not the asset name.
+
+---
+
+## File locations reference
+
+```
+/                              repo root
+├── CLAUDE.md                  this file
+├── HEAD-SNIPPET.html          canonical <head> template for new pages
+│
+├── docs/brand/                canonical brand documentation (read on demand)
+│   ├── qb-brand-codex-v1.md
+│   ├── qb-design-system-v3.4.md
+│   ├── qb-voice-codex-v1.md
+│   ├── qb-illustration-style-lock-v1.md
+│   └── qb-master-instruction-v5.md
+│
+├── img/
+│   ├── brand/                 brand mark, lockups, favicons, OG image
+│   │   ├── mark-ink.svg
+│   │   ├── mark-gold.svg
+│   │   ├── mark-rose.svg
+│   │   ├── mark-reverse.svg
+│   │   ├── mark-favicon.svg
+│   │   ├── mark-favicon-32.png
+│   │   ├── mark-app-icon-1024.png
+│   │   ├── lockup-h-ink.svg
+│   │   ├── lockup-h-gold.svg
+│   │   ├── lockup-v-ink.svg
+│   │   ├── lockup-v-gold.svg
+│   │   ├── qb-logo-system.html
+│   │   ├── web/               favicons, manifest, Safari pinned tab
+│   │   └── og/                Open Graph share image
+│   │
+│   └── illus/                 editorial illustrations (closed inventory)
+│       ├── blank-slate.png
+│       ├── doubter.png
+│       ├── player.png
+│       ├── multi-brand.png
+│       ├── guide.png
+│       ├── synergy.png
+│       ├── three-steps.png
+│       ├── start-building.png
+│       ├── phase-04.png
+│       ├── phase-05.png
+│       └── founder-portrait.png
+│
+├── api/                       serverless functions (Vercel)
+├── *.html                     the 25 production tool/page files
+├── vercel.json                routing
+├── stripe-webhook.ts          payment events
+└── supabase-setup.sql         schema
+```
+
+---
+
+## Illustration inventory
+
+The QB illustration library is closed and lives at `/img/illus/`. Reference these files by their exact filenames. Do not invent variants. Do not substitute placeholders. Do not generate inline SVG when an inventoried illustration applies to the slot.
+
+| File | Character or scene | Used in |
+|---|---|---|
+| `blank-slate.png` | The Blank Slate persona (Door 01). Solo skater with coffee, drink-in-hand pose. | Persona cards, "I have an idea" door. |
+| `doubter.png` | The Doubter persona (Door 02). Seated figure at café table, hand-on-chin contemplative. | Persona cards, "Something feels off" door. |
+| `player.png` | The Player persona (Door 03). Runner with dog on leash, forward motion. | Persona cards, "Competition coming fast" door. |
+| `multi-brand.png` | The Multi-Brand persona (Door 04). Figure holding oversized framed portrait. | Persona cards, "I build for clients" door, agency tier. |
+| `guide.png` | The Guide character. Figure on tandem bicycle, two riders, partnership. | journey-guide.html, navigation contexts. |
+| `synergy.png` | Ecosystem scene. House cutaway with multiple figures. | ecosystem.html connection visualization. |
+| `three-steps.png` | "How it works" scene. Figure with feet up, two figures stacked on shoulders. | index.html "Three steps. That's it." section. |
+| `start-building.png` | Final CTA scene. Group photo shoot with plant headpiece. | index.html final CTA, "Start building" sections. |
+| `phase-04.png` | Phase 04 Execution scene. Production studio with crew, spotlights, sticky notes. | ecosystem.html Phase 04 mock card. |
+| `phase-05.png` | Phase 05 Intelligence scene. Group in park with phones, social moment. | ecosystem.html Phase 05 mock card. |
+| `founder-portrait.png` | Founder block. Figure at desk with headphones, world map. | index.html "From the founder" section. Restricted: never use this file outside the founder block. |
+
+### Rules of use for illustrations
+
+- Every illustration sits inside a `qb-illus-card` frame (cream-card surface, 2px ink border, hard offset shadow). Never as a bare floating image.
+- The illustration palette is locked. Do not recolor an illustration via CSS filters. Use the file as delivered.
+- Persona illustrations are paired with their door: `blank-slate` with Door 01, `doubter` with Door 02, `player` with Door 03, `multi-brand` with Door 04. Do not swap.
+- The founder portrait is restricted to the founder block. Using it elsewhere implies endorsement.
+- If a slot needs an illustration that is not in this inventory, flag it as a missing asset and stop. Do not substitute an unrelated file.
+- New illustrations enter the library only through the QB Character Machine using the master prompt in Illustration Style Lock Section 10. The inventory is not extended ad hoc.
+
+### Standard usage pattern for illustrations
+
+```html
+<figure class="qb-illus-card">
+  <img src="/img/illus/blank-slate.png"
+       alt="Solo skater with coffee, the Blank Slate persona"
+       loading="lazy">
+</figure>
+```
+
+```css
+.qb-illus-card {
+  background: var(--cream-card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-card);
+  padding: var(--space-l);
+  box-shadow: var(--shadow-card-mobile);
+  overflow: hidden;
+}
+.qb-illus-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+@media (min-width: 640px) {
+  .qb-illus-card { box-shadow: var(--shadow-card-desktop); }
+}
+```
+
+The `qb-illus-card` pattern is documented in Design System v3.4 Part 17.
+
+---
+
+## What "production-ready" means in this repo
+
+A file is production-ready when:
+
+- All visible UI uses CSS variables from `:root`. No hardcoded colours, spacing, or type sizes.
+- Voice passes the tests in `qb-voice-codex-v1.md` Part 7. No em dashes. No banned phrases.
+- The brand mark, where used, references `/img/brand/` files. Never inline-redrawn.
+- Illustrations, where used, reference inventoried files from `/img/illus/`. Never substitute placeholders.
+- The `<head>` follows `/HEAD-SNIPPET.html` for favicon, OG, and meta tags.
+- Mobile-first responsive at minimum 360px viewport.
+- Reduced-motion respected on every animation.
+- API calls handle errors with the QB error empty-state pattern, not generic alerts.
+- localStorage reads the QBP on load and writes back on completion where applicable.
+- Self-contained: opens and runs without a build step beyond serving the file.
+
+There is no intermediate state between "in progress" and "production-ready." A file is either shippable or it is being worked on.
+
+---
+
+## When in doubt
+
+When the documentation does not cover a case:
+
+1. Check the Brand Codex first. It is the highest authority.
+2. Check the Design System for the visual implementation pattern.
+3. Check the Voice Codex for any user-facing copy.
+4. Search existing locked files (`signal-scan.html`, `index.html`, `ecosystem.html`) for the established pattern.
+5. If still unresolved, ask before guessing. Do not invent brand decisions.
+
+---
+
+*CLAUDE.md · QB BrandOS · April 2026*
+*Read this. Run the self-check. Read the canonical docs. Build accordingly.*

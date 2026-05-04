@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — Logo Direction Agent</title>
+<title>QB BrandOS - Logo Direction Agent</title>
 <script>
   (function(){
     try {
@@ -263,11 +263,11 @@ const PARADOX_OPTIONS  = ['Timeless yet modern','Simple yet profound','Bold yet 
 const INDUSTRIES       = ['Luxury Lifestyle','Technology','Finance & Wealth','Fashion','Health & Wellness','Architecture & Design','Food & Hospitality','Creative Agency','Legal & Professional','Education & Knowledge'];
 
 // ── SYSTEM PROMPT ─────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `You are the QB BrandOS Logo Direction Agent — a senior brand identity strategist and creative director. Your role is to translate brand strategy inputs into precise, actionable logo creative directions that a world-class designer can execute immediately.
+const SYSTEM_PROMPT = `You are the QB BrandOS Logo Direction Agent - a senior brand identity strategist and creative director. Your role is to translate brand strategy inputs into precise, actionable logo creative directions that a world-class designer can execute immediately.
 
-You think in systems. A logo is not decoration — it is compressed meaning. Every curve, weight, spacing decision, and color choice must earn its place by serving the brand's strategic position.
+You think in systems. A logo is not decoration - it is compressed meaning. Every curve, weight, spacing decision, and color choice must earn its place by serving the brand's strategic position.
 
-OUTPUT FORMAT — respond with exactly these sections in order:
+OUTPUT FORMAT - respond with exactly these sections in order:
 
 ## STRATEGIC BRIEF
 2–3 sentences distilling the core brand tension and what the logo must resolve or embody.
@@ -285,7 +285,7 @@ Primary typeface direction: category, specific characteristics to seek. If custo
 Primary palette with hex codes. Rationale for each. Usage hierarchy. One unexpected accent with careful deployment instructions.
 
 ## TEXTURE & FINISH
-Surface quality, application contexts — what the logo should feel like in print, screen, embossing, foil.
+Surface quality, application contexts - what the logo should feel like in print, screen, embossing, foil.
 
 ## WHAT TO AVOID
 3–5 specific traps this brand must not fall into. Be blunt.
@@ -343,7 +343,7 @@ function Field({ label, hint, children }) {
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:'7px' }}>
       <label style={{ fontSize:'11px', fontWeight:600, letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--text-3)' }}>
-        {label}{hint && <span style={{ color:'var(--text-4)', fontWeight:400, textTransform:'none', letterSpacing:0 }}> — {hint}</span>}
+        {label}{hint && <span style={{ color:'var(--text-4)', fontWeight:400, textTransform:'none', letterSpacing:0 }}> - {hint}</span>}
       </label>
       {children}
     </div>
@@ -469,7 +469,7 @@ function App() {
       {/* MANIFESTO */}
       <div className="manifesto-block" style={{ marginBottom:'44px' }}>
         <p style={{ fontSize:'15px', color:'var(--text-2)', lineHeight:'1.85', fontStyle:'italic' }}>
-          "A logo is not what you see. It is what you feel when you see it — the compressed residue of every decision you've made about who this brand is and who it is not."
+          "A logo is not what you see. It is what you feel when you see it - the compressed residue of every decision you've made about who this brand is and who it is not."
         </p>
       </div>
 
@@ -482,7 +482,7 @@ function App() {
           </Field>
           <Field label="Industry">
             <select value={f.industry || ''} onChange={e => set('industry', e.target.value || null)}>
-              <option value="">— Select industry —</option>
+              <option value="">- Select industry -</option>
               {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
             </select>
           </Field>
@@ -551,7 +551,7 @@ function App() {
             <textarea rows={2} placeholder="e.g. Must work in single color, no gradients, avoid serifs" value={f.constraints} onChange={e => set('constraints', e.target.value)} />
           </Field>
           <Field label="Competitive Landscape">
-            <textarea rows={2} placeholder="e.g. Competing with Cartier, Mejuri — must feel distinct from both" value={f.competitive} onChange={e => set('competitive', e.target.value)} />
+            <textarea rows={2} placeholder="e.g. Competing with Cartier, Mejuri - must feel distinct from both" value={f.competitive} onChange={e => set('competitive', e.target.value)} />
           </Field>
           <Field label="Additional Context" hint="optional">
             <textarea rows={2} placeholder="Brand history, nuances, founder story, application priorities..." value={f.additionalContext} onChange={e => set('additionalContext', e.target.value)} />

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Predictive Panel</title>
+<title>QB - Predictive Panel</title>
 <script>
   (function() {
     try {
@@ -13,7 +13,7 @@
   })();
 </script>
 <script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+// QB_SPINE v2 - API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
   // QBP
@@ -55,7 +55,7 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-/* QB BRANDOS — "Entangled Time" Design System */
+/* QB BRANDOS - "Entangled Time" Design System */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root, [data-theme="dark"] {
@@ -468,7 +468,7 @@ const VerdictBadge = ({ verdict }) => {
     
     const color = isGo ? 'var(--patina)' : isNoGo ? 'var(--error)' : 'var(--brass)';
     const bg = isGo ? 'var(--patina-faint)' : isNoGo ? 'var(--error-dim)' : 'var(--brass-faint)';
-    const label = isGo ? 'GO — Launch Ready' : isNoGo ? 'NO-GO — Do Not Launch' : 'CONDITIONAL — Pivot Required';
+    const label = isGo ? 'GO - Launch Ready' : isNoGo ? 'NO-GO - Do Not Launch' : 'CONDITIONAL - Pivot Required';
     
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '20px 24px', borderRadius: 10, background: bg, border: `1px solid ${color}30` }}>
@@ -547,7 +547,7 @@ You operate as a probabilistic forecasting system for brand and product launches
 You do NOT give opinions. You run structured scenario simulations and assign probabilities to outcomes.
 You think in probabilities, not predictions. In scenarios, not single outcomes. In combinations, not isolated variables.
 You identify: the most stable repeatable patterns, the highest-confidence zones, the critical failure points, and the exploitable advantages.
-Your output is a market intelligence document that tells a founder exactly what will happen and why — before they spend a dollar.
+Your output is a market intelligence document that tells a founder exactly what will happen and why - before they spend a dollar.
 Return ONLY valid JSON. No markdown, no preamble.`;
 
         const userPrompt = `QUANTUM BRAND PROFILE:
@@ -569,12 +569,12 @@ Panel size: ${panelSize} synthetic personas built from the primary persona profi
 Run a full Predictive Panel simulation and return:
 {
   "overallConfidenceScore": number 0-100,
-  "verdict": "GO — Launch Ready" | "CONDITIONAL GO — Pivot Required" | "NO-GO — Fundamental Issues",
+  "verdict": "GO - Launch Ready" | "CONDITIONAL GO - Pivot Required" | "NO-GO - Fundamental Issues",
   "verdictReason": "2-3 sentences. The core finding. Why this verdict.",
   "panelSummary": "3-4 sentences. What the ${panelSize} synthetic personas showed overall. What surprised, what confirmed, what the aggregate pattern revealed.",
   "scenarios": [
     {
-      "name": "scenario name — specific, not generic",
+      "name": "scenario name - specific, not generic",
       "probability": number 0-100,
       "description": "what happens in this scenario",
       "conditions": "what must be true for this scenario to unfold",
@@ -591,7 +591,7 @@ Run a full Predictive Panel simulation and return:
   ],
   "failurePoints": [
     {
-      "risk": "specific risk — what breaks",
+      "risk": "specific risk - what breaks",
       "probability": number 0-100,
       "trigger": "what causes this failure",
       "mitigation": "how to prevent or reduce it"
@@ -630,12 +630,12 @@ Run a full Predictive Panel simulation and return:
 
 Requirements:
 - scenarios: minimum 4, cover best case through worst case
-- highConfidenceZones: minimum 3 — things that appear consistently across all scenarios
-- failurePoints: minimum 3 — specific, not generic
-- personaSegments: minimum 3 — segment the persona into real behavioral sub-groups
+- highConfidenceZones: minimum 3 - things that appear consistently across all scenarios
+- failurePoints: minimum 3 - specific, not generic
+- personaSegments: minimum 3 - segment the persona into real behavioral sub-groups
 - launchReadinessChecklist: minimum 6 items
 - All probabilities must be internally consistent (scenario probabilities roughly sum to 100%)
-- Everything must be specific to THIS brand, THIS product, THIS persona — no generic market advice`;
+- Everything must be specific to THIS brand, THIS product, THIS persona - no generic market advice`;
 
         try {
             const res = await window.QB_AI(systemPrompt, userPrompt, 5000);

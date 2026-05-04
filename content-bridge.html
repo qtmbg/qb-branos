@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Content Bridge</title>
+<title>QB - Content Bridge</title>
 
 <!-- Flash Prevention & Theme Init -->
 <script>
@@ -19,13 +19,13 @@
 (function(){
   try { window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e) { window.QB_QBP = {}; }
 
-  // FIX (CRITICAL): was calling /api/claude — a non-existent backend route.
+  // FIX (CRITICAL): was calling /api/claude - a non-existent backend route.
   // Now calls Anthropic API directly with proper headers and API key from localStorage.
   window.QB_AI = async function(sys, usr, max) {
     max = max || 2000;
     var apiKey = '';
     try { apiKey = localStorage.getItem('qb-api-key') || ''; } catch(e) {}
-    if (!apiKey) throw new Error('API key not configured — click the key icon in the header to add your Anthropic API key.');
+    if (!apiKey) throw new Error('API key not configured - click the key icon in the header to add your Anthropic API key.');
     var r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -229,7 +229,7 @@ body::after {
   pointer-events: none;
 }
 
-/* Manifesto Block — MUST NOT share element with .glass-card (both use ::before) */
+/* Manifesto Block - MUST NOT share element with .glass-card (both use ::before) */
 .manifesto-block {
   position: relative;
   padding: 24px 0 24px 26px;
@@ -636,7 +636,7 @@ function ApiKeyModal({ onSave, onClose, currentKey }) {
         {currentKey && (
           <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-success)', flexShrink: 0 }} />
-            <span className="font-mono" style={{ fontSize: 10, color: 'var(--status-success)', letterSpacing: '.1em' }}>KEY ACTIVE — ENDS IN …{currentKey.slice(-6)}</span>
+            <span className="font-mono" style={{ fontSize: 10, color: 'var(--status-success)', letterSpacing: '.1em' }}>KEY ACTIVE - ENDS IN …{currentKey.slice(-6)}</span>
           </div>
         )}
       </div>
@@ -651,7 +651,7 @@ const LAYERS = [
     id: 'static',
     n: '01',
     label: 'Branded Static Content',
-    sub: 'Posts, ads, lifestyle imagery — your brand identity baked in',
+    sub: 'Posts, ads, lifestyle imagery - your brand identity baked in',
     color: 'var(--phase-creation)',
     icon: '◧',
     useCase: 'Product photos, brand posts, LinkedIn banners, Instagram grid, ad creatives',
@@ -663,7 +663,7 @@ const LAYERS = [
     sourceQuality: [
       { icon: '✓', text: 'Product photos: minimum 1000×1000px, white or neutral background, sharp focus, good lighting' },
       { icon: '✓', text: 'Brand colors: export your hex codes from the QBP / Sensescape before starting' },
-      { icon: '✓', text: 'Logo: provide as SVG or PNG with transparent background — minimum 500px wide' },
+      { icon: '✓', text: 'Logo: provide as SVG or PNG with transparent background - minimum 500px wide' },
       { icon: '✓', text: 'Reference images: 3–5 examples of the visual style you want. Pull from your Visual DNA outputs.' },
       { icon: '✗', text: 'Do not provide: blurry photos, screenshots, photos with other brand logos visible' },
     ],
@@ -673,7 +673,7 @@ const LAYERS = [
     id: 'ugc',
     n: '02',
     label: 'UGC Video & Face Clone',
-    sub: 'Your face, your voice — without filming again',
+    sub: 'Your face, your voice - without filming again',
     color: 'var(--phase-content)',
     icon: '◎',
     useCase: 'Instagram Reels, TikTok, YouTube Shorts, LinkedIn video, testimonial-style ads',
@@ -739,7 +739,7 @@ const BRIEF_FIELD_CONFIG = {
 function App() {
   const qbp = window.QB_QBP || {};
 
-  // API Key state — persisted to localStorage
+  // API Key state - persisted to localStorage
   const [apiKey, setApiKey] = useState(() => {
     try { return localStorage.getItem('qb-api-key') || ''; } catch(e) { return ''; }
   });
@@ -781,7 +781,7 @@ function App() {
   };
 
   const generateBrief = async () => {
-    if (!apiKey) { setError('API key required — click the key icon in the header.'); setShowApiModal(true); return; }
+    if (!apiKey) { setError('API key required - click the key icon in the header.'); setShowApiModal(true); return; }
     if (!script.trim()) { setError('Paste your script or content before generating the brief.'); return; }
     if (!layer || !platform) { setError('Select a layer and platform first.'); return; }
     setError(''); setLoading(true);
@@ -816,7 +816,7 @@ Generate a complete production brief for ${platform.name} and return:
   "productionInstructions": [
     {"step": number, "action": "what to do", "detail": "specific detail, settings, or guidance for this step in ${platform.name}"}
   ],
-  "scriptFormatted": "the script reformatted and optimized for ${platform.name} delivery — correct pacing, emphasis markers, pause indicators where relevant",
+  "scriptFormatted": "the script reformatted and optimized for ${platform.name} delivery - correct pacing, emphasis markers, pause indicators where relevant",
   "platformSettings": {
     "format": "exact format/resolution/aspect ratio for this platform",
     "duration": "recommended duration",
@@ -831,10 +831,10 @@ Generate a complete production brief for ${platform.name} and return:
   "qualityChecklist": [
     {"check": "what to verify before downloading/exporting", "why": "why this matters"}
   ],
-  "nextStep": "exactly where to go in ${platform.name} to start — which menu, which feature, which template category"
+  "nextStep": "exactly where to go in ${platform.name} to start - which menu, which feature, which template category"
 }
 
-Requirements: productionInstructions must be step-by-step for someone who has never used ${platform.name}. All guidance must be specific to this brand and this script — nothing generic.`;
+Requirements: productionInstructions must be step-by-step for someone who has never used ${platform.name}. All guidance must be specific to this brand and this script - nothing generic.`;
 
     try {
       const raw = await window.QB_AI(sys, usr, 3000);
@@ -903,14 +903,14 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
 
         {/* INTRO */}
         <div style={{ marginBottom: 48 }} className="fade-in">
-          <ML c="var(--brass)" mb={16}>Phase 03 — Production Layer</ML>
+          <ML c="var(--brass)" mb={16}>Phase 03 - Production Layer</ML>
           <h1 className="font-serif" style={{ fontSize: 44, color: 'var(--text-1)', lineHeight: 1.1, marginBottom: 16 }}>Content Bridge</h1>
           <p className="font-sans" style={{ fontSize: 16, color: 'var(--text-2)', lineHeight: 1.7, maxWidth: 600 }}>
-            Take any QB agent output — script, strategy, brand profile — and transform it into a precise, platform-ready production brief. Select your layer, choose your platform, paste your content.
+            Take any QB agent output - script, strategy, brand profile - and transform it into a precise, platform-ready production brief. Select your layer, choose your platform, paste your content.
           </p>
         </div>
 
-        {/* API KEY BANNER — shown if key is not set */}
+        {/* API KEY BANNER - shown if key is not set */}
         {!apiKey && (
           <div className="api-banner fade-in">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brass)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -928,7 +928,7 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
 
         {/* LAYER SELECTION */}
         <div style={{ marginBottom: 40 }} className="fade-in">
-          <ML c="var(--text-3)" mb={16}>01 — Select production layer</ML>
+          <ML c="var(--text-3)" mb={16}>01 - Select production layer</ML>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {LAYERS.map((l, i) => (
               <div
@@ -961,7 +961,7 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
         {/* PLATFORM SELECTION */}
         {layer && (
           <div style={{ marginBottom: 40 }} className="fade-in">
-            <ML c="var(--text-3)" mb={16}>02 — Select platform</ML>
+            <ML c="var(--text-3)" mb={16}>02 - Select platform</ML>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {layer.platforms.map(pl => (
                 <button
@@ -1002,7 +1002,7 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
         {/* CONSENT GATE */}
         {layer?.requiresConsent && selectedPlatform && (
           <div className="consent-box fade-in" style={{ marginBottom: 40 }}>
-            <ML c="var(--status-error)" mb={12}>Consent required — face &amp; likeness</ML>
+            <ML c="var(--status-error)" mb={12}>Consent required - face &amp; likeness</ML>
             <p className="font-sans" style={{ fontSize: 14, color: 'var(--text-1)', lineHeight: 1.7, marginBottom: 20 }}>
               This production layer involves cloning your face, voice, or creating a digital likeness. You must confirm the following before proceeding:
             </p>
@@ -1014,7 +1014,7 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
                 'I take full responsibility for how this content is distributed and used commercially.',
               ].map((item, i) => (
                 <div key={i} className="font-sans" style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, display: 'flex', gap: 12 }}>
-                  <span style={{ color: 'var(--status-error)', flexShrink: 0 }}>—</span>{item}
+                  <span style={{ color: 'var(--status-error)', flexShrink: 0 }}>-</span>{item}
                 </div>
               ))}
             </div>
@@ -1032,7 +1032,7 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
         {layer && selectedPlatform && (!layer.requiresConsent || consentGiven) && (
           <div style={{ marginBottom: 40 }} className="fade-in">
             <Card accent="var(--brass-dim)">
-              <ML c="var(--brass)" mb={16}>Source quality guide — read before uploading</ML>
+              <ML c="var(--brass)" mb={16}>Source quality guide - read before uploading</ML>
               <div>
                 {layer.sourceQuality.map((item, i) => (
                   <div key={i} className="quality-item">
@@ -1048,7 +1048,7 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
         {/* SCRIPT INPUT + BRIEF FIELDS */}
         {layer && selectedPlatform && (!layer.requiresConsent || consentGiven) && (
           <div style={{ marginBottom: 40 }} className="fade-in">
-            <ML c="var(--text-3)" mb={16}>03 — Paste your QB agent output</ML>
+            <ML c="var(--text-3)" mb={16}>03 - Paste your QB agent output</ML>
             <TF
               label="Script or content from QB agent"
               value={script}
@@ -1060,7 +1060,7 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
 
             <div style={{ height: 24 }} />
 
-            <ML c="var(--text-3)" mb={16}>04 — Brief details (optional but improves precision)</ML>
+            <ML c="var(--text-3)" mb={16}>04 - Brief details (optional but improves precision)</ML>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
               {layer.briefFields.map(fk => (
                 <TF
@@ -1120,7 +1120,7 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
             {activeTab === 'brief' && (
               <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-                {/* Executive Summary — glass-card wraps manifesto-block so both ::before work correctly */}
+                {/* Executive Summary - glass-card wraps manifesto-block so both ::before work correctly */}
                 <div className="glass-card">
                   <div className="manifesto-block" style={{ padding: '24px 32px' }}>
                     <ML c="var(--text-3)" mb={8}>Executive Summary</ML>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Logo Evaluation Agent</title>
+<title>QB - Logo Evaluation Agent</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap">
 
 <script>
-  // Theme init — read from localStorage, default to dark. Prevents flash.
+  // Theme init - read from localStorage, default to dark. Prevents flash.
   (function() {
     try {
       var theme = localStorage.getItem('qb-theme') || 'light';
@@ -465,7 +465,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outlin
 </style>
 
 <script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+// QB_SPINE v2 - API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
   // QBP
@@ -474,7 +474,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outlin
   try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
   
   // Universal AI call
-  // QB_AI and QB_AUTOFILL consolidated — API calls handled directly in runEvaluation
+  // QB_AI and QB_AUTOFILL consolidated - API calls handled directly in runEvaluation
 })();
 </script>
 </head>
@@ -740,7 +740,7 @@ function App() {
     setConcepts(prev=>prev.map((c,i)=>i===activeConcept?{...c,name}:c));
   };
 
-  const SYSTEM_PROMPT = `You are the Logo Evaluation Agent inside the Quantum Branding BrandOS ecosystem. Your function is to score and evaluate logo concepts against the Quantum Brand Profile with surgical precision. You do not give general design feedback — you score against specific QBP dimensions only. Return ONLY valid JSON — no markdown, no preamble, no code fences.`;
+  const SYSTEM_PROMPT = `You are the Logo Evaluation Agent inside the Quantum Branding BrandOS ecosystem. Your function is to score and evaluate logo concepts against the Quantum Brand Profile with surgical precision. You do not give general design feedback - you score against specific QBP dimensions only. Return ONLY valid JSON - no markdown, no preamble, no code fences.`;
 
 const buildPrompt = (concept) => `QUANTUM BRAND PROFILE:
 Brand: ${brandName}
@@ -761,7 +761,7 @@ Quality Test: ${qualityTest||'Does this mark carry the Brand Essence without wor
 Evaluate this logo concept against the QBP and return:
 {
   "overallScore": number 0-100,
-  "verdict": "PASS — Ready for use" | "REFINE — Conditional approval with changes" | "REJECT — Fundamental misalignment",
+  "verdict": "PASS - Ready for use" | "REFINE - Conditional approval with changes" | "REJECT - Fundamental misalignment",
   "verdictReason": "2-3 sentences explaining the verdict with specific references to QBP fields",
   "dimensions": [
     { "id": "geometry", "label": "Geometry Alignment", "score": 0-100, "finding": "1-2 sentences", "evidence": "what you see in the mark that supports this score" },
@@ -774,7 +774,7 @@ Evaluate this logo concept against the QBP and return:
   "strengths": ["specific strength 1 traced to QBP", "specific strength 2", "specific strength 3"],
   "criticalIssues": ["specific issue 1 with fix direction", "specific issue 2 if any"],
   "refinementDirections": ["actionable direction 1 if REFINE verdict", "actionable direction 2"],
-  "designerNote": "One paragraph for the designer. What to keep, what to change, and why — all traced to QBP data. Specific, not general.",
+  "designerNote": "One paragraph for the designer. What to keep, what to change, and why - all traced to QBP data. Specific, not general.",
   "passedQualityTest": true | false,
   "qualityTestExplanation": "Why it passes or fails the quality test question"
 }`;
@@ -894,7 +894,7 @@ Evaluate this logo concept against the QBP and return:
                   <TextField label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The name under evaluation"/>
                   <TextField label="Natural Force *" value={naturalForce} onChange={setNaturalForce} placeholder="e.g. Lightning, Wildfire, The Ocean"/>
                 </div>
-                <TextField label="Brand Essence — the irreducible truth *" value={brandEssence} onChange={setBrandEssence} placeholder="The sentence carved in stone. Every concept is tested against this." multiline rows={2}/>
+                <TextField label="Brand Essence - the irreducible truth *" value={brandEssence} onChange={setBrandEssence} placeholder="The sentence carved in stone. Every concept is tested against this." multiline rows={2}/>
                 <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:24}}>
                   <TextField label="Museum Room *" value={museumRoom} onChange={setMuseumRoom} placeholder="e.g. Bauhaus, Minimalism, Surrealism"/>
                   <TextField label="Primary Archetype *" value={archetype} onChange={setArchetype} placeholder="e.g. The Alchemist, The Sage, The Rebel"/>
@@ -908,9 +908,9 @@ Evaluate this logo concept against the QBP and return:
               <div className="glass-card" style={{padding: 32}}>
                 <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:24}}>
                   <TextField label="Expected Mark Type" value={markType} onChange={setMarkType} placeholder="e.g. Symbol + wordmark combination"/>
-                  <TextField label="Corner Radius Direction" value={cornerSpec} onChange={setCornerSpec} placeholder="e.g. Zero — sharp surgical edges"/>
-                  <TextField label="Complexity Direction" value={complexitySpec} onChange={setComplexitySpec} placeholder="e.g. Essential — one irreducible form"/>
-                  <TextField label="Symmetry Direction" value={symmetrySpec} onChange={setSymmetrySpec} placeholder="e.g. Asymmetric — deliberate tension"/>
+                  <TextField label="Corner Radius Direction" value={cornerSpec} onChange={setCornerSpec} placeholder="e.g. Zero - sharp surgical edges"/>
+                  <TextField label="Complexity Direction" value={complexitySpec} onChange={setComplexitySpec} placeholder="e.g. Essential - one irreducible form"/>
+                  <TextField label="Symmetry Direction" value={symmetrySpec} onChange={setSymmetrySpec} placeholder="e.g. Asymmetric - deliberate tension"/>
                 </div>
                 <TextField label="Color Territory" value={colorTerritory} onChange={setColorTerritory} placeholder="e.g. Deep warm amber to near-black. No corporate blue." multiline rows={2}/>
                 <TextField label="Anti-Pattern Blocklist" value={antiPatterns} onChange={setAntiPatterns} placeholder="e.g. No startup gradients, no rounded sans-serif wordmarks, no tech aesthetic..." multiline rows={2}/>

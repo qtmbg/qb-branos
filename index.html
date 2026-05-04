@@ -12,7 +12,7 @@
 
 <style>
   /* =====================================================
-     QB BRANDOS DESIGN SYSTEM v3.2 — TOKENS (Part 11)
+     QB BRANDOS DESIGN SYSTEM v3.2 - TOKENS (Part 11)
      ===================================================== */
   :root {
     /* Surface */
@@ -250,7 +250,7 @@
   .qb-button.is-expand .qb-button_content { width: 100%; }
 
   /* =====================================================
-     TAG (canonical v3.3 Part 9.2 — outer ink slab + inner cream-card pill + rose dot)
+     TAG (canonical v3.3 Part 9.2 - outer ink slab + inner cream-card pill + rose dot)
      ===================================================== */
   .qb-tag {
     display: inline-flex; padding: 1px;
@@ -394,7 +394,7 @@
   .mobile-menu_foot { margin-top: auto; padding-top: var(--space-l); }
 
   /* =====================================================
-     HERO — typography only, no media
+     HERO - typography only, no media
      ===================================================== */
   .hero {
     /* Compressed top so both CTAs fit above the fold on common laptop viewports */
@@ -403,7 +403,7 @@
   }
   .hero_inner > * + * { margin-top: var(--space-s); }
   .hero_h1 {
-    /* Override qb-type-heading for hero — large but contained so CTAs stay visible */
+    /* Override qb-type-heading for hero - large but contained so CTAs stay visible */
     font-family: 'Fraunces', 'Times New Roman', serif;
     font-variation-settings: "wght" 600, "opsz" 144, "SOFT" 60, "WONK" 0;
     font-size: clamp(3rem, 11vw, 9rem);
@@ -473,7 +473,7 @@
     text-wrap: balance;
   }
   .arch-copy_h em {
-    /* v3.3 Part 3.6 — italic spotlight is --gold, not rose-deep */
+    /* v3.3 Part 3.6 - italic spotlight is --gold, not rose-deep */
     font-style: italic;
     font-variation-settings: "wght" 800, "opsz" 144, "SOFT" 100, "WONK" 1;
     color: var(--gold);
@@ -506,9 +506,9 @@
 
   .arch-cta { margin-top: var(--space-s); }
 
-  /* Illustration card — v3.3 Part 17.5 .qb-illus-card framing
+  /* Illustration card - v3.3 Part 17.5 .qb-illus-card framing
      Standard 2px ink border, hard offset shadow 0 9px / 0 16px var(--ink), 32px radius.
-     The slight rotate is the only stylistic add — everything else matches spec. */
+     The slight rotate is the only stylistic add - everything else matches spec. */
   .arch-illust {
     position: relative;
     background: var(--cream-card);
@@ -543,7 +543,7 @@
 
   /* ─── Canonical v3.3 pattern (.qb-tag is now defined above per Part 9.2) ─── */
 
-  /* Section header — eyebrow + headline stack */
+  /* Section header - eyebrow + headline stack */
   .section_header { text-align: center; }
   .section_header > * + * { margin-top: var(--space-s); }
 
@@ -557,7 +557,7 @@
     color: var(--ink);
   }
 
-  /* "How" grid — 4 phase cards on this page */
+  /* "How" grid - 4 phase cards on this page */
   .how-grid {
     display: grid; grid-template-columns: 1fr; gap: var(--space-m-l);
     margin-top: var(--space-xl-2xl);
@@ -619,7 +619,7 @@
     color: var(--ink-75);
   }
 
-  /* Scroll-triggered reveal — IntersectionObserver toggles .in */
+  /* Scroll-triggered reveal - IntersectionObserver toggles .in */
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
   .reveal.in { opacity: 1; transform: translateY(0); }
   .rd1 { transition-delay: 0.1s; }
@@ -916,14 +916,14 @@
     Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
   })();
 
-  // Featured-by marquee — duplicate track contents for seamless loop
+  // Featured-by marquee - duplicate track contents for seamless loop
   (function () {
     var track = document.getElementById('featuredTrack');
     if (!track) return;
     track.innerHTML = track.innerHTML + track.innerHTML;
   })();
 
-  // Canonical scroll reveal — toggles `.in` on every `.reveal` element when it
+  // Canonical scroll reveal - toggles `.in` on every `.reveal` element when it
   // enters the viewport. Same pattern as ecosystem.html. Honors reduced-motion.
   (function () {
     var els = document.querySelectorAll('.reveal');

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — The War Table</title>
-<meta name="description" content="The War Table · QB BrandOS Phase 01 — score, interrogate, and prioritise your strategic initiatives.">
+<title>QB BrandOS - The War Table</title>
+<meta name="description" content="The War Table · QB BrandOS Phase 01 - score, interrogate, and prioritise your strategic initiatives.">
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
 <script src="/qb-gate.js"></script>
@@ -862,7 +862,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
 }
 .dossier-head .actions{ display:flex; align-items:center; gap:10px; margin-top:18px; flex-wrap:wrap; }
 
-/* Shared section shell — parallel to .wt-phase-head */
+/* Shared section shell - parallel to .wt-phase-head */
 .d-section{ display:flex; flex-direction:column; gap:28px; }
 .d-section-head{
   display:flex; flex-direction:column; gap:12px;
@@ -885,7 +885,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   color:var(--text-2);
 }
 
-/* 01 Diagnosis — four stacked prose blocks */
+/* 01 Diagnosis - four stacked prose blocks */
 .d-diagnosis{
   padding:clamp(36px, 4vw, 56px);
   display:flex; flex-direction:column; gap:36px;
@@ -907,7 +907,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   max-width:68ch;
 }
 
-/* 02 Posture Statement — typography carries it, no decoration */
+/* 02 Posture Statement - typography carries it, no decoration */
 .d-posture{
   padding:clamp(40px, 5vw, 72px) clamp(28px, 4vw, 64px);
   display:flex; flex-direction:column; align-items:flex-start; gap:20px;
@@ -927,7 +927,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   padding-left:clamp(20px, 2.5vw, 32px);
 }
 
-/* 03 Field Plan — vertical timeline, quieter dots */
+/* 03 Field Plan - vertical timeline, quieter dots */
 .d-field-plan{ position:relative; padding-left:clamp(28px, 4vw, 56px); }
 .d-field-plan::before{
   content:''; position:absolute; left:clamp(10px, 1.5vw, 16px); top:4px; bottom:4px;
@@ -989,7 +989,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   padding-top:10px; border-top:1px solid var(--border-subtle);
 }
 
-/* 04 NEXT / LATER / PARK — three columns */
+/* 04 NEXT / LATER / PARK - three columns */
 .d-queues{
   display:grid; grid-template-columns:1fr; gap:24px;
 }
@@ -1055,7 +1055,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   color:var(--text-1);
 }
 
-/* 06 Persona Contract — letter */
+/* 06 Persona Contract - letter */
 .d-letter{
   padding:clamp(48px, 5vw, 80px);
   max-width:760px; margin:0 auto;
@@ -1244,7 +1244,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   margin-top:auto;
 }
 
-/* Signature commitment — same weight as other cards */
+/* Signature commitment - same weight as other cards */
 .d-signature{
   padding:clamp(36px, 4.5vw, 56px);
   display:flex; flex-direction:column; gap:24px;
@@ -1765,7 +1765,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         // Cloud-aware write: mirrors to Supabase if user is authed
         if (window.QB && QB.setQBP) { QB.setQBP(updated); }
         else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
-        // Note: qb_war_table_done legacy flag removed — completion is recorded
+        // Note: qb_war_table_done legacy flag removed - completion is recorded
         // by QB.openGate() → QB.recordCompletion() after dossier renders.
         setTimeout(function(){
           if (!document.getElementById('qb-float-results')){
@@ -1802,9 +1802,9 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     if (navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(text)
         .then(function(){ showToast('Strategic record copied.'); })
-        .catch(function(){ showToast('Copy failed — select manually.', 'error'); });
+        .catch(function(){ showToast('Copy failed - select manually.', 'error'); });
     } else {
-      showToast('Copy not supported — select manually.', 'error');
+      showToast('Copy not supported - select manually.', 'error');
     }
   }
 
@@ -1841,7 +1841,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       'contradictions. Use the founder\'s brand voice (see QBP voiceNotes, manifesto, archetype) for ' +
       'postureStatement, kickoffEmail, and principles. Use the Primary Persona\'s voice for personaContract. ' +
       'Return only valid JSON matching the specified schema. No markdown. No preamble. No trailing commentary. ' +
-      'Do not use em dashes in any generated copy — use periods, commas, or colons. ' +
+      'Do not use em dashes in any generated copy - use periods, commas, or colons. ' +
       'No consulting-speak: no "innovative", "human-centered", "authentic", "premium", "elevate", "unlock", "journey". ' +
       'No hedging: never "could", "might", "helps to". Declarative only.\n\n' +
       'QBP (Quantum Brand Profile, for voice + context):\n' +
@@ -1884,7 +1884,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       '- Leading indicator = what to measure by Friday of that week. Owner = role or named person pulled from Interrogation if mentioned.\n\n' +
       'HANDOFF RULES\n' +
       '- Pick 3 specific QB BrandOS tools that this plan should hand off to next. Use exact .html file names from the enum. ' +
-      'If the brand hasn\'t done Archetype Compass, Brand Soul Map, or Visual DNA yet, prioritise those (Compass is the 10-min entry point — Brand Soul Map is the 90-min depth pass). If scoring surfaced an Awareness gap, suggest Instagram/LinkedIn/YouTube agents. If content velocity is the bottleneck, suggest Content Bridge or Repurposing Engine.\n\n' +
+      'If the brand hasn\'t done Archetype Compass, Brand Soul Map, or Visual DNA yet, prioritise those (Compass is the 10-min entry point - Brand Soul Map is the 90-min depth pass). If scoring surfaced an Awareness gap, suggest Instagram/LinkedIn/YouTube agents. If content velocity is the bottleneck, suggest Content Bridge or Repurposing Engine.\n\n' +
       'Return ONLY the JSON. Begin with { and end with }.';
 
     return { system: system, user: userPrompt };
@@ -2120,7 +2120,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
 
   function exportDossierPPTX(mode){
     if (!window.QB_exportPPTX){
-      showToast('PPTX export still loading — try again in a second.', 'error');
+      showToast('PPTX export still loading - try again in a second.', 'error');
       return;
     }
     var brand = state.brandInfo.brandName || 'Brand';
@@ -2142,7 +2142,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     var md = dossierToMarkdown();
     var to = state.leadForm.email || '';
     var subject = 'Strategic Command Dossier · ' + (state.brandInfo.brandName || 'Brand');
-    // Fallback: mailto. (Klaviyo campaign send requires server-side — not suitable for client)
+    // Fallback: mailto. (Klaviyo campaign send requires server-side - not suitable for client)
     var href = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(md.slice(0, 1800));
     // Most clients cap mailto length. Warn user if truncated.
     var a = document.createElement('a');
@@ -2524,7 +2524,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         el('p',  { class:'hook', text:'One winner. No compromises.' })
       ]),
       el('div', { style:{ display:'flex', flexDirection:'column', gap:'32px' } }, [
-        // Conflict 01 — Close call
+        // Conflict 01 - Close call
         el('div', { class:'glass-card wt-arena' }, [
           el('div', { class:'conflict-tag', text:'Conflict 01' }),
           el('h3', { text:'The Close Call' }),
@@ -2540,7 +2540,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
             el('div', {}, [ el('label', { class:'label-mono', text:'Accepted cost (asset to wait)' }), arenaInput('closeCall', 'acceptWait') ])
           ])
         ]),
-        // Conflict 02 — Pillar clash
+        // Conflict 02 - Pillar clash
         el('div', { class:'glass-card wt-arena' }, [
           el('div', { class:'conflict-tag', text:'Conflict 02' }),
           el('h3', { text:'The Pillar Clash' }),
@@ -2550,7 +2550,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
             el('div', {}, [ el('label', { class:'label-mono', text:'Current stage justification' }), arenaInput('pillarClash', 'because') ])
           ])
         ]),
-        // Conflict 03 — Brand test
+        // Conflict 03 - Brand test
         el('div', { class:'glass-card wt-arena' }, [
           el('div', { class:'conflict-tag', text:'Conflict 03' }),
           el('h3', { text:'The Brand Test' }),
@@ -2741,7 +2741,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       isKey
         ? el('div', { class:'d-apikey' }, [
             el('h3', { text:'This environment cannot call the AI service.' }),
-            el('p',  { text:'To generate the full Strategic Command Dossier, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. You can still view the baseline dossier below — it renders everything you entered, without the AI voice.' }),
+            el('p',  { text:'To generate the full Strategic Command Dossier, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. You can still view the baseline dossier below - it renders everything you entered, without the AI voice.' }),
             el('div', { style:{ display:'flex', gap:'10px', flexWrap:'wrap' } }, [
               el('button', { class:'btn btn-primary btn-sm', type:'button', onclick: triggerDossierGeneration }, 'Retry synthesis'),
               el('button', { class:'btn btn-sm', type:'button', onclick:function(){ state.dossier = {}; render(); } }, 'Show baseline dossier')
@@ -2849,10 +2849,10 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
                   return el('div', { class:'glass-card d-init-card' }, [
                     el('h4', { text: i.name || '' }),
                     el('div', { class:'meta-row' }, [
-                      el('div', {}, [ el('span', { class:'k', text:'Action' }),            el('span', { class:'v', text: i.action || '—' }) ]),
-                      el('div', {}, [ el('span', { class:'k', text:'Owner' }),             el('span', { class:'v', text: i.owner || '—' }) ]),
-                      el('div', {}, [ el('span', { class:'k', text:'Leading indicator' }), el('span', { class:'v', text: i.leadingIndicator || '—' }) ]),
-                      el('div', { class:'kill' }, [ el('span', { class:'k', text:'Kill condition' }), el('span', { class:'v', text: i.killCondition || '—' }) ])
+                      el('div', {}, [ el('span', { class:'k', text:'Action' }),            el('span', { class:'v', text: i.action || '-' }) ]),
+                      el('div', {}, [ el('span', { class:'k', text:'Owner' }),             el('span', { class:'v', text: i.owner || '-' }) ]),
+                      el('div', {}, [ el('span', { class:'k', text:'Leading indicator' }), el('span', { class:'v', text: i.leadingIndicator || '-' }) ]),
+                      el('div', { class:'kill' }, [ el('span', { class:'k', text:'Kill condition' }), el('span', { class:'v', text: i.killCondition || '-' }) ])
                     ]),
                     i.dependency ? el('div', { class:'dep', text:'Unlocks: ' + i.dependency }) : null
                   ]);
@@ -2878,7 +2878,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       ]);
     }
     var s04 = el('section', { class:'d-section' }, [
-      sectionHead('04.', 'Queues', 'Everything that is not NOW — and when it becomes relevant.'),
+      sectionHead('04.', 'Queues', 'Everything that is not NOW - and when it becomes relevant.'),
       el('div', { class:'d-queues' }, [
         queue('next',  'Next · trigger-based', d.nextList || [], 'Queue empty.', function(i){
           return el('div', { class:'d-queue-item' }, [
@@ -2968,7 +2968,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
             el('div', { class:'d-acc-email-body' }, [
               el('div', { class:'subject' }, [
                 el('span', { class:'k', text:'Subject' }),
-                document.createTextNode(kickoff.subject || 'Week 1 — the ' + (state.initiatives.filter(function(i){ return i.band === 'NOW'; }).length) + '-initiative plan')
+                document.createTextNode(kickoff.subject || 'Week 1 - the ' + (state.initiatives.filter(function(i){ return i.band === 'NOW'; }).length) + '-initiative plan')
               ]),
               el('div', { class:'content', text: kickoff.body || 'Pending.' })
             ])
@@ -3048,7 +3048,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       ]),
       el('h3', { text:'You are choosing this plan. Sign it.' }),
       el('p', { style:{ fontFamily:'var(--f-body)', fontSize:'14.5px', lineHeight:'1.65', color:'var(--text-2)', maxWidth:'560px' },
-        text:'Signing writes this dossier to your commitment log. You can revisit it in the BrandOS Hub, but the version you sign today is preserved — so you can tell yourself, honestly, six months from now, what you chose to believe on this day.' }),
+        text:'Signing writes this dossier to your commitment log. You can revisit it in the BrandOS Hub, but the version you sign today is preserved - so you can tell yourself, honestly, six months from now, what you chose to believe on this day.' }),
       signed ? signed : sigRow
     ]);
 

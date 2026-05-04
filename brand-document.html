@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Your Brand Document</title>
+<title>QB - Your Brand Document</title>
 
 <!-- Flash Prevention & Theme Init -->
 <script>
@@ -30,7 +30,7 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Entangled Time — Dark Theme (Default) */
+/* Entangled Time - Dark Theme (Default) */
 :root, [data-theme="dark"] {
   --bg-void: #080604;
   --bg-deep: #0A0806;
@@ -65,7 +65,7 @@
   --serif: 'DM Serif Display', Georgia, serif;
 }
 
-/* Entangled Time — Light Theme */
+/* Entangled Time - Light Theme */
 [data-theme="light"] {
   --bg-void: #F4F0EB;
   --bg-deep: #EDE8E2;
@@ -231,7 +231,7 @@ main { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; position: rela
   opacity: 0.5;
 }
 
-/* FIX P-01: PDF render mode — removes backdrop-filter unsupported by html2canvas */
+/* FIX P-01: PDF render mode - removes backdrop-filter unsupported by html2canvas */
 .pdf-render,
 .pdf-render .glass-card {
   backdrop-filter: none !important;
@@ -377,7 +377,7 @@ input:focus, textarea:focus {
     <div class="logo-text">QB BrandOS</div>
     <div class="header-actions">
       <button class="btn-ghost" onclick="toggleTheme()" id="theme-toggle" aria-label="Toggle theme">☼ Theme</button>
-      <!-- FIX M-03: Guard history.back() — avoids blank page when opened directly -->
+      <!-- FIX M-03: Guard history.back() - avoids blank page when opened directly -->
       <button class="btn-ghost" onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'index.html'" aria-label="Go back">← Back</button>
       <button class="btn-ghost" onclick="downloadDocPPTX()" id="dl-pptx-btn" aria-label="Download brand document as PPTX">↓ Download PPTX</button>
       <button class="btn-ghost" onclick="downloadDocMarketingDeck()" id="dl-marketing-btn" aria-label="Download brand document as marketing-style PPTX">↓ Marketing deck</button>
@@ -406,9 +406,9 @@ input:focus, textarea:focus {
 
     <!-- Cover -->
     <div class="doc-cover">
-      <div class="doc-cover-label">Entangled Time — Brand Operating System</div>
+      <div class="doc-cover-label">Entangled Time - Brand Operating System</div>
       <div class="doc-cover-brand" id="cover-brand">Your Brand</div>
-      <div class="doc-cover-sub">Quantum Brand Profile — Complete Identity Document</div>
+      <div class="doc-cover-sub">Quantum Brand Profile - Complete Identity Document</div>
       <div class="doc-cover-date" id="cover-date"></div>
     </div>
 
@@ -551,7 +551,7 @@ function cloudCompleted(toolId) {
   return !!(c && c[toolId]);
 }
 
-// FIX B-02: unescape() replaced with TextEncoder — modern, spec-compliant Unicode encoding
+// FIX B-02: unescape() replaced with TextEncoder - modern, spec-compliant Unicode encoding
 function openTool(file) {
   const qbpStr = localStorage.getItem('qb_qbp') || '';
   let url = file;
@@ -718,7 +718,7 @@ function render() {
       const moves = Array.isArray(p.marketingApproach) ? p.marketingApproach : [];
       const takeaways = Array.isArray(p.keyTakeaways) ? p.keyTakeaways : [];
       return '<div class="doc-field">' +
-        '<div class="doc-field-label">' + escHtml(label) + (p.name ? ' — ' + escHtml(p.name) : '') + '</div>' +
+        '<div class="doc-field-label">' + escHtml(label) + (p.name ? ' - ' + escHtml(p.name) : '') + '</div>' +
         (p.role ? '<div class="doc-field-value">' + escHtml(p.role) + '</div>' : '') +
         '</div>' +
         (p.hook ? field('Hook', p.hook, true) : '') +
@@ -750,7 +750,7 @@ function render() {
     document.getElementById('personas-content').innerHTML = emptySection('The Profiles', 'the-profiles.html');
   }
 
-  // ── SECTION 07: QBP Summary — FIX M-02: now uses fieldGrid() like all other sections ──
+  // ── SECTION 07: QBP Summary - FIX M-02: now uses fieldGrid() like all other sections ──
   document.getElementById('summary-content').innerHTML =
     fieldGrid([
       ['Brand Name',      qbp.brandName],
@@ -788,7 +788,7 @@ function render() {
 }
 
 // ── PDF DOWNLOAD ──────────────────────────────────────────────────────────────
-// FIX B-01: /\s+/g — was /\\s+/g which matched literal backslash+s, not whitespace
+// FIX B-01: /\s+/g - was /\\s+/g which matched literal backslash+s, not whitespace
 // FIX P-01: pdf-render class strips backdrop-filter before snapshot (unsupported by html2canvas)
 // FIX P-02: await document.fonts.ready ensures Google Fonts render correctly in PDF
 // FIX A-01: aria-label updated on button during generation for screen reader accuracy
@@ -799,7 +799,7 @@ async function downloadDoc() {
   btn.disabled = true;
 
   const qbp = getQBP();
-  // FIX B-01: /\s+/g correctly replaces whitespace (was /\\s+/g — broken)
+  // FIX B-01: /\s+/g correctly replaces whitespace (was /\\s+/g - broken)
   const brandName = (qbp.brandName || 'Brand').replace(/\s+/g, '-').toLowerCase();
 
   const bgColor = getComputedStyle(document.documentElement)
@@ -831,7 +831,7 @@ async function downloadDoc() {
     console.error('PDF generation failed:', err);
     alert('PDF generation failed. Use Ctrl+P / Cmd+P to print as PDF instead.');
   } finally {
-    // Always restore — whether success or failure
+    // Always restore - whether success or failure
     preview.classList.remove('pdf-render');
     btn.textContent = '\u2193 Download PDF';
     btn.setAttribute('aria-label', 'Download brand document as PDF');
@@ -842,7 +842,7 @@ async function downloadDoc() {
 async function exportDocPPTXMode(mode, btnId, idleLabel) {
   const btn = document.getElementById(btnId);
   if (!window.QB_exportPPTX) {
-    alert('PPTX export still loading — try again in a second.');
+    alert('PPTX export still loading - try again in a second.');
     return;
   }
   if (btn) { btn.disabled = true; btn.textContent = 'Generating…'; }

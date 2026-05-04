@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — Archetype Compass</title>
-<meta name="description" content="Archetype Compass · QB BrandOS Phase 01 — the first step. A 10-exercise diagnostic that reads your brand's archetype trinity.">
+<title>QB BrandOS - Archetype Compass</title>
+<meta name="description" content="Archetype Compass · QB BrandOS Phase 01 - the first step. A 10-exercise diagnostic that reads your brand's archetype trinity.">
 <script>(function(){try{var legacy=localStorage.getItem('qb_theme');if(legacy){localStorage.setItem('qb-theme',legacy);localStorage.removeItem('qb_theme');}var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
 <script src="/qb-gate.js"></script>
@@ -412,7 +412,7 @@ textarea,input{ font-family:inherit; }
 }
 
 /* ============================================================
-   CARD GRID — compact responsive layout
+   CARD GRID - compact responsive layout
    Goal: all 12 ranking options on a single screen, no scrolling.
    Desktop: 6 cols × 2 rows. Tablet: 4 × 3. Mobile: 3 × 4.
    Quadrant question (cols-2) keeps its 2×2 layout.
@@ -435,7 +435,7 @@ textarea,input{ font-family:inherit; }
   .q-grid{ grid-template-columns:repeat(2, 1fr); gap:8px; }
 }
 
-/* Ranking hint — single inline row above the grid, minimal height */
+/* Ranking hint - single inline row above the grid, minimal height */
 .q-rank-hint{
   display:flex; align-items:center; justify-content:space-between;
   gap:14px; flex-wrap:wrap;
@@ -480,7 +480,7 @@ textarea,input{ font-family:inherit; }
   .q-grid.cols-2{ grid-template-columns:1fr; }
 }
 
-/* Generic option card — compact */
+/* Generic option card - compact */
 .q-opt{
   position:relative; display:flex; flex-direction:column;
   width:100%;
@@ -508,7 +508,7 @@ textarea,input{ font-family:inherit; }
 .q-opt.is-dimmed{ opacity:.5; }
 .q-opt.is-dimmed:hover{ opacity:.85; }
 
-/* Rank badge — small, top-right */
+/* Rank badge - small, top-right */
 .q-rank-badge{
   position:absolute; top:6px; right:6px;
   width:22px; height:22px; border-radius:50%;
@@ -570,7 +570,7 @@ textarea,input{ font-family:inherit; }
   color:var(--text-1); line-height:1.4;
 }
 
-/* Quadrant (big typographic) — keeps generous treatment, only 4 cards */
+/* Quadrant (big typographic) - keeps generous treatment, only 4 cards */
 .q-opt.kind-quadrant{
   min-height:180px;
   padding:28px 22px;
@@ -591,7 +591,7 @@ textarea,input{ font-family:inherit; }
   color:var(--text-3);
 }
 
-/* Peers cluster — horizontal logo strip instead of dense 2×2 grid */
+/* Peers cluster - horizontal logo strip instead of dense 2×2 grid */
 .q-opt.kind-peers{
   padding:24px 22px 22px;
   justify-content:center; gap:18px;
@@ -625,13 +625,13 @@ textarea,input{ font-family:inherit; }
   color:var(--text-3);
   text-align:center; padding:0 1px; line-height:1.05;
 }
-/* Hide individual brand names on the card — the cluster reads as a single image */
+/* Hide individual brand names on the card - the cluster reads as a single image */
 .q-opt.kind-peers .peer-name{ display:none; }
 .q-opt.kind-peers.is-selected .peer-logo{
   border-color:var(--brass);
   box-shadow:0 0 0 1px var(--brass);
 }
-/* Cluster archetype label — appears under the logo strip when selected */
+/* Cluster archetype label - appears under the logo strip when selected */
 .q-opt.kind-peers .peer-meta{
   font-family:var(--f-mono); font-size:8px; font-weight:500;
   text-transform:uppercase; letter-spacing:.18em;
@@ -647,7 +647,7 @@ textarea,input{ font-family:inherit; }
   .q-opt.kind-peers .peer-logo{ width:22px; height:22px; }
 }
 
-/* Figure portrait — real image overlay (sits on top of placeholder) */
+/* Figure portrait - real image overlay (sits on top of placeholder) */
 .q-opt.kind-figure .figure-img{
   position:absolute; inset:0;
   width:100%; height:100%;
@@ -670,7 +670,7 @@ textarea,input{ font-family:inherit; }
   letter-spacing:-.003em;
 }
 
-/* Figure (celebrity/metaphor/expression) — compact: small frame at top, name only */
+/* Figure (celebrity/metaphor/expression) - compact: small frame at top, name only */
 .q-opt.kind-figure{
   padding:0;
   display:flex; flex-direction:column;
@@ -698,7 +698,7 @@ textarea,input{ font-family:inherit; }
   background:radial-gradient(circle at center, transparent 40%, rgba(26,22,16,.06) 100%);
   pointer-events:none;
 }
-/* PLACEHOLDER portrait — swap with real <img> via data-img attribute + imagery/{slug}.jpg later */
+/* PLACEHOLDER portrait - swap with real <img> via data-img attribute + imagery/{slug}.jpg later */
 .q-opt.kind-figure .figure-placeholder{
   position:relative; z-index:1;
   display:flex; flex-direction:column; align-items:center; gap:14px;
@@ -731,10 +731,10 @@ textarea,input{ font-family:inherit; }
   letter-spacing:-.005em;
   line-height:1.2;
 }
-/* Hide the long descriptive line in compact mode — name carries the meaning */
+/* Hide the long descriptive line in compact mode - name carries the meaning */
 .q-opt.kind-figure .figure-desc{ display:none; }
 
-/* Expression (simpler figure — just face) */
+/* Expression (simpler figure - just face) */
 .q-opt.kind-expression{ min-height:128px; }
 .q-opt.kind-expression .figure-frame{ aspect-ratio: 1 / 1; max-height:80px; }
 .q-opt.kind-expression .figure-body{ padding:8px 10px 10px; }
@@ -1628,7 +1628,7 @@ var LOADING_MESSAGES = [
   'Writing it down'
 ];
 
-/* Inline SVG placeholder — used for figure/expression tiles until real imagery lands in /img/archetype/{slug}.jpg */
+/* Inline SVG placeholder - used for figure/expression tiles until real imagery lands in /img/archetype/{slug}.jpg */
 var PLACEHOLDER_SVG = '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
   + '<circle cx="24" cy="18" r="6"/>'
   + '<path d="M10 40c0-7.7 6.3-14 14-14s14 6.3 14 14"/>'
@@ -1698,7 +1698,7 @@ function renderIntro(){
 
   inner.appendChild(el('div', {class:'intro-hero'}, [
     el('h1', {html:'The <em>Archetype Compass.</em><br/>The first step.'}),
-    el('p', {class:'intro-lede'}, "Ten exercises, about seven minutes. The clearest read of your brand's identity foundation — primary archetype, secondary texture, and the shadow to manage. Everything else in QB BrandOS sharpens once this is set."),
+    el('p', {class:'intro-lede'}, "Ten exercises, about seven minutes. The clearest read of your brand's identity foundation - primary archetype, secondary texture, and the shadow to manage. Everything else in QB BrandOS sharpens once this is set."),
     el('p', {class:'intro-lede', style:{fontSize:'1rem', color:'var(--text-3)'}}, "The brand isn't being invented here. It's being uncovered.")
   ]));
 
@@ -1722,7 +1722,7 @@ function renderIntro(){
     el('div', {class:'intro-protocol'}, [
       el('div', {class:'label p-num'}, '03'),
       el('h3', {}, 'The diagnostic is the starting line.'),
-      el('p', {}, "Soul Map, Sensescape, Visual DNA — every downstream tool reads from what you set here.")
+      el('p', {}, "Soul Map, Sensescape, Visual DNA - every downstream tool reads from what you set here.")
     ])
   ]));
 
@@ -1794,7 +1794,7 @@ function renderQuestion(n){
       el('span', {class:'rh-pip' + (picks.length >= 3 ? ' filled' : '')}, picks.length >= 3 ? '3' : '')
     ]);
     var hint = el('div', {class:'q-rank-hint'}, [
-      el('div', {class:'rh-text', html: 'Pick your <b>top 3</b> in order — most-us first. Tap a picked card to remove it.'}),
+      el('div', {class:'rh-text', html: 'Pick your <b>top 3</b> in order - most-us first. Tap a picked card to remove it.'}),
       pipsRow
     ]);
     wrap.appendChild(hint);
@@ -2020,7 +2020,7 @@ function renderResults(){
   if (S.error && S.fallbackUsed){
     var banner = el('div', {class:'banner err'});
     banner.appendChild(el('span', {class:'b-glyph'}, '!'));
-    banner.appendChild(el('div', {style:{flex:'1'}}, S.error + (S.errorDetail ? ' — ' + S.errorDetail.slice(0, 120) : '')));
+    banner.appendChild(el('div', {style:{flex:'1'}}, S.error + (S.errorDetail ? ' - ' + S.errorDetail.slice(0, 120) : '')));
     banner.appendChild(el('button', {class:'b-btn', onclick:function(){ runSynthesis(); }}, 'Retry'));
     results.appendChild(banner);
   } else if (S.fallbackUsed){
@@ -2168,7 +2168,7 @@ function renderResults(){
     ]));
   }
 
-  // Fingerprint — uses each exercise's #1 ranked pick
+  // Fingerprint - uses each exercise's #1 ranked pick
   results.appendChild(divider('·', 'Diagnostic Fingerprint'));
   function topPick(n){
     var a = S.answers[n];
@@ -2180,9 +2180,9 @@ function renderResults(){
   var motivation = topPick(5);
   var fear = topPick(7);
   results.appendChild(el('div', {class:'r-meta'}, [
-    metaCell('Tone register', tone ? tone.label : '—'),
-    metaCell('Core motivation', motivation ? motivation.label : '—'),
-    metaCell('Core fear', fear ? fear.words.join(' · ') : '—')
+    metaCell('Tone register', tone ? tone.label : '-'),
+    metaCell('Core motivation', motivation ? motivation.label : '-'),
+    metaCell('Core fear', fear ? fear.words.join(' · ') : '-')
   ]));
 
   // Refine
@@ -2190,7 +2190,7 @@ function renderResults(){
     var rem = 3 - S.revisions;
     var refine = el('div', {class:'r-refine'});
     refine.appendChild(el('div', {class:'rtl'}, 'Refine the read · ' + rem + ' revision' + (rem === 1 ? '' : 's') + ' remaining'));
-    refine.appendChild(el('div', {class:'rhint'}, 'If the reading is missing something, sharpen it. Tell the system what to push, soften, or reframe — it will rewrite from your answers with that lens.'));
+    refine.appendChild(el('div', {class:'rhint'}, 'If the reading is missing something, sharpen it. Tell the system what to push, soften, or reframe - it will rewrite from your answers with that lens.'));
     var ta = el('textarea', {
       placeholder: 'e.g. "Push harder on the tension between Magician and Sage. The Year-5 arc feels too cautious."',
       oninput: function(e){ S.refineNote = e.target.value; }
@@ -2282,7 +2282,7 @@ function archCard(role, arch, read){
     ]),
     refRow,
     el('div', {class:'meta-line'}, 'Gift · ' + arch.gift + '  /  Shadow · ' + arch.shadow),
-    el('div', {class:'read'}, read || '—')
+    el('div', {class:'read'}, read || '-')
   ]);
 }
 
@@ -2420,7 +2420,7 @@ function callClaude(scored, isRefinement){
     var sc = SCREENS[n-1];
 
     if (Array.isArray(a)){
-      // Ranking exercise — top 3 in order
+      // Ranking exercise - top 3 in order
       var ranked = a.map(function(idx, i){
         var o = sc.opts[idx];
         return {
@@ -2454,19 +2454,19 @@ function callClaude(scored, isRefinement){
   var offer = QBP.offer || '';
 
   var refinementInstr = isRefinement && S.refineNote.trim()
-    ? '\n\nUSER REVISION REQUEST: ' + S.refineNote.trim() + '\nApply this revision to sharpen the read while staying faithful to the underlying diagnostic. Do not invent new archetypes — work with the trinity.'
+    ? '\n\nUSER REVISION REQUEST: ' + S.refineNote.trim() + '\nApply this revision to sharpen the read while staying faithful to the underlying diagnostic. Do not invent new archetypes - work with the trinity.'
     : '';
 
   var p = ARCHETYPES[scored.primary];
   var s = ARCHETYPES[scored.secondary];
   var t = ARCHETYPES[scored.tension];
 
-  var sys = 'You are the Archetype Compass synthesizer inside QB BrandOS — a strategic intelligence system, NOT a personality test.\n\n'
+  var sys = 'You are the Archetype Compass synthesizer inside QB BrandOS - a strategic intelligence system, NOT a personality test.\n\n'
     + 'You read raw answers from a 10-exercise archetype diagnostic and produce a precise, brand-specific strategic reading.\n\n'
     + 'You are not a generic archetype copywriter. You operate as a senior brand strategist + cultural critic + product architect. You think with rigor, write with edge, and refuse to flatter.\n\n'
     + 'Every sentence you write MUST be:\n'
     + '- TRACEABLE to the user\'s actual choices (no generic archetype-101 copy)\n'
-    + '- BEHAVIORALLY CONCRETE (show the brand in motion — what it actually DOES)\n'
+    + '- BEHAVIORALLY CONCRETE (show the brand in motion - what it actually DOES)\n'
     + '- SPECIFIC (no abstractions like "authenticity," "connection," "premium quality")\n'
     + '- USEFUL (the founder should be able to act on it within 24 hours)\n'
     + '- HONEST (if the trinity reveals a tension or risk, name it directly)\n\n'
@@ -2475,7 +2475,7 @@ function callClaude(scored, isRefinement){
 
   var usr = 'BRAND CONTEXT\n'
     + 'Name: ' + brandName + '\n'
-    + 'Essence: ' + (brandEssence || '(not yet defined — work from diagnostic alone)') + '\n'
+    + 'Essence: ' + (brandEssence || '(not yet defined - work from diagnostic alone)') + '\n'
     + 'Spark: ' + (spark || '(not yet defined)') + '\n'
     + 'Core Offer: ' + (offer || '(not yet defined)') + '\n\n'
     + 'DIAGNOSTIC SCORING (weighted Borda tally · 9 ranking exercises score #1=3pts / #2=2pts / #3=1pt + quadrant +1.5 per archetype in chosen quadrant)\n'
@@ -2498,7 +2498,7 @@ function callClaude(scored, isRefinement){
     + '  "trinityReads": {\n'
     + '    "primary": "3-4 sentences. Why ' + p.name + ' is THIS BRAND\'S operating system. Reference 2-3 specific answer choices. Show the brand in motion.",\n'
     + '    "secondary": "3-4 sentences. How ' + s.name + ' adds texture. Where it surfaces.",\n'
-    + '    "tension": "3-4 sentences. ' + t.name + ' — when it serves and when it betrays."\n'
+    + '    "tension": "3-4 sentences. ' + t.name + ' - when it serves and when it betrays."\n'
     + '  },\n'
     + '  "strategicMoat": {\n'
     + '    "uniqueEnablement": "2-3 sentences on what this trinity uniquely enables in market.",\n'
@@ -2507,7 +2507,7 @@ function callClaude(scored, isRefinement){
     + '  },\n'
     + '  "operatingMode": {\n'
     + '    "decisionStyle": "How this brand makes decisions. Concrete pattern.",\n'
-    + '    "rhythm": "Its relationship to time — fast or slow, urgent or patient. Why.",\n'
+    + '    "rhythm": "Its relationship to time - fast or slow, urgent or patient. Why.",\n'
     + '    "yesAndNo": "Format: YES to [X]. NO to [Y]. Two specific each."\n'
     + '  },\n'
     + '  "marketLandscape": {\n'
@@ -2536,7 +2536,7 @@ function callClaude(scored, isRefinement){
     + '    "signaturePhrase": "Short signature phrase this brand can own."\n'
     + '  },\n'
     + '  "visualImplications": {\n'
-    + '    "world": "1-2 sentences on visual world — color temperature, geometry, materiality.",\n'
+    + '    "world": "1-2 sentences on visual world - color temperature, geometry, materiality.",\n'
     + '    "neverLooks": "1 sentence on what it must NEVER look like.",\n'
     + '    "signatureMove": "Specific visual signature move."\n'
     + '  },\n'
@@ -2607,7 +2607,7 @@ function localFallback(scored){
   return {
     headline: brand + ' reads as a ' + p.name + ' primary with ' + s.name + ' texture and ' + t.name + ' tension.',
     centralParadox: {
-      statement: 'You are ' + p.name.replace('The ','') + ' yet ' + s.name.replace('The ','') + ' — and ' + t.name.replace('The ','') + ' keeps knocking.',
+      statement: 'You are ' + p.name.replace('The ','') + ' yet ' + s.name.replace('The ','') + ' - and ' + t.name.replace('The ','') + ' keeps knocking.',
       whenGoverned: 'Held with intention, this combination produces a brand that delivers ' + p.gift.toLowerCase() + ' through the texture of ' + s.gift.toLowerCase() + '.',
       whenUngoverned: 'Without discipline, ' + p.shadow.toLowerCase() + ' amplifies ' + s.shadow.toLowerCase() + ', and ' + t.shadow.toLowerCase() + ' pulls the brand off-axis.'
     },
@@ -2629,12 +2629,12 @@ function localFallback(scored){
     marketLandscape: {
       occupiers: [
         { brand: p.brand, read: 'Holds the pure ' + p.name + ' position with global recognition.' },
-        { brand: s.brand, read: 'Holds the pure ' + s.name + ' position — useful contrast for your texture.' }
+        { brand: s.brand, read: 'Holds the pure ' + s.name + ' position - useful contrast for your texture.' }
       ],
       openSpace: 'The intersection of ' + p.name + ' and ' + s.name + ' is rarely owned cleanly. Most brands collapse one into the other.'
     },
     failurePattern: {
-      selfSabotage: 'The death spiral begins when ' + p.shadow.toLowerCase() + ' compensates for ' + s.shadow.toLowerCase() + ', then ' + t.shadow.toLowerCase() + ' steps in — at which point coherence collapses.',
+      selfSabotage: 'The death spiral begins when ' + p.shadow.toLowerCase() + ' compensates for ' + s.shadow.toLowerCase() + ', then ' + t.shadow.toLowerCase() + ' steps in - at which point coherence collapses.',
       earlyWarnings: [
         'Decisions start being made to manage perception rather than express identity',
         'The voice begins drifting toward the ' + t.name + ' register without intention',
@@ -2644,25 +2644,25 @@ function localFallback(scored){
     },
     growthArc: {
       year1: 'Establish the ' + p.name + ' foundation publicly. Make ' + p.gift.toLowerCase() + ' undeniable.',
-      year3: 'Become known for the rare combination — ' + p.name + ' delivered through ' + s.name + ' texture.',
+      year3: 'Become known for the rare combination - ' + p.name + ' delivered through ' + s.name + ' texture.',
       year5: 'Hold the position no competitor can copy. The ' + p.name + '/' + s.name + ' space is yours.'
     },
     fusion: 'Only ' + brand + ' can be ' + p.name.replace('The ','') + ' and ' + s.name.replace('The ','') + ' at the same time.',
     decisionFilter: 'Does this make us more ' + p.gift.toLowerCase() + ' without making us more ' + p.shadow.toLowerCase() + '?',
     shadowsToWatch: [
-      'Watch for ' + p.shadow.toLowerCase() + ' — the failure mode of the ' + p.name + '.',
-      'Watch for ' + s.shadow.toLowerCase() + ' — the failure mode of the ' + s.name + '.',
-      'Watch for ' + t.shadow.toLowerCase() + ' — the failure mode of the ' + t.name + '.',
+      'Watch for ' + p.shadow.toLowerCase() + ' - the failure mode of the ' + p.name + '.',
+      'Watch for ' + s.shadow.toLowerCase() + ' - the failure mode of the ' + s.name + '.',
+      'Watch for ' + t.shadow.toLowerCase() + ' - the failure mode of the ' + t.name + '.',
       'When ' + p.name + ' and ' + t.name + ' collide unexamined, the brand reads as inconsistent.'
     ],
     voiceImplications: {
       register: 'Voice should foreground the ' + p.gift.toLowerCase() + ' of the ' + p.name + ', modulated by the ' + s.gift.toLowerCase() + ' of the ' + s.name + '.',
-      neverSounds: 'Never sound like the ' + t.name + ' — this is where the brand drifts when uncertain.',
+      neverSounds: 'Never sound like the ' + t.name + ' - this is where the brand drifts when uncertain.',
       signaturePhrase: 'Deploy with ANTHROPIC_API_KEY for a brand-specific signature phrase.'
     },
     visualImplications: {
       world: 'Visual identity should sit in the world of the ' + p.name + ', with inflections from the ' + s.name + '.',
-      neverLooks: 'Never look like the ' + t.name + ' — these visual cues take over the system fast.',
+      neverLooks: 'Never look like the ' + t.name + ' - these visual cues take over the system fast.',
       signatureMove: 'Deploy with ANTHROPIC_API_KEY for a brand-specific signature visual move.'
     },
     firstMoveThisWeek: 'Audit one piece of recent brand output. Test it against the trinity: does it lead with ' + p.gift.toLowerCase() + '? Does the ' + s.name + ' texture come through? Does any ' + t.shadow.toLowerCase() + ' sneak in?',

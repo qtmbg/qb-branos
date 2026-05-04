@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — Content Repurposing Engine</title>
+<title>QB BrandOS - Content Repurposing Engine</title>
 
 <!-- Theme Flash Prevention -->
 <script>
@@ -285,7 +285,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outlin
 }
 .pill-neutral { background: var(--bg-elevated); color: var(--text-2); border: 1px solid var(--border-medium); }
 
-/* FIX 2 — Responsive: hide step progress on mobile */
+/* FIX 2 - Responsive: hide step progress on mobile */
 @media (max-width: 768px) { .hide-mobile { display: none !important; } }
 /* === v3.4 OVERRIDE BLOCK (cream/ink/Fraunces ecosystem unification) === */
 :root {
@@ -321,7 +321,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outlin
 </style>
 
 <script>
-// ── QB SPINE — API Key + QBP + Multi-provider adapter ────────────────────────
+// ── QB SPINE - API Key + QBP + Multi-provider adapter ────────────────────────
 (function(){
   var params = new URLSearchParams(window.location.search);
   var urlQBP = params.get('qbp');
@@ -396,7 +396,7 @@ const SF=({label,options,value,onChange})=>(
   <div style={{marginBottom:20}}>
     <ML>{label}</ML>
     <select value={value} onChange={e=>onChange(e.target.value)}>
-      <option value="">— select —</option>
+      <option value="">- select -</option>
       {options.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -553,70 +553,70 @@ function App(){
   const activeCount=Object.values(selectedPlatforms).filter(Boolean).length;
   const isValid=()=>sourceContent.trim().length>100&&brandName&&voiceNotes;
 
-  // FIX 9 — System prompt separated for proper Claude API structure
+  // FIX 9 - System prompt separated for proper Claude API structure
   const buildSystemPrompt=()=>`You are the Content Repurposing Engine inside the Quantum Branding BrandOS ecosystem.
-Your function is to take one piece of long-form content and extract maximum value from it across multiple platforms — without repeating content, without losing brand voice, and without generic reformatting.
+Your function is to take one piece of long-form content and extract maximum value from it across multiple platforms - without repeating content, without losing brand voice, and without generic reformatting.
 Each repurposed piece must feel like it was written natively for that platform. Not copied. Not summarized. Extracted, reframed, and rebuilt.
-Return ONLY valid JSON — no markdown, no preamble.
+Return ONLY valid JSON - no markdown, no preamble.
 
-Return JSON with this structure — include ONLY the platforms requested:
+Return JSON with this structure - include ONLY the platforms requested:
 {
-  "extractedCore": "The single most powerful idea in this content — 1-2 sentences",
+  "extractedCore": "The single most powerful idea in this content - 1-2 sentences",
   "contentAngles": [
     {"angle": "angle name", "description": "what this angle focuses on", "bestFor": "which platforms"}
   ],
   "instagram_caption": [
-    {"label": "Caption 1 — [angle used]", "content": "full caption with line breaks", "hashtags": ["tag1","tag2","tag3","tag4","tag5"], "visualBrief": "what image/visual this needs", "note": "angle/hook strategy"}
+    {"label": "Caption 1 - [angle used]", "content": "full caption with line breaks", "hashtags": ["tag1","tag2","tag3","tag4","tag5"], "visualBrief": "what image/visual this needs", "note": "angle/hook strategy"}
   ],
   "instagram_carousel": [
-    {"label": "Slide 1 — Hook", "content": "slide text", "note": "visual direction"}
+    {"label": "Slide 1 - Hook", "content": "slide text", "note": "visual direction"}
   ],
   "linkedin_personal": [
-    {"label": "Post 1 — Belief-driven", "content": "complete LinkedIn post", "format": "Belief post", "note": "strategic angle"}
+    {"label": "Post 1 - Belief-driven", "content": "complete LinkedIn post", "format": "Belief post", "note": "strategic angle"}
   ],
   "linkedin_company": [
     {"label": "Company Post", "content": "complete company page post", "format": "Method/Proof", "note": "angle"}
   ],
   "twitter_thread": [
-    {"label": "Tweet 1 — Hook", "content": "tweet text under 280 chars"}
+    {"label": "Tweet 1 - Hook", "content": "tweet text under 280 chars"}
   ],
   "newsletter_excerpt": [
     {"label": "Newsletter Excerpt", "content": "intro + insights formatted for email", "note": "how to use in newsletter"}
   ],
   "youtube_short": [
-    {"label": "Short 1 — [angle]", "content": "full spoken script under 60s", "note": "visual direction for B-roll"}
+    {"label": "Short 1 - [angle]", "content": "full spoken script under 60s", "note": "visual direction for B-roll"}
   ],
   "quote_graphic": [
-    {"label": "Quote 1", "content": "the quote exactly — standalone, powerful", "visualBrief": "visual style for this quote"}
+    {"label": "Quote 1", "content": "the quote exactly - standalone, powerful", "visualBrief": "visual style for this quote"}
   ],
   "podcast_intro": [
     {"label": "Podcast Teaser", "content": "full spoken intro script 90-120 seconds", "note": "pacing notes"}
   ],
   "email_subject": [
-    {"label": "Subject 1 — Direct", "content": "subject line", "note": "type/angle"}
+    {"label": "Subject 1 - Direct", "content": "subject line", "note": "type/angle"}
   ]
 }
 
 CRITICAL: Only include keys for platforms that were requested. Every piece must be in THIS brand's voice. No filler. Extract the real power.`;
 
-  // FIX 1 — c.label used directly; no self-referencing specs variable
+  // FIX 1 - c.label used directly; no self-referencing specs variable
   const buildUserPrompt=()=>{
     const active=Object.entries(selectedPlatforms).filter(([,v])=>v).map(([k])=>k);
     const specs=active.map(k=>{
       const c=PLATFORMS[k];
       const counts={
-        instagram_caption:'3 separate captions — each angles the core idea differently',
-        instagram_carousel:'1 carousel — 6-8 slides: hook slide, 4-6 content slides, CTA slide. Give each slide as a separate content item.',
-        linkedin_personal:'2 posts — one belief-driven, one story-driven. Full posts, ready to publish.',
-        linkedin_company:'1 post — methodology or proof focused. Company voice.',
-        twitter_thread:'1 thread — opening tweet + 6-8 follow-up tweets. Number each tweet.',
-        newsletter_excerpt:'1 excerpt — intro paragraph + 3-4 key insights formatted as newsletter content',
-        youtube_short:'3 short-form video scripts — each under 60 seconds, hook in first 3 words',
-        quote_graphic:'3 standalone quote-worthy lines pulled from the content — each must work alone visually',
-        podcast_intro:'1 podcast intro teaser — 90-120 seconds spoken, first-person, draws listeners in',
-        email_subject:'5 subject line options for an email version — ranging from direct to curiosity to bold',
+        instagram_caption:'3 separate captions - each angles the core idea differently',
+        instagram_carousel:'1 carousel - 6-8 slides: hook slide, 4-6 content slides, CTA slide. Give each slide as a separate content item.',
+        linkedin_personal:'2 posts - one belief-driven, one story-driven. Full posts, ready to publish.',
+        linkedin_company:'1 post - methodology or proof focused. Company voice.',
+        twitter_thread:'1 thread - opening tweet + 6-8 follow-up tweets. Number each tweet.',
+        newsletter_excerpt:'1 excerpt - intro paragraph + 3-4 key insights formatted as newsletter content',
+        youtube_short:'3 short-form video scripts - each under 60 seconds, hook in first 3 words',
+        quote_graphic:'3 standalone quote-worthy lines pulled from the content - each must work alone visually',
+        podcast_intro:'1 podcast intro teaser - 90-120 seconds spoken, first-person, draws listeners in',
+        email_subject:'5 subject line options for an email version - ranging from direct to curiosity to bold',
       };
-      return `${k}: ${c.label} — ${counts[k]}`;
+      return `${k}: ${c.label} - ${counts[k]}`;
     }).join('\n');
 
     return `BRAND VOICE CONTEXT:
@@ -638,7 +638,7 @@ ${sourceContent}
 PLATFORMS REQUESTED:
 ${specs}
 
-For each platform, identify the strongest angle from the source content — the specific insight, story, tension, or idea that will perform best on that platform. Then rebuild it natively.`;
+For each platform, identify the strongest angle from the source content - the specific insight, story, tension, or idea that will perform best on that platform. Then rebuild it natively.`;
   };
 
   const statuses=[
@@ -652,7 +652,7 @@ For each platform, identify the strongest angle from the source content — the 
     'Assembling output pack...',
   ];
 
-  // FIX 9+10 — Uses QB_AI adapter with system/user split; interval safely stored in ref object
+  // FIX 9+10 - Uses QB_AI adapter with system/user split; interval safely stored in ref object
   const run=async()=>{
     if(!isValid()){setError('Add source content (min 100 chars), brand name, and voice notes.');return;}
     if(!window.QB_AI){setError('AI engine not available. Check network and reload.');return;}
@@ -674,7 +674,7 @@ For each platform, identify the strongest angle from the source content — the 
 
   const exportAll=()=>{
     if(!result) return;
-    const lines=[`CONTENT REPURPOSING PACK — ${brandName||'Brand'}`,`Source: ${sourceTitle||'Untitled'}`,`Generated by QB BrandOS / Phase 04`,''];
+    const lines=[`CONTENT REPURPOSING PACK - ${brandName||'Brand'}`,`Source: ${sourceTitle||'Untitled'}`,`Generated by QB BrandOS / Phase 04`,''];
     if(result.extractedCore){lines.push('CORE IDEA:');lines.push(result.extractedCore);lines.push('');}
     if(result.contentAngles?.length){lines.push('NARRATIVE ANGLES:');result.contentAngles.forEach(a=>{lines.push(`  ${a.angle}: ${a.description||''} ${a.bestFor?'→ '+a.bestFor:''}`.trim());});lines.push('');}
     Object.entries(PLATFORMS).forEach(([key,cfg])=>{
@@ -739,7 +739,7 @@ For each platform, identify the strongest angle from the source content — the 
         {step===0&&(
           <div className="fade-in stagger-1">
             <div className="manifesto-block" style={{marginBottom:56}}>
-              <ML c="var(--brass)">Phase 04 — Execution</ML>
+              <ML c="var(--brass)">Phase 04 - Execution</ML>
               <h1 style={{fontSize:48,lineHeight:1.15,marginBottom:16}}>Content Repurposing Engine</h1>
               <p style={{color:'var(--text-2)',fontSize:16,maxWidth:640}}>One core insight. Up to {totalExpected}+ pieces across {activeCount} surfaces. Each reframed natively for its platform. The engine extracts the tension and rebuilds the narrative.</p>
             </div>
@@ -755,7 +755,7 @@ For each platform, identify the strongest angle from the source content — the 
                 onChange={setSourceContent}
                 placeholder="Paste the complete script, transcript, or long-form post. The deeper the source material, the sharper the extraction. Minimum 100 characters."
                 rows={12}
-                hint={`${sourceContent.length} characters${sourceContent.length>100?' — sufficient depth':', minimum 100 required'}`}
+                hint={`${sourceContent.length} characters${sourceContent.length>100?' - sufficient depth':', minimum 100 required'}`}
               />
             </Sec>
 
@@ -876,7 +876,7 @@ For each platform, identify the strongest angle from the source content — the 
 
             {/* Platform outputs */}
             <div style={{marginTop:48}}>
-              <ML mb={20}>Platform Outputs — Click to expand</ML>
+              <ML mb={20}>Platform Outputs - Click to expand</ML>
               {Object.entries(PLATFORMS).map(([key,cfg])=>{
                 if(!selectedPlatforms[key]||!result[key]?.length) return null;
                 return <OutputCard key={key} platformKey={key} items={result[key]} config={cfg}/>;
@@ -896,7 +896,7 @@ For each platform, identify the strongest angle from the source content — the 
 }
 
 // ── QB CONTENT APPROVAL LOOP ────────────────────────────────────────────────
-// Reusable approval/revision wrapper — not yet wired into App render tree.
+// Reusable approval/revision wrapper - not yet wired into App render tree.
 // To activate: wrap any items array with <QBApprovalWrapper items={...} renderItem={...} onAllApproved={...} />
 function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revisionField='content'}) {
   const [states, setStates] = React.useState(() => {
@@ -916,7 +916,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
   const approve = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'approved'}}));
   const remove = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'removed'}}));
   const startRevise = (i) => setRevising(prev => ({...prev, [i]: true}));
-  // FIX 6 — QB_AI checked BEFORE state mutation; prevents stuck "revising" state
+  // FIX 6 - QB_AI checked BEFORE state mutation; prevents stuck "revising" state
   const submitRevise = async (i) => {
     const feedback = document.getElementById('revision-input-' + i)?.value || '';
     if (!feedback.trim()) return;
@@ -941,7 +941,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
 
 
   const statusColor = {pending:'var(--text-3)', approved:'var(--patina)', removed:'var(--error-warm)', revising:'var(--brass)', revised:'rgb(74, 122, 138)'};
-  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised — review again'};
+  const statusLabel = {pending:'Pending review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised - review again'};
 
   return (
     <div>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Instagram Seed Content Agent</title>
+<title>QB - Instagram Seed Content Agent</title>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -408,7 +408,7 @@ button { cursor: pointer; font-family: var(--font-sans); border: none; outline: 
 </style>
 
 <script>
-// QB_SPINE v3 — hardened API adapter + base64url-safe QBP decoding
+// QB_SPINE v3 - hardened API adapter + base64url-safe QBP decoding
 (function(){
   var params = new URLSearchParams(window.location.search);
 
@@ -492,10 +492,10 @@ const {useState,useEffect}=React;
 
 // ── CONSTANTS ──────────────────────────────────────────────────────────────────
 const CONTENT_ARCS = [
-  {id:'identity',label:'Identity arc',desc:'Posts 1-3 establish WHO you are — energy, philosophy, force'},
-  {id:'belief',label:'Belief arc',desc:'Posts 4-6 establish WHAT you stand for — manifesto, stance, conviction'},
-  {id:'work',label:'Work arc',desc:'Posts 7-9 introduce WHAT you do — method, transformation, offer'},
-  {id:'community',label:'Community arc',desc:'Posts 10-12 build belonging — proof, invitation, belonging signal'},
+  {id:'identity',label:'Identity arc',desc:'Posts 1-3 establish WHO you are - energy, philosophy, force'},
+  {id:'belief',label:'Belief arc',desc:'Posts 4-6 establish WHAT you stand for - manifesto, stance, conviction'},
+  {id:'work',label:'Work arc',desc:'Posts 7-9 introduce WHAT you do - method, transformation, offer'},
+  {id:'community',label:'Community arc',desc:'Posts 10-12 build belonging - proof, invitation, belonging signal'},
 ];
 
 const POST_TYPES = ['Single image','Carousel','Reel script','Quote graphic','Behind the scenes','Case study reveal','Manifesto post','Question post','Before/After','Story series'];
@@ -553,7 +553,7 @@ const SF=({label,options,value,onChange})=>(
   <div style={{marginBottom:16}}>
     <MonoLabel>{label}</MonoLabel>
     <select value={value} onChange={e=>onChange(e.target.value)}>
-      <option value="">— select —</option>
+      <option value="">- select -</option>
       {options.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -574,7 +574,7 @@ const GridView=({posts,selected,onSelect})=>{
   if(!posts?.length) return null;
     return(
     <div>
-      <MonoLabel c="var(--text-3)" mb={16}>Grid preview — 12-post sequence</MonoLabel>
+      <MonoLabel c="var(--text-3)" mb={16}>Grid preview - 12-post sequence</MonoLabel>
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:6,marginBottom:24}}>
         {posts.map((p,i)=>{
           const arc=normalizeArc(p.arc, i);
@@ -828,7 +828,7 @@ Anti-Brand: ${antiBrand||'not specified'}
 Primary Persona: ${primaryPersona}
 Core Offer: ${offer||'not specified'}
 Voice Notes: ${voiceNotes||'not specified'}
-Visual / Color: ${visualNotes||'not specified'} — Palette: ${colorPalette||'not specified'}
+Visual / Color: ${visualNotes||'not specified'} - Palette: ${colorPalette||'not specified'}
 Always/Never: ${alwaysNever||'not specified'}
 Profile Bio: ${profileBio||'not specified'}
 Account Goal: ${accountGoal||'Establish brand presence and attract ideal clients'}
@@ -843,8 +843,8 @@ Return a JSON object with this EXACT structure:
       "work": "what the work arc establishes",
       "community": "what the community arc establishes"
     },
-    "sequenceLogic": "why posts are ordered this way — psychological reasoning",
-    "gridAesthetic": "visual coherence intention — what the 12-post grid should feel like",
+    "sequenceLogic": "why posts are ordered this way - psychological reasoning",
+    "gridAesthetic": "visual coherence intention - what the 12-post grid should feel like",
     "profileOptimizations": ["specific bio tweak", "highlight cover direction", "profile photo direction", "link in bio strategy"]
   },
   "posts": [
@@ -854,35 +854,35 @@ Return a JSON object with this EXACT structure:
       "postTitle": "short descriptive title for this post",
       "postType": "Single image | Carousel | Reel script | Quote graphic",
       "goal": "what this specific post achieves",
-      "hook": "the exact first line — the opening hook that stops the scroll",
+      "hook": "the exact first line - the opening hook that stops the scroll",
       "hookAnalysis": "why this hook works for this brand and this persona",
-      "caption": "the full caption exactly as it would be posted — in the brand's voice, with line breaks, all elements included",
+      "caption": "the full caption exactly as it would be posted - in the brand's voice, with line breaks, all elements included",
       "cta": "the call to action",
-      "visualBrief": "specific visual direction — what is in the image, how it's shot, what it communicates",
+      "visualBrief": "specific visual direction - what is in the image, how it's shot, what it communicates",
       "colorMood": "color mood for this specific post",
       "composition": "composition direction",
       "midjourney": "complete Midjourney v6 prompt for the visual",
       "hashtags": ["hashtag1","hashtag2","hashtag3","hashtag4","hashtag5","hashtag6","hashtag7","hashtag8","hashtag9","hashtag10"],
-      "hashtagStrategy": "why these hashtags — mix of reach, niche, and brand",
+      "hashtagStrategy": "why these hashtags - mix of reach, niche, and brand",
       "psychologicalTrigger": "the psychological mechanism this post activates in the ideal persona"
     }
   ]
 }
 
 CRITICAL REQUIREMENTS:
-- All 12 posts must be fully written — captions complete, ready to post
+- All 12 posts must be fully written - captions complete, ready to post
 - Posts 1-3 arc=identity, 4-6 arc=belief, 7-9 arc=work, 10-12 arc=community
-- Every caption must sound unmistakably like THIS brand's voice — not generic Instagram content
-- Hooks must be specific and scroll-stopping — no generic openers
+- Every caption must sound unmistakably like THIS brand's voice - not generic Instagram content
+- Hooks must be specific and scroll-stopping - no generic openers
 - Visual briefs must be specific enough to brief a photographer or AI
 - Each post must serve its arc purpose while building on the previous
 - The 12 posts together tell a complete brand introduction story`;
 
   const systemPrompt = `You are the Instagram Seed Content Agent inside the Quantum Branding BrandOS ecosystem.
-Your function is to generate the first 12 Instagram posts for a brand — the posts that introduce the brand to the world, establish its identity, and invite its audience into its universe.
+Your function is to generate the first 12 Instagram posts for a brand - the posts that introduce the brand to the world, establish its identity, and invite its audience into its universe.
 These are not random posts. They follow a strategic 4-arc sequence: Identity (1-3), Belief (4-6), Work (7-9), Community (10-12).
-Every post must sound like this specific brand — on-voice, on-visual, strategically positioned.
-Return ONLY valid JSON — no markdown, no preamble.`;
+Every post must sound like this specific brand - on-voice, on-visual, strategically positioned.
+Return ONLY valid JSON - no markdown, no preamble.`;
 
   const run=async()=>{
     if(!isValid()){
@@ -927,15 +927,15 @@ Return ONLY valid JSON — no markdown, no preamble.`;
   };
 
   const exportPack=()=>{
-    const lines=['INSTAGRAM SEED CONTENT PACK','Generated by QB BrandOS — Instagram Seed Content Agent','',`Brand: ${brandName}`,'='.repeat(60),''];
+    const lines=['INSTAGRAM SEED CONTENT PACK','Generated by QB BrandOS - Instagram Seed Content Agent','',`Brand: ${brandName}`,'='.repeat(60),''];
     result?.posts?.forEach(p=>{
-      lines.push(`POST ${String(p.postNumber).padStart(2,'0')} — ${p.arc.toUpperCase()} ARC`);
+      lines.push(`POST ${String(p.postNumber).padStart(2,'0')} - ${p.arc.toUpperCase()} ARC`);
       lines.push(`Type: ${p.postType} | Goal: ${p.goal}`);
       lines.push('');
       lines.push('CAPTION:');
       lines.push(p.caption);
       lines.push('');
-      lines.push(`CTA: ${p.cta||'—'}`);
+      lines.push(`CTA: ${p.cta||'-'}`);
       lines.push('');
       lines.push('VISUAL BRIEF:');
       lines.push(p.visualBrief);
@@ -992,9 +992,9 @@ Return ONLY valid JSON — no markdown, no preamble.`;
         {step===0&&(
           <div className="fade-in stagger-in">
             <div style={{marginBottom:56}}>
-              <MonoLabel c="var(--patina)">// Phase 03 — Content Creation</MonoLabel>
+              <MonoLabel c="var(--patina)">// Phase 03 - Content Creation</MonoLabel>
               <h1 style={{fontSize:46, lineHeight:1.1, marginBottom:16}}>Instagram Seed Content Agent</h1>
-              <p style={{color:'var(--text-2)',fontSize:16,lineHeight:1.7,maxWidth:600}}>Feed the QBP. The agent generates the first 12 posts — fully written captions, visual briefs, Midjourney prompts, hooks, hashtags — as a complete content pack ready to publish.</p>
+              <p style={{color:'var(--text-2)',fontSize:16,lineHeight:1.7,maxWidth:600}}>Feed the QBP. The agent generates the first 12 posts - fully written captions, visual briefs, Midjourney prompts, hooks, hashtags - as a complete content pack ready to publish.</p>
             </div>
 
             <Section number={1} title="Brand Core" note="* required">
@@ -1002,9 +1002,9 @@ Return ONLY valid JSON — no markdown, no preamble.`;
                 <TF label="Brand Name *" value={brandName} onChange={setBrandName} placeholder="The brand entering Instagram" rows={1}/>
                 <SF label="Natural Force *" options={NATURAL_FORCES} value={naturalForce} onChange={setNaturalForce}/>
               </div>
-              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth — one sentence" rows={2}/>
+              <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="The irreducible truth - one sentence" rows={2}/>
               <TF label="Manifesto Line" value={manifestoLine} onChange={setManifestoLine} placeholder="The belief that drives everything" rows={1}/>
-              <TF label="The Spark — narrative synthesis" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what it is here to do" rows={3}/>
+              <TF label="The Spark - narrative synthesis" value={spark} onChange={setSpark} placeholder="Who this brand is, why it exists, what it is here to do" rows={3}/>
             </Section>
 
             <Section number={2} title="Identity + Audience" note="* required">
@@ -1012,14 +1012,14 @@ Return ONLY valid JSON — no markdown, no preamble.`;
                 <SF label="Primary Archetype *" options={ARCHETYPES} value={archetype} onChange={setArchetype}/>
                 <TF label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be" rows={1}/>
               </div>
-              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who is following this account — their state, desire, what they carry. Be specific." rows={3}
+              <TF label="Primary Persona *" value={primaryPersona} onChange={setPrimaryPersona} placeholder="Who is following this account - their state, desire, what they carry. Be specific." rows={3}
                 hint="The more specific, the more precisely targeted every post will be"/>
-              <TF label="Core Offer" value={offer} onChange={setOffer} placeholder="What this brand sells or does — the transformation it provides" rows={2}/>
+              <TF label="Core Offer" value={offer} onChange={setOffer} placeholder="What this brand sells or does - the transformation it provides" rows={2}/>
               <TF label="Account Goal" value={accountGoal} onChange={setAccountGoal} placeholder="e.g. Build authority, attract discovery call bookings, grow waitlist, sell digital product" rows={1}/>
             </Section>
 
             <Section number={3} title="Voice + Visual System">
-              <TF label="Voice Notes — how this brand writes" value={voiceNotes} onChange={setVoiceNotes} placeholder="e.g. Short declarative sentences. Challenge-first. No filler. Sounds like Dieter Rams meets Virgil Abloh." rows={2}/>
+              <TF label="Voice Notes - how this brand writes" value={voiceNotes} onChange={setVoiceNotes} placeholder="e.g. Short declarative sentences. Challenge-first. No filler. Sounds like Dieter Rams meets Virgil Abloh." rows={2}/>
               <TF label="Always / Never" value={alwaysNever} onChange={setAlwaysNever} placeholder="e.g. Always: direct, one idea per post. Never: motivational quotes, hashtag stuffing, generic captions." rows={2}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                 <TF label="Visual Direction" value={visualNotes} onChange={setVisualNotes} placeholder="e.g. Dark, editorial, architectural. Strong shadows. Minimal text on image." rows={2}/>
@@ -1028,7 +1028,7 @@ Return ONLY valid JSON — no markdown, no preamble.`;
             </Section>
 
             <Section number={4} title="Profile Context">
-              <TF label="Current or intended bio" value={profileBio} onChange={setProfileBio} placeholder="The bio text — the agent will suggest optimizations" rows={2}/>
+              <TF label="Current or intended bio" value={profileBio} onChange={setProfileBio} placeholder="The bio text - the agent will suggest optimizations" rows={2}/>
             </Section>
 
             {error&&<div style={{background:'var(--bg-surface)',border:'1px solid #8A4A4A',borderRadius:8,padding:'14px 20px',marginBottom:24,fontSize:14,color:'#8A4A4A'}}>{error}</div>}
@@ -1068,7 +1068,7 @@ Return ONLY valid JSON — no markdown, no preamble.`;
             {/* Header */}
             <div style={{marginBottom:32,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16}}>
               <div>
-                <MonoLabel c="var(--patina)">// Content Pack — 12 Posts Complete</MonoLabel>
+                <MonoLabel c="var(--patina)">// Content Pack - 12 Posts Complete</MonoLabel>
                 <h1 style={{fontSize:36,marginBottom:8}}>{brandName}</h1>
                 <p style={{color:'var(--text-2)',fontSize:14}}>First 12 posts · 4-arc sequence · ready to publish</p>
               </div>

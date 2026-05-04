@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — Sensescape</title>
-<meta name="description" content="Sensescape · QB BrandOS Phase 01 — before a brand speaks, it is felt.">
+<title>QB BrandOS - Sensescape</title>
+<meta name="description" content="Sensescape · QB BrandOS Phase 01 - before a brand speaks, it is felt.">
 <script>(function(){try{var legacy=localStorage.getItem('qb_theme');if(legacy){localStorage.setItem('qb-theme',legacy);localStorage.removeItem('qb_theme');}var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
 <script src="/qb-gate.js"></script>
@@ -679,7 +679,7 @@ body.phase-intro{ overflow:hidden; }
   margin-bottom:48px;
 }
 .q-text .q-kind .sq{ width:10px; height:10px; border:1.5px solid var(--brass); display:inline-block; }
-/* "Q N of M" indicator — appears top-right of every question */
+/* "Q N of M" indicator - appears top-right of every question */
 .q-counter{
   position:absolute; top:18px; right:22px;
   font-family:var(--f-mono); font-size:9px;
@@ -1091,7 +1091,7 @@ body.phase-intro{ overflow:hidden; }
 
 /* ================== CODEX · VISUAL APPLIED SECTIONS ================== */
 
-/* Brand identity card — the "this is you" hero */
+/* Brand identity card - the "this is you" hero */
 .cdx-brand-hero{
   position:relative;
   padding:clamp(48px, 6vw, 88px) clamp(32px, 5vw, 64px);
@@ -1194,7 +1194,7 @@ body.phase-intro{ overflow:hidden; }
   color:var(--text-3);
 }
 
-/* Typography showcase — full alphabet + paragraph + weight ladder */
+/* Typography showcase - full alphabet + paragraph + weight ladder */
 .cdx-type-showcase{
   padding:48px;
   display:flex; flex-direction:column; gap:32px;
@@ -1233,7 +1233,7 @@ body.phase-intro{ overflow:hidden; }
   max-width:68ch;
 }
 
-/* Voice in action — mock touchpoints */
+/* Voice in action - mock touchpoints */
 .cdx-voice-action{
   display:grid; grid-template-columns:1fr; gap:16px;
   margin-top:24px;
@@ -1264,7 +1264,7 @@ body.phase-intro{ overflow:hidden; }
   padding-top:10px; border-top:1px solid var(--border-subtle);
 }
 
-/* Colour-in-use chips row — mini primary pill / surface sample */
+/* Colour-in-use chips row - mini primary pill / surface sample */
 .cdx-palette-demo{
   margin-top:24px;
   padding:32px;
@@ -1491,7 +1491,7 @@ body.phase-intro{ overflow:hidden; }
   color:var(--text-1);
 }
 
-/* Voice — say this / not that */
+/* Voice - say this / not that */
 .cdx-voice-pairs{ display:grid; grid-template-columns:1fr; gap:12px; }
 @media(min-width:760px){ .cdx-voice-pairs{ grid-template-columns:1fr 1fr; gap:16px 24px; } }
 .cdx-voice-pair{
@@ -1998,7 +1998,7 @@ body.phase-intro{ overflow:hidden; }
   0%  { transform:translate(-50%, -50%) scale(0.3);  opacity:0.95; }
   100%{ transform:translate(-50%, -50%) scale(12);   opacity:0; }
 }
-/* Legacy class retained for the 'radius'/'corners' case only — not used by animation-state anymore. */
+/* Legacy class retained for the 'radius'/'corners' case only - not used by animation-state anymore. */
 .viz-anim{
   width:160px; height:160px;
   border-radius:50%;
@@ -2150,7 +2150,7 @@ body.phase-intro{ overflow:hidden; }
   transition:opacity .3s ease;
 }
 
-/* --- Preview meta label shared — never wraps --- */
+/* --- Preview meta label shared - never wraps --- */
 .q-preview .viz-meta{
   position:absolute; bottom:14px; left:50%;
   transform:translateX(-50%);
@@ -2703,7 +2703,7 @@ body.phase-intro{ overflow:hidden; }
               if (!v){ unanswered = qq; break; }
             }
             if (unanswered){
-              state.validationError = 'Question still empty — scrolling you to it.';
+              state.validationError = 'Question still empty - scrolling you to it.';
               updateToast();
               // Highlight + scroll
               document.querySelectorAll('.q-text.unanswered').forEach(function(n){ n.classList.remove('unanswered'); });
@@ -2770,7 +2770,7 @@ body.phase-intro{ overflow:hidden; }
   };
 
   function renderToastContainer(){
-    // Re-usable container — content set by updateToast
+    // Re-usable container - content set by updateToast
     var t = el('div', { id:'toast-slot' });
     return t;
   }
@@ -3060,7 +3060,7 @@ body.phase-intro{ overflow:hidden; }
         break;
       }
       case 'corners':
-        // Sharp ↔ Rounded — about edge softness of a container
+        // Sharp ↔ Rounded - about edge softness of a container
         body.appendChild(el('div', { class:'viz-corners', style:{ borderRadius: (n * 50) + '%' } }));
         body.appendChild(el('div', { class:'viz-meta', text:'RADIUS ' + Math.round(n * 50) + '%' }));
         break;
@@ -3098,7 +3098,7 @@ body.phase-intro{ overflow:hidden; }
             // Straight lines (angular zig-zag). Interpolate toward smooth by slightly bending.
             d += ' L ' + x.toFixed(0) + ',' + y.toFixed(0);
           } else {
-            // Curved — use cubic Bezier handles that bow outward for curves
+            // Curved - use cubic Bezier handles that bow outward for curves
             var prevX = (i - 1) * xStep;
             var prevY = 130 + ((i - 1) % 2 === 0 ? -amp : amp);
             var cx1 = prevX + xStep * (0.5 + (1 - n) * 0.3);
@@ -3121,7 +3121,7 @@ body.phase-intro{ overflow:hidden; }
         break;
       }
       case 'tracking': {
-        // Extended side actually stretches letters horizontally (scaleX) — letters get wider.
+        // Extended side actually stretches letters horizontally (scaleX) - letters get wider.
         // Compact side: scaleX < 1 (condensed), tight tracking.
         var stage = el('div', { class:'viz-tracking-stage' });
         var sx = 0.7 + n * 1.3;                         // 0.7 compact → 2.0 extended
@@ -3184,7 +3184,7 @@ body.phase-intro{ overflow:hidden; }
         for (var ri = 0; ri < ringCount; ri++){
           var ring = el('div', { class:'viz-motion-ring' });
           ring.style.setProperty('--ring-delay', (ri * 0.35) + 's');
-          // Rings only "radiate" past 0.25 — static side is frozen
+          // Rings only "radiate" past 0.25 - static side is frozen
           if (n > 0.25){
             ring.classList.add('radiate');
             ring.style.animationDuration = Math.max(1.4, 3.4 - n * 2) + 's';
@@ -3308,7 +3308,7 @@ body.phase-intro{ overflow:hidden; }
         grid.style.setProperty('--ld-cols', String(cols));
         grid.style.setProperty('--ld-gap',  gap + 'px');
         grid.style.setProperty('--ld-row',  rowH + 'px');
-        // Also vary the individual block opacity as we go — dense = full, spacious = airier
+        // Also vary the individual block opacity as we go - dense = full, spacious = airier
         var blkOpacity = 1 - n * 0.3;
         for (var b2 = 0; b2 < cols * rows; b2++){
           var blk = el('div', { class:'blk' });
@@ -3333,8 +3333,8 @@ body.phase-intro{ overflow:hidden; }
           { source:'Harper’s · This Month',         kind:'slow', body:'A lot has been written about the new rules; less about the people who will live inside them.' },
           { source:'The Paris Review · Spring',     kind:'slow', body:'It started, as so many things start, with a number that nobody wanted to print and everyone could not stop saying.' },
           { source:'The New Yorker · Talk of the Town', kind:'slow', body:'There is a particular kind of Tuesday morning when the city pretends to be calm and the calm itself begins to feel like the news.' },
-          { source:'The New Yorker · Profile',      kind:'slow', body:'The first thing she does, before anything else, is walk to the window — not because she wants to see anything, but because the day will not begin until she has acknowledged it.' },
-          { source:'The New Yorker · April Issue',  kind:'slow', body:'The quiet revolution of an otherwise unremarkable Tuesday morning, and what it taught us about time itself, was that the future does not arrive at all — only the present, again and again, with a different light on it.' }
+          { source:'The New Yorker · Profile',      kind:'slow', body:'The first thing she does, before anything else, is walk to the window - not because she wants to see anything, but because the day will not begin until she has acknowledged it.' },
+          { source:'The New Yorker · April Issue',  kind:'slow', body:'The quiet revolution of an otherwise unremarkable Tuesday morning, and what it taught us about time itself, was that the future does not arrive at all - only the present, again and again, with a different light on it.' }
         ];
         var spec = SPECIMENS[Math.max(0, Math.min(10, value))];
         var stage = el('div', { class:'viz-headlines' });
@@ -3356,7 +3356,7 @@ body.phase-intro{ overflow:hidden; }
             '<span class="dek" style="color:var(--brass)">' + spec.source + '</span>' +
             '<p>' + spec.body + '</p>';
         }
-        // Make this the only headline visible (no crossfade — each grade is its own headline)
+        // Make this the only headline visible (no crossfade - each grade is its own headline)
         box.style.opacity = '1';
         box.style.position = 'absolute';
         stage.appendChild(box);
@@ -3371,7 +3371,7 @@ body.phase-intro{ overflow:hidden; }
         var barCount = 28;
         for (var bi = 0; bi < barCount; bi++){
           var bar = el('div', { class:'bar' });
-          // Shaped envelope so the spread looks like a real EQ — taller in the middle
+          // Shaped envelope so the spread looks like a real EQ - taller in the middle
           var shape = Math.sin(bi / barCount * Math.PI) * 0.7 + 0.3;
           // Push the visual much higher into the canvas: max ~280px when musical
           var baseH = 4 + shape * 280 * Math.max(0.08, n);
@@ -3615,7 +3615,7 @@ body.phase-intro{ overflow:hidden; }
         ]),
         el('h1', { class:'composing-title', html:'Composing your Codex<span class="blink">.</span>' }),
         el('p',  { class:'composing-sub',
-          text:'A senior brand strategist would take a week for this. We are writing your document now — positioning, manifesto, voice, first campaign, implementation sprint. All in your voice. All from your answers.' }),
+          text:'A senior brand strategist would take a week for this. We are writing your document now - positioning, manifesto, voice, first campaign, implementation sprint. All in your voice. All from your answers.' }),
         el('div', { class:'composing-status' },
           el('div', { class:'composing-status-text', id:'composing-status-text',
             text: state.composingStatus || COMPOSING_STATUS_MESSAGES[0] })
@@ -3659,10 +3659,10 @@ body.phase-intro{ overflow:hidden; }
 
     var promptBody =
       'CLIENT\n' +
-      '  Name: ' + (lead.name || '—') + '\n' +
-      '  Company/Brand: ' + (lead.company || '—') + '\n\n' +
-      'DIAGNOSTIC — SLIDER ANSWERS (0–10)\n' + sliders.join('\n') + '\n\n' +
-      (textLines.length ? 'DIAGNOSTIC — TEXT ANSWERS\n' + textLines.join('\n') + '\n\n' : '') +
+      '  Name: ' + (lead.name || '-') + '\n' +
+      '  Company/Brand: ' + (lead.company || '-') + '\n\n' +
+      'DIAGNOSTIC - SLIDER ANSWERS (0–10)\n' + sliders.join('\n') + '\n\n' +
+      (textLines.length ? 'DIAGNOSTIC - TEXT ANSWERS\n' + textLines.join('\n') + '\n\n' : '') +
       'DERIVED VISUAL SYSTEM (computed from sliders)\n' +
       '  Palette: ' + paletteLine + '\n' +
       '  Primary typeface: ' + derived.typography.primary + '\n' +
@@ -3674,9 +3674,9 @@ body.phase-intro{ overflow:hidden; }
       'Synthesize the diagnostic into a complete brand operating manual.\n' +
       'Return ONE valid JSON object (no prose before/after, no markdown fences) with exactly these keys:\n\n' +
       '{\n' +
-      '  "essence": string (one sentence, deeply specific to THIS client — not generic. Use their actual company name if given. Reference their brand object or moment if present.),\n' +
+      '  "essence": string (one sentence, deeply specific to THIS client - not generic. Use their actual company name if given. Reference their brand object or moment if present.),\n' +
       '  "positioning": [string, string, string] (three sentences: "For whom / What we are / What we are not"),\n' +
-      '  "manifesto": [string × 8] (first-person plural — "We believe…", "We refuse…", "We build…". Short, declarative, no hedging.),\n' +
+      '  "manifesto": [string × 8] (first-person plural - "We believe…", "We refuse…", "We build…". Short, declarative, no hedging.),\n' +
       '  "narrative": {\n' +
       '    "whoWeAre": string (one paragraph, 3–4 sentences),\n' +
       '    "howWeShowUp": string (one paragraph, 3–4 sentences),\n' +
@@ -3688,10 +3688,10 @@ body.phase-intro{ overflow:hidden; }
       '    { "role":"Accent",   "poeticName":string, "hex":string, "usageRule":string },\n' +
       '    { "role":"Surface",  "poeticName":string, "hex":string, "usageRule":string },\n' +
       '    { "role":"Neutral",  "poeticName":string, "hex":string, "usageRule":string }\n' +
-      '  ] — use these exact hex values: ' + paletteLine + '. Give each an evocative name (e.g., "Smoked Obsidian", "Low-Tide Brass") and one specific usage rule. Do NOT rename the roles.\n' +
-      '  "typographyRationale": string (3–4 sentences explaining why THIS pairing — ' + derived.typography.primary + ' + ' + derived.typography.secondary + ' — fits THIS brand. Not generic.),\n' +
+      '  ] - use these exact hex values: ' + paletteLine + '. Give each an evocative name (e.g., "Smoked Obsidian", "Low-Tide Brass") and one specific usage rule. Do NOT rename the roles.\n' +
+      '  "typographyRationale": string (3–4 sentences explaining why THIS pairing - ' + derived.typography.primary + ' + ' + derived.typography.secondary + ' - fits THIS brand. Not generic.),\n' +
       '  "typographyRules": [string × 3] (specific, actionable),\n' +
-      '  "shapeRules": [string × 3] (specific drawing rules — "Never round a corner more than Xpx", etc.),\n' +
+      '  "shapeRules": [string × 3] (specific drawing rules - "Never round a corner more than Xpx", etc.),\n' +
       '  "motionTokens": {\n' +
       '    "durationFast": string (e.g., "140ms"),\n' +
       '    "durationBase": string (e.g., "240ms"),\n' +
@@ -3700,19 +3700,19 @@ body.phase-intro{ overflow:hidden; }
       '    "rule": string (one sentence on motion discipline)\n' +
       '  },\n' +
       '  "voice": {\n' +
-      '    "sayNotThat": [ { "say":string, "notThat":string } × 10 ] (concrete examples in this brand\'s voice — not generic),\n' +
-      '    "taglines": [string × 3] (candidate taglines — distinctive, not generic, no "Experience the difference" type copy)\n' +
+      '    "sayNotThat": [ { "say":string, "notThat":string } × 10 ] (concrete examples in this brand\'s voice - not generic),\n' +
+      '    "taglines": [string × 3] (candidate taglines - distinctive, not generic, no "Experience the difference" type copy)\n' +
       '  },\n' +
       '  "competitiveMap": {\n' +
       '    "xAxisLabel": string (e.g., "Restrained ← → Expressive"),\n' +
       '    "yAxisLabel": string (e.g., "Ceremonial ← → Spontaneous"),\n' +
       '    "brandPosition": [x, y] (each 0–100),\n' +
-      '    "competitors": [ { "name":string, "x":0–100, "y":0–100 } × 6 ] (real named brands in the client\'s likely category — plot them at coordinates that honestly place them)\n' +
+      '    "competitors": [ { "name":string, "x":0–100, "y":0–100 } × 6 ] (real named brands in the client\'s likely category - plot them at coordinates that honestly place them)\n' +
       '  },\n' +
       '  "firstCampaign": {\n' +
-      '    "title": string (a distinctive campaign name — not "Launch" or "Introducing X"),\n' +
-      '    "premise": string (one sentence — the campaign idea),\n' +
-      '    "heroSvg": string (a complete inline SVG for the campaign hero — see SVG RULES below),\n' +
+      '    "title": string (a distinctive campaign name - not "Launch" or "Introducing X"),\n' +
+      '    "premise": string (one sentence - the campaign idea),\n' +
+      '    "heroSvg": string (a complete inline SVG for the campaign hero - see SVG RULES below),\n' +
       '    "scenes": [ { "title":string, "copy":string, "visualDirection":string } × 4 ]\n' +
       '  },\n' +
       '  "sprint30": [\n' +
@@ -3723,7 +3723,7 @@ body.phase-intro{ overflow:hidden; }
       '  ]\n' +
       '}\n\n' +
       'QUALITY BAR\n' +
-      '- Every string must be specific to THIS brand signal — not transferable to other clients.\n' +
+      '- Every string must be specific to THIS brand signal - not transferable to other clients.\n' +
       '- No consulting-speak: no "innovative", "human-centered", "authentic", "premium", "best-in-class", "elevate", "unlock", "journey", "storytelling".\n' +
       '- No hedging: never "could", "might", "helps to". Declarative only.\n' +
       '- Pull the client\'s own phrases (brand object, signature gesture, anti-voice) into the output where natural.\n' +
@@ -3733,11 +3733,11 @@ body.phase-intro{ overflow:hidden; }
       'SVG RULES (firstCampaign.heroSvg)\n' +
       '- Output a complete <svg>…</svg> string, viewBox="0 0 600 340", xmlns="http://www.w3.org/2000/svg", preserveAspectRatio="xMidYMid slice".\n' +
       '- Use ONLY these hex codes for fills/strokes/gradients: ' + paletteLine + '. No other colors. No "white"/"black" keywords (use the palette\'s Surface/Shadow). No CSS named colors.\n' +
-      '- Make it abstract and atmospheric — geometric shapes, gradients, lines, simple silhouettes — illustrating the campaign premise. Not a photo. Not text-heavy. The shape character of this brand is: radius ' + derived.shape.radius + '%, ' + derived.shape.dims.map(function(d){ return d.k+':'+d.v; }).join(' / ') + ' — let it inform corner-rounding and form language.\n' +
+      '- Make it abstract and atmospheric - geometric shapes, gradients, lines, simple silhouettes - illustrating the campaign premise. Not a photo. Not text-heavy. The shape character of this brand is: radius ' + derived.shape.radius + '%, ' + derived.shape.dims.map(function(d){ return d.k+':'+d.v; }).join(' / ') + ' - let it inform corner-rounding and form language.\n' +
       '- Allowed elements: rect, circle, ellipse, line, polygon, polyline, path, g, defs, linearGradient, radialGradient, stop, mask, clipPath, use, symbol, title, desc.\n' +
       '- FORBIDDEN: <script>, <foreignObject>, <image> (no external assets), <style> (use attributes), any on* event handlers, any href/xlink:href starting with "javascript:" or pointing to an external URL.\n' +
       '- Keep total markup under 4500 characters. Single-line if possible. No comments. No CDATA.\n' +
-      '- The SVG must validly parse on its own — escape any " inside attribute values, use self-closing tags where appropriate.\n\n' +
+      '- The SVG must validly parse on its own - escape any " inside attribute values, use self-closing tags where appropriate.\n\n' +
       'Return ONLY the JSON object. Begin your response with { and end with }.';
 
     return promptBody;
@@ -3764,7 +3764,7 @@ body.phase-intro{ overflow:hidden; }
         err.expected = true;
         throw err;
       }
-      // Content-Type is not JSON — probably an HTML error page
+      // Content-Type is not JSON - probably an HTML error page
       if (!isJson){
         return res.text().then(function(body){
           var short = (body || '').slice(0, 120).replace(/\s+/g,' ');
@@ -3775,10 +3775,10 @@ body.phase-intro{ overflow:hidden; }
     }).then(function(wrap){
       if (!wrap) return;  // error path already threw
       if (wrap.status === 503){
-        throw new Error('Claude API key is not configured for this environment. Deploy to test the full Codex — or click "Continue without AI synthesis" for the derived-only version.');
+        throw new Error('Claude API key is not configured for this environment. Deploy to test the full Codex - or click "Continue without AI synthesis" for the derived-only version.');
       }
       if (wrap.status === 502){
-        throw new Error('Could not reach Claude. The network call failed — try again in a moment.');
+        throw new Error('Could not reach Claude. The network call failed - try again in a moment.');
       }
       if (wrap.status !== 200 || !wrap.data || !wrap.data.content){
         var msg = (wrap.data && wrap.data.error && (wrap.data.error.message || wrap.data.error)) || 'Unexpected response from the AI service.';
@@ -3874,7 +3874,7 @@ body.phase-intro{ overflow:hidden; }
   }
 
   /* ========================================================================
-     CODEX — Derivation helpers
+     CODEX - Derivation helpers
      ======================================================================== */
 
   function num(v, def){ return typeof v === 'number' ? v : (def == null ? 5 : def); }
@@ -3952,10 +3952,10 @@ body.phase-intro{ overflow:hidden; }
         var primaryHex = chips[0].hex;
         var accentHex  = chips[2].hex;
         var rules = [];
-        rules.push('Your primary is ' + primaryHex + '. Use it as the single anchor on every surface — never blend.');
+        rules.push('Your primary is ' + primaryHex + '. Use it as the single anchor on every surface - never blend.');
         rules.push('Your accent is ' + accentHex + '. Reserved for interactive states only (hover, focus, primary CTA).');
         rules.push('Build hover/active states by shifting lightness +8 (lighter) and -8 (darker). No new hues.');
-        rules.push('Body text on background uses neutral chip ' + chips[4].hex + ' — anything else is wrong.');
+        rules.push('Body text on background uses neutral chip ' + chips[4].hex + ' - anything else is wrong.');
         return rules.join(' ');
       })(),
       hexes: chips.map(function(c){ return c.hex; })
@@ -4019,7 +4019,7 @@ body.phase-intro{ overflow:hidden; }
       kindLabel: isSerif ? 'Serif-led' : 'Sans-led',
       voiceLabel: cla < 3 ? 'Classical' : cla > 7 ? 'Avant-garde' : 'Contemporary',
       rules: [
-        'Display layer: ' + primary + ' at ' + w.label + '. Headlines, pull-quotes, hero numbers — nothing else.',
+        'Display layer: ' + primary + ' at ' + w.label + '. Headlines, pull-quotes, hero numbers - nothing else.',
         'Body copy: ' + secondary + ' Regular 400 at 16px / 28px line-height. Never larger than 18px for paragraphs.',
         'Two families. Two weights per family. Anything beyond is brand drift.'
       ]
@@ -4108,7 +4108,7 @@ body.phase-intro{ overflow:hidden; }
       var poetic = dir > 6;
       if (bold)   return 'Your new product launches today. It does X. You get Y.';
       if (poetic) return 'It begins, as most things do, on a morning that would otherwise pass unmarked.';
-      return 'A thoughtful new product — considered, ready, quietly confident in what it can do for you.';
+      return 'A thoughtful new product - considered, ready, quietly confident in what it can do for you.';
     }
     return {
       dims: [
@@ -4123,21 +4123,21 @@ body.phase-intro{ overflow:hidden; }
   function deriveFirstMoves(a, palette, typography, shape, motion){
     var moves = [];
 
-    // Move 1 — Colour
+    // Move 1 - Colour
     moves.push({
       tag:'COLOUR',
       title:'Lock your system around the primary',
-      body:'Build every surface, button and illustration from ' + palette.primary.hex + ' as your anchor. For UI states, nudge lightness ±8 without changing hue. Reserve the accent chip for interactive moments only — never as background.'
+      body:'Build every surface, button and illustration from ' + palette.primary.hex + ' as your anchor. For UI states, nudge lightness ±8 without changing hue. Reserve the accent chip for interactive moments only - never as background.'
     });
 
-    // Move 2 — Typography
+    // Move 2 - Typography
     moves.push({
       tag:'TYPOGRAPHY',
       title:'Commission a specimen in your two families',
-      body:'Set body copy in ' + typography.secondary + ' at 16/28 with normal tracking. Reserve ' + typography.primary + ' for the display layer — only headlines and pull-quotes. One typeface for speed, one for ceremony.'
+      body:'Set body copy in ' + typography.secondary + ' at 16/28 with normal tracking. Reserve ' + typography.primary + ' for the display layer - only headlines and pull-quotes. One typeface for speed, one for ceremony.'
     });
 
-    // Move 3 — Shape / Motion / Gesture
+    // Move 3 - Shape / Motion / Gesture
     var actionFromShape = shape.radius < 15
       ? 'Draw every container at radius 4–6px. Keep hairlines at 1px, never rounded.'
       : shape.radius < 30
@@ -4149,7 +4149,7 @@ body.phase-intro{ overflow:hidden; }
       body:actionFromShape + ' Set motion duration at ' + (motion.slow < 4 ? '320–480ms' : motion.slow > 6 ? '120–180ms' : '220–280ms') + ' with ' + (motion.ease < 4 ? 'a smooth cubic-bezier(.22,1,.36,1)' : motion.ease > 6 ? 'a staccato cubic-bezier(.85,0,.15,1)' : 'a measured ease-in-out') + '. Every transition follows one curve.'
     });
 
-    // Move 4 — Voice
+    // Move 4 - Voice
     if (a.vbvoicefail){
       moves.push({
         tag:'VOICE',
@@ -4158,12 +4158,12 @@ body.phase-intro{ overflow:hidden; }
       });
     }
 
-    // Move 5 — Ritual
+    // Move 5 - Ritual
     if (a.rtsignaturerit){
       moves.push({
         tag:'RITUAL',
         title:'Protocol the signature gesture',
-        body:'"' + a.rtsignaturerit + '" — document this as a required step in the customer journey. It is not decoration; it is the brand-defining moment.'
+        body:'"' + a.rtsignaturerit + '" - document this as a required step in the customer journey. It is not decoration; it is the brand-defining moment.'
       });
     }
 
@@ -4180,35 +4180,35 @@ body.phase-intro{ overflow:hidden; }
     var t = text.toLowerCase();
     var destination = null;
     if (/\b(dawn|sunrise|first\s*light|4:?\d\d\s*am|5:?\d\d\s*am|6:?\d\d\s*am)\b/.test(t) || /\b(4am|5am|6am)\b/.test(t))
-      destination = 'A pre-dawn brand — built on quiet conviction before the world arrives. Your discipline is your differentiator. Communication should feel like it was there before the reader, waiting.';
+      destination = 'A pre-dawn brand - built on quiet conviction before the world arrives. Your discipline is your differentiator. Communication should feel like it was there before the reader, waiting.';
     else if (/\b(morning|7\s*am|8\s*am|9\s*am|10\s*am|7am|8am|9am|10am|mattin)\b/.test(t))
-      destination = 'A morning brand — alert, focused, freshly arrived. Your tone carries the clarity of a day not yet complicated. Design every touchpoint to feel sharp, optimistic, unhurried.';
+      destination = 'A morning brand - alert, focused, freshly arrived. Your tone carries the clarity of a day not yet complicated. Design every touchpoint to feel sharp, optimistic, unhurried.';
     else if (/\b(11\s*am|noon|midday|12\s*pm|high noon)\b/.test(t) || /\b11am\b/.test(t))
-      destination = 'A high-noon brand — fully present, at peak, nothing hidden. This is the light of confidence, not ceremony. Be direct. Your communication should be the thing itself, not a trailer for it.';
+      destination = 'A high-noon brand - fully present, at peak, nothing hidden. This is the light of confidence, not ceremony. Be direct. Your communication should be the thing itself, not a trailer for it.';
     else if (/\b(afternoon|1\s*pm|2\s*pm|3\s*pm|4\s*pm|5\s*pm|1pm|2pm|3pm|4pm|5pm)\b/.test(t))
-      destination = 'An afternoon brand — sustained, productive, earning its position. Your voice is the voice of someone mid-sentence in a long conversation: already trusted, already at work. Write like you have been here all day.';
+      destination = 'An afternoon brand - sustained, productive, earning its position. Your voice is the voice of someone mid-sentence in a long conversation: already trusted, already at work. Write like you have been here all day.';
     else if (/\b(evening|dusk|6\s*pm|7\s*pm|golden hour|6pm|7pm|twilight)\b/.test(t))
-      destination = 'A dusk brand — reflective, warm, softening. Your tone invites — never demands. Every surface should feel like a room lit at the end of the day: considered, honest, slightly tired in the right way.';
+      destination = 'A dusk brand - reflective, warm, softening. Your tone invites - never demands. Every surface should feel like a room lit at the end of the day: considered, honest, slightly tired in the right way.';
     else if (/\b(night|midnight|8\s*pm|9\s*pm|10\s*pm|11\s*pm|8pm|9pm|10pm|11pm|1\s*am|2\s*am|3\s*am|1am|2am|3am|late)\b/.test(t))
-      destination = 'A night brand — intimate, honest, unafraid of shadows. Your communication says the things daytime cannot. Reserve plain language for difficult truths; reserve beauty for the ones worth hearing twice.';
+      destination = 'A night brand - intimate, honest, unafraid of shadows. Your communication says the things daytime cannot. Reserve plain language for difficult truths; reserve beauty for the ones worth hearing twice.';
     if (destination) return { raw: text, destination: destination };
-    return { raw: text, destination: 'This light is your habitat — measure every touchpoint against it. If an ad would look wrong at your chosen hour, it is not your ad. Shoot photography at this time, set type for this time, write copy that reads at this time.' };
+    return { raw: text, destination: 'This light is your habitat - measure every touchpoint against it. If an ad would look wrong at your chosen hour, it is not your ad. Shoot photography at this time, set type for this time, write copy that reads at this time.' };
   }
 
   function interpretBrandObject(text){
     if (!text || !text.trim()) return null;
     var t = text.toLowerCase();
     var destination = null;
-    if (/\bcompass\b/.test(t))      destination = 'Your brand is a compass — wayfinding, oriented, sure of north. Your primary job is to help the customer locate themselves. Every product feature is a bearing, not a decoration.';
-    else if (/\bglass|crystal|lens|mirror\b/.test(t)) destination = 'Your brand is glass — transparent, fragile if mishandled, beautiful when lit. Design for respect. The customer should feel the seriousness of what they are holding without needing it explained.';
-    else if (/\bstone|marble|granite|rock|brick\b/.test(t)) destination = 'Your brand is stone — permanent, weighty, unarguable. Move slowly and land hard. Do not apologise for taking time to respond. Authority is built from refusal to hurry.';
-    else if (/\bknife|blade|sword|scalpel\b/.test(t)) destination = 'Your brand is a blade — precise, useful, consequential. You cut through confusion. Your copy should be shorter than the reader expects; your decisions sharper than your competitors\'.';
-    else if (/\bbook|paper|letter|document|journal\b/.test(t)) destination = 'Your brand is a document — it remembers, it preserves, it is read with care. Build for archive quality. Nothing you publish should feel disposable; nothing should be retired before it has had a chance to age.';
-    else if (/\bwatch|clock|timepiece\b/.test(t)) destination = 'Your brand is a timekeeper — the thing people trust with their rhythm. Reliability is your product, not a feature of it. If the customer cannot set their day by you, you have failed a single job.';
-    else if (/\bbrass|gold|copper|bronze|metal\b/.test(t)) destination = 'Your brand is metal — dense, conductive, it records touch. Every interaction should leave a small mark. Design so patina is an asset, not a flaw.';
-    else if (/\bsilk|linen|cotton|fabric|textile\b/.test(t)) destination = 'Your brand is a textile — intimate, tactile, chosen for how it meets skin. Your communication is read with the hand as well as the eye. Paper stock, material, weight — these are your unspoken arguments.';
-    else if (/\bwater|river|ocean|liquid\b/.test(t)) destination = 'Your brand is water — it takes the shape of its container without losing itself. Design for adaptation across contexts while holding one clear character. The customer should always recognise you by taste, not logo.';
-    else if (/\bwood|oak|timber|grain\b/.test(t)) destination = 'Your brand is wood — grown, grained, warm. It wears well. Celebrate wear as evidence of life. Let your surfaces feel handled, not manufactured.';
+    if (/\bcompass\b/.test(t))      destination = 'Your brand is a compass - wayfinding, oriented, sure of north. Your primary job is to help the customer locate themselves. Every product feature is a bearing, not a decoration.';
+    else if (/\bglass|crystal|lens|mirror\b/.test(t)) destination = 'Your brand is glass - transparent, fragile if mishandled, beautiful when lit. Design for respect. The customer should feel the seriousness of what they are holding without needing it explained.';
+    else if (/\bstone|marble|granite|rock|brick\b/.test(t)) destination = 'Your brand is stone - permanent, weighty, unarguable. Move slowly and land hard. Do not apologise for taking time to respond. Authority is built from refusal to hurry.';
+    else if (/\bknife|blade|sword|scalpel\b/.test(t)) destination = 'Your brand is a blade - precise, useful, consequential. You cut through confusion. Your copy should be shorter than the reader expects; your decisions sharper than your competitors\'.';
+    else if (/\bbook|paper|letter|document|journal\b/.test(t)) destination = 'Your brand is a document - it remembers, it preserves, it is read with care. Build for archive quality. Nothing you publish should feel disposable; nothing should be retired before it has had a chance to age.';
+    else if (/\bwatch|clock|timepiece\b/.test(t)) destination = 'Your brand is a timekeeper - the thing people trust with their rhythm. Reliability is your product, not a feature of it. If the customer cannot set their day by you, you have failed a single job.';
+    else if (/\bbrass|gold|copper|bronze|metal\b/.test(t)) destination = 'Your brand is metal - dense, conductive, it records touch. Every interaction should leave a small mark. Design so patina is an asset, not a flaw.';
+    else if (/\bsilk|linen|cotton|fabric|textile\b/.test(t)) destination = 'Your brand is a textile - intimate, tactile, chosen for how it meets skin. Your communication is read with the hand as well as the eye. Paper stock, material, weight - these are your unspoken arguments.';
+    else if (/\bwater|river|ocean|liquid\b/.test(t)) destination = 'Your brand is water - it takes the shape of its container without losing itself. Design for adaptation across contexts while holding one clear character. The customer should always recognise you by taste, not logo.';
+    else if (/\bwood|oak|timber|grain\b/.test(t)) destination = 'Your brand is wood - grown, grained, warm. It wears well. Celebrate wear as evidence of life. Let your surfaces feel handled, not manufactured.';
     if (destination) return { raw: text, destination: destination };
     return { raw: text, destination: 'Treat this object as a physical standard. Every touchpoint should feel like the same thing made by the same hand. If you can\'t imagine this object next to what you just shipped, do not ship it.' };
   }
@@ -4217,21 +4217,21 @@ body.phase-intro{ overflow:hidden; }
     if (!text || !text.trim()) return null;
     var t = text.toLowerCase();
     var destination = null;
-    if (/\b(calm|peace|stil|quiet|serene)\b/.test(t)) destination = 'Your dominant colour emotion is stillness. This is a discipline. Do not let anyone inside the brand argue for a louder shade "just this once." The moment you allow energy to enter, the stillness is gone — and with it, the brand.';
-    else if (/\b(warm|comfort|home|cozy|intim)\b/.test(t)) destination = 'Your dominant colour emotion is warmth. Every surface should feel lit from behind — by lamplight, not a screen. Avoid cold whites and fluorescents. Your photography lives in 2500–3500K light.';
+    if (/\b(calm|peace|stil|quiet|serene)\b/.test(t)) destination = 'Your dominant colour emotion is stillness. This is a discipline. Do not let anyone inside the brand argue for a louder shade "just this once." The moment you allow energy to enter, the stillness is gone - and with it, the brand.';
+    else if (/\b(warm|comfort|home|cozy|intim)\b/.test(t)) destination = 'Your dominant colour emotion is warmth. Every surface should feel lit from behind - by lamplight, not a screen. Avoid cold whites and fluorescents. Your photography lives in 2500–3500K light.';
     else if (/\b(clarity|clean|clear|fresh|bright|alert)\b/.test(t)) destination = 'Your dominant colour emotion is clarity. Saturation is a liability. Hold the palette high-contrast and white-forward; resist decorative tints. Any colour you add must earn its pigment.';
-    else if (/\b(power|bold|strong|intens|assert)\b/.test(t)) destination = 'Your dominant colour emotion is assertion. Your brand arrives before it speaks. Use colour at full strength — no pastel versions, no 40% opacity hedges. If it is not committing, it is not you.';
-    else if (/\b(depth|mystery|deep|shadow|dark|secret)\b/.test(t)) destination = 'Your dominant colour emotion is depth. Work primarily in dark fields with a single point of light. Let emptiness do the heavy lifting. The eye should have to look for detail — and be rewarded for looking.';
+    else if (/\b(power|bold|strong|intens|assert)\b/.test(t)) destination = 'Your dominant colour emotion is assertion. Your brand arrives before it speaks. Use colour at full strength - no pastel versions, no 40% opacity hedges. If it is not committing, it is not you.';
+    else if (/\b(depth|mystery|deep|shadow|dark|secret)\b/.test(t)) destination = 'Your dominant colour emotion is depth. Work primarily in dark fields with a single point of light. Let emptiness do the heavy lifting. The eye should have to look for detail - and be rewarded for looking.';
     else if (/\b(joy|play|fun|happy|cheer|bright)\b/.test(t)) destination = 'Your dominant colour emotion is joy. This is permission to use colour without apology. Block it flat, saturate fully, and never dilute with gradients or glow. Joy has edges.';
     if (destination) return { raw: text, destination: destination };
-    return { raw: text, destination: 'Test every photo shoot, ad, and surface against this feeling. If it does not produce this response in the first half-second, it is the wrong image — no matter how technically correct.' };
+    return { raw: text, destination: 'Test every photo shoot, ad, and surface against this feeling. If it does not produce this response in the first half-second, it is the wrong image - no matter how technically correct.' };
   }
 
   function interpretAntiVoice(text){
     if (!text || !text.trim()) return null;
     return {
       raw: text,
-      destination: 'Make this the top line of your voice guidelines. Every piece of copy gets tested against it this week. If you catch the brand doing this, pull the work — not just the copy, the entire execution that allowed it.'
+      destination: 'Make this the top line of your voice guidelines. Every piece of copy gets tested against it this week. If you catch the brand doing this, pull the work - not just the copy, the entire execution that allowed it.'
     };
   }
 
@@ -4239,7 +4239,7 @@ body.phase-intro{ overflow:hidden; }
     if (!text || !text.trim()) return null;
     return {
       raw: text,
-      destination: 'Commission this sound. Three seconds, mastered properly. It plays at the end of every video, every keynote, every launch moment. Repetition is what makes it yours — not novelty.'
+      destination: 'Commission this sound. Three seconds, mastered properly. It plays at the end of every video, every keynote, every launch moment. Repetition is what makes it yours - not novelty.'
     };
   }
 
@@ -4287,7 +4287,7 @@ body.phase-intro{ overflow:hidden; }
   }
 
   /* ========================================================================
-     CODEX — Renderer
+     CODEX - Renderer
      ======================================================================== */
 
   views.codex = function(){
@@ -4363,7 +4363,7 @@ body.phase-intro{ overflow:hidden; }
       } catch(e){ return ''; }
     }
 
-    // ---- 00 Brand Identity Card (THE hero — their brand rendered in their system) ----
+    // ---- 00 Brand Identity Card (THE hero - their brand rendered in their system) ----
     var heroPrimary   = palette.chips[0];
     var heroShadow    = palette.chips[1];
     var heroAccent    = palette.chips[2];
@@ -4504,7 +4504,7 @@ body.phase-intro{ overflow:hidden; }
       ) : el('div', { class:'cdx-palette-note cdx-body' }, [
         el('p', { style:{ margin:'8px 0' } }, [
           el('strong', { style:{ color:'var(--text-1)' }, text: 'Primary ' + palette.chips[0].hex + '. ' }),
-          document.createTextNode('Use as the single anchor on every surface — never blend.')
+          document.createTextNode('Use as the single anchor on every surface - never blend.')
         ]),
         el('p', { style:{ margin:'8px 0' } }, [
           el('strong', { style:{ color:'var(--text-1)' }, text: 'Accent ' + palette.chips[2].hex + '. ' }),
@@ -4540,7 +4540,7 @@ body.phase-intro{ overflow:hidden; }
           return s;
         }
         return el('div', { class:'cdx-palette-demo' }, [
-          el('div', { class:'label', text:'Your colours — in use' }),
+          el('div', { class:'label', text:'Your colours - in use' }),
           el('div', { class:'cdx-palette-demo-row' }, [
             chipDemo('Start free',  palette.chips[0].css, null, primaryInk, { }),
             chipDemo('Secondary',   'transparent',        palette.chips[0].css, palette.chips[0].css, { }),
@@ -4548,7 +4548,7 @@ body.phase-intro{ overflow:hidden; }
             chipDemo('Surface / card',  palette.chips[3].css, null, surfaceInk, { })
           ]),
           el('div', { style:{ fontFamily:'var(--f-mono)', fontSize:'10px', letterSpacing:'.22em', textTransform:'uppercase', color:'var(--text-3)' },
-            text:'Primary · Secondary · Accent · Surface — rendered in your actual palette, type, and radius.' })
+            text:'Primary · Secondary · Accent · Surface - rendered in your actual palette, type, and radius.' })
         ]);
       })()
     ]);
@@ -4603,7 +4603,7 @@ body.phase-intro{ overflow:hidden; }
       // --- Full type showcase: alphabet + paragraph + weight ladder ---
       (function(){
         var showcase = el('div', { class:'glass-card cdx-type-showcase' }, [
-          el('div', { class:'label', text:'Your system — on the page' }),
+          el('div', { class:'label', text:'Your system - on the page' }),
           // Uppercase alphabet in display font
           el('div', { class:'alpha-row' }, [
             el('span', { class:'alpha-label', text:typography.primary }),
@@ -4661,7 +4661,7 @@ body.phase-intro{ overflow:hidden; }
             var p = el('p', { class:'para',
               text: (lead.company || 'This brand') + ' makes a specific kind of work for a specific kind of person. Every sentence we write ' +
                     'lands in this typeface: ' + typography.secondary + ', at 16 pixels over 28 pixels of line-height, with enough room around it ' +
-                    'to breathe. The writing should feel like someone who knows what they are doing — not someone performing that knowledge. ' +
+                    'to breathe. The writing should feel like someone who knows what they are doing - not someone performing that knowledge. ' +
                     'We reserve the display family (' + typography.primary + ') for the first word you see. Everything else is this voice.'
             });
             p.style.fontFamily = typography.secondaryStack;
@@ -4711,7 +4711,7 @@ body.phase-intro{ overflow:hidden; }
               el('strong', { style:{ color:'var(--text-1)' }, text: (shape.btnR === 999 ? 'pill' : shape.btnR + 'px') }),
               document.createTextNode('. Stroke: '),
               el('strong', { style:{ color:'var(--text-1)' }, text: shape.stroke + 'px' }),
-              document.createTextNode('. These are the values — apply them everywhere.')
+              document.createTextNode('. These are the values - apply them everywhere.')
             ])
           ]),
           el('div', { class:'dims' },
@@ -4863,7 +4863,7 @@ body.phase-intro{ overflow:hidden; }
     var voiceCard = el('div', { class:'glass-card cdx-voice' }, [
       a.tvoice
         ? el('div', { class:'pullquote', text:a.tvoice })
-        : el('div', { class:'pullquote', text:'The voice you described lives here — fill in "The Speaking Voice" to see it return.' }),
+        : el('div', { class:'pullquote', text:'The voice you described lives here - fill in "The Speaking Voice" to see it return.' }),
       voiceChips,
       el('div', { class:'cdx-voice-example' }, [
         el('span', { class:'tag', text:'SAMPLE IN YOUR VOICE' }),
@@ -4880,11 +4880,11 @@ body.phase-intro{ overflow:hidden; }
             return el('div', { style:{ display:'contents' } }, [
               el('div', { class:'cdx-voice-pair' }, [
                 el('span', { class:'tag say', text:'SAY' }),
-                el('div',  { class:'val', text: p.say || '—' })
+                el('div',  { class:'val', text: p.say || '-' })
               ]),
               el('div', { class:'cdx-voice-pair not' }, [
                 el('span', { class:'tag not', text:'NOT' }),
-                el('div',  { class:'val', text: p.notThat || '—' })
+                el('div',  { class:'val', text: p.notThat || '-' })
               ])
             ]);
           })
@@ -4899,11 +4899,11 @@ body.phase-intro{ overflow:hidden; }
           })
         )
       ]) : null;
-    // Voice-in-action mock touchpoints — rendered in their type + accent
+    // Voice-in-action mock touchpoints - rendered in their type + accent
     var voiceInAction = (function(){
       var taglineSample = (claudeVoice && Array.isArray(claudeVoice.taglines) && claudeVoice.taglines[0]) || voice.sample || 'Built for the work that deserves it.';
       var sayLine = (claudeVoice && Array.isArray(claudeVoice.sayNotThat) && claudeVoice.sayNotThat[0] && claudeVoice.sayNotThat[0].say) || voice.sample;
-      var emailSubject = 'Your ' + (a.swmoment ? a.swmoment.split(/[,.;]/)[0].trim() : 'Monday') + ' brief — ' + (lead.company || 'from us');
+      var emailSubject = 'Your ' + (a.swmoment ? a.swmoment.split(/[,.;]/)[0].trim() : 'Monday') + ' brief - ' + (lead.company || 'from us');
       var social = sayLine || 'Three things we are shipping this week.';
       function spec(tag, body, foot, styleAsDisplay){
         var card = el('div', { class:'cdx-voice-specimen' }, [
@@ -4943,7 +4943,7 @@ body.phase-intro{ overflow:hidden; }
       ]) : null
     ]);
 
-    // Sensory + ritual — always prefer interpretation (destination) over repetition.
+    // Sensory + ritual - always prefer interpretation (destination) over repetition.
     var sensoryCards = [];
     function pushInterpretation(label, interp){
       if (!interp) return;
@@ -5023,7 +5023,7 @@ body.phase-intro{ overflow:hidden; }
             el('p', { class:'cdx-body', text: cm.xAxisLabel || '' }),
             el('p', { class:'cdx-body', text: cm.yAxisLabel || '' }),
             el('div', { class:'label', style:{ marginTop:'12px' }, text:'Your coordinates' }),
-            el('p', { class:'cdx-body', text:'You sit at roughly (' + Math.round(brandPos[0]) + ', ' + Math.round(brandPos[1]) + '). The named competitors above are plotted honestly — steal where there is open territory, stay distinct where there is density.' })
+            el('p', { class:'cdx-body', text:'You sit at roughly (' + Math.round(brandPos[0]) + ', ' + Math.round(brandPos[1]) + '). The named competitors above are plotted honestly - steal where there is open territory, stay distinct where there is density.' })
           ])
         ])
       ]);
@@ -5136,7 +5136,7 @@ body.phase-intro{ overflow:hidden; }
           try { window.print(); } catch(e){}
         } }, 'Export as PDF'),
         el('button', { class:'btn btn-primary btn-sm', type:'button', onclick:function(){
-          // Full reset — back to intro, clear readings
+          // Full reset - back to intro, clear readings
           state.readings = [];
           state.canRegenerate = true;
           saveReadings(state.readings);
@@ -5150,7 +5150,7 @@ body.phase-intro{ overflow:hidden; }
     var regenModal = el('div', { class:'regen-modal', id:'regen-modal' }, [
       el('div', { class:'regen-modal-card' }, [
         el('h3', { text:'Generate a second reading?' }),
-        el('p',  { text:'The AI will synthesise your answers a second time. Both readings will be saved — you can toggle between them at the top of the Codex and export either as a PDF. This is the last regeneration available for this session (two readings maximum).' }),
+        el('p',  { text:'The AI will synthesise your answers a second time. Both readings will be saved - you can toggle between them at the top of the Codex and export either as a PDF. This is the last regeneration available for this session (two readings maximum).' }),
         el('p',  { text:'Generation takes 20–40 seconds. Please keep this tab open.' }),
         el('div', { class:'regen-modal-actions' }, [
           el('button', { class:'btn btn-primary btn-sm', type:'button',

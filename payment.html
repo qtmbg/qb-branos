@@ -386,7 +386,7 @@ function toggleTheme() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// QB BrandOS — PAYMENT GATE
+// QB BrandOS - PAYMENT GATE
 // ─────────────────────────────────────────────────────────────────────────────
 const CONFIG = {
   STRIPE_PUBLISHABLE_KEY: 'pk_live_51T4LrnEHEAcWrG55GLqBVJyczc4WGgSQEKaZOOLE0lr8lZSlvpeyfxN1YgtXoOtbTHF97qB5C0D2MC48lrOVhVJ005iEJWgbZ',
@@ -414,7 +414,7 @@ const CONFIG = {
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0',
 };
 
-// XSS sanitizer — applied to all API-sourced strings injected into innerHTML
+// XSS sanitizer - applied to all API-sourced strings injected into innerHTML
 function encodeHTML(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -769,7 +769,7 @@ async function handleAuth(email, password) {
   }
 }
 
-// PAYMENT_LINKS are the primary path — no server required.
+// PAYMENT_LINKS are the primary path - no server required.
 // stripe.redirectToCheckout({ lineItems }) is deprecated; kept as last resort only.
 // Future migration: create a server-side Checkout Session and redirect to session.url.
 async function redirectToStripe(email) {

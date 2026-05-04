@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB — Quarterly Brand Review Agent</title>
+<title>QB - Quarterly Brand Review Agent</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap">
 
 <script>
-  // Theme init — read from localStorage, default to dark
+  // Theme init - read from localStorage, default to dark
   (function() {
     try {
       var theme = localStorage.getItem('qb-theme') || 'light';
@@ -475,7 +475,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outlin
 </style>
 
 <script>
-// QB_SPINE v2 — API Key + QBP + Multi-provider adapter
+// QB_SPINE v2 - API Key + QBP + Multi-provider adapter
 (function(){
   var params = new URLSearchParams(window.location.search);
   var urlQBP = params.get('qbp');
@@ -550,7 +550,7 @@ const SF = ({ label, options, value, onChange }) => (
   <div style={{ marginBottom: 20 }}>
     <Label>{label}</Label>
     <select value={value} onChange={e => onChange(e.target.value)}>
-      <option value="">— select —</option>
+      <option value="">- select -</option>
       {options.map(o => <option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -588,7 +588,7 @@ const QBPDiffPanel = ({ updates }) => {
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 8, padding: '16px 20px', background: 'var(--bg-surface)', borderRadius: 8, borderLeft: '2px solid var(--brass)' }}>
-        The QBP evolves based on what has been learned. These updates reflect what the brand has become — not what it was designed to be. Accept changes that feel true. Reject those that feel reactive.
+        The QBP evolves based on what has been learned. These updates reflect what the brand has become - not what it was designed to be. Accept changes that feel true. Reject those that feel reactive.
       </div>
       {updates.map((u, i) => {
         let typeColor = 'var(--brass)';
@@ -672,7 +672,7 @@ const InitiativesPanel = ({ initiatives }) => {
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 18, fontWeight: 700, color: styles.color }}>{ini.score || '—'}</div>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 18, fontWeight: 700, color: styles.color }}>{ini.score || '-'}</div>
                       <div style={{ fontSize: 9, color: 'var(--text-3)', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 2 }}>conviction</div>
                     </div>
                   </div>
@@ -697,12 +697,12 @@ const STEPS = ['Input Data', 'Intelligence', 'War Table'];
 
 const QB_SYSTEM_PROMPT = `You are the Quarterly Brand Review Agent inside the Quantum Branding BrandOS ecosystem.
 Your function is to run a full quarterly review that does three things:
-1. Read what happened this quarter through the brand lens — what the data says, what it means for identity
-2. Update the Quantum Brand Profile based on what was learned — the brand is not static
-3. Produce the strategic direction for the next 90 days — the War Table for Q+1
+1. Read what happened this quarter through the brand lens - what the data says, what it means for identity
+2. Update the Quantum Brand Profile based on what was learned - the brand is not static
+3. Produce the strategic direction for the next 90 days - the War Table for Q+1
 
 This is the tool that makes the system self-evolving. The brand gets smarter each quarter.
-Return ONLY valid JSON — no markdown, no preamble.`;
+Return ONLY valid JSON - no markdown, no preamble.`;
 
 const LOADING_MESSAGES = [
   "Reading quarter's data through brand lens...",
@@ -780,7 +780,7 @@ function App() {
 
   const fmtProfile = (idx, p) => {
     if (!p || typeof p !== 'object') return `Persona ${idx + 1}: not specified`;
-    const head = [p.name, p.role].filter(Boolean).join(' — ');
+    const head = [p.name, p.role].filter(Boolean).join(' - ');
     const hook = p.hook ? ` Hook: "${p.hook}"` : '';
     const mind = p.mindset ? ` Mindset: ${p.mindset}` : '';
     return `Persona ${idx + 1}: ${head || 'not specified'}.${hook}${mind}`;
@@ -821,34 +821,34 @@ Goal for next quarter: ${nextQGoal||'not specified'}
 
 Return this exact JSON structure:
 {
-  "quarterNarrative": "4-6 sentences. The honest story of this quarter — what the brand became, what it learned, what it proved, and what it must leave behind. Written with the authority of a strategist who has seen the full picture.",
+  "quarterNarrative": "4-6 sentences. The honest story of this quarter - what the brand became, what it learned, what it proved, and what it must leave behind. Written with the authority of a strategist who has seen the full picture.",
   "quarterGrade": {
     "overall": "A | B | C | D",
     "brandCoherence": "A | B | C | D",
     "contentQuality": "A | B | C | D",
     "audienceAlignment": "A | B | C | D",
     "commercialProgress": "A | B | C | D",
-    "gradeExplanation": "2-3 sentences on the grade — honest, not harsh, not soft"
+    "gradeExplanation": "2-3 sentences on the grade - honest, not harsh, not soft"
   },
   "keyLearnings": [
     {
-      "learning": "specific insight — not generic",
+      "learning": "specific insight - not generic",
       "evidence": "what in the data supports this",
       "implication": "what this changes going forward"
     }
   ],
   "whatToCarryForward": ["specific asset, content type, angle, behavior to double down on"],
-  "whatToLeave": ["specific thing to stop or retire — with honest reason"],
+  "whatToLeave": ["specific thing to stop or retire - with honest reason"],
   "qbpUpdates": [
     {
-      "field": "QBP field name — e.g. Brand Essence, Voice Notes, Primary Persona, Archetype, Anti-Brand",
+      "field": "QBP field name - e.g. Brand Essence, Voice Notes, Primary Persona, Archetype, Anti-Brand",
       "changeType": "strengthen | evolve | add | recalibrate",
       "currentValue": "what it currently says",
-      "proposedValue": "what it should say now — after this quarter's learnings",
-      "reasoning": "why this update — specific evidence from the quarter"
+      "proposedValue": "what it should say now - after this quarter's learnings",
+      "reasoning": "why this update - specific evidence from the quarter"
     }
   ],
-  "nextQuarterTheme": "One sentence. The single overarching theme for Q+1 — what this quarter is fundamentally about",
+  "nextQuarterTheme": "One sentence. The single overarching theme for Q+1 - what this quarter is fundamentally about",
   "nextQuarterNorthStar": "The one metric / outcome that would make Q+1 a success. Specific.",
   "initiatives": [
     {
@@ -856,7 +856,7 @@ Return this exact JSON structure:
       "band": "now | next | later | park",
       "platform": "which platform(s)",
       "pillar": "content pillar it serves",
-      "rationale": "why this initiative, why now — traced to quarter learnings",
+      "rationale": "why this initiative, why now - traced to quarter learnings",
       "effort": "low | medium | high",
       "score": number 40-100,
       "successMetric": "how to know if this worked"
@@ -865,30 +865,30 @@ Return this exact JSON structure:
   "contentFocus": {
     "primaryFormat": "the format to lead with next quarter",
     "primaryAngle": "the content angle / territory to own",
-    "voiceEvolution": "how the voice should evolve — if at all",
-    "platformPriority": ["platform 1 — reason", "platform 2 — reason", "platform 3 — reason"]
+    "voiceEvolution": "how the voice should evolve - if at all",
+    "platformPriority": ["platform 1 - reason", "platform 2 - reason", "platform 3 - reason"]
   },
-  "offerSignals": "What the quarter's data says about the offer — is it landing, is it being understood, does it need repositioning?",
+  "offerSignals": "What the quarter's data says about the offer - is it landing, is it being understood, does it need repositioning?",
   "identityCheck": {
     "driftAssessment": "Did the brand drift from its identity this quarter? Where and why?",
     "recalibration": "Specific moves to re-anchor or strengthen identity heading into Q+1",
     "coreToProtect": "The single most important identity element to protect next quarter"
   },
   "warTableSummary": {
-    "constraint": "Time | Money | Clarity | Team | Trust — the binding constraint for Q+1",
-    "nowList": ["top 3 initiatives — name only"],
-    "nextList": ["next 2-3 — name only"],
-    "parkList": ["what to park — name only"]
+    "constraint": "Time | Money | Clarity | Team | Trust - the binding constraint for Q+1",
+    "nowList": ["top 3 initiatives - name only"],
+    "nextList": ["next 2-3 - name only"],
+    "parkList": ["what to park - name only"]
   },
-  "closingDirective": "One paragraph. The strategic directive for Q+1 — written directly to the founder. What the brand is doing, why, and what it is betting on. The document that runs the next 90 days."
+  "closingDirective": "One paragraph. The strategic directive for Q+1 - written directly to the founder. What the brand is doing, why, and what it is betting on. The document that runs the next 90 days."
 }
 
 Requirements:
 - keyLearnings: minimum 4, maximum 6
-- qbpUpdates: only include genuine updates — if the QBP holds, return empty array
+- qbpUpdates: only include genuine updates - if the QBP holds, return empty array
 - initiatives: minimum 8, across all bands
-- All analysis must be specific to THIS brand and THIS quarter's data — no generic advice
-- The quarterNarrative and closingDirective must be written with real strategic authority — the kind a founder reads once and acts on`;
+- All analysis must be specific to THIS brand and THIS quarter's data - no generic advice
+- The quarterNarrative and closingDirective must be written with real strategic authority - the kind a founder reads once and acts on`;
 
   const run = async () => {
     if (!isValid()) { setError('Complete required fields: brand name, essence, quarter, and at least one data field.'); return; }
@@ -906,7 +906,7 @@ Requirements:
 
   const exportReview = () => {
     if (!result) return;
-    const lines = [`QUARTERLY BRAND REVIEW — ${quarter} ${year}`, 'Generated by QB BrandOS — Quarterly Brand Review Agent', `Brand: ${brandName}`, ''];
+    const lines = [`QUARTERLY BRAND REVIEW - ${quarter} ${year}`, 'Generated by QB BrandOS - Quarterly Brand Review Agent', `Brand: ${brandName}`, ''];
     lines.push('QUARTER NARRATIVE:', result.quarterNarrative, '');
     if (result.quarterGrade) {
       lines.push('GRADES:');
@@ -920,7 +920,7 @@ Requirements:
     lines.push('', 'LEAVE BEHIND:');
     result.whatToLeave?.forEach(w => lines.push(`- ${w}`));
     lines.push('', 'QBP UPDATES:');
-    result.qbpUpdates?.forEach(u => { lines.push(`${u.field} (${u.changeType}):`, `  Current: ${u.currentValue || '—'}`, `  Proposed: ${u.proposedValue}`, `  Why: ${u.reasoning}`, ''); });
+    result.qbpUpdates?.forEach(u => { lines.push(`${u.field} (${u.changeType}):`, `  Current: ${u.currentValue || '-'}`, `  Proposed: ${u.proposedValue}`, `  Why: ${u.reasoning}`, ''); });
     lines.push('', 'NEXT QUARTER:');
     lines.push(`Theme: ${result.nextQuarterTheme}`);
     lines.push(`North Star: ${result.nextQuarterNorthStar}`, '');
@@ -976,7 +976,7 @@ Requirements:
         {step === 0 && (
           <div className="fade-in">
             <div style={{ marginBottom: 56 }}>
-              <Label color="var(--brass)" mb={16}>Phase 05 — Intelligence + Pivot</Label>
+              <Label color="var(--brass)" mb={16}>Phase 05 - Intelligence + Pivot</Label>
               <h1 style={{ fontSize: 44, lineHeight: 1.1, marginBottom: 16, maxWidth: 600 }}>Quarterly Brand Review</h1>
               <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.8, maxWidth: 620 }}>
                 The tool that makes the system self-evolving. Feed the quarter's data, let the agent read it through your brand identity, update the QBP with learned reality, and produce the strategic direction for the next 90 days.
@@ -992,7 +992,7 @@ Requirements:
                     <SF label="Archetype" options={ARCHETYPES} value={archetype} onChange={setArchetype} />
                   </div>
                 </div>
-                <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="Current irreducible truth — one sentence" rows={2} />
+                <TF label="Brand Essence *" value={brandEssence} onChange={setBrandEssence} placeholder="Current irreducible truth - one sentence" rows={2} />
                 <TF label="The Spark (Narrative)" value={spark} onChange={setSpark} placeholder="Current synthesis of who the brand is and why it exists" rows={3} />
                 <TF label="Manifesto Line" value={manifesto} onChange={setManifesto} placeholder="Current core belief" />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
@@ -1014,9 +1014,9 @@ Requirements:
             <Section n={3} title="Performance Data" note="Quantitative reality">
               <div className="glass-card" style={{ padding: '32px' }}>
                 <TF label="Content Produced" value={contentProduced} onChange={setContentProduced} placeholder="e.g. 24 IG posts, 12 LinkedIn posts, 3 YouTube videos, 6 newsletter issues" rows={2} />
-                <TF label="Top Performers" value={topPerformers} onChange={setTopPerformers} placeholder="Describe what performed best — which posts, topics, formats, and rough numbers" rows={3} />
-                <TF label="Lowest Performers" value={lowestPerformers} onChange={setLowestPerformers} placeholder="What underperformed — and any patterns" rows={2} />
-                <TF label="Key Metrics" value={keyMetrics} onChange={setKeyMetrics} placeholder="Follower growth, engagement rates, reach, email list, website traffic — whatever you track" rows={2} />
+                <TF label="Top Performers" value={topPerformers} onChange={setTopPerformers} placeholder="Describe what performed best - which posts, topics, formats, and rough numbers" rows={3} />
+                <TF label="Lowest Performers" value={lowestPerformers} onChange={setLowestPerformers} placeholder="What underperformed - and any patterns" rows={2} />
+                <TF label="Key Metrics" value={keyMetrics} onChange={setKeyMetrics} placeholder="Follower growth, engagement rates, reach, email list, website traffic - whatever you track" rows={2} />
                 <TF label="Business Outcomes" value={businessOutcomes} onChange={setBusinessOutcomes} placeholder="Leads, calls booked, sales, revenue attributable to content and brand activity" rows={2} />
               </div>
             </Section>
@@ -1024,12 +1024,12 @@ Requirements:
             <Section n={4} title="Reflection & Qualitative Data" note="Founder intuition">
               <div className="glass-card" style={{ padding: '32px' }}>
                 <TF label="Audience Evolution" value={audienceEvolution} onChange={setAudienceEvolution} placeholder="Who started showing up? Did the persona match? Any new segments?" rows={2} />
-                <TF label="What Worked (Honest Read)" value={whatWorked} onChange={setWhatWorked} placeholder="What genuinely worked this quarter — in content, strategy, offer, or brand" rows={3} />
-                <TF label="What Didn't (Honest Read)" value={whatDidnt} onChange={setWhatDidnt} placeholder="What failed, underperformed, or felt wrong — even if the numbers didn't reflect it yet" rows={3} />
-                <TF label="Biggest Lesson" value={biggestLesson} onChange={setBiggestLesson} placeholder="The single most important thing you learned this quarter — about your brand, your audience, or yourself" rows={2} />
-                <TF label="Brand Feeling" value={brandFeeling} onChange={setBrandFeeling} placeholder="Honest gut check — did it feel like you? Did it feel coherent? Or did something feel off?" rows={2} />
-                <TF label="Identity Drift" value={identityDrift} onChange={setIdentityDrift} placeholder="Any moments where the brand drifted from its identity — in content, offers, or communication" rows={2} />
-                <TF label="Emerging Opportunities" value={emergingOpportunities} onChange={setEmergingOpportunities} placeholder="What became visible this quarter that didn't exist before — new angles, audiences, formats, or moves" rows={2} />
+                <TF label="What Worked (Honest Read)" value={whatWorked} onChange={setWhatWorked} placeholder="What genuinely worked this quarter - in content, strategy, offer, or brand" rows={3} />
+                <TF label="What Didn't (Honest Read)" value={whatDidnt} onChange={setWhatDidnt} placeholder="What failed, underperformed, or felt wrong - even if the numbers didn't reflect it yet" rows={3} />
+                <TF label="Biggest Lesson" value={biggestLesson} onChange={setBiggestLesson} placeholder="The single most important thing you learned this quarter - about your brand, your audience, or yourself" rows={2} />
+                <TF label="Brand Feeling" value={brandFeeling} onChange={setBrandFeeling} placeholder="Honest gut check - did it feel like you? Did it feel coherent? Or did something feel off?" rows={2} />
+                <TF label="Identity Drift" value={identityDrift} onChange={setIdentityDrift} placeholder="Any moments where the brand drifted from its identity - in content, offers, or communication" rows={2} />
+                <TF label="Emerging Opportunities" value={emergingOpportunities} onChange={setEmergingOpportunities} placeholder="What became visible this quarter that didn't exist before - new angles, audiences, formats, or moves" rows={2} />
                 <TF label="Goal for Q+1" value={nextQGoal} onChange={setNextQGoal} placeholder="What does success look like at the end of next quarter? Be specific." rows={2} />
               </div>
             </Section>
@@ -1063,7 +1063,7 @@ Requirements:
             <div style={{ marginBottom: 48, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }}>
               <div>
                 <Label color="var(--brass)" mb={12}>// Phase 05 Intelligence Complete</Label>
-                <h1 style={{ fontSize: 32, marginBottom: 8, color: 'var(--text-1)' }}>{brandName} — {quarter}</h1>
+                <h1 style={{ fontSize: 32, marginBottom: 8, color: 'var(--text-1)' }}>{brandName} - {quarter}</h1>
                 <p style={{ color: 'var(--text-3)', fontSize: 14 }}>Brand analyzed · QBP evolved · Directives set</p>
               </div>
               <div style={{ display: 'flex', gap: 12 }}>
@@ -1082,7 +1082,7 @@ Requirements:
                   { label: 'Commercial', key: 'commercialProgress' },
                 ].map(g => (
                   <div key={g.key} className="glass-card" style={{ padding: '20px 16px', textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 36, color: getGradeColor(result.quarterGrade[g.key]), lineHeight: 1 }}>{result.quarterGrade[g.key] || '—'}</div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 36, color: getGradeColor(result.quarterGrade[g.key]), lineHeight: 1 }}>{result.quarterGrade[g.key] || '-'}</div>
                     <div style={{ fontSize: 9, color: 'var(--text-3)', marginTop: 8, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>{g.label}</div>
                   </div>
                 ))}
@@ -1249,7 +1249,7 @@ Requirements:
             {activeTab === 'directive' && (
               <div className="fade-in">
                 <div className="glass-card manifesto-block" style={{ padding: '40px 48px' }}>
-                  <Label color="var(--brass)" mb={16}>Strategic Directive — Execute The Following</Label>
+                  <Label color="var(--brass)" mb={16}>Strategic Directive - Execute The Following</Label>
                   <p style={{ fontSize: 16, lineHeight: 1.9, color: 'var(--text-1)' }}>{result.closingDirective}</p>
                 </div>
                 <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end' }}>

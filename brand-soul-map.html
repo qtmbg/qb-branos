@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — The Brand Soul Map</title>
-<meta name="description" content="The Brand Soul Map · QB BrandOS Phase 01 — discover your brand's irreducible truth, archetype, and emotional foundation.">
+<title>QB BrandOS - The Brand Soul Map</title>
+<meta name="description" content="The Brand Soul Map · QB BrandOS Phase 01 - discover your brand's irreducible truth, archetype, and emotional foundation.">
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
 <script src="/qb-gate.js"></script>
@@ -15,7 +15,7 @@
 <style>
 *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box }
 :root{
-  /* QB BRANDOS DESIGN SYSTEM v3.2 — TOKENS (canonical, mirrors ecosystem.html / index.html)
+  /* QB BRANDOS DESIGN SYSTEM v3.2 - TOKENS (canonical, mirrors ecosystem.html / index.html)
      Variable names retained from prior local system so existing rules continue to resolve.
      Phase 01 = Discovery → sage green accent (--phase-discovery).
   */
@@ -54,7 +54,7 @@
   --text-3:         var(--ink-mute);
   --text-4:         var(--ink-faint);
 
-  /* v3.2 accents — gold / rose / teal / aubergine */
+  /* v3.2 accents - gold / rose / teal / aubergine */
   --gold:           #E0B069;
   --gold-deep:      #B58840;
   --rose:           #CA6180;
@@ -106,7 +106,7 @@
   --pill-border:    var(--ink);
   --pill-ink:       var(--ink);
 
-  /* Type stack — Fraunces display, Inter body, JetBrains Mono labels */
+  /* Type stack - Fraunces display, Inter body, JetBrains Mono labels */
   --f-display:      'Fraunces','Times New Roman',serif;
   --f-body:         'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --f-mono:         'JetBrains Mono',ui-monospace,monospace;
@@ -147,7 +147,7 @@
   --r-card-lg:      32px;
 }
 [data-theme="dark"]{
-  /* Dark mode — aubergine ground, cream text, same accent palette inverted */
+  /* Dark mode - aubergine ground, cream text, same accent palette inverted */
   --cream:          #1A0E15;            /* deep aubergine ground */
   --cream-soft:     #221220;
   --cream-deep:     #2A1828;
@@ -215,7 +215,7 @@ a{ color:inherit; text-decoration:none; }
 img{ display:block; max-width:100%; }
 button{ font-family:inherit; cursor:pointer; }
 
-/* ================== BUTTONS — v3.2 + pomegranate two-layer pill ==================
+/* ================== BUTTONS - v3.2 + pomegranate two-layer pill ==================
    Markup:
      <button class="btn btn-primary"><span class="btn_content">CLICK ME</span></button>
    Mechanic:
@@ -236,7 +236,7 @@ button{ font-family:inherit; cursor:pointer; }
   font-family:inherit;
 }
 
-/* STATIC shadow layer — planted, never moves under interaction */
+/* STATIC shadow layer - planted, never moves under interaction */
 .btn::before{
   content:'';
   position:absolute; top:0; right:0; bottom:0; left:0;
@@ -246,7 +246,7 @@ button{ font-family:inherit; cursor:pointer; }
   z-index:-1;
 }
 
-/* Inner pill — the only thing that moves */
+/* Inner pill - the only thing that moves */
 .btn_content{
   position:relative;
   display:inline-flex; align-items:center; justify-content:center;
@@ -272,7 +272,7 @@ button{ font-family:inherit; cursor:pointer; }
   will-change:transform;
 }
 
-/* Hover/focus — content rises higher; shadow stays planted */
+/* Hover/focus - content rises higher; shadow stays planted */
 @media (hover:hover){
   .btn:not(:disabled):hover .btn_content,
   .btn:not(:disabled):focus-visible .btn_content{
@@ -281,7 +281,7 @@ button{ font-family:inherit; cursor:pointer; }
   }
 }
 
-/* Active/click — content slams down through the shadow */
+/* Active/click - content slams down through the shadow */
 .btn:not(:disabled):active .btn_content{
   transform:translateY(0.28em) scale(0.99);
   filter:brightness(0.9);
@@ -293,16 +293,16 @@ button{ font-family:inherit; cursor:pointer; }
 
 /* ============ VARIANTS ============ */
 
-/* Primary — gold pill */
+/* Primary - gold pill */
 .btn-primary .btn_content{ background:var(--gold); color:var(--ink); }
 
-/* Secondary — rose-deep on cream (contrast / destructive) */
+/* Secondary - rose-deep on cream (contrast / destructive) */
 .btn-secondary .btn_content{ background:var(--rose-deep); color:var(--cream); }
 
-/* Phase accent — sage green for Phase 01 (Discovery) */
+/* Phase accent - sage green for Phase 01 (Discovery) */
 .btn-phase .btn_content{ background:var(--phase-discovery); color:var(--ink); }
 
-/* Active/toggled — sits depressed with white inner ring (selected state) */
+/* Active/toggled - sits depressed with white inner ring (selected state) */
 .btn-active .btn_content{
   background:var(--rose);
   color:var(--cream);
@@ -310,7 +310,7 @@ button{ font-family:inherit; cursor:pointer; }
   box-shadow:inset 0 0 0 0.20em var(--cream);
 }
 
-/* Sizes — em-based so they cascade off .btn font-size */
+/* Sizes - em-based so they cascade off .btn font-size */
 .btn-sm{ font-size:calc(var(--space-m) * 0.78); }
 .btn-sm::before{ transform:translateY(0.10em) scale(0.99); }
 .btn-sm .btn_content{ padding:0.8em 1.4em; font-size:0.4em; transform:translateY(-0.10em); }
@@ -328,7 +328,7 @@ button{ font-family:inherit; cursor:pointer; }
 .btn-expand,
 .btn-expand .btn_content{ width:100%; }
 
-/* On-dark variant — invert pill, ink shadow becomes cream shadow */
+/* On-dark variant - invert pill, ink shadow becomes cream shadow */
 .btn-on-dark::before{ background:var(--cream); }
 .btn-on-dark .btn_content{ background:var(--cream); border-color:var(--cream); color:var(--ink); }
 .btn-on-dark.btn-primary .btn_content{ background:var(--gold); border-color:var(--gold); color:var(--ink); }
@@ -592,7 +592,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
 }
 [data-theme="light"] .visual-header h2{ color:var(--text-1); text-shadow:none; }
 
-/* Glass panel — used throughout */
+/* Glass panel - used throughout */
 .glass-panel{
   background:var(--bg-surface);
   border:1px solid var(--border-medium);
@@ -1675,7 +1675,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     synthesis:"https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200&auto=format&fit=crop"
   };
 
-  // Full schema — matches original React file so the Codex prompt template has every expected key.
+  // Full schema - matches original React file so the Codex prompt template has every expected key.
   // Fields beyond the minimum UI inputs are reserved: the prompt sends empty strings, the UI can
   // be extended later without changing the API contract or QBP writeback.
   var INITIAL_DATA = {
@@ -1814,7 +1814,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     isGenerating: false,
     isSaving: false,
     mobileMenuOpen: false,
-    // Codex (Part 3 — the structured JSON returned by Claude)
+    // Codex (Part 3 - the structured JSON returned by Claude)
     codex: null,
     codexError: null,
     codexStatus: '',
@@ -2115,7 +2115,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
               onclick: function(){ updateData('manifestoQuoteId', q.id); }
             }, [
               el('p', { text:'“' + q.quote + '”' }),
-              el('div', { class:'author', text:'— ' + q.author })
+              el('div', { class:'author', text:'- ' + q.author })
             ]);
             return card;
           })
@@ -2382,7 +2382,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   /* --- 8 Checkpoint 04 --- */
   views[8] = function(){
     var d = state.data;
-    var vocab = [d.cEss, d.cuEss, d.vEss, d.lEss, d.valEss].filter(Boolean).join(' · ') || '—';
+    var vocab = [d.cEss, d.cuEss, d.vEss, d.lEss, d.valEss].filter(Boolean).join(' · ') || '-';
     return checkpoint('Community soul', 'Checkpoint IV', [
       ckRow('Vocabulary', el('span', { style:{ color:'var(--patina)', fontFamily:'var(--f-mono)', textTransform:'uppercase', letterSpacing:'.2em' }, text: vocab })),
       ckRow('The person', el('span', { class:'hl', text: d.fanTarget || '[description]' }))
@@ -2541,16 +2541,16 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     return checkpoint('Voice & tone', 'Checkpoint V', [
       ckRow('Alignment', el('span', {}, [
         document.createTextNode('We align with '),
-        el('span', { class:'hl', text: d.a1 || '—' }),
+        el('span', { class:'hl', text: d.a1 || '-' }),
         document.createTextNode('. We refuse '),
-        el('span', { class:'hl', text: d.na1 || '—' }),
+        el('span', { class:'hl', text: d.na1 || '-' }),
         document.createTextNode('.')
       ])),
       ckRow('Behavioral DNA', el('span', {}, [
         document.createTextNode((d.brandName || 'This brand') + ' leads like '),
-        el('span', { class:'hl', text: d.leadChoice || '—' }),
+        el('span', { class:'hl', text: d.leadChoice || '-' }),
         document.createTextNode(' and endures like '),
-        el('span', { class:'hl', text: d.endChoice  || '—' }),
+        el('span', { class:'hl', text: d.endChoice  || '-' }),
         document.createTextNode('.')
       ]))
     ]);
@@ -2716,7 +2716,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       return renderCodexDocument(state.codex);
     }
 
-    // Fallback (shouldn't hit this — handleNext sets isGenerating before entering phase 14)
+    // Fallback (shouldn't hit this - handleNext sets isGenerating before entering phase 14)
     return el('div', { class:'cx-loading step-container' }, [
       el('h1', { text:'Preparing synthesis…' })
     ]);
@@ -2731,7 +2731,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
         el('h2', { text: isKey ? 'Full synthesis requires the QB API key.' : 'Synthesis is being finalised.' }),
         el('p', { text: isKey
           ? 'To generate the Brand Soul Map Codex in your brand voice, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. Your full 15-exercise session is saved and will not be lost. You can retry once the key is active, or export the raw session below.'
-          : 'Something interrupted the synthesis before it completed. Your answers are preserved. Click Retry to re-run the synthesis. The founder copy of this document will be produced — the tool will not ship a template instead.'
+          : 'Something interrupted the synthesis before it completed. Your answers are preserved. Click Retry to re-run the synthesis. The founder copy of this document will be produced - the tool will not ship a template instead.'
         }),
         state.codexError ? el('div', { class:'detail', text: state.codexError }) : null,
         el('div', { class:'actions' }, [
@@ -2804,7 +2804,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     // Actions
     function exportCodexPPTX(mode){
       if (!window.QB_exportPPTX){
-        alert('PPTX export still loading — try again in a second.');
+        alert('PPTX export still loading - try again in a second.');
         return;
       }
       var suffix = mode === 'editorial' ? '-marketing' : '';
@@ -2900,10 +2900,10 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       : (Array.isArray(cs.essentialWords) ? cs.essentialWords : []);
     // If essentialWords came back as a single string, try splitting on lines with ALLCAPS-em dash pattern
     if (essentialWords.length === 1 && typeof cs.essentialWords === 'string'){
-      var lines = cs.essentialWords.split(/\n+|\s*(?:[-—])\s*(?=[A-Z]{2,})/);
-      // Fallback: parse "WORD — cost. WORD2 — cost." pattern
+      var lines = cs.essentialWords.split(/\n+|\s*(?:[--])\s*(?=[A-Z]{2,})/);
+      // Fallback: parse "WORD - cost. WORD2 - cost." pattern
       var parsed = [];
-      var re = /([A-ZÀ-Ö0-9]{2,}(?:[-\s][A-ZÀ-Ö0-9]{2,})*)\s*[—:-]\s*([^A-Z]+?)(?=\s+[A-ZÀ-Ö0-9]{2,}\s*[—:-]|$)/g;
+      var re = /([A-ZÀ-Ö0-9]{2,}(?:[-\s][A-ZÀ-Ö0-9]{2,})*)\s*[-:-]\s*([^A-Z]+?)(?=\s+[A-ZÀ-Ö0-9]{2,}\s*[-:-]|$)/g;
       var m;
       while ((m = re.exec(cs.essentialWords)) !== null){
         parsed.push({ word: m[1].trim(), cost: m[2].trim() });
@@ -3057,8 +3057,8 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     var c = state.codex || {};
     var d = state.data;
     var lines = [];
-    lines.push('# ' + (d.brandName || 'Brand') + ' — Brand Soul Map Codex');
-    lines.push('*' + new Date().toISOString().split('T')[0] + ' · Session ' + (state.codexSessionId || '—') + '*');
+    lines.push('# ' + (d.brandName || 'Brand') + ' - Brand Soul Map Codex');
+    lines.push('*' + new Date().toISOString().split('T')[0] + ' · Session ' + (state.codexSessionId || '-') + '*');
     lines.push('');
     if (c.verdict){          lines.push('## Verdict');            lines.push(c.verdict); lines.push(''); }
     if (c.essence){          lines.push('## Essence');            lines.push('> ' + c.essence); lines.push(''); }
@@ -3089,7 +3089,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       if (c.communitySoul.essentialWords){
         lines.push('### Five essential words');
         lines.push(typeof c.communitySoul.essentialWords === 'string' ? c.communitySoul.essentialWords
-          : (Array.isArray(c.communitySoul.essentialWords) ? c.communitySoul.essentialWords.map(function(w){ return '- **' + (w.word || '') + '** — ' + (w.cost || ''); }).join('\n') : ''));
+          : (Array.isArray(c.communitySoul.essentialWords) ? c.communitySoul.essentialWords.map(function(w){ return '- **' + (w.word || '') + '** - ' + (w.cost || ''); }).join('\n') : ''));
         lines.push('');
       }
       sub('The unsaid promise', c.communitySoul.unsaidPromise);
@@ -3104,7 +3104,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       if (Array.isArray(c.voiceToneCode.samples)){
         lines.push('### Samples');
         c.voiceToneCode.samples.forEach(function(s){
-          lines.push('**' + (s.label || '') + '** — ' + (s.text || ''));
+          lines.push('**' + (s.label || '') + '** - ' + (s.text || ''));
           lines.push('');
         });
       }
@@ -3119,14 +3119,14 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     if (Array.isArray(c.tensionsToManage)){
       lines.push('## 07 · Tensions to manage');
       c.tensionsToManage.forEach(function(t){
-        lines.push('- **' + (t.tension || '') + '** — ' + (t.managementNote || ''));
+        lines.push('- **' + (t.tension || '') + '** - ' + (t.managementNote || ''));
       });
       lines.push('');
     }
     if (Array.isArray(c.risksAndBlindSpots)){
       lines.push('## 08 · Risks & blind spots');
       c.risksAndBlindSpots.forEach(function(r){
-        lines.push('- **' + (r.risk || '') + '** — ' + (r.mitigation || ''));
+        lines.push('- **' + (r.risk || '') + '** - ' + (r.mitigation || ''));
       });
       lines.push('');
     }
@@ -3233,19 +3233,19 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     '═══════════════════════════════════════════════════════════',
     'Before writing anything, perform these reads on the full payload.',
     '',
-    'READ 1 — The coherent identity: Across all 15 exercises, what is the single brand that keeps showing up? Not the brand they wrote. The brand their answers reveal.',
+    'READ 1 - The coherent identity: Across all 15 exercises, what is the single brand that keeps showing up? Not the brand they wrote. The brand their answers reveal.',
     '',
-    'READ 2 — The archetype stack tension: What specific contradictions does the primary + secondary + tension archetype combination create? How does the anti-brand and the always/never discipline those tensions?',
+    'READ 2 - The archetype stack tension: What specific contradictions does the primary + secondary + tension archetype combination create? How does the anti-brand and the always/never discipline those tensions?',
     '',
-    'READ 3 — The language pattern: What words, metaphors, and sensory references repeat across modules? The repetition is the signal.',
+    'READ 3 - The language pattern: What words, metaphors, and sensory references repeat across modules? The repetition is the signal.',
     '',
-    'READ 4 — The destination: If this identity is obeyed for five years, what kind of company does it become? What does its most ambitious expression look like?',
+    'READ 4 - The destination: If this identity is obeyed for five years, what kind of company does it become? What does its most ambitious expression look like?',
     '',
-    'READ 5 — The refusals: What is this brand already refusing, stated and unstated? The refusals define the position more than the claims do.',
+    'READ 5 - The refusals: What is this brand already refusing, stated and unstated? The refusals define the position more than the claims do.',
     '',
-    'READ 6 — The audience truth: Who, precisely, is the fan letter written to? What do they believe about themselves that brought them to this brand? What do they need permission to stop doing?',
+    'READ 6 - The audience truth: Who, precisely, is the fan letter written to? What do they believe about themselves that brought them to this brand? What do they need permission to stop doing?',
     '',
-    'READ 7 — The cultural inheritance: What does choosing this movement reveal about the founder\'s positioning relative to the current market?',
+    'READ 7 - The cultural inheritance: What does choosing this movement reveal about the founder\'s positioning relative to the current market?',
     '',
     'These reads are internal. Do not narrate them in the output.',
     '',
@@ -3308,7 +3308,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
     '  "tensionsToManage": [ {"tension":"...","managementNote":"..."}, ... 5-7 items ],',
     '  "risksAndBlindSpots": [ {"risk":"...","mitigation":"..."}, ... 3-5 items ],',
     '  "operatingPrinciples": [ 10 executable rules, each testable ],',
-    '  "voiceSamples": "(redundant with voiceToneCode.samples — same array)",',
+    '  "voiceSamples": "(redundant with voiceToneCode.samples - same array)",',
     '  "nextThreeMoves": [ {"move":"","rationale":"","tool":"Sensescape|Visual DNA|War Table|Voice Guide|Logo Direction"} x3 ],',
     '  "closingDirective": "One paragraph. Ends on a directive, not a reflection."',
     '}',
@@ -3362,7 +3362,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       if (artist) bits.push('by ' + artist);
       if (feels)  bits.push('feels ' + feels);
       if (why)    bits.push('why: ' + why);
-      return '  ' + (i+1) + '. ' + bits.join(' — ');
+      return '  ' + (i+1) + '. ' + bits.join(' - ');
     }).join('\n');
 
     return [
@@ -3373,13 +3373,13 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       'Founder: ' + [d.firstName, d.lastName].filter(Boolean).join(' '),
       'Company: ' + (d.companyName || ''),
       '',
-      '══════════════ MODULE I — IDENTITY ══════════════',
+      '══════════════ MODULE I - IDENTITY ══════════════',
       'Natural force chosen: ' + (d.mod1Force || ''),
       'Museum room composition: ' + (d.mod1Room || ''),
       'Mythological figure: ' + (d.mod1Myth || ''),
       'Identity portrait they wrote: ' + (d.mod1Portrait || ''),
       '',
-      '══════════════ MODULE II — PURPOSE ══════════════',
+      '══════════════ MODULE II - PURPOSE ══════════════',
       'Documentary title: ' + (d.docTitle || ''),
       'Opening image: ' + (d.docImage || ''),
       'Central argument: ' + (d.docArgument || ''),
@@ -3391,7 +3391,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       'Proof behavior: ' + (d.manifestoProof || ''),
       'What this belief opposes: ' + (d.manifestoOpposite || ''),
       '',
-      '══════════════ MODULE III — CRAFT ══════════════',
+      '══════════════ MODULE III - CRAFT ══════════════',
       'Primary archetype: ' + primA,
       'Secondary archetype: ' + secA,
       'Tension archetype: ' + tenA,
@@ -3409,18 +3409,18 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       'For: ' + (d.posFor || ''),
       'Not for: ' + (d.posNotFor || ''),
       '',
-      '══════════════ MODULE IV — TRIBE ══════════════',
-      'Culture — 5 words: ' + (d.cWords || []).join(', ') + ' | Essential: ' + (d.cEss || '') + ' | Why irreplaceable: ' + (d.cEssReason || ''),
-      'Customer — 5 words: ' + (d.cuWords || []).join(', ') + ' | Essential: ' + (d.cuEss || '') + ' | Belief that brought them: ' + (d.cuEssReason || ''),
-      'Voice — 5 words: ' + (d.vWords || []).join(', ') + ' | Essential: ' + (d.vEss || '') + ' | First 10 seconds feeling: ' + (d.vEssReason || ''),
-      'Look/Feel — 5 words: ' + (d.lWords || []).join(', ') + ' | Essential: ' + (d.lEss || '') + ' | Body feeling: ' + (d.lEssReason || ''),
-      'Value — 5 words: ' + (d.valWords || []).join(', ') + ' | Essential: ' + (d.valEss || '') + ' | What becomes possible: ' + (d.valEssReason || ''),
+      '══════════════ MODULE IV - TRIBE ══════════════',
+      'Culture - 5 words: ' + (d.cWords || []).join(', ') + ' | Essential: ' + (d.cEss || '') + ' | Why irreplaceable: ' + (d.cEssReason || ''),
+      'Customer - 5 words: ' + (d.cuWords || []).join(', ') + ' | Essential: ' + (d.cuEss || '') + ' | Belief that brought them: ' + (d.cuEssReason || ''),
+      'Voice - 5 words: ' + (d.vWords || []).join(', ') + ' | Essential: ' + (d.vEss || '') + ' | First 10 seconds feeling: ' + (d.vEssReason || ''),
+      'Look/Feel - 5 words: ' + (d.lWords || []).join(', ') + ' | Essential: ' + (d.lEss || '') + ' | Body feeling: ' + (d.lEssReason || ''),
+      'Value - 5 words: ' + (d.valWords || []).join(', ') + ' | Essential: ' + (d.valEss || '') + ' | What becomes possible: ' + (d.valEssReason || ''),
       'The fan letter they wrote: ' + (d.fanLetter || ''),
       'What surprised them writing it: ' + (d.fanSurprise || ''),
       'What this person needs permission for: ' + (d.fanNeeds || ''),
       'Target recognition: ' + (d.fanTarget || ''),
       '',
-      '══════════════ MODULE V — SIGNAL ══════════════',
+      '══════════════ MODULE V - SIGNAL ══════════════',
       'Aligned brand 1: ' + (d.a1 || '')  + ' | Quality: '  + (d.a1Q || ''),
       'Aligned brand 2: ' + (d.a2 || '')  + ' | Quality: '  + (d.a2Q || ''),
       'Non-aligned brand 1: ' + (d.na1 || '') + ' | Contrast: ' + (d.na1C || ''),
@@ -3444,7 +3444,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       'Emotional register: ' + (d.rhythmEmotion || ''),
       'Voice synthesis note: ' + (d.voiceSynthesis || ''),
       '',
-      '══════════════ MODULE VI — WORLD ══════════════',
+      '══════════════ MODULE VI - WORLD ══════════════',
       'Always list: ' + (d.always || []).filter(Boolean).join(' | '),
       'Core Always: ' + ((d.coreAlwaysIdx !== null && d.always && d.always[d.coreAlwaysIdx]) || ''),
       'Never list: '  + (d.nevers  || []).filter(Boolean).join(' | '),
@@ -3545,7 +3545,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
                             || (data.cuEss ? ('The ' + data.cuEss + ' who ' + (data.fanTarget || '')) : (existing.primaryPersona || '')),
         naturalForce:    data.mod1Force || existing.naturalForce || '',
         paradox:         data.posAdj1 && data.posAdj2 ? (data.posAdj1 + ' yet ' + data.posAdj2) : (existing.paradox || ''),
-        // NEW fields (spec Part 6) — downstream tools (Voice Guide, Logo Direction, content agents) read these
+        // NEW fields (spec Part 6) - downstream tools (Voice Guide, Logo Direction, content agents) read these
         verdict:              codex.verdict || '',
         operatingPrinciples:  Array.isArray(codex.operatingPrinciples) ? codex.operatingPrinciples : [],
         voiceSamples:         voiceSamples,
@@ -3560,7 +3560,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
       // Cloud-aware write: mirrors to Supabase if user is authed, no-op otherwise
       if (window.QB && QB.setQBP) { QB.setQBP(updated); }
       else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
-      // Note: qb_soul_map_done legacy flag removed — completion is recorded
+      // Note: qb_soul_map_done legacy flag removed - completion is recorded
       // by QB.openGate() → QB.recordCompletion() below as the single source.
       try {
         if (window.parent && window.parent !== window){
@@ -3591,7 +3591,7 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   function handleNext(){
     if (!isStepValid(state.currentStep)) return;
     if (state.currentStep === STEPS.length - 2){
-      // Entering synthesis — advance the step, then kick off the production Codex call.
+      // Entering synthesis - advance the step, then kick off the production Codex call.
       state.currentStep = STEPS.length - 1;
       state.maxStepReached = Math.max(state.maxStepReached, state.currentStep);
       state.codexSessionId = state.codexSessionId || newSessionId();

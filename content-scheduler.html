@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — Content Scheduler</title>
+<title>QB BrandOS - Content Scheduler</title>
 <script>
 (function(){
   try{var t=localStorage.getItem('qb-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}
@@ -231,7 +231,7 @@ select option{background:var(--bg-deep);color:var(--text-1)}
           Buffer is a free social media scheduling tool. Connect it once and QB OS queues your content automatically across Instagram, LinkedIn, X, and Facebook.
         </p>
         <div class="token-input-row">
-          <input type="password" id="token-input" placeholder="Buffer Access Token — from buffer.com/developers/apps" autocomplete="off"/>
+          <input type="password" id="token-input" placeholder="Buffer Access Token - from buffer.com/developers/apps" autocomplete="off"/>
           <button class="btn btn-primary brass" id="btn-connect">Connect</button>
         </div>
         <div class="manifesto">
@@ -552,8 +552,8 @@ function renderQueue() {
     var preview     = esc(post.text.substring(0, 200)) + (post.text.length > 200 ? '&hellip;' : '');
 
     var warns = '';
-    if (!post.profileId && post.status === 'queued') warns += '<div class="queue-item-warn">&#9888; No profile ID — add before scheduling</div>';
-    if (!post.date     && post.status === 'queued') warns += '<div class="queue-item-warn">&#9888; No date selected — required before scheduling</div>';
+    if (!post.profileId && post.status === 'queued') warns += '<div class="queue-item-warn">&#9888; No profile ID - add before scheduling</div>';
+    if (!post.date     && post.status === 'queued') warns += '<div class="queue-item-warn">&#9888; No date selected - required before scheduling</div>';
     if (post.status === 'error' && post.error)       warns += '<div class="queue-item-err">Error: ' + esc(post.error) + '</div>';
 
     var removeBtn = post.status !== 'scheduled'

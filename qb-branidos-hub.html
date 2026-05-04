@@ -204,7 +204,7 @@ em { font-style:italic; }
 .banner a { color:var(--gold); text-decoration:none; font-weight:600; margin-left:0.5em; }
 .banner a:hover { text-decoration:underline; text-underline-offset:3px; }
 
-/* STICKY NAV — app surface (Design System v3.4 Part 20.14) */
+/* STICKY NAV - app surface (Design System v3.4 Part 20.14) */
 .nav-wrap { padding:var(--space-s) var(--space-m-l); position:sticky; top:0; z-index:80; background:var(--cream); }
 .nav {
   max-width:1320px; margin-inline:auto;
@@ -425,12 +425,12 @@ window.QB_HAS_ACCESS = function(feature) {
 
   // FIX #4 (part B): localStorage override placed BEFORE the first await so it runs
   // synchronously. load() (in the next script block) runs after this entire script tag
-  // executes but before the async fetch resolves — the override is active in time.
+  // executes but before the async fetch resolves - the override is active in time.
   const _orig = localStorage.setItem.bind(localStorage);
   localStorage.setItem = function(key, value) {
     _orig(key, value);
     if (key === 'qb_qbp' && session && session.token) {
-      // FIX #2: Guard against undefined supabaseId — was producing /profiles?id=eq.undefined
+      // FIX #2: Guard against undefined supabaseId - was producing /profiles?id=eq.undefined
       if (!session.supabaseId) return;
       try {
         const qbp = JSON.parse(value);
@@ -507,35 +507,35 @@ const PHASES = [
   { n: 5, id: '05', label: 'Intelligence',   color: 'var(--phase-5)', rgb: '168, 144, 62' },
 ];
 
-// FIX #11: Duplicate icons removed — ◈ (was on logo-dir + panel), ◫ (was on visual-dna + scheduler)
-// FIX #13: panel is ph:5 directly — phantom ph:6 + post-hoc remapping forEach removed
+// FIX #11: Duplicate icons removed - ◈ (was on logo-dir + panel), ◫ (was on visual-dna + scheduler)
+// FIX #13: panel is ph:5 directly - phantom ph:6 + post-hoc remapping forEach removed
 const TOOLS = [
-  // Phase 01 — Discovery
-  { id: 'archetype-compass', ph: 1, name: 'Archetype Compass',     desc: 'The first step. Read your trinity — primary archetype, secondary texture, and tension.', file: 'archetype-compass.html',     icon: '✦' },
+  // Phase 01 - Discovery
+  { id: 'archetype-compass', ph: 1, name: 'Archetype Compass',     desc: 'The first step. Read your trinity - primary archetype, secondary texture, and tension.', file: 'archetype-compass.html',     icon: '✦' },
   { id: 'soul-map',    ph: 1, name: 'Brand Soul Map',              desc: 'Uncover your brand identity through 6 modules and 15 exercises.',        file: 'brand-soul-map.html',                icon: '◬' },
   { id: 'sensescape',  ph: 1, name: 'Sensescape',                  desc: 'Map the sensory universe of your brand across 47 spectrums.',             file: 'sensescape.html',                    icon: '◌' },
   { id: 'visual-dna',  ph: 1, name: 'Visual DNA',                  desc: 'Build your visual reference library through instinctive selection.',      file: 'visual-dna.html',                    icon: '◫' },
   { id: 'war-table',   ph: 1, name: 'The War Table',               desc: 'Strategic prioritization tool. Score initiatives across 6 dimensions.',   file: 'war-table.html',                     icon: '◧' },
-  { id: 'profiles', ph: 1, name: 'The Profiles',         desc: 'Build three personas in one journey — NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.', file: 'the-profiles.html',          icon: '◭' },
+  { id: 'profiles', ph: 1, name: 'The Profiles',         desc: 'Build three personas in one journey - NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.', file: 'the-profiles.html',          icon: '◭' },
   { id: 'brand-doc',   ph: 1, name: 'Brand Document',              desc: 'Compile all Phase 01 outputs into your master foundational document.',     file: 'brand-document.html',                icon: '■' },
 
-  // Phase 02 — Brand Creation
+  // Phase 02 - Brand Creation
   { id: 'logo-dir',    ph: 2, name: 'Logo Direction Agent',        desc: 'Complete logo brief and prompt generation derived from your QBP.',        file: 'logo-direction-agent.html',          icon: '◈' },
   { id: 'logo-eval',   ph: 2, name: 'Logo Evaluation Agent',       desc: 'Upload concepts for AI scoring against your established identity.',       file: 'logo-evaluation-agent.html',         icon: '◎' },
   { id: 'voice',       ph: 2, name: 'Voice Guide Agent',           desc: 'Complete verbal identity: tone modes, rules, and live copy generator.',   file: 'voice-guide-agent.html',             icon: '◉' },
 
-  // Phase 03 — Content
+  // Phase 03 - Content
   { id: 'instagram',   ph: 3, name: 'Instagram Seed Agent',        desc: 'First 12 posts: captions, briefs, hooks, and strategic sequence.',        file: 'instagram-seed-agent.html',          icon: '⬡' },
   { id: 'linkedin',    ph: 3, name: 'LinkedIn Strategy Agent',     desc: 'Profile rewrites and 20 targeted posts scripted across 4 weeks.',         file: 'linkedin-strategy-agent.html',       icon: '⬢' },
   { id: 'youtube',     ph: 3, name: 'YouTube Strategy Agent',      desc: 'Channel strategy, 6 full scripts, and short-form repurpose briefs.',      file: 'youtube-strategy-agent.html',        icon: '▷' },
   { id: 'newsletter',  ph: 3, name: 'Newsletter Architecture',     desc: 'Structure your publishing platform: first 4 issues fully drafted.',       file: 'newsletter-architecture-agent.html', icon: '✉' },
   { id: 'bridge',      ph: 3, name: 'Content Bridge',              desc: 'Translate scripts into production briefs for HeyGen, Canva, etc.',        file: 'content-bridge.html',                icon: '⇢' },
 
-  // Phase 04 — Execution
+  // Phase 04 - Execution
   { id: 'repurpose',   ph: 4, name: 'Content Repurposing Engine',  desc: '1 long-form piece → 25 native pieces across 10 platforms.',               file: 'content-repurposing-engine.html',    icon: '⟳' },
-  { id: 'scheduler',   ph: 4, name: 'Content Scheduler',           desc: 'Organize, tag, and map your generated content to a timeline.',            file: 'content-scheduler.html',             icon: '◱' }, /* was ◫ — duplicate of visual-dna */
+  { id: 'scheduler',   ph: 4, name: 'Content Scheduler',           desc: 'Organize, tag, and map your generated content to a timeline.',            file: 'content-scheduler.html',             icon: '◱' }, /* was ◫ - duplicate of visual-dna */
 
-  // Phase 05 — Intelligence
+  // Phase 05 - Intelligence
   { id: 'performance', ph: 5, name: 'Brand Performance Dashboard', desc: 'Translate data into brand signals, health scores, and directions.',       file: 'brand-performance-dashboard.html',   icon: '◐' },
   { id: 'quarterly',   ph: 5, name: 'Quarterly Brand Review',      desc: 'Update QBP, grade the quarter, and set the 90-day trajectory.',          file: 'quarterly-brand-review-agent.html',  icon: '↻' },
   { id: 'panel',       ph: 5, name: 'Predictive Panel',            desc: 'Test before launch via synthetic persona panels and scenarios.',          file: 'predictive-panel.html',              icon: '◑' }, /* was ◈ (duplicate) + was ph:6 remapped */
@@ -577,7 +577,7 @@ function toggleTheme() {
   if (btn) btn.textContent = S.theme === 'dark' ? '☀️' : '🌙';
 }
 
-// FIX #5: showNotif was referenced but never defined — would throw ReferenceError on any call
+// FIX #5: showNotif was referenced but never defined - would throw ReferenceError on any call
 function showNotif(msg, duration = 3000) {
   const n = el('div', { class: 'notif' }, msg);
   document.getElementById('notifs').appendChild(n);
@@ -800,7 +800,7 @@ function buildHealthMeter(health) {
 
   content.appendChild(statusWrap);
   content.appendChild(el('h1', { class: 'title-large font-serif' }, headingText));
-  // FIX #9: card-desc class removed — it carries flex:1 for tool-card flex columns,
+  // FIX #9: card-desc class removed - it carries flex:1 for tool-card flex columns,
   // not applicable in this meter-content context; body-large alone is correct here.
   content.appendChild(el('p', { class: 'body-large' }, bodyText));
 
@@ -816,7 +816,7 @@ function buildHealthMeter(health) {
 }
 
 // FIX #12: startCardIdx passed in so animation delays are computed from a correct
-// running total — was hardcoded as (idx * 5) + tIdx which assumed 5 tools per phase.
+// running total - was hardcoded as (idx * 5) + tIdx which assumed 5 tools per phase.
 function buildPhaseSection(phaseDef, phaseTools, idx, startCardIdx) {
   const section = el('div', {
     id: `phase-${phaseDef.n}`,
@@ -855,7 +855,7 @@ function buildPhaseSection(phaseDef, phaseTools, idx, startCardIdx) {
 
     const footer = el('div', { class: 'card-footer' });
 
-    const statusMap = { completed: ['✓', 'Completed'], progress: ['—', 'Ready'], locked: ['×', 'Locked'] };
+    const statusMap = { completed: ['✓', 'Completed'], progress: ['-', 'Ready'], locked: ['×', 'Locked'] };
     const [icon, text] = statusMap[tool.state] || ['×', 'Locked'];
     footer.appendChild(el('div', { class: `card-status status-${tool.state} label-mono` }, [
       el('span', {}, icon + ' ' + text)
@@ -865,7 +865,7 @@ function buildPhaseSection(phaseDef, phaseTools, idx, startCardIdx) {
       footer.appendChild(el('span', { class: 'card-btn' },
         tool.state === 'completed' ? 'Review →' : 'Launch →'
       ));
-      // FIX #14: addEventListener used — was card.onclick = ... (direct assignment),
+      // FIX #14: addEventListener used - was card.onclick = ... (direct assignment),
       // inconsistent with the el() helper's onClick → addEventListener pattern
       card.addEventListener('click', () => launchTool(tool));
     } else {
@@ -883,7 +883,7 @@ function buildPhaseSection(phaseDef, phaseTools, idx, startCardIdx) {
 function launchTool(tool) {
   if (tool.state === 'locked') return;
 
-  // FIX #3: Access tier enforced for gated tools — was completely absent; any free user
+  // FIX #3: Access tier enforced for gated tools - was completely absent; any free user
   // with a complete QBP could open the Predictive Panel
   if (tool.id === 'panel' && !window.QB_HAS_ACCESS('panel')) {
     showNotif('Predictive Panel requires a Pro or Agency plan.');
@@ -894,7 +894,7 @@ function launchTool(tool) {
   const provider = localStorage.getItem('qb_provider');
   if (provider) params.set('provider', provider);
 
-  // Security: API key NOT passed via URL — visible in address bar, server logs, Referer headers.
+  // Security: API key NOT passed via URL - visible in address bar, server logs, Referer headers.
   // Tool pages on the same origin read qb_apikey from localStorage directly.
 
   // FIX #8: QBP encoded and passed via URL so tools open with fresh context even in

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QB BrandOS — Visual DNA</title>
-<meta name="description" content="Visual DNA · QB BrandOS Phase 01 — trust your eye, discover your brand's visual signature.">
+<title>QB BrandOS - Visual DNA</title>
+<meta name="description" content="Visual DNA · QB BrandOS Phase 01 - trust your eye, discover your brand's visual signature.">
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
 <script src="/qb-gate.js"></script>
@@ -1178,7 +1178,7 @@ body.immersive{ overflow:hidden; }
               el('div', { style:{marginBottom:'24px'} }, [
                 el('label', { class:'vd-label', text:'Session Identifier' }),
                 (function(){
-                  var i = el('input', { type:'text', class:'vd-input', value: state.session.code === 'DNA001' ? 'Verne Jewels — March 2026' : state.session.client, placeholder:'Client — Month Year' });
+                  var i = el('input', { type:'text', class:'vd-input', value: state.session.code === 'DNA001' ? 'Verne Jewels - March 2026' : state.session.client, placeholder:'Client - Month Year' });
                   i.addEventListener('input', function(e){ state.session.client = e.target.value; });
                   return i;
                 })()
@@ -1422,7 +1422,7 @@ body.immersive{ overflow:hidden; }
             return el('div', { class:'reveal-tile' }, el('img', { class:'quantum-image', src:img.url, alt:'' }));
           })
         )
-      : el('div', { class:'reveal-empty', text:'No finalists — try a longer session.' });
+      : el('div', { class:'reveal-empty', text:'No finalists - try a longer session.' });
     return el('section', { class:'phase-reveal' }, [
       content,
       el('button', { class:'reveal-cta', type:'button', onclick:function(){ setPhase('capture'); } }, 'Proceed to diagnostics →')
@@ -1536,7 +1536,7 @@ body.immersive{ overflow:hidden; }
         el('div', { class:'report-banner-inner' }, [
           el('span', { class:'pulse-dot' }),
           document.createTextNode('Report securely generated to'),
-          el('strong', { text: lead.email || '—' })
+          el('strong', { text: lead.email || '-' })
         ])
       ),
       el('div', { class:'report-wrap animate-in' }, [
@@ -1720,7 +1720,7 @@ body.immersive{ overflow:hidden; }
       // Cloud-aware write: mirrors to Supabase if user is authed
       if (window.QB && QB.setQBP) { QB.setQBP(updated); }
       else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
-      // Note: qb_visual_dna_done legacy flag removed — completion is recorded
+      // Note: qb_visual_dna_done legacy flag removed - completion is recorded
       // by QB.openGate() → QB.recordCompletion() below as the single source.
       // Open soft gate (no-op if already authed)
       try {
