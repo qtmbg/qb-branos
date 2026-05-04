@@ -910,20 +910,27 @@
 
   .persona-avatar {
     position:absolute; inset:0;
-    display:flex; align-items:center; justify-content:center;
+    padding:0;
     opacity:0; transition:opacity 0.5s var(--ease-qb);
-    padding:5%;
     z-index:2;
   }
   .persona-avatar.active {
     opacity:1;
     animation:qb-float-tilt 8s ease-in-out infinite;
   }
+  /* Fill the frame edge-to-edge so the figure merges with its tinted
+     backdrop instead of floating as a PNG inside it. The transparent
+     edges of the illustration let the frame tint bleed through, and
+     anchoring the bottom keeps the figure grounded against the rule. */
   .persona-avatar img,
   .persona-avatar .persona-svg {
-    max-width:100%; max-height:100%; width:100%; height:100%;
-    object-fit:contain; object-position:center bottom;
+    width:100%; height:100%;
+    object-fit:cover;
+    object-position:center bottom;
     display:block;
+    /* Slight upscale for a more grounded, full-frame composition */
+    transform:scale(1.04);
+    transform-origin:center bottom;
   }
   .persona-stage_tag {
     position:absolute; left:50%; bottom:-18px; transform:translateX(-50%);
