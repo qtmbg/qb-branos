@@ -28,6 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap">
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -357,6 +358,37 @@ button { cursor: pointer; font-family: var(--font-sans); border: none; outline: 
 }
 .ep-card:hover { border-color: var(--border-medium); background: var(--bg-elevated); }
 .ep-card.active { border-color: var(--brass); background: var(--bg-overlay); box-shadow: 0 0 12px var(--brass-faint); }
+/* === v3.4 OVERRIDE BLOCK (cream/ink/Fraunces ecosystem unification) === */
+:root {
+  --cream:#FBF5E6 !important; --cream-card:#F2EBD3; --cream-warm:#ECDDB8; --cream-edge:#DBD4C0;
+  --cream-rose:#F4D9DD; --white:#FFFEF8;
+  --ink:#2D1521 !important;
+  --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.50);
+  --ink-33:rgba(45,21,33,0.33); --ink-25:rgba(45,21,33,0.25);
+  --gold:#E0B069; --gold-deep:#B58840; --rose:#CA6180; --rose-deep:#8E3F58;
+  --teal:#9ED3DC; --teal-deep:#5BA8B5; --aubergine:#4A2B3A;
+  --pink:#FCB7C7; --butter:#FEFD99; --teal-soft:#C5E5E9; --rose-soft:#ECC4D0;
+  --phase-acquisition:#C5E5E9; --phase-discovery:#9CC4A2; --phase-creation:#B5C8E5;
+  --phase-content:#FCB7C7; --phase-execution:#E89380; --phase-intelligence:#B080A0;
+  --illus-forest:#5B7E6A; --illus-peach:#E89380; --illus-coral:#DC6B52;
+  --illus-mustard:#D4B85A; --illus-rust:#B8704D; --illus-lavender:#B8A0C7; --illus-pink-soft:#F4C4D0;
+  --bg-void:var(--cream) !important; --bg-deep:var(--cream-card) !important; --bg-base:var(--cream) !important;
+  --bg-surface:var(--cream-card) !important; --bg-elevated:var(--white) !important; --bg-overlay:var(--white) !important;
+  --border-subtle:var(--ink-25) !important; --border-medium:var(--ink-33) !important; --border-strong:var(--ink-50) !important;
+  --text-1:var(--ink) !important; --text-2:var(--ink-75) !important; --text-3:var(--ink-50) !important; --text-4:var(--ink-33) !important;
+  --patina:var(--phase-discovery) !important; --patina-lit:var(--illus-forest) !important;
+  --patina-dim:rgba(156,196,162,0.25) !important; --patina-faint:rgba(156,196,162,0.10) !important;
+  --brass:var(--gold) !important; --brass-lit:var(--gold-deep) !important;
+  --brass-dim:rgba(224,176,105,0.25) !important; --brass-faint:rgba(224,176,105,0.10) !important;
+  --error:var(--rose-deep) !important;
+  --font-display:'Fraunces','Times New Roman',serif !important;
+  --font-serif:'Fraunces','Times New Roman',serif !important;
+  --serif:'Fraunces','Times New Roman',serif !important;
+  --font-body:'Inter',-apple-system,sans-serif !important;
+  --font-mono:'JetBrains Mono',monospace !important;
+}
+[data-theme="dark"] { /* deactivated by v3.4 override */ }
+
 </style>
 
 <script>
@@ -412,6 +444,13 @@ button { cursor: pointer; font-family: var(--font-sans); border: none; outline: 
 </script>
 </head>
 <body>
+
+<!-- Banner (verbatim copy) -->
+<div style="background:var(--ink); color:var(--cream); text-align:center; padding:0.7em 1.5rem; font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; letter-spacing:0.04em; position:relative; z-index:120;">
+  <strong>Signal Scan is live.</strong> Free brand diagnostic. 5 minutes to your first insight.
+  <a href="signal-scan.html" style="color:var(--gold); text-decoration:none; font-weight:600; margin-left:0.5em;">Run yours →</a>
+</div>
+
 <div id="root"></div>
 <script type="text/babel">
 const {useState,useEffect,useRef}=React;
