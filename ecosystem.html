@@ -188,9 +188,11 @@
     will-change:transform; white-space:nowrap;
   }
   @media (hover:hover) {
-    .qb-button:hover .qb-button_content { transform:translateY(-0.35em); filter:brightness(1.05); }
+    .qb-button:hover .qb-button_content { transform:translateY(-0.45em) scale(1.02); filter:brightness(1.08); }
+    .qb-button:hover::before { transform:translateY(0.05em) scale(0.99); }
   }
-  .qb-button:active .qb-button_content { transform:translateY(0.28em) scale(0.99); filter:brightness(0.9); }
+  .qb-button:active .qb-button_content { transform:translateY(0.32em) scale(0.96); filter:brightness(0.92); transition-duration:0.15s; }
+  .qb-button:active::before { transform:translateY(0.42em) scale(0.99); transition-duration:0.15s; }
   .qb-button.is-primary   .qb-button_content { background:var(--gold);      color:var(--ink); }
   .qb-button.is-secondary .qb-button_content { background:var(--rose-deep); color:var(--cream); }
   .qb-button.is-active    .qb-button_content { background:var(--teal-deep); color:var(--ink); transform:translateY(0.1em); box-shadow:inset 0 0 0 0.2em var(--ink); }
@@ -371,8 +373,9 @@
     will-change:transform;
   }
   .agent-pill_dot { width:7px; height:7px; border-radius:50%; background:var(--rose); flex-shrink:0; }
-  .agent-pill.is-anchor { background:var(--gold); }
-  .agent-pill.is-anchor .agent-pill_dot { background:var(--ink); }
+  /* Brand Profile is the spine: same pill surface as the rest, distinctive gold dot */
+  .agent-pill.is-anchor { background:var(--cream-card); border-width:2px; }
+  .agent-pill.is-anchor .agent-pill_dot { background:var(--gold); width:9px; height:9px; box-shadow:0 0 0 3px rgba(224,176,105,0.25); }
   /* Phase-coloured dots tie each agent to its phase visually */
   .agent-pill.is-acquire  .agent-pill_dot { background:var(--phase-acquisition); }
   .agent-pill.is-discover .agent-pill_dot { background:var(--phase-discovery); }
@@ -390,6 +393,13 @@
     font-family:'JetBrains Mono',monospace; font-size:var(--step--2); letter-spacing:0.14em;
     text-transform:uppercase; color:var(--ink-50);
     margin-top:var(--space-s); text-align:center;
+    display:flex; flex-direction:column; gap:0.45em; line-height:1.4;
+  }
+  .agent-cluster_count_sub {
+    font-family:'Fraunces',serif; font-style:italic;
+    font-variation-settings:"wght" 500,"opsz" 36,"SOFT" 70;
+    font-size:var(--step--1); text-transform:none; letter-spacing:0;
+    color:var(--ink-75);
   }
 
   /* =====================================================
@@ -831,8 +841,8 @@
   /* =====================================================
      PERSONAS - tab switcher on dark
      ===================================================== */
-  .persona-shell { display:grid; gap:var(--space-l); grid-template-columns:1fr; }
-  @media (min-width:900px) { .persona-shell { grid-template-columns:1fr 1.2fr; } }
+  .persona-shell { display:grid; gap:var(--space-l); grid-template-columns:1fr; align-items:start; }
+  @media (min-width:900px) { .persona-shell { grid-template-columns:1.25fr 1fr; gap:var(--space-xl); } }
   .persona-tags {
     display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center;
     margin-bottom:var(--space-l);
@@ -1029,18 +1039,51 @@
   .pricing-tagline em { font-style:italic; }
 
   .price-grid {
-    display:grid; grid-template-columns:1fr; gap:var(--space-s-m);
-    margin-top:var(--space-l);
+    display:grid; grid-template-columns:1fr; gap:var(--space-m-l);
+    margin-top:var(--space-xl);
   }
   @media (min-width:700px)  { .price-grid { grid-template-columns:repeat(2,1fr); } }
   @media (min-width:1100px) { .price-grid { grid-template-columns:repeat(4,1fr); } }
   .price-card {
+    position:relative;
     background:var(--cream-card); border:2px solid var(--ink); border-radius:24px;
     padding:var(--space-s-m); display:flex; flex-direction:column; gap:var(--space-xs);
+    isolation:isolate;
+    transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
     box-shadow:0 9px var(--ink);
   }
   @media (min-width:640px) { .price-card { box-shadow:0 16px var(--ink); } }
-  .price-card.is-feat { background:var(--butter); position:relative; }
+  .price-card > * { position:relative; z-index:3; }
+  /* Layered tinted shadow card behind every tier so each price feels active and inviting */
+  .price-card::before {
+    content:''; position:absolute; inset:0;
+    border:2px solid var(--ink); border-radius:24px;
+    transform:translate(10px,10px); z-index:-1;
+    transition:transform 0.5s var(--ease-qb);
+  }
+  /* Tier-specific tints that respect the phase palette */
+  .price-card:nth-child(1)::before { background:var(--phase-acquisition); }
+  .price-card:nth-child(2)::before { background:var(--gold); }
+  .price-card:nth-child(3)::before { background:var(--phase-creation); }
+  .price-card:nth-child(4)::before { background:var(--phase-intelligence); }
+  @media (hover:hover) {
+    .price-card:hover { transform:translate(-6px,-6px); box-shadow:0 22px var(--ink); }
+    .price-card:hover::before { transform:translate(20px,20px); }
+  }
+  .price-card.is-feat { background:var(--butter); }
+  .price-card.is-feat::after {
+    content:'Most popular'; position:absolute;
+    top:-14px; right:18px;
+    background:var(--rose); color:var(--cream);
+    border:2px solid var(--ink); border-radius:9999px;
+    padding:0.35em 0.9em;
+    font-family:'JetBrains Mono',monospace; font-size:0.6rem; letter-spacing:0.12em;
+    text-transform:uppercase; z-index:4;
+    box-shadow:0 4px var(--ink);
+    animation:qb-float-y 4s ease-in-out infinite;
+  }
+  /* Hide the inline "Most popular" tag span since we render it via ::after */
+  .price-card.is-feat .price-tag { display:none; }
   .price-name {
     display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;
     font-family:'Fraunces',serif;
@@ -1592,7 +1635,10 @@
         <span class="agent-pill is-intel" style="--d:8.5s;--dl:-0.2s"><span class="agent-pill_dot"></span>Quarterly Review</span>
         <span class="agent-pill is-intel" style="--d:9.1s;--dl:-1.5s"><span class="agent-pill_dot"></span>BrandOS Hub</span>
       </div>
-      <div class="agent-cluster_count"><strong>20</strong> connected agents · One Brand Profile</div>
+      <div class="agent-cluster_count">
+        <span><strong>20</strong> connected agents</span>
+        <span class="agent-cluster_count_sub">All connected through one Brand Profile.</span>
+      </div>
     </div>
   </section>
 
@@ -1960,8 +2006,9 @@
   <section class="section is-dark">
     <div class="qb-x">
       <header class="section_header">
-        <span class="qb-tag on-dark"><span class="qb-tag_content">From founders who used it</span></span>
-        <h2 class="qb-type-heading qb-type-balance reveal">What founders <em>shipped.</em></h2>
+        <span class="qb-tag on-dark"><span class="qb-tag_content">Real voices</span></span>
+        <h2 class="qb-type-heading qb-type-balance reveal">Words from people who <em>lived the work.</em></h2>
+        <p class="qb-type-opening qb-type-pretty reveal rd1" style="max-width:620px;margin-inline:auto;color:rgba(251,245,230,0.84);">QB BrandOS is the digitisation of a 20-year practice. These are the people who shaped that practice with me, in the room, before the software existed.</p>
       </header>
 
       <div class="testi-grid">
@@ -2054,7 +2101,7 @@
         </article>
 
         <div class="testi-more reveal rd4">
-          <a href="https://www.linkedin.com/in/nizzarbenchekroune/details/recommendations/" target="_blank" rel="noopener" class="qb-button on-dark"><span class="qb-button_content">Read more than 150 reviews</span></a>
+          <a href="https://www.fiverr.com/nizzar" target="_blank" rel="noopener" class="qb-button is-primary on-dark"><span class="qb-button_content">Read 150+ reviews on Fiverr →</span></a>
         </div>
       </div>
     </div>
@@ -2316,7 +2363,14 @@
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
         e.target.classList.add('in');
-        e.target.querySelectorAll && e.target.querySelectorAll('[data-w]').forEach(function (b) { b.style.width = b.getAttribute('data-w'); });
+        // The target itself may BE a [data-w] bar that was observed directly
+        if (e.target.hasAttribute && e.target.hasAttribute('data-w')) {
+          e.target.style.width = e.target.getAttribute('data-w');
+        }
+        // And any [data-w] descendants animate fill too
+        e.target.querySelectorAll && e.target.querySelectorAll('[data-w]').forEach(function (b) {
+          b.style.width = b.getAttribute('data-w');
+        });
         io.unobserve(e.target);
       });
     }, { threshold: 0.15 });
