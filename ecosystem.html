@@ -373,6 +373,13 @@
   .agent-pill_dot { width:7px; height:7px; border-radius:50%; background:var(--rose); flex-shrink:0; }
   .agent-pill.is-anchor { background:var(--gold); }
   .agent-pill.is-anchor .agent-pill_dot { background:var(--ink); }
+  /* Phase-coloured dots tie each agent to its phase visually */
+  .agent-pill.is-acquire  .agent-pill_dot { background:var(--phase-acquisition); }
+  .agent-pill.is-discover .agent-pill_dot { background:var(--phase-discovery); }
+  .agent-pill.is-create   .agent-pill_dot { background:var(--phase-creation); }
+  .agent-pill.is-content  .agent-pill_dot { background:var(--phase-content); }
+  .agent-pill.is-execute  .agent-pill_dot { background:var(--phase-execution); }
+  .agent-pill.is-intel    .agent-pill_dot { background:var(--phase-intelligence); }
   @keyframes agent-float {
     0%,100% { transform:translate(0,0); }
     25% { transform:translate(2px,-3px); }
@@ -438,11 +445,12 @@
     position:relative;
     background:var(--cream-card); border:2px solid var(--ink); border-radius:24px;
     padding:var(--space-s-m); display:flex; flex-direction:column; gap:var(--space-2xs);
-    color:var(--ink); z-index:2;
-    box-shadow:0 9px var(--ink);
+    color:var(--ink);
+    isolation:isolate;
     transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
   }
-  @media (min-width:640px) { .how-card { box-shadow:0 16px var(--ink); } }
+  /* Card content always wins the cascade vs the layer pseudos */
+  .how-card > * { position:relative; z-index:3; }
   .how-card::before,
   .how-card::after {
     content:''; position:absolute; inset:0;
@@ -452,11 +460,11 @@
   }
   .how-card::before {
     background:var(--rose-soft);
-    transform:translate(8px,8px); z-index:1;
+    transform:translate(8px,8px); z-index:-1;
   }
   .how-card::after {
     background:var(--phase-discovery);
-    transform:translate(16px,16px); z-index:0;
+    transform:translate(16px,16px); z-index:-2;
   }
   /* Per-card layer color rotation so each step reads distinct */
   .how-card:nth-child(1)::before { background:var(--phase-discovery); }
@@ -839,28 +847,69 @@
   }
   .persona-tag:hover { border-color:var(--gold); }
   .persona-tag.active { background:var(--gold); color:var(--ink); border-color:var(--gold); }
+  /* Persona stage: harmonised frame with stacked phase-colour layers behind,
+     so every character gets the same visual weight regardless of PNG aspect. */
   .persona-stage {
-    background:rgba(244,240,235,0.04); border:2px solid rgba(244,240,235,0.18); border-radius:32px;
-    aspect-ratio:1/1; max-width:420px; margin-inline:auto;
-    position:relative; overflow:hidden;
+    position:relative;
+    aspect-ratio:5/6; max-width:480px;
+    margin-inline:auto;
+    background:var(--cream);
+    border:2px solid var(--cream); border-radius:32px;
+    overflow:hidden;
+    isolation:isolate;
+    transition:transform 0.6s var(--ease-qb);
+    z-index:1;
   }
+  .persona-stage::before,
+  .persona-stage::after {
+    content:''; position:absolute; inset:0;
+    border:2px solid var(--cream); border-radius:32px;
+    pointer-events:none;
+    transition:transform 0.6s var(--ease-qb);
+  }
+  .persona-stage::before {
+    background:var(--phase-discovery);
+    transform:translate(14px,14px);
+    z-index:-1;
+  }
+  .persona-stage::after {
+    background:var(--rose);
+    transform:translate(28px,28px);
+    z-index:-2;
+  }
+  /* Tinted backdrop per active persona so the illustration sits on its own colour world */
+  .persona-stage[data-p="0"] { background:var(--phase-discovery); }
+  .persona-stage[data-p="1"] { background:var(--rose-soft); }
+  .persona-stage[data-p="2"] { background:var(--phase-creation); }
+  .persona-stage[data-p="3"] { background:var(--butter); }
+  .persona-stage[data-p="0"]::before { background:var(--gold); }
+  .persona-stage[data-p="1"]::before { background:var(--phase-creation); }
+  .persona-stage[data-p="2"]::before { background:var(--phase-content); }
+  .persona-stage[data-p="3"]::before { background:var(--phase-discovery); }
+  .persona-stage[data-p="0"]::after { background:var(--rose); }
+  .persona-stage[data-p="1"]::after { background:var(--gold); }
+  .persona-stage[data-p="2"]::after { background:var(--rose); }
+  .persona-stage[data-p="3"]::after { background:var(--phase-execution); }
+  @media (hover:hover) {
+    .persona-stage:hover { transform:translate(-6px,-6px); }
+    .persona-stage:hover::before { transform:translate(20px,20px); }
+    .persona-stage:hover::after  { transform:translate(40px,40px); }
+  }
+
   .persona-avatar {
     position:absolute; inset:0;
     display:flex; align-items:center; justify-content:center;
     opacity:0; transition:opacity 0.5s var(--ease-qb);
-    padding:8%;
+    padding:6%;
   }
   .persona-avatar.active {
     opacity:1;
     animation:qb-float-tilt 8s ease-in-out infinite;
   }
   .persona-avatar img,
-  .persona-avatar .persona-svg { max-width:100%; max-height:100%; width:100%; height:100%; object-fit:contain; }
-  .persona-stage {
-    transition:transform 0.6s var(--ease-qb), border-color 0.6s var(--ease-qb);
-  }
-  @media (hover:hover) {
-    .persona-stage:hover { transform:translateY(-6px) rotate(-0.8deg); border-color:var(--gold); }
+  .persona-avatar .persona-svg {
+    max-width:100%; max-height:100%; width:100%; height:100%;
+    object-fit:contain; object-position:center bottom;
   }
   .persona-stage_tag {
     position:absolute; left:50%; bottom:1rem; transform:translateX(-50%);
@@ -869,6 +918,8 @@
     padding:0.4em 1em;
     font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.14em;
     text-transform:uppercase; white-space:nowrap;
+    box-shadow:0 4px var(--ink);
+    z-index:5;
   }
   .persona-detail h3 {
     font-family:'Fraunces',serif;
@@ -881,7 +932,7 @@
   .lb-period::before { content:""; display:block; }
 
   /* =====================================================
-     TESTIMONIALS - 4 cards on dark
+     TESTIMONIALS - real reviews from real people, on dark
      ===================================================== */
   .testi-grid {
     display:grid; grid-template-columns:1fr; gap:var(--space-m);
@@ -890,25 +941,44 @@
   @media (min-width:700px)  { .testi-grid { grid-template-columns:repeat(2,1fr); } }
   @media (min-width:1100px) { .testi-grid { grid-template-columns:repeat(4,1fr); } }
   .testi-card {
+    position:relative;
     background:var(--cream); color:var(--ink);
     border:2px solid var(--ink); border-radius:24px;
     padding:var(--space-s);
     display:flex; flex-direction:column; gap:var(--space-xs);
     box-shadow:0 9px var(--cream-rose);
+    text-decoration:none;
+    transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
+  }
+  @media (hover:hover) {
+    a.testi-card:hover { transform:translate(-4px,-4px); box-shadow:0 13px var(--gold); }
+  }
+  .testi-card.is-link::after {
+    content:'↗'; position:absolute; top:0.6rem; right:0.8rem;
+    font-family:'JetBrains Mono',monospace; font-size:1rem;
+    color:var(--ink-50);
+    transition:color 0.4s var(--ease-qb), transform 0.4s var(--ease-qb);
+  }
+  @media (hover:hover) {
+    a.testi-card.is-link:hover::after { color:var(--ink); transform:translate(2px,-2px); }
   }
   .testi-head { display:flex; align-items:center; gap:0.6rem; }
   .testi-avatar {
-    width:40px; height:40px; border-radius:9999px;
+    width:42px; height:42px; border-radius:9999px;
     border:2px solid var(--ink);
     display:inline-flex; align-items:center; justify-content:center;
     font-family:'Fraunces',serif;
     font-variation-settings:"wght" 700,"opsz" 36,"SOFT" 80;
     font-size:1.05rem; color:var(--ink); flex-shrink:0;
   }
-  .testi-avatar.is-discovery { background:var(--phase-discovery); }
-  .testi-avatar.is-execution { background:var(--phase-execution); }
-  .testi-avatar.is-gold      { background:var(--gold); }
-  .testi-avatar.is-rose      { background:var(--rose-soft); }
+  .testi-avatar.is-discovery    { background:var(--phase-discovery); }
+  .testi-avatar.is-execution    { background:var(--phase-execution); }
+  .testi-avatar.is-gold         { background:var(--gold); }
+  .testi-avatar.is-rose         { background:var(--rose-soft); }
+  .testi-avatar.is-creation     { background:var(--phase-creation); }
+  .testi-avatar.is-content      { background:var(--phase-content); }
+  .testi-avatar.is-intel        { background:var(--phase-intelligence); }
+  .testi-avatar.is-acquire      { background:var(--phase-acquisition); }
   .testi-name { font-family:'Inter',sans-serif; font-weight:700; font-size:var(--step--1); color:var(--ink); line-height:1.1; }
   .testi-role {
     font-family:'JetBrains Mono',monospace; font-size:0.6rem; letter-spacing:0.12em;
@@ -917,21 +987,11 @@
   .testi-quote {
     font-family:'Fraunces',serif; font-style:italic;
     font-variation-settings:"wght" 500,"opsz" 36,"SOFT" 70;
-    font-size:var(--step-0); line-height:1.35; color:var(--ink);
+    font-size:var(--step--1); line-height:1.45; color:var(--ink);
   }
-  .testi-foot {
-    margin-top:auto; padding-top:var(--space-xs);
-    border-top:1px dashed var(--ink-25);
-    display:flex; align-items:baseline; gap:0.5rem; flex-wrap:wrap;
-  }
-  .testi-stat {
-    font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 700,"opsz" 60,"SOFT" 70;
-    font-size:var(--step-2); line-height:1; color:var(--gold);
-  }
-  .testi-stat-lbl {
-    font-family:'JetBrains Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
-    text-transform:uppercase; color:var(--ink-75); flex:1;
+  .testi-more {
+    grid-column:1 / -1;
+    display:flex; justify-content:center; margin-top:var(--space-m);
   }
   .testi-disclaimer {
     margin-top:var(--space-l); text-align:center;
@@ -960,6 +1020,14 @@
     background:var(--gold); color:var(--ink);
     font-size:0.65rem; letter-spacing:0.05em;
   }
+  .pricing-tagline {
+    font-family:'Fraunces',serif; font-style:italic;
+    font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 80,"WONK" 1;
+    font-size:var(--step-3); line-height:1; color:var(--gold);
+    text-align:center; margin-top:var(--space-xs);
+  }
+  .pricing-tagline em { font-style:italic; }
+
   .price-grid {
     display:grid; grid-template-columns:1fr; gap:var(--space-s-m);
     margin-top:var(--space-l);
@@ -1498,29 +1566,31 @@
         Free forever tier · No credit card · 5 min to your first brand
       </div>
 
-      <!-- 20 agent pills cluster -->
+      <!-- 20 agent pills cluster. Brand Profile is the spine (gold anchor); each
+           agent's dot picks up its own phase colour so the constellation reads
+           as a system, not a random list. -->
       <div class="agent-cluster" aria-label="The 20 connected agents">
         <span class="agent-pill is-anchor" style="--d:9s;--dl:0s"><span class="agent-pill_dot"></span>Brand Profile</span>
-        <span class="agent-pill" style="--d:7s;--dl:-0.4s"><span class="agent-pill_dot"></span>Signal Scan</span>
-        <span class="agent-pill" style="--d:8s;--dl:-1s"><span class="agent-pill_dot"></span>Archetype Compass</span>
-        <span class="agent-pill" style="--d:7.5s;--dl:-1.6s"><span class="agent-pill_dot"></span>Brand Soul Map</span>
-        <span class="agent-pill" style="--d:9s;--dl:-2.2s"><span class="agent-pill_dot"></span>Sensescape</span>
-        <span class="agent-pill" style="--d:6.8s;--dl:-2.8s"><span class="agent-pill_dot"></span>Visual DNA</span>
-        <span class="agent-pill" style="--d:8.4s;--dl:-3.2s"><span class="agent-pill_dot"></span>War Table</span>
-        <span class="agent-pill" style="--d:7.2s;--dl:-0.8s"><span class="agent-pill_dot"></span>Logo Direction</span>
-        <span class="agent-pill" style="--d:9.2s;--dl:-1.4s"><span class="agent-pill_dot"></span>Logo Evaluation</span>
-        <span class="agent-pill" style="--d:7s;--dl:-2s"><span class="agent-pill_dot"></span>Voice Guide</span>
-        <span class="agent-pill" style="--d:8s;--dl:-2.6s"><span class="agent-pill_dot"></span>Instagram Agent</span>
-        <span class="agent-pill" style="--d:7.6s;--dl:-3.4s"><span class="agent-pill_dot"></span>LinkedIn Agent</span>
-        <span class="agent-pill" style="--d:8.8s;--dl:-0.6s"><span class="agent-pill_dot"></span>YouTube Agent</span>
-        <span class="agent-pill" style="--d:7.4s;--dl:-1.2s"><span class="agent-pill_dot"></span>Newsletter</span>
-        <span class="agent-pill" style="--d:8.2s;--dl:-1.8s"><span class="agent-pill_dot"></span>Content Bridge</span>
-        <span class="agent-pill" style="--d:7.8s;--dl:-2.4s"><span class="agent-pill_dot"></span>Repurposing Engine</span>
-        <span class="agent-pill" style="--d:8.1s;--dl:-2.7s"><span class="agent-pill_dot"></span>Content Scheduler</span>
-        <span class="agent-pill" style="--d:8.6s;--dl:-3s"><span class="agent-pill_dot"></span>Predictive Panel</span>
-        <span class="agent-pill" style="--d:7.3s;--dl:-3.6s"><span class="agent-pill_dot"></span>Dashboard</span>
-        <span class="agent-pill" style="--d:8.5s;--dl:-0.2s"><span class="agent-pill_dot"></span>Quarterly Review</span>
-        <span class="agent-pill" style="--d:9.1s;--dl:-1.5s"><span class="agent-pill_dot"></span>BrandOS Hub</span>
+        <span class="agent-pill is-acquire" style="--d:7s;--dl:-0.4s"><span class="agent-pill_dot"></span>Signal Scan</span>
+        <span class="agent-pill is-discover" style="--d:8s;--dl:-1s"><span class="agent-pill_dot"></span>Archetype Compass</span>
+        <span class="agent-pill is-discover" style="--d:7.5s;--dl:-1.6s"><span class="agent-pill_dot"></span>Brand Soul Map</span>
+        <span class="agent-pill is-discover" style="--d:9s;--dl:-2.2s"><span class="agent-pill_dot"></span>Sensescape</span>
+        <span class="agent-pill is-discover" style="--d:6.8s;--dl:-2.8s"><span class="agent-pill_dot"></span>Visual DNA</span>
+        <span class="agent-pill is-discover" style="--d:8.4s;--dl:-3.2s"><span class="agent-pill_dot"></span>War Table</span>
+        <span class="agent-pill is-create" style="--d:7.2s;--dl:-0.8s"><span class="agent-pill_dot"></span>Logo Direction</span>
+        <span class="agent-pill is-create" style="--d:9.2s;--dl:-1.4s"><span class="agent-pill_dot"></span>Logo Evaluation</span>
+        <span class="agent-pill is-create" style="--d:7s;--dl:-2s"><span class="agent-pill_dot"></span>Voice Guide</span>
+        <span class="agent-pill is-content" style="--d:8s;--dl:-2.6s"><span class="agent-pill_dot"></span>Instagram Agent</span>
+        <span class="agent-pill is-content" style="--d:7.6s;--dl:-3.4s"><span class="agent-pill_dot"></span>LinkedIn Agent</span>
+        <span class="agent-pill is-content" style="--d:8.8s;--dl:-0.6s"><span class="agent-pill_dot"></span>YouTube Agent</span>
+        <span class="agent-pill is-content" style="--d:7.4s;--dl:-1.2s"><span class="agent-pill_dot"></span>Newsletter</span>
+        <span class="agent-pill is-content" style="--d:8.2s;--dl:-1.8s"><span class="agent-pill_dot"></span>Content Bridge</span>
+        <span class="agent-pill is-execute" style="--d:7.8s;--dl:-2.4s"><span class="agent-pill_dot"></span>Repurposing Engine</span>
+        <span class="agent-pill is-execute" style="--d:8.1s;--dl:-2.7s"><span class="agent-pill_dot"></span>Content Scheduler</span>
+        <span class="agent-pill is-intel" style="--d:8.6s;--dl:-3s"><span class="agent-pill_dot"></span>Predictive Panel</span>
+        <span class="agent-pill is-intel" style="--d:7.3s;--dl:-3.6s"><span class="agent-pill_dot"></span>Dashboard</span>
+        <span class="agent-pill is-intel" style="--d:8.5s;--dl:-0.2s"><span class="agent-pill_dot"></span>Quarterly Review</span>
+        <span class="agent-pill is-intel" style="--d:9.1s;--dl:-1.5s"><span class="agent-pill_dot"></span>BrandOS Hub</span>
       </div>
       <div class="agent-cluster_count"><strong>20</strong> connected agents · One Brand Profile</div>
     </div>
@@ -1624,7 +1694,7 @@
         <div class="feature-media reveal rd1">
           <div class="mock-card">
             <div class="mock-card_eyebrow">Brand Soul Map · Live</div>
-            <h3 class="mock-card_h">Verne Jewels, North Carolina</h3>
+            <h3 class="mock-card_h">Selvaggi Built, California</h3>
             <div style="display:flex;flex-direction:column;gap:0.5rem">
               <div class="progress-row">
                 <span class="progress-label">Brand essence</span>
@@ -1642,7 +1712,7 @@
                 <span class="progress-val">82%</span>
               </div>
             </div>
-            <div class="progress-note">"Your story, set in gold." The Creator with Lover sensibilities. Heirloom collectors.</div>
+            <div class="progress-note">"Built wild, built to last." The Creator with Hero conviction. Bespoke build clients.</div>
           </div>
         </div>
       </div>
@@ -1688,16 +1758,16 @@
                 <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
                 <div class="qb-phone_body">
                   <div class="pm_eye">Brand Profile · Live</div>
-                  <div class="pm_h">Verne Jewels,<br>North Carolina</div>
-                  <div class="pm_quote">Your story, set in gold.</div>
+                  <div class="pm_h">Selvaggi Built,<br>California</div>
+                  <div class="pm_quote">Built wild, built to last.</div>
                   <div class="pm_chips">
                     <div class="pm_chip"><span>Brand essence</span><span class="pm_chip_v">95%</span></div>
                     <div class="pm_chip"><span>Archetype</span><span class="pm_chip_v">Creator</span></div>
-                    <div class="pm_chip"><span>Sensory map</span><span class="pm_chip_v">Romantic</span></div>
+                    <div class="pm_chip"><span>Sensory map</span><span class="pm_chip_v">Rugged</span></div>
                   </div>
                   <div class="pm_tags">
                     <span>Creator</span>
-                    <span>Heirloom</span>
+                    <span>Bespoke</span>
                   </div>
                 </div>
               </div>
@@ -1816,7 +1886,7 @@
       </div>
 
       <div class="persona-shell">
-        <div class="persona-stage">
+        <div class="persona-stage" id="personaStage" data-p="0">
           <div class="persona-avatar active" data-avatar="0">
             <img src="img/illus/blank-slate.png" alt="The Blank Slate. Solo skater with coffee, drink-in-hand pose." loading="lazy">
           </div>
@@ -1895,68 +1965,98 @@
       </header>
 
       <div class="testi-grid">
-        <article class="testi-card reveal">
+        <a href="https://www.instagram.com/reels/CY34hGhAiAc/" target="_blank" rel="noopener" class="testi-card is-link reveal">
           <div class="testi-head">
-            <div class="testi-avatar is-discovery">M.</div>
+            <div class="testi-avatar is-gold">G.</div>
             <div>
-              <div class="testi-name">M. Ayache</div>
-              <div class="testi-role">Beta · Solo founder</div>
+              <div class="testi-name">Gary Vaynerchuk</div>
+              <div class="testi-role">"Gary Vee"</div>
             </div>
           </div>
-          <p class="testi-quote">"I built a brand in one afternoon. The Brand Profile thing is genuinely new. I stopped explaining my brand to freelancers."</p>
-          <div class="testi-foot">
-            <span class="testi-stat">47x</span>
-            <span class="testi-stat-lbl">Faster than my last brand sprint</span>
-          </div>
-        </article>
+          <p class="testi-quote">"You have no idea, it got me goosebumps. Please keep sharing the love."</p>
+        </a>
 
         <article class="testi-card reveal rd1">
           <div class="testi-head">
-            <div class="testi-avatar is-execution">R.</div>
+            <div class="testi-avatar is-rose">G.</div>
             <div>
-              <div class="testi-name">R. Kessler</div>
-              <div class="testi-role">Beta · Fintech studio</div>
+              <div class="testi-name">Giulio Vinaccia</div>
+              <div class="testi-role">Winner Compass de Oro</div>
             </div>
           </div>
-          <p class="testi-quote">"The Predictive Panel told us to tighten the price anchor. We did. Conversion lifted in week one."</p>
-          <div class="testi-foot">
-            <span class="testi-stat" style="color:var(--rose)">+22%</span>
-            <span class="testi-stat-lbl">Conversion in week one</span>
-          </div>
+          <p class="testi-quote">"He is the embodiment of Avant-garde."</p>
         </article>
 
         <article class="testi-card reveal rd2">
           <div class="testi-head">
-            <div class="testi-avatar is-gold">S.</div>
+            <div class="testi-avatar is-creation">C.</div>
             <div>
-              <div class="testi-name">S. Lindqvist</div>
-              <div class="testi-role">Beta · Content founder</div>
+              <div class="testi-name">Christian Cordella</div>
+              <div class="testi-role">Academy Award winning costume designer</div>
             </div>
           </div>
-          <p class="testi-quote">"I write content faster than I used to brief it. Same voice every time. My team stopped asking me to review."</p>
-          <div class="testi-foot">
-            <span class="testi-stat" style="color:var(--gold)">0</span>
-            <span class="testi-stat-lbl">Draft reviews per week now</span>
-          </div>
+          <p class="testi-quote">"Nizzar built a brilliant branding method."</p>
         </article>
+
+        <a href="https://www.youtube.com/watch?v=hwOZG5TR-r8" target="_blank" rel="noopener" class="testi-card is-link reveal rd3">
+          <div class="testi-head">
+            <div class="testi-avatar is-discovery">K.</div>
+            <div>
+              <div class="testi-name">Keith Grossman</div>
+              <div class="testi-role">Time Magazine President</div>
+            </div>
+          </div>
+          <p class="testi-quote">"Nizzar consistently uplifted me and helped me think. That's unbelievable."</p>
+        </a>
+
+        <article class="testi-card reveal">
+          <div class="testi-head">
+            <div class="testi-avatar is-content">H.</div>
+            <div>
+              <div class="testi-name">Halima Taha</div>
+              <div class="testi-role">Best-selling Author</div>
+            </div>
+          </div>
+          <p class="testi-quote">"Do your thing and soar beloved. May god open the minds, hearts and pockets to support your vision."</p>
+        </article>
+
+        <article class="testi-card reveal rd1">
+          <div class="testi-head">
+            <div class="testi-avatar is-execution">S.</div>
+            <div>
+              <div class="testi-name">Stanislas Wawrinka</div>
+              <div class="testi-role">3 times grand slam winner</div>
+            </div>
+          </div>
+          <p class="testi-quote">"Nizzar is ahead of his time. I learned and earned a lot thanks to him."</p>
+        </article>
+
+        <a href="https://www.instagram.com/thenizzar/p/DLnC8uLspBA/" target="_blank" rel="noopener" class="testi-card is-link reveal rd2">
+          <div class="testi-head">
+            <div class="testi-avatar is-intel">C.</div>
+            <div>
+              <div class="testi-name">Charly Palmer</div>
+              <div class="testi-role">Artist</div>
+            </div>
+          </div>
+          <p class="testi-quote">"We share the same values and love for the invisible."</p>
+        </a>
 
         <article class="testi-card reveal rd3">
           <div class="testi-head">
-            <div class="testi-avatar is-rose">D.</div>
+            <div class="testi-avatar is-acquire">M.</div>
             <div>
-              <div class="testi-name">D. Brennan</div>
-              <div class="testi-role">Beta · Agency partner</div>
+              <div class="testi-name">Mike Mongo</div>
+              <div class="testi-role">Co-Founder Obey</div>
             </div>
           </div>
-          <p class="testi-quote">"Eight client portals, white-label, brand-consistent outputs. Replaced three tools and a junior strategist."</p>
-          <div class="testi-foot">
-            <span class="testi-stat" style="color:var(--teal)">8</span>
-            <span class="testi-stat-lbl">Client brands, one system</span>
-          </div>
+          <p class="testi-quote">"Brother I know you see the world through my own eyes. Thank you more than words can bear."</p>
         </article>
-      </div>
 
-      <p class="testi-disclaimer">Early beta feedback · Names abbreviated at users' request</p>
+        <div class="testi-more reveal rd4">
+          <a href="https://www.linkedin.com/in/nizzarbenchekroune/details/recommendations/" target="_blank" rel="noopener" class="qb-button on-dark"><span class="qb-button_content">Read more than 150 reviews</span></a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1966,8 +2066,9 @@
       <header class="section_header">
         <span class="qb-tag is-soft"><span class="qb-tag_content">Pricing</span></span>
         <h2 class="qb-type-heading qb-type-balance reveal">Phase 01 free. <em>Phases 02 to 05 paid.</em></h2>
-        <p class="qb-type-opening qb-type-pretty reveal rd1">Phase 01 is radically free, forever. Phase 02–05 is where the agents do the work for you.</p>
-        <div class="billing-toggle reveal rd2" role="tablist" aria-label="Billing period">
+        <p class="pricing-tagline reveal rd1"><em>Free steak, paid fries.</em></p>
+        <p class="qb-type-opening qb-type-pretty reveal rd2">Phase 01 is radically free, forever. Phase 02 to 05 is where the agents do the work for you.</p>
+        <div class="billing-toggle reveal rd3" role="tablist" aria-label="Billing period">
           <button type="button" class="bt-opt active" data-billing="monthly" role="tab" aria-selected="true">Monthly</button>
           <button type="button" class="bt-opt" data-billing="annual" role="tab" aria-selected="false">Annual <span class="bt-save">save 17%</span></button>
         </div>
@@ -2274,6 +2375,9 @@
         document.querySelectorAll('.persona-avatar').forEach(function (a) { a.classList.remove('active'); });
         var av = document.querySelector('.persona-avatar[data-avatar="' + i + '"]');
         if (av) av.classList.add('active');
+        // Switch the stage tint per active persona so the layered backdrop rotates with the character
+        var stage = document.getElementById('personaStage');
+        if (stage) stage.setAttribute('data-p', String(i));
       });
     });
   })();
