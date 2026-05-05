@@ -1231,13 +1231,14 @@
   }
 
   /* =====================================================
-     FINAL CTA - merged with bike strip (single closing moment)
+     FINAL CTA - merged with footer into one closing block
+     (same cream-warm surface, no internal border)
      ===================================================== */
   .final-cta {
     position:relative;
     background:var(--cream-warm);
-    border-block:2px solid var(--ink);
-    padding-block:var(--space-2xl);
+    border-top:2px solid var(--ink);
+    padding-block:var(--space-2xl) 0;
     text-align:center;
     overflow:hidden;
   }
@@ -1303,7 +1304,10 @@
     text-wrap:balance;
   }
 
-  .footer { background:var(--cream); padding:var(--space-2xl) var(--space-m-l) var(--space-l); border-top:2px solid var(--ink); }
+  /* Footer flows directly out of the final CTA: same cream-warm surface,
+     no top border so the bike's road extends straight into the footer.
+     No more duplicate stats block, the KPI row in final CTA is the SOT. */
+  .footer { background:var(--cream-warm); padding:var(--space-l) var(--space-m-l); border-top:0; }
   .footer_grid { max-width:1240px; margin-inline:auto; display:grid; grid-template-columns:1fr; gap:var(--space-l-xl); }
   @media (min-width:900px) { .footer_grid { grid-template-columns:2fr 1fr 1fr 1fr; } }
   .footer_brand { font-family:'Fraunces',serif; font-variation-settings:"wght" 600,"opsz" 36; font-size:var(--step-0); display:inline-flex; align-items:center; gap:0.5em; }
@@ -2391,64 +2395,51 @@
       </div>
       <div class="hero_meta">No download · No credit card · 5 minutes</div>
     </div>
+
+    <!-- Footer flows out of the same cream-warm surface, no border.
+         Stats are NOT repeated here; the KPI row above is the SOT. -->
+    <footer class="footer">
+      <div class="footer_grid">
+        <div>
+          <a href="index.html" class="footer_brand">
+            <span class="nav-brand_dot" aria-hidden="true"></span>
+            Quantum Branding
+          </a>
+          <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
+        </div>
+        <div class="footer_col">
+          <div class="footer_col-title">Product</div>
+          <a href="#how">How it works</a>
+          <a href="#what">The 20 tools</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#scanner">Free Signal Scan</a>
+        </div>
+        <div class="footer_col">
+          <div class="footer_col-title">Company</div>
+          <a href="#about">About</a>
+          <a href="https://nizzar.com" target="_blank" rel="noopener">nizzar.com</a>
+          <a href="mailto:me@qtmbg.com">Contact</a>
+        </div>
+        <div class="footer_col">
+          <div class="footer_col-title">Social</div>
+          <a href="https://linkedin.com/in/nizzar" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://instagram.com/thequantumbranding" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://x.com/quantumbranding" target="_blank" rel="noopener">X (Twitter)</a>
+        </div>
+      </div>
+
+      <div class="footer_bottom">
+        <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
+        <nav class="footer_bottom_links">
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Data</a>
+        </nav>
+      </div>
+    </footer>
   </section>
 
 </main>
-
-<footer class="footer">
-  <div class="footer_grid">
-    <div>
-      <a href="index.html" class="footer_brand">
-        <span class="nav-brand_dot" aria-hidden="true"></span>
-        Quantum Branding
-      </a>
-      <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
-    </div>
-    <div class="footer_col">
-      <div class="footer_col-title">Product</div>
-      <a href="#how">How it works</a>
-      <a href="#what">The 20 tools</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#scanner">Free Signal Scan</a>
-    </div>
-    <div class="footer_col">
-      <div class="footer_col-title">Company</div>
-      <a href="#about">About</a>
-      <a href="https://nizzar.com" target="_blank" rel="noopener">nizzar.com</a>
-      <a href="mailto:me@qtmbg.com">Contact</a>
-    </div>
-    <div class="footer_col">
-      <div class="footer_col-title">Social</div>
-      <a href="https://linkedin.com/in/nizzar" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="https://instagram.com/thequantumbranding" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://x.com/quantumbranding" target="_blank" rel="noopener">X (Twitter)</a>
-    </div>
-  </div>
-
-  <div class="footer_stats">
-    <div class="footer_stat">
-      <div class="footer_stat_v"><span data-count="20">0</span></div>
-      <div class="footer_stat_l">Agent tools</div>
-    </div>
-    <div class="footer_stat">
-      <div class="footer_stat_v"><span data-count="1">0</span></div>
-      <div class="footer_stat_l">Brand Profile</div>
-    </div>
-    <div class="footer_stat">
-      <div class="footer_stat_v">$<span data-count="0">0</span></div>
-      <div class="footer_stat_l">To start</div>
-    </div>
-  </div>
-
-  <div class="footer_bottom">
-    <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
-    <nav class="footer_bottom_links">
-      <a href="#">Terms</a>
-      <a href="#">Privacy</a>
-      <a href="#">Data</a>
-    </nav>
-  </div>
-</footer>
 
 <script>
   // Loading bar idle
