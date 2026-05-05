@@ -15,6 +15,285 @@
 })();
 </script>
 <style>
+/* === CANONICAL CHASSIS OVERRIDE (ecosystem SOT, full pixel continuity) === */
+/* Force the v3.4 surface tokens regardless of any legacy :root that follows */
+:root,
+[data-theme="dark"],
+[data-theme="light"] {
+  --cream:#FBF5E6 !important;
+  --cream-soft:#F2EBD3 !important;
+  --cream-deep:#ECDDB8 !important;
+  --cream-card:#F2EBD3 !important;
+  --cream-warm:#ECDDB8 !important;
+  --cream-edge:#DBD4C0 !important;
+  --cream-rose:#F4D9DD !important;
+  --cream-line:rgba(45,21,33,0.14) !important;
+  --white:#FFFEF8 !important;
+  --bg-void:#FBF5E6 !important;
+  --bg-deep:#F2EBD3 !important;
+  --bg-base:#FBF5E6 !important;
+  --bg-surface:#F2EBD3 !important;
+  --bg-elevated:#FFFEF8 !important;
+  --bg-overlay:#FFFEF8 !important;
+  --border-subtle:rgba(45,21,33,0.10) !important;
+  --border-medium:rgba(45,21,33,0.18) !important;
+  --border-strong:rgba(45,21,33,0.30) !important;
+  --ink:#2D1521 !important;
+  --ink-soft:rgba(45,21,33,0.75) !important;
+  --ink-mute:rgba(45,21,33,0.50) !important;
+  --ink-faint:rgba(45,21,33,0.33) !important;
+  --ink-75:rgba(45,21,33,0.75) !important;
+  --ink-50:rgba(45,21,33,0.50) !important;
+  --ink-33:rgba(45,21,33,0.33) !important;
+  --ink-25:rgba(45,21,33,0.25) !important;
+  --text-1:#2D1521 !important;
+  --text-2:rgba(45,21,33,0.75) !important;
+  --text-3:rgba(45,21,33,0.50) !important;
+  --text-4:rgba(45,21,33,0.33) !important;
+  --gold:#E0B069 !important;
+  --gold-deep:#B58840 !important;
+  --rose:#CA6180 !important;
+  --rose-deep:#8E3F58 !important;
+  --teal:#9ED3DC !important;
+  --teal-deep:#5BA8B5 !important;
+  --aubergine:#4A2B3A !important;
+  --pink:#FCB7C7 !important;
+  --butter:#FEFD99 !important;
+  --teal-soft:#C5E5E9 !important;
+  --rose-soft:#ECC4D0 !important;
+  --phase-acquisition:#C5E5E9 !important;
+  --phase-discovery:#9CC4A2 !important;
+  --phase-creation:#B5C8E5 !important;
+  --phase-content:#FCB7C7 !important;
+  --phase-execution:#E89380 !important;
+  --phase-intelligence:#B080A0 !important;
+  --illus-forest:#5B7E6A !important;
+  --illus-peach:#E89380 !important;
+  --illus-coral:#DC6B52 !important;
+  --illus-mustard:#D4B85A !important;
+  --illus-rust:#B8704D !important;
+  --illus-lavender:#B8A0C7 !important;
+  --illus-pink-soft:#F4C4D0 !important;
+  --patina:#9CC4A2 !important;
+  --patina-lit:#5B7E6A !important;
+  --patina-dim:rgba(156,196,162,0.25) !important;
+  --patina-faint:rgba(156,196,162,0.10) !important;
+  --patina-deep:#2D1521 !important;
+  --brass:#E0B069 !important;
+  --brass-lit:#B58840 !important;
+  --brass-dim:rgba(224,176,105,0.25) !important;
+  --brass-faint:rgba(224,176,105,0.10) !important;
+  --terra:#E89380 !important;
+  --plum:#B080A0 !important;
+  --warmred:#8E3F58 !important;
+  --pill-bg:#F2EBD3 !important;
+  --pill-bg-hover:#ECDDB8 !important;
+  --pill-border:#2D1521 !important;
+  --pill-ink:#2D1521 !important;
+  --scrim:rgba(251,245,230,0.90) !important;
+  --skeleton:rgba(224,176,105,0.33) !important;
+  --error:#8E3F58 !important;
+  --warning:#B58840 !important;
+  --info:#5BA8B5 !important;
+  --success:#9CC4A2 !important;
+  --ease:cubic-bezier(0.19,1,0.22,1) !important;
+  --ease-qb:cubic-bezier(0.19,1,0.22,1) !important;
+  --ease-standard:cubic-bezier(0.4,0,0.2,1) !important;
+  --ease-spring:cubic-bezier(0.175,0.885,0.32,1.275) !important;
+  --r-pill:9999px !important;
+  --r-card:24px !important;
+  --r-card-lg:32px !important;
+  --f-display:'Fraunces','Times New Roman',serif !important;
+  --f-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif !important;
+  --f-mono:'JetBrains Mono',ui-monospace,monospace !important;
+  --font-display:'Fraunces','Times New Roman',serif !important;
+  --font-serif:'Fraunces','Times New Roman',serif !important;
+  --font-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif !important;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace !important;
+  --serif:'Fraunces','Times New Roman',serif !important;
+}
+
+/* Body always cream + ink, no dark mode default. */
+html, body {
+  background:var(--cream) !important;
+  color:var(--ink) !important;
+}
+
+/* CANONICAL BANNER */
+.banner, .banner-canonical {
+  background:var(--ink) !important; color:var(--cream) !important; text-align:center;
+  padding:0.7em 1.5rem !important;
+  font-family:var(--f-body) !important; font-size:0.78rem; font-weight:500; letter-spacing:0.04em;
+  position:relative; z-index:120;
+  border:0;
+}
+.banner a, .banner-canonical a {
+  color:var(--gold) !important; text-decoration:none; font-weight:600; margin-left:0.5em;
+}
+.banner a:hover, .banner-canonical a:hover { text-decoration:underline; text-underline-offset:3px; }
+
+/* CANONICAL NAV (floating cream pill) */
+.nav-wrap { padding:1.125rem 1.5rem; position:sticky; top:0; z-index:80; background:var(--cream); }
+.nav-wrap > .nav, .nav.is-canonical {
+  max-width:1320px; margin-inline:auto;
+  display:flex !important; align-items:center; justify-content:space-between; gap:1rem;
+  background:var(--cream) !important; border:2px solid var(--ink) !important; border-radius:9999px !important;
+  padding:0.6rem 0.6rem 0.6rem 1.4rem !important;
+  box-shadow:0 6px var(--ink) !important;
+  width:auto; height:auto; min-height:0; min-width:0;
+  position:static !important;
+}
+.nav-wrap .nav-brand, .nav-brand.is-canonical {
+  display:inline-flex; align-items:center; gap:0.6rem;
+  font-family:var(--f-display) !important;
+  font-variation-settings:"wght" 600,"opsz" 36,"SOFT" 70,"WONK" 0 !important;
+  font-size:1.125rem !important; color:var(--ink) !important; text-decoration:none; line-height:1;
+}
+.nav-wrap .nav-brand_dot, .nav-brand_dot.is-canonical {
+  width:0.65em !important; height:0.65em !important; border-radius:50%;
+  background:var(--rose) !important;
+  display:inline-block;
+  box-shadow:0 0 0 3px rgba(202,97,128,0.18) !important;
+  animation:nav-dot-pulse 2.4s var(--ease-qb) infinite;
+}
+@keyframes nav-dot-pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.18); } }
+
+/* CANONICAL HAMBURGER */
+.hamburger.is-canonical, .nav-wrap .hamburger {
+  display:none; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  width:44px; height:44px; border:2px solid var(--ink); border-radius:9999px;
+  background:var(--cream); cursor:pointer; padding:0;
+}
+@media (max-width:999px) { .nav-wrap .hamburger { display:inline-flex; } }
+.hamburger.is-canonical span, .nav-wrap .hamburger span {
+  display:block; width:18px; height:2px; background:var(--ink); border-radius:2px;
+}
+
+/* CANONICAL MOBILE MENU */
+.mobile-menu {
+  position:fixed; inset:0; z-index:90; background:var(--cream);
+  padding:2.5rem 1.5rem; display:none; flex-direction:column;
+}
+.mobile-menu[data-open="true"] { display:flex !important; }
+.mobile-menu_head { display:flex; justify-content:space-between; align-items:center; margin-bottom:2.25rem; }
+.mobile-menu_close {
+  width:44px; height:44px; border-radius:9999px; border:2px solid var(--ink); background:var(--cream);
+  font-size:1.1rem; cursor:pointer;
+}
+.mobile-menu_list { display:flex; flex-direction:column; gap:1.25rem; }
+.mobile-menu_list a {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 500,"opsz" 72,"SOFT" 70;
+  font-size:2rem; color:var(--ink); text-decoration:none;
+  border-bottom:1px solid var(--ink-25); padding:0.5em 0;
+}
+.mobile-menu_foot { margin-top:auto; padding-top:2.25rem; }
+
+/* CANONICAL QB-BUTTON two-layer 3D pill */
+.qb-button {
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  background:transparent; border:0; padding:0; font-size:1.875rem; cursor:pointer;
+  isolation:isolate; text-decoration:none; color:inherit;
+}
+.qb-button::before {
+  content:''; position:absolute; inset:0; border-radius:9999px; background:var(--ink);
+  transform:translateY(0.17em) scale(0.99);
+  transition:transform 0.4s var(--ease-qb); z-index:-1;
+}
+.qb-button_content {
+  position:relative; display:inline-flex; align-items:center; justify-content:center; gap:0.5em;
+  border:2px solid var(--ink); border-radius:9999px;
+  background:var(--white); color:var(--ink);
+  padding:1.1em 1.5em;
+  font-family:var(--f-body); font-weight:700; font-size:0.5em; line-height:1.5em;
+  letter-spacing:0.02em;
+  transform:translateY(-0.17em);
+  transition:transform 0.4s var(--ease-qb),filter 0.4s var(--ease-qb),background 0.4s var(--ease-qb),color 0.4s var(--ease-qb);
+  white-space:nowrap;
+}
+@media (hover:hover) {
+  .qb-button:hover .qb-button_content { transform:translateY(-0.45em) scale(1.02); filter:brightness(1.08); }
+  .qb-button:hover::before { transform:translateY(0.05em) scale(0.99); }
+}
+.qb-button:active .qb-button_content { transform:translateY(0.32em) scale(0.96); filter:brightness(0.92); transition-duration:0.15s; }
+.qb-button:active::before { transform:translateY(0.42em) scale(0.99); transition-duration:0.15s; }
+.qb-button.is-primary   .qb-button_content { background:var(--gold); color:var(--ink); }
+.qb-button.is-secondary .qb-button_content { background:var(--rose-deep); color:var(--cream); }
+.qb-button.is-sm        .qb-button_content { padding:0.8em 1.4em; font-size:0.4em; }
+.qb-button.is-sm::before { transform:translateY(0.1em) scale(0.99); }
+.qb-button.is-lg        .qb-button_content { font-size:0.6em; }
+.qb-button.is-expand { width:100%; }
+.qb-button.is-expand .qb-button_content { width:100%; }
+
+/* CANONICAL FOOTER */
+.footer {
+  background:var(--cream-card) !important;
+  padding:3.375rem 1.5rem 2.25rem !important;
+  border-top:2px solid var(--ink) !important;
+}
+.footer_grid {
+  max-width:1240px; margin-inline:auto;
+  display:grid; grid-template-columns:1fr; gap:2.25rem;
+}
+@media (min-width:900px) { .footer_grid { grid-template-columns:2fr 1fr 1fr 1fr; } }
+.footer_brand {
+  font-family:var(--f-display); font-variation-settings:"wght" 600,"opsz" 36;
+  font-size:1.125rem; display:inline-flex; align-items:center; gap:0.5em;
+  color:var(--ink); text-decoration:none;
+}
+.footer_blurb {
+  margin-top:0.875rem;
+  font-family:var(--f-body); font-size:0.95rem; color:var(--ink-75);
+  max-width:380px;
+}
+.footer_col-title {
+  font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--ink-50); margin-bottom:0.875rem;
+}
+.footer_col a {
+  display:block; padding:0.4em 0;
+  font-family:var(--f-body); font-size:0.95rem; color:var(--ink-75); text-decoration:none;
+  transition:color 0.4s var(--ease-qb);
+}
+.footer_col a:hover { color:var(--ink); }
+.footer_bottom {
+  max-width:1240px; margin:2.75rem auto 0;
+  display:flex; justify-content:space-between; flex-wrap:wrap; gap:1.125rem;
+  padding-top:1.125rem; border-top:1px solid var(--ink-25);
+}
+.footer_bottom_meta {
+  font-family:var(--f-mono); font-size:0.78rem; letter-spacing:0.06em; color:var(--ink-50);
+}
+.footer_bottom_links { display:inline-flex; gap:1.125rem; flex-wrap:wrap; }
+.footer_bottom_links a {
+  color:var(--ink-50); text-decoration:none;
+  font-family:var(--f-mono); font-size:0.78rem; letter-spacing:0.06em;
+}
+.footer_bottom_links a:hover { color:var(--ink); }
+
+/* Hide any leftover legacy chassis pieces if they still exist in the markup */
+.theme-toggle, button.theme-toggle, .nav-spacer, .vignette,
+.ambient-glow, .main-vignette, .ambient-tools, .ambient-scan,
+.grain-tools, .vignette-tools,
+footer.micro-foot, footer.site-foot, footer.site-micro-footer { display:none !important; }
+.mmenu, [id="mmenu"] { display:none !important; }
+
+/* Compatibility: any tool still rendering its old .nav directly should be hidden if it lives outside .nav-wrap */
+body > header.nav { display:none !important; }
+body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !important; }
+
+/* === END CANONICAL CHASSIS OVERRIDE === */
+
+/* CANONICAL LOADING BAR */
+.qb-loading-bar {
+  position:fixed; top:0; left:0; right:0; height:4px; z-index:100; pointer-events:none;
+  background:linear-gradient(to right,rgba(158,211,220,0) 0%,var(--teal) 50%,rgba(158,211,220,0) 100%);
+  animation:qb-loading-bar 1s linear infinite;
+  opacity:1; transition:opacity 0.75s ease 0.5s;
+}
+.qb-loading-bar[data-state="idle"] { opacity:0; }
+@keyframes qb-loading-bar { 0%,100% { transform:translateX(-100%); } 99.99% { transform:translateX(100%); } }
+
   html:not([data-theme]) { background: #080604; color: #A89A88; }
 </style>
 
@@ -31,7 +310,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* Entangled Time - Dark Theme (Default) */
-:root, [data-theme="dark"] {
+/* dark-theme block neutralised: :root, [data-theme="dark"] {
   --bg-void: #080604;
   --bg-deep: #0A0806;
   --bg-base: #0E0C09;
@@ -63,7 +342,7 @@
   --font: 'Inter', -apple-system, sans-serif;
   --mono: 'JetBrains Mono', monospace;
   --serif: 'DM Serif Display', Georgia, serif;
-}
+} */
 
 /* Entangled Time - Light Theme */
 [data-theme="light"] {
@@ -359,7 +638,7 @@ input:focus, textarea:focus {
   --font-body:'Inter',-apple-system,sans-serif !important;
   --font-mono:'JetBrains Mono',monospace !important;
 }
-[data-theme="dark"] { /* deactivated by v3.4 override */ }
+/* dark-theme block neutralised: [data-theme="dark"] { /* deactivated by v3.4 override * / } */
 
 
 /* =====================================================
@@ -572,12 +851,52 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 </head>
 <body>
 
-<!-- Banner (verbatim copy) -->
-<div style="background:var(--ink); color:var(--cream); text-align:center; padding:0.7em 1.5rem; font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; letter-spacing:0.04em; position:relative; z-index:120;">
+<!-- CANONICAL CHASSIS BODY (ecosystem SOT) -->
+<div class="qb-loading-bar" id="qbLoadingBar"></div>
+
+<div class="banner banner-canonical">
   <strong>Signal Scan is live.</strong> Free brand diagnostic. 5 minutes to your first insight.
-  <a href="signal-scan.html" style="color:var(--gold); text-decoration:none; font-weight:600; margin-left:0.5em;">Run yours →</a>
+  <a href="signal-scan.html">Run yours →</a>
 </div>
 
+<div class="nav-wrap">
+  <header class="nav is-canonical">
+    <a href="index.html" class="nav-brand is-canonical">
+      <span class="nav-brand_dot is-canonical" aria-hidden="true"></span>
+      Quantum Branding
+    </a>
+    <nav class="nav-links">
+      <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
+      <a href="tools.html" class="qb-type-nav">Tools</a>
+      <a href="ecosystem.html#pricing" class="qb-type-nav">Pricing</a>
+      <a href="ecosystem.html#about" class="qb-type-nav">About</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="qb-branidos-hub.html" class="qb-button is-sm"><span class="qb-button_content">Hub</span></a>
+      <a href="signal-scan.html" class="qb-button is-primary is-sm"><span class="qb-button_content">Free scan</span></a>
+      <button class="hamburger is-canonical" id="qbHamburger" aria-label="Open menu" type="button">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<div class="mobile-menu" id="qbMobileMenu">
+  <div class="mobile-menu_head">
+    <span class="nav-brand is-canonical"><span class="nav-brand_dot is-canonical"></span>Quantum Branding</span>
+    <button class="mobile-menu_close" id="qbMobileMenuClose" aria-label="Close menu" type="button">×</button>
+  </div>
+  <nav class="mobile-menu_list">
+    <a href="ecosystem.html">Ecosystem</a>
+    <a href="tools.html">Tools</a>
+    <a href="qb-branidos-hub.html">Hub</a>
+    <a href="ecosystem.html#pricing">Pricing</a>
+    <a href="signal-scan.html">Free scan</a>
+  </nav>
+  <div class="mobile-menu_foot">
+    <a href="signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Run my free scan</span></a>
+  </div>
+</div>
 
 <header>
   <div class="header-inner">
@@ -1092,5 +1411,71 @@ window.addEventListener('message', function(e) {
   if (e.data && e.data.type === 'QB_PHASE_COMPLETE') render();
 });
 </script>
+
+<footer class="footer">
+  <div class="footer_grid">
+    <div>
+      <a href="index.html" class="footer_brand">
+        <span class="nav-brand_dot is-canonical" aria-hidden="true"></span>
+        Quantum Branding
+      </a>
+      <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Product</div>
+      <a href="ecosystem.html#how">How it works</a>
+      <a href="tools.html">The 20 tools</a>
+      <a href="ecosystem.html#pricing">Pricing</a>
+      <a href="signal-scan.html">Free Signal Scan</a>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Company</div>
+      <a href="ecosystem.html#about">About</a>
+      <a href="https://nizzar.com" target="_blank" rel="noopener">nizzar.com</a>
+      <a href="mailto:me@qtmbg.com">Contact</a>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Social</div>
+      <a href="https://linkedin.com/in/nizzar" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://instagram.com/thequantumbranding" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://x.com/quantumbranding" target="_blank" rel="noopener">X (Twitter)</a>
+      <a href="https://www.fiverr.com/nizzar" target="_blank" rel="noopener">150+ reviews</a>
+    </div>
+  </div>
+
+  <div class="footer_bottom">
+    <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
+    <nav class="footer_bottom_links">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#">Data</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* CANONICAL CHASSIS NAV WIRING */
+(function () {
+  var bar = document.getElementById('qbLoadingBar');
+  if (bar) window.addEventListener('load', function () { setTimeout(function () { bar.dataset.state = 'idle'; }, 400); });
+  var ham = document.getElementById('qbHamburger');
+  var mm  = document.getElementById('qbMobileMenu');
+  var mc  = document.getElementById('qbMobileMenuClose');
+  if (ham && mm && mc) {
+    function closeMM() { mm.dataset.open = 'false'; document.body.style.overflow = ''; }
+    ham.addEventListener('click', function () { mm.dataset.open = 'true'; document.body.style.overflow = 'hidden'; });
+    mc.addEventListener('click', closeMM);
+    Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
+  }
+  /* Force light mode regardless of any legacy theme loader script */
+  try {
+    document.documentElement.removeAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('qb-theme', 'light');
+  } catch(e) {}
+})();
+</script>
+
+
 </body>
 </html>
