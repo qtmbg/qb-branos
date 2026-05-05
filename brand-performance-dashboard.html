@@ -473,6 +473,100 @@ select option { background: var(--bg-deep); color: var(--text-1); }
 
 /* === END TOOL SHELL SOT UPGRADE === */
 
+
+/* =====================================================
+   TOOL TYPOGRAPHY CONTINUITY (ecosystem SOT)
+   Forces every tool to render headings, italic spotlights,
+   underlined accents, and body copy with the exact same
+   typography rules that govern ecosystem.html. Each tool
+   keeps its own structure and content; the surface reads
+   one brand from the homepage to the deepest agent.
+   ===================================================== */
+
+/* All known heading hooks become Fraunces display with proper
+   variation axes. The list covers raw h1-h4, the QB type classes,
+   the "display/serif/font-display" legacy aliases, the tool-specific
+   title classes, and React-rendered card name classes. */
+h1, h2, h3, h4,
+.h1, .h2, .h3,
+.display, .font-display, .font-serif, .serif,
+.csh-title, .csh-eyebrow + h1, .csh-eyebrow + h2,
+.section-title, .module-title, .panel-title, .panel-h,
+.codex-title, .compass-title, .compass-h,
+.card-name, .bcard-name, .step-name, .feat-name,
+.qb-type-heading, .qb-type-subheading, .qb-type-title {
+  font-family: 'Fraunces', 'Times New Roman', serif !important;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+/* Display-grade variation axes per heading tier (matches ecosystem
+   .qb-type-heading / qb-type-subheading / qb-type-title rules). */
+h1, .h1, .display, .csh-title, .compass-title, .qb-type-heading {
+  font-variation-settings: "wght" 600, "opsz" 144, "SOFT" 60, "WONK" 0 !important;
+}
+h2, .h2, .section-title, .module-title, .panel-title, .panel-h, .qb-type-subheading {
+  font-variation-settings: "wght" 600, "opsz" 96, "SOFT" 60, "WONK" 0 !important;
+}
+h3, .h3, .codex-title, .card-name, .bcard-name, .qb-type-title {
+  font-variation-settings: "wght" 600, "opsz" 60, "SOFT" 70, "WONK" 0 !important;
+}
+
+/* Italic em inside any heading is the GOLD spotlight, exactly as
+   ecosystem v3.4 Part 3.6 specifies. Replaces every legacy use of
+   rose / brass / patina inside italic ems. */
+h1 em, h2 em, h3 em, h4 em,
+.h1 em, .h2 em, .h3 em,
+.display em, .font-display em, .font-serif em, .serif em,
+.csh-title em, .section-title em, .module-title em, .panel-title em,
+.codex-title em, .compass-title em, .panel-h em, .compass-h em,
+.qb-type-heading em, .qb-type-subheading em, .qb-type-title em,
+.card-name em, .bcard-name em {
+  font-style: italic !important;
+  font-variation-settings: "wght" 600, "opsz" 96, "SOFT" 80, "WONK" 1 !important;
+  color: var(--gold) !important;
+}
+
+/* The .underlined utility paints a gold band under accent words.
+   Ecosystem uses this on the hero ("Start building.") and elsewhere. */
+.underlined {
+  background-image: linear-gradient(
+    transparent 75%,
+    var(--gold) 75%,
+    var(--gold) 95%,
+    transparent 95%
+  );
+  padding: 0 0.05em;
+}
+
+/* Body, list, and form copy always Inter to match ecosystem body. */
+body, p, li, label, input, textarea, select, .qb-type-text, .qb-type-opening, .qb-type-subtext {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+/* Mono labels (eyebrow tags, KPI labels) use JetBrains Mono caps,
+   matching the ecosystem mono-label rhythm. */
+.mono-label, .csh-eyebrow, .eyebrow, .section-eyebrow, .module-eyebrow,
+.qb-tag_content, .step-tag, .pm_eye, .footer_col-title,
+.cta-stats_l, .footer_bottom_meta {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Italic em outside headings (in body prose) also adopts the gold
+   spotlight rule for absolute consistency. Excludes ems inside the
+   tool's question/answer rendering (option-btn) and excludes the
+   founder-quote, which is its own paragraph italic. */
+p em, li em, .qb-type-opening em, .qb-type-text em {
+  font-style: italic;
+  color: var(--gold);
+}
+.option-btn em, .testi-quote em, .founder-quote em,
+.csh-desc em, .pm_quote em, .progress-note em { color: inherit; }
+
+/* === END TOOL TYPOGRAPHY CONTINUITY === */
+
 </style>
 <script>
 // QB_SPINE v2 - API Key + QBP + Multi-provider adapter
