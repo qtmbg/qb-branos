@@ -923,7 +923,7 @@
   }
   /* Fill the frame edge-to-edge so the illustration merges with its
      backdrop. The frame tint matches the PNG canvas colour, and a
-     1.08 upscale eliminates any sub-pixel transparency leak at the
+     1.12 upscale eliminates any sub-pixel transparency leak at the
      image edges. */
   .persona-avatar img,
   .persona-avatar .persona-svg {
@@ -931,7 +931,7 @@
     object-fit:cover;
     object-position:center center;
     display:block;
-    transform:scale(1.08);
+    transform:scale(1.12);
     transform-origin:center center;
   }
   .persona-stage_tag {
@@ -1231,15 +1231,77 @@
   }
 
   /* =====================================================
-     FINAL CTA + FOOTER
+     FINAL CTA - merged with bike strip (single closing moment)
      ===================================================== */
   .final-cta {
-    background:var(--cream-card); border-block:2px solid var(--ink);
-    padding-block:var(--space-2xl-3xl); text-align:center;
+    position:relative;
+    background:var(--cream-warm);
+    border-block:2px solid var(--ink);
+    padding-block:var(--space-2xl);
+    text-align:center;
+    overflow:hidden;
   }
-  .final-cta > * + * { margin-top:var(--space-s); }
-  .final-cta .hero_cta { margin-top:var(--space-m) !important; }
-  .final-cta .hero_meta { margin-top:var(--space-s) !important; }
+  .final-cta_top { position:relative; z-index:2; }
+  .final-cta_top > * + * { margin-top:var(--space-s); }
+
+  .cta-kpis {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-s);
+    max-width:760px; margin:var(--space-l) auto 0;
+    padding-inline:var(--space-m-l);
+  }
+  .cta-kpi {
+    background:var(--cream); border:2px solid var(--ink); border-radius:18px;
+    padding:var(--space-s) var(--space-xs);
+    box-shadow:0 6px var(--ink);
+    transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
+  }
+  @media (min-width:640px) { .cta-kpi { box-shadow:0 9px var(--ink); padding:var(--space-m) var(--space-xs); } }
+  @media (hover:hover) {
+    .cta-kpi:hover { transform:translateY(-4px); box-shadow:0 12px var(--ink); }
+  }
+  .cta-kpi_v {
+    font-family:'Fraunces',serif;
+    font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 60,"WONK" 0;
+    font-size:clamp(2rem,5vw,3.75rem); line-height:1; color:var(--ink);
+    letter-spacing:-0.02em;
+  }
+  .cta-kpi_l {
+    margin-top:0.3em;
+    font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--ink-50);
+  }
+
+  .cta-bike {
+    position:relative;
+    height:clamp(120px,15vw,200px);
+    margin:var(--space-m) 0 var(--space-m);
+    overflow:visible;
+    z-index:1;
+  }
+  .cta-bike_road {
+    position:absolute; left:0; right:0; bottom:0;
+    height:3px; background:var(--ink);
+  }
+  .cta-bike_image {
+    position:absolute;
+    bottom:0;
+    height:100%; width:auto;
+    transform-origin:center bottom;
+    animation:bike-roll 14s linear infinite, bike-bob 0.55s ease-in-out infinite;
+    will-change:transform, left;
+    pointer-events:none;
+  }
+
+  .final-cta_bottom { position:relative; z-index:2; padding-inline:var(--space-m-l); }
+  .final-cta_bottom .hero_cta { margin-top:var(--space-s) !important; }
+  .final-cta_bottom .hero_meta { margin-top:var(--space-s) !important; }
+  .final-cta_caption {
+    font-family:'Fraunces',serif; font-style:italic;
+    font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 80,"WONK" 1;
+    font-size:clamp(1.5rem,3.5vw,2.5rem); line-height:1.1;
+    color:var(--rose);
+    text-wrap:balance;
+  }
 
   .footer { background:var(--cream); padding:var(--space-2xl) var(--space-m-l) var(--space-l); border-top:2px solid var(--ink); }
   .footer_grid { max-width:1240px; margin-inline:auto; display:grid; grid-template-columns:1fr; gap:var(--space-l-xl); }
@@ -1293,51 +1355,7 @@
   }
   .footer_bottom_links a:hover { color:var(--ink); }
 
-  /* =====================================================
-     BIKE STRIP - rolls end-to-end across the screen, looping
-     ===================================================== */
-  .bike-strip {
-    position:relative;
-    background:var(--cream-warm);
-    border-block:2px solid var(--ink);
-    padding:var(--space-2xl) 0 var(--space-l);
-    overflow:hidden;
-    text-align:center;
-  }
-  .bike-strip_caption {
-    font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 600,"opsz" 144,"SOFT" 60,"WONK" 0;
-    font-size:clamp(2.25rem,6vw,4.5rem);
-    line-height:1; letter-spacing:-0.01em;
-    color:var(--ink);
-    text-wrap:balance;
-    max-width:920px; margin:0 auto;
-    padding:0 var(--space-m-l);
-  }
-  .bike-strip_caption em {
-    font-style:italic;
-    font-variation-settings:"wght" 600,"opsz" 144,"SOFT" 80,"WONK" 1;
-    color:var(--rose);
-  }
-  .bike-strip_track {
-    position:relative;
-    height:clamp(140px,18vw,260px);
-    margin-top:var(--space-l);
-    overflow:visible;
-  }
-  .bike-strip_road {
-    position:absolute; left:0; right:0; bottom:0;
-    height:3px; background:var(--ink);
-  }
-  .bike-strip_bike {
-    position:absolute;
-    bottom:0;
-    height:100%; width:auto;
-    transform-origin:center bottom;
-    animation:bike-roll 14s linear infinite, bike-bob 0.55s ease-in-out infinite;
-    will-change:transform, left;
-    pointer-events:none;
-  }
+  /* Bike rolls end-to-end across the merged final CTA. */
   @keyframes bike-roll {
     0%   { left:-30%; }
     100% { left:100%; }
@@ -1445,7 +1463,7 @@
     .reveal { opacity:1; transform:none; filter:none; }
     .qb-illus-card, .qb-phone, .founder-portrait img, .feature-media { animation:none !important; }
     .hero_h1, .hero_body, .hero_cta, .hero_meta, .agent-cluster { animation:none !important; opacity:1; }
-    .bike-strip_bike { animation:none !important; left:30% !important; transform:none !important; }
+    .cta-bike_image { animation:none !important; left:30% !important; transform:none !important; }
   }
 </style>
 </head>
@@ -2345,26 +2363,33 @@
     </div>
   </section>
 
-  <!-- FINAL CTA -->
-  <section class="final-cta">
-    <div class="qb-x-narrow">
+  <!-- FINAL CTA - merged with bike strip. KPIs at top, bike rolls the
+       full width below them, free signal scan + secondary CTA below. -->
+  <section class="final-cta" aria-label="Start building">
+    <div class="qb-x-narrow final-cta_top">
       <span class="qb-tag is-butter"><span class="qb-tag_content">Free forever tier</span></span>
       <h2 class="qb-type-heading qb-type-balance">Start <em><span class="underlined">building.</span></em></h2>
-      <p class="qb-type-opening qb-type-pretty">Even if you're starting with just an idea. Four tools. Free forever. 5 minutes to your first brand signal.</p>
+      <p class="qb-type-opening qb-type-pretty">From idea, to orbit. Just like that.</p>
+
+      <div class="cta-kpis reveal">
+        <div class="cta-kpi"><div class="cta-kpi_v">20</div><div class="cta-kpi_l">Agent tools</div></div>
+        <div class="cta-kpi"><div class="cta-kpi_v">1</div><div class="cta-kpi_l">Brand Profile</div></div>
+        <div class="cta-kpi"><div class="cta-kpi_v">$0</div><div class="cta-kpi_l">To start</div></div>
+      </div>
+    </div>
+
+    <div class="cta-bike" aria-hidden="true">
+      <div class="cta-bike_road"></div>
+      <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
+    </div>
+
+    <div class="qb-x-narrow final-cta_bottom">
+      <p class="final-cta_caption">Free Signal Scan.</p>
       <div class="hero_cta">
-        <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Start free</span></a>
+        <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Run my free scan</span></a>
         <a href="https://app.quantumbranding.ai" class="qb-button is-lg"><span class="qb-button_content">Enter QB BrandOS</span></a>
       </div>
-      <div class="hero_meta">Available on any device · No download · No credit card</div>
-    </div>
-  </section>
-
-  <!-- BIKE STRIP - From idea to orbit. The two riders roll across the page, end to end, looping. -->
-  <section class="bike-strip" aria-label="From idea to orbit">
-    <p class="bike-strip_caption">From idea, <em>to orbit.</em></p>
-    <div class="bike-strip_track">
-      <div class="bike-strip_road" aria-hidden="true"></div>
-      <img class="bike-strip_bike" src="img/illus/start-building.png" alt="Two riders on a tandem bicycle, rolling forward together." loading="lazy">
+      <div class="hero_meta">No download · No credit card · 5 minutes</div>
     </div>
   </section>
 
