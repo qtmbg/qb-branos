@@ -1245,10 +1245,21 @@
     text-align:center;
     overflow:hidden;
   }
-  .final-cta_top { position:relative; z-index:2; }
-  .final-cta_top > * + * { margin-top:var(--space-s); }
-  .final-cta_top .hero_cta { margin-top:var(--space-m) !important; }
-  .final-cta_top .hero_meta { margin-top:var(--space-s) !important; }
+  /* Top zone holds the bike as a moving background and the CTA text on top. */
+  .final-cta_top {
+    position:relative;
+    isolation:isolate;
+    min-height:clamp(520px,60vh,720px);
+    display:flex; align-items:center; justify-content:center;
+    padding-block:var(--space-l);
+  }
+  .final-cta_inner {
+    position:relative; z-index:3;
+    width:100%;
+  }
+  .final-cta_inner > * + * { margin-top:var(--space-s); }
+  .final-cta_inner .hero_cta { margin-top:var(--space-m) !important; }
+  .final-cta_inner .hero_meta { margin-top:var(--space-s) !important; }
   .final-cta_caption {
     font-family:'Fraunces',serif; font-style:italic;
     font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 80,"WONK" 1;
@@ -1257,25 +1268,38 @@
     text-wrap:balance;
   }
 
+  /* Bike rolls in the background of the CTA text area, vertically
+     centered, full-bleed horizontal. Lower opacity so the headline
+     and buttons stay legible on top. */
   .cta-bike {
-    position:relative;
-    height:clamp(210px,26vw,350px);
-    margin:var(--space-l) 0 0;
-    overflow:visible;
+    position:absolute;
+    inset:0;
     z-index:1;
+    overflow:visible;
+    pointer-events:none;
+    opacity:0.55;
   }
   .cta-bike_road {
-    position:absolute; left:0; right:0; bottom:0;
+    position:absolute; left:0; right:0; top:50%;
+    margin-top:-1.5px;
     height:3px; background:var(--ink);
+    opacity:0.4;
+  }
+  /* Carrier handles the horizontal roll. Image inside handles the bob. */
+  .cta-bike_carrier {
+    position:absolute;
+    top:0; bottom:0;
+    display:flex; align-items:center;
+    animation:bike-roll 14s linear infinite;
+    will-change:left;
   }
   .cta-bike_image {
-    position:absolute;
-    bottom:0;
-    height:100%; width:auto;
+    height:62%;
+    width:auto;
+    display:block;
     transform-origin:center bottom;
-    animation:bike-roll 14s linear infinite, bike-bob 0.55s ease-in-out infinite;
-    will-change:transform, left;
-    pointer-events:none;
+    animation:bike-bob 0.55s ease-in-out infinite;
+    will-change:transform;
   }
 
   /* Big horizontal stats card (the "old longer design"): one card,
@@ -1467,7 +1491,8 @@
     .reveal { opacity:1; transform:none; filter:none; }
     .qb-illus-card, .qb-phone, .founder-portrait img, .feature-media { animation:none !important; }
     .hero_h1, .hero_body, .hero_cta, .hero_meta, .agent-cluster { animation:none !important; opacity:1; }
-    .cta-bike_image { animation:none !important; left:30% !important; transform:none !important; }
+    .cta-bike_carrier { animation:none !important; left:30% !important; }
+    .cta-bike_image { animation:none !important; transform:none !important; }
   }
 </style>
 </head>
@@ -2367,24 +2392,30 @@
     </div>
   </section>
 
-  <!-- FINAL CTA - flow: Free Signal Scan first, bike rolls, big stats
-       card, then footer on lighter beige for colour break. -->
+  <!-- FINAL CTA - bike rolls in the background of the CTA text, then
+       the big stats card sits below as the closing punctuation. -->
   <section class="final-cta" aria-label="Start building">
-    <div class="qb-x-narrow final-cta_top">
-      <span class="qb-tag is-butter"><span class="qb-tag_content">Free forever tier</span></span>
-      <h2 class="qb-type-heading qb-type-balance">Start <em><span class="underlined">building.</span></em></h2>
-      <p class="qb-type-opening qb-type-pretty">From idea, to orbit. Just like that.</p>
-      <p class="final-cta_caption">Free Signal Scan.</p>
-      <div class="hero_cta">
-        <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Run my free scan</span></a>
-        <a href="https://app.quantumbranding.ai" class="qb-button is-lg"><span class="qb-button_content">Enter QB BrandOS</span></a>
-      </div>
-      <div class="hero_meta">No download · No credit card · 5 minutes</div>
-    </div>
+    <div class="final-cta_top">
 
-    <div class="cta-bike" aria-hidden="true">
-      <div class="cta-bike_road"></div>
-      <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
+      <!-- Bike rolls full-bleed, vertically centred, behind the text -->
+      <div class="cta-bike" aria-hidden="true">
+        <div class="cta-bike_road"></div>
+        <div class="cta-bike_carrier">
+          <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
+        </div>
+      </div>
+
+      <div class="qb-x-narrow final-cta_inner">
+        <span class="qb-tag is-butter"><span class="qb-tag_content">Free forever tier</span></span>
+        <h2 class="qb-type-heading qb-type-balance">Start <em><span class="underlined">building.</span></em></h2>
+        <p class="qb-type-opening qb-type-pretty">From idea, to orbit. Just like that.</p>
+        <p class="final-cta_caption">Free Signal Scan.</p>
+        <div class="hero_cta">
+          <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Run my free scan</span></a>
+          <a href="https://app.quantumbranding.ai" class="qb-button is-lg"><span class="qb-button_content">Enter QB BrandOS</span></a>
+        </div>
+        <div class="hero_meta">No download · No credit card · 5 minutes</div>
+      </div>
     </div>
 
     <div class="qb-x">
