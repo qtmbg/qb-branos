@@ -602,26 +602,22 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
 
 /* === END CHASSIS HARMONIZATION === */
 
-/* === CANONICAL BODY PAINT (ecosystem SOT visual unification, all 5 sweeps) === */
-/* Aggressive painter that unifies tool body internals to ecosystem visual
-   language: cream surfaces, ink type, hard offset shadows, Fraunces headings,
-   mono eyebrows, gold italics. Every CTA button is already painted by
-   canonical-button-paint. Every chassis component (nav, banner, footer) is
-   excluded so the shell stays untouched. */
+/* === CANONICAL BODY PAINT (Pomegranate-aligned, elder-friendly comfort) === */
+/* Comprehensive paint that unifies all 24 tool internals to ecosystem SOT
+   visual language with COMFORT FIRST: bigger type, more padding, larger
+   touch targets, generous line-height. Tool functionality (JS, IDs, hooks)
+   untouched — only visual surface. */
 
 
-/* SWEEP 4: BODY + MAIN BACKGROUNDS — cream + ink only, no legacy bg-void / dark */
-html { background: var(--cream) !important; color: var(--ink) !important; }
-body { background: var(--cream) !important; color: var(--ink) !important; }
+/* SWEEP 4: BODY + MAIN BACKGROUNDS — cream + ink only */
+html { background: var(--cream) !important; color: var(--ink) !important; font-size: 17px !important; }
+body { background: var(--cream) !important; color: var(--ink) !important; font-size: 1.0625rem !important; }
+@media (max-width: 640px) { html { font-size: 16px !important; } }
 body > main, body > .main, body > #app, body > .app, body > .container,
 body > main > section, body > .main > section { background: transparent !important; color: var(--ink) !important; }
 
 
-/* SWEEP 1: CARD / PANEL / MODULE SURFACE PAINT
-   Any element with a class token suggesting it is a content surface gets the
-   ecosystem qb-card visual. Excludes chassis (nav, banner, footer, hamburger),
-   tiny widgets (dot, pip, badge, tag, label), and already-canonical components
-   (qb-button, qb-illus-card, qb-tag). */
+/* SWEEP 1: SURFACE PAINT — ecosystem qb-card visual, elder-comfortable padding */
 .qb-paint-surface,
 [class*="-card"]:not(.qb-card):not(.qb-illus-card):not(.qb-button):not(.qb-button_content):not(.banner-card):not(.scorecard):not(.text-card):not([class*="-dot"]):not([class*="-pip"]):not([class*="-badge"]):not([class*="-tag"]):not([class*="-label"]),
 [class^="card-"]:not(.qb-button):not([class*="-dot"]):not([class*="-pip"]),
@@ -631,17 +627,21 @@ body > main > section, body > .main > section { background: transparent !importa
 .figure-placeholder, .results-shell, .err-shell, .compass-glance, .manifesto-block,
 .queue-item, .csh-output-item, .pcb, .pcl, .cb, .cl, .r-cell, .r-paradox-col,
 .q-profile, .panel-verdict, .voice-block, .module-block, .insight-block,
-.metric-block, .report-block, .empty-state {
+.metric-block, .report-block, .empty-state,
+.exercise-box, .exercise-card, .step-card, .question-card, .answer-card,
+.option-box, .option-card, .input-card, .prompt-card, .reflection-card,
+.scorecard:not([class*="-dot"]) {
   background: var(--cream-card) !important;
   border: 2px solid var(--ink) !important;
-  border-radius: 24px !important;
+  border-radius: 28px !important;
   box-shadow: 0 9px var(--ink) !important;
   color: var(--ink) !important;
-  padding: 1.5rem !important;
+  padding: 2.25rem !important;
   position: relative;
   overflow: visible !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
+  margin-bottom: 1.5rem !important;
 }
 @media (min-width: 640px) {
   [class*="-card"]:not(.qb-card):not(.qb-illus-card):not(.qb-button):not(.qb-button_content):not(.banner-card):not(.scorecard):not(.text-card):not([class*="-dot"]):not([class*="-pip"]):not([class*="-badge"]):not([class*="-tag"]):not([class*="-label"]),
@@ -652,49 +652,61 @@ body > main > section, body > .main > section { background: transparent !importa
   .figure-placeholder, .results-shell, .err-shell, .compass-glance, .manifesto-block,
   .queue-item, .csh-output-item, .pcb, .pcl, .cb, .cl, .r-cell, .r-paradox-col,
   .q-profile, .panel-verdict, .voice-block, .module-block, .insight-block,
-  .metric-block, .report-block {
+  .metric-block, .report-block,
+  .exercise-box, .exercise-card, .step-card, .question-card, .answer-card,
+  .option-box, .option-card, .input-card, .prompt-card, .reflection-card {
     box-shadow: 0 16px var(--ink) !important;
+    padding: 2.75rem !important;
+    border-radius: 32px !important;
   }
 }
 
 
-/* SWEEP 2: HEADING TYPOGRAPHY — Pomegranate-aligned chunky Fraunces (SOFT 100) */
+/* SWEEP 2: HEADING TYPOGRAPHY — Pomegranate chunky Fraunces, comfortable sizes */
 body h1:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *),
 body .display-h1, body .h1, body .hero-title, body .csh-title {
   font-family: var(--f-display, 'Fraunces'), serif !important;
   font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100, "WONK" 0 !important;
+  font-size: clamp(2.75rem, 7vw, 5rem) !important;
   color: var(--ink) !important;
   letter-spacing: -0.025em !important;
-  line-height: 0.95 !important;
+  line-height: 0.96 !important;
   font-style: normal !important;
+  margin-block: 0 1.25rem !important;
 }
 body h2:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *),
 body .display-h2, body .h2, body .section-title, body .panel-title,
 body .module-title, body .compass-title, body .codex-title {
   font-family: var(--f-display, 'Fraunces'), serif !important;
   font-variation-settings: "wght" 700, "opsz" 96, "SOFT" 100, "WONK" 0 !important;
+  font-size: clamp(2rem, 4.5vw, 3.25rem) !important;
   color: var(--ink) !important;
-  letter-spacing: -0.015em !important;
-  line-height: 0.98 !important;
+  letter-spacing: -0.018em !important;
+  line-height: 1 !important;
   font-style: normal !important;
+  margin-block: 0 1rem !important;
 }
 body h3:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *),
 body .display-h3, body .h3, body .card-name, body .step-name, body .feat-name {
   font-family: var(--f-display, 'Fraunces'), serif !important;
   font-variation-settings: "wght" 650, "opsz" 72, "SOFT" 100, "WONK" 0 !important;
+  font-size: clamp(1.5rem, 2.8vw, 2.125rem) !important;
   color: var(--ink) !important;
-  line-height: 1.05 !important;
+  line-height: 1.08 !important;
   font-style: normal !important;
+  margin-block: 0 0.75rem !important;
 }
 body h4:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *) {
   font-family: var(--f-display, 'Fraunces'), serif !important;
   font-variation-settings: "wght" 600, "opsz" 48, "SOFT" 100, "WONK" 0 !important;
+  font-size: clamp(1.25rem, 2vw, 1.625rem) !important;
   color: var(--ink) !important;
-  line-height: 1.15 !important;
+  line-height: 1.18 !important;
   font-style: normal !important;
+  margin-block: 0 0.5rem !important;
 }
 
-/* Italic em inherits chunky energy */
+/* Italic em on every heading — chunky bouncy axis, gold */
 body h1 em, body h2 em, body h3 em, body h4 em,
 body .display-h1 em, body .display-h2 em, body .display-h3 em {
   font-style: italic !important;
@@ -703,18 +715,25 @@ body .display-h1 em, body .display-h2 em, body .display-h3 em {
 }
 
 
-/* EYEBROWS — mono uppercase tracked-out, ecosystem pattern */
+/* EYEBROW PILL — Pomegranate-style: 2px ink border, cream-card bg, drop shadow,
+   bigger comfortable size for elders */
 body .eyebrow, body [class*="eyebrow"]:not(.banner *):not(.nav-wrap *),
 body .pretitle, body .section_eyebrow, body .module-eyebrow,
 body .csh-eyebrow, body .pre-h, body .label-eyebrow {
-  font-family: var(--f-mono, 'JetBrains Mono'), ui-monospace, monospace !important;
-  font-size: 0.7rem !important;
-  letter-spacing: 0.18em !important;
-  text-transform: uppercase !important;
-  color: var(--ink-50, rgba(45,21,33,0.5)) !important;
-  font-weight: 500 !important;
   display: inline-block !important;
-  margin-bottom: 0.5rem !important;
+  font-family: var(--f-body, 'Inter'), sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: var(--ink) !important;
+  background: var(--cream-card) !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 9999px !important;
+  padding: 0.55em 1.25em !important;
+  box-shadow: 0 4px var(--ink) !important;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.4 !important;
 }
 
 
@@ -726,7 +745,7 @@ body i:not([class]):not(.fa):not(.icon):not(.banner *):not(.nav-wrap *):not(.foo
 }
 
 
-/* SWEEP 3: FORM FIELDS — ecosystem qb-field visual */
+/* SWEEP 3: FORM FIELDS — qb-field visual with elder-comfortable size */
 body input[type="text"]:not(.banner *):not(.nav-wrap *),
 body input[type="email"]:not(.banner *):not(.nav-wrap *),
 body input[type="password"]:not(.banner *):not(.nav-wrap *),
@@ -739,13 +758,13 @@ body textarea:not(.banner *):not(.nav-wrap *),
 body select:not(.banner *):not(.nav-wrap *) {
   background: var(--cream-card) !important;
   border: 2px solid var(--ink) !important;
-  border-radius: 14px !important;
+  border-radius: 16px !important;
   color: var(--ink) !important;
-  padding: 0.85em 1.1em !important;
-  font-family: var(--f-body), 'Inter', sans-serif !important;
+  padding: 1.1em 1.3em !important;
+  font-family: var(--f-body, 'Inter'), sans-serif !important;
   font-weight: 500 !important;
-  font-size: 0.95rem !important;
-  line-height: 1.4 !important;
+  font-size: 1.0625rem !important;
+  line-height: 1.5 !important;
   box-shadow: 0 4px var(--ink) !important;
   transition: box-shadow 0.3s cubic-bezier(0.19,1,0.22,1),
               transform 0.3s cubic-bezier(0.19,1,0.22,1),
@@ -753,56 +772,119 @@ body select:not(.banner *):not(.nav-wrap *) {
   outline: none !important;
   -webkit-appearance: none !important;
   appearance: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 1rem !important;
 }
+body textarea { min-height: 9rem !important; resize: vertical !important; }
 body input:focus, body textarea:focus, body select:focus {
   box-shadow: 0 6px var(--ink) !important;
   transform: translateY(-2px) !important;
   background: var(--white, #FFFEF8) !important;
+  border-color: var(--rose-deep) !important;
 }
 body input::placeholder, body textarea::placeholder {
   color: var(--ink-50, rgba(45,21,33,0.5)) !important;
   font-weight: 400 !important;
 }
 body label:not(.banner *):not(.nav-wrap *):not(.footer *) {
-  font-family: var(--f-mono), monospace !important;
-  font-size: 0.72rem !important;
-  letter-spacing: 0.12em !important;
+  font-family: var(--f-mono, 'JetBrains Mono'), monospace !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.14em !important;
   text-transform: uppercase !important;
-  color: var(--ink-75, rgba(45,21,33,0.75)) !important;
-  font-weight: 500 !important;
-  margin-bottom: 0.4rem !important;
+  color: var(--ink) !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.6rem !important;
   display: inline-block !important;
 }
 
 
-/* SWEEP 5: SECTION SPACING — ecosystem rhythm */
+/* CHECKBOX / RADIO — large, comfortable, ink-bordered */
+body input[type="checkbox"]:not(.banner *):not(.nav-wrap *),
+body input[type="radio"]:not(.banner *):not(.nav-wrap *) {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  margin-right: 0.65rem !important;
+  border: 2px solid var(--ink) !important;
+  background: var(--cream-card) !important;
+  cursor: pointer !important;
+  accent-color: var(--rose-deep) !important;
+  vertical-align: middle !important;
+}
+
+
+/* SWEEP 5: SECTION SPACING — generous Pomegranate breathing room */
 body main > section,
 body > main > section,
 body main > .section,
 body main > div[class*="section"]:not([class*="card"]) {
-  padding-block: var(--space-2xl, 4rem) !important;
+  padding-block: clamp(4rem, 10vw, 7.5rem) !important;
   background: transparent !important;
 }
+body main > section + section,
+body main > .section + .section { margin-top: 0 !important; }
 
 
-/* PARAGRAPH BODY COPY — ink-75 with Inter, 1.65 leading */
+/* PARAGRAPH BODY COPY — comfortable elder-friendly size, generous leading */
 body p:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *) {
-  font-family: var(--f-body), 'Inter', sans-serif !important;
+  font-family: var(--f-body, 'Inter'), sans-serif !important;
   font-weight: 400 !important;
-  color: var(--ink-75, rgba(45,21,33,0.75)) !important;
+  font-size: 1.125rem !important;
+  color: var(--ink) !important;
+  line-height: 1.7 !important;
+  letter-spacing: -0.005em !important;
+  margin-bottom: 1.25rem !important;
+  max-width: 65ch !important;
+}
+body p:last-child { margin-bottom: 0 !important; }
+
+
+/* LIST ITEMS — comfortable spacing */
+body main ul:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *),
+body main ol:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *) {
+  font-size: 1.0625rem !important;
+  line-height: 1.65 !important;
+  margin-bottom: 1.25rem !important;
+  color: var(--ink) !important;
+}
+body main li { margin-bottom: 0.5rem !important; }
+
+
+/* TOOL EXERCISE BOXES — explicit redesign for question/answer/prompt patterns */
+body .question, body .question-text, body .prompt, body .prompt-text,
+body .exercise, body .exercise-text, body .scenario, body .scenario-text {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 600, "opsz" 48, "SOFT" 100 !important;
+  font-size: clamp(1.25rem, 2vw, 1.625rem) !important;
+  color: var(--ink) !important;
+  line-height: 1.3 !important;
+  margin-bottom: 1.25rem !important;
+}
+body .answer, body .answer-text, body .response, body .response-text {
+  font-family: var(--f-body, 'Inter'), sans-serif !important;
+  font-size: 1.0625rem !important;
+  color: var(--ink) !important;
   line-height: 1.65 !important;
 }
 
 
-/* DOTS / DIVIDERS / DIM ARTIFACTS — neutralize legacy dark theme */
-body .header-divider, body .nav-spacer { background: var(--ink-25, rgba(45,21,33,0.25)) !important; }
-
-
-/* HIDE LEGACY VIGNETTE / NOISE / AMBIENT artifacts that survived the chassis swap */
+/* HIDE LEGACY VIGNETTE / NOISE / AMBIENT artifacts that survived chassis swap */
 body > .ambient-glow, body > .main-vignette, body > .vignette,
 body > .ambient-tools, body > .ambient-scan, body > .grain-tools,
 .ambient-glow, .main-vignette, .vignette { display: none !important; opacity: 0 !important; }
 body { background-image: none !important; }
+
+
+/* DOTS / DIVIDERS / DIM ARTIFACTS */
+body .header-divider, body .nav-spacer { background: var(--ink-25, rgba(45,21,33,0.25)) !important; }
+
+
+/* MIN TOUCH TARGET 44x44 for buttons and interactive elements */
+body button:not(.qb-button):not(.banner *):not(.nav-wrap *):not(.footer *),
+body [role="button"]:not(.qb-button):not(.banner *):not(.nav-wrap *):not(.footer *) {
+  min-height: 44px !important;
+}
 
 
 /* === END CANONICAL BODY PAINT === */
