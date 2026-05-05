@@ -456,7 +456,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 
 /* === CHASSIS HARMONIZATION (one shell across all 27 pages, ecosystem.html SOT) === */
 
-/* Restore sticky context — overflow-x:hidden on body breaks position:sticky on
+/* Restore sticky context — overflow-x:clip on body breaks position:sticky on
    descendants. Use overflow-x:clip instead so horizontal scroll is prevented
    without creating a scroll container. */
 html { overflow-x: clip !important; }
@@ -655,7 +655,7 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg-void); color: var(--text-2);
   font-family: var(--font-body); min-height: 100vh;
-  overflow-x: hidden; line-height: 1.7;
+  overflow-x:clip; line-height: 1.7;
 }
 
 .font-display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.015em; color: var(--text-1); }

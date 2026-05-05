@@ -446,7 +446,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 
 /* === CHASSIS HARMONIZATION (one shell across all 27 pages, ecosystem.html SOT) === */
 
-/* Restore sticky context — overflow-x:hidden on body breaks position:sticky on
+/* Restore sticky context — overflow-x:clip on body breaks position:sticky on
    descendants. Use overflow-x:clip instead so horizontal scroll is prevented
    without creating a scroll container. */
 html { overflow-x: clip !important; }
@@ -641,7 +641,7 @@ html:not([data-theme]){background:#080604;color:#A89A88}</style>
   --creation:#2E5A6A;--error:#8A4A4A;
   --text-1:#1A1610;--text-2:#5A5040;--text-3:#8A7E70;--text-4:#B8AEA0;
 }
-body{background:var(--bg-void);color:var(--text-2);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg-void);color:var(--text-2);font-family:var(--font-body);min-height:100vh;overflow-x:clip;-webkit-font-smoothing:antialiased;}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse 70% 60% at 50% 35%,transparent 0%,rgba(8,6,4,0.35) 100%);}
 [data-theme="light"] body::before{background:radial-gradient(ellipse 70% 60% at 50% 35%,transparent 0%,rgba(200,190,175,0.12) 100%);}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg-void)}::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
