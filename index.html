@@ -237,9 +237,11 @@
     white-space: nowrap;
   }
   @media (hover: hover) {
-    .qb-button:hover .qb-button_content { transform: translateY(-0.35em); filter: brightness(1.05); }
+    .qb-button:hover .qb-button_content { transform: translateY(-0.45em) scale(1.02); filter: brightness(1.08); }
+    .qb-button:hover::before { transform: translateY(0.05em) scale(0.99); }
   }
-  .qb-button:active .qb-button_content { transform: translateY(0.28em) scale(0.99); filter: brightness(0.9); }
+  .qb-button:active .qb-button_content { transform: translateY(0.32em) scale(0.96); filter: brightness(0.92); transition-duration: 0.15s; }
+  .qb-button:active::before { transform: translateY(0.42em) scale(0.99); transition-duration: 0.15s; }
   .qb-button.is-primary   .qb-button_content { background: var(--gold);      color: var(--ink); }
   .qb-button.is-secondary .qb-button_content { background: var(--rose-deep); color: var(--cream); }
   .qb-button.is-active    .qb-button_content { background: var(--teal-deep); color: var(--ink); transform: translateY(0.1em); box-shadow: inset 0 0 0 0.2em var(--ink); }
@@ -619,9 +621,13 @@
     color: var(--ink-75);
   }
 
-  /* Scroll-triggered reveal - IntersectionObserver toggles .in */
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
-  .reveal.in { opacity: 1; transform: translateY(0); }
+  /* Scroll-triggered reveal - richer entrance: fade + lift + scale + blur (ecosystem SOT) */
+  .reveal {
+    opacity: 0; transform: translateY(36px) scale(0.97);
+    filter: blur(4px);
+    transition: opacity 0.9s var(--ease-qb), transform 0.9s var(--ease-qb), filter 0.9s var(--ease-qb);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
   .rd1 { transition-delay: 0.1s; }
   .rd2 { transition-delay: 0.2s; }
   .rd3 { transition-delay: 0.3s; }
@@ -698,34 +704,150 @@
   }
 
   /* =====================================================
-     FINAL CTA
+     FINAL CTA - merged closing block (ecosystem SOT pattern):
+       cream-warm surface, bike rolls behind text, big stats card,
+       footer transitions to cream-card.
      ===================================================== */
   .final-cta {
-    background: var(--cream-card);
-    border-block: 2px solid var(--ink);
-    padding-block: var(--space-2xl-3xl);
+    position: relative;
+    background: var(--cream-warm);
+    border-top: 2px solid var(--ink);
+    padding-top: var(--space-2xl);
     text-align: center;
+    overflow: hidden;
   }
-  .final-cta > * + * { margin-top: var(--space-s); }
-  .final-cta .qb-button { margin-top: var(--space-m) !important; }
+  .final-cta_top {
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(520px, 60vh, 720px);
+    display: flex; align-items: center; justify-content: center;
+    padding-block: var(--space-l);
+  }
+  .final-cta_inner {
+    position: relative; z-index: 3;
+    width: 100%;
+  }
+  .final-cta_inner > * + * { margin-top: var(--space-s); }
+  .final-cta_inner .hero_cta { margin-top: var(--space-m) !important; }
+  .final-cta_inner .hero_meta { margin-top: var(--space-s) !important; }
+  .final-cta_caption {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-variation-settings: "wght" 600, "opsz" 96, "SOFT" 80, "WONK" 1;
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem); line-height: 1.1;
+    color: var(--rose);
+    text-wrap: balance;
+  }
+
+  /* Bike rolls in the background of the CTA text area, vertically
+     centred. One bike, translateX-based loop hides the teleport. */
+  .cta-bike {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: visible;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .cta-bike_carrier {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0;
+    display: flex; align-items: center;
+    transform: translateX(-100%);
+    animation: bike-roll 12s linear infinite;
+    will-change: transform;
+  }
+  .cta-bike_image {
+    height: 62%;
+    width: auto;
+    display: block;
+    transform-origin: center;
+    animation: bike-bob 0.6s ease-in-out infinite;
+    will-change: transform;
+  }
+  @keyframes bike-roll {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100vw); }
+  }
+  @keyframes bike-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+  }
+
+  /* Big horizontal stats card: one card, three columns split by inner
+     dividers, hard offset shadow. The closing punctuation. */
+  .cta-stats {
+    max-width: 1240px; margin: var(--space-xl-2xl) auto var(--space-2xl);
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    background: var(--cream-card); border: 2px solid var(--ink); border-radius: 32px;
+    box-shadow: 0 9px var(--ink); overflow: hidden;
+  }
+  @media (min-width: 640px) { .cta-stats { box-shadow: 0 16px var(--ink); } }
+  .cta-stats_item {
+    text-align: center; padding: var(--space-l) var(--space-s);
+    border-right: 1.5px solid var(--ink-25);
+  }
+  .cta-stats_item:last-child { border-right: 0; }
+  .cta-stats_v {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 60, "WONK" 0;
+    font-size: var(--step-5); line-height: 1; color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .cta-stats_l {
+    margin-top: 0.5em;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-75);
+  }
 
   /* =====================================================
-     FOOTER
+     FOOTER - lighter cream-card surface for colour break
+     after the bike + stats area, 4-col grid.
      ===================================================== */
   .footer {
-    background: var(--cream);
-    padding: var(--space-l) var(--space-m-l);
+    background: var(--cream-card);
+    padding: var(--space-xl) var(--space-m-l) var(--space-l);
     border-top: 2px solid var(--ink);
   }
-  .footer_inner {
+  .footer_grid {
     max-width: 1240px; margin-inline: auto;
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-    gap: var(--space-m);
+    display: grid; grid-template-columns: 1fr; gap: var(--space-l-xl);
   }
-  .footer_brand { display: inline-flex; align-items: center; gap: 0.5em; font-family: 'Fraunces', serif; font-variation-settings: "wght" 600, "opsz" 36; font-size: var(--step-0); color: var(--ink); text-decoration: none; }
-  .footer_links { display: inline-flex; gap: var(--space-m); flex-wrap: wrap; }
-  .footer_links a { color: var(--ink-75); text-decoration: none; font-size: var(--step--1); }
-  .footer_links a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+  @media (min-width: 900px) { .footer_grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
+  .footer_brand {
+    font-family: 'Fraunces', serif; font-variation-settings: "wght" 600, "opsz" 36;
+    font-size: var(--step-0); display: inline-flex; align-items: center; gap: 0.5em;
+    color: var(--ink); text-decoration: none;
+  }
+  .footer_blurb {
+    margin-top: var(--space-xs);
+    font-family: 'Inter', sans-serif; font-size: var(--step--1); color: var(--ink-75);
+    max-width: 380px;
+  }
+  .footer_col-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-50); margin-bottom: var(--space-xs);
+  }
+  .footer_col a {
+    display: block; padding: 0.4em 0;
+    font-family: 'Inter', sans-serif; font-size: var(--step--1); color: var(--ink-75); text-decoration: none;
+    transition: color 0.4s var(--ease-qb);
+  }
+  .footer_col a:hover { color: var(--ink); }
+  .footer_bottom {
+    max-width: 1240px; margin: var(--space-l) auto 0;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-s);
+    padding-top: var(--space-s); border-top: 1px solid var(--ink-25);
+  }
+  .footer_bottom_meta {
+    font-family: 'JetBrains Mono', monospace; font-size: var(--step--2); letter-spacing: 0.06em; color: var(--ink-50);
+  }
+  .footer_bottom_links { display: inline-flex; gap: var(--space-s); flex-wrap: wrap; }
+  .footer_bottom_links a {
+    color: var(--ink-50); text-decoration: none;
+    font-family: 'JetBrains Mono', monospace; font-size: var(--step--2); letter-spacing: 0.06em;
+  }
+  .footer_bottom_links a:hover { color: var(--ink); }
 
   /* =====================================================
      REDUCED MOTION
@@ -741,6 +863,8 @@
     .qb-button:active .qb-button_content { transform: none; }
     .reveal { opacity: 1; transform: none; transition: none; }
     .featured-track { animation: none; }
+    .cta-bike_carrier { animation: none !important; transform: translateX(30vw) !important; }
+    .cta-bike_image { animation: none !important; transform: none !important; }
   }
 </style>
 </head>
@@ -869,31 +993,90 @@
     </div>
   </section>
 
-  <!-- FINAL CTA -->
-  <section class="final-cta">
-    <div class="qb-x-narrow">
-      <span class="qb-tag is-butter"><span class="qb-tag_content">Free forever tier</span></span>
-      <h2 class="qb-type-subheading qb-type-balance">Run your first Signal Scan.</h2>
-      <p class="qb-type-opening qb-type-pretty">5 minutes. No credit card. A real brand diagnosis at the end.</p>
-      <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Start free</span></a>
+  <!-- FINAL CTA - merged closing block (ecosystem SOT). Bike rolls in
+       the background of the CTA text, big stats card below, then the
+       footer transitions to lighter cream-card. -->
+  <section class="final-cta" aria-label="Start building">
+    <div class="final-cta_top">
+
+      <!-- Single bike rolling full-bleed in the background -->
+      <div class="cta-bike" aria-hidden="true">
+        <div class="cta-bike_carrier">
+          <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
+        </div>
+      </div>
+
+      <div class="qb-x-narrow final-cta_inner">
+        <span class="qb-tag is-butter"><span class="qb-tag_content">Free forever tier</span></span>
+        <h2 class="qb-type-heading qb-type-balance">Start <em><span class="underlined">building.</span></em></h2>
+        <p class="qb-type-opening qb-type-pretty">From idea, to orbit. Just like that.</p>
+        <p class="final-cta_caption">Free Signal Scan.</p>
+        <div class="hero_cta">
+          <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Run my free scan</span></a>
+          <a href="https://app.quantumbranding.ai" class="qb-button is-lg"><span class="qb-button_content">Enter QB BrandOS</span></a>
+        </div>
+        <div class="hero_meta">No download · No credit card · 5 minutes</div>
+      </div>
+    </div>
+
+    <div class="qb-x">
+      <div class="cta-stats reveal">
+        <div class="cta-stats_item">
+          <div class="cta-stats_v">20</div>
+          <div class="cta-stats_l">Agent tools</div>
+        </div>
+        <div class="cta-stats_item">
+          <div class="cta-stats_v">1</div>
+          <div class="cta-stats_l">Brand Profile</div>
+        </div>
+        <div class="cta-stats_item">
+          <div class="cta-stats_v">$0</div>
+          <div class="cta-stats_l">To start</div>
+        </div>
+      </div>
     </div>
   </section>
 
 </main>
 
 <footer class="footer">
-  <div class="footer_inner">
-    <a href="index.html" class="footer_brand">
-      <span class="nav-brand_dot" aria-hidden="true"></span>
-      Quantum Branding
-    </a>
-    <nav class="footer_links">
-      <a href="ecosystem.html#about">About</a>
+  <div class="footer_grid">
+    <div>
+      <a href="index.html" class="footer_brand">
+        <span class="nav-brand_dot" aria-hidden="true"></span>
+        Quantum Branding
+      </a>
+      <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Product</div>
+      <a href="ecosystem.html#how">How it works</a>
+      <a href="tools.html">The 20 tools</a>
       <a href="ecosystem.html#pricing">Pricing</a>
-      <a href="tools.html">Tools</a>
-      <a href="mailto:hello@quantumbranding.ai">Contact</a>
+      <a href="https://app.quantumbranding.ai/signal-scan.html">Free Signal Scan</a>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Company</div>
+      <a href="ecosystem.html#about">About</a>
+      <a href="https://nizzar.com" target="_blank" rel="noopener">nizzar.com</a>
+      <a href="mailto:me@qtmbg.com">Contact</a>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Social</div>
+      <a href="https://linkedin.com/in/nizzar" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://instagram.com/thequantumbranding" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://x.com/quantumbranding" target="_blank" rel="noopener">X (Twitter)</a>
+      <a href="https://www.fiverr.com/nizzar" target="_blank" rel="noopener">150+ reviews</a>
+    </div>
+  </div>
+
+  <div class="footer_bottom">
+    <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
+    <nav class="footer_bottom_links">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#">Data</a>
     </nav>
-    <div class="qb-type-subtext" style="color:var(--ink-50);">© Quantum Branding · Built by Nizzar Ben Chekroune</div>
   </div>
 </footer>
 
