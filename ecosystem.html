@@ -1231,51 +1231,36 @@
   }
 
   /* =====================================================
-     FINAL CTA - merged with footer into one closing block
-     (same cream-warm surface, no internal border)
+     FINAL CTA: closing block with bike rolling, in three layers.
+     Top (cream-warm)    : eyebrow + headline + Free Signal Scan CTA
+     Mid (cream-warm)    : bike rolls full-bleed
+     Stats card          : big horizontal 20 / 1 / $0 SOT card
+     Footer (cream-card) : lighter beige for clear colour break
      ===================================================== */
   .final-cta {
     position:relative;
     background:var(--cream-warm);
     border-top:2px solid var(--ink);
-    padding-block:var(--space-2xl) 0;
+    padding-top:var(--space-2xl);
     text-align:center;
     overflow:hidden;
   }
   .final-cta_top { position:relative; z-index:2; }
   .final-cta_top > * + * { margin-top:var(--space-s); }
-
-  .cta-kpis {
-    display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-s);
-    max-width:760px; margin:var(--space-l) auto 0;
-    padding-inline:var(--space-m-l);
-  }
-  .cta-kpi {
-    background:var(--cream); border:2px solid var(--ink); border-radius:18px;
-    padding:var(--space-s) var(--space-xs);
-    box-shadow:0 6px var(--ink);
-    transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
-  }
-  @media (min-width:640px) { .cta-kpi { box-shadow:0 9px var(--ink); padding:var(--space-m) var(--space-xs); } }
-  @media (hover:hover) {
-    .cta-kpi:hover { transform:translateY(-4px); box-shadow:0 12px var(--ink); }
-  }
-  .cta-kpi_v {
-    font-family:'Fraunces',serif;
-    font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 60,"WONK" 0;
-    font-size:clamp(2rem,5vw,3.75rem); line-height:1; color:var(--ink);
-    letter-spacing:-0.02em;
-  }
-  .cta-kpi_l {
-    margin-top:0.3em;
-    font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.14em;
-    text-transform:uppercase; color:var(--ink-50);
+  .final-cta_top .hero_cta { margin-top:var(--space-m) !important; }
+  .final-cta_top .hero_meta { margin-top:var(--space-s) !important; }
+  .final-cta_caption {
+    font-family:'Fraunces',serif; font-style:italic;
+    font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 80,"WONK" 1;
+    font-size:clamp(1.5rem,3.5vw,2.5rem); line-height:1.1;
+    color:var(--rose);
+    text-wrap:balance;
   }
 
   .cta-bike {
     position:relative;
     height:clamp(120px,15vw,200px);
-    margin:var(--space-m) 0 var(--space-m);
+    margin:var(--space-l) 0 0;
     overflow:visible;
     z-index:1;
   }
@@ -1293,21 +1278,36 @@
     pointer-events:none;
   }
 
-  .final-cta_bottom { position:relative; z-index:2; padding-inline:var(--space-m-l); }
-  .final-cta_bottom .hero_cta { margin-top:var(--space-s) !important; }
-  .final-cta_bottom .hero_meta { margin-top:var(--space-s) !important; }
-  .final-cta_caption {
-    font-family:'Fraunces',serif; font-style:italic;
-    font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 80,"WONK" 1;
-    font-size:clamp(1.5rem,3.5vw,2.5rem); line-height:1.1;
-    color:var(--rose);
-    text-wrap:balance;
+  /* Big horizontal stats card (the "old longer design"): one card,
+     three columns split by inner divider, hard offset shadow. */
+  .cta-stats {
+    max-width:1240px; margin:var(--space-xl-2xl) auto var(--space-2xl);
+    display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+    background:var(--cream-card); border:2px solid var(--ink); border-radius:32px;
+    box-shadow:0 9px var(--ink); overflow:hidden;
+  }
+  @media (min-width:640px) { .cta-stats { box-shadow:0 16px var(--ink); } }
+  .cta-stats_item {
+    text-align:center; padding:var(--space-l) var(--space-s);
+    border-right:1.5px solid var(--ink-25);
+  }
+  .cta-stats_item:last-child { border-right:0; }
+  .cta-stats_v {
+    font-family:'Fraunces',serif;
+    font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 60,"WONK" 0;
+    font-size:var(--step-5); line-height:1; color:var(--ink);
+    letter-spacing:-0.02em;
+  }
+  .cta-stats_l {
+    margin-top:0.5em;
+    font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--ink-75);
   }
 
-  /* Footer flows directly out of the final CTA: same cream-warm surface,
-     no top border so the bike's road extends straight into the footer.
-     No more duplicate stats block, the KPI row in final CTA is the SOT. */
-  .footer { background:var(--cream-warm); padding:var(--space-l) var(--space-m-l); border-top:0; }
+  /* Footer sits on the lighter cream-card surface to differentiate
+     from the cream-warm bike + stats area above. Top border re-added
+     to mark the colour break clearly. */
+  .footer { background:var(--cream-card); padding:var(--space-xl) var(--space-m-l) var(--space-l); border-top:2px solid var(--ink); }
   .footer_grid { max-width:1240px; margin-inline:auto; display:grid; grid-template-columns:1fr; gap:var(--space-l-xl); }
   @media (min-width:900px) { .footer_grid { grid-template-columns:2fr 1fr 1fr 1fr; } }
   .footer_brand { font-family:'Fraunces',serif; font-variation-settings:"wght" 600,"opsz" 36; font-size:var(--step-0); display:inline-flex; align-items:center; gap:0.5em; }
@@ -2367,27 +2367,13 @@
     </div>
   </section>
 
-  <!-- FINAL CTA - merged with bike strip. KPIs at top, bike rolls the
-       full width below them, free signal scan + secondary CTA below. -->
+  <!-- FINAL CTA - flow: Free Signal Scan first, bike rolls, big stats
+       card, then footer on lighter beige for colour break. -->
   <section class="final-cta" aria-label="Start building">
     <div class="qb-x-narrow final-cta_top">
       <span class="qb-tag is-butter"><span class="qb-tag_content">Free forever tier</span></span>
       <h2 class="qb-type-heading qb-type-balance">Start <em><span class="underlined">building.</span></em></h2>
       <p class="qb-type-opening qb-type-pretty">From idea, to orbit. Just like that.</p>
-
-      <div class="cta-kpis reveal">
-        <div class="cta-kpi"><div class="cta-kpi_v">20</div><div class="cta-kpi_l">Agent tools</div></div>
-        <div class="cta-kpi"><div class="cta-kpi_v">1</div><div class="cta-kpi_l">Brand Profile</div></div>
-        <div class="cta-kpi"><div class="cta-kpi_v">$0</div><div class="cta-kpi_l">To start</div></div>
-      </div>
-    </div>
-
-    <div class="cta-bike" aria-hidden="true">
-      <div class="cta-bike_road"></div>
-      <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
-    </div>
-
-    <div class="qb-x-narrow final-cta_bottom">
       <p class="final-cta_caption">Free Signal Scan.</p>
       <div class="hero_cta">
         <a href="https://app.quantumbranding.ai/signal-scan.html" class="qb-button is-primary is-lg"><span class="qb-button_content">Run my free scan</span></a>
@@ -2396,50 +2382,70 @@
       <div class="hero_meta">No download · No credit card · 5 minutes</div>
     </div>
 
-    <!-- Footer flows out of the same cream-warm surface, no border.
-         Stats are NOT repeated here; the KPI row above is the SOT. -->
-    <footer class="footer">
-      <div class="footer_grid">
-        <div>
-          <a href="index.html" class="footer_brand">
-            <span class="nav-brand_dot" aria-hidden="true"></span>
-            Quantum Branding
-          </a>
-          <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
-        </div>
-        <div class="footer_col">
-          <div class="footer_col-title">Product</div>
-          <a href="#how">How it works</a>
-          <a href="#what">The 20 tools</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#scanner">Free Signal Scan</a>
-        </div>
-        <div class="footer_col">
-          <div class="footer_col-title">Company</div>
-          <a href="#about">About</a>
-          <a href="https://nizzar.com" target="_blank" rel="noopener">nizzar.com</a>
-          <a href="mailto:me@qtmbg.com">Contact</a>
-        </div>
-        <div class="footer_col">
-          <div class="footer_col-title">Social</div>
-          <a href="https://linkedin.com/in/nizzar" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="https://instagram.com/thequantumbranding" target="_blank" rel="noopener">Instagram</a>
-          <a href="https://x.com/quantumbranding" target="_blank" rel="noopener">X (Twitter)</a>
-        </div>
-      </div>
+    <div class="cta-bike" aria-hidden="true">
+      <div class="cta-bike_road"></div>
+      <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
+    </div>
 
-      <div class="footer_bottom">
-        <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
-        <nav class="footer_bottom_links">
-          <a href="#">Terms</a>
-          <a href="#">Privacy</a>
-          <a href="#">Data</a>
-        </nav>
+    <div class="qb-x">
+      <div class="cta-stats reveal">
+        <div class="cta-stats_item">
+          <div class="cta-stats_v">20</div>
+          <div class="cta-stats_l">Agent tools</div>
+        </div>
+        <div class="cta-stats_item">
+          <div class="cta-stats_v">1</div>
+          <div class="cta-stats_l">Brand Profile</div>
+        </div>
+        <div class="cta-stats_item">
+          <div class="cta-stats_v">$0</div>
+          <div class="cta-stats_l">To start</div>
+        </div>
       </div>
-    </footer>
+    </div>
   </section>
 
 </main>
+
+<footer class="footer">
+  <div class="footer_grid">
+    <div>
+      <a href="index.html" class="footer_brand">
+        <span class="nav-brand_dot" aria-hidden="true"></span>
+        Quantum Branding
+      </a>
+      <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Product</div>
+      <a href="#how">How it works</a>
+      <a href="#what">The 20 tools</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#scanner">Free Signal Scan</a>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Company</div>
+      <a href="#about">About</a>
+      <a href="https://nizzar.com" target="_blank" rel="noopener">nizzar.com</a>
+      <a href="mailto:me@qtmbg.com">Contact</a>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Social</div>
+      <a href="https://linkedin.com/in/nizzar" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://instagram.com/thequantumbranding" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://x.com/quantumbranding" target="_blank" rel="noopener">X (Twitter)</a>
+    </div>
+  </div>
+
+  <div class="footer_bottom">
+    <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
+    <nav class="footer_bottom_links">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#">Data</a>
+    </nav>
+  </div>
+</footer>
 
 <script>
   // Loading bar idle
