@@ -1519,15 +1519,20 @@ select.glass-input{
 }
 .editorial-header-eyebrow{
   display:inline-block;
-  font-family:var(--f-body); font-size:0.78rem; font-weight:600;
-  text-transform:uppercase; letter-spacing:.14em;
-  color:var(--ink);
-  background:var(--cream-card);
+  font-family:var(--f-body); font-size:0.82rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.12em;
+  color:var(--cream);
+  background:var(--rose-deep);
   border:2px solid var(--ink);
   border-radius:9999px;
-  padding:0.55em 1.25em;
+  padding:0.6em 1.4em;
   box-shadow:0 4px var(--ink);
 }
+.editorial-header-eyebrow.is-teal   { background:var(--teal-deep); color:var(--cream); }
+.editorial-header-eyebrow.is-gold   { background:var(--gold);      color:var(--ink); }
+.editorial-header-eyebrow.is-aubergine { background:var(--aubergine); color:var(--cream); }
+.editorial-header-eyebrow.is-pink   { background:var(--pink);      color:var(--ink); }
+.editorial-header-eyebrow.is-butter { background:var(--butter);    color:var(--ink); }
 .editorial-header-title{
   font-family:var(--f-display); font-weight:700;
   font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 100,"WONK" 0;
@@ -1549,7 +1554,7 @@ select.glass-input{
    in the DOM (rare) will collapse to nothing rather than render the old image. */
 .visual-header{ display:none !important; }
 
-/* Panel — ecosystem qb-card, replaces the old glassy backdrop-blur look */
+/* Panel — ecosystem qb-card with a top accent strip for more color presence */
 .glass-panel{
   background:var(--cream-card);
   border:2px solid var(--ink);
@@ -1558,8 +1563,22 @@ select.glass-input{
   box-shadow:0 9px var(--ink);
   -webkit-backdrop-filter:none;
   backdrop-filter:none;
+  position:relative;
+  overflow:hidden;
 }
-@media(min-width:640px){ .glass-panel{ box-shadow:0 16px var(--ink); border-radius:28px; } }
+.glass-panel::before{
+  content:''; position:absolute; left:0; right:0; top:0;
+  height:8px;
+  background:linear-gradient(90deg,
+    var(--rose-deep) 0%, var(--rose-deep) 20%,
+    var(--gold) 20%, var(--gold) 40%,
+    var(--teal-deep) 40%, var(--teal-deep) 60%,
+    var(--aubergine) 60%, var(--aubergine) 80%,
+    var(--pink) 80%, var(--pink) 100%);
+  border-bottom:2px solid var(--ink);
+}
+@media(min-width:640px){ .glass-panel{ box-shadow:0 16px var(--ink); border-radius:28px; } .glass-panel::before{ height:10px; } }
+.glass-panel > *:first-child{ margin-top:0.5rem; }
 .panel-h{
   font-family:var(--f-display); font-weight:650;
   font-variation-settings:"wght" 650,"opsz" 72,"SOFT" 100,"WONK" 0;
@@ -1605,16 +1624,26 @@ select.glass-input{
   color:var(--ink-50);
 }
 .manifesto-block{
-  padding:1.5rem 1.75rem;
-  border-left:4px solid var(--gold);
-  background:var(--cream);
-  border-radius:0 16px 16px 0;
+  padding:1.75rem 1.85rem;
+  background:var(--cream-rose);
+  border:2px solid var(--ink);
+  border-radius:20px;
+  box-shadow:0 6px var(--ink);
   font-family:var(--f-display); font-style:italic; font-weight:600;
   font-variation-settings:"wght" 600,"opsz" 48,"SOFT" 100,"WONK" 1;
   font-size:1.35rem; line-height:1.45;
   color:var(--ink);
-  margin-top:1.5rem;
+  margin-top:1.75rem;
+  position:relative;
 }
+.manifesto-block::before{
+  content:'\201C'; position:absolute; top:-0.15em; left:0.6rem;
+  font-family:var(--f-display); font-weight:700;
+  font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 100,"WONK" 1;
+  font-size:5rem; line-height:1; color:var(--rose-deep);
+  pointer-events:none;
+}
+.manifesto-block{ padding-left:3rem; }
 .sync-stamp{
   margin-top:1.5rem;
   display:flex; align-items:center; justify-content:center; gap:0.6rem;
