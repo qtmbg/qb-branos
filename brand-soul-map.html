@@ -1248,22 +1248,36 @@ button{ font-family:inherit; cursor:pointer; }
 .btn-on-dark .btn_content{ background:var(--cream); border-color:var(--cream); color:var(--ink); }
 .btn-on-dark.btn-primary .btn_content{ background:var(--gold); border-color:var(--gold); color:var(--ink); }
 
-/* ================== LAYOUT ================== */
+/* ================== LAYOUT (story-page flow, no sidebar / no app shell) ================== */
 .app{
-  display:flex; height:100vh; width:100vw;
-  overflow:hidden; position:relative; z-index:2;
+  display:block; height:auto; width:100%;
+  overflow:visible; position:relative; z-index:2;
+  background:transparent;
 }
 
-/* Sidebar */
+/* Module palette tokens — used per-step to tint the page accent.
+   Default: gold. Overridden by .app[data-module="X"] further down. */
+.app{
+  --mod-accent: var(--gold);
+  --mod-tint:   var(--cream);
+}
+
+/* Sidebar — hidden on desktop. Repurposed as a slide-over drawer on mobile only. */
 .sidebar{
-  width:280px; flex-shrink:0;
-  background:var(--bg-deep);
-  border-right:1px solid var(--border-subtle);
-  padding:28px 24px;
+  position:fixed; top:0; left:0; bottom:0; z-index:100;
+  width:300px; max-width:85vw;
+  background:var(--cream);
+  border-right:2px solid var(--ink);
+  padding:1.75rem 1.5rem;
   display:flex; flex-direction:column;
-  height:100vh; overflow-y:auto;
-  position:relative; z-index:10;
-  transition:transform .3s ease;
+  overflow-y:auto;
+  transform:translateX(-100%);
+  transition:transform .35s cubic-bezier(0.19,1,0.22,1);
+  box-shadow:0 0 0 transparent;
+}
+.sidebar.open{
+  transform:translateX(0);
+  box-shadow:8px 0 0 var(--ink);
 }
 .sidebar-head{
   display:flex; justify-content:space-between; align-items:flex-start;
@@ -1368,26 +1382,28 @@ button{ font-family:inherit; cursor:pointer; }
   .main{ padding-top:70px; }
 }
 
-/* Main */
+/* Main — natural flow story page, no fixed-height app shell */
 .main{
-  flex:1; height:100vh; overflow-y:auto;
-  position:relative;
+  flex:none; height:auto; min-height:100vh; overflow:visible;
+  position:relative; width:100%;
+  background:var(--mod-tint, var(--cream));
+  transition:background .8s cubic-bezier(0.19,1,0.22,1);
 }
 .main-inner{
-  max-width:1000px; margin:0 auto;
-  padding:56px clamp(16px, 3vw, 40px) 180px;
+  max-width:880px; margin:0 auto;
+  padding:clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 4vw, 2.5rem) clamp(2.5rem, 4vw, 4rem);
 }
-@media(max-width:960px){ .main-inner{ padding:20px 16px 180px; } }
 
 /* Step transition */
 @keyframes fadeUp{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:translateY(0); } }
-.step-container{ animation:fadeUp .4s var(--ease) both; }
+.step-container{ animation:fadeUp .5s cubic-bezier(0.19,1,0.22,1) both; }
 
-/* Dock */
+/* Dock — flows inline at the end of each step, not sticky */
 .dock-wrap{
-  position:sticky; bottom:24px; z-index:50;
-  padding:0 clamp(16px, 3vw, 40px);
-  pointer-events:none;
+  position:relative; bottom:auto; z-index:auto;
+  margin:clamp(2rem, 4vw, 3rem) auto 0;
+  padding:0 clamp(1.25rem, 4vw, 2.5rem);
+  pointer-events:auto;
   display:flex; justify-content:center;
 }
 .dock{
