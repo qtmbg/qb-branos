@@ -467,6 +467,12 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 
 /* === CHASSIS HARMONIZATION (one shell across all 27 pages, ecosystem.html SOT) === */
 
+/* Restore sticky context — overflow-x:hidden on body breaks position:sticky on
+   descendants. Use overflow-x:clip instead so horizontal scroll is prevented
+   without creating a scroll container. */
+html { overflow-x: clip !important; }
+body { overflow-x: clip !important; overflow-y: visible !important; }
+
 /* Stack order: loading bar over banner over nav over everything else */
 .qb-loading-bar { z-index: 100 !important; }
 .banner, .banner-canonical { z-index: 95 !important; }
