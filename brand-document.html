@@ -607,6 +607,205 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
 
 /* === END CHASSIS HARMONIZATION === */
 
+/* === CANONICAL BODY PAINT (ecosystem SOT visual unification, all 5 sweeps) === */
+/* Aggressive painter that unifies tool body internals to ecosystem visual
+   language: cream surfaces, ink type, hard offset shadows, Fraunces headings,
+   mono eyebrows, gold italics. Every CTA button is already painted by
+   canonical-button-paint. Every chassis component (nav, banner, footer) is
+   excluded so the shell stays untouched. */
+
+
+/* SWEEP 4: BODY + MAIN BACKGROUNDS — cream + ink only, no legacy bg-void / dark */
+html { background: var(--cream) !important; color: var(--ink) !important; }
+body { background: var(--cream) !important; color: var(--ink) !important; }
+body > main, body > .main, body > #app, body > .app, body > .container,
+body > main > section, body > .main > section { background: transparent !important; color: var(--ink) !important; }
+
+
+/* SWEEP 1: CARD / PANEL / MODULE SURFACE PAINT
+   Any element with a class token suggesting it is a content surface gets the
+   ecosystem qb-card visual. Excludes chassis (nav, banner, footer, hamburger),
+   tiny widgets (dot, pip, badge, tag, label), and already-canonical components
+   (qb-button, qb-illus-card, qb-tag). */
+.qb-paint-surface,
+[class*="-card"]:not(.qb-card):not(.qb-illus-card):not(.qb-button):not(.qb-button_content):not(.banner-card):not(.scorecard):not(.text-card):not([class*="-dot"]):not([class*="-pip"]):not([class*="-badge"]):not([class*="-tag"]):not([class*="-label"]),
+[class^="card-"]:not(.qb-button):not([class*="-dot"]):not([class*="-pip"]),
+.glass-card, .module-card, .panel-card, .stat-card, .testi-card, .compass-card,
+.voice-card, .proof-card, .codex-card, .feat-card, .how-card, .price-card,
+.tool-card, .tool-bcard, .completion-card, .plan-card, .figure-frame,
+.figure-placeholder, .results-shell, .err-shell, .compass-glance, .manifesto-block,
+.queue-item, .csh-output-item, .pcb, .pcl, .cb, .cl, .r-cell, .r-paradox-col,
+.q-profile, .panel-verdict, .voice-block, .module-block, .insight-block,
+.metric-block, .report-block, .empty-state {
+  background: var(--cream-card) !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 9px var(--ink) !important;
+  color: var(--ink) !important;
+  padding: 1.5rem !important;
+  position: relative;
+  overflow: visible !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+@media (min-width: 640px) {
+  [class*="-card"]:not(.qb-card):not(.qb-illus-card):not(.qb-button):not(.qb-button_content):not(.banner-card):not(.scorecard):not(.text-card):not([class*="-dot"]):not([class*="-pip"]):not([class*="-badge"]):not([class*="-tag"]):not([class*="-label"]),
+  [class^="card-"]:not(.qb-button):not([class*="-dot"]):not([class*="-pip"]),
+  .glass-card, .module-card, .panel-card, .stat-card, .testi-card, .compass-card,
+  .voice-card, .proof-card, .codex-card, .feat-card, .how-card, .price-card,
+  .tool-card, .tool-bcard, .completion-card, .plan-card, .figure-frame,
+  .figure-placeholder, .results-shell, .err-shell, .compass-glance, .manifesto-block,
+  .queue-item, .csh-output-item, .pcb, .pcl, .cb, .cl, .r-cell, .r-paradox-col,
+  .q-profile, .panel-verdict, .voice-block, .module-block, .insight-block,
+  .metric-block, .report-block {
+    box-shadow: 0 16px var(--ink) !important;
+  }
+}
+
+
+/* SWEEP 2: HEADING TYPOGRAPHY — Fraunces with ecosystem variation axes */
+body h1:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *),
+body .display-h1, body .h1, body .hero-title, body .csh-title {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 60, "WONK" 0 !important;
+  color: var(--ink) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.05 !important;
+  font-style: normal !important;
+}
+body h2:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *),
+body .display-h2, body .h2, body .section-title, body .panel-title,
+body .module-title, body .compass-title, body .codex-title {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 600, "opsz" 96, "SOFT" 60, "WONK" 0 !important;
+  color: var(--ink) !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.1 !important;
+  font-style: normal !important;
+}
+body h3:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *),
+body .display-h3, body .h3, body .card-name, body .step-name, body .feat-name {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 600, "opsz" 72, "SOFT" 70, "WONK" 0 !important;
+  color: var(--ink) !important;
+  line-height: 1.15 !important;
+  font-style: normal !important;
+}
+body h4:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *) {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 500, "opsz" 48, "SOFT" 70, "WONK" 0 !important;
+  color: var(--ink) !important;
+  line-height: 1.2 !important;
+  font-style: normal !important;
+}
+
+
+/* EYEBROWS — mono uppercase tracked-out, ecosystem pattern */
+body .eyebrow, body [class*="eyebrow"]:not(.banner *):not(.nav-wrap *),
+body .pretitle, body .section_eyebrow, body .module-eyebrow,
+body .csh-eyebrow, body .pre-h, body .label-eyebrow {
+  font-family: var(--f-mono, 'JetBrains Mono'), ui-monospace, monospace !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-50, rgba(45,21,33,0.5)) !important;
+  font-weight: 500 !important;
+  display: inline-block !important;
+  margin-bottom: 0.5rem !important;
+}
+
+
+/* ITALIC EM = GOLD per v3.4 Part 3.6 */
+body em:not(.banner *):not(.nav-wrap *):not(.footer *),
+body i:not([class]):not(.fa):not(.icon):not(.banner *):not(.nav-wrap *):not(.footer *) {
+  font-style: italic !important;
+  color: var(--gold) !important;
+}
+
+
+/* SWEEP 3: FORM FIELDS — ecosystem qb-field visual */
+body input[type="text"]:not(.banner *):not(.nav-wrap *),
+body input[type="email"]:not(.banner *):not(.nav-wrap *),
+body input[type="password"]:not(.banner *):not(.nav-wrap *),
+body input[type="number"]:not(.banner *):not(.nav-wrap *),
+body input[type="search"]:not(.banner *):not(.nav-wrap *),
+body input[type="tel"]:not(.banner *):not(.nav-wrap *),
+body input[type="url"]:not(.banner *):not(.nav-wrap *),
+body input:not([type]):not(.banner *):not(.nav-wrap *),
+body textarea:not(.banner *):not(.nav-wrap *),
+body select:not(.banner *):not(.nav-wrap *) {
+  background: var(--cream-card) !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 14px !important;
+  color: var(--ink) !important;
+  padding: 0.85em 1.1em !important;
+  font-family: var(--f-body), 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.4 !important;
+  box-shadow: 0 4px var(--ink) !important;
+  transition: box-shadow 0.3s cubic-bezier(0.19,1,0.22,1),
+              transform 0.3s cubic-bezier(0.19,1,0.22,1),
+              background 0.3s cubic-bezier(0.19,1,0.22,1) !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+body input:focus, body textarea:focus, body select:focus {
+  box-shadow: 0 6px var(--ink) !important;
+  transform: translateY(-2px) !important;
+  background: var(--white, #FFFEF8) !important;
+}
+body input::placeholder, body textarea::placeholder {
+  color: var(--ink-50, rgba(45,21,33,0.5)) !important;
+  font-weight: 400 !important;
+}
+body label:not(.banner *):not(.nav-wrap *):not(.footer *) {
+  font-family: var(--f-mono), monospace !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-75, rgba(45,21,33,0.75)) !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.4rem !important;
+  display: inline-block !important;
+}
+
+
+/* SWEEP 5: SECTION SPACING — ecosystem rhythm */
+body main > section,
+body > main > section,
+body main > .section,
+body main > div[class*="section"]:not([class*="card"]) {
+  padding-block: var(--space-2xl, 4rem) !important;
+  background: transparent !important;
+}
+
+
+/* PARAGRAPH BODY COPY — ink-75 with Inter, 1.65 leading */
+body p:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *) {
+  font-family: var(--f-body), 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  color: var(--ink-75, rgba(45,21,33,0.75)) !important;
+  line-height: 1.65 !important;
+}
+
+
+/* DOTS / DIVIDERS / DIM ARTIFACTS — neutralize legacy dark theme */
+body .header-divider, body .nav-spacer { background: var(--ink-25, rgba(45,21,33,0.25)) !important; }
+
+
+/* HIDE LEGACY VIGNETTE / NOISE / AMBIENT artifacts that survived the chassis swap */
+body > .ambient-glow, body > .main-vignette, body > .vignette,
+body > .ambient-tools, body > .ambient-scan, body > .grain-tools,
+.ambient-glow, .main-vignette, .vignette { display: none !important; opacity: 0 !important; }
+body { background-image: none !important; }
+
+
+/* === END CANONICAL BODY PAINT === */
+
+
+
 
 
 /* CANONICAL LOADING BAR */
