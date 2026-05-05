@@ -303,7 +303,8 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 /* === END CANONICAL CHASSIS OVERRIDE === */
 
 /* === CANONICAL BUTTON PAINT (ecosystem qb-button visual on legacy classes) === */
-/* Paints legacy single-layer CTA classes with the qb-button two-layer 3D pill.
+/* Paints legacy single-layer CTA classes with the qb-button drop-shadow pill.
+   Uses box-shadow for the ink slab so text never sits on top of the slab.
    Skips elements that already have a two-layer inner span (.btn_content or
    .qb-button_content) so we never double-pill an already-correct button. */
 
@@ -346,17 +347,19 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
   text-decoration: none !important;
   text-transform: none !important;
   cursor: pointer !important;
-  isolation: isolate !important;
-  box-shadow: none !important;
+  box-shadow: 0 0.34em 0 0 var(--ink) !important;
   transition: transform 0.4s cubic-bezier(0.19,1,0.22,1),
+              box-shadow 0.4s cubic-bezier(0.19,1,0.22,1),
               filter 0.4s cubic-bezier(0.19,1,0.22,1),
               background 0.4s cubic-bezier(0.19,1,0.22,1),
               color 0.4s cubic-bezier(0.19,1,0.22,1) !important;
   -webkit-appearance: none !important;
   appearance: none !important;
   white-space: nowrap !important;
+  transform: translateY(0) !important;
 }
 
+/* Suppress any stale ::before pseudo from earlier paint experiments */
 .btn:not(.btn-remove):not(.btn-theme):not(.tab-btn):not(.btn-icon):not(:has(.btn_content)):not(:has(.qb-button_content))::before,
 .btn-primary:not(:has(.btn_content)):not(:has(.qb-button_content))::before,
 .btn-secondary:not(:has(.btn_content)):not(:has(.qb-button_content))::before,
@@ -378,15 +381,8 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 .secondary-btn:not(:has(.btn_content)):not(:has(.qb-button_content))::before,
 .ghost-btn:not(:has(.btn_content)):not(:has(.qb-button_content))::before,
 .action-btn:not(:has(.btn_content)):not(:has(.qb-button_content))::before {
-  content: '' !important;
-  position: absolute !important;
-  left: -2px; right: -2px; top: -2px; bottom: -2px;
-  border-radius: 9999px !important;
-  background: var(--ink) !important;
-  transform: translateY(0.34em) scale(0.99) !important;
-  transition: transform 0.4s cubic-bezier(0.19,1,0.22,1) !important;
-  z-index: -1 !important;
-  pointer-events: none !important;
+  content: none !important;
+  display: none !important;
 }
 
 @media (hover: hover) {
@@ -411,31 +407,9 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
   .secondary-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover,
   .ghost-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover,
   .action-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover {
-    transform: translateY(-0.28em) scale(1.02) !important;
+    transform: translateY(-0.2em) !important;
+    box-shadow: 0 0.55em 0 0 var(--ink) !important;
     filter: brightness(1.06) !important;
-  }
-  .btn:not(.btn-remove):not(.btn-theme):not(.tab-btn):not(.btn-icon):not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .btn-primary:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .btn-secondary:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .btn-ghost:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .btn-large:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .btn-lg:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .btn-sm:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .cta-primary:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .cta-secondary:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .cta-pill:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .back-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .print-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .bottom-cta-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .card-cta:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .bcard-cta:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .option-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .filter-pill:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .primary-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .secondary-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .ghost-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before,
-  .action-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):hover::before {
-    transform: translateY(0.55em) scale(0.99) !important;
   }
 }
 
@@ -460,12 +434,13 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 .secondary-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):active,
 .ghost-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):active,
 .action-btn:not(:has(.btn_content)):not(:has(.qb-button_content)):active {
-  transform: translateY(0.22em) scale(0.96) !important;
+  transform: translateY(0.24em) scale(0.98) !important;
+  box-shadow: 0 0.10em 0 0 var(--ink) !important;
   filter: brightness(0.94) !important;
   transition-duration: 0.15s !important;
 }
 
-/* VARIANT FILLS — only paint single-layer buttons (skip ones with inner span) */
+/* VARIANT FILLS */
 .btn-primary:not(:has(.btn_content)):not(:has(.qb-button_content)),
 .cta-primary:not(:has(.btn_content)):not(:has(.qb-button_content)),
 .primary-btn:not(:has(.btn_content)):not(:has(.qb-button_content)) { background: var(--gold) !important; color: var(--ink) !important; }
@@ -473,9 +448,9 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 .cta-secondary:not(:has(.btn_content)):not(:has(.qb-button_content)),
 .secondary-btn:not(:has(.btn_content)):not(:has(.qb-button_content)) { background: var(--rose-deep) !important; color: var(--cream) !important; }
 .btn-ghost:not(:has(.btn_content)):not(:has(.qb-button_content)),
-.ghost-btn:not(:has(.btn_content)):not(:has(.qb-button_content)) { background: transparent !important; }
+.ghost-btn:not(:has(.btn_content)):not(:has(.qb-button_content)) { background: var(--cream) !important; color: var(--ink) !important; }
 
-/* SIZE VARIANTS (paint-mode only) */
+/* SIZE VARIANTS */
 .btn-sm:not(:has(.btn_content)):not(:has(.qb-button_content)) { padding: 0.65em 1.15em !important; font-size: 0.74rem !important; }
 .btn-large:not(:has(.btn_content)):not(:has(.qb-button_content)),
 .btn-lg:not(:has(.btn_content)):not(:has(.qb-button_content)) { padding: 1em 1.85em !important; font-size: 0.98rem !important; }
@@ -492,13 +467,13 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 
 /* === END CANONICAL BUTTON PAINT === */
 
-/* === NAV CONTINUITY HARDENING === */
+/* === CHASSIS HARMONIZATION (one shell across all tools) === */
 /* Force canonical nav above any tool-internal sticky header */
 .nav-wrap { z-index: 90 !important; }
 .banner-canonical, .banner { z-index: 95 !important; }
 .qb-loading-bar { z-index: 100 !important; }
 
-/* Lock nav link styling — beats most tool-defined `.nav a` rules */
+/* Lock nav link styling so tool-defined `.nav a` rules can't override */
 .nav-wrap .nav-links a, .nav.is-canonical .nav-links a, .nav-wrap nav.nav-links a {
   font-family: var(--f-body) !important;
   font-weight: 500 !important;
@@ -513,15 +488,25 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 .nav-wrap .nav-links a:hover, .nav.is-canonical .nav-links a:hover { color: var(--ink) !important; }
 .nav-wrap .nav-links { display: inline-flex !important; gap: 0.4rem !important; align-items: center !important; }
 @media (max-width: 999px) { .nav-wrap .nav-links { display: none !important; } }
-
-/* Lock nav-actions positioning */
 .nav-wrap .nav-actions { display: inline-flex !important; align-items: center !important; gap: 0.6rem !important; }
 
-/* Hide tool-internal mobile header bars that compete with canonical mobile menu. */
+/* Hide DUPLICATE tool-internal top header bars that visually compete with the
+   canonical chassis nav (e.g. content-scheduler's dark sticky bar).
+   Only matches generic shells, not in-body section headers / card headers. */
+body > header.header,
+body > .header[role="banner"],
+body > div > header.header,
+body > main > header.header,
+body > div.app > header.header,
 .mobile-header, .header-mobile, header.mobile-header,
-.mobile-overlay { display: none !important; }
+.mobile-overlay, .nav-spacer, body > .vignette { display: none !important; }
 
-/* === END NAV CONTINUITY HARDENING === */
+/* Push body content down to clear the sticky canonical nav on tools that don't
+   already account for it */
+body > main > section:first-child,
+body > main > .hero:first-child { padding-top: 0; }
+
+/* === END CHASSIS HARMONIZATION === */
 
 
 
