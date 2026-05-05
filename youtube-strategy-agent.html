@@ -453,15 +453,89 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
 
 /* === END CANONICAL BUTTON PAINT === */
 
-/* === CHASSIS HARMONIZATION (one shell across all tools) === */
-/* Force canonical nav above any tool-internal sticky header */
-.nav-wrap { z-index: 90 !important; }
-.banner-canonical, .banner { z-index: 95 !important; }
-.qb-loading-bar { z-index: 100 !important; }
+/* === CHASSIS HARMONIZATION (one shell across all 27 pages, ecosystem.html SOT) === */
 
-/* Lock nav link styling so tool-defined `.nav a` rules can't override */
-.nav-wrap .nav-links a, .nav.is-canonical .nav-links a, .nav-wrap nav.nav-links a {
-  font-family: var(--f-body) !important;
+/* Stack order: loading bar over banner over nav over everything else */
+.qb-loading-bar { z-index: 100 !important; }
+.banner, .banner-canonical { z-index: 95 !important; }
+.nav-wrap { z-index: 90 !important; }
+
+/* BANNER — exact ecosystem values */
+.banner, .banner-canonical {
+  background: var(--ink) !important;
+  color: var(--cream) !important;
+  text-align: center !important;
+  padding: 0.7em var(--space-m-l, 1.5rem) !important;
+  font-family: var(--f-body), 'Inter', sans-serif !important;
+  font-size: var(--step--2, 0.78rem) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.04em !important;
+  border: 0 !important;
+}
+.banner a, .banner-canonical a {
+  color: var(--gold) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  margin-left: 0.5em !important;
+}
+.banner a:hover, .banner-canonical a:hover { text-decoration: underline !important; text-underline-offset: 3px !important; }
+
+/* NAV-WRAP — exact ecosystem values */
+.nav-wrap {
+  padding: var(--space-s, 0.875rem) var(--space-m-l, 1.5rem) !important;
+  position: sticky !important; top: 0 !important;
+  background: var(--cream) !important;
+}
+
+/* NAV PILL — exact ecosystem values, beats every chassis variant */
+.nav-wrap > .nav,
+.nav.is-canonical,
+.nav-wrap > header.nav,
+header.nav.is-canonical {
+  max-width: 1320px !important; margin-inline: auto !important;
+  display: flex !important; align-items: center !important; justify-content: space-between !important;
+  gap: var(--space-m, 1rem) !important;
+  background: var(--cream) !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 9999px !important;
+  padding: 0.6rem 0.6rem 0.6rem 1.4rem !important;
+  box-shadow: 0 6px var(--ink) !important;
+  width: auto !important; height: auto !important; min-height: 0 !important;
+  position: static !important;
+}
+
+/* NAV BRAND — exact ecosystem values */
+.nav-wrap .nav-brand,
+.nav-brand.is-canonical {
+  display: inline-flex !important; align-items: center !important; gap: 0.6rem !important;
+  font-family: var(--f-display), 'Fraunces', serif !important;
+  font-variation-settings: "wght" 600, "opsz" 36, "SOFT" 70, "WONK" 0 !important;
+  font-size: var(--step-0, 1.125rem) !important;
+  color: var(--ink) !important;
+  text-decoration: none !important;
+  line-height: 1 !important;
+}
+.nav-wrap .nav-brand_dot,
+.nav-brand_dot.is-canonical {
+  width: 0.65em !important; height: 0.65em !important; border-radius: 50% !important;
+  background: var(--rose) !important;
+  display: inline-block !important;
+  box-shadow: 0 0 0 3px rgba(202,97,128,0.18) !important;
+  animation: nav-dot-pulse 2.4s cubic-bezier(0.19,1,0.22,1) infinite !important;
+}
+
+/* NAV LINKS — hidden by default, visible at >=1000px (matches ecosystem) */
+.nav-wrap .nav-links {
+  display: none !important;
+  align-items: center !important;
+  gap: var(--space-s, 0.875rem) !important;
+}
+@media (min-width: 1000px) {
+  .nav-wrap .nav-links { display: inline-flex !important; }
+}
+.nav-wrap .nav-links a,
+.nav.is-canonical .nav-links a {
+  font-family: var(--f-body), 'Inter', sans-serif !important;
   font-weight: 500 !important;
   font-size: 0.92rem !important;
   letter-spacing: 0.01em !important;
@@ -471,26 +545,59 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display:none !im
   border-radius: 9999px !important;
   transition: color 0.3s cubic-bezier(0.19,1,0.22,1) !important;
 }
-.nav-wrap .nav-links a:hover, .nav.is-canonical .nav-links a:hover { color: var(--ink) !important; }
-.nav-wrap .nav-links { display: inline-flex !important; gap: 0.4rem !important; align-items: center !important; }
-@media (max-width: 999px) { .nav-wrap .nav-links { display: none !important; } }
-.nav-wrap .nav-actions { display: inline-flex !important; align-items: center !important; gap: 0.6rem !important; }
+.nav-wrap .nav-links a:hover { color: var(--ink) !important; }
 
-/* Hide DUPLICATE tool-internal top header bars that visually compete with the
-   canonical chassis nav (e.g. content-scheduler's dark sticky bar).
-   Only matches generic shells, not in-body section headers / card headers. */
+/* NAV ACTIONS — exact ecosystem values */
+.nav-wrap .nav-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+/* HAMBURGER — visible by default, hidden at >=1000px (matches ecosystem) */
+.nav-wrap .hamburger,
+.hamburger.is-canonical {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  width: 44px !important; height: 44px !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 9999px !important;
+  background: var(--cream) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+}
+@media (min-width: 1000px) {
+  .nav-wrap .hamburger,
+  .hamburger.is-canonical { display: none !important; }
+}
+.nav-wrap .hamburger span,
+.hamburger.is-canonical span {
+  display: block !important; width: 18px !important; height: 2px !important;
+  background: var(--ink) !important; border-radius: 2px !important;
+}
+
+/* MOBILE MENU — exact ecosystem values */
+.mobile-menu {
+  position: fixed !important; inset: 0 !important; z-index: 110 !important;
+  background: var(--cream) !important;
+  padding: var(--space-l, 2rem) var(--space-m-l, 1.5rem) !important;
+  display: none; flex-direction: column !important;
+}
+.mobile-menu[data-open="true"] { display: flex !important; }
+
+/* HIDE DUPLICATE tool-internal top header bars that compete with canonical nav */
 body > header.header,
 body > .header[role="banner"],
 body > div > header.header,
 body > main > header.header,
 body > div.app > header.header,
+body > div#app > header.header,
 .mobile-header, .header-mobile, header.mobile-header,
-.mobile-overlay, .nav-spacer, body > .vignette { display: none !important; }
-
-/* Push body content down to clear the sticky canonical nav on tools that don't
-   already account for it */
-body > main > section:first-child,
-body > main > .hero:first-child { padding-top: 0; }
+.mobile-overlay, .nav-spacer { display: none !important; }
+body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !important; }
 
 /* === END CHASSIS HARMONIZATION === */
 
