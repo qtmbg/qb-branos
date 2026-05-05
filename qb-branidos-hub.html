@@ -291,6 +291,119 @@ main.app-shell {
   .qb-button:active .qb-button_content { transform:none; }
   .nav-brand_dot { animation:none; }
 }
+
+/* =====================================================
+   TOOL SHELL SOT UPGRADE (auto-injected, ecosystem.html aligned)
+   Aligns every tool with the ecosystem page on motion, depth,
+   spring, and entrance rhythm. Additive only.
+   ===================================================== */
+
+/* Snappier pop on every legacy button class. The ecosystem qb-button
+   already has its own pop; this brings the rest of the surface up. */
+.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-ghost-link,
+.cta-primary, .cta-secondary, .option-btn, .filter-pill, .bcard-cta,
+.card-cta, .bottom-cta-btn, .nav-actions .btn, .mmenu .btn {
+  transition:
+    transform 0.4s cubic-bezier(0.19,1,0.22,1),
+    filter 0.4s cubic-bezier(0.19,1,0.22,1),
+    box-shadow 0.4s cubic-bezier(0.19,1,0.22,1),
+    background 0.4s cubic-bezier(0.19,1,0.22,1),
+    color 0.4s cubic-bezier(0.19,1,0.22,1);
+}
+@media (hover:hover) {
+  .btn:hover, .btn-primary:hover, .btn-secondary:hover, .btn-ghost:hover,
+  .cta-primary:hover, .cta-secondary:hover, .option-btn:hover,
+  .filter-pill:hover, .bcard-cta:hover, .card-cta:hover, .bottom-cta-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.07);
+  }
+}
+.btn:active, .btn-primary:active, .btn-secondary:active,
+.cta-primary:active, .cta-secondary:active, .option-btn:active,
+.filter-pill:active, .bcard-cta:active, .card-cta:active, .bottom-cta-btn:active {
+  transform: translateY(2px) scale(0.97);
+  filter: brightness(0.92);
+  transition-duration: 0.15s;
+}
+
+/* Hard offset shadow + hover lift on every common card surface. */
+.glass-card, .mock-card, .qb-card, .qb-illus-card,
+.price-card, .testi-card, .phase-card, .how-card,
+.tool-card, .tool-bcard, .stat-card, .compass-card, .voice-card,
+.proof-card, .module-card, .codex-card, .panel-verdict {
+  transition:
+    transform 0.5s cubic-bezier(0.19,1,0.22,1),
+    box-shadow 0.5s cubic-bezier(0.19,1,0.22,1) !important;
+}
+@media (hover:hover) {
+  .glass-card:hover, .mock-card:hover, .qb-card:hover,
+  .price-card:hover, .testi-card:hover, .phase-card:hover, .how-card:hover,
+  .tool-card:hover, .tool-bcard:hover, .stat-card:hover, .compass-card:hover {
+    transform: translateY(-4px);
+  }
+  .qb-illus-card:hover { transform: translate(-4px, -4px); }
+}
+
+/* Richer reveal entrance. Override the legacy fade-in keyframe so any
+   element with .fade-in or [data-reveal] gets the ecosystem treatment. */
+@keyframes qb-shell-reveal {
+  from { opacity: 0; transform: translateY(36px) scale(0.97); filter: blur(4px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+.fade-in { animation: qb-shell-reveal 0.9s cubic-bezier(0.19,1,0.22,1) forwards !important; }
+
+/* Idle float on illustration assets where they exist. */
+@keyframes qb-shell-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.qb-illus-card img,
+.illus-anchor,
+.compass-illust img,
+.founder-portrait img,
+.synergy-vid {
+  animation: qb-shell-float 8s ease-in-out infinite;
+}
+
+/* Pop the qb-button two-layer pill harder so the spring matches
+   ecosystem (only takes effect where qb-button already exists). */
+@media (hover:hover) {
+  .qb-button:hover .qb-button_content {
+    transform: translateY(-0.45em) scale(1.02);
+    filter: brightness(1.08);
+  }
+  .qb-button:hover::before { transform: translateY(0.05em) scale(0.99); }
+}
+.qb-button:active .qb-button_content {
+  transform: translateY(0.32em) scale(0.96);
+  filter: brightness(0.92);
+  transition-duration: 0.15s;
+}
+.qb-button:active::before {
+  transform: translateY(0.42em) scale(0.99);
+  transition-duration: 0.15s;
+}
+
+/* Reduced-motion guards for everything above. */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn-primary, .btn-secondary, .btn-ghost,
+  .cta-primary, .cta-secondary, .option-btn, .filter-pill,
+  .glass-card, .mock-card, .qb-card, .qb-illus-card,
+  .price-card, .testi-card, .phase-card, .how-card,
+  .tool-card, .tool-bcard {
+    transition: none !important;
+  }
+  .btn:hover, .cta-primary:hover, .glass-card:hover, .mock-card:hover,
+  .qb-card:hover, .qb-illus-card:hover, .qb-button:hover .qb-button_content {
+    transform: none !important;
+  }
+  .fade-in { animation: none !important; opacity: 1; transform: none; filter: none; }
+  .qb-illus-card img, .illus-anchor, .compass-illust img,
+  .founder-portrait img, .synergy-vid { animation: none !important; }
+}
+
+/* === END TOOL SHELL SOT UPGRADE === */
+
 </style>
 </head>
 
