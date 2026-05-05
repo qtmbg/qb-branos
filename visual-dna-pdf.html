@@ -5,6 +5,117 @@
 <title>Visual DNA - QB BrandOS</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
+
+/* === CANONICAL PDF PAINT (Pomegranate-aligned, applies to printed deliverables) === */
+/* Targets the printed content inside .document / .cover / .page / .chapter
+   wrappers in PDF preview files. Body bg stays as the dark preview chrome.
+   The PRINTED page (cream paper inside) gets ecosystem typography. */
+
+/* SOT color tokens — every PDF gets the v3.4 palette */
+.document, .cover, .page, .chapter, .closing-page, .spark-page,
+.results-page, .summary-page, .verdict-page {
+  --cream: #FBF5E6;
+  --cream-card: #F2EBD3;
+  --cream-warm: #ECDDB8;
+  --cream-rose: #F4D9DD;
+  --ink: #2D1521;
+  --ink-75: rgba(45,21,33,0.75);
+  --ink-50: rgba(45,21,33,0.50);
+  --ink-25: rgba(45,21,33,0.25);
+  --gold: #E0B069;
+  --gold-deep: #B58840;
+  --rose: #CA6180;
+  --rose-deep: #8E3F58;
+  --teal: #9ED3DC;
+  --teal-deep: #5BA8B5;
+  --aubergine: #4A2B3A;
+  --f-display: 'Fraunces', 'Times New Roman', serif;
+  --f-body: 'Inter', sans-serif;
+  --f-mono: 'JetBrains Mono', monospace;
+}
+
+
+/* HEADINGS — Pomegranate chunky Fraunces, applies inside any printed page */
+.document h1, .document .h1, .document .display-h1, .document .cover-doc-type,
+.cover h1, .page h1, .chapter h1, .chapter-title {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100, "WONK" 0 !important;
+  color: var(--ink, #2D1521) !important;
+  letter-spacing: -0.025em !important;
+  line-height: 0.96 !important;
+  font-style: normal !important;
+}
+.document h2, .document .h2, .document .display-h2,
+.cover h2, .page h2, .chapter h2, .closing-title, .cover-brand-name {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 700, "opsz" 96, "SOFT" 100, "WONK" 0 !important;
+  color: var(--ink, #2D1521) !important;
+  letter-spacing: -0.018em !important;
+  line-height: 1 !important;
+  font-style: normal !important;
+}
+.document h3, .document .h3, .document .display-h3,
+.cover h3, .page h3, .chapter h3,
+.archetype-name, .archetype-type, .panel-h, .section-title, .spark-label {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 650, "opsz" 72, "SOFT" 100, "WONK" 0 !important;
+  color: var(--ink, #2D1521) !important;
+  line-height: 1.05 !important;
+  font-style: normal !important;
+}
+.document h4, .document .h4, .cover h4, .page h4, .chapter h4 {
+  font-family: var(--f-display, 'Fraunces'), serif !important;
+  font-variation-settings: "wght" 600, "opsz" 48, "SOFT" 100, "WONK" 0 !important;
+  color: var(--ink, #2D1521) !important;
+  line-height: 1.15 !important;
+  font-style: normal !important;
+}
+
+
+/* ITALIC EM = GOLD */
+.document em, .cover em, .page em, .chapter em,
+.document i:not([class]):not(.fa) {
+  font-style: italic !important;
+  font-variation-settings: "wght" 700, "SOFT" 100, "WONK" 1 !important;
+  color: var(--gold, #E0B069) !important;
+}
+
+
+/* BODY COPY — Inter, comfortable size, ink color */
+.document p, .cover p, .page p, .chapter p,
+.spark-text, .spark-essence, .closing-body, .archetype-data,
+.code-text, .csh-desc, .panel-verdict_text {
+  font-family: var(--f-body, 'Inter'), sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 1rem !important;
+  color: var(--ink, #2D1521) !important;
+  line-height: 1.6 !important;
+}
+
+
+/* EYEBROWS / META labels — JetBrains Mono uppercase tracked */
+.document .eyebrow, .document .label, .document .meta-label,
+.cover-doc-type, .cover-meta-label, .chapter-number, .page-section-label,
+.spark-label, .archetype-icon, .closing-cta, .code-marker {
+  font-family: var(--f-mono, 'JetBrains Mono'), monospace !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-50, rgba(45,21,33,0.5)) !important;
+  font-weight: 500 !important;
+}
+
+
+/* PRINTED PAGE BACKGROUND — every page in PDF is cream paper */
+.document, .page, .chapter, .closing-page {
+  background: var(--cream, #FBF5E6) !important;
+  color: var(--ink, #2D1521) !important;
+}
+
+
+/* === END CANONICAL PDF PAINT === */
+
+
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 body{background:#2D1521;display:flex;flex-direction:column;align-items:center;padding:40px 20px;font-family:'Inter',sans-serif;}
 .controls{width:794px;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
