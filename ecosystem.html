@@ -1279,13 +1279,9 @@
     pointer-events:none;
     opacity:0.55;
   }
-  .cta-bike_road {
-    position:absolute; left:0; right:0; top:50%;
-    margin-top:-1.5px;
-    height:3px; background:var(--ink);
-    opacity:0.4;
-  }
-  /* Carrier handles the horizontal roll. Image inside handles the bob. */
+  /* Two carriers offset by half a cycle. As one exits right the other
+     is at center, so a bike is always visible. No dissolve, no jump,
+     continuous flow. Image inside each carrier handles the bob. */
   .cta-bike_carrier {
     position:absolute;
     top:0; bottom:0;
@@ -1293,6 +1289,7 @@
     animation:bike-roll 14s linear infinite;
     will-change:left;
   }
+  .cta-bike_carrier.is-echo { animation-delay:-7s; }
   .cta-bike_image {
     height:62%;
     width:auto;
@@ -1383,10 +1380,12 @@
   }
   .footer_bottom_links a:hover { color:var(--ink); }
 
-  /* Bike rolls end-to-end across the merged final CTA. */
+  /* Bike rolls end-to-end across the merged final CTA. Range pushes
+     fully past both edges so each carrier exits cleanly before the
+     other is mid-frame, avoiding the visible loop seam. */
   @keyframes bike-roll {
-    0%   { left:-30%; }
-    100% { left:100%; }
+    0%   { left:-50%; }
+    100% { left:120%; }
   }
   @keyframes bike-bob {
     0%, 100% { transform:translateY(0) rotate(-0.6deg); }
@@ -2397,10 +2396,14 @@
   <section class="final-cta" aria-label="Start building">
     <div class="final-cta_top">
 
-      <!-- Bike rolls full-bleed, vertically centred, behind the text -->
+      <!-- Bike rolls full-bleed, vertically centred, behind the text.
+           Two carriers offset by half a cycle keep the flow continuous
+           with no visible loop seam. -->
       <div class="cta-bike" aria-hidden="true">
-        <div class="cta-bike_road"></div>
         <div class="cta-bike_carrier">
+          <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
+        </div>
+        <div class="cta-bike_carrier is-echo">
           <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
         </div>
       </div>
