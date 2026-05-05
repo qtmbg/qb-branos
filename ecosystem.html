@@ -1279,23 +1279,25 @@
     pointer-events:none;
     opacity:0.55;
   }
-  /* Two carriers offset by half a cycle. As one exits right the other
-     is at center, so a bike is always visible. No dissolve, no jump,
-     continuous flow. Image inside each carrier handles the bob. */
+  /* One bike, one continuous loop. Translate animation goes from fully
+     off-screen left to fully off-screen right, then teleports back.
+     Both endpoints are well past the section edges so the teleport is
+     invisible: the bike rolls off, brief offstage pause, rolls back in. */
   .cta-bike_carrier {
     position:absolute;
     top:0; bottom:0;
+    left:0;
     display:flex; align-items:center;
-    animation:bike-roll 14s linear infinite;
-    will-change:left;
+    transform:translateX(-100%);
+    animation:bike-roll 12s linear infinite;
+    will-change:transform;
   }
-  .cta-bike_carrier.is-echo { animation-delay:-7s; }
   .cta-bike_image {
     height:62%;
     width:auto;
     display:block;
-    transform-origin:center bottom;
-    animation:bike-bob 0.55s ease-in-out infinite;
+    transform-origin:center;
+    animation:bike-bob 0.6s ease-in-out infinite;
     will-change:transform;
   }
 
@@ -1380,16 +1382,18 @@
   }
   .footer_bottom_links a:hover { color:var(--ink); }
 
-  /* Bike rolls end-to-end across the merged final CTA. Range pushes
-     fully past both edges so each carrier exits cleanly before the
-     other is mid-frame, avoiding the visible loop seam. */
+  /* Bike rolls end-to-end across the section. Translate from -100%
+     (carrier fully off-screen left) to 100vw (carrier fully past the
+     right edge), so the teleport at loop end happens entirely off-stage. */
   @keyframes bike-roll {
-    0%   { left:-50%; }
-    100% { left:120%; }
+    0%   { transform:translateX(-100%); }
+    100% { transform:translateX(100vw); }
   }
+  /* Subtle vertical bob only, no rotation, so the bike never looks
+     distorted at the edges of its travel. */
   @keyframes bike-bob {
-    0%, 100% { transform:translateY(0) rotate(-0.6deg); }
-    50%      { transform:translateY(-3px) rotate(0.6deg); }
+    0%, 100% { transform:translateY(0); }
+    50%      { transform:translateY(-4px); }
   }
 
   /* =====================================================
@@ -1490,7 +1494,7 @@
     .reveal { opacity:1; transform:none; filter:none; }
     .qb-illus-card, .qb-phone, .founder-portrait img, .feature-media { animation:none !important; }
     .hero_h1, .hero_body, .hero_cta, .hero_meta, .agent-cluster { animation:none !important; opacity:1; }
-    .cta-bike_carrier { animation:none !important; left:30% !important; }
+    .cta-bike_carrier { animation:none !important; transform:translateX(30vw) !important; }
     .cta-bike_image { animation:none !important; transform:none !important; }
   }
 </style>
@@ -2396,14 +2400,10 @@
   <section class="final-cta" aria-label="Start building">
     <div class="final-cta_top">
 
-      <!-- Bike rolls full-bleed, vertically centred, behind the text.
-           Two carriers offset by half a cycle keep the flow continuous
-           with no visible loop seam. -->
+      <!-- Single bike rolling full-bleed in the background, vertically
+           centred. The translate-based loop hides the teleport off-stage. -->
       <div class="cta-bike" aria-hidden="true">
         <div class="cta-bike_carrier">
-          <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
-        </div>
-        <div class="cta-bike_carrier is-echo">
           <img class="cta-bike_image" src="img/illus/start-building.png" alt="" loading="lazy">
         </div>
       </div>
