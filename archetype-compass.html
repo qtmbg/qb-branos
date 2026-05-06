@@ -1661,74 +1661,130 @@ textarea,input{ font-family:inherit; }
   padding:0;
   display:flex; flex-direction:column;
   overflow:hidden;
+  min-height:auto;
 }
+/* Frame fills the card width as a real square portrait — no max-height cap */
 .q-opt.kind-figure .figure-frame{
   position:relative;
   aspect-ratio: 1 / 1;
   width:100%;
-  max-height:80px;
-  background:linear-gradient(135deg, var(--cream-deep) 0%, var(--cream-soft) 100%);
+  background:linear-gradient(135deg, var(--rose-deep) 0%, var(--aubergine) 100%);
   display:flex; align-items:center; justify-content:center;
   overflow:hidden;
-  border-bottom:1px solid var(--border-subtle);
-  transition:background .3s ease;
+  border-bottom:2px solid var(--ink);
+  transition:background .4s cubic-bezier(0.19,1,0.22,1), filter .3s cubic-bezier(0.19,1,0.22,1);
 }
-[data-theme="dark"] .q-opt.kind-figure .figure-frame{
-  background:linear-gradient(135deg, rgba(140,110,70,0.05) 0%, rgba(140,110,70,0.10) 100%);
+/* Per-archetype color fill — picked from QB palette so each card has a real identity */
+.q-opt.kind-figure .figure-frame[data-arch="magician"]  { background:linear-gradient(135deg, var(--aubergine) 0%, var(--rose-deep) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="explorer"]  { background:linear-gradient(135deg, var(--teal-deep) 0%, var(--patina-lit, #5B7E6A) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="creator"]   { background:linear-gradient(135deg, var(--gold) 0%, var(--gold-deep) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="ruler"]     { background:linear-gradient(135deg, var(--ink) 0%, var(--aubergine) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="innocent"]  { background:linear-gradient(135deg, var(--cream-warm) 0%, var(--butter) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="hero"]      { background:linear-gradient(135deg, var(--terra, #E89380) 0%, var(--rose-deep) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="caregiver"] { background:linear-gradient(135deg, var(--patina, #9CC4A2) 0%, var(--teal-deep) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="jester"]    { background:linear-gradient(135deg, var(--butter) 0%, var(--gold) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="everyman"]  { background:linear-gradient(135deg, var(--illus-lavender, #B8A0C7) 0%, var(--plum, #B080A0) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="lover"]     { background:linear-gradient(135deg, var(--rose-soft) 0%, var(--rose) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="sage"]      { background:linear-gradient(135deg, var(--teal) 0%, var(--teal-deep) 100%); }
+.q-opt.kind-figure .figure-frame[data-arch="rebel"]     { background:linear-gradient(135deg, var(--warmred, #8E3F58) 0%, var(--ink) 100%); }
+
+.q-opt.kind-figure .figure-frame::after{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at center, transparent 50%, rgba(45,21,33,.18) 100%);
+  pointer-events:none;
+  z-index:3;
 }
 .q-opt.kind-figure.is-selected .figure-frame{
-  background:linear-gradient(135deg, var(--brass-faint) 0%, var(--patina-faint) 100%);
+  filter:saturate(1.15) brightness(1.04);
 }
-.q-opt.kind-figure .figure-frame::before{
-  content:''; position:absolute; inset:0;
-  background:radial-gradient(circle at center, transparent 40%, rgba(26,22,16,.06) 100%);
-  pointer-events:none;
-}
-/* PLACEHOLDER portrait - swap with real <img> via data-img attribute + imagery/{slug}.jpg later */
+
+/* Placeholder treatment: rich glyph + monogram centered in the colored frame.
+   Hidden as soon as a real image loads (.no-img class removed by JS). */
 .q-opt.kind-figure .figure-placeholder{
-  position:relative; z-index:1;
-  display:flex; flex-direction:column; align-items:center; gap:14px;
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0.4rem;
+  z-index:1;
+  color:var(--cream);
+  text-shadow:0 2px 6px rgba(45,21,33,0.25);
 }
-.q-opt.kind-figure .placeholder-ring{
-  width:48px; height:48px; border-radius:50%;
-  border:1.5px dashed var(--border-strong);
-  display:flex; align-items:center; justify-content:center;
-  color:var(--brass);
-  background:var(--bg-overlay);
-  transition:all .3s ease;
-  font-size:16px;
+.q-opt.kind-figure .figure-frame[data-arch="innocent"] .figure-placeholder,
+.q-opt.kind-figure .figure-frame[data-arch="jester"]   .figure-placeholder,
+.q-opt.kind-figure .figure-frame[data-arch="creator"]  .figure-placeholder,
+.q-opt.kind-figure .figure-frame[data-arch="caregiver"] .figure-placeholder,
+.q-opt.kind-figure .figure-frame[data-arch="lover"]    .figure-placeholder { color:var(--ink); text-shadow:none; }
+
+.q-opt.kind-figure .placeholder-glyph{
+  font-family:var(--f-display); font-weight:750;
+  font-variation-settings:"wght" 750,"opsz" 144,"SOFT" 100;
+  font-size:clamp(2.4rem, 7vw, 4.5rem);
+  line-height:1;
+  letter-spacing:-0.02em;
+  color:inherit;
 }
-.q-opt.kind-figure:hover .placeholder-ring{ border-style:solid; }
-.q-opt.kind-figure.is-selected .placeholder-ring{
-  border-color:var(--brass); border-style:solid;
-  box-shadow:0 0 0 3px var(--brass-faint);
-  background:var(--bg-overlay);
+.q-opt.kind-figure .placeholder-monogram{
+  font-family:var(--f-mono); font-weight:600;
+  font-size:0.7rem; letter-spacing:0.18em;
+  text-transform:uppercase;
+  opacity:0.85;
 }
-.q-opt.kind-figure .placeholder-meta{ display:none; }
-.q-opt.kind-figure .figure-tag{ display:none; }
+/* Old ring + meta hidden — replaced by the glyph+monogram treatment */
+.q-opt.kind-figure .placeholder-ring,
+.q-opt.kind-figure .placeholder-meta { display:none; }
+
+/* Image overlay — full bleed, sits above the colored placeholder when loaded */
+.q-opt.kind-figure .figure-frame .figure-img{
+  z-index:2;
+}
+/* When the JS confirms an image loaded, the placeholder fades away */
+.q-opt.kind-figure .figure-frame:not(.no-img) .figure-placeholder{
+  opacity:0; pointer-events:none;
+}
+
+.q-opt.kind-figure .figure-tag{
+  display:inline-block;
+  position:absolute; top:0.65rem; left:0.65rem; z-index:4;
+  font-family:var(--f-mono); font-size:0.62rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.16em;
+  color:var(--ink);
+  background:var(--cream);
+  border:1.5px solid var(--ink);
+  border-radius:9999px;
+  padding:0.25em 0.65em;
+  box-shadow:0 2px var(--ink);
+}
+
 .q-opt.kind-figure .figure-body{
-  padding:8px 10px 10px;
-  display:flex; flex-direction:column; gap:2px;
+  padding:0.85rem 0.95rem 1rem;
+  display:flex; flex-direction:column; gap:0.3rem;
   flex:1;
 }
 .q-opt.kind-figure .figure-name{
-  font-family:var(--f-display); font-weight:500;
-  font-size:.85rem; color:var(--text-1);
-  letter-spacing:-.005em;
+  font-family:var(--f-display); font-weight:650;
+  font-variation-settings:"wght" 650,"opsz" 36,"SOFT" 100,"WONK" 0;
+  font-size:1rem;
+  color:var(--ink);
+  letter-spacing:-.012em;
   line-height:1.2;
 }
-/* Hide the long descriptive line in compact mode - name carries the meaning */
-.q-opt.kind-figure .figure-desc{ display:none; }
-
-/* Expression (simpler figure - just face) */
-.q-opt.kind-expression{ min-height:128px; }
-.q-opt.kind-expression .figure-frame{ aspect-ratio: 1 / 1; max-height:80px; }
-.q-opt.kind-expression .figure-body{ padding:8px 10px 10px; }
-.q-opt.kind-expression .figure-name{
-  font-family:var(--f-body); font-weight:400; font-style:italic;
-  font-size:.82rem; line-height:1.3;
-  color:var(--text-1);
+.q-opt.kind-figure .figure-desc{
+  display:block;
+  font-family:var(--f-body); font-size:0.78rem; font-weight:400;
+  color:var(--ink-75); line-height:1.4;
+  letter-spacing:-0.005em;
 }
+
+/* Expression (face) — same frame treatment, simpler body */
+.q-opt.kind-expression{ min-height:auto; }
+.q-opt.kind-expression .figure-frame{ aspect-ratio: 1 / 1; }
+.q-opt.kind-expression .figure-body{ padding:0.85rem 0.95rem 1rem; }
+.q-opt.kind-expression .figure-name{
+  font-family:var(--f-display); font-weight:600; font-style:italic;
+  font-variation-settings:"wght" 600,"opsz" 36,"SOFT" 100,"WONK" 1;
+  font-size:0.95rem; line-height:1.25;
+  color:var(--ink);
+}
+.q-opt.kind-expression .figure-desc{ display:none; }
 
 /* ================== NAV BUTTONS ================== */
 .q-nav{
@@ -3197,26 +3253,40 @@ function buildCard(sc, opt, idx, n){
     ]));
   }
 
+  // Compact monogram from a name: 'Albert Einstein' -> 'AE', 'MLK' -> 'M', 'The Dalai Lama' -> 'DL'
+  function monogramOf(name){
+    return (name||'').replace(/[^A-Za-z\s]/g,'').split(/\s+/)
+      .filter(function(w){ return w && w.toLowerCase()!=='the' && w.toLowerCase()!=='a'; })
+      .map(function(w){ return w.charAt(0).toUpperCase(); })
+      .join('').slice(0,2) || (name||'').charAt(0).toUpperCase();
+  }
+
   if (sc.kind === 'figure'){
     var fallbackImg = 'img/archetype/' + (opt.slug||'') + '.jpg';
     var primaryImg  = opt.portrait || fallbackImg;
-    var frame = el('div', {class:'figure-frame', 'data-img': primaryImg}, [
+    var aData = ARCHETYPES[opt.a] || {};
+    var frame = el('div', {
+      class:'figure-frame no-img',
+      'data-img': primaryImg,
+      'data-arch': opt.a || ''
+    }, [
       el('div', {class:'figure-tag'}, sc.figureTag || 'Portrait'),
       el('div', {class:'figure-placeholder'}, [
-        el('div', {class:'placeholder-ring', html: PLACEHOLDER_SVG}),
-        el('div', {class:'placeholder-meta'}, 'Portrait · ' + (opt.slug||'tba'))
+        el('div', {class:'placeholder-glyph'}, aData.glyph || monogramOf(opt.name)),
+        el('div', {class:'placeholder-monogram'}, monogramOf(opt.name) + (aData.name ? ' · ' + aData.name : ''))
       ])
     ]);
     if (opt.slug || opt.portrait){
       var pimg = el('img', {alt: opt.name + ' portrait', class:'figure-img', loading:'lazy'});
-      pimg.src = primaryImg;
+      pimg.addEventListener('load', function(){ frame.classList.remove('no-img'); });
       pimg.addEventListener('error', function(){
         if (opt.portrait && pimg.src === opt.portrait){
           pimg.src = fallbackImg;
         } else {
-          pimg.remove();
+          pimg.remove();    // colored placeholder remains (no-img stays on)
         }
       });
+      pimg.src = primaryImg;
       frame.appendChild(pimg);
     }
     return withBadge(el('button', {class: base + ' kind-figure', onclick:onSelect, type:'button'}, [
@@ -3231,16 +3301,21 @@ function buildCard(sc, opt, idx, n){
   if (sc.kind === 'expression'){
     var eFallbackImg = 'img/archetype/expression-' + (opt.slug||'') + '.jpg';
     var ePrimaryImg  = opt.portrait || eFallbackImg;
-    var eframe = el('div', {class:'figure-frame', 'data-img': ePrimaryImg}, [
+    var eaData = ARCHETYPES[opt.a] || {};
+    var eframe = el('div', {
+      class:'figure-frame no-img',
+      'data-img': ePrimaryImg,
+      'data-arch': opt.a || ''
+    }, [
       el('div', {class:'figure-tag'}, sc.figureTag || 'Expression'),
       el('div', {class:'figure-placeholder'}, [
-        el('div', {class:'placeholder-ring', html: PLACEHOLDER_SVG}),
-        el('div', {class:'placeholder-meta'}, 'Face · ' + (opt.slug||'tba'))
+        el('div', {class:'placeholder-glyph'}, eaData.glyph || monogramOf(opt.name)),
+        el('div', {class:'placeholder-monogram'}, eaData.name || (opt.slug||'').toUpperCase())
       ])
     ]);
     if (opt.slug || opt.portrait){
       var eimg = el('img', {alt: opt.name + ' expression', class:'figure-img', loading:'lazy'});
-      eimg.src = ePrimaryImg;
+      eimg.addEventListener('load', function(){ eframe.classList.remove('no-img'); });
       eimg.addEventListener('error', function(){
         if (opt.portrait && eimg.src === opt.portrait){
           eimg.src = eFallbackImg;
@@ -3248,6 +3323,7 @@ function buildCard(sc, opt, idx, n){
           eimg.remove();
         }
       });
+      eimg.src = ePrimaryImg;
       eframe.appendChild(eimg);
     }
     return withBadge(el('button', {class: base + ' kind-figure kind-expression', onclick:onSelect, type:'button'}, [
