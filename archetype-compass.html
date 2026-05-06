@@ -3146,17 +3146,25 @@ function buildCard(sc, opt, idx, n){
   }
 
   if (sc.kind === 'figure'){
-    var frame = el('div', {class:'figure-frame', 'data-img': opt.portrait || ('img/archetype/' + (opt.slug||'') + '.jpg')}, [
+    var fallbackImg = 'img/archetype/' + (opt.slug||'') + '.jpg';
+    var primaryImg  = opt.portrait || fallbackImg;
+    var frame = el('div', {class:'figure-frame', 'data-img': primaryImg}, [
       el('div', {class:'figure-tag'}, sc.figureTag || 'Portrait'),
       el('div', {class:'figure-placeholder'}, [
         el('div', {class:'placeholder-ring', html: PLACEHOLDER_SVG}),
         el('div', {class:'placeholder-meta'}, 'Portrait · ' + (opt.slug||'tba'))
       ])
     ]);
-    if (opt.portrait){
+    if (opt.slug || opt.portrait){
       var pimg = el('img', {alt: opt.name + ' portrait', class:'figure-img', loading:'lazy'});
-      pimg.src = opt.portrait;
-      pimg.addEventListener('error', function(){ pimg.remove(); });
+      pimg.src = primaryImg;
+      pimg.addEventListener('error', function(){
+        if (opt.portrait && pimg.src === opt.portrait){
+          pimg.src = fallbackImg;
+        } else {
+          pimg.remove();
+        }
+      });
       frame.appendChild(pimg);
     }
     return withBadge(el('button', {class: base + ' kind-figure', onclick:onSelect, type:'button'}, [
@@ -3169,13 +3177,27 @@ function buildCard(sc, opt, idx, n){
   }
 
   if (sc.kind === 'expression'){
-    var eframe = el('div', {class:'figure-frame', 'data-img':'img/archetype/expression-' + (opt.slug||'') + '.jpg'}, [
+    var eFallbackImg = 'img/archetype/expression-' + (opt.slug||'') + '.jpg';
+    var ePrimaryImg  = opt.portrait || eFallbackImg;
+    var eframe = el('div', {class:'figure-frame', 'data-img': ePrimaryImg}, [
       el('div', {class:'figure-tag'}, sc.figureTag || 'Expression'),
       el('div', {class:'figure-placeholder'}, [
         el('div', {class:'placeholder-ring', html: PLACEHOLDER_SVG}),
         el('div', {class:'placeholder-meta'}, 'Face · ' + (opt.slug||'tba'))
       ])
     ]);
+    if (opt.slug || opt.portrait){
+      var eimg = el('img', {alt: opt.name + ' expression', class:'figure-img', loading:'lazy'});
+      eimg.src = ePrimaryImg;
+      eimg.addEventListener('error', function(){
+        if (opt.portrait && eimg.src === opt.portrait){
+          eimg.src = eFallbackImg;
+        } else {
+          eimg.remove();
+        }
+      });
+      eframe.appendChild(eimg);
+    }
     return withBadge(el('button', {class: base + ' kind-figure kind-expression', onclick:onSelect, type:'button'}, [
       eframe,
       el('div', {class:'figure-body'}, [
