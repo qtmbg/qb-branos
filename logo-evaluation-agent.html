@@ -1058,26 +1058,9 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-4); }
 
-/* Film Grain Overlay */
-body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    opacity: var(--grain-opacity);
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 200px 200px;
-}
-
-/* Warm Vignette */
-.vignette {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background: radial-gradient(ellipse 80% 80% at 50% 25%, transparent 0%, var(--vignette-bg) 100%);
-}
+/* Film grain + vignette killed — clean cream surface */
+body::after { display: none !important; }
+.vignette { display: none !important; }
 
 .app-container {
     position: relative;
@@ -1087,142 +1070,135 @@ body::after {
     min-height: 100vh;
 }
 
-/* Inputs & Form Elements */
+/* Inputs & Form Elements — ecosystem qb-field, elder-comfortable */
 input, textarea, select {
-    background: var(--bg-deep);
-    border: 1px solid var(--border-strong);
-    color: var(--text-1);
-    font-family: 'Inter', sans-serif;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 14px;
+    background: var(--cream-card);
+    border: 2px solid var(--ink);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    border-radius: 16px;
+    padding: 1em 1.25em;
+    font-size: 1.0625rem; line-height: 1.5;
     width: 100%;
     outline: none;
-    transition: all 0.25s ease;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 4px var(--ink);
+    -webkit-appearance: none; appearance: none;
+    transition: transform 0.25s cubic-bezier(0.19,1,0.22,1), box-shadow 0.25s cubic-bezier(0.19,1,0.22,1), border-color 0.25s cubic-bezier(0.19,1,0.22,1), background 0.25s cubic-bezier(0.19,1,0.22,1);
 }
 
 input::placeholder, textarea::placeholder {
-    color: var(--text-3);
-    font-style: italic;
-    opacity: 0.7;
+    color: var(--ink-50);
+    font-style: normal;
+    font-weight: 400;
+    opacity: 1;
 }
 
 input:focus, textarea:focus, select:focus {
-    border-color: var(--patina);
-    box-shadow: 0 0 0 3px var(--patina-faint), 0 0 24px -4px var(--brass-faint);
-    background: var(--bg-base);
+    border-color: var(--rose-deep);
+    background: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px var(--ink);
 }
 
-textarea { resize: vertical; line-height: 1.6; }
-select option { background: var(--bg-deep); }
+textarea { resize: vertical; line-height: 1.6; min-height: 9rem; }
+select option { background: var(--cream); color: var(--ink); }
 button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outline: none; }
 
-/* Buttons */
+/* Buttons — ecosystem qb-button visual */
 .btn-primary {
-    background: var(--patina);
-    color: #E6DDD0; /* Always cream, even in light mode */
-    font-weight: 600;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 14px 32px;
-    border-radius: 7px;
-    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border: 1px solid transparent;
+    background: var(--gold); color: var(--ink);
+    font-weight: 700; font-size: 0.92rem;
+    letter-spacing: 0.02em; text-transform: none;
+    padding: 1em 1.85em; border-radius: 9999px;
+    border: 2px solid var(--ink);
+    box-shadow: 0 4px var(--ink);
+    transition: transform 0.3s cubic-bezier(0.19,1,0.22,1), box-shadow 0.3s cubic-bezier(0.19,1,0.22,1), filter 0.3s cubic-bezier(0.19,1,0.22,1);
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: var(--patina-lit);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px -6px var(--patina-dim), 0 0 0 1px var(--brass-faint);
+    transform: translateY(-3px);
+    box-shadow: 0 7px var(--ink);
+    filter: brightness(1.06);
 }
-
-.btn-primary:disabled {
-    background: var(--bg-surface);
-    color: var(--text-4);
-    cursor: not-allowed;
-    border: 1px solid var(--border-medium);
-}
+.btn-primary:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px var(--ink); transition-duration: 0.15s; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: 0 4px var(--ink); }
 
 .btn-secondary {
-    background: transparent;
-    color: var(--text-2);
-    border: 1px solid var(--border-strong);
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    transition: all 0.2s ease;
+    background: var(--cream-card); color: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 1em 1.6em; border-radius: 9999px;
+    font-size: 0.92rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700; letter-spacing: 0.02em; text-transform: none;
+    box-shadow: 0 4px var(--ink);
+    transition: transform 0.3s cubic-bezier(0.19,1,0.22,1), box-shadow 0.3s cubic-bezier(0.19,1,0.22,1), background 0.3s cubic-bezier(0.19,1,0.22,1);
+    min-height: 48px;
+    display: inline-flex; align-items: center; gap: 0.5rem;
 }
 
 .btn-secondary:hover {
-    background: var(--bg-surface);
-    color: var(--text-1);
-    border-color: var(--patina);
+    background: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px var(--ink);
 }
+.btn-secondary:active { transform: translateY(1px); box-shadow: 0 2px var(--ink); transition-duration: 0.15s; }
 
-/* Glass Cards & Manifesto Blocks */
+/* Glass Cards & Manifesto Blocks → ecosystem qb-card + pull-quote */
 .glass-card {
-    background: var(--bg-overlay);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--border-subtle);
-    border-radius: 12px;
+    background: var(--cream-card);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    border: 2px solid var(--ink);
+    border-radius: 24px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    box-shadow: 0 9px var(--ink);
 }
-
-.glass-card::before {
-    content: '';
-    position: absolute;
-    top: -30%; left: -10%;
-    width: 60%; height: 60%;
-    background: radial-gradient(ellipse at center, var(--brass-faint) 0%, transparent 70%);
-    pointer-events: none;
-}
+@media (min-width: 640px) { .glass-card { box-shadow: 0 16px var(--ink); border-radius: 28px; } }
+.glass-card::before { content: none; }
 
 .manifesto-block {
     position: relative;
-    padding: 24px 0 24px 28px;
-    background: var(--bg-surface);
-    border-radius: 0 8px 8px 0;
-    border-right: 1px solid var(--border-subtle);
-    border-top: 1px solid var(--border-subtle);
-    border-bottom: 1px solid var(--border-subtle);
+    padding: 1.5rem 1.75rem 1.5rem 3rem;
+    background: var(--cream-rose);
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    box-shadow: 0 6px var(--ink);
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-variation-settings: "wght" 600, "opsz" 48, "SOFT" 100, "WONK" 1;
+    font-size: 1.2rem; line-height: 1.45;
+    color: var(--ink);
 }
 
 .manifesto-block::before {
-    content: '';
+    content: '\201C';
     position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: linear-gradient(180deg, var(--brass) 0%, var(--patina) 100%);
-    border-radius: 3px 0 0 3px;
-    box-shadow: 2px 0 12px var(--brass-faint);
+    left: 0.6rem; top: -0.15em;
+    width: auto; height: auto; bottom: auto;
+    font-family: 'Fraunces', serif; font-weight: 700;
+    font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 100, "WONK" 1;
+    font-size: 4.5rem; line-height: 1; color: var(--rose-deep);
+    pointer-events: none;
+    background: none; border-radius: 0; box-shadow: none;
 }
 
-/* Progress & Meters */
+/* Progress & Meters — ecosystem-energy bar */
 .score-meter {
-    height: 4px;
-    background: var(--border-strong);
-    border-radius: 2px;
+    height: 8px;
+    background: var(--ink-25);
+    border: 2px solid var(--ink);
+    border-radius: 9999px;
     overflow: hidden;
-    margin-top: 8px;
+    margin-top: 0.6rem;
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--patina), var(--brass));
-    border-radius: 2px;
-    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--gold);
+    border-radius: 9999px;
+    transition: width 1.2s cubic-bezier(0.19,1,0.22,1);
 }
 
 /* Heartbeat / Live Indicator */
@@ -1247,104 +1223,133 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; border: none; outlin
 .fade-in { animation: fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
 .evaluating-ring {
-    width: 64px; height: 64px;
+    width: 80px; height: 80px;
     border-radius: 50%;
-    border: 2px solid var(--border-strong);
+    border: 3px solid var(--ink-25);
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--cream-card);
+    box-shadow: 0 4px var(--ink);
 }
 .evaluating-ring::before {
     content: '';
     position: absolute;
-    inset: -2px;
+    inset: -3px;
     border-radius: 50%;
-    border: 2px solid transparent;
-    border-top-color: var(--brass);
-    border-right-color: var(--patina);
+    border: 3px solid transparent;
+    border-top-color: var(--gold);
+    border-right-color: var(--rose-deep);
     animation: spin 1.4s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Upload Zone */
+/* Upload Zone — bold dashed cream-card with gold lift on hover */
 .drop-zone {
-    background: var(--bg-deep);
-    border: 1px dashed var(--border-strong);
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    background: var(--cream-card);
+    border: 3px dashed var(--ink);
+    border-radius: 24px;
+    transition: transform 0.3s cubic-bezier(0.19,1,0.22,1), box-shadow 0.3s cubic-bezier(0.19,1,0.22,1), background 0.3s cubic-bezier(0.19,1,0.22,1), border-color 0.3s cubic-bezier(0.19,1,0.22,1);
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    min-height: 220px;
+    min-height: 260px;
+    box-shadow: 0 6px var(--ink);
 }
 .drop-zone:hover, .drop-zone.drag-over {
-    border-color: var(--patina);
-    background: var(--bg-surface);
+    border-color: var(--gold-deep);
+    background: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 9px var(--ink);
 }
-.drop-zone:hover::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    box-shadow: inset 0 0 40px var(--patina-faint);
-    pointer-events: none;
+.drop-zone:hover::after { content: none; }
+
+/* Status Cards — ecosystem colored cards, ink border */
+.verdict-pass {
+    background: var(--phase-discovery, #9CC4A2);
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    box-shadow: 0 6px var(--ink);
+    padding: 1.25rem 1.5rem;
+    color: var(--ink);
+}
+.verdict-refine {
+    background: var(--gold);
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    box-shadow: 0 6px var(--ink);
+    padding: 1.25rem 1.5rem;
+    color: var(--ink);
+}
+.verdict-reject {
+    background: var(--cream-rose);
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    box-shadow: 0 6px var(--ink);
+    padding: 1.25rem 1.5rem;
+    color: var(--ink);
 }
 
-/* Status Cards */
-.verdict-pass { background: var(--patina-faint); border: 1px solid var(--patina-dim); }
-.verdict-refine { background: var(--brass-faint); border: 1px solid var(--brass-dim); }
-.verdict-reject { background: rgba(138, 74, 74, 0.08); border: 1px solid rgba(138, 74, 74, 0.2); }
-
-/* Tabs */
+/* Tabs — ecosystem pill tabs, elder-comfortable touch targets */
 .tab-btn {
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-family: var(--font-mono);
+    padding: 0.65em 1.4em;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    font-family: var(--font-body); font-weight: 600;
     background: transparent;
-    border: 1px solid transparent;
-    color: var(--text-3);
-    transition: all 0.25s ease;
+    border: 2px solid transparent;
+    color: var(--ink-75);
+    cursor: pointer;
+    min-height: 40px;
+    transition: transform 0.25s cubic-bezier(0.19,1,0.22,1), box-shadow 0.25s cubic-bezier(0.19,1,0.22,1), background 0.25s cubic-bezier(0.19,1,0.22,1), border-color 0.25s cubic-bezier(0.19,1,0.22,1);
 }
 .tab-btn:hover {
-    color: var(--text-2);
+    color: var(--ink);
+    background: var(--cream-card);
 }
 .tab-btn.active {
-    background: var(--bg-surface);
-    border-color: var(--border-strong);
-    color: var(--text-1);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    background: var(--cream-card);
+    border-color: var(--ink);
+    color: var(--ink);
+    box-shadow: 0 3px var(--ink);
+    font-weight: 700;
 }
 .tab-btn.active .tab-indicator {
-    background: var(--brass);
-    box-shadow: 0 0 8px var(--brass-dim);
+    background: var(--gold);
+    box-shadow: none;
 }
 
-/* Error state */
+/* Error box — ecosystem error pill */
 .error-box {
-    background: rgba(138, 74, 74, 0.08);
-    border: 1px solid rgba(138, 74, 74, 0.2);
-    border-radius: 8px;
-    padding: 14px 20px;
-    color: var(--status-error);
-    font-size: 13px;
+    background: var(--cream-rose);
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    color: var(--rose-deep);
+    font-family: var(--font-body); font-size: 1rem; font-weight: 600;
+    line-height: 1.5;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.85rem;
+    box-shadow: 0 4px var(--ink);
 }
 .error-box::before {
     content: '!';
-    font-family: var(--font-mono);
-    font-weight: bold;
+    font-family: var(--font-display);
+    font-variation-settings: "wght" 750, "SOFT" 100;
+    font-weight: 750;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20px; height: 20px;
+    width: 32px; height: 32px;
     border-radius: 50%;
-    background: var(--status-error);
-    color: #E6DDD0;
+    background: var(--rose-deep);
+    color: var(--cream);
+    border: 2px solid var(--ink);
+    flex-shrink: 0;
 }
 /* === v3.4 OVERRIDE BLOCK (cream/ink/Fraunces ecosystem unification) === */
 :root {
