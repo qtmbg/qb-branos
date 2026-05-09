@@ -1209,34 +1209,43 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
 
 /* ================== TOP PHASE NAV ================== */
 .wt-phase-nav{
-  max-width:1160px; margin:28px auto 0;
-  padding:16px 28px;
-  display:flex; align-items:center; justify-content:space-between; gap:18px;
-  background:var(--bg-overlay);
-  -webkit-backdrop-filter:blur(18px);
-  backdrop-filter:blur(18px);
-  border:1px solid var(--border-medium);
-  border-radius:999px;
+  max-width:1160px; margin:1.75rem auto 0;
+  padding:0.75rem 1.25rem;
+  display:flex; align-items:center; justify-content:space-between; gap:1.25rem;
+  background:var(--cream);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  border:2px solid var(--ink);
+  border-radius:9999px;
+  box-shadow:0 6px var(--ink);
   flex-wrap:wrap;
 }
-.wt-phase-dots{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.wt-phase-dots{ display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
 .wt-phase-dot{
-  width:30px; height:30px; border-radius:50%;
+  width:44px; height:44px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  font-family:var(--f-mono); font-size:10px; font-weight:700;
-  background:transparent; color:var(--text-3);
-  border:1px solid var(--border-medium);
+  font-family:var(--f-display); font-size:0.95rem; font-weight:700;
+  font-variation-settings:"wght" 700,"opsz" 36,"SOFT" 100,"WONK" 0;
+  background:var(--cream-card); color:var(--ink-75);
+  border:2px solid var(--ink);
   cursor:pointer;
-  transition:all .25s var(--ease);
+  transition:transform .3s cubic-bezier(0.19,1,0.22,1), box-shadow .3s cubic-bezier(0.19,1,0.22,1), background .3s cubic-bezier(0.19,1,0.22,1);
 }
-.wt-phase-dot.active{ background:var(--text-1); color:var(--cream); border-color:transparent; transform:scale(1.1); box-shadow:0 0 0 4px var(--brass-faint); }
-.wt-phase-dot:disabled, .wt-phase-dot.locked{ opacity:.4; cursor:not-allowed; border-color:var(--border-subtle); color:var(--text-4); }
-.wt-phase-dot:not(.locked):not(.active):hover{ border-color:var(--brass); color:var(--brass); }
-.wt-phase-sep{ width:10px; height:1px; background:var(--border-medium); }
+.wt-phase-dot.active{
+  background:var(--gold); color:var(--ink);
+  transform:translateY(-2px);
+  box-shadow:0 4px var(--ink);
+}
+.wt-phase-dot:disabled, .wt-phase-dot.locked{ opacity:.35; cursor:not-allowed; }
+.wt-phase-dot:not(.locked):not(.active):hover{
+  background:var(--white); transform:translateY(-1px);
+  box-shadow:0 3px var(--ink);
+}
+.wt-phase-sep{ width:14px; height:2px; background:var(--ink-25); border-radius:2px; }
 .wt-phase-meta{
-  font-family:var(--f-mono); font-size:10px;
-  text-transform:uppercase; letter-spacing:.28em;
-  color:var(--text-3);
+  font-family:var(--f-mono); font-size:0.8rem; font-weight:600;
+  text-transform:uppercase; letter-spacing:.14em;
+  color:var(--ink);
   white-space:nowrap;
 }
 
@@ -1253,69 +1262,113 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   border-bottom:1px solid var(--border-subtle);
 }
 .wt-phase-head h2{
-  font-family:var(--f-display); font-weight:500;
+  font-family:var(--f-display); font-weight:700;
+  font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 100,"WONK" 0;
   font-size:clamp(2.5rem, 5vw, 3.5rem);
-  letter-spacing:-.02em; line-height:1.02;
-  color:var(--text-1);
+  letter-spacing:-.02em; line-height:1;
+  color:var(--ink);
+  text-wrap:balance;
+}
+.wt-phase-head h2 em{
+  font-style:italic; color:var(--gold);
+  font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 100,"WONK" 1;
 }
 .wt-phase-head .kicker{
-  font-family:var(--f-mono); font-size:10px;
-  text-transform:uppercase; letter-spacing:.3em;
-  color:var(--brass);
+  display:inline-block;
+  font-family:var(--f-body); font-size:0.82rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.12em;
+  color:var(--cream);
+  background:var(--rose-deep);
+  border:2px solid var(--ink);
+  border-radius:9999px;
+  padding:0.5em 1.2em;
+  box-shadow:0 4px var(--ink);
+  align-self:flex-start;
 }
 
 /* Intro phase */
 .wt-intro{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:60px; }
 .wt-intro-hero{ text-align:center; display:flex; flex-direction:column; gap:28px; }
 .wt-intro-hero h1{
-  font-family:var(--f-display); font-weight:500;
+  font-family:var(--f-display); font-weight:750;
+  font-variation-settings:"wght" 750,"opsz" 144,"SOFT" 100,"WONK" 0;
   font-size:clamp(3.25rem, 8vw, 6rem);
-  letter-spacing:-.025em; line-height:.98;
-  color:var(--text-1);
+  letter-spacing:-.025em; line-height:.94;
+  color:var(--ink);
+  text-wrap:balance;
 }
-.wt-intro-hero .separator{ width:96px; height:1px; background:var(--brass); margin:0 auto; opacity:.6; }
+.wt-intro-hero h1 em{
+  font-style:italic; color:var(--gold);
+  font-variation-settings:"wght" 750,"opsz" 144,"SOFT" 100,"WONK" 1;
+}
+.wt-intro-hero .separator{ width:120px; height:4px; background:var(--gold); margin:0 auto; opacity:1; border-radius:2px; }
 .wt-intro-philosophy{
-  display:flex; flex-direction:column; gap:32px;
+  display:flex; flex-direction:column; gap:1.5rem;
 }
 .wt-intro-philosophy .phil-row{
-  display:flex; gap:24px; align-items:flex-start;
+  display:flex; gap:1.25rem; align-items:flex-start;
+  padding:1.25rem 1.5rem;
+  background:var(--cream-card);
+  border:2px solid var(--ink);
+  border-radius:18px;
+  box-shadow:0 5px var(--ink);
 }
 .wt-intro-philosophy .phil-num{
-  font-family:var(--f-mono); font-size:12px; font-weight:700;
-  color:var(--brass); min-width:24px; padding-top:4px;
+  font-family:var(--f-display); font-size:1.5rem; font-weight:700;
+  font-variation-settings:"wght" 700,"opsz" 48,"SOFT" 100,"WONK" 0;
+  color:var(--gold-deep); min-width:2rem; padding-top:0;
+  line-height:1;
 }
 .wt-intro-philosophy .phil-body{
-  font-family:var(--f-body); font-size:16px; line-height:1.75;
-  color:var(--text-2);
+  font-family:var(--f-body); font-size:1.0625rem; line-height:1.65; font-weight:400;
+  color:var(--ink-75);
 }
-.wt-intro-philosophy .phil-body strong{ color:var(--text-1); font-weight:600; }
+.wt-intro-philosophy .phil-body strong{ color:var(--ink); font-weight:700; }
 .wt-intro-warn{
-  padding:32px;
-  border-radius:var(--r-card);
-  border:1px solid var(--terra);
-  background:rgba(196,101,74,.07);
-  display:flex; flex-direction:column; gap:14px;
+  padding:1.75rem;
+  border-radius:20px;
+  border:2px solid var(--ink);
+  background:var(--cream-rose);
+  box-shadow:0 6px var(--ink);
+  display:flex; flex-direction:column; gap:0.85rem;
 }
 .wt-intro-warn h3{
-  font-family:var(--f-mono); font-size:10px;
-  text-transform:uppercase; letter-spacing:.26em;
-  font-weight:700; color:var(--terra);
+  font-family:var(--f-mono); font-size:0.78rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.16em;
+  color:var(--rose-deep);
 }
 .wt-intro-warn p{
-  font-family:var(--f-body); font-size:15.5px; line-height:1.7;
-  color:var(--text-2);
+  font-family:var(--f-body); font-size:1.0625rem; line-height:1.65; font-weight:400;
+  color:var(--ink);
 }
-.wt-intro-warn em{ color:var(--terra); font-style:italic; font-weight:500; }
+.wt-intro-warn em{
+  color:var(--rose-deep); font-style:italic; font-weight:600;
+  font-variation-settings:"wght" 600,"SOFT" 100,"WONK" 1;
+}
 
 /* Brief cards */
 .wt-card-h{
-  font-family:var(--f-display); font-size:1.4rem; color:var(--text-1);
-  font-weight:500;
-  padding-bottom:20px; border-bottom:1px solid var(--border-subtle);
-  margin-bottom:28px;
-  display:flex; align-items:center; gap:12px;
+  font-family:var(--f-display); font-weight:650;
+  font-variation-settings:"wght" 650,"opsz" 72,"SOFT" 100,"WONK" 0;
+  font-size:clamp(1.35rem,2.2vw,1.65rem); color:var(--ink);
+  letter-spacing:-.012em; line-height:1.1;
+  padding-bottom:1.1rem; border-bottom:2px solid var(--ink);
+  margin-bottom:1.75rem;
+  display:flex; align-items:center; gap:0.85rem;
 }
-.wt-card-h .idx{ font-family:var(--f-mono); font-size:12px; color:var(--brass); font-weight:700; }
+.wt-card-h em{
+  font-style:italic; color:var(--gold);
+  font-variation-settings:"wght" 650,"opsz" 72,"SOFT" 100,"WONK" 1;
+}
+.wt-card-h .idx{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; border-radius:50%;
+  background:var(--gold); color:var(--ink);
+  border:2px solid var(--ink);
+  font-family:var(--f-display); font-size:0.95rem; font-weight:700;
+  font-variation-settings:"wght" 700,"opsz" 36,"SOFT" 100;
+  flex-shrink:0;
+}
 .wt-field-grid{ display:grid; grid-template-columns:1fr; gap:28px; }
 @media(min-width:760px){
   .wt-field-grid.two{ grid-template-columns:1fr 1fr; }
