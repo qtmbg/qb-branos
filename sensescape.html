@@ -1259,62 +1259,89 @@ body.immersive .mmenu{ display:none !important; }
 /* ================== INTRO PHASE ================== */
 .intro-shell{
   position:relative; z-index:3;
-  height:calc(100vh - 110px);
-  min-height:620px;
-  padding:clamp(24px, 4vh, 60px) 24px clamp(24px, 4vh, 48px);
-  display:flex; align-items:center; justify-content:center;
-  overflow:hidden;
+  min-height:auto;
+  padding:clamp(24px,3vh,40px) clamp(20px,4vw,48px) clamp(24px,3vh,40px);
+  display:block;
+  overflow:visible;
 }
 .intro-wrap{
-  max-width:1160px; width:100%;
+  max-width:1080px; width:100%; margin-inline:auto;
   display:flex; flex-direction:column;
-  justify-content:space-between;
-  height:100%;
-  gap:clamp(20px, 3vh, 40px);
+  gap:clamp(16px,2.5vh,24px);
 }
-.intro-hero{ display:flex; flex-direction:column; gap:clamp(16px, 2vh, 28px); }
+.intro-hero{ display:flex; flex-direction:column; gap:clamp(12px,1.5vh,18px); }
 .intro-eyebrow{
-  display:inline-flex; align-items:center; gap:14px;
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--f-mono); font-size:0.78rem; font-weight:600;
+  letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--ink-75);
 }
-.intro-eyebrow .label{ letter-spacing:.32em; }
+.intro-eyebrow .label{ letter-spacing:.18em; }
+.intro-eyebrow .pulse-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--rose-deep);
+  box-shadow:0 0 0 3px var(--cream-rose);
+}
 .intro-hero h1{
-  font-family:var(--f-display); font-weight:500;
-  font-size:clamp(3rem,9vw,6rem);
-  letter-spacing:-.025em; line-height:.95;
-  color:var(--text-1);
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 100,"WONK" 1;
+  font-size:clamp(2.2rem,4.5vw,3.4rem);
+  letter-spacing:-.015em; line-height:1.05;
+  color:var(--ink);
+  margin:0;
+  text-wrap:balance;
+}
+.intro-hero h1 em{
+  font-style:italic; color:var(--gold-deep);
+  font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 100,"WONK" 1;
 }
 .intro-lede{
-  font-family:var(--f-display); font-style:italic; font-weight:400;
-  font-size:clamp(1.1rem,2.2vw,1.55rem);
-  line-height:1.5; color:var(--text-2);
-  max-width:640px;
+  font-family:var(--f-body);
+  font-style:normal; font-weight:500;
+  font-size:1.1rem;
+  line-height:1.6; color:var(--ink-75);
+  max-width:65ch;
+  margin:0;
 }
 .intro-protocols{
-  display:grid; grid-template-columns:1fr; gap:28px;
-  padding-top:clamp(20px, 3vh, 40px); margin-top:clamp(16px, 2vh, 28px);
-  border-top:1px solid var(--border-medium);
+  display:grid; grid-template-columns:1fr; gap:1rem;
+  padding-top:0; margin-top:0;
+  border-top:0;
 }
-@media(min-width:760px){ .intro-protocols{ grid-template-columns:repeat(3,1fr); gap:40px; } }
+@media(min-width:760px){ .intro-protocols{ grid-template-columns:repeat(3,1fr); gap:1rem; } }
 .intro-protocol{
-  transition:padding-left .4s ease;
-  display:flex; flex-direction:column; gap:10px;
+  transition:transform .35s cubic-bezier(0.19,1,0.22,1), box-shadow .35s cubic-bezier(0.19,1,0.22,1);
+  display:flex; flex-direction:column; gap:0.5rem;
+  padding:1.25rem 1.4rem;
+  background:var(--cream-card);
+  border:2px solid var(--ink);
+  border-radius:18px;
+  box-shadow:0 4px var(--ink);
 }
-.intro-protocol:hover{ padding-left:8px; }
-.intro-protocol .p-num{ letter-spacing:.3em; }
+.intro-protocol:hover{ transform:translateY(-2px); box-shadow:0 6px var(--ink); }
+.intro-protocol .p-num{
+  font-family:var(--f-mono); font-size:0.7rem; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--gold-deep);
+}
 .intro-protocol h3{
-  font-family:var(--f-display); font-weight:500;
-  font-size:clamp(1.15rem, 1.6vw, 1.35rem);
-  color:var(--text-1);
-  line-height:1.2;
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 650,"opsz" 144,"SOFT" 100,"WONK" 1;
+  font-size:1.2rem;
+  color:var(--ink);
+  line-height:1.15;
   letter-spacing:-.01em;
-  transition:color .3s ease;
+  margin:0;
 }
-.intro-protocol:hover h3{ color:var(--brass); }
 .intro-protocol p{
-  font-family:var(--f-body); font-size:13.5px; line-height:1.55;
-  color:var(--text-2); opacity:.85;
+  font-family:var(--f-body); font-size:0.94rem; line-height:1.5;
+  color:var(--ink-75); opacity:1;
+  margin:0;
 }
-.intro-cta{ padding-top:clamp(12px, 1.5vh, 20px); }
+.intro-cta{
+  padding-top:0;
+  display:flex; justify-content:flex-end;
+}
 
 /* Hide micro-footer when we're on the single-viewport intro */
 body.phase-intro .micro-foot{ display:none; }
@@ -3771,10 +3798,10 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         el('div', { class:'intro-hero' }, [
           el('div', { class:'intro-eyebrow' }, [
             el('span', { class:'pulse-dot' }),
-            el('span', { class:'label', text:'System Initialization' })
+            el('span', { class:'label', text:'Phase 01 · Sensescape · The sensory layer' })
           ]),
-          el('h1', { text:'Sensescape' }),
-          el('p', { class:'intro-lede', text:'Before a brand speaks, it is felt. Before it is understood, it is sensed.' })
+          el('h1', { html:'Before a brand speaks, <em>it is felt.</em>' }),
+          el('p', { class:'intro-lede', text:'Six chapters, fifteen spectrums. You will rate where your brand sits between two anchors. Every spectrum carries a real cultural reference. The first read is the truthful one.' })
         ]),
         el('div', { class:'intro-protocols' }, [
           { n:'01', title:'Instinct Over Logic.',  body:'Answer in the first five seconds. Your score is not a preference. It is a pure recognition.' },
