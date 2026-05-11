@@ -1542,6 +1542,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       <button class="btn-ghost" onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'index.html'" aria-label="Go back">← Back</button>
       <button class="btn-ghost" onclick="downloadDocPPTX()" id="dl-pptx-btn" aria-label="Download brand document as PPTX">↓ Download PPTX</button>
       <button class="btn-ghost" onclick="downloadDocMarketingDeck()" id="dl-marketing-btn" aria-label="Download brand document as marketing-style PPTX">↓ Marketing deck</button>
+      <button class="btn-ghost" onclick="sendDocByEmail()" id="dl-email-btn" aria-label="Send brand document to my inbox">✉ Send to inbox</button>
       <button class="btn-primary" onclick="downloadDoc()" id="dl-btn" aria-label="Download brand document as PDF">↓ Download PDF</button>
     </div>
   </div>
@@ -2025,6 +2026,55 @@ async function exportDocPPTXMode(mode, btnId, idleLabel) {
 }
 async function downloadDocPPTX()           { return exportDocPPTXMode('studio',    'dl-pptx-btn',         '↓ Download PPTX'); }
 async function downloadDocMarketingDeck()  { return exportDocPPTXMode('editorial', 'dl-marketing-btn',    '↓ Marketing deck'); }
+
+// C3 — deliver the brand document by email via the existing /api/send-results pipeline.
+// Uses the authed identity when available; otherwise opens the qb-gate modal so the
+// user can drop their email. Either path ends with a single fire-and-forget POST.
+async function sendDocByEmail() {
+  const btn = document.getElementById('dl-email-btn');
+  if (!btn) return;
+  const origLabel = btn.textContent;
+  const qbp = getQBP();
+
+  function fireSend(email, firstName) {
+    return fetch('/api/send-results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName: firstName || '',
+        email,
+        toolId: 'brand-document',
+        qbp,
+        results: {}
+      })
+    });
+  }
+
+  if (window.QB && QB.isAuthed && QB.isAuthed()) {
+    const session = QB.getSession && QB.getSession();
+    const email   = session && session.email;
+    if (!email) { btn.textContent = '✗ Sign in to receive'; setTimeout(() => { btn.textContent = origLabel; }, 3000); return; }
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const r = await fireSend(email, localStorage.getItem('qb_first_name') || '');
+      btn.textContent = r.ok ? '✓ Sent to inbox' : '✗ Try again';
+    } catch (e) {
+      btn.textContent = '✗ Try again';
+    }
+    setTimeout(() => { btn.textContent = origLabel; btn.disabled = false; }, 3500);
+    return;
+  }
+
+  // Anonymous — open the gate. qb-gate.js will fire send-results itself after
+  // the user submits, using toolId='brand-document'.
+  if (window.QB && QB.openGate) {
+    QB.openGate({ toolId: 'brand-document', toolName: 'Brand Document', brandName: qbp.brandName || '' });
+  } else {
+    btn.textContent = '✗ Sign in to receive';
+    setTimeout(() => { btn.textContent = origLabel; }, 3000);
+  }
+}
 
 // On init: if authed, await a cloud pull so tool_completions + qbp reflect
 // the latest state across devices before the first render. Falls through
