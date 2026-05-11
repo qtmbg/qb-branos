@@ -1231,6 +1231,256 @@ main.tool-shell {
   .qb-button:active .qb-button_content { transform:none; }
   .nav-brand_dot { animation:none; }
 }
+
+
+/* =====================================================
+   PHASE 01 FRAME OVERRIDE v1 — coherence pass
+   Strips the inherited "card-on-card" nesting from earlier
+   paint sweeps so that .screen and .container-* become
+   invisible layout wrappers. The actual cards (.intro-card,
+   .seat-card, etc.) are then the only painted surface, and
+   they sit inside a wide responsive grid that uses the
+   full column instead of stacking one pill per row.
+   ===================================================== */
+
+/* Layout wrappers — invisible, just structure */
+body main #app .screen,
+body main #app .screen-center,
+body main #app .container-xl,
+body main #app .container-lg,
+body main #app .container-md,
+body main #app .container-sm {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* The .screen sets the page rhythm (gutters + min-height for fold safety) */
+body main #app .screen,
+body main #app .screen-center {
+  display: block;
+  width: 100%;
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(20px, 4vw, 48px) !important;
+}
+
+/* The .container-* sets the column width — UNIFIED at 1080px across tools */
+body main #app .container-xl,
+body main #app .container-lg,
+body main #app .container-md {
+  max-width: 1080px !important;
+  margin-inline: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: clamp(1rem, 2vw, 1.5rem) !important;
+}
+body main #app .container-sm { max-width: 720px !important; margin-inline: auto !important; }
+
+/* The .container-* with .center modifier — for hero centered intros */
+body main #app .container-lg.center,
+body main #app .container-md.center,
+body main #app .container-xl.center {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+/* Eyebrow / kicker — one weight, one rhythm */
+body main #app .kicker {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-75) !important;
+  margin: 0 0 0.5rem 0 !important;
+}
+
+/* Display headline — the question itself */
+body main #app .display {
+  font-family: 'Fraunces', serif !important;
+  font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 100, "WONK" 1 !important;
+  font-size: clamp(2rem, 4.5vw, 3.2rem) !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.015em !important;
+  color: var(--ink) !important;
+  margin: 0 !important;
+  text-wrap: balance;
+}
+body main #app .display em {
+  font-style: italic !important;
+  color: var(--gold-deep) !important;
+  font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 100, "WONK" 1 !important;
+}
+
+/* Deck / body copy */
+body main #app .hook,
+body main #app .body {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 1.1rem !important;
+  line-height: 1.6 !important;
+  color: var(--ink-75) !important;
+  max-width: 65ch !important;
+  margin: 0 !important;
+}
+body main #app .small {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.94rem !important;
+  color: var(--ink-50) !important;
+  max-width: 65ch !important;
+  margin: 0 !important;
+}
+
+/* Intro phase grid — flat horizontal flow, not stacked pills */
+body main #app .intro-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  gap: 1rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Each phase card — single card, internal rhythm, NOT nested pills */
+body main #app .intro-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  padding: 1.25rem 1.4rem !important;
+  background: var(--cream-card) !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 4px var(--ink) !important;
+  margin: 0 !important;
+  transition:
+    transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1) !important;
+}
+body main #app .intro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px var(--ink) !important;
+}
+body main #app .intro-card-num {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--gold-deep) !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+body main #app .intro-card-title {
+  font-family: 'Fraunces', serif !important;
+  font-variation-settings: "wght" 650, "opsz" 144, "SOFT" 100, "WONK" 1 !important;
+  font-size: 1.2rem !important;
+  line-height: 1.15 !important;
+  color: var(--ink) !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+body main #app .intro-card-time {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-50) !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+body main #app .intro-card-desc {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 0.94rem !important;
+  line-height: 1.5 !important;
+  color: var(--ink-75) !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Seats grid — 3-up desktop, stacked mobile */
+body main #app .seats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 1rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Seat card — single layer, internal padding only */
+body main #app .seat-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.9rem !important;
+  padding: 1.5rem !important;
+  background: var(--cream-card) !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px var(--ink) !important;
+  margin: 0 !important;
+}
+body main #app .seat-card-num {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--gold-deep) !important;
+}
+
+/* Persona strip (the per-persona header banner on profile screens) */
+body main #app .persona-strip {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  padding: 1rem 1.25rem !important;
+  background: var(--cream-card) !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 3px var(--ink) !important;
+  margin: 0 !important;
+}
+
+/* CTA row — always at the bottom of the column, never wraps awkwardly */
+body main #app .flex.justify-center,
+body main #app .flex.justify-end {
+  display: flex !important;
+  gap: 0.75rem !important;
+  flex-wrap: wrap !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Center the divider line below the .display headline */
+body main #app .container-lg.center > div[style*="background: var(--brass)"],
+body main #app .container-lg.center > div[style*="background:var(--brass)"] {
+  margin-left: 0 !important;
+}
+
+/* Mobile gutter shrink */
+@media (max-width: 640px) {
+  body main #app .screen,
+  body main #app .screen-center {
+    padding: 1rem 16px !important;
+  }
+}
+
+/* === END PHASE 01 FRAME OVERRIDE === */
 </style>
 </head>
 
@@ -1793,18 +2043,18 @@ function renderIntro() {
     )
   ) : null;
 
-  return h("div", { class: "screen screen-center fade-in" },
-    h("div", { class: "container-lg center" },
-      h("div", { class: "kicker", text: 'Phase 01 · The Profiles' }),
-      h("h1", { class: "display", style: { marginBottom: "20px" } },
-        "Three buyers."
+  return h("div", { class: "screen fade-in" },
+    h("div", { class: "container-lg" },
+      h("div", { class: "kicker", text: 'Phase 01 · The Profiles · The journey' }),
+      h("h1", { class: "display" },
+        "Three buyers. ",
+        h("em", {}, "Three lives.")
       ),
-      h("div", { style: { width: "96px", height: "1px", background: "var(--brass)", margin: "0 auto 28px", opacity: "0.6" } }),
-      h("p", { class: "hook", style: { maxWidth: "640px", margin: "0 auto 12px" }, text: "An hour of structured depth. Identity, pain, journey, psychology. By the end you will have three complete persona briefs in the format your strategy work demands." }),
-      h("p", { class: "small", style: { maxWidth: "560px", margin: "0 auto 16px" }, text: "Built in coherence with Brand Soul Map. Reads from your QBP. Writes back when complete." }),
+      h("p", { class: "hook", text: "An hour of structured depth. Identity, pain, journey, psychology. By the end you have three complete persona briefs in the format your strategy work demands." }),
+      h("p", { class: "small", text: "Built in coherence with Brand Soul Map. Reads from your QBP. Writes back when complete." }),
       resumeNotice,
       h("div", { class: "intro-grid" }, cards),
-      h("div", { class: "flex justify-center gap-3 flex-wrap" },
+      h("div", { class: "flex justify-end gap-3 flex-wrap" },
         btn("Begin · 60 minutes", { size: "lg", iconRight: "arrowRight", onClick: function() { if (state.step === 0) goNext(); else goToStep(1); } }),
         hasSavedProgress() ? btn("Reset", { size: "md", variant: "ghost", onClick: function() {
           if (confirm("Clear all saved progress and start over?")) {
