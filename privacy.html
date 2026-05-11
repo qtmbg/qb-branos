@@ -195,8 +195,13 @@
         </tr>
         <tr>
           <td>Technical</td>
-          <td>IP address, browser user-agent, page-load timestamps as part of normal HTTP request logs (hosting only — not used for tracking)</td>
+          <td>IP address, browser user-agent, page-load timestamps as part of normal HTTP request logs (hosting only, not used for tracking)</td>
           <td><code>Vercel</code> access logs</td>
+        </tr>
+        <tr>
+          <td>Aggregate usage</td>
+          <td>Pageviews, page paths, referrer, country, device type. Cookieless. No persistent identifier. IP hashed and discarded.</td>
+          <td><code>Vercel Web Analytics</code> + <code>Speed Insights</code></td>
         </tr>
       </tbody>
     </table>
@@ -221,7 +226,7 @@
       <tbody>
         <tr>
           <td><a href="https://vercel.com/legal/dpa" target="_blank" rel="noopener">Vercel</a></td>
-          <td>Hosting, edge functions, request logs</td>
+          <td>Hosting, edge functions, request logs, cookieless web analytics, speed insights</td>
           <td>Global (EU edge nodes)</td>
         </tr>
         <tr>
@@ -324,5 +329,8 @@
   </div>
 </footer>
 
+<!-- QB analytics -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
