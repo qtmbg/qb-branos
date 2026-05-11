@@ -3290,13 +3290,12 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   /* --- 0 Initialize --- */
   views[0] = function(){
     return el('div', { class:'step-container' }, [
-      el('div', { style:{ maxWidth:'720px', margin:'0 auto' } }, [
-        vizHeader('The Brand Soul Map', 'System initialization', 'intro'),
+      el('div', { style:{ maxWidth:'1080px', margin:'0 auto' } }, [
+        vizHeader('Name what you are uncovering.', 'Phase 01 · Brand Soul Map · The start', 'intro'),
         el('div', { class:'glass-panel' }, [
-          el('h2', { class:'headline', style:{ fontSize:'1.85rem', marginBottom:'16px' }, text:'A diagnostic instrument.' }),
-          el('p', { class:'helper-text', style:{ fontSize:'16px', marginBottom:'32px', maxWidth:'560px' },
-            text:'The brand is not being invented here. It is being uncovered. Over the next 6 modules you will define the core convictions, positioning, and cultural stance of your brand. You cannot skip ahead. We will guide you step by step.' }),
-          formField('Input designation: Brand name', null, lineInput('brandName', 'e.g. Acme Corp'))
+          el('p', { class:'helper-text', style:{ fontSize:'17px', lineHeight:'1.6', marginBottom:'32px', maxWidth:'65ch' },
+            text:'The brand is not being invented here. It is being uncovered. Over the next six modules you will define the core convictions, positioning, and cultural stance of your brand. No skipping ahead. The order is the work.' }),
+          formField('Brand name', null, lineInput('brandName', 'e.g. Acme Corp'))
         ])
       ])
     ]);
