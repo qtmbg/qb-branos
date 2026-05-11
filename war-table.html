@@ -2954,8 +2954,22 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
             btn.addEventListener('click', function(){
               var qbp = {};
               try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e){}
-              if (window.QB_showResultsModal){
-                window.QB_showResultsModal({ toolId:'war-table', qbp:qbp, results:{}, pdfPage:'/war-table-pdf.html' });
+              if (window.QB && QB.isAuthed && QB.isAuthed()) {
+                var session = QB.getSession();
+                var fn = localStorage.getItem('qb_first_name') || '';
+                if (session && session.email) {
+                  fetch('/api/send-results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      firstName: fn, email: session.email,
+                      toolId: 'war-table', qbp: qbp, results: {}
+                    })
+                  }).then(function(r){ if (r.ok) btn.textContent = 'Sent ✓'; })
+                    .catch(function(){});
+                }
+              } else if (window.QB && QB.openGate) {
+                QB.openGate({ toolId: 'war-table', toolName: 'The War Table', brandName: (qbp && qbp.brandName) || '' });
               }
             });
             document.body.appendChild(btn);

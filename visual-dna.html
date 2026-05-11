@@ -2933,8 +2933,24 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     btn.addEventListener('click', function(){
       var qbp = {};
       try { qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e){}
-      if (window.QB_showResultsModal){
-        window.QB_showResultsModal({ toolId:'visual-dna', qbp:qbp, results:{}, pdfPage:'/visual-dna-pdf.html' });
+      // Re-fire the results email. Uses the stashed identity if the user is
+      // already authed; otherwise re-opens the email-capture gate.
+      if (window.QB && QB.isAuthed && QB.isAuthed()) {
+        var session = QB.getSession();
+        var fn = localStorage.getItem('qb_first_name') || '';
+        if (session && session.email) {
+          fetch('/api/send-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              firstName: fn, email: session.email,
+              toolId: 'visual-dna', qbp: qbp, results: {}
+            })
+          }).then(function(r){ if (r.ok) btn.textContent = 'Sent ✓'; })
+            .catch(function(){});
+        }
+      } else if (window.QB && QB.openGate) {
+        QB.openGate({ toolId: 'visual-dna', toolName: 'Visual DNA', brandName: qbp.brandName || '' });
       }
     });
     document.body.appendChild(btn);

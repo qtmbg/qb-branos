@@ -21,35 +21,42 @@
 
   function injectStyles(){
     if (document.getElementById('qb-gate-styles')) return;
+    // v3.4 SOT: cream + ink + gold + rose-deep. 2px ink border, hard offset shadow,
+    // Fraunces chunky title, Inter body, JetBrains Mono labels. Reads ecosystem
+    // tokens from :root with safe fallbacks for pages that load this script
+    // before their own design tokens settle.
     const style = document.createElement('style');
     style.id = 'qb-gate-styles';
     style.textContent = ''
-      + '.qb-gate-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:qbGateIn 0.3s ease-out;font-family:\'Inter\',-apple-system,BlinkMacSystemFont,sans-serif}'
+      + '.qb-gate-overlay{position:fixed;inset:0;background:rgba(45,21,33,0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:qbGateIn 0.3s ease-out;font-family:\'Inter\',-apple-system,BlinkMacSystemFont,sans-serif}'
       + '@keyframes qbGateIn{from{opacity:0}to{opacity:1}}'
-      + '.qb-gate-card{background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:16px;max-width:440px;width:100%;padding:36px 32px;color:#fff;position:relative;animation:qbGateUp 0.4s cubic-bezier(0.16,1,0.3,1);box-shadow:0 20px 60px rgba(0,0,0,0.5)}'
+      + '.qb-gate-card{background:var(--cream-card,#F4EBD3);border:2px solid var(--ink,#2D1521);border-radius:24px;max-width:460px;width:100%;padding:40px 32px;color:var(--ink,#2D1521);position:relative;animation:qbGateUp 0.4s cubic-bezier(0.16,1,0.3,1);box-shadow:0 12px var(--ink,#2D1521)}'
+      + '@media (min-width:640px){.qb-gate-card{box-shadow:0 16px var(--ink,#2D1521)}}'
       + '@keyframes qbGateUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}'
-      + '.qb-gate-label{font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:0.16em;color:#4ade80;margin-bottom:18px;text-transform:uppercase}'
-      + '.qb-gate-title{font-size:22px;font-weight:500;line-height:1.3;margin-bottom:12px;color:#fff}'
-      + '.qb-gate-sub{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:24px}'
+      + '.qb-gate-label{font-family:\'JetBrains Mono\',monospace;font-size:0.72rem;letter-spacing:0.16em;color:var(--gold-deep,#A8862E);margin-bottom:18px;text-transform:uppercase;font-weight:600}'
+      + '.qb-gate-title{font-family:\'Fraunces\',serif;font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 100,"WONK" 1;font-size:clamp(1.6rem,3vw,2rem);font-weight:700;line-height:1.1;letter-spacing:-0.015em;margin-bottom:12px;color:var(--ink,#2D1521)}'
+      + '.qb-gate-sub{font-family:\'Inter\',sans-serif;font-weight:500;font-size:0.96rem;color:var(--ink-75,rgba(45,21,33,0.75));line-height:1.55;margin-bottom:24px}'
       + '.qb-gate-row{display:flex;gap:10px;margin-bottom:12px}'
-      + '.qb-gate-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:13px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.15s;-webkit-appearance:none}'
-      + '.qb-gate-input:focus{border-color:#4ade80}'
-      + '.qb-gate-input::placeholder{color:rgba(255,255,255,0.35)}'
-      + '.qb-gate-btn{width:100%;background:#4ade80;color:#000;border:none;border-radius:8px;padding:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:opacity 0.15s;margin-top:8px}'
-      + '.qb-gate-btn:hover{opacity:0.9}'
-      + '.qb-gate-btn:disabled{opacity:0.5;cursor:not-allowed}'
-      + '.qb-gate-skip{display:block;text-align:center;margin-top:18px;color:rgba(255,255,255,0.4);font-size:13px;text-decoration:underline;cursor:pointer;background:none;border:none;width:100%;font-family:inherit}'
-      + '.qb-gate-skip:hover{color:rgba(255,255,255,0.7)}'
-      + '.qb-gate-fine{font-size:11px;color:rgba(255,255,255,0.4);margin-top:18px;font-family:\'JetBrains Mono\',monospace;letter-spacing:0.04em;text-align:center;line-height:1.6}'
-      + '.qb-gate-err{color:#f87171;font-size:12px;margin-top:10px;font-family:\'JetBrains Mono\',monospace;text-align:center}'
+      + '.qb-gate-input{flex:1;background:var(--cream,#FBF5E6);border:2px solid var(--ink,#2D1521);border-radius:16px;padding:0.9em 1.1em;color:var(--ink,#2D1521);font-size:1.0625rem;font-family:\'Inter\',sans-serif;font-weight:500;outline:none;box-shadow:0 4px var(--ink,#2D1521);transition:transform 0.25s cubic-bezier(0.19,1,0.22,1),box-shadow 0.25s cubic-bezier(0.19,1,0.22,1),border-color 0.25s cubic-bezier(0.19,1,0.22,1);-webkit-appearance:none}'
+      + '.qb-gate-input:focus{transform:translateY(-2px);box-shadow:0 6px var(--ink,#2D1521);border-color:var(--rose-deep,#B5455A)}'
+      + '.qb-gate-input::placeholder{color:var(--ink-50,rgba(45,21,33,0.5));font-weight:400}'
+      + '.qb-gate-btn{width:100%;background:var(--gold,#E5C975);color:var(--ink,#2D1521);border:2px solid var(--ink,#2D1521);border-radius:9999px;padding:0.9em 1.5em;font-size:1rem;font-weight:600;font-family:\'Inter\',sans-serif;cursor:pointer;margin-top:8px;box-shadow:0 4px var(--ink,#2D1521);transition:transform 0.25s cubic-bezier(0.19,1,0.22,1),box-shadow 0.25s cubic-bezier(0.19,1,0.22,1),filter 0.25s cubic-bezier(0.19,1,0.22,1)}'
+      + '.qb-gate-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 7px var(--ink,#2D1521);filter:brightness(1.06)}'
+      + '.qb-gate-btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px var(--ink,#2D1521);transition-duration:0.15s}'
+      + '.qb-gate-btn:disabled{opacity:0.55;cursor:not-allowed}'
+      + '.qb-gate-skip{display:block;text-align:center;margin-top:18px;color:var(--ink-50,rgba(45,21,33,0.5));font-size:0.88rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer;background:none;border:none;width:100%;font-family:\'Inter\',sans-serif;font-weight:500}'
+      + '.qb-gate-skip:hover{color:var(--ink,#2D1521)}'
+      + '.qb-gate-fine{font-size:0.7rem;color:var(--ink-50,rgba(45,21,33,0.5));margin-top:18px;font-family:\'JetBrains Mono\',monospace;letter-spacing:0.06em;text-align:center;line-height:1.6}'
+      + '.qb-gate-err{color:var(--rose-deep,#B5455A);font-size:0.8rem;margin-top:10px;font-family:\'JetBrains Mono\',monospace;text-align:center;font-weight:500}'
       + '.qb-gate-success{text-align:center;padding:20px 0}'
-      + '.qb-gate-success-icon{font-size:32px;margin-bottom:14px}'
+      + '.qb-gate-success-icon{font-family:\'Fraunces\',serif;font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 100,"WONK" 1;font-size:2.4rem;color:var(--gold-deep,#A8862E);margin-bottom:14px}'
       + '.qb-gate-progress{display:flex;gap:6px;margin-bottom:24px}'
-      + '.qb-gate-pip{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;transition:background-color .25s ease}'
-      + '.qb-gate-pip.done{background:#4ade80}'
-      + '.qb-gate-context{font-family:\'JetBrains Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}'
-      + '.qb-gate-context-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:qbPulse 2s ease-in-out infinite}'
-      + '@keyframes qbPulse{0%,100%{opacity:1}50%{opacity:0.4}}';
+      + '.qb-gate-pip{flex:1;height:4px;background:var(--cream-edge,#E5DCC5);border-radius:9999px;overflow:hidden;transition:background-color .25s ease}'
+      + '.qb-gate-pip.done{background:var(--gold-deep,#A8862E)}'
+      + '.qb-gate-context{font-family:\'JetBrains Mono\',monospace;font-size:0.7rem;color:var(--ink-75,rgba(45,21,33,0.75));letter-spacing:0.14em;text-transform:uppercase;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}'
+      + '.qb-gate-context-dot{width:8px;height:8px;border-radius:9999px;background:var(--rose-deep,#B5455A);box-shadow:0 0 0 3px var(--cream-rose,#F2E0DA);animation:qbPulse 2.4s ease-in-out infinite}'
+      + '@keyframes qbPulse{0%,100%{transform:scale(1)}50%{transform:scale(0.85)}}'
+      + '@media (prefers-reduced-motion: reduce){.qb-gate-overlay,.qb-gate-card{animation:none}.qb-gate-context-dot{animation:none}.qb-gate-input,.qb-gate-btn{transition:none}}';
     document.head.appendChild(style);
   }
 
@@ -161,9 +168,30 @@
 
     const isLogin = opts.toolId === 'hub-login';
 
-    // If already authed, no gate. Just record completion + invoke onClose.
+    // If already authed, no gate. Record completion, silently fire the
+    // results email using the stashed identity (no second modal), invoke
+    // onClose. The send-results call is fire-and-forget so a Resend
+    // hiccup never blocks the user from moving on to the next tool.
     if (QB.isAuthed() && !isLogin) {
       QB.recordCompletion(opts.toolId);
+      try {
+        const session   = QB.getSession && QB.getSession();
+        const email     = session && session.email;
+        const firstName = localStorage.getItem('qb_first_name') || '';
+        if (email && opts.toolId) {
+          const qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
+          fetch('/api/send-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              firstName, email,
+              toolId: opts.toolId,
+              qbp,
+              results: opts.results || {}
+            })
+          }).catch(() => {});
+        }
+      } catch (e) { /* silent */ }
       if (opts.onClose) opts.onClose({ skipped:false, alreadyAuthed:true });
       return;
     }
@@ -215,6 +243,26 @@
         submitBtn.textContent = isLogin ? 'Send magic link →' : 'Save my Brand Profile →';
         return;
       }
+
+      // Fire-and-forget results email. Login flow skips it (no fresh tool output
+      // to deliver). Errors stay silent so a Resend hiccup never blocks the
+      // signup success state the user is about to see.
+      if (!isLogin && opts.toolId) {
+        try {
+          const qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
+          fetch('/api/send-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              firstName, email,
+              toolId: opts.toolId,
+              qbp,
+              results: opts.results || {}
+            })
+          }).catch(() => {});
+        } catch (e) { /* silent */ }
+      }
+
       // Replace with success state
       overlay.remove();
       const success = buildSuccess(email);
