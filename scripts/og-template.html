@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QB OG card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,600..800,0..100,0..1;1,9..144,600..800,0..100,0..1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF5E6; --cream-card:#F2EBD3; --cream-warm:#ECDDB8; --cream-edge:#DBD4C0;
+    --ink:#2D1521;
+    --gold:#E0B069; --gold-deep:#B58840;
+    --rose:#CA6180; --rose-deep:#8E3F58;
+    --teal:#9ED3DC; --teal-deep:#5BA8B5;
+    --phase-discovery:#9CC4A2;
+    --phase-creation:#B5C8E5;
+    --phase-content:#FCB7C7;
+    --phase-execution:#E89380;
+    --phase-intelligence:#B080A0;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1200px;height:630px;overflow:hidden;background:var(--cream);font-family:'Inter',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  .card{
+    position:relative;width:1200px;height:630px;
+    background:var(--cream);
+    padding:64px 72px;
+    display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .card::before{
+    content:"";position:absolute;inset:24px;border:2px solid var(--ink);border-radius:24px;pointer-events:none;
+  }
+  .top{display:flex;align-items:center;justify-content:space-between;gap:24px;position:relative;z-index:1}
+  .lockup{display:flex;align-items:center;gap:14px}
+  .lockup svg{display:block}
+  .lockup .wm{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:600;
+    font-size:36px;line-height:1;letter-spacing:-0.01em;color:var(--ink);
+    font-variation-settings:"SOFT" 60,"WONK" 0;
+  }
+  .accent-pill{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:10px 18px;border-radius:999px;
+    background:var(--cream-card);border:2px solid var(--ink);
+    font-family:'JetBrains Mono',monospace;font-weight:600;
+    font-size:14px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--ink);
+  }
+  .accent-pill .dot{
+    width:10px;height:10px;border-radius:50%;background:var(--gold);
+  }
+  .accent-pill[data-accent="discovery"] .dot{background:var(--phase-discovery)}
+  .accent-pill[data-accent="creation"]  .dot{background:var(--phase-creation)}
+  .accent-pill[data-accent="content"]   .dot{background:var(--phase-content)}
+  .accent-pill[data-accent="execution"] .dot{background:var(--phase-execution)}
+  .accent-pill[data-accent="intelligence"] .dot{background:var(--phase-intelligence)}
+  .accent-pill[data-accent="gold"] .dot{background:var(--gold)}
+  .accent-pill[data-accent="rose"] .dot{background:var(--rose-deep)}
+  .accent-pill[data-accent="ink"]  .dot{background:var(--ink)}
+
+  .body{position:relative;z-index:1;display:flex;flex-direction:column;gap:28px;max-width:1000px}
+  h1{
+    font-family:'Fraunces',serif;font-weight:700;font-style:normal;
+    font-size:104px;line-height:0.96;letter-spacing:-0.025em;color:var(--ink);
+    font-variation-settings:"SOFT" 100,"WONK" 1,"opsz" 144;
+  }
+  h1 em{
+    font-style:italic;color:var(--rose-deep);
+    font-variation-settings:"SOFT" 100,"WONK" 1,"opsz" 144;
+  }
+  h1.small{font-size:88px}
+  h1.tight{font-size:80px;line-height:0.98}
+
+  .deck{
+    font-family:'Inter',sans-serif;font-weight:500;font-size:24px;line-height:1.4;color:var(--ink);opacity:0.78;
+    max-width:880px;
+  }
+
+  .bottom{display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:1}
+  .url{
+    font-family:'JetBrains Mono',monospace;font-weight:500;font-size:16px;letter-spacing:0.04em;
+    color:var(--ink);opacity:0.65;
+  }
+  .mark-corner{display:flex;align-items:center;gap:10px;opacity:0.8}
+  .mark-corner svg{display:block;width:42px;height:42px}
+</style>
+</head>
+<body>
+<div class="card">
+  <header class="top">
+    <div class="lockup">
+      <!-- QB mark (ink) — circular asterisk-like glyph. Inline SVG mirrors mark-ink.svg silhouette. -->
+      <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="32" cy="32" r="30" stroke="#2D1521" stroke-width="3" fill="none"/>
+        <path d="M32 12 L32 52 M14 32 L50 32 M19 19 L45 45 M45 19 L19 45" stroke="#2D1521" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="32" cy="32" r="4.5" fill="#2D1521"/>
+      </svg>
+      <span class="wm">quantum branding</span>
+    </div>
+    <div id="pill" class="accent-pill" data-accent="gold">
+      <span class="dot"></span><span id="eyebrow">Eyebrow</span>
+    </div>
+  </header>
+
+  <div class="body">
+    <h1 id="headline">Headline goes here.</h1>
+    <p id="deck" class="deck" style="display:none"></p>
+  </div>
+
+  <footer class="bottom">
+    <span class="url">quantumbranding.ai</span>
+    <div class="mark-corner">
+      <span class="url">from idea to orbit.</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const p = new URLSearchParams(location.search);
+  const headline = p.get('h') || 'Headline goes here.';
+  const eyebrow  = p.get('e') || 'Quantum Branding';
+  const accent   = p.get('a') || 'gold';
+  const deck     = p.get('d') || '';
+  const size     = p.get('s') || '';
+
+  const hEl = document.getElementById('headline');
+  // Replace *word* with <em>word</em> for italic emphasis.
+  hEl.innerHTML = headline.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  if(size === 'small') hEl.classList.add('small');
+  if(size === 'tight') hEl.classList.add('tight');
+
+  document.getElementById('eyebrow').textContent = eyebrow;
+  document.getElementById('pill').setAttribute('data-accent', accent);
+
+  if(deck){
+    const d = document.getElementById('deck');
+    d.style.display = 'block';
+    d.textContent = deck;
+  }
+</script>
+</body>
+</html>
