@@ -41,12 +41,32 @@
   // Order matters: nextRecommendedTool() returns the first incomplete one,
   // so list them in journey order. Compass is the entry point.
   const TOOL_NAMES = {
+    // Phase 01 — Discovery (free)
     'archetype-compass': 'Archetype Compass',
     'soul-map':          'Brand Soul Map',
     'sensescape':        'Sensescape',
     'visual-dna':        'Visual DNA',
     'war-table':         'The War Table',
-    'profiles':     'The Profiles'
+    'profiles':          'The Profiles',
+    // Phase 02 — Brand Creation
+    'logo-direction':    'Logo Direction',
+    'logo-evaluation':   'Logo Evaluation',
+    'voice-guide':       'Voice Guide',
+    // Phase 03 — Content Creation
+    'content-bridge':    'Content Bridge',
+    'content-repurpose': 'Content Repurposing Engine',
+    'content-scheduler': 'Content Scheduler',
+    // Phase 04 — Execution
+    'instagram':         'Instagram Seed Agent',
+    'linkedin':          'LinkedIn Strategy',
+    'youtube':           'YouTube Strategy',
+    'newsletter':        'Newsletter Architecture',
+    // Phase 05 — Intelligence
+    'quarterly':         'Quarterly Brand Review',
+    'dashboard':         'Brand Performance Dashboard',
+    'panel':             'Predictive Panel',
+    // Phase 06 — Synthesis (top-of-funnel deliverable)
+    'brand-document':    'Brand Document'
   };
   const TOOL_FILES = {
     'archetype-compass': 'archetype-compass.html',
@@ -54,9 +74,32 @@
     'sensescape':        'sensescape.html',
     'visual-dna':        'visual-dna.html',
     'war-table':         'war-table.html',
-    'profiles':     'the-profiles.html'
+    'profiles':          'the-profiles.html',
+    'logo-direction':    'logo-direction-agent.html',
+    'logo-evaluation':   'logo-evaluation-agent.html',
+    'voice-guide':       'voice-guide-agent.html',
+    'content-bridge':    'content-bridge.html',
+    'content-repurpose': 'content-repurposing-engine.html',
+    'content-scheduler': 'content-scheduler.html',
+    'instagram':         'instagram-seed-agent.html',
+    'linkedin':          'linkedin-strategy-agent.html',
+    'youtube':           'youtube-strategy-agent.html',
+    'newsletter':        'newsletter-architecture-agent.html',
+    'quarterly':         'quarterly-brand-review-agent.html',
+    'dashboard':         'brand-performance-dashboard.html',
+    'panel':             'predictive-panel..html',
+    'brand-document':    'brand-document.html'
   };
   const PHASE_01_TOOLS = ['archetype-compass', 'soul-map', 'sensescape', 'visual-dna', 'war-table', 'profiles'];
+
+  // Phase 02-5 tools — gated behind any paid tier. brand-document is the
+  // synthesis page that surfaces the QBP; it stays free (the deliverable).
+  const PAID_TOOLS = [
+    'logo-direction', 'logo-evaluation', 'voice-guide',
+    'content-bridge', 'content-repurpose', 'content-scheduler',
+    'instagram', 'linkedin', 'youtube', 'newsletter',
+    'quarterly', 'dashboard', 'panel'
+  ];
 
   // ── Session management ────────────────────────────────────────────────────
   function getSession(){
@@ -348,12 +391,44 @@
     // Phase 01 tools are always free
     if (PHASE_01_TOOLS.includes(feature)) return true;
     if (feature === 'signal-scan')        return true;
+    if (feature === 'brand-document')     return true;
     // Everything else requires an active paid subscription
     return status === 'active' && tier !== 'free';
   }
   // Backwards-compat shim — existing code calls window.QB_HAS_ACCESS
   if (typeof window.QB_HAS_ACCESS !== 'function') {
     window.QB_HAS_ACCESS = hasAccess;
+  }
+
+  // ── requireAccess (boot-time gate for Phase 02+ agents) ───────────────────
+  // Called from each agent's <head> via:
+  //   <script>QB.requireAccess('logo-direction', 'Logo Direction')</script>
+  //
+  // Behavior:
+  //   - Phase 01 tools and brand-document: always allowed (no redirect).
+  //   - Anonymous user on a paid tool: redirect to /signal-scan first so they
+  //     enter the funnel at the top instead of staring at a paywall.
+  //   - Authed but free/inactive on a paid tool: redirect to /payment, remember
+  //     the return path so payment.html can bounce them back after checkout.
+  function requireAccess(toolId, toolName){
+    if (!toolId) return true;
+    if (hasAccess(toolId)) return true;
+
+    // Save where the user wanted to go so we can bring them back.
+    try {
+      sessionStorage.setItem('qb_return_to', window.location.pathname + window.location.search);
+      sessionStorage.setItem('qb_blocked_tool', toolId);
+      if (toolName) sessionStorage.setItem('qb_blocked_tool_name', toolName);
+    } catch(e) {}
+
+    if (!isAuthed()) {
+      // Top-of-funnel entry — Signal Scan is the canonical free door.
+      window.location.replace('/signal-scan.html?reason=paywall&tool=' + encodeURIComponent(toolId));
+      return false;
+    }
+    // Authed but unpaid (or sub lapsed) — straight to the plan picker.
+    window.location.replace('/payment.html?reason=upgrade&tool=' + encodeURIComponent(toolId));
+    return false;
   }
 
   // ── Klaviyo bridge ────────────────────────────────────────────────────────
@@ -471,9 +546,9 @@
     getQBP, setQBP, mergeQBP, syncQBPToCloud, pullQBPFromCloud,
     recordCompletion, getCompletions, nextRecommendedTool, phase01Progress,
     sendMagicLink, logout,
-    hasAccess,
+    hasAccess, requireAccess,
     syncKlaviyoProfile, sendKlaviyoEvent,
     cloudFetch, refreshAccessToken,
-    TOOL_NAMES, TOOL_FILES, PHASE_01_TOOLS
+    TOOL_NAMES, TOOL_FILES, PHASE_01_TOOLS, PAID_TOOLS
   };
 })();

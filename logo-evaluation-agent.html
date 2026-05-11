@@ -1604,6 +1604,11 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   // QB_AI and QB_AUTOFILL consolidated - API calls handled directly in runEvaluation
 })();
 </script>
+
+<!-- QB auth gate (qb-cloud + qb-gate + requireAccess) -->
+<script src="/qb-cloud.js"></script>
+<script src="/qb-gate.js"></script>
+<script>if(window.QB&&QB.requireAccess){QB.requireAccess("logo-evaluation", "Logo Evaluation");}</script>
 </head>
 <body>
 
