@@ -179,12 +179,18 @@ export default async function handler(req) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'QB BrandOS <auth@send.nizzar.com>',
+      from: 'Quantum Branding <auth@send.nizzar.com>',
       to: [email],
-      subject: 'Your Quantum Branding sign-in link',
+      reply_to: 'me@qtmbg.com',
+      subject: 'Your sign-in link to Quantum Branding',
       html: emailHTML,
-      // Plain-text fallback for clients that block HTML
-      text: `Hello${firstName ? ' ' + firstName : ''},\n\nClick the link below to sign in to your Brand Profile. No password needed.\n\n${actionLink}\n\nThe link expires in 60 minutes. If you did not request this, you can ignore the email.\n\nQB BrandOS · The Brand Operating System`,
+      text: `Hello${firstName ? ' ' + firstName : ''},\n\nClick the link below to sign in to your Brand Profile. No password needed.\n\n${actionLink}\n\nThe link expires in 60 minutes. If you did not request this, you can ignore this email and nothing happens.\n\nQuantum Branding\nThe Brand Operating System`,
+      // Spam-classifier signals: transactional sender + clear unsubscribe path
+      headers: {
+        'List-Unsubscribe': '<mailto:me@qtmbg.com?subject=unsubscribe>',
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        'X-Entity-Ref-ID': 'qb-brandos-magic-link',
+      },
     }),
   });
 

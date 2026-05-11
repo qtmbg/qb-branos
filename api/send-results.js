@@ -236,10 +236,17 @@ export default async function handler(req) {
       // domain is verified in Resend (add SPF + DKIM + DMARC DNS records).
       // send.nizzar.com is already verified, used here so emails actually
       // deliver in production while the QB domain DNS gets sorted.
-      from: 'QB BrandOS <results@send.nizzar.com>',
+      from: 'Quantum Branding <results@send.nizzar.com>',
       to: [email],
+      reply_to: 'me@qtmbg.com',
       subject: `${brandName} — Your ${toolLabel} Results`,
       html: emailHTML,
+      // Spam-classifier signals: transactional sender + clear unsubscribe path
+      headers: {
+        'List-Unsubscribe': '<mailto:me@qtmbg.com?subject=unsubscribe>',
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        'X-Entity-Ref-ID': 'qb-brandos-results',
+      },
     })
   });
 
