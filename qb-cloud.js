@@ -331,37 +331,27 @@
   // host redirect at the top of this module).
   async function sendMagicLink(email, firstName, sourceTool){
     if (!email) return { ok:false, error:'Email is required.' };
-    const canonicalOrigin = (window.location.host === 'app.' + CANONICAL_HOST)
-      ? window.location.origin                     // app subdomain stays itself
-      : 'https://' + CANONICAL_HOST;               // everything else → canonical root
-    const returnUrl = window.location.href.replace('://www.', '://');
-    const redirectTo = canonicalOrigin
-      + '/auth-callback.html?return_to='
-      + encodeURIComponent(returnUrl);
+    // Custom magic-link delivery path. We POST to /api/send-magic-link which:
+    //   1. Mints an action_link via Supabase admin /generate_link (does NOT
+    //      trigger Supabase's default email).
+    //   2. Sends our own branded email through Resend from auth@send.nizzar.com
+    //      (verified domain, much better deliverability than the default
+    //      noreply@mail.app.supabase.io which Gmail/Apple aggressively filter).
     try {
-      const res = await fetch(
-        SUPA_URL + '/auth/v1/otp?redirect_to=' + encodeURIComponent(redirectTo),
-        {
-          method: 'POST',
-          headers: {
-            'apikey': SUPA_KEY,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email,
-            create_user: true,
-            data: {
-              first_name:    firstName || '',
-              signup_source: sourceTool || 'unknown'
-            }
-          })
-        }
-      );
+      const res = await fetch('/api/send-magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          firstName: firstName || '',
+          sourceTool: sourceTool || 'unknown'
+        })
+      });
       if (!res.ok) {
         let msg = 'Email send failed';
         try {
           const err = await res.json();
-          msg = err.msg || err.error_description || err.message || msg;
+          msg = err.error || err.msg || msg;
         } catch(e){}
         throw new Error(msg);
       }
