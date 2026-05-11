@@ -2147,46 +2147,98 @@ function buildHeader() {
   return header;
 }
 
+// Mono pill — v3.4 SOT (cream-card body, 2px ink border, hard 0 3px ink shadow).
+// Variant controls the fill: 'gold' for primary action, 'rose' for tier badge
+// on paid users, default cream-card for neutral.
+function pillStyle(variant) {
+  const map = {
+    gold:  { bg: 'var(--gold)',       text: 'var(--ink)' },
+    rose:  { bg: 'var(--cream-rose)', text: 'var(--ink)' },
+    plain: { bg: 'var(--cream-card)', text: 'var(--ink)' }
+  };
+  const c = map[variant] || map.plain;
+  return {
+    background: c.bg,
+    color: c.text,
+    border: '2px solid var(--ink)',
+    fontSize: '0.7rem',
+    padding: '6px 12px',
+    borderRadius: '9999px',
+    cursor: 'pointer',
+    fontFamily: "'JetBrains Mono', monospace",
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    boxShadow: '0 3px var(--ink)',
+    transition: 'transform 0.2s cubic-bezier(0.19,1,0.22,1), box-shadow 0.2s cubic-bezier(0.19,1,0.22,1)'
+  };
+}
+
 function buildAuthPill() {
   const authed = window.QB && QB.isAuthed();
-  if (authed) {
-    const name = (localStorage.getItem('qb_first_name') || 'Account').toUpperCase();
+  if (!authed) {
     return el('button', {
       type: 'button',
-      title: 'Click to log out',
-      style: {
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        color: 'var(--text-1)',
-        fontSize: '11px',
-        padding: '6px 12px',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontFamily: 'var(--f-mono, monospace)',
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        fontWeight: '500'
-      },
-      onClick: () => {
-        if (confirm('Log out?')) { QB.logout(); render(); }
-      }
-    }, [name + ' · LOGOUT']);
+      style: pillStyle('gold'),
+      onClick: openLoginModal
+    }, ['LOG IN']);
   }
-  return el('button', {
+
+  // Authed — return a row container with tier badge + manage + logout.
+  const row = el('div', { style: { display: 'inline-flex', gap: '8px', alignItems: 'center' } });
+
+  // Tier badge (M6) — rose if paid, neutral cream-card if free
+  const tier   = (localStorage.getItem('qb_user_tier')   || 'free').toLowerCase();
+  const status = (localStorage.getItem('qb_sub_status')  || 'inactive').toLowerCase();
+  const isPaid = (tier !== 'free') && (status === 'active');
+  row.appendChild(el('span', {
+    title: isPaid ? 'Active subscription' : 'Free plan',
+    style: Object.assign({}, pillStyle(isPaid ? 'rose' : 'plain'), { cursor: 'default' })
+  }, [tier.toUpperCase()]));
+
+  // Manage subscription (H7) — only shown when paid
+  if (isPaid) {
+    row.appendChild(el('button', {
+      type: 'button',
+      style: pillStyle('plain'),
+      onClick: openBillingPortal
+    }, ['MANAGE']));
+  }
+
+  // Account name + logout
+  const name = (localStorage.getItem('qb_first_name') || 'Account').toUpperCase();
+  row.appendChild(el('button', {
     type: 'button',
-    style: {
-      background: '#4ade80',
-      color: '#000',
-      border: 'none',
-      fontSize: '11px',
-      padding: '6px 12px',
-      borderRadius: '6px',
-      cursor: 'pointer',
-      fontWeight: '600',
-      letterSpacing: '0.04em'
-    },
-    onClick: openLoginModal
-  }, ['LOG IN']);
+    title: 'Click to log out',
+    style: pillStyle('plain'),
+    onClick: () => {
+      if (confirm('Log out?')) { QB.logout(); render(); }
+    }
+  }, [name + ' · OUT']));
+
+  return row;
+}
+
+async function openBillingPortal() {
+  const session = QB.getSession && QB.getSession();
+  const token = session && session.token;
+  if (!token) { showNotif('Sign in first to manage billing.'); return; }
+  try {
+    const res = await fetch('/api/billing-portal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ return_url: window.location.origin + '/os' })
+    });
+    if (res.status === 404) { showNotif('Subscribe first to manage billing.'); return; }
+    if (!res.ok) { showNotif('Could not open billing portal. Try again.'); return; }
+    const data = await res.json();
+    if (data && data.url) window.location.href = data.url;
+  } catch(e) {
+    showNotif('Could not open billing portal. Try again.');
+  }
 }
 
 function openLoginModal() {

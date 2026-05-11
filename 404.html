@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page not found · Quantum Branding</title>
+<meta name="description" content="That page is not here. Find your way back to the brand operating system.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="/img/brand/web/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/brand/web/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+<link rel="manifest" href="/img/brand/web/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..800,0..100,0..1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+  :root {
+    --cream:       #FBF5E6;
+    --cream-card:  #F4EBD3;
+    --cream-rose:  #F2E0DA;
+    --ink:         #2D1521;
+    --ink-75:      rgba(45, 21, 33, 0.75);
+    --ink-50:      rgba(45, 21, 33, 0.50);
+    --gold:        #E5C975;
+    --gold-deep:   #A8862E;
+    --rose-deep:   #B5455A;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(2rem, 6vw, 4rem) 1.5rem;
+  }
+  .stack {
+    max-width: 560px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 auto;
+    padding: 0.4em 1em;
+    background: var(--cream-rose);
+    border: 2px solid var(--ink);
+    border-radius: 9999px;
+    box-shadow: 0 3px var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .pulse-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    background: var(--rose-deep);
+    animation: qbPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes qbPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.85); } }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100, "WONK" 1;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--gold-deep);
+    font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100, "WONK" 1;
+  }
+  p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--ink-75);
+  }
+  .ctas {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .qb-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85em 1.5em;
+    background: var(--gold);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: 9999px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    box-shadow: 0 4px var(--ink);
+    transition:
+      transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+      box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+      filter 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  .qb-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px var(--ink);
+    filter: brightness(1.06);
+  }
+  .qb-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px var(--ink);
+    transition-duration: 0.15s;
+  }
+  .qb-button.is-ghost {
+    background: var(--cream-card);
+  }
+  .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+    margin-top: 0.5rem;
+  }
+  footer {
+    padding: 1.5rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-50);
+    border-top: 1px solid rgba(45, 21, 33, 0.12);
+  }
+  footer a { color: var(--gold-deep); text-decoration: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-dot, .qb-button { animation: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="stack">
+    <span class="eyebrow">
+      <span class="pulse-dot" aria-hidden="true"></span>
+      404 · Page not here
+    </span>
+    <h1>That page is <em>not here</em>.</h1>
+    <p>The link you followed is broken, the page moved, or it never existed. Head back to the homepage, run a Signal Scan, or open the BrandOS hub.</p>
+    <div class="ctas">
+      <a href="/" class="qb-button">← Back home</a>
+      <a href="/signal-scan.html" class="qb-button is-ghost">Run a free Signal Scan</a>
+      <a href="/os" class="qb-button is-ghost">Open BrandOS hub →</a>
+    </div>
+    <div class="meta">QB BrandOS · From idea to orbit</div>
+  </div>
+</main>
+<footer>
+  © Quantum Branding · <a href="https://quantumbranding.ai">quantumbranding.ai</a>
+</footer>
+</body>
+</html>
