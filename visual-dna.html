@@ -2184,17 +2184,43 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     'https://images.unsplash.com/photo-1534081333815-ae5019106622?auto=format&fit=crop&w=1920&q=80'
   ];
 
+  // Local manifest (preferred). Populated by scripts/import-images.mjs from a
+  // local image batch — writes /img/visual-dna/manifest.json. If the manifest
+  // exists, real images are used in deterministic order; if not, falls back
+  // to the demo Unsplash URLs above and randomly picks among them.
+  var IMAGE_MANIFEST = null;
+  var manifestFetch  = null;
+  function loadManifest(){
+    if (manifestFetch) return manifestFetch;
+    manifestFetch = fetch('/img/visual-dna/manifest.json', { cache: 'no-cache' })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(m){ IMAGE_MANIFEST = m; return m; })
+      .catch(function(){ IMAGE_MANIFEST = null; return null; });
+    return manifestFetch;
+  }
+  // Fire off immediately so the manifest is in cache when startSession runs.
+  loadManifest();
+
   function generateMockImages(count){
     var out = [];
+    var localPool = (IMAGE_MANIFEST && Array.isArray(IMAGE_MANIFEST.images))
+      ? IMAGE_MANIFEST.images.map(function(x){ return x.src; })
+      : null;
+
     for (var i = 0; i < count; i++){
       var tags = {};
       Object.keys(TAG_DIMENSIONS).forEach(function(dim){
         var opts = TAG_DIMENSIONS[dim];
         tags[dim] = opts[Math.floor(Math.random() * opts.length)];
       });
+      // Prefer the local manifest — use each image in order so we never
+      // duplicate when the count matches. Fall back to recycling BASE_URLS.
+      var url = localPool && localPool.length
+        ? localPool[i % localPool.length]
+        : BASE_URLS[i % BASE_URLS.length] + '&sig=' + i;
       out.push({
         id: 'img_' + (i+1),
-        url: BASE_URLS[i % BASE_URLS.length] + '&sig=' + i,
+        url: url,
         tags: tags,
         isShadow: (i % 8 === 0)
       });
