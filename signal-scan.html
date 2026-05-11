@@ -2086,19 +2086,33 @@ function buildEmail(){
     const topGap = getTopGap(result.dims);
     const verdict = getVerdict(result.overall, answers.moment);
     const userEmail = email;
+    // M2 — server-side Klaviyo signup. The previous path went straight to
+    // manage.kmail-lists.com/ajax/subscriptions/subscribe from the browser
+    // and was silently suppressed by Klaviyo's bot-protection on a
+    // non-trivial slice of legitimate traffic. /api/klaviyo-signup uses
+    // the private API key server-side and accepts a `properties` object so
+    // Signal-Scan-specific fields ride along with the profile create.
     try {
-      var klaviyoBody = new URLSearchParams();
-      klaviyoBody.append('g', 'Rh3gvy');
-      klaviyoBody.append('email', userEmail);
-      klaviyoBody.append('$fields', 'email');
-      klaviyoBody.append('$source', 'Signal Scan');
-      fetch('https://manage.kmail-lists.com/ajax/subscriptions/subscribe', {
+      fetch('/api/klaviyo-signup', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: klaviyoBody.toString()
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: userEmail,
+          sourceTool: 'signal-scan',
+          listId: 'Rh3gvy',
+          properties: {
+            signal_scan_score:    result.overall,
+            signal_scan_grade:    verdict.grade,
+            signal_scan_verdict:  verdict.label,
+            signal_scan_top_gap:  topGap.label,
+            signal_scan_moment:   answers.moment,
+            signal_scan_describe: answers.describe || '',
+            signal_scan_date:     new Date().toISOString().split('T')[0]
+          }
+        })
       })
-      .then(function(r){ return r.json(); })
-      .then(function(d){ console.log('Klaviyo response:', d); })
+      .then(function(r){ return r.json().catch(function(){ return {}; }); })
+      .then(function(d){ if (d && !d.ok) console.warn('Klaviyo server response:', d); })
       .catch(function(e){ console.warn('Klaviyo network error:', e); });
     } catch(err) { console.warn('Klaviyo signal-scan sync failed:', err); }
     } catch(err) {

@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ ok: false, error: 'Server misconfigured' });
   }
 
-  const { email, firstName, sourceTool, completions, qbp, listId } = (req.body || {});
+  const { email, firstName, sourceTool, completions, qbp, listId, properties } = (req.body || {});
 
   if (!email || typeof email !== 'string') {
     return res.status(400).json({ ok: false, error: 'email required' });
@@ -63,7 +63,10 @@ export default async function handler(req, res) {
       archetype:                 (qbp && qbp.archetype)  || null,
       brand_name:                (qbp && qbp.brandName)  || null,
       tools_completed_at_signup: completionCount,
-      signup_date:               new Date().toISOString().split('T')[0]
+      signup_date:               new Date().toISOString().split('T')[0],
+      // Caller-supplied extras (e.g. Signal Scan score, grade, verdict).
+      // Merged last so callers can also override the defaults above.
+      ...(properties && typeof properties === 'object' ? properties : {})
     }
   };
 
