@@ -1411,6 +1411,233 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 /* === END TOOL TYPOGRAPHY CONTINUITY === */
 
+
+/* =====================================================
+   PAYMENT.HTML — plan-card chrome restore (v3.4 SOT)
+   Caps icon SVGs that have viewBox but no width/height,
+   and lays out the plan-card / feature-row internals.
+   ===================================================== */
+
+/* Icon SVGs blow up to container width without explicit sizing. Cap them. */
+.feature-icon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Header pulse dot (rose, hard ink ring, gentle pulse) */
+.pulse-dot {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  border-radius: 9999px;
+  background: var(--rose-deep);
+  box-shadow: 0 0 0 3px var(--cream-rose);
+  animation: qb-pay-pulse 2.4s ease-in-out infinite;
+}
+@keyframes qb-pay-pulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50%     { transform: scale(0.86); opacity: 0.7; }
+}
+
+.logo-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 auto 1.5rem;
+  padding: 0.5em 1.1em;
+  border: 2px solid var(--ink);
+  background: var(--cream-card);
+  border-radius: 9999px;
+  box-shadow: 0 4px var(--ink);
+}
+.logo-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* Plan card — sits on the .glass-card base from earlier sweeps,
+   adds inner spacing and the plan-specific structure. */
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin: 0 auto 1.25rem;
+  max-width: 560px;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.19,1,0.22,1),
+              box-shadow 0.4s cubic-bezier(0.19,1,0.22,1);
+}
+.plan-card:hover { transform: translateY(-3px); box-shadow: 0 12px var(--ink); }
+.plan-card.is-popular { border-color: var(--gold-deep); }
+
+.plan-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.plan-name-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.plan-name {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.plan-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.35em 0.75em;
+  border: 2px solid var(--ink);
+  border-radius: 9999px;
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: 0 3px var(--ink);
+}
+.plan-price-row { display: flex; align-items: baseline; gap: 0.35rem; margin-top: 0.4rem; }
+.plan-price {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: var(--ink);
+  line-height: 1;
+}
+.plan-per {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--ink-50);
+}
+.plan-arrow {
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem;
+  color: var(--gold-deep);
+  align-self: center;
+  transition: transform 0.3s cubic-bezier(0.19,1,0.22,1);
+}
+.plan-card:hover .plan-arrow { transform: translateX(4px); }
+
+.plan-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: var(--ink-75);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--cream-edge);
+}
+.feature-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.96rem;
+  color: var(--ink);
+}
+.feature-row span { line-height: 1.4; }
+
+.free-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1.5rem auto 0;
+  padding: 0.6em 1.2em;
+  border: 2px solid var(--ink);
+  border-radius: 9999px;
+  background: var(--cream-rose);
+  box-shadow: 0 3px var(--ink);
+}
+.free-note-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+.warn-msg {
+  max-width: 560px;
+  margin: 0 auto 1.5rem;
+  padding: 0.9em 1.2em;
+  background: var(--cream-rose);
+  border: 2px solid var(--rose-deep);
+  border-radius: 16px;
+  box-shadow: 0 4px var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.94rem;
+  color: var(--ink);
+}
+
+.text-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.94rem;
+  color: var(--rose-deep);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.text-link:hover { color: var(--ink); }
+
+.back-btn {
+  background: var(--cream-card);
+  border: 2px solid var(--ink);
+  border-radius: 9999px;
+  padding: 0.5em 1em;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--ink);
+  cursor: pointer;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 3px var(--ink);
+  transition: transform 0.25s cubic-bezier(0.19,1,0.22,1),
+              box-shadow 0.25s cubic-bezier(0.19,1,0.22,1);
+}
+.back-btn:hover { transform: translateY(-2px); box-shadow: 0 5px var(--ink); }
+
+/* Center the plan stack on the page */
+#app { max-width: 720px; margin: 0 auto; padding: clamp(1.5rem, 4vw, 2.5rem) 1rem; }
+#app > div[style*="text-align:center"] h1 {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--ink);
+  line-height: 1.05;
+}
+
+@media (min-width: 640px) {
+  .plan-card:hover { box-shadow: 0 20px var(--ink); }
+}
+
+/* === END PAYMENT.HTML plan-card chrome restore === */
+
+
 </style>
 </head>
 
