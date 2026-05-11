@@ -1289,21 +1289,43 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
 }
 
 /* Intro phase */
-.wt-intro{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:60px; }
-.wt-intro-hero{ text-align:center; display:flex; flex-direction:column; gap:28px; }
+.wt-intro{ max-width:1080px; margin:0 auto; display:flex; flex-direction:column; gap:clamp(1rem,2vw,1.5rem); }
+.wt-intro-hero{ text-align:left; display:flex; flex-direction:column; gap:clamp(12px,1.5vh,18px); align-items:flex-start; }
+.wt-intro-eyebrow{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--f-mono); font-size:0.78rem; font-weight:600;
+  letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--ink-75);
+}
+.wt-intro-pulse{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--rose-deep);
+  box-shadow:0 0 0 3px var(--cream-rose);
+  animation:pulseDot 3s var(--ease,ease) infinite;
+  flex-shrink:0;
+}
 .wt-intro-hero h1{
-  font-family:var(--f-display); font-weight:750;
-  font-variation-settings:"wght" 750,"opsz" 144,"SOFT" 100,"WONK" 0;
-  font-size:clamp(3.25rem, 8vw, 6rem);
-  letter-spacing:-.025em; line-height:.94;
+  font-family:var(--f-display); font-weight:700;
+  font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 100,"WONK" 1;
+  font-size:clamp(2rem, 4.5vw, 3.2rem);
+  letter-spacing:-.015em; line-height:1.05;
   color:var(--ink);
   text-wrap:balance;
+  margin:0;
+  max-width:none;
 }
 .wt-intro-hero h1 em{
-  font-style:italic; color:var(--gold);
-  font-variation-settings:"wght" 750,"opsz" 144,"SOFT" 100,"WONK" 1;
+  font-style:italic; color:var(--gold-deep);
+  font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 100,"WONK" 1;
 }
-.wt-intro-hero .separator{ width:120px; height:4px; background:var(--gold); margin:0 auto; opacity:1; border-radius:2px; }
+.wt-intro-hero .hook{
+  font-family:var(--f-body); font-style:normal; font-weight:500;
+  font-size:1.1rem; line-height:1.6;
+  color:var(--ink-75);
+  max-width:65ch;
+  margin:0;
+}
+.wt-intro-hero .separator{ display:none; }
 .wt-intro-philosophy{
   display:flex; flex-direction:column; gap:1.5rem;
 }
@@ -3354,9 +3376,18 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   views[0] = function(){
     return el('div', { class:'wt-intro animate-in' }, [
       el('div', { class:'wt-intro-hero' }, [
-        el('h1', { text:'The War Table' }),
-        el('div', { class:'separator' }),
-        el('p',   { class:'hook', text:'“Every resource you deploy has an opportunity cost.”' })
+        el('div', { class:'wt-intro-eyebrow' }, [
+          el('span', { class:'wt-intro-pulse' }),
+          'Phase 01 · War Table · Strategic prioritization'
+        ]),
+        (function(){
+          var h = el('h1');
+          h.appendChild(document.createTextNode('Every resource you deploy '));
+          var em = el('em', { text:'has an opportunity cost.' });
+          h.appendChild(em);
+          return h;
+        })(),
+        el('p', { class:'hook', text:'Score every initiative, defend it through four interrogations, and produce a NOW list that earns its place. By the end the work that matters has been chosen, and the rest is at peace below the line.' })
       ]),
       el('div', { class:'glass-card padded' }, [
         el('h2', { style:{ fontFamily:'var(--f-display)', fontSize:'1.6rem', color:'var(--text-1)', borderBottom:'1px solid var(--border-subtle)', paddingBottom:'20px', marginBottom:'32px' }, text:'Design Philosophy' }),
