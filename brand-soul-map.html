@@ -2819,10 +2819,13 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
    ===================================================== */
 /* The outer #app element is itself .step-container and was being
    painted as a card by the cross-tool paint sweep. Demote it to a
-   transparent layout wrapper so the sm-frame inside controls the
-   look. Other .step-container nodes (rendered by inner views) keep
-   their card styling. */
-#app.step-container {
+   transparent layout wrapper. Every inner view's wrapper .step-container
+   gets the same treatment so views 1-14 don't render inside a giant
+   cream rounded panel either. The actual painted cards inside each
+   view (glass-panel, archetype-card, etc.) handle their own surface. */
+#app.step-container,
+#app .step-container,
+.step-container {
   background: transparent !important;
   border: 0 !important;
   border-radius: 0 !important;
@@ -2830,6 +2833,29 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   padding: 0 !important;
   margin: 0 !important;
   overflow: visible !important;
+  max-width: 1080px;
+  margin-inline: auto !important;
+}
+/* Comfortable side gutters for the inner views */
+#app.step-container > *,
+.step-container > * {
+  padding-inline: clamp(20px, 4vw, 48px);
+}
+.step-container > .sm-frame,
+.step-container > .sm-frame_inner { padding-inline: 0; }
+
+/* Inner views use .glass-panel as their question card. Make that
+   the single painted surface, with the unified card style. */
+.glass-panel {
+  background: var(--cream-card) !important;
+  border: 2px solid var(--ink) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px var(--ink) !important;
+  padding: 1.75rem !important;
+  margin: 0 !important;
+}
+@media (min-width: 640px) {
+  .glass-panel { box-shadow: 0 6px var(--ink) !important; padding: 2rem !important; }
 }
 .sm-frame {
   background: var(--cream);

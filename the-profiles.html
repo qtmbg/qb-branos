@@ -1481,6 +1481,130 @@ body main #app .container-lg.center > div[style*="background:var(--brass)"] {
 }
 
 /* === END PHASE 01 FRAME OVERRIDE === */
+
+
+/* =====================================================
+   THE PROFILES — Inner-screen header chassis
+   renderHeader() renders the breadcrumb + progress for
+   every step past intro. Without CSS these classes
+   rendered as raw stacked text in the upper-left. This
+   block adds the v3.4 styling.
+   ===================================================== */
+body main #app .header {
+  max-width: 1080px;
+  margin: 0 auto 1rem auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+}
+body main #app .header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--cream-edge);
+  flex-wrap: wrap;
+}
+body main #app .header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+body main #app .header-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-75);
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+body main #app .header-phase {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+body main #app .header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+body main #app .progress-track {
+  width: 160px;
+  height: 6px;
+  background: var(--cream-edge);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+body main #app .progress-bar {
+  height: 100%;
+  background: var(--gold-deep);
+  border-radius: 9999px;
+  transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+body main #app .progress-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-75);
+  min-width: 3ch;
+  text-align: right;
+}
+body main #app .icon-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cream-card);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 3px var(--ink);
+  transition: transform 0.25s cubic-bezier(0.19, 1, 0.22, 1),
+              box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+}
+body main #app .icon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px var(--ink);
+}
+@media (max-width: 640px) {
+  body main #app .progress-track { width: 100px; }
+  body main #app .header { padding: 0 16px; }
+}
+
+/* The seat-card nested "SEAT 1" hanging pill — flatten to a row
+   eyebrow instead of a separate floating pill. */
+body main #app .seat-card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  transform: none !important;
+  width: auto !important;
+  min-height: 0 !important;
+}
+
+/* === END THE PROFILES inner-screen chassis === */
+
 </style>
 </head>
 
