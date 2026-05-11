@@ -2023,6 +2023,150 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 /* === END TOOL TYPOGRAPHY CONTINUITY === */
 
+
+/* =====================================================
+   VISUAL DNA — Phase 01 Question Frame v1 (intro screen)
+   Replaces the facilitator-terminal aesthetic with a warm,
+   elder-friendly invitation. Same column width, eyebrow,
+   chunky Fraunces, deck, single subtle panel, gold CTA.
+   ===================================================== */
+.vd-intro {
+  background: var(--cream);
+  color: var(--ink);
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(20px, 4vw, 48px);
+  min-height: calc(100vh - 200px);
+}
+.vd-intro_inner {
+  max-width: 1080px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+.vd-intro_eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-75);
+}
+.vd-intro_h {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.vd-intro_h em {
+  font-style: italic;
+  color: var(--gold-deep);
+  font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 100, "WONK" 1;
+}
+.vd-intro_deck {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--ink-75);
+  max-width: 65ch;
+  margin: 0;
+}
+.vd-intro_panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.5rem 1.75rem;
+  background: var(--cream-card);
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: 0 4px var(--ink);
+  margin-top: 0.5rem;
+}
+@media (min-width: 640px) {
+  .vd-intro_panel { box-shadow: 0 6px var(--ink); }
+}
+.vd-intro_field { display: flex; flex-direction: column; gap: 0.4rem; }
+.vd-intro_label {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-75);
+}
+.vd-session-input {
+  background: var(--cream);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  padding: 0.85em 1.1em;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1.0625rem;
+  outline: none;
+  box-shadow: 0 3px var(--ink);
+  transition:
+    transform 0.25s cubic-bezier(0.19,1,0.22,1),
+    box-shadow 0.25s cubic-bezier(0.19,1,0.22,1),
+    border-color 0.25s cubic-bezier(0.19,1,0.22,1);
+}
+.vd-session-input::placeholder { color: var(--ink-50); }
+.vd-session-input:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 5px var(--ink);
+  border-color: var(--rose-deep);
+}
+.vd-intro_demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  user-select: none;
+}
+.vd-demo-toggle {
+  width: 20px; height: 20px;
+  -webkit-appearance: none; appearance: none;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.vd-demo-toggle:checked { background: var(--gold); }
+.vd-demo-toggle:checked::after {
+  content: '✓';
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+}
+.vd-intro_demoText {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: var(--ink-75);
+  line-height: 1.4;
+}
+.vd-intro_demoText strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.vd-intro_cta {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+@media (max-width: 640px) {
+  .vd-intro { padding: 1rem 16px; }
+  .vd-intro_cta { justify-content: stretch; }
+  .vd-intro_cta .qb-button { width: 100%; }
+}
+
+/* === END VISUAL DNA Phase 01 intro === */
+
 </style>
 </head>
 <body>
@@ -2374,64 +2518,53 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
   var views = {};
 
-  /* --- STUDIO --- */
+  /* --- STUDIO (Phase 01 Question Frame v1) --- */
   views.studio = function(){
-    var wrap = el('section', { class:'phase-studio' },
-      el('div', { class:'studio-wrap animate-in' }, [
-        el('header', { class:'studio-header' }, [
-          el('div', {}, [
-            el('div', { class:'label-system', style:{opacity:.6, marginBottom:'12px'}, text:'System Ready' }),
-            el('h1', { class:'heading-display', text:'Visual DNA' })
+    // Phase 01 entry to Visual DNA. Warm, elder-friendly intro that reads as
+    // an invitation to a sensing exercise, not a "facilitator terminal".
+    // The session-name field and demo toggle are kept but tucked into a
+    // single subtle row so they don't compete with the headline.
+
+    var clientInput = el('input', {
+      type: 'text',
+      class: 'vd-session-input',
+      value: state.session.client || '',
+      placeholder: 'A name for this session (optional)'
+    });
+    clientInput.addEventListener('input', function(e){ state.session.client = e.target.value; });
+
+    var demoToggle = el('input', { type: 'checkbox', class: 'vd-demo-toggle' });
+    demoToggle.checked = !!state.demoMode;
+    demoToggle.addEventListener('change', function(e){ state.demoMode = e.target.checked; });
+
+    var wrap = el('section', { class: 'vd-intro animate-in' },
+      el('div', { class: 'vd-intro_inner' }, [
+        el('div', { class: 'vd-intro_eyebrow', text: 'Phase 01 · Visual DNA · Build the look' }),
+        (function(){
+          var h = el('h1', { class: 'vd-intro_h' });
+          h.appendChild(document.createTextNode('Trust your eye. '));
+          var em = el('em', { text: 'Build the look.' });
+          h.appendChild(em);
+          return h;
+        })(),
+        el('p', { class: 'vd-intro_deck', text: 'You will see images one by one. Keep what feels like your brand. Discard what does not. Five minutes. No second-guessing. The pattern will reveal itself.' }),
+        el('div', { class: 'vd-intro_panel' }, [
+          el('div', { class: 'vd-intro_field' }, [
+            el('label', { class: 'vd-intro_label', text: 'Session name' }),
+            clientInput
           ]),
-          el('div', { class:'studio-header-meta' }, [
-            el('div', { class:'label-system', style:{color:'var(--brass)', display:'inline-flex', alignItems:'center', gap:'10px'} }, [
-              el('span', { class:'pulse-dot' }),
-              document.createTextNode('Facilitator Terminal')
+          el('label', { class: 'vd-intro_demo' }, [
+            demoToggle,
+            el('span', { class: 'vd-intro_demoText' }, [
+              el('strong', { text: 'Short demo' }),
+              document.createTextNode(' — 15 images instead of 200. Untick for the full session.')
             ])
           ])
         ]),
-        el('div', { class:'studio-grid' }, [
-          el('div', { class:'glass-card studio-card' }, [
-            el('h2', { class:'label-system', style:{opacity:.8}, text:'Session Config' }),
-            el('div', {}, [
-              el('div', { style:{marginBottom:'24px'} }, [
-                el('label', { class:'vd-label', text:'Session Identifier' }),
-                (function(){
-                  var i = el('input', { type:'text', class:'vd-input', value: state.session.code === 'DNA001' ? 'Verne Jewels - March 2026' : state.session.client, placeholder:'Client - Month Year' });
-                  i.addEventListener('input', function(e){ state.session.client = e.target.value; });
-                  return i;
-                })()
-              ]),
-              el('div', { style:{marginBottom:'24px'} }, [
-                el('label', { class:'vd-label', text:'Access Code' }),
-                el('div', { class:'mono', style:{fontSize:'22px', letterSpacing:'.3em', color:'var(--text-1)'}, text: state.session.code })
-              ]),
-              el('label', { style:{display:'flex', alignItems:'center', gap:'10px', cursor:'pointer'} }, [
-                (function(){
-                  var cb = el('input', { type:'checkbox', class:'vd-checkbox', id:'vd-demo' });
-                  cb.checked = !!state.demoMode;
-                  cb.addEventListener('change', function(e){ state.demoMode = e.target.checked; });
-                  return cb;
-                })(),
-                el('span', { class:'label-system', style:{opacity:.75}, text:'Demo Protocol (15 IMG / 3s)' })
-              ])
-            ])
-          ]),
-          el('div', { class:'glass-card studio-card' }, [
-            el('h2', { class:'label-system', style:{opacity:.8}, text:'Asset Status' }),
-            el('div', { class:'studio-row' }, [
-              el('span', { class:'body-copy', style:{fontSize:'14px', color:'var(--text-2)'}, text:'Standard Deck' }),
-              el('span', { class:'label-system', style:{color:'var(--patina-lit)'}, text:'Ready (' + (state.demoMode ? '13' : '175') + ')' })
-            ]),
-            el('div', { class:'studio-row' }, [
-              el('span', { class:'body-copy', style:{fontSize:'14px', color:'var(--text-2)'}, text:'Shadow Deck' }),
-              el('span', { class:'label-system', style:{color:'var(--patina-lit)'}, text:'Ready (' + (state.demoMode ? '2' : '25') + ')' })
-            ]),
-            el('p', { class:'studio-footnote', text:'Images pre-tagged across 8 psychological dimensions. Transitions pre-configured per 30-minute architecture.' })
-          ])
-        ]),
-        el('div', { class:'studio-cta' }, [
-          el('button', { class:'btn btn-primary btn-lg', type:'button', onclick: startSession }, 'Initiate sequence →')
+        el('div', { class: 'vd-intro_cta' }, [
+          el('button', { class: 'qb-button is-primary is-lg', type: 'button', onclick: startSession },
+            el('span', { class: 'qb-button_content', text: 'Begin →' })
+          )
         ])
       ])
     );
