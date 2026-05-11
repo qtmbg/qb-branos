@@ -1420,6 +1420,342 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 /* === END TOOL TYPOGRAPHY CONTINUITY === */
 
+
+/* =====================================================
+   QB-BRANIDOS-HUB.HTML — internal chrome restore (v3.4 SOT)
+   The hub's render() injects an internal chassis using legacy
+   class names (system-header, meter-section, phase-section,
+   tool-card, label-mono, title-large, badge-mono, etc.). The
+   CSS for those was stripped by an earlier paint sweep. This
+   block restores the chrome in v3.4 cream + ink + gold tokens.
+   Also caps the brand-core meter SVG which was inflating to
+   ~1060x1060 because it has only viewBox set, no width/height.
+   ===================================================== */
+
+/* App container — center column, breathing room */
+#app { display: block; }
+#app > .container { max-width: 1140px; margin: 0 auto; padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem); }
+
+/* Internal system header — sits inside #app, ABOVE the meter section.
+   Marketing-style chassis (banner + nav) already lives above #app.
+   We render this as a minimal in-app secondary header. */
+.system-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.1rem clamp(1rem, 3vw, 2rem);
+  border-bottom: 2px solid var(--ink);
+  background: var(--cream);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+.header-brand { display: inline-flex; align-items: center; gap: 0.75rem; }
+.header-brand-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.badge-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.3em 0.8em;
+  border: 2px solid var(--ink);
+  border-radius: 9999px;
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: 0 3px var(--ink);
+}
+.system-header .nav-links {
+  display: inline-flex;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+.system-header .nav-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-75);
+  text-decoration: none;
+  transition: color 0.25s cubic-bezier(0.19,1,0.22,1);
+}
+.system-header .nav-link:hover { color: var(--ink); }
+
+/* Theme toggle pill */
+.theme-toggle {
+  background: var(--cream-card);
+  border: 2px solid var(--ink);
+  border-radius: 9999px;
+  width: 38px; height: 38px;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px var(--ink);
+  transition: transform 0.25s cubic-bezier(0.19,1,0.22,1),
+              box-shadow 0.25s cubic-bezier(0.19,1,0.22,1);
+}
+.theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 5px var(--ink); }
+
+/* Notification toasts */
+#notifs {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 200;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  pointer-events: none;
+}
+.notif {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 0.85em 1.2em;
+  border-radius: 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  box-shadow: 0 9px 32px rgba(45,21,33,0.18);
+}
+
+/* Typography utility classes used inside #app */
+.font-serif { font-family: 'Fraunces', serif; }
+.font-mono  { font-family: 'JetBrains Mono', monospace; }
+.title-large {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+}
+.title-medium {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+.title-small {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "wght" 650, "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0;
+}
+.body-large {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ink-75);
+  margin: 0;
+}
+.body-regular {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.96rem;
+  line-height: 1.55;
+  color: var(--ink-75);
+  margin: 0;
+}
+.label-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-75);
+}
+
+/* Brand-core meter section */
+.meter-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  align-items: center;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  background: var(--cream-card);
+  border: 2px solid var(--ink);
+  border-radius: 28px;
+  box-shadow: 0 9px var(--ink);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+@media (min-width: 768px) {
+  .meter-section { grid-template-columns: 220px 1fr; box-shadow: 0 16px var(--ink); }
+}
+.meter-chart {
+  position: relative;
+  width: 200px; height: 200px;
+  margin: 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.meter-chart svg {
+  width: 200px;
+  height: 200px;
+  transform: rotate(-90deg);
+}
+.meter-bg, .meter-fill { fill: none; stroke-width: 12; stroke-linecap: round; }
+.meter-bg   { stroke: var(--cream-edge); }
+.meter-fill { stroke: var(--rose-deep); transition: stroke-dashoffset 1.2s cubic-bezier(0.19,1,0.22,1); }
+.meter-text {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.meter-percent {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--ink);
+}
+.meter-text .label-mono { margin-top: 0.25rem; color: var(--ink-50); }
+
+.meter-content { display: flex; flex-direction: column; gap: 0.85rem; }
+.meter-status  { display: inline-flex; align-items: center; gap: 0.6rem; }
+.meter-status .label-mono { color: var(--ink); }
+
+.pulse-dot {
+  width: 10px; height: 10px;
+  border-radius: 9999px;
+  background: var(--rose-deep);
+  box-shadow: 0 0 0 3px var(--cream-rose);
+  animation: qb-hub-pulse 2.4s ease-in-out infinite;
+}
+@keyframes qb-hub-pulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(0.85); }
+}
+
+/* Btn-primary inside the meter content area (uses the page-level rule
+   that already sets gold + 0 4px ink shadow). We add layout. */
+.meter-content .btn-primary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.75em 1.5em;
+  border: 2px solid var(--ink);
+  border-radius: 9999px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  width: fit-content;
+  margin-top: 0.4rem;
+}
+
+/* Phase section + grid */
+.phase-section {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  scroll-margin-top: 80px;
+}
+.phase-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.85rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid var(--ink);
+}
+.phase-header-left { display: flex; align-items: baseline; gap: 0.9rem; flex-wrap: wrap; }
+.phase-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--phase-color, var(--gold-deep));
+  padding: 0.3em 0.7em;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--cream-card);
+  box-shadow: 0 3px var(--ink);
+}
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Tool card — extends .glass-card (already styled to cream + ink + shadow) */
+.tool-card {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  padding: 1.25rem;
+  cursor: pointer;
+  position: relative;
+}
+.tool-card.state-locked  { opacity: 0.55; cursor: not-allowed; }
+.tool-card.is-next       { border-color: var(--gold-deep); }
+.tool-card.is-next .start-badge {
+  position: absolute; top: -10px; left: 1rem;
+  padding: 0.3em 0.65em;
+  background: var(--gold);
+  border: 2px solid var(--ink);
+  border-radius: 9999px;
+  color: var(--ink);
+  font-size: 0.66rem;
+  box-shadow: 0 2px var(--ink);
+}
+.card-header { display: flex; align-items: center; gap: 0.6rem; }
+.card-icon {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--cream-warm);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  font-size: 1.1rem;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.card-title { line-height: 1.2; }
+.card-desc  { flex: 1; }
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--cream-edge);
+}
+.card-status { display: inline-flex; align-items: center; gap: 0.3rem; }
+.card-status.status-completed { color: var(--phase-discovery); }
+.card-status.status-progress  { color: var(--rose-deep); }
+.card-status.status-locked    { color: var(--ink-50); }
+.card-btn {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--gold-deep);
+  text-decoration: none;
+  transition: transform 0.25s cubic-bezier(0.19,1,0.22,1);
+}
+.tool-card:not(.state-locked):hover .card-btn { transform: translateX(3px); }
+
+/* Animate-cascade — gentle reveal on tool-card mount.
+   Uses --idx custom property set inline. */
+.animate-cascade {
+  opacity: 0; transform: translateY(8px);
+  animation: qb-hub-cascade 0.6s cubic-bezier(0.19,1,0.22,1) forwards;
+  animation-delay: calc(var(--idx, 0) * 50ms);
+}
+@keyframes qb-hub-cascade {
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-cascade { animation: none; opacity: 1; transform: none; }
+  .pulse-dot       { animation: none; }
+  .meter-fill      { transition: none; }
+}
+
+/* === END QB-BRANIDOS-HUB.HTML internal chrome restore === */
+
+
 </style>
 </head>
 
