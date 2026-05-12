@@ -3,7 +3,7 @@
 //
 // Replaces Supabase's default email sender (noreply@mail.app.supabase.io,
 // aggressively spam-filtered by Gmail/Apple) with a Resend send from our
-// verified send.nizzar.com domain.
+// verified quantumbranding.ai domain.
 //
 // Flow:
 //   1. Client POSTs { email, firstName, sourceTool } to this endpoint
@@ -179,7 +179,7 @@ export default async function handler(req) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Quantum Branding <auth@send.nizzar.com>',
+      from: 'Quantum Branding <auth@quantumbranding.ai>',
       to: [email],
       reply_to: 'me@qtmbg.com',
       subject: 'Your sign-in link to Quantum Branding',

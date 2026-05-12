@@ -232,11 +232,7 @@ export default async function handler(req) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendKey}` },
     body: JSON.stringify({
-      // TODO(post-launch): swap to results@quantumbranding.ai once that
-      // domain is verified in Resend (add SPF + DKIM + DMARC DNS records).
-      // send.nizzar.com is already verified, used here so emails actually
-      // deliver in production while the QB domain DNS gets sorted.
-      from: 'Quantum Branding <results@send.nizzar.com>',
+      from: 'Quantum Branding <results@quantumbranding.ai>',
       to: [email],
       reply_to: 'me@qtmbg.com',
       subject: `${brandName} — Your ${toolLabel} Results`,
