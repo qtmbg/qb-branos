@@ -1641,17 +1641,17 @@ textarea,input{ font-family:inherit; }
   .q-opt.kind-peers .peer-name{ font-size:0.72rem; }
 }
 
-/* Figure portrait - real image overlay (sits on top of placeholder) */
+/* Figure portrait - transparent illustration sits on the archetype gradient */
 .q-opt.kind-figure .figure-img{
   position:absolute; inset:0;
   width:100%; height:100%;
-  object-fit:cover; object-position:center top;
+  object-fit:contain;
+  object-position:center bottom;
   z-index:2;
-  filter:saturate(.88) contrast(1.02);
-  transition:filter .3s ease;
+  transition:transform .3s cubic-bezier(0.19,1,0.22,1);
 }
 .q-opt.kind-figure.is-selected .figure-img{
-  filter:saturate(1) contrast(1.06);
+  transform:scale(1.02);
 }
 .q-opt.kind-figure .figure-frame .figure-tag{ z-index:3; }
 
@@ -2790,18 +2790,18 @@ var SCREENS = [
     title:'Which personality does your brand most align with?',
     sub:"A brand has a soul that resembles a real human presence. Trust who you recognize yourself in.",
     opts:[
-      { name:'Jacques Cousteau',   desc:'Goes deeper than the map shows. Wonder as method.',                slug:'cousteau',a:'explorer',  portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Cousteau1972_%28cropped%29.jpg/500px-Cousteau1972_%28cropped%29.jpg' },
-      { name:'Tom Hanks',          desc:"I am just like you and you are just like me.",                     slug:'hanks',   a:'everyman',  portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/1989_Tom_Hanks_%28cropped%29.jpg/500px-1989_Tom_Hanks_%28cropped%29.jpg' },
-      { name:'Albert Einstein',    desc:'The truth lives in knowledge and understanding.',                  slug:'einstein',a:'sage',      portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Einstein-formal_portrait-35_%28cropped%29.jpg/500px-Einstein-formal_portrait-35_%28cropped%29.jpg' },
-      { name:'Coco Chanel',        desc:'Cut the world to its essential gesture. Made absence a language.',slug:'chanel',  a:'creator',   portrait:'https://upload.wikimedia.org/wikipedia/commons/2/22/Coco_Chanel_in_Los_Angeles%2C_1931_%28cropped%29.jpg' },
-      { name:'The Dalai Lama',     desc:'Faith carried lightly. Laughter as a vow.',                        slug:'dalai',   a:'innocent',  portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Tenzin_Gyatso.jpg/500px-Tenzin_Gyatso.jpg' },
-      { name:'Charlie Chaplin',    desc:'Made important things laughable. Lightness as resistance.',        slug:'chaplin', a:'jester',    portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Charlie_Chaplin_portrait.jpg/500px-Charlie_Chaplin_portrait.jpg' },
-      { name:'Frida Kahlo',        desc:'Turned every wound into ornament. Devotion painted in unflinching color.',slug:'kahlo',a:'lover',     portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg/500px-Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg' },
-      { name:'Michael Jordan',     desc:'Elegance, the strive for greatness. The process is the religion.', slug:'jordan',  a:'hero',      portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Michael_Jordan_holds_up_his_Chicago_Bulls_jersey_on_September_12%2C_1984_%28cropped%29.jpg/500px-Michael_Jordan_holds_up_his_Chicago_Bulls_jersey_on_September_12%2C_1984_%28cropped%29.jpg' },
-      { name:'Nelson Mandela',     desc:'Authority earned through conscience.',                             slug:'mandela', a:'ruler',     portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Nelson_Mandela_1998_cropped.JPG/500px-Nelson_Mandela_1998_cropped.JPG' },
-      { name:'Muhammad Ali',       desc:'A poet who happened to be the greatest.',                          slug:'ali',     a:'rebel',     portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Muhammad_Ali_NYWTS.jpg/500px-Muhammad_Ali_NYWTS.jpg' },
-      { name:'Martin Luther King', desc:'Vision strong enough to bend reality. The fierce urgency of now.', slug:'mlk',     a:'magician',  portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Martin_Luther_King%2C_Jr._close-up_%28cropped%29.jpg/500px-Martin_Luther_King%2C_Jr._close-up_%28cropped%29.jpg' },
-      { name:'Mother Teresa',      desc:'Selfless care for those the world forgets.',                       slug:'teresa',  a:'caregiver', portrait:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Mother_Teresa_close-up_%28cropped%29.jpg/500px-Mother_Teresa_close-up_%28cropped%29.jpg' }
+      { name:'Jacques Cousteau',   desc:'Goes deeper than the map shows. Wonder as method.',                slug:'cousteau',a:'explorer',  portrait:'/img/archetype/cousteau.webp' },
+      { name:'Tom Hanks',          desc:"I am just like you and you are just like me.",                     slug:'hanks',   a:'everyman',  portrait:'/img/archetype/hanks.webp' },
+      { name:'Albert Einstein',    desc:'The truth lives in knowledge and understanding.',                  slug:'einstein',a:'sage',      portrait:'/img/archetype/einstein.webp' },
+      { name:'Coco Chanel',        desc:'Cut the world to its essential gesture. Made absence a language.',slug:'chanel',  a:'creator',   portrait:'/img/archetype/chanel.webp' },
+      { name:'The Dalai Lama',     desc:'Faith carried lightly. Laughter as a vow.',                        slug:'dalai',   a:'innocent',  portrait:'/img/archetype/dalai.webp' },
+      { name:'Charlie Chaplin',    desc:'Made important things laughable. Lightness as resistance.',        slug:'chaplin', a:'jester',    portrait:'/img/archetype/chaplin.webp' },
+      { name:'Frida Kahlo',        desc:'Turned every wound into ornament. Devotion painted in unflinching color.',slug:'kahlo',a:'lover',     portrait:'/img/archetype/kahlo.webp' },
+      { name:'Michael Jordan',     desc:'Elegance, the strive for greatness. The process is the religion.', slug:'jordan',  a:'hero',      portrait:'/img/archetype/jordan.webp' },
+      { name:'Nelson Mandela',     desc:'Authority earned through conscience.',                             slug:'mandela', a:'ruler',     portrait:'/img/archetype/mandela.webp' },
+      { name:'Muhammad Ali',       desc:'A poet who happened to be the greatest.',                          slug:'ali',     a:'rebel',     portrait:'/img/archetype/ali.webp' },
+      { name:'Martin Luther King', desc:'Vision strong enough to bend reality. The fierce urgency of now.', slug:'mlk',     a:'magician',  portrait:'/img/archetype/mlk.webp' },
+      { name:'Mother Teresa',      desc:'Selfless care for those the world forgets.',                       slug:'teresa',  a:'caregiver', portrait:'/img/archetype/teresa.webp' }
     ]
   },
   {
