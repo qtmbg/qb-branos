@@ -17,7 +17,9 @@ import { execFileSync } from 'node:child_process';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIR  = resolve(ROOT, 'img', 'archetype');
 
-// source filename -> canonical slug
+// Source filename -> canonical slug. If a source name is missing (already
+// renamed on a prior run), the script falls back to <slug>.png in the same
+// folder so it can be re-run idempotently to apply framing fixes.
 const MAP = {
   'cousteau.png': 'cousteau',
   'hanks.png':    'hanks',
@@ -36,8 +38,13 @@ const MAP = {
 let webpTotal = 0, pngTotal = 0, srcTotal = 0;
 
 for(const [src, slug] of Object.entries(MAP)){
-  const srcPath = join(DIR, src);
-  if(!existsSync(srcPath)){ console.log(`SKIP missing ${src}`); continue; }
+  let srcPath = join(DIR, src);
+  if(!existsSync(srcPath)){
+    // Fallback: re-process the already-slug-named PNG so the framing fix
+    // can be applied in a subsequent run.
+    srcPath = join(DIR, `${slug}.png`);
+    if(!existsSync(srcPath)){ console.log(`SKIP missing ${src}`); continue; }
+  }
 
   const srcSize = statSync(srcPath).size;
   srcTotal += srcSize;
@@ -45,22 +52,27 @@ for(const [src, slug] of Object.entries(MAP)){
   const webpOut = join(DIR, `${slug}.webp`);
   const pngOut  = join(DIR, `${slug}.png`);
 
-  // Optimized PNG fallback - 600x600 with alpha preserved
-  // We write to a tmp name first so we don't clobber the source mid-stream.
-  const pngTmp = join(DIR, `_${slug}.png`);
-  execFileSync('magick', [
-    srcPath,
+  // Pipeline:
+  //   1. Trim to alpha bounding box (removes any transparent margin built into source)
+  //   2. Resize so figure fits within 520x580 (preserves aspect)
+  //   3. Re-canvas to 600x600 with -gravity south so figure bottom sits at canvas bottom
+  //
+  // Result: all 12 figures share Chaplin's framing -- ~7% horizontal padding,
+  // bottom touches canvas bottom, head sits in upper-middle on the gradient.
+  const COMMON = [
     '-strip',
-    '-resize', '600x600',
-    '-quality', '90',
-    pngTmp,
-  ]);
+    '-background', 'none', '-alpha', 'set',
+    '-trim', '+repage',
+    '-resize', '520x580',
+    '-background', 'none', '-gravity', 'south',
+    '-extent', '600x600',
+  ];
 
-  // WebP variant
+  const pngTmp = join(DIR, `_${slug}.png`);
+  execFileSync('magick', [srcPath, ...COMMON, '-quality', '90', pngTmp]);
+
   execFileSync('magick', [
-    srcPath,
-    '-strip',
-    '-resize', '600x600',
+    srcPath, ...COMMON,
     '-quality', '85',
     '-define', 'webp:alpha-quality=90',
     webpOut,
