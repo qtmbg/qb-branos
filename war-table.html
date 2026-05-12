@@ -3163,14 +3163,28 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         e1.kind = 'api-key';
         throw e1;
       }
+      if (res.status === 502 || res.status === 504){
+        var eUnavail1 = new Error('Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.');
+        eUnavail1.kind = 'unavailable';
+        throw eUnavail1;
+      }
       if (!isJson){
         return res.text().then(function(body){
-          var e2 = new Error('Non-JSON response from /api/claude (status ' + res.status + ').');
-          e2.kind = 'network';
-          throw e2;
+          var eUnavail2 = new Error('Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.');
+          eUnavail2.kind = 'unavailable';
+          throw eUnavail2;
         });
       }
-      return res.json().then(function(data){ return { status:res.status, data:data }; });
+      return res.text().then(function(rawBody){
+        var data;
+        try { data = rawBody ? JSON.parse(rawBody) : {}; }
+        catch(parseErr){
+          var eUnavail3 = new Error('Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.');
+          eUnavail3.kind = 'unavailable';
+          throw eUnavail3;
+        }
+        return { status: res.status, data: data };
+      });
     }).then(function(wrap){
       if (!wrap) return;
       if (wrap.status === 503){
@@ -3185,6 +3199,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       }
       var text = '';
       wrap.data.content.forEach(function(b){ if (b.type === 'text') text += b.text; });
+      text = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
       var start = text.indexOf('{'), end = text.lastIndexOf('}');
       if (start < 0 || end < 0){
         var e5 = new Error('AI response was not valid JSON.');
