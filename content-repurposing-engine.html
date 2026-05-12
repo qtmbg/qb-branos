@@ -1448,8 +1448,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    var d = await res.json();
+    var rawBody = await res.text();
+    var d = {};
+    try { d = rawBody ? JSON.parse(rawBody) : {}; }
+    catch(e){ throw new Error('UNAVAILABLE'); }
+    if(!res.ok){
+      if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+      throw new Error((d.error && d.error.message) || ('API error: HTTP ' + res.status));
+    }
     if(d.error) throw new Error(d.error.message);
+    if(!d.content || !d.content[0] || !d.content[0].text) throw new Error('UNAVAILABLE');
     return d.content[0].text;
   };
 })();
@@ -1865,10 +1873,22 @@ For each platform, identify the strongest angle from the source content - the sp
     try{
       const raw=await window.QB_AI(buildSystemPrompt(),buildUserPrompt(),8000);
       clearInterval(statusIntervalRef.id);
-      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      setResult(JSON.parse(clean));
+      const stripped=raw.replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+      const sliceStart=stripped.indexOf('{'), sliceEnd=stripped.lastIndexOf('}');
+      if(sliceStart < 0 || sliceEnd < 0 || sliceEnd < sliceStart) throw new Error('UNAVAILABLE');
+      let parsed;
+      try { parsed = JSON.parse(stripped.substring(sliceStart, sliceEnd + 1)); }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
+      setResult(parsed);
       setStep(2);
-    }catch(e){clearInterval(statusIntervalRef.id);setError('Engine anomaly: '+e.message);setStep(0);}
+    }catch(e){
+      clearInterval(statusIntervalRef.id);
+      const msg = e.message === 'UNAVAILABLE'
+        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        : 'Engine anomaly: '+e.message;
+      setError(msg);
+      setStep(0);
+    }
     setLoading(false);
   };
 
