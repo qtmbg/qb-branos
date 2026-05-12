@@ -54,16 +54,17 @@ for(const [src, slug] of Object.entries(MAP)){
 
   // Pipeline:
   //   1. Trim to alpha bounding box (removes any transparent margin built into source)
-  //   2. Resize so figure fits within 520x580 (preserves aspect)
+  //   2. Resize so figure fills 600x600 (preserves aspect; one edge touches frame)
   //   3. Re-canvas to 600x600 with -gravity south so figure bottom sits at canvas bottom
   //
-  // Result: all 12 figures share Chaplin's framing -- ~7% horizontal padding,
-  // bottom touches canvas bottom, head sits in upper-middle on the gradient.
+  // Result: each figure fills the gradient frame as much as its aspect ratio
+  // permits. Tall portraits touch top + bottom, wide ones touch sides + bottom.
+  // No more uniform horizontal padding -- figures occupy the frame they sit in.
   const COMMON = [
     '-strip',
     '-background', 'none', '-alpha', 'set',
     '-trim', '+repage',
-    '-resize', '520x580',
+    '-resize', '600x600',
     '-background', 'none', '-gravity', 'south',
     '-extent', '600x600',
   ];
