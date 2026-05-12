@@ -1537,8 +1537,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    var d = await res.json();
+    var rawBody = await res.text();
+    var d = {};
+    try { d = rawBody ? JSON.parse(rawBody) : {}; }
+    catch(e){ throw new Error('UNAVAILABLE'); }
+    if(!res.ok){
+      if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+      throw new Error((d.error && d.error.message) || ('API error: HTTP ' + res.status));
+    }
     if(d.error) throw new Error(d.error.message);
+    if(!d.content || !d.content[0] || !d.content[0].text) throw new Error('UNAVAILABLE');
     return d.content[0].text;
   };
   
@@ -2082,16 +2090,30 @@ REQUIREMENTS:
           messages: [{role: 'user', content: buildPrompt()}]
         })
       });
-      const d = await res.json();
-      if(d.error) throw new Error(d.error.message);
-      const raw = d.content[0].text.trim();
+      const rawBody = await res.text();
+      let envelope = {};
+      try { envelope = rawBody ? JSON.parse(rawBody) : {}; }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
+      if(!res.ok){
+        if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+        throw new Error((envelope.error && envelope.error.message) || ('API error: HTTP ' + res.status));
+      }
+      if(envelope.error) throw new Error(envelope.error.message);
+      const text = envelope && envelope.content && envelope.content[0] && envelope.content[0].text;
+      if(!text) throw new Error('UNAVAILABLE');
+      const raw = text.trim();
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new SyntaxError('No JSON object found in agent response.');
-      setResult(JSON.parse(jsonMatch[0]));
+      if (!jsonMatch) throw new Error('UNAVAILABLE');
+      let parsed;
+      try { parsed = JSON.parse(jsonMatch[0]); }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
+      setResult(parsed);
       setActiveIssue(0); setMainTab('architecture'); setStep(2);
     } catch(e) {
-      if (e instanceof SyntaxError) setError('Could not parse agent response - please try again.');
-      else setError('Agent error: ' + e.message);
+      const msg = e.message === 'UNAVAILABLE'
+        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        : 'Agent error: ' + e.message;
+      setError(msg);
       setStep(0);
     }
     setLoading(false);
