@@ -1507,9 +1507,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    if (!res.ok) throw new Error('API error: HTTP ' + res.status);
-    var d = await res.json();
+    var rawBody = await res.text();
+    var d = {};
+    try { d = rawBody ? JSON.parse(rawBody) : {}; }
+    catch(e){ throw new Error('UNAVAILABLE'); }
+    if (!res.ok){
+      if (res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+      throw new Error((d.error && d.error.message) || ('API error: HTTP ' + res.status));
+    }
     if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    if(!d.content || !d.content[0] || !d.content[0].text) throw new Error('UNAVAILABLE');
     return d.content[0].text;
   };
   window.QB_AUTOFILL = function(fieldMap){
@@ -2092,15 +2099,25 @@ Your function is to produce two complete, ready-to-execute LinkedIn strategies f
 These are not outlines. Every post must be fully written, on-brand, and ready to publish.
 Return ONLY valid JSON - no markdown, no preamble, no explanation. Return nothing but the JSON object.`;
       const raw=await window.QB_AI(systemPrompt, buildPrompt(), 12000);
-      const clean=raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      const parsed=JSON.parse(clean);
+      const stripped=raw.replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+      const sliceStart = stripped.indexOf('{'), sliceEnd = stripped.lastIndexOf('}');
+      if(sliceStart < 0 || sliceEnd < 0 || sliceEnd < sliceStart) throw new Error('UNAVAILABLE');
+      let parsed;
+      try { parsed = JSON.parse(stripped.substring(sliceStart, sliceEnd + 1)); }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
       if(!parsed.personal||!parsed.company) throw new Error('Unexpected response structure - missing personal or company keys');
       if(!Array.isArray(parsed.personal.posts)||!Array.isArray(parsed.company.posts)) throw new Error('Unexpected response structure - posts must be arrays');
       setResult(parsed);
       setMode('personal');
       setModeTab('strategy');
       setStep(2);
-    }catch(e){setError('Agent error: '+e.message);setStep(0);}
+    }catch(e){
+      const msg = e.message === 'UNAVAILABLE'
+        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        : 'Agent error: '+e.message;
+      setError(msg);
+      setStep(0);
+    }
     setLoading(false);
   };
 
