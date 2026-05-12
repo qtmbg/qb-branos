@@ -11,11 +11,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- QB fonts unblocked -->
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&family=Lora:wght@500&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=JetBrains+Mono:wght@400;500;700&family=Lora:wght@500&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@400;700&display=swap"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=Lora:wght@500&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300..900&family=Lora:wght@500&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@400;700&display=swap"></noscript>
 <!-- QB fonts unblocked -->
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap"></noscript>
+
 <style>
 /* === CANONICAL CHASSIS OVERRIDE (ecosystem SOT, full pixel continuity) === */
 /* Force the v3.4 surface tokens regardless of any legacy :root that follows */
@@ -615,14 +616,12 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
    touch targets, generous line-height. Tool functionality (JS, IDs, hooks)
    untouched — only visual surface. */
 
-
 /* SWEEP 4: BODY + MAIN BACKGROUNDS — cream + ink only */
 html { background: var(--cream) !important; color: var(--ink) !important; font-size: 17px !important; }
 body { background: var(--cream) !important; color: var(--ink) !important; font-size: 1.0625rem !important; }
 @media (max-width: 640px) { html { font-size: 16px !important; } }
 body > main, body > .main, body > #app, body > .app, body > .container,
 body > main > section, body > .main > section { background: transparent !important; color: var(--ink) !important; }
-
 
 /* SWEEP 1: SURFACE PAINT — ecosystem qb-card visual, elder-comfortable padding */
 .qb-paint-surface,
@@ -690,7 +689,6 @@ body > main > section, body > .main > section { background: transparent !importa
   }
 }
 
-
 /* SWEEP 2: HEADING TYPOGRAPHY — Pomegranate chunky Fraunces, comfortable sizes */
 body h1:not(.qb-button_content):not(.banner *):not(.nav-wrap *):not(.footer *),
 body .display-h1, body .h1, body .hero-title, body .csh-title {
@@ -743,7 +741,6 @@ body .display-h1 em, body .display-h2 em, body .display-h3 em {
   color: var(--gold) !important;
 }
 
-
 /* EYEBROW PILL — Pomegranate-style: 2px ink border, cream-card bg, drop shadow,
    bigger comfortable size for elders */
 body .eyebrow, body [class*="eyebrow"]:not(.banner *):not(.nav-wrap *),
@@ -765,14 +762,12 @@ body .csh-eyebrow, body .pre-h, body .label-eyebrow {
   line-height: 1.4 !important;
 }
 
-
 /* ITALIC EM = GOLD per v3.4 Part 3.6 */
 body em:not(.banner *):not(.nav-wrap *):not(.footer *),
 body i:not([class]):not(.fa):not(.icon):not(.banner *):not(.nav-wrap *):not(.footer *) {
   font-style: italic !important;
   color: var(--gold) !important;
 }
-
 
 /* SWEEP 3: FORM FIELDS — qb-field visual with elder-comfortable size */
 body input[type="text"]:not(.banner *):not(.nav-wrap *),
@@ -828,7 +823,6 @@ body label:not(.banner *):not(.nav-wrap *):not(.footer *) {
   display: inline-block !important;
 }
 
-
 /* CHECKBOX / RADIO — large, comfortable, ink-bordered */
 body input[type="checkbox"]:not(.banner *):not(.nav-wrap *),
 body input[type="radio"]:not(.banner *):not(.nav-wrap *) {
@@ -842,7 +836,6 @@ body input[type="radio"]:not(.banner *):not(.nav-wrap *) {
   vertical-align: middle !important;
 }
 
-
 /* SWEEP 5: SECTION SPACING — generous Pomegranate breathing room */
 body main > section,
 body > main > section,
@@ -853,7 +846,6 @@ body main > div[class*="section"]:not([class*="card"]) {
 }
 body main > section + section,
 body main > .section + .section { margin-top: 0 !important; }
-
 
 /* PARAGRAPH BODY COPY — comfortable elder-friendly size, generous leading */
 body p:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *) {
@@ -868,7 +860,6 @@ body p:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *) {
 }
 body p:last-child { margin-bottom: 0 !important; }
 
-
 /* LIST ITEMS — comfortable spacing */
 body main ul:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *),
 body main ol:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *) {
@@ -878,7 +869,6 @@ body main ol:not(.banner *):not(.nav-wrap *):not(.footer *):not(.qb-button *) {
   color: var(--ink) !important;
 }
 body main li { margin-bottom: 0.5rem !important; }
-
 
 /* TOOL EXERCISE BOXES — explicit redesign for question/answer/prompt patterns */
 body .question, body .question-text, body .prompt, body .prompt-text,
@@ -897,17 +887,14 @@ body .answer, body .answer-text, body .response, body .response-text {
   line-height: 1.65 !important;
 }
 
-
 /* HIDE LEGACY VIGNETTE / NOISE / AMBIENT artifacts that survived chassis swap */
 body > .ambient-glow, body > .main-vignette, body > .vignette,
 body > .ambient-tools, body > .ambient-scan, body > .grain-tools,
 .ambient-glow, .main-vignette, .vignette { display: none !important; opacity: 0 !important; }
 body { background-image: none !important; }
 
-
 /* DOTS / DIVIDERS / DIM ARTIFACTS */
 body .header-divider, body .nav-spacer { background: var(--ink-25, rgba(45,21,33,0.25)) !important; }
-
 
 /* MIN TOUCH TARGET 44x44 for buttons and interactive elements */
 body button:not(.qb-button):not(.banner *):not(.nav-wrap *):not(.footer *),
@@ -915,12 +902,7 @@ body [role="button"]:not(.qb-button):not(.banner *):not(.nav-wrap *):not(.footer
   min-height: 44px !important;
 }
 
-
 /* === END CANONICAL BODY PAINT === */
-
-
-
-
 
 /* CANONICAL LOADING BAR */
 .qb-loading-bar {
@@ -2403,7 +2385,6 @@ textarea,input{ font-family:inherit; }
 }
 /* dark-theme block neutralised: [data-theme="dark"] { /* deactivated by v3.4 override * / } */
 
-
 /* =====================================================
    TOOL SHELL SOT UPGRADE (auto-injected, ecosystem.html aligned)
    Aligns every tool with the ecosystem page on motion, depth,
@@ -2516,7 +2497,6 @@ textarea,input{ font-family:inherit; }
 
 /* === END TOOL SHELL SOT UPGRADE === */
 
-
 /* =====================================================
    TOOL TYPOGRAPHY CONTINUITY (ecosystem SOT)
    Forces every tool to render headings, italic spotlights,
@@ -2624,7 +2604,6 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
 <link rel="mask-icon" href="/img/brand/web/safari-pinned-tab.svg" color="#2D1521">
 <link rel="manifest" href="/img/brand/web/site.webmanifest">
-
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -4234,7 +4213,6 @@ render();
   } catch(e) {}
 })();
 </script>
-
 
 <!-- QB analytics -->
 <script defer src="https://va.vercel-scripts.com/v1/script.js"></script>

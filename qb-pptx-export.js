@@ -21,6 +21,12 @@
   //               aubergine. For pitch decks / printed leave-behinds.
   // Hex values come straight from the locked :root blocks (do not invent).
   // Same semantic keys in both modes so deck builders close over a single TOKENS ref.
+  //
+  // Serif font note:
+  // DM Serif Display retained for PPTX serif output. Fraunces is a variable
+  // font and PowerPoint variable font support is inconsistent on older versions.
+  // Static fallback prevents broken decks. The web codex uses Fraunces; this
+  // file is the documented PPTX exception.
   var THEMES = {
     studio: {
       mode:      "studio",

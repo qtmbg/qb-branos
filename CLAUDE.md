@@ -83,6 +83,18 @@ Additional voice rules:
 - The wordmark is `quantum branding` set in Fraunces italic, weight 600, SOFT axis 60, lowercase.
 - Web favicon and OG share image assets live at `/img/brand/web/` and `/img/brand/og/`. Reference the head template at `/HEAD-SNIPPET.html` for canonical wiring.
 
+### Typography
+
+- The canonical type stack is **Fraunces** (display), **Inter** (body and UI), **JetBrains Mono** (labels and captions). Every web page in the repo loads the same canonical Google Fonts URL. The required `<link>` block lives in `/HEAD-SNIPPET.html` and is the single source of truth for the font import.
+- The canonical URL is the minimal-superset of every weight and axis value actually used in CSS: Fraunces `ital 0+1, opsz 9..144, wght 300..800, SOFT 50..100, WONK 0..1` · Inter `wght 400..800` · JetBrains Mono `wght 400..700`. SOFT 50-70 is reserved for the wordmark and headline styles. Do not add weights outside this range without updating both the URL and `HEAD-SNIPPET.html` first.
+- All font families must be referenced through CSS variables in `:root` (`--font-display`, `--font-body`, `--font-mono`, or any per-page synonyms already in use). Never hardcode a `font-family: 'Fraunces'` outside `:root`.
+- **DM Serif Display is not a web font.** It is retained only inside `qb-pptx-export.js` for PowerPoint deck export, because PowerPoint variable-font support is inconsistent on older versions and a static fallback prevents broken decks. The web codex is Fraunces.
+- Documented typography exceptions (do not copy the canonical block onto these pages):
+  - `the-profiles.html` — eight archetype-themed fonts plus Caveat. Locked. Do not touch its font URLs.
+  - `archetype-compass.html` — canonical Fraunces stack plus a supplementary archetype-themed set (Archivo Black, Cormorant Garamond, DM Sans, EB Garamond, Figtree, Lora, Playfair Display, Space Grotesk). Required to render the twelve archetype previews.
+  - `war-table.html` — canonical Fraunces stack plus a supplementary Caveat link for signature-scrawl elements.
+- Loading pattern is non-render-blocking: `<link rel="preload" ... onload="this.onload=null;this.rel='stylesheet'">` plus a `<noscript>` fallback. The pattern is in `HEAD-SNIPPET.html`. Do not regress to a blocking `rel="stylesheet"` link.
+
 ### Illustrations
 
 - Illustration palette is locked to seven colours: forest #5B7E6A, peach #E89380, coral #DC6B52, mustard #D4B85A, rust #B8704D, lavender #B8A0C7, pink-soft #F4C4D0.

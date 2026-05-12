@@ -54,3 +54,23 @@
 
 <!-- Canonical URL (update per page) -->
 <link rel="canonical" href="https://quantumbranding.ai/">
+
+<!--
+  Typography — canonical font import for every QB BrandOS page.
+
+  Fraunces (display), Inter (body/UI), JetBrains Mono (labels).
+  Minimal-superset axes/weights cover every value used across the codebase:
+    Fraunces  ital 0+1 · opsz 9..144 · wght 300..800 · SOFT 50..100 · WONK 0..1
+    Inter     wght 400..800
+    JBMono    wght 400..700
+
+  Documented exceptions (do NOT use this canonical block in place of theirs):
+    the-profiles.html       Eight archetype-themed fonts plus Caveat
+    archetype-compass.html  Canonical + supplementary archetype-themed set
+    war-table.html          Canonical + supplementary Caveat (signature scrawl)
+
+  Loading pattern: non-render-blocking. The preload promotes itself to a
+  stylesheet once it lands. The noscript fallback covers JS-off users.
+-->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
