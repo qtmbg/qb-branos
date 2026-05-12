@@ -1406,8 +1406,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTok, system: sys, messages: [{ role: 'user', content: usr }] })
     });
-    var d = await res.json();
+    var rawBody = await res.text();
+    var d = {};
+    try { d = rawBody ? JSON.parse(rawBody) : {}; }
+    catch(e){ throw new Error('UNAVAILABLE'); }
+    if(!res.ok){
+      if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+      throw new Error((d.error && d.error.message) || ('API error ' + res.status + ': ' + res.statusText));
+    }
     if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    if(!d.content || !d.content[0] || !d.content[0].text) throw new Error('UNAVAILABLE');
     return d.content[0].text;
   };
 })();
@@ -1709,7 +1717,10 @@ function App() {
       setResult(text);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior:'smooth', block:'start' }), 120);
     } catch(e) {
-      setError(e.message || 'Generation failed. Check your API connection.');
+      const msg = e.message === 'UNAVAILABLE'
+        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        : (e.message || 'Generation failed. Check your API connection.');
+      setError(msg);
     } finally { setLoading(false); }
   };
 
