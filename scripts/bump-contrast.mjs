@@ -39,6 +39,8 @@ for(const f of readdirSync(ROOT)){
 
   html = bumpInBlock(html, /\.hero_meta/);
   html = bumpInBlock(html, /\.footer_col-title/);
+  html = bumpInBlock(html, /\.footer_bottom_meta/);
+  html = bumpInBlock(html, /\.footer_bottom_links\s+a/);
 
   if(html !== before){
     writeFileSync(path, html);
