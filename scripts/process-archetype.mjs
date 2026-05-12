@@ -21,6 +21,7 @@ const DIR  = resolve(ROOT, 'img', 'archetype');
 // renamed on a prior run), the script falls back to <slug>.png in the same
 // folder so it can be re-run idempotently to apply framing fixes.
 const MAP = {
+  // set 1 - personalities (originally hand-illustrated)
   'cousteau.png': 'cousteau',
   'hanks.png':    'hanks',
   'albert.png':   'einstein',
@@ -33,6 +34,32 @@ const MAP = {
   'ali.png':      'ali',
   'king.png':     'mlk',
   'teresa.png':   'teresa',
+  // set 2 - metaphor scenes (gpt-image-1, transparent png drops as <slug>.png)
+  'runner.png':    'runner',
+  'hand.png':      'hand',
+  'moon.png':      'moon',
+  'monk.png':      'monk',
+  'canvas.png':    'canvas',
+  'map.png':       'map',
+  'bonfire.png':   'bonfire',
+  'circle.png':    'circle',
+  'letter.png':    'letter',
+  'lion.png':      'lion',
+  'sunrise.png':   'sunrise',
+  'child.png':     'child',
+  // set 3 - expressions (saved with expression- prefix)
+  'expression-cool.png':        'expression-cool',
+  'expression-elder.png':       'expression-elder',
+  'expression-distinguish.png': 'expression-distinguish',
+  'expression-artist.png':      'expression-artist',
+  'expression-laugh.png':       'expression-laugh',
+  'expression-candle.png':      'expression-candle',
+  'expression-steady.png':      'expression-steady',
+  'expression-athlete.png':     'expression-athlete',
+  'expression-eyes.png':        'expression-eyes',
+  'expression-warm.png':        'expression-warm',
+  'expression-hiker.png':       'expression-hiker',
+  'expression-sensual.png':     'expression-sensual',
 };
 
 let webpTotal = 0, pngTotal = 0, srcTotal = 0;
