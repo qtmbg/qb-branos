@@ -2009,13 +2009,29 @@ Evaluate this logo concept against the QBP and return:
             }]
           })
         });
-        const data = await res.json();
+        const rawBody = await res.text();
+        let data = {};
+        try { data = rawBody ? JSON.parse(rawBody) : {}; }
+        catch(envErr){ throw new Error('UNAVAILABLE'); }
+        if(!res.ok){
+          if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+          throw new Error((data.error && data.error.message) || ('API error ' + res.status));
+        }
         if(data.error) throw new Error(data.error.message);
-        const raw = data.content[0].text.trim();
-        const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-        newResults[concept.id] = JSON.parse(clean);
+        const text = data && data.content && data.content[0] && data.content[0].text;
+        if(!text) throw new Error('UNAVAILABLE');
+        const stripped = text.trim().replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+        const sliceStart = stripped.indexOf('{'), sliceEnd = stripped.lastIndexOf('}');
+        if(sliceStart < 0 || sliceEnd < 0 || sliceEnd < sliceStart) throw new Error('UNAVAILABLE');
+        let parsed;
+        try { parsed = JSON.parse(stripped.substring(sliceStart, sliceEnd + 1)); }
+        catch(parseErr){ throw new Error('UNAVAILABLE'); }
+        newResults[concept.id] = parsed;
       } catch(e) {
-        newResults[concept.id] = { error: e.message };
+        const msg = e.message === 'UNAVAILABLE'
+          ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+          : e.message;
+        newResults[concept.id] = { error: msg };
       }
     }
     setResults(newResults);
