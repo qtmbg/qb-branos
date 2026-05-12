@@ -3958,11 +3958,18 @@ function callClaude(scored, isRefinement){
       messages: [{ role:'user', content: usr }]
     })
   }).then(function(res){
-    return res.json().then(function(data){ return { status: res.status, data: data }; });
+    return res.text().then(function(text){
+      var data = null;
+      try { data = text ? JSON.parse(text) : null; } catch(e){ data = null; }
+      return { status: res.status, data: data, raw: text };
+    });
   }).then(function(wrap){
     if (wrap.status === 503) throw new Error('Claude API key is not configured on the server.');
-    if (wrap.status === 502) throw new Error('Could not reach Claude (upstream error).');
-    if (wrap.status !== 200 || !wrap.data || !wrap.data.content){
+    if (wrap.status === 502) throw new Error('The AI service is temporarily unreachable. Please retry in a moment.');
+    if (!wrap.data){
+      throw new Error('The AI service returned an unexpected response. Please retry in a moment.');
+    }
+    if (wrap.status !== 200 || !wrap.data.content){
       var msg = (wrap.data && wrap.data.error && (wrap.data.error.message || wrap.data.error)) || 'Unexpected response from the AI service.';
       throw new Error(msg);
     }
