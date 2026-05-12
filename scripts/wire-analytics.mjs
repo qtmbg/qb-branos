@@ -6,6 +6,12 @@
  * path only resolves when Analytics is enabled in the dashboard, which
  * is fragile for static HTML projects and 404s on rollback.
  *
+ *
+ * Note: After enabling Web Analytics + Speed Insights in the Vercel
+ * dashboard, the project must be redeployed before /_vercel/insights/view
+ * stops 404-ing. Vercel provisions the ingestion route on deploy, not at
+ * enable time. The CDN script tag above POSTs to it automatically once
+ * the route exists.
  * Usage: node scripts/wire-analytics.mjs
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
