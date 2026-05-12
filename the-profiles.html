@@ -1607,6 +1607,11 @@ body main #app .seat-card-num {
 
 /* === END THE PROFILES inner-screen chassis === */
 
+/* QB mobile nav fix */
+@media (max-width:999px){
+  .nav-wrap .nav-actions > a,
+  .nav .nav-actions > a { display:none !important; }
+}
 </style>
 <link rel="canonical" href="https://quantumbranding.ai/the-profiles.html">
 </head>
@@ -3376,10 +3381,7 @@ function buildBrandedHTML(out) {
     '<section class="page themes-page"><h2>COMMON<br>THEMES<br>ACROSS<br>ALL PERSONAS</h2><ul class="themes-list">' + commonList + '</ul></section>' +
     '<section class="page binding"><h3>The binding insight</h3><blockquote>"' + esc(out.bindingInsight) + '"</blockquote></section>' +
     '<section class="page takeaways-page"><h3 class="key-h">Shared Key Takeaways</h3><h4 class="sub">Across all three personas</h4><ul class="key-list">' + sharedList + '</ul></section>' +
-    '<!-- QB analytics -->
-<script defer src="/_vercel/insights/script.js"></script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-</body></html>';
+    '</body></html>';
 }
 
 // ============================================================================
@@ -3486,5 +3488,8 @@ function renderApiKeyGate() {
 </script>
 
 
+<!-- QB analytics -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>

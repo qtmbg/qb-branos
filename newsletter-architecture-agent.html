@@ -930,7 +930,12 @@ body [role="button"]:not(.qb-button):not(.banner *):not(.nav-wrap *):not(.footer
 }
 .qb-loading-bar[data-state="idle"] { opacity:0; }
 @keyframes qb-loading-bar { 0%,100% { transform:translateX(-100%); } 99.99% { transform:translateX(100%); } }
-html:not([data-theme]){background:#080604;color:#A89A88}</style>
+html:not([data-theme]){background:#080604;color:#A89A88}/* QB mobile nav fix */
+@media (max-width:999px){
+  .nav-wrap .nav-actions > a,
+  .nav .nav-actions > a { display:none !important; }
+}
+</style>
 
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>

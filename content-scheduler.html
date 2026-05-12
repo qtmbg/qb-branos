@@ -924,7 +924,12 @@ body [role="button"]:not(.qb-button):not(.banner *):not(.nav-wrap *):not(.footer
 }
 .qb-loading-bar[data-state="idle"] { opacity:0; }
 @keyframes qb-loading-bar { 0%,100% { transform:translateX(-100%); } 99.99% { transform:translateX(100%); } }
-html:not([data-theme]){background:#080604;color:#A89A88}</style>
+html:not([data-theme]){background:#080604;color:#A89A88}/* QB mobile nav fix */
+@media (max-width:999px){
+  .nav-wrap .nav-actions > a,
+  .nav .nav-actions > a { display:none !important; }
+}
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">

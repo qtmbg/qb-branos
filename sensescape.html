@@ -576,6 +576,10 @@ header.nav.is-canonical {
   .nav-wrap .hamburger,
   .hamburger.is-canonical { display: none !important; }
 }
+/* Below 1000px: hide nav CTAs, hamburger carries them via the mobile menu. */
+@media (max-width: 999px) {
+  .nav-wrap .nav-actions > a { display: none !important; }
+}
 .nav-wrap .hamburger span,
 .hamburger.is-canonical span {
   display: block !important; width: 18px !important; height: 2px !important;

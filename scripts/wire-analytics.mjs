@@ -39,8 +39,12 @@ for(const slug of PAGES){
   let html = readFileSync(path, 'utf8');
   if(html.includes(MARKER)){ console.log(`-    ${file} (already wired)`); continue; }
 
-  if(!/<\/body>/i.test(html)){ console.log(`SKIP no </body>  ${file}`); skipped++; continue; }
-  html = html.replace(/<\/body>/i, BLOCK + '</body>');
+  // Use the LAST </body> in the file. The first one may be inside a JS string
+  // literal (some pages build HTML via string concat for PDF export), and
+  // injecting raw <script> tags into a JS string breaks the parser.
+  const idx = html.toLowerCase().lastIndexOf('</body>');
+  if(idx < 0){ console.log(`SKIP no </body>  ${file}`); skipped++; continue; }
+  html = html.slice(0, idx) + BLOCK + html.slice(idx);
   writeFileSync(path, html);
   console.log(`OK   ${file}`);
   touched++;

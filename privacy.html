@@ -83,8 +83,11 @@
   @media (max-width:640px) {
     html { font-size:16px; }
     .nav-actions a { padding:6px 12px; font-size:0.78rem; }
-    table { font-size:0.85rem; }
-    th, td { padding:10px 12px; }
+    /* Tables become horizontally scrollable on mobile rather than overflowing the page. */
+    table { display:block; overflow-x:auto; font-size:0.85rem; }
+    thead, tbody, tr { display:table; width:100%; table-layout:fixed; }
+    thead { display:table-header-group; }
+    th, td { padding:10px 12px; word-break:break-word; }
   }
 </style>
 
