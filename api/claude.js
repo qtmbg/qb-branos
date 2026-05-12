@@ -61,6 +61,9 @@ export default async function handler(req, res) {
     ...(body.temperature !== undefined && { temperature: body.temperature }),
   };
 
+  const tool = toolFromReferer(req.headers.referer || req.headers.referrer || '');
+  const t0 = Date.now();
+
   try {
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -72,17 +75,41 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload),
     });
 
+    const duration_s = Number(((Date.now() - t0) / 1000).toFixed(2));
     const text = await upstream.text();
     let data;
     try { data = JSON.parse(text); }
     catch {
+      logCall({ tool, model, max_tokens, duration_s, status: upstream.status, ok: false, reason: 'non_json' });
       return res.status(502).json({
         error: 'Upstream returned non-JSON',
         detail: text.slice(0, 200),
       });
     }
+    logCall({ tool, model, max_tokens, duration_s, status: upstream.status, ok: upstream.ok });
     return res.status(upstream.status).json(data);
   } catch (err) {
+    const duration_s = Number(((Date.now() - t0) / 1000).toFixed(2));
+    logCall({ tool, model, max_tokens, duration_s, status: 0, ok: false, reason: 'fetch_threw' });
     return res.status(502).json({ error: 'Upstream error', detail: err.message });
+  }
+}
+
+function toolFromReferer(referer) {
+  if (!referer) return 'unknown';
+  try {
+    const url = new URL(referer);
+    const last = url.pathname.split('/').filter(Boolean).pop();
+    return last || 'root';
+  } catch {
+    return 'unknown';
+  }
+}
+
+function logCall(fields) {
+  try {
+    console.log(JSON.stringify({ event: 'claude_proxy', ...fields }));
+  } catch {
+    console.log('claude_proxy log_emit_failed');
   }
 }
