@@ -47,6 +47,17 @@ When these documents conflict, the order above is the priority order. The Brand 
 
 These are the rules that are violated most often. They are non-negotiable.
 
+### Merge gate protocol
+
+When the user issues a hold instruction. "branch only", "do not merge", "wait for approval", "do not touch main", or any equivalent phrasing. That instruction is a hard gate. The following rules apply until the user explicitly releases the gate in chat:
+
+1. Do not merge the working branch to main. Not via direct merge, fast-forward, squash, rebase-and-merge, or PR auto-merge.
+2. Do not commit to main directly.
+3. If a commit lands on main from any other source (another agent, the user, a CI process) while the gate is active, STOP. Do not continue work on top of those changes. Report the new commit hashes to the user in chat and wait for instructions.
+4. Do not bundle the held work into an unrelated commit on main, even if the unrelated commit is small or appears safe.
+5. The gate releases only when the user types "approved, merge" or equivalent explicit release language. Inferred approval from context does not count.
+6. Apologizing for a breach after the fact does not retroactively authorize the merge. If a breach occurs, the response is: report, stop, wait.
+
 ### Code
 
 - Vanilla HTML, CSS, and JavaScript only. No frameworks, no JSX in raw HTML, no build step required.
