@@ -32,7 +32,9 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap">
+<!-- QB fonts unblocked -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap"></noscript>
 
 <style>
 /* === CANONICAL CHASSIS OVERRIDE (ecosystem SOT, full pixel continuity) === */
@@ -3355,7 +3357,9 @@ function buildBrandedHTML(out) {
   var sharedList = out.sharedKeyTakeaways.map(function(t) { return "<li>" + esc(t) + "</li>"; }).join("");
 
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>The Profiles</title>' +
-    '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">' +
+    '<!-- QB fonts unblocked -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"></noscript>' +
     '<style>' +
     '* { margin: 0; padding: 0; box-sizing: border-box; }' +
     'body { font-family: Inter, sans-serif; color: #fff; background: #000; -webkit-font-smoothing: antialiased; }' +
