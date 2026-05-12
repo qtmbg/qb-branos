@@ -34,10 +34,18 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    if (!res.ok) throw new Error('API Error: ' + res.status + ' ' + res.statusText);
-    const d = await res.json();
+    const rawBody = await res.text();
+    let d = {};
+    try { d = rawBody ? JSON.parse(rawBody) : {}; }
+    catch(e){ throw new Error('UNAVAILABLE'); }
+    if (!res.ok){
+      if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+      throw new Error((d.error && d.error.message) || ('API Error: ' + res.status + ' ' + res.statusText));
+    }
     if(d.error) throw new Error(d.error.message);
-    return d?.content?.[0]?.text ?? '';
+    const text = d?.content?.[0]?.text;
+    if(!text) throw new Error('UNAVAILABLE');
+    return text;
   };
 })();
 </script>
@@ -1842,13 +1850,21 @@ Requirements:
         try {
             const res = await window.QB_AI(systemPrompt, userPrompt, 5000);
             clearInterval(iv);
-            const clean = res.replace(/^```json\s*/, '').replace(/\s*```$/, '').replace(/^```\s*/, '').trim();
-            setResult(JSON.parse(clean));
+            const stripped = res.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+            const sliceStart = stripped.indexOf('{'), sliceEnd = stripped.lastIndexOf('}');
+            if(sliceStart < 0 || sliceEnd < 0 || sliceEnd < sliceStart) throw new Error('UNAVAILABLE');
+            let parsed;
+            try { parsed = JSON.parse(stripped.substring(sliceStart, sliceEnd + 1)); }
+            catch(parseErr){ throw new Error('UNAVAILABLE'); }
+            setResult(parsed);
             setActiveTab('distribution');
             setStep(2);
         } catch(e) {
             clearInterval(iv);
-            setError('Panel disruption: ' + e.message);
+            const msg = e.message === 'UNAVAILABLE'
+                ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+                : 'Panel disruption: ' + e.message;
+            setError(msg);
             setStep(0);
         }
         setLoading(false);

@@ -1418,9 +1418,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    if(!res.ok) throw new Error('API error ' + res.status + ': ' + res.statusText);
-    var d = await res.json();
+    var rawBody = await res.text();
+    var d = {};
+    try { d = rawBody ? JSON.parse(rawBody) : {}; }
+    catch(e){ throw new Error('UNAVAILABLE'); }
+    if(!res.ok){
+      if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+      throw new Error((d.error && d.error.message) || ('API error ' + res.status + ': ' + res.statusText));
+    }
     if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    if(!d.content || !d.content[0] || !d.content[0].text) throw new Error('UNAVAILABLE');
     return d.content[0].text;
   };
 })();
@@ -2038,13 +2045,24 @@ function App(){
         buildPrompt(),
         6000
       );
-      // FIX 5: robust JSON extraction handles preamble before code block
+      // FIX 5: robust JSON extraction handles preamble before code block, plus brace-slice fallback
       var match = res.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-      var clean = (match ? match[1] : res).trim();
-      setResult(JSON.parse(clean));
+      var stripped = (match ? match[1] : res).trim();
+      var sliceStart = stripped.indexOf('{'), sliceEnd = stripped.lastIndexOf('}');
+      if(sliceStart < 0 || sliceEnd < 0 || sliceEnd < sliceStart) throw new Error('UNAVAILABLE');
+      var parsed;
+      try { parsed = JSON.parse(stripped.substring(sliceStart, sliceEnd + 1)); }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
+      setResult(parsed);
       setActiveTab('Voice DNA');
       setStep(2);
-    }catch(e){ setError('Agent error: '+e.message); setStep(0); }
+    }catch(e){
+      var msg = e.message === 'UNAVAILABLE'
+        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        : 'Agent error: '+e.message;
+      setError(msg);
+      setStep(0);
+    }
     setLoading(false);
   };
 

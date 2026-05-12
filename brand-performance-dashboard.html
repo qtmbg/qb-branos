@@ -1485,9 +1485,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    if(!res.ok) throw new Error('API error ' + res.status + ': ' + res.statusText);
-    var d = await res.json();
+    var rawBody = await res.text();
+    var d = {};
+    try { d = rawBody ? JSON.parse(rawBody) : {}; }
+    catch(e){ throw new Error('UNAVAILABLE'); }
+    if(!res.ok){
+      if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
+      throw new Error((d.error && d.error.message) || ('API error ' + res.status + ': ' + res.statusText));
+    }
     if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    if(!d.content || !d.content[0] || !d.content[0].text) throw new Error('UNAVAILABLE');
     return d.content[0].text;
   };
 
@@ -1917,13 +1924,22 @@ Requirements:
     setError(''); setLoading(true); setStep(1);
     try{
       const raw = await window.QB_AI(buildSystemPrompt(), buildUserPrompt(), 6000);
-      const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      const match = clean.match(/(\{[\s\S]*\})/);
-      if(!match) throw new Error('No valid JSON returned from agent. Please try again.');
-      setResult(JSON.parse(match[1]));
+      const stripped = raw.replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+      const sliceStart = stripped.indexOf('{'), sliceEnd = stripped.lastIndexOf('}');
+      if(sliceStart < 0 || sliceEnd < 0 || sliceEnd < sliceStart) throw new Error('UNAVAILABLE');
+      let parsed;
+      try { parsed = JSON.parse(stripped.substring(sliceStart, sliceEnd + 1)); }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
+      setResult(parsed);
       setActiveTab('signals');
       setStep(2);
-    }catch(e){ setError('Agent error: ' + e.message); setStep(0); }
+    }catch(e){
+      const msg = e.message === 'UNAVAILABLE'
+        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        : 'Agent error: ' + e.message;
+      setError(msg);
+      setStep(0);
+    }
     setLoading(false);
   };
 
