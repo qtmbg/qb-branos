@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 /**
  * Inject Vercel Web Analytics + Speed Insights script tags on every
- * production HTML page. Scripts are no-ops until enabled in the Vercel
- * dashboard, so the tags are safe to ship in advance.
+ * production HTML page. Uses public CDN URLs that work without a
+ * project-level rewrite. The relative `/_vercel/insights/script.js`
+ * path only resolves when Analytics is enabled in the dashboard, which
+ * is fragile for static HTML projects and 404s on rollback.
  *
  * Usage: node scripts/wire-analytics.mjs
  */
@@ -26,8 +28,8 @@ const PAGES = [
 
 const MARKER = '<!-- QB analytics -->';
 const BLOCK = `${MARKER}
-<script defer src="/_vercel/insights/script.js"></script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
+<script defer src="https://va.vercel-scripts.com/v1/script.js"></script>
+<script defer src="https://va.vercel-scripts.com/v1/speed-insights/script.js"></script>
 `;
 
 let touched = 0, skipped = 0;
