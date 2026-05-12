@@ -503,7 +503,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   .qb-type-nav:hover { color: var(--gold); }
   .qb-type-nav.is-active { color: var(--rose); }
 
-  .qb-type-spot-1 { color: var(--gold); }
+  .qb-type-spot-1 { color: var(--gold-deep); }
   .qb-type-spot-2 { color: var(--rose); }
   .qb-type-spot-3 { color: var(--teal-deep); }
 
@@ -801,10 +801,12 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     text-wrap: balance;
   }
   .arch-copy_h em {
-    /* v3.3 Part 3.6 - italic spotlight is --gold, not rose-deep */
+    /* v3.3 Part 3.6 - italic spotlight is --gold, not rose-deep.
+       Deepened to --gold-deep on 2026-05-12 to clear WCAG AA 3:1 for
+       large text on cream / cream-warm backgrounds. */
     font-style: italic;
     font-variation-settings: "wght" 800, "opsz" 144, "SOFT" 100, "WONK" 1;
-    color: var(--gold);
+    color: var(--gold-deep);
   }
   .arch-copy_body {
     font-family: 'Inter', sans-serif;
