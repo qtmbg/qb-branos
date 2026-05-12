@@ -49,7 +49,7 @@ These are the rules that are violated most often. They are non-negotiable.
 
 ### Merge gate protocol
 
-When the user issues a hold instruction. "branch only", "do not merge", "wait for approval", "do not touch main", or any equivalent phrasing. That instruction is a hard gate. The following rules apply until the user explicitly releases the gate in chat:
+When the user issues a hold instruction such as "branch only", "do not merge", "wait for approval", "do not touch main", or any equivalent phrasing, that instruction is a hard gate. The following rules apply until the user explicitly releases the gate in chat:
 
 1. Do not merge the working branch to main. Not via direct merge, fast-forward, squash, rebase-and-merge, or PR auto-merge.
 2. Do not commit to main directly.
