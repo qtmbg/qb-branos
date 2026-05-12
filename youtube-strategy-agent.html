@@ -2064,16 +2064,33 @@ REQUIREMENTS:
           messages:[{role:'user',content:buildUserPrompt()}]
         })
       });
-      const d=await res.json();
-      if(d && d.error) throw new Error(d.error.message || d.error || 'AI request failed');
-      const text = d && d.content && d.content[0] && d.content[0].text;
-      if(!text) throw new Error('Empty response from AI service');
-      const clean=text.trim().replace(/^```json\s*/,'').replace(/\s*```$/,'').replace(/^```\s*/,'').trim();
-      const parsed=JSON.parse(clean);
+      const rawBody = await res.text();
+      let envelope = {};
+      try { envelope = rawBody ? JSON.parse(rawBody) : {}; }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
+      if(!res.ok){
+        const msg = (envelope.error && envelope.error.message) || envelope.message || ('HTTP ' + res.status);
+        throw new Error(res.status === 504 || res.status === 502 ? 'UNAVAILABLE' : ('AI service error: ' + msg));
+      }
+      if(envelope.error) throw new Error(envelope.error.message || envelope.error || 'AI request failed');
+      const text = envelope && envelope.content && envelope.content[0] && envelope.content[0].text;
+      if(!text) throw new Error('UNAVAILABLE');
+      const stripped = text.trim().replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+      const start = stripped.indexOf('{'), end = stripped.lastIndexOf('}');
+      if(start < 0 || end < 0 || end < start) throw new Error('UNAVAILABLE');
+      let parsed;
+      try { parsed = JSON.parse(stripped.substring(start, end + 1)); }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
       if(!parsed.videos || !parsed.videos.length) throw new Error('AI returned no videos');
       setResult(parsed);
       setActiveVideo(0);setMainTab('channel');setStep(2);
-    }catch(e){setError('Agent error: '+e.message);setStep(0);}
+    }catch(e){
+      const msg = e.message === 'UNAVAILABLE'
+        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        : 'Agent error: ' + e.message;
+      setError(msg);
+      setStep(0);
+    }
     finally{setLoading(false);}
   };
 

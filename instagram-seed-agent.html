@@ -1543,10 +1543,11 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     var data = {};
     try { data = raw ? JSON.parse(raw) : {}; }
     catch(e){
-      throw new Error('Invalid JSON response from /api/claude');
+      throw new Error('UNAVAILABLE');
     }
 
     if(!res.ok){
+      if(res.status === 504 || res.status === 502) throw new Error('UNAVAILABLE');
       var message = (data && data.error && data.error.message) || data.message || ('HTTP ' + res.status + ': ' + res.statusText);
       throw new Error(message);
     }
@@ -2087,7 +2088,12 @@ Return ONLY valid JSON - no markdown, no preamble.`;
 
     try{
       const raw = await window.QB_AI(systemPrompt, buildPrompt(), 8000);
-      const parsed = JSON.parse(stripCodeFence(raw));
+      const stripped = stripCodeFence(raw);
+      const sliceStart = stripped.indexOf('{'), sliceEnd = stripped.lastIndexOf('}');
+      if(sliceStart < 0 || sliceEnd < 0 || sliceEnd < sliceStart) throw new Error('UNAVAILABLE');
+      let parsed;
+      try { parsed = JSON.parse(stripped.substring(sliceStart, sliceEnd + 1)); }
+      catch(parseErr){ throw new Error('UNAVAILABLE'); }
 
       if(!parsed || !Array.isArray(parsed.posts) || parsed.posts.length !== 12){
         throw new Error('The agent returned an invalid post pack. Expected exactly 12 posts.');
@@ -2105,7 +2111,10 @@ Return ONLY valid JSON - no markdown, no preamble.`;
       setMainTab('grid');
       setStep(2);
     }catch(e){
-      setError('Agent error: ' + (e.message || 'Unknown error'));
+      const msg = e.message === 'UNAVAILABLE'
+        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        : 'Agent error: ' + (e.message || 'Unknown error');
+      setError(msg);
       setStep(0);
     }finally{
       setLoading(false);
