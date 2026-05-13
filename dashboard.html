@@ -333,21 +333,25 @@
   }
   .section_eyebrow { font-size:var(--step--1); }
 
-  /* ── JOURNEY ROW ──────────────────────────────────────────────────── */
-  .journey {
+  /* ── JOURNEY: featured Phase 01 + 4-card row ─────────────────────── */
+  .journey-featured { margin-bottom:var(--space-s); }
+  @media (min-width:1024px) {
+    .journey-featured { margin-bottom:var(--space-m); }
+  }
+
+  .journey-rest {
     display:grid;
     grid-template-columns:1fr;
     gap:var(--space-s);
   }
-  @media (min-width:768px) {
-    .journey { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  @media (min-width:640px) {
+    .journey-rest { grid-template-columns:repeat(2, minmax(0,1fr)); }
   }
-  @media (min-width:1100px) {
-    .journey { grid-template-columns:repeat(5, minmax(0,1fr)); gap:var(--space-xs); }
+  @media (min-width:1024px) {
+    .journey-rest { grid-template-columns:repeat(4, minmax(0,1fr)); }
   }
 
   .phase {
-    --phase-c:var(--phase-discovery);
     position:relative;
     display:flex;
     flex-direction:column;
@@ -356,32 +360,53 @@
     border-radius:var(--radius-card);
     background:var(--cream-card);
     box-shadow:var(--shadow-card-mobile);
-    transition:transform 0.4s var(--ease-qb), box-shadow 0.4s var(--ease-qb), opacity 0.4s var(--ease-qb);
     min-height:240px;
   }
   @media (min-width:640px) {
     .phase { box-shadow:var(--shadow-card-desktop); }
   }
   .phase[data-state="locked"] {
-    opacity:0.55;
+    opacity:0.7;
     background:var(--cream-warm);
   }
-  .phase[data-phase="01"] { --phase-c:var(--phase-discovery); }
-  .phase[data-phase="02"] { --phase-c:var(--phase-creation); }
-  .phase[data-phase="03"] { --phase-c:var(--phase-content); }
-  .phase[data-phase="04"] { --phase-c:var(--phase-execution); }
-  .phase[data-phase="05"] { --phase-c:var(--phase-intelligence); }
 
-  .phase_swatch {
-    position:absolute;
-    top:var(--space-s);
-    right:var(--space-s);
-    width:0.7em;
-    height:0.7em;
-    border-radius:50%;
-    background:var(--phase-c);
-    border:1.5px solid var(--ink);
+  /* Featured Phase 01 card: paragraph-readable, side-by-side at desktop */
+  .phase.phase--featured {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:var(--space-m);
+    padding:var(--space-l) var(--space-m);
+    min-height:auto;
   }
+  @media (min-width:768px) {
+    .phase.phase--featured {
+      flex-direction:row;
+      align-items:center;
+      justify-content:space-between;
+      gap:var(--space-l);
+      padding:var(--space-l) var(--space-l);
+    }
+  }
+  .phase--featured .phase_meta {
+    flex:1 1 auto;
+    min-width:0;
+  }
+  .phase--featured .phase_name {
+    font-size:var(--step-3);
+    margin-bottom:var(--space-2xs);
+  }
+  .phase--featured .phase_sub {
+    font-size:var(--step-0);
+    max-width:60ch;
+    margin-bottom:var(--space-xs);
+    flex:none;
+  }
+  .phase--featured .phase_status { margin-bottom:0; }
+  .phase--featured .phase_cta_wrap {
+    margin-top:0;
+    flex-shrink:0;
+  }
+
   .phase_num {
     font-family:var(--font-mono);
     font-size:var(--step--1);
@@ -432,6 +457,28 @@
   }
   .phase[data-state="complete"] .phase_status { color:var(--phase-discovery); }
   .phase[data-state="complete"] .phase_status_dot { background:var(--phase-discovery); }
+
+  /* Locked marker: clean mono caps with small lock icon, no button styling */
+  .phase_locked {
+    display:inline-flex;
+    align-items:center;
+    gap:0.5em;
+    margin-top:auto;
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink-50);
+  }
+  .phase_locked svg {
+    width:0.95em;
+    height:0.95em;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
 
   /* ── BUTTON ───────────────────────────────────────────────────────── */
   .qb-button {
@@ -865,59 +912,58 @@
       </h2>
     </div>
 
-    <div class="journey" id="journey">
-      <article class="phase" data-phase="01" data-state="available" aria-labelledby="p01">
-        <span class="phase_swatch" aria-hidden="true"></span>
-        <div class="phase_num">Phase 01</div>
-        <h3 id="p01" class="phase_name">Foundation</h3>
-        <p class="phase_sub">Discover your brand's truth. Archetype, soul, sensescape, visual DNA, war table, profiles.</p>
-        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Available</span></div>
+    <div class="journey-featured">
+      <article class="phase phase--featured" data-phase="01" data-state="available" aria-labelledby="p01">
+        <div class="phase_meta">
+          <div class="phase_num">Phase 01</div>
+          <h3 id="p01" class="phase_name">Foundation</h3>
+          <p class="phase_sub">Discover your brand's truth. Archetype, soul, sensescape, visual DNA, war table, profiles.</p>
+          <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Available</span></div>
+        </div>
         <div class="phase_cta_wrap">
-          <a class="qb-button is-primary is-block" href="/qb-branidos-hub.html"><span class="qb-button_content">Open Foundation</span></a>
+          <a class="qb-button is-primary" href="/brand-soul-map.html"><span class="qb-button_content">Open Foundation</span></a>
         </div>
       </article>
+    </div>
 
+    <div class="journey-rest" id="journey">
       <article class="phase" data-phase="02" data-state="locked" aria-labelledby="p02">
-        <span class="phase_swatch" aria-hidden="true"></span>
         <div class="phase_num">Phase 02</div>
         <h3 id="p02" class="phase_name">Creation</h3>
         <p class="phase_sub">Visual identity and voice. Logo direction, logo evaluation, voice guide.</p>
-        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Locked</span></div>
-        <div class="phase_cta_wrap">
-          <a class="qb-button is-block is-disabled" aria-disabled="true" tabindex="-1"><span class="qb-button_content">Locked</span></a>
+        <div class="phase_locked" aria-label="Locked">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          <span>Locked</span>
         </div>
       </article>
 
       <article class="phase" data-phase="03" data-state="locked" aria-labelledby="p03">
-        <span class="phase_swatch" aria-hidden="true"></span>
         <div class="phase_num">Phase 03</div>
         <h3 id="p03" class="phase_name">Content</h3>
         <p class="phase_sub">Strategy and first content. Content bridge, repurposing, scheduling.</p>
-        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Locked</span></div>
-        <div class="phase_cta_wrap">
-          <a class="qb-button is-block is-disabled" aria-disabled="true" tabindex="-1"><span class="qb-button_content">Locked</span></a>
+        <div class="phase_locked" aria-label="Locked">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          <span>Locked</span>
         </div>
       </article>
 
       <article class="phase" data-phase="04" data-state="locked" aria-labelledby="p04">
-        <span class="phase_swatch" aria-hidden="true"></span>
         <div class="phase_num">Phase 04</div>
         <h3 id="p04" class="phase_name">Execution</h3>
         <p class="phase_sub">Scheduled production. Instagram, LinkedIn, YouTube, newsletter.</p>
-        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Locked</span></div>
-        <div class="phase_cta_wrap">
-          <a class="qb-button is-block is-disabled" aria-disabled="true" tabindex="-1"><span class="qb-button_content">Locked</span></a>
+        <div class="phase_locked" aria-label="Locked">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          <span>Locked</span>
         </div>
       </article>
 
       <article class="phase" data-phase="05" data-state="locked" aria-labelledby="p05">
-        <span class="phase_swatch" aria-hidden="true"></span>
         <div class="phase_num">Phase 05</div>
         <h3 id="p05" class="phase_name">Intelligence</h3>
         <p class="phase_sub">Ongoing optimization. Quarterly review, brand performance, predictive panel.</p>
-        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Locked</span></div>
-        <div class="phase_cta_wrap">
-          <a class="qb-button is-block is-disabled" aria-disabled="true" tabindex="-1"><span class="qb-button_content">Locked</span></a>
+        <div class="phase_locked" aria-label="Locked">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          <span>Locked</span>
         </div>
       </article>
     </div>
@@ -965,7 +1011,7 @@
       </h2>
     </div>
     <div class="actions">
-      <a class="qb-button is-primary" href="/qb-branidos-hub.html"><span class="qb-button_content">Continue Phase 01</span></a>
+      <a class="qb-button is-primary" href="/brand-soul-map.html"><span class="qb-button_content">Continue Phase 01</span></a>
       <a class="qb-button" href="/signal-scan.html"><span class="qb-button_content">Run Signal Scan</span></a>
       <a class="text_link" href="/atelier">Apply for Atelier</a>
     </div>
@@ -981,7 +1027,6 @@
 
     <div class="tier_card">
       <div class="tier_card_head">
-        <span class="tier_badge" id="tierBadgeBody" data-tier="free">Free</span>
         <h3 class="tier_card_name" id="tierName">Free</h3>
       </div>
       <p class="tier_card_desc" id="tierDesc">Brand foundation diagnostic. Phase 01 access.</p>
@@ -1085,14 +1130,11 @@
     var nav = document.getElementById('navUserName');
     if (firstName) nav.textContent = firstName;
 
-    // Tier badges
+    // Tier badge (header only) + tier card name
     var meta = TIERS[tier];
     var b1 = document.getElementById('tierBadge');
-    var b2 = document.getElementById('tierBadgeBody');
-    [b1, b2].forEach(function (el) {
-      el.setAttribute('data-tier', tier);
-      el.textContent = meta.name;
-    });
+    b1.setAttribute('data-tier', tier);
+    b1.textContent = meta.name;
     document.getElementById('tierName').textContent = meta.name;
     document.getElementById('tierDesc').textContent = meta.desc;
 
@@ -1249,11 +1291,11 @@
     if (locked) {
       card.setAttribute('data-state', 'complete');
       if (statusT) statusT.textContent = 'Locked';
-      if (ctaWrap) ctaWrap.innerHTML = '<a class="qb-button is-block" href="/brand-document.html"><span class="qb-button_content">View profile</span></a>';
+      if (ctaWrap) ctaWrap.innerHTML = '<a class="qb-button" href="/brand-document.html"><span class="qb-button_content">View profile</span></a>';
     } else if (done) {
       card.setAttribute('data-state', 'in-progress');
       if (statusT) statusT.textContent = 'Ready to lock';
-      if (ctaWrap) ctaWrap.innerHTML = '<a class="qb-button is-block" href="/qb-branidos-hub.html"><span class="qb-button_content">Open Foundation</span></a>';
+      if (ctaWrap) ctaWrap.innerHTML = '<a class="qb-button is-primary" href="/brand-soul-map.html"><span class="qb-button_content">Open Foundation</span></a>';
     }
   }
 

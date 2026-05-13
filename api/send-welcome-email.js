@@ -67,7 +67,7 @@ function buildHtml({ firstName }) {
         <p style="margin:0 0 16px;">Your diagnostic is on its way to your inbox in a moment.</p>
         <p style="margin:0 0 24px;">When you are ready to go deeper, your next step is the foundation work. Phase 01 of Quantum Branding is four exercises that surface your brand's truth. It is free and you can do it at your own pace.</p>
         <p style="margin:0 0 32px;text-align:left;">
-          <a href="https://quantumbranding.ai/qb-branidos-hub.html" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">Begin Phase 01</a>
+          <a href="https://quantumbranding.ai/dashboard" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">Begin Phase 01</a>
         </p>
         <p style="margin:0;color:#2D1521;">Nizzar</p>
       </td></tr>
@@ -91,7 +91,7 @@ Your diagnostic is on its way to your inbox in a moment.
 
 When you are ready to go deeper, your next step is the foundation work. Phase 01 of Quantum Branding is four exercises that surface your brand's truth. It is free and you can do it at your own pace.
 
-Begin Phase 01: https://quantumbranding.ai/qb-branidos-hub.html
+Begin Phase 01: https://quantumbranding.ai/dashboard
 
 Nizzar
 

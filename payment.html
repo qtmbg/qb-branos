@@ -1980,7 +1980,7 @@ function renderSuccess() {
       <div class="success-icon">✓</div>
       <h2 style="font-size: 36px; margin-bottom: 16px;">You're in.</h2>
       <p style="margin-bottom: 32px;">Your account is active. Your API key and QBP are waiting in the system.</p>
-      <button type="button" class="btn-primary" onclick="window.location.href='/qb-branidos-hub.html'">Enter QB BrandOS →</button>
+      <button type="button" class="btn-primary" onclick="window.location.href='/dashboard'">Enter QB BrandOS →</button>
     </div>
   `;
 }
@@ -2085,12 +2085,12 @@ async function handleAuth(email, password) {
     saveSession({ email, token: session?.access_token, supabaseId: data.user?.id });
     localStorage.setItem('qb_user_email', email);
 
-    // Login: go to checkout if a plan is selected, otherwise go straight to hub
+    // Login: go to checkout if a plan is selected, otherwise go straight to the dashboard
     if (authMode === 'login') {
       if (selectedPlan) {
         await redirectToStripe(email);
       } else {
-        window.location.href = '/qb-branidos-hub.html';
+        window.location.href = '/dashboard';
       }
       return;
     }

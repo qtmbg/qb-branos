@@ -4,18 +4,29 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "routes": [
-{
+    {
       "src": "/",
       "has": [{"type": "host", "value": "app.quantumbranding.ai"}],
-      "dest": "/qb-branidos-hub.html"
+      "dest": "/dashboard.html"
     },
-        {
+    {
       "src": "/",
       "dest": "/index.html"
     },
     {
       "src": "/os",
-      "dest": "/qb-branidos-hub.html"
+      "status": 301,
+      "headers": {"Location": "/dashboard"}
+    },
+    {
+      "src": "/hub",
+      "status": 301,
+      "headers": {"Location": "/dashboard"}
+    },
+    {
+      "src": "/qb-branidos-hub(\\.html)?",
+      "status": 301,
+      "headers": {"Location": "/dashboard"}
     },
     {
       "src": "/scan",

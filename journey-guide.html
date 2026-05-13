@@ -1785,7 +1785,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     <h1 class="csh-title">Your brand is built.</h1>
     <p class="completion-sub">You have completed the full QB BrandOS journey. Your QBP is fully populated, your brand system is live, and the intelligence cycle begins. Every quarter, the system gets smarter.</p>
     <div class="completion-ctas">
-      <a href="qb-branidos-hub.html" class="btn-secondary">Return to hub</a>
+      <a href="/dashboard" class="btn-secondary">Return to dashboard</a>
       <a href="brand-performance-dashboard.html" class="btn-primary">Start review</a>
     </div>
   </div>
@@ -1926,13 +1926,13 @@ function renderReturnBanner(progress, currentStep, allDone) {
   const eyebrow = 'WELCOME BACK' + (firstName ? ' · ' + firstName.toUpperCase() : '');
   let msg, ctaLabel = 'Continue →', ctaHref = null;
   if (allDone) {
-    msg = 'You have completed every step of the journey. Open the OS to revisit any tool.';
-    ctaLabel = 'Open OS →';
-    ctaHref = 'qb-branidos-hub.html';
+    msg = 'You have completed every step of the journey. Open your dashboard to revisit any tool.';
+    ctaLabel = 'Open dashboard →';
+    ctaHref = '/dashboard';
   } else if (phase01.percent === 100 && currentStep && currentStep.phase > 1) {
-    msg = 'Phase 01 is complete. Phase 02 unlocks ' + currentStep.name + ' next. Visit the OS to see everything that is now available.';
-    ctaLabel = 'Open OS →';
-    ctaHref = 'qb-branidos-hub.html';
+    msg = 'Phase 01 is complete. Phase 02 unlocks ' + currentStep.name + ' next. Visit your dashboard to see everything that is now available.';
+    ctaLabel = 'Open dashboard →';
+    ctaHref = '/dashboard';
   } else if (phase01.percent < 100 && currentStep && currentStep.phase === 1) {
     msg = 'Phase 01 is ' + phase01.percent + '% complete. ' + currentStep.name + ' compounds next.';
     ctaHref = currentStep.file;
