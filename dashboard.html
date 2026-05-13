@@ -584,6 +584,156 @@
     align-self:flex-start;
   }
 
+  /* Live artifact card — replaces a .artifact_slot when a real
+     artifact row exists for this user. Native <details> drives the
+     inline expansion; the summary IS the card, the body is the
+     synthesized content. */
+  .artifact_card {
+    border:2px solid var(--ink);
+    border-radius:var(--radius-card);
+    background:var(--cream-card);
+    box-shadow:var(--shadow-card-mobile);
+    overflow:hidden;
+    opacity:1;
+  }
+  @media (min-width:640px) {
+    .artifact_card { box-shadow:var(--shadow-card-desktop); }
+  }
+  .artifact_card > summary {
+    list-style:none;
+    cursor:pointer;
+    padding:var(--space-m);
+    display:flex;
+    flex-direction:column;
+    gap:var(--space-xs);
+    min-height:180px;
+    justify-content:space-between;
+    transition:background 0.3s var(--ease-qb);
+  }
+  .artifact_card > summary::-webkit-details-marker { display:none; }
+  .artifact_card[open] > summary { background:color-mix(in srgb, var(--cream-warm) 60%, transparent); }
+  .artifact_card:hover > summary { background:color-mix(in srgb, var(--cream-warm) 35%, transparent); }
+  .artifact_card .artifact_label { color:var(--ink); }
+  .artifact_card .artifact_chevron {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink-50);
+  }
+  .artifact_card[open] .artifact_chevron::before { content:'Collapse'; }
+  .artifact_card:not([open]) .artifact_chevron::before { content:'View'; }
+  .artifact_status {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    padding:0.3em 0.7em;
+    border-radius:var(--radius-pill);
+    align-self:flex-start;
+    display:inline-flex;
+    align-items:center;
+    gap:0.5em;
+  }
+  .artifact_status[data-status='producing'] {
+    color:var(--gold-deep);
+    background:color-mix(in srgb, var(--gold) 30%, transparent);
+    border:1px solid var(--gold-deep);
+  }
+  .artifact_status[data-status='producing']::before {
+    content:'';
+    width:6px; height:6px;
+    border-radius:9999px;
+    background:var(--gold-deep);
+    animation:artifactPulse 1.6s ease-in-out infinite;
+  }
+  .artifact_status[data-status='ready'] {
+    color:var(--cream);
+    background:var(--ink);
+    border:1px solid var(--ink);
+  }
+  .artifact_status[data-status='failed'] {
+    color:var(--cream);
+    background:var(--rose-deep);
+    border:1px solid var(--rose-deep);
+  }
+  @keyframes artifactPulse {
+    0%, 100% { opacity:1; transform:scale(1); }
+    50%      { opacity:0.45; transform:scale(0.6); }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    .artifact_status[data-status='producing']::before { animation:none; }
+  }
+  .artifact_body {
+    padding:0 var(--space-m) var(--space-m);
+    border-top:1px solid var(--ink-25);
+    display:flex;
+    flex-direction:column;
+    gap:var(--space-m);
+  }
+  .artifact_body__producing {
+    padding:var(--space-m);
+    border-top:1px solid var(--ink-25);
+    color:var(--ink-75);
+    font-family:var(--font-body);
+    font-size:var(--step--1);
+    line-height:1.55;
+  }
+  .artifact_body__producing .retry_row {
+    display:flex; flex-wrap:wrap; gap:var(--space-s); align-items:center;
+    margin-top:var(--space-s);
+  }
+  .artifact_section_eyebrow {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+    margin-top:var(--space-m);
+  }
+  .artifact_section_eyebrow:first-child { margin-top:var(--space-s); }
+  .artifact_section_body {
+    font-family:var(--font-body);
+    font-size:var(--step-0);
+    line-height:1.6;
+    color:var(--ink);
+    margin-top:0.35em;
+  }
+  .artifact_section_body--display {
+    font-family:var(--font-display);
+    font-variation-settings:'opsz' 144, 'SOFT' 55, 'wght' 500;
+    font-size:var(--step-1);
+    line-height:1.25;
+    color:var(--ink);
+  }
+  .artifact_list {
+    margin:0; padding:0; list-style:none;
+    display:flex; flex-direction:column; gap:0.4em;
+    font-family:var(--font-body);
+    font-size:var(--step-0);
+    line-height:1.5;
+    color:var(--ink);
+    margin-top:0.35em;
+  }
+  .artifact_list li { padding-left:1em; position:relative; }
+  .artifact_list li::before {
+    content:'';
+    position:absolute; left:0; top:0.65em;
+    width:6px; height:1px;
+    background:var(--ink-50);
+  }
+  .artifact_missing_note {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.06em;
+    color:var(--ink-50);
+    padding:var(--space-s);
+    border:1px dashed var(--ink-25);
+    border-radius:var(--radius-card);
+    background:transparent;
+    margin-top:var(--space-s);
+  }
+
   /* ── QUICK ACTIONS ────────────────────────────────────────────────── */
   .actions {
     display:flex;
@@ -931,7 +1081,7 @@
       </h2>
     </div>
 
-    <div class="empty" role="region" aria-label="Artifacts empty state">
+    <div class="empty" id="artifactsEmpty" role="region" aria-label="Artifacts empty state">
       <div>
         <h3 class="empty_t">Nothing here yet.</h3>
         <p class="empty_d">Your brand artifacts will appear here as your agents produce them. Complete Phase 01 to begin.</p>
@@ -941,9 +1091,11 @@
       </figure>
     </div>
 
-    <div class="artifacts_grid" aria-label="Upcoming artifact slots">
-      <div class="artifact_slot">
-        <span class="artifact_label">Brand Document</span>
+    <div class="artifacts_grid" id="artifactsGrid" aria-label="Brand artifacts">
+      <!-- Soul Map slot. Replaced in place by paintArtifacts() once the
+           corresponding row appears in public.artifacts. -->
+      <div class="artifact_slot" data-artifact-type="soul-map-synthesis">
+        <span class="artifact_label">Soul Map synthesis</span>
         <span class="artifact_locked">Locked</span>
       </div>
       <div class="artifact_slot">
@@ -1172,7 +1324,7 @@
     try {
       var res = await window.QB.cloudFetch(function (token) {
         return {
-          url: window.QB.SUPA_URL + '/rest/v1/profiles?select=email,first_name,tier,subscription_status,stripe_customer_id,tool_completions,foundation_locked_at&id=eq.' + session.userId,
+          url: window.QB.SUPA_URL + '/rest/v1/profiles?select=email,first_name,tier,subscription_status,stripe_customer_id,tool_completions,foundation_locked_at,foundation_lock_qbp&id=eq.' + session.userId,
           init: { headers: { 'apikey': window.QB.SUPA_KEY, 'Authorization': 'Bearer ' + token } }
         };
       });
@@ -1182,6 +1334,222 @@
     } catch (e) {
       return null;
     }
+  }
+
+  // Day 3: artifacts produced by the agentic dispatch layer. RLS scopes
+  // results to the current user. We tolerate the table not existing yet
+  // (returns a non-OK response) by silently returning [] so older
+  // databases keep rendering the locked-slot placeholders.
+  async function loadArtifacts(session) {
+    try {
+      var res = await window.QB.cloudFetch(function (token) {
+        return {
+          url: window.QB.SUPA_URL + '/rest/v1/artifacts?select=artifact_type,content,status,error,created_at,updated_at&user_id=eq.' + session.userId,
+          init: { headers: { 'apikey': window.QB.SUPA_KEY, 'Authorization': 'Bearer ' + token } }
+        };
+      });
+      if (!res || !res.ok) return [];
+      return await res.json();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function escapeText(s) {
+    return String(s == null ? '' : s).replace(/[&<>]/g, function (c) {
+      return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;';
+    });
+  }
+
+  // Render the synthesized Soul Map JSON into the inline expansion body.
+  // Defensive — every field is optional in case the agent flagged it as
+  // "Not yet captured" or returned a partially-filled structure.
+  function renderSoulMapBody(content) {
+    var c = (content && typeof content === 'object') ? content : {};
+    var html = '';
+
+    if (c.essence) {
+      html += '<div class="artifact_section_eyebrow">Essence</div>'
+            + '<p class="artifact_section_body artifact_section_body--display">' + escapeText(c.essence) + '</p>';
+    }
+    if (c.archetype) {
+      var ap = (c.archetype && typeof c.archetype === 'object') ? c.archetype : { primary:'', interpretation:'' };
+      html += '<div class="artifact_section_eyebrow">Archetype</div>'
+            + (ap.primary ? '<p class="artifact_section_body artifact_section_body--display">' + escapeText(ap.primary) + '</p>' : '')
+            + (ap.interpretation ? '<p class="artifact_section_body">' + escapeText(ap.interpretation) + '</p>' : '');
+    }
+    if (c.manifesto) {
+      html += '<div class="artifact_section_eyebrow">Manifesto</div>'
+            + '<p class="artifact_section_body">' + escapeText(c.manifesto).replace(/\n+/g, '</p><p class="artifact_section_body">') + '</p>';
+    }
+    if (c.antiBrand) {
+      html += '<div class="artifact_section_eyebrow">Anti-brand</div>'
+            + '<p class="artifact_section_body">' + escapeText(c.antiBrand) + '</p>';
+    }
+    if (c.paradox) {
+      html += '<div class="artifact_section_eyebrow">Paradox</div>'
+            + '<p class="artifact_section_body artifact_section_body--display">' + escapeText(c.paradox) + '</p>';
+    }
+    if (Array.isArray(c.always) && c.always.length) {
+      html += '<div class="artifact_section_eyebrow">Always</div>'
+            + '<ul class="artifact_list">'
+            + c.always.map(function (it) { return '<li>' + escapeText(it) + '</li>'; }).join('')
+            + '</ul>';
+    }
+    if (Array.isArray(c.never) && c.never.length) {
+      html += '<div class="artifact_section_eyebrow">Never</div>'
+            + '<ul class="artifact_list">'
+            + c.never.map(function (it) { return '<li>' + escapeText(it) + '</li>'; }).join('')
+            + '</ul>';
+    }
+    if (c.observed_pattern) {
+      html += '<div class="artifact_section_eyebrow">A pattern we noticed</div>'
+            + '<p class="artifact_section_body">' + escapeText(c.observed_pattern) + '</p>';
+    }
+    if (c._meta && Array.isArray(c._meta.missing_inputs) && c._meta.missing_inputs.length) {
+      html += '<div class="artifact_missing_note">Some answers were not captured before you locked: '
+            + c._meta.missing_inputs.map(escapeText).join(', ')
+            + '. Return to the Soul Map to fill these in. Your synthesis will sharpen on the next lock.</div>';
+    }
+    return html;
+  }
+
+  function ageInSeconds(iso) {
+    if (!iso) return 0;
+    var t = new Date(iso).getTime();
+    if (isNaN(t)) return 0;
+    return Math.max(0, (Date.now() - t) / 1000);
+  }
+
+  async function retrySynthesis(qbp) {
+    if (!window.QB || !window.QB.isAuthed()) return;
+    try {
+      var session = window.QB.getSession();
+      var res = await fetch('/api/agents/dispatch', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + session.token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: session.userId,
+          qbp: qbp || {},
+          agentName: 'soul-map-synthesizer'
+        })
+      });
+      var data = {};
+      try { data = await res.json(); } catch (e) {}
+      if (res.ok && data.ok) {
+        toast('Synthesis ready. Reloading.');
+      } else {
+        toast('Synthesis is still running. Try again in a minute.');
+      }
+    } catch (e) {
+      toast('Connection failed. Try again.');
+    }
+    await boot();
+  }
+
+  function paintArtifacts(profile, artifacts) {
+    var grid = document.getElementById('artifactsGrid');
+    var empty = document.getElementById('artifactsEmpty');
+    if (!grid) return;
+
+    var byType = {};
+    (artifacts || []).forEach(function (row) { byType[row.artifact_type] = row; });
+
+    var anyReal = (artifacts || []).length > 0;
+    if (anyReal && empty) empty.hidden = true;
+    if (!anyReal && empty) empty.hidden = false;
+
+    var soulSlot = grid.querySelector('[data-artifact-type="soul-map-synthesis"]');
+    if (!soulSlot) return;
+    var row = byType['soul-map-synthesis'];
+    if (!row) {
+      // Locked still applies if the lock has not fired yet.
+      return;
+    }
+
+    var status = row.status || 'producing';
+    var ageS = ageInSeconds(row.updated_at || row.created_at);
+
+    var details = document.createElement('details');
+    details.className = 'artifact_card';
+    details.setAttribute('data-artifact-type', 'soul-map-synthesis');
+
+    var summary = document.createElement('summary');
+
+    var label = document.createElement('span');
+    label.className = 'artifact_label';
+    label.textContent = 'Soul Map synthesis';
+
+    var statusEl = document.createElement('span');
+    statusEl.className = 'artifact_status';
+    statusEl.setAttribute('data-status', status);
+    if (status === 'producing') statusEl.textContent = 'Producing';
+    else if (status === 'ready') statusEl.textContent = 'Ready';
+    else statusEl.textContent = 'Failed';
+
+    var chevron = document.createElement('span');
+    chevron.className = 'artifact_chevron';
+
+    summary.appendChild(label);
+    summary.appendChild(statusEl);
+    if (status === 'ready') summary.appendChild(chevron);
+    details.appendChild(summary);
+
+    if (status === 'ready') {
+      var body = document.createElement('div');
+      body.className = 'artifact_body';
+      body.innerHTML = renderSoulMapBody(row.content);
+      details.appendChild(body);
+    } else if (status === 'producing') {
+      var bodyP = document.createElement('div');
+      bodyP.className = 'artifact_body__producing';
+      var stuck = ageS > 60;
+      bodyP.innerHTML = stuck
+        ? 'Still running. The first synthesis can occasionally exceed the timeout. Retry below to kick it again — your input is unchanged.'
+        : 'Your Soul Map synthesis is being produced. This takes up to a minute. You can leave the page; you will get an email when it lands.';
+      if (stuck) {
+        var retryRow = document.createElement('div');
+        retryRow.className = 'retry_row';
+        var retryBtn = document.createElement('button');
+        retryBtn.type = 'button';
+        retryBtn.className = 'qb-button';
+        retryBtn.innerHTML = '<span class="qb-button_content">Retry synthesis</span>';
+        retryBtn.addEventListener('click', function () {
+          retryBtn.disabled = true;
+          retrySynthesis(profile.foundation_lock_qbp || {});
+        });
+        retryRow.appendChild(retryBtn);
+        bodyP.appendChild(retryRow);
+      }
+      details.appendChild(bodyP);
+      // Producing summary should not toggle open (no body worth showing
+      // beyond the inline note), so keep it closed by default but allow
+      // expansion to surface the Retry row when relevant.
+      if (stuck) details.open = true;
+    } else {
+      var bodyF = document.createElement('div');
+      bodyF.className = 'artifact_body__producing';
+      bodyF.innerHTML = 'Synthesis failed. Please contact support, or retry below.';
+      var retryRowF = document.createElement('div');
+      retryRowF.className = 'retry_row';
+      var retryBtnF = document.createElement('button');
+      retryBtnF.type = 'button';
+      retryBtnF.className = 'qb-button';
+      retryBtnF.innerHTML = '<span class="qb-button_content">Retry synthesis</span>';
+      retryBtnF.addEventListener('click', function () {
+        retryBtnF.disabled = true;
+        retrySynthesis(profile.foundation_lock_qbp || {});
+      });
+      retryRowF.appendChild(retryBtnF);
+      bodyF.appendChild(retryRowF);
+      details.appendChild(bodyF);
+      details.open = true;
+    }
+
+    soulSlot.replaceWith(details);
   }
 
   // Phase 01 completion is gated on these four tools. Archetype Compass
@@ -1340,6 +1708,13 @@
     paint(profile);
     paintFoundation(profile);
     paintPhase01Card(profile);
+
+    // Artifacts query is non-blocking against the rest of the render. If
+    // the table is missing on an old DB or the request hiccups, the page
+    // still shows the locked-slot placeholders.
+    var artifacts = await loadArtifacts(session);
+    paintArtifacts(profile, artifacts);
+
     document.body.setAttribute('data-auth', 'ok');
   }
 

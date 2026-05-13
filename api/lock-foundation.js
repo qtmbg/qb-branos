@@ -20,7 +20,14 @@
 // Idempotent: re-calling on a locked profile returns the existing lockedAt
 // without re-sending the email or re-aggregating the qbp.
 //
-// Day 2 scope: NO agent dispatch. The synthesis fan-out lands in Day 3.
+// Day 3: after the lock writes, fan out to the agentic dispatcher.
+// The Soul Map Synthesizer is the only registered agent for now; future
+// agents plug into AGENT_REGISTRY in api/agents/dispatch.js without
+// touching this file. We await the dispatch call so the Edge invocation
+// stays open for its full 25s budget; the agent's Sonnet call runs
+// inside that window and the artifact row lands as 'ready' before we
+// respond to the dashboard. The lock email goes out first so the user
+// still gets confirmation even if the agent later times out.
 //
 // Required env vars:
 //   SUPABASE_URL, SUPABASE_ANON_KEY    For /auth/v1/user + RLS read/patch.
@@ -272,8 +279,43 @@ export default async function handler(req) {
     });
   }
 
-  return new Response(JSON.stringify({ ok: true, lockedAt }), {
+  // Step 6: agent dispatch. Day 3 only ships soul-map-synthesizer. We
+  // build the same-origin URL from the inbound request so this works
+  // identically on the bare and app hosts. Dispatch errors do not roll
+  // back the lock — the dashboard surfaces a Retry on stuck rows.
+  const dispatchResult = await runAgentDispatch({
+    req,
+    token,
+    userId: user.id,
+    qbp: lockQbp,
+    agentName: 'soul-map-synthesizer',
+  });
+
+  return new Response(JSON.stringify({ ok: true, lockedAt, dispatch: dispatchResult }), {
     status: 200,
     headers: { 'Content-Type': 'application/json', ...cors_h },
   });
+}
+
+async function runAgentDispatch({ req, token, userId, qbp, agentName }) {
+  try {
+    const base = new URL(req.url).origin;
+    const res = await fetch(`${base}/api/agents/dispatch`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, qbp, agentName }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.error('[lock-foundation] dispatch non-OK', res.status, JSON.stringify(data).slice(0, 300));
+      return { ok: false, status: res.status, error: data?.error || 'dispatch failed' };
+    }
+    return data;
+  } catch (e) {
+    console.error('[lock-foundation] dispatch threw', e && e.message);
+    return { ok: false, error: e && e.message || 'dispatch threw' };
+  }
 }

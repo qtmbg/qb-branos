@@ -190,7 +190,43 @@ create trigger profiles_updated_at
   before update on public.profiles
   for each row execute function public.set_updated_at();
 
--- 6. ADMIN VIEW: funnel_snapshot ────────────────────────────────────────────
+-- 6. ARTIFACTS TABLE ────────────────────────────────────────────────────────
+-- Output of the agentic synthesis layer. Each row is one artifact for one
+-- user (Soul Map synthesis, Voice guide, etc). Status moves
+-- 'producing' → 'ready' (or 'failed') as the agent runs.
+--
+-- RLS: users SELECT their own rows. INSERT/UPDATE/DELETE are not allowed
+-- for normal callers; the dispatch function writes with the service role,
+-- which bypasses RLS by design. This keeps client tools from forging
+-- artifacts even if they hold a valid JWT.
+create table if not exists public.artifacts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  artifact_type text not null,
+  content jsonb not null default '{}'::jsonb,
+  status text not null default 'producing',
+  error text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id, artifact_type)
+);
+
+create index if not exists idx_artifacts_user_status   on public.artifacts(user_id, status);
+create index if not exists idx_artifacts_type          on public.artifacts(artifact_type);
+
+alter table public.artifacts enable row level security;
+
+drop policy if exists "Users can read own artifacts" on public.artifacts;
+create policy "Users can read own artifacts"
+  on public.artifacts for select
+  using (auth.uid() = user_id);
+
+drop trigger if exists artifacts_updated_at on public.artifacts;
+create trigger artifacts_updated_at
+  before update on public.artifacts
+  for each row execute function public.set_updated_at();
+
+-- 7. ADMIN VIEW: funnel_snapshot ────────────────────────────────────────────
 -- Aggregated counts by drip_stage + signup_source. Read-only. Useful for
 -- Supabase Studio dashboards. Not exposed to the client.
 create or replace view public.funnel_snapshot as
