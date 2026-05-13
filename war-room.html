@@ -4,16 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<title>Quantum Dashboard · QB BrandOS War Room</title>
-<meta name="description" content="Internal war room dashboard for QB BrandOS. Shipped work, go-live actions, build queue, agents roadmap, native roadmap.">
+<title>Ship Gate · QB BrandOS</title>
+<meta name="description" content="What is missing before QB BrandOS can ship and take money safely.">
 
-<meta name="theme-color" content="#080604">
-<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#FBF5E6">
+<meta name="color-scheme" content="light">
 <meta name="robots" content="noindex,nofollow">
 
 <link rel="icon" type="image/svg+xml" href="/img/brand/web/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/img/brand/web/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/brand/web/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+
+<link rel="canonical" href="https://quantumbranding.ai/war-room.html">
 
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
@@ -23,949 +26,671 @@
 
 <style>
   :root {
-    --font-display: 'Fraunces', Georgia, serif;
-    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    /* Surface */
+    --cream:#FBF5E6; --cream-card:#F2EBD3; --cream-warm:#ECDDB8; --cream-edge:#DBD4C0;
+    --cream-rose:#F4D9DD; --white:#FFFEF8;
 
-    --wr-green: #4ade80;
-    --wr-blue: #60a5fa;
-    --wr-pink: #f472b6;
-    --wr-teal: #2dd4bf;
-    --wr-amber: #f59e0b;
-    --wr-purple: #a78bfa;
-    --wr-red: #f87171;
-    --wr-patina: #3A5F4A;
-    --wr-brass: #A8903E;
+    /* Ink */
+    --ink:#2D1521;
+    --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.50);
+    --ink-33:rgba(45,21,33,0.33); --ink-25:rgba(45,21,33,0.25);
+    --ink-10:rgba(45,21,33,0.10);
 
-    --wr-bg: #080604;
-    --wr-bg2: #12100d;
-    --wr-text: #DDD4C4;
-    --wr-text2: #B8AFA2;
-    --wr-text3: #8A8279;
-    --wr-bd: rgba(221, 212, 196, 0.06);
-    --wr-bd2: rgba(221, 212, 196, 0.12);
-    --wr-cd: rgba(255, 255, 255, 0.02);
-    --wr-ns: #555;
-    --wr-ac: var(--wr-patina);
+    /* Brand triad */
+    --gold:#E0B069; --rose:#CA6180; --teal:#9ED3DC;
+
+    /* Depth */
+    --rose-deep:#8E3F58; --teal-deep:#5BA8B5; --gold-deep:#B58840; --aubergine:#4A2B3A;
+
+    /* Phases */
+    --phase-discovery:#9CC4A2;
+    --phase-creation:#B5C8E5;
+    --phase-content:#FCB7C7;
+    --phase-execution:#E89380;
+    --phase-intelligence:#B080A0;
+
+    /* Type */
+    --font-display:'Fraunces','Times New Roman',serif;
+    --font-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+
+    /* Type scale */
+    --step--1:clamp(0.9375rem,0.8937rem + 0.2063vw,1.1rem);
+    --step-0:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+    --step-1:clamp(1.35rem,1.2505rem + 0.4683vw,1.7188rem);
+    --step-2:clamp(1.62rem,1.4773rem + 0.6714vw,2.1488rem);
+    --step-3:clamp(1.9438rem,1.7436rem + 0.9421vw,2.6856rem);
+    --step-4:clamp(2.3325rem,2.0561rem + 1.3008vw,3.3569rem);
+    --step-5:clamp(2.7994rem,2.4224rem + 1.7738vw,4.1963rem);
+
+    /* Space scale */
+    --space-3xs:clamp(0.375rem,0.353rem + 0.106vw,0.4375rem);
+    --space-2xs:clamp(0.5625rem,0.5288rem + 0.1587vw,0.6875rem);
+    --space-xs:clamp(0.875rem,0.8244rem + 0.2381vw,1.0625rem);
+    --space-s:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+    --space-m:clamp(1.6875rem,1.5863rem + 0.4762vw,2.0625rem);
+    --space-l:clamp(2.25rem,2.1151rem + 0.6349vw,2.75rem);
+    --space-xl:clamp(3.375rem,3.1726rem + 0.9524vw,4.125rem);
+    --space-2xl:clamp(4.5rem,4.2302rem + 1.2698vw,5.5rem);
+
+    /* Radii + motion */
+    --radius-card:18px;
+    --radius-pill:999px;
+    --ease-qb:cubic-bezier(0.19,1,0.22,1);
+
+    /* Hard offset shadow signature */
+    --shadow-card-mobile:0 9px 0 0 var(--ink);
+    --shadow-card-desktop:0 16px 0 0 var(--ink);
   }
 
-  [data-mode="light"] {
-    --wr-bg: #F5F0E8;
-    --wr-bg2: #EDE7DC;
-    --wr-text: #1a1714;
-    --wr-text2: #4a453d;
-    --wr-text3: #7a7368;
-    --wr-bd: rgba(26, 23, 20, 0.08);
-    --wr-bd2: rgba(26, 23, 20, 0.12);
-    --wr-cd: rgba(0, 0, 0, 0.03);
-    --wr-ns: #aaa;
-    --wr-ac: #2d5a3d;
+  *,*::before,*::after { box-sizing:border-box; }
+  body,h1,h2,h3,p,ul,figure { margin:0; }
+  ul { padding:0; list-style:none; }
+  button { font:inherit; color:inherit; cursor:pointer; border:none; background:none; }
+  a { color:inherit; }
+
+  html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  html,body {
+    background:var(--cream);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:var(--step-0);
+    line-height:1.55;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html, body {
-    background: var(--wr-bg);
-    color: var(--wr-text);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    transition: background 0.3s, color 0.3s;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  .wrap {
+    max-width:980px;
+    margin:0 auto;
+    padding:var(--space-l) var(--space-s) var(--space-2xl);
   }
 
-  button { font-family: inherit; }
-  a { color: inherit; }
+  /* HEADER */
+  .qb-eyebrow {
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+    font-weight:700;
+  }
+  .qb-eyebrow_dot {
+    display:inline-block;
+    width:0.45em;
+    height:0.45em;
+    border-radius:50%;
+    background:var(--gold-deep);
+    margin-right:0.65em;
+    vertical-align:0.18em;
+  }
 
-  .header {
-    border-bottom: 1px solid var(--wr-bd);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
+  .qb-headline {
+    font-family:var(--font-display);
+    font-weight:400;
+    font-variation-settings:'opsz' 144, 'SOFT' 60;
+    line-height:1.05;
+    color:var(--ink);
+    letter-spacing:-0.01em;
   }
-  .header_eyebrow {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--wr-ac);
-    font-weight: 700;
-    margin-bottom: 3px;
+  .qb-headline em {
+    font-style:italic;
+    color:var(--gold-deep);
+    font-variation-settings:'opsz' 144, 'SOFT' 60;
   }
+
+  .header { margin-bottom:var(--space-m); }
+  .header_eyebrow { margin-bottom:var(--space-xs); }
   .header_title {
-    font-family: var(--font-display);
-    font-size: 24px;
-    font-weight: 400;
-    font-variation-settings: 'opsz' 144, 'SOFT' 60;
+    font-size:var(--step-5);
+    margin-bottom:var(--space-s);
   }
-  .header_right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .header_pct_n {
-    font-family: var(--font-mono);
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--wr-brass);
-    text-align: right;
-  }
-  .header_pct_n.full { color: var(--wr-green); }
-  .header_pct_l {
-    font-family: var(--font-mono);
-    font-size: 8px;
-    color: var(--wr-text3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-align: right;
-  }
-  .header_bar {
-    width: 80px;
-    height: 5px;
-    background: var(--wr-bd2);
-    border-radius: 3px;
-  }
-  .header_bar > div {
-    height: 100%;
-    background: var(--wr-ac);
-    border-radius: 3px;
-    transition: width 0.3s;
-  }
-  .header_mode {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    border: 1px solid var(--wr-bd2);
-    background: var(--wr-cd);
-    color: var(--wr-text2);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
+  .header_sub {
+    font-size:var(--step-0);
+    color:var(--ink-75);
+    max-width:62ch;
+    line-height:1.55;
   }
 
-  .filters {
-    display: flex;
-    gap: 8px;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--wr-bd);
-    flex-wrap: wrap;
+  /* STATUS STRIP */
+  .ship_status {
+    margin:var(--space-m) 0 var(--space-l);
+    padding:var(--space-s) var(--space-m);
+    border:2px solid var(--ink);
+    border-radius:var(--radius-card);
+    background:var(--cream-card);
+    box-shadow:var(--shadow-card-mobile);
+    display:flex;
+    align-items:center;
+    gap:var(--space-s);
+    transition:transform 0.4s var(--ease-qb), box-shadow 0.4s var(--ease-qb);
   }
-  .filter {
-    background: var(--wr-cd);
-    border: 1px solid var(--wr-bd);
-    border-radius: 6px;
-    padding: 8px 14px;
-    cursor: pointer;
-    color: var(--wr-text2);
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.06em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.15s;
+  @media (min-width:640px) {
+    .ship_status { box-shadow:var(--shadow-card-desktop); }
   }
-  .filter[data-active="1"] {
-    background: color-mix(in srgb, var(--filter-c) 9%, transparent);
-    border-color: color-mix(in srgb, var(--filter-c) 25%, transparent);
-    color: var(--filter-c);
+  .ship_status_dot {
+    width:1.1em;
+    height:1.1em;
+    border-radius:50%;
+    flex-shrink:0;
+    background:var(--rose-deep);
+    box-shadow:0 0 0 0.4em color-mix(in srgb, var(--rose-deep) 18%, transparent);
   }
-  .filter_count { font-size: 9px; opacity: 0.6; }
-  .filter_clear {
-    background: none;
-    border: 1px solid var(--wr-bd2);
-    border-radius: 6px;
-    padding: 8px 14px;
-    cursor: pointer;
-    color: var(--wr-text3);
-    font-family: var(--font-mono);
-    font-size: 10px;
+  .ship_status[data-state="amber"] .ship_status_dot {
+    background:var(--gold-deep);
+    box-shadow:0 0 0 0.4em color-mix(in srgb, var(--gold-deep) 18%, transparent);
   }
-
-  .body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
+  .ship_status[data-state="green"] .ship_status_dot {
+    background:var(--phase-discovery);
+    box-shadow:0 0 0 0.4em color-mix(in srgb, var(--phase-discovery) 22%, transparent);
   }
-
-  .group_h {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    user-select: none;
+  .ship_status_l {
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-50);
+    margin-bottom:var(--space-3xs);
   }
-  .group_caret {
-    font-size: 12px;
-    transition: transform 0.2s;
-  }
-  .group_caret[data-col="1"] { transform: rotate(-90deg); }
-  .group_label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-  .group_count {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--wr-text3);
-  }
-  .group_list {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .group_list[data-col="1"] { display: none; }
-
-  .card {
-    background: var(--wr-cd);
-    border: 1px solid var(--wr-bd);
-    border-radius: 10px;
-    padding: 14px 16px;
-    cursor: pointer;
-    border-left: 3px solid color-mix(in srgb, var(--st-c) 25%, transparent);
-    transition: all 0.15s;
-  }
-  .card:hover { border-color: var(--wr-bd2); }
-  .card_row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .card_chk {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--wr-green);
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .card_pr {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .card_t {
-    font-size: 14px;
-    font-weight: 500;
-    flex: 1;
-    color: var(--wr-text);
-  }
-  .card[data-done="1"] .card_t {
-    text-decoration: line-through;
-    opacity: 0.5;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 4px;
-    background: color-mix(in srgb, var(--st-c) 9%, transparent);
-    color: var(--st-c);
-    border: 1px solid color-mix(in srgb, var(--st-c) 19%, transparent);
-  }
-  .badge_dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--st-c);
-  }
-  .card_d {
-    margin-top: 12px;
-    padding-left: 40px;
-    font-size: 13px;
-    color: var(--wr-text2);
-    line-height: 1.7;
-    display: none;
-  }
-  .card[data-exp="1"] .card_d { display: block; }
-  .card_owner {
-    margin-top: 8px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--wr-text3);
+  .ship_status_t {
+    font-family:var(--font-display);
+    font-size:var(--step-2);
+    font-variation-settings:'opsz' 144, 'SOFT' 55;
+    line-height:1.2;
+    color:var(--ink);
   }
 
-  .panel {
-    background: var(--wr-cd);
-    border: 1px solid var(--wr-bd);
-    border-radius: 10px;
-    padding: 12px;
-    overflow: hidden;
+  /* LEGEND */
+  .legend {
+    margin:var(--space-m) 0 var(--space-l);
+    padding:var(--space-s) var(--space-m);
+    border:1px solid var(--ink-25);
+    border-radius:12px;
+    background:color-mix(in srgb, var(--cream-warm) 50%, transparent);
+    display:flex;
+    flex-wrap:wrap;
+    gap:var(--space-s) var(--space-m);
+    font-size:var(--step--1);
+    color:var(--ink-75);
   }
-  .panel_label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: block;
+  .legend_item { display:flex; align-items:center; gap:var(--space-2xs); }
+  .legend_swatch { width:0.9em; height:0.9em; border-radius:50%; border:1.5px solid var(--ink); background:var(--swatch-c); }
+  .legend_swatch.is-t0 { --swatch-c:var(--rose); }
+  .legend_swatch.is-t1 { --swatch-c:var(--gold-deep); }
+  .legend_swatch.is-t2 { --swatch-c:var(--teal-deep); }
+  .legend_swatch.is-t3 { --swatch-c:var(--phase-intelligence); }
+
+  /* TIER CARDS */
+  .tier {
+    margin-bottom:var(--space-l);
+    border:2px solid var(--ink);
+    border-radius:var(--radius-card);
+    background:var(--cream-card);
+    box-shadow:var(--shadow-card-mobile);
+    overflow:hidden;
+    transition:opacity 0.4s var(--ease-qb);
+  }
+  @media (min-width:640px) {
+    .tier { box-shadow:var(--shadow-card-desktop); }
+  }
+  .tier[data-locked="1"] { opacity:0.55; }
+  .tier[data-locked="1"] .tier_body { pointer-events:none; }
+
+  .tier_head {
+    padding:var(--space-m) var(--space-m) var(--space-s);
+    display:flex;
+    align-items:center;
+    gap:var(--space-s);
+    flex-wrap:wrap;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--tier-c) 18%, transparent), transparent);
+    border-bottom:1px solid var(--ink-10);
+  }
+  .tier_num {
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    font-weight:700;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    padding:var(--space-3xs) var(--space-2xs);
+    border-radius:6px;
+    background:var(--tier-c);
+    color:var(--ink);
+  }
+  .tier_name {
+    font-family:var(--font-display);
+    font-size:var(--step-3);
+    font-variation-settings:'opsz' 144, 'SOFT' 55;
+    line-height:1.1;
+    color:var(--ink);
+    flex:1;
+    min-width:14ch;
+  }
+  .tier_count {
+    font-family:var(--font-mono);
+    font-size:var(--step-0);
+    color:var(--ink-75);
+    font-weight:500;
+  }
+  .tier_count strong { color:var(--ink); }
+  .tier_lock {
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+    padding:var(--space-3xs) var(--space-2xs);
+    border:1px solid var(--gold-deep);
+    border-radius:6px;
+    display:none;
+  }
+  .tier[data-locked="1"] .tier_lock { display:inline-block; }
+  .tier[data-locked="1"] .tier_count { display:none; }
+
+  .tier_gate {
+    padding:var(--space-s) var(--space-m);
+    background:color-mix(in srgb, var(--tier-c) 10%, transparent);
+    border-bottom:1px solid var(--ink-10);
+    font-size:var(--step-0);
+    line-height:1.55;
+    color:var(--ink-75);
+  }
+  .tier_gate strong { color:var(--ink); font-weight:600; }
+
+  .tier_body { padding:var(--space-2xs) 0; }
+
+  /* TASK ROW */
+  .task {
+    padding:var(--space-s) var(--space-m);
+    border-bottom:1px solid var(--ink-10);
+    display:flex;
+    align-items:flex-start;
+    gap:var(--space-s);
+    transition:background 0.2s var(--ease-qb);
+  }
+  .task:last-child { border-bottom:none; }
+  .task:hover { background:color-mix(in srgb, var(--ink) 3%, transparent); }
+
+  .task_chk {
+    -webkit-appearance:none;
+    appearance:none;
+    width:1.4em;
+    height:1.4em;
+    border:2px solid var(--ink);
+    border-radius:6px;
+    background:var(--white);
+    cursor:pointer;
+    flex-shrink:0;
+    margin-top:0.15em;
+    position:relative;
+    transition:background 0.2s var(--ease-qb), transform 0.2s var(--ease-qb);
+  }
+  .task_chk:hover { transform:scale(1.05); }
+  .task_chk:checked { background:var(--phase-discovery); }
+  .task_chk:checked::after {
+    content:"";
+    position:absolute;
+    left:0.34em;
+    top:0.08em;
+    width:0.4em;
+    height:0.78em;
+    border:solid var(--ink);
+    border-width:0 3px 3px 0;
+    transform:rotate(45deg);
   }
 
-  .gantt_scroll, .journey_scroll {
-    overflow-x: auto;
-    margin-top: 16px;
-    padding-bottom: 8px;
+  .task_body { flex:1; min-width:0; }
+  .task_t {
+    font-size:var(--step-1);
+    font-weight:600;
+    line-height:1.35;
+    color:var(--ink);
+    margin-bottom:var(--space-3xs);
   }
-  .gantt_inner { min-width: 700px; }
-  .gantt_head {
-    display: grid;
-    grid-template-columns: 140px 1fr;
+  .task[data-done="1"] .task_t { text-decoration:line-through; color:var(--ink-50); }
+  .task_d {
+    font-size:var(--step-0);
+    color:var(--ink-75);
+    line-height:1.55;
+    margin-bottom:var(--space-xs);
   }
-  .gantt_head_l {
-    padding: 8px 10px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--wr-text3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+  .task[data-done="1"] .task_d { color:var(--ink-50); }
+  .task_meta {
+    display:flex;
+    align-items:center;
+    gap:var(--space-2xs);
+    flex-wrap:wrap;
   }
-  .gantt_wks {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    border-bottom: 1px solid var(--wr-bd);
+  .qb-tag {
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    letter-spacing:0.06em;
+    padding:var(--space-3xs) var(--space-2xs);
+    border:1px solid var(--gold-deep);
+    border-radius:var(--radius-pill);
+    background:color-mix(in srgb, var(--gold-deep) 10%, transparent);
+    color:var(--gold-deep);
+    font-weight:600;
   }
-  .gantt_wk {
-    padding: 8px 2px;
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--wr-text3);
-  }
-  .gantt_row {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    border-bottom: 1px solid var(--wr-bd);
-  }
-  .gantt_l {
-    padding: 5px 10px;
-    font-size: 11px;
-    color: var(--wr-text2);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .gantt_l_dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .gantt_track {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    min-height: 26px;
-  }
-  .gantt_cell { border-left: 1px solid var(--wr-bd); }
-  .gantt_bar {
-    position: absolute;
-    top: 3px;
-    height: 18px;
-    border-radius: 4px;
-    background: color-mix(in srgb, var(--bar-c) 14%, transparent);
-    border: 1px solid color-mix(in srgb, var(--bar-c) 25%, transparent);
+  .qb-tag.is-muted {
+    border:1px solid var(--ink-25);
+    background:transparent;
+    color:var(--ink-50);
+    font-weight:500;
   }
 
-  .journey_inner {
-    display: flex;
-    gap: 0;
-    align-items: flex-start;
-    min-width: 1000px;
-  }
-  .jn_node { display: flex; align-items: flex-start; }
-  .jn_col { display: flex; flex-direction: column; align-items: center; width: 68px; }
-  .jn_ph {
-    font-family: var(--font-mono);
-    font-size: 7px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-    text-align: center;
-    opacity: 0.7;
-  }
-  .jn_circle {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    font-weight: 700;
-    background: color-mix(in srgb, var(--jn-c) 12%, transparent);
-    border: 2px solid color-mix(in srgb, var(--jn-c) 31%, transparent);
-    color: var(--jn-c);
-  }
-  .jn_l {
-    font-size: 10px;
-    font-weight: 600;
-    margin-top: 4px;
-    text-align: center;
-    line-height: 1.2;
-    color: var(--wr-text);
-  }
-  .jn_ps {
-    margin-top: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    align-items: center;
-  }
-  .jn_ps span {
-    font-size: 7px;
-    padding: 1px 4px;
-    border-radius: 3px;
-    background: var(--wr-cd);
-    border: 1px solid var(--wr-bd);
-    color: var(--wr-text3);
-    font-family: var(--font-mono);
-    text-align: center;
-    max-width: 70px;
-    line-height: 1.2;
-  }
-  .jn_link {
-    display: flex;
-    align-items: center;
-    padding-top: 18px;
-    width: 8px;
-  }
-  .jn_link > div {
-    width: 8px;
-    height: 1px;
-    background: var(--wr-bd2);
-  }
-
-  .decisions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
-  }
-  .dec {
-    background: var(--wr-cd);
-    border: 1px solid var(--wr-bd);
-    border-top: 3px solid color-mix(in srgb, var(--dec-c) 25%, transparent);
-    border-radius: 8px;
-    padding: 12px 14px;
-  }
-  .dec_t {
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: var(--wr-text);
-  }
-  .dec_v {
-    font-family: var(--font-mono);
-    font-size: 8px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 3px;
-    background: color-mix(in srgb, var(--dec-c) 9%, transparent);
-    color: var(--dec-c);
-    border: 1px solid color-mix(in srgb, var(--dec-c) 19%, transparent);
-  }
-
+  /* FOOTER + BUTTON */
   .footer {
-    font-family: var(--font-mono);
-    font-size: 8px;
-    color: var(--wr-text3);
-    letter-spacing: 0.06em;
-    text-align: center;
-    padding: 20px 0 8px;
-    border-top: 1px solid var(--wr-bd);
+    margin-top:var(--space-xl);
+    padding-top:var(--space-m);
+    border-top:1px solid var(--ink-10);
+    text-align:center;
+  }
+  .footer_meta {
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    letter-spacing:0.08em;
+    color:var(--ink-50);
+    margin-bottom:var(--space-s);
+  }
+  .qb-button {
+    display:inline-block;
+    padding:0;
+    font-size:var(--step-0);
+    color:var(--ink);
+    border-radius:var(--radius-pill);
+    position:relative;
+  }
+  .qb-button::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:var(--ink);
+    border-radius:var(--radius-pill);
+    transform:translateY(0.32em);
+    transition:transform 0.4s var(--ease-qb);
+    z-index:0;
+  }
+  .qb-button_content {
+    position:relative;
+    display:inline-block;
+    background:var(--cream-card);
+    border:2px solid var(--ink);
+    color:var(--ink);
+    padding:0.7em 1.6em;
+    border-radius:var(--radius-pill);
+    font-weight:600;
+    transition:transform 0.4s var(--ease-qb), filter 0.4s var(--ease-qb);
+    z-index:1;
+  }
+  @media (hover:hover) {
+    .qb-button:hover .qb-button_content {
+      transform:translateY(-0.18em);
+      filter:brightness(1.04);
+    }
+    .qb-button:hover::before { transform:translateY(0.42em); }
+  }
+  .qb-button:active .qb-button_content {
+    transform:translateY(0.22em);
+    transition-duration:0.15s;
+  }
+  .qb-button:active::before {
+    transform:translateY(0.10em);
+    transition-duration:0.15s;
   }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      animation-duration:0.01ms !important;
+      transition-duration:0.01ms !important;
     }
+  }
+
+  @media (max-width:520px) {
+    .tier_head { gap:var(--space-2xs); }
+    .tier_name { width:100%; order:3; }
   }
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div>
-    <div class="header_eyebrow">QB BrandOS War Room</div>
-    <div class="header_title">Quantum Dashboard</div>
-  </div>
-  <div class="header_right">
+<div class="wrap">
+
+  <header class="header">
+    <div class="qb-eyebrow header_eyebrow">
+      <span class="qb-eyebrow_dot"></span>QB BrandOS · Ship Gate
+    </div>
+    <h1 class="qb-headline header_title">
+      What is missing<br>to ship<em>.</em>
+    </h1>
+    <p class="header_sub">
+      Four tiers ordered by what blocks revenue. Work the lowest open tier. Do not touch the next one until the current is clean.
+    </p>
+  </header>
+
+  <div class="ship_status" id="shipStatus" data-state="red">
+    <div class="ship_status_dot"></div>
     <div>
-      <div class="header_pct_n" id="pct">0%</div>
-      <div class="header_pct_l" id="pctLabel">0/0 tasks</div>
+      <div class="ship_status_l">Ship readiness</div>
+      <div class="ship_status_t" id="shipStatusText">Not ready. Tier 00 must close before anything else.</div>
     </div>
-    <div class="header_bar"><div id="pctBar" style="width:0%"></div></div>
-    <button class="header_mode" id="modeBtn" aria-label="Toggle color mode">☾</button>
   </div>
-</header>
 
-<nav class="filters" id="filters" aria-label="Task group filters"></nav>
+  <div class="legend" aria-label="Tier colors">
+    <span class="legend_item"><span class="legend_swatch is-t0"></span>Tier 00 · Security</span>
+    <span class="legend_item"><span class="legend_swatch is-t1"></span>Tier 01 · Transaction</span>
+    <span class="legend_item"><span class="legend_swatch is-t2"></span>Tier 02 · Experience</span>
+    <span class="legend_item"><span class="legend_swatch is-t3"></span>Tier 03 · Backlog</span>
+  </div>
 
-<main class="body">
-  <div id="groups"></div>
+  <div id="tiers"></div>
 
-  <section>
-    <span class="panel_label" style="color:var(--wr-ac)">Timeline</span>
-    <div class="panel">
-      <div class="gantt_scroll">
-        <div class="gantt_inner">
-          <div class="gantt_head">
-            <div class="gantt_head_l">Stream</div>
-            <div class="gantt_wks" id="ganttWks"></div>
-          </div>
-          <div id="ganttRows"></div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <footer class="footer">
+    <div class="footer_meta">QB BrandOS Ship Gate · May 2026 · State saved locally</div>
+    <button class="qb-button" id="resetBtn"><span class="qb-button_content">Reset all checks</span></button>
+  </footer>
 
-  <section>
-    <span class="panel_label" style="color:var(--wr-brass)">User Journey</span>
-    <div class="panel">
-      <div class="journey_scroll">
-        <div class="journey_inner" id="journey"></div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <span class="panel_label" style="color:var(--wr-brass)">Decisions (Locked)</span>
-    <div class="decisions" id="decisions"></div>
-  </section>
-
-  <div class="footer" id="footer">QB BrandOS War Room | May 2026 | DARK mode</div>
-</main>
+</div>
 
 <script>
 (function () {
   'use strict';
 
-  const A = {
-    green: '#4ade80', blue: '#60a5fa', pink: '#f472b6', teal: '#2dd4bf',
-    amber: '#f59e0b', purple: '#a78bfa', red: '#f87171',
-    patina: '#3A5F4A', brass: '#A8903E'
-  };
+  var LS = 'qb_shipgate_v2';
 
-  const S = { N: 'ns', I: 'ip', B: 'bl', D: 'dn' };
-  const SL = { ns: 'Not Started', ip: 'In Progress', bl: 'Blocked', dn: 'Done' };
-  const sc = function (s) {
-    return { ns: 'var(--wr-ns)', ip: A.amber, bl: A.red, dn: A.green }[s];
-  };
-
-  const GR = {
-    ship: { l: 'Shipped', c: A.green, i: '▲' },
-    go: { l: 'Go Live', c: A.teal, i: '◉' },
-    build: { l: 'Build Work', c: A.brass, i: '◆' },
-    agents: { l: 'Managed Agents', c: A.purple, i: '◈' },
-    native: { l: 'Native App', c: A.blue, i: '◐' }
-  };
-
-  const tasks0 = [
-    // Shipped — already on main
-    { id: 'sh1', g: 'ship', t: 'Defensive parse Batch A (6 highest-exposure tools)', d: 'PR #7 (a2c54b5). UNAVAILABLE sentinel + localFallback wired into youtube-strategy, linkedin-strategy, voice-guide, content-repurposing, content-scheduler, newsletter-architecture.', s: S.D, p: 'critical', o: 'Build Chat' },
-    { id: 'sh2', g: 'ship', t: 'Defensive parse Batch B (4 medium-exposure tools)', d: 'PR #8 (dc121b4). Hardened brand-performance-dashboard, war-table (typed error.kind), predictive-panel, instagram-seed-agent against Vercel edge timeouts.', s: S.D, p: 'critical', o: 'Build Chat' },
-    { id: 'sh3', g: 'ship', t: 'Defensive parse Batch C (logo-direction + logo-evaluation)', d: 'PR #9 (a0136c4). Closes the 13-tool hardening sprint. content-bridge + /qb-ai.js parked for Vercel Pro reopen.', s: S.D, p: 'critical', o: 'Build Chat' },
-    { id: 'sh4', g: 'ship', t: 'Archetype-compass max_tokens 5000 for Hobby window', d: 'PR #6 (28af8b0). Defensive cap to keep Sonnet response under the 10s Hobby edge timeout.', s: S.D, p: 'high', o: 'Build Chat' },
-    { id: 'sh5', g: 'ship', t: 'Vercel Web Analytics + Speed Insights live', d: 'PR #5 (d53e1b7). Provisioning needed one redeploy to mount /_vercel/insights/view.', s: S.D, p: 'high', o: 'Build Chat' },
-    { id: 'sh6', g: 'ship', t: 'Email senders moved to @quantumbranding.ai', d: 'Resend domain verified, send-results + magic-link now use the branded domain.', s: S.D, p: 'high', o: 'Build Chat' },
-    { id: 'sh7', g: 'ship', t: '24 archetype illustrations shipped', d: '12 scenes + 12 expressions, framed tight, wired across archetype-compass + the-profiles.', s: S.D, p: 'medium', o: 'Build Chat' },
-    { id: 'sh8', g: 'ship', t: 'JSON-LD structured data on all 27 pages', d: 'SEO schema rolled out to index + tools + remaining 26 pages.', s: S.D, p: 'medium', o: 'Build Chat' },
-    { id: 'sh9', g: 'ship', t: 'Canonical Google Fonts URL unified sitewide', d: 'Fraunces + Inter + JetBrains Mono on every non-profile page. Non-render-blocking pattern in HEAD-SNIPPET.html.', s: S.D, p: 'medium', o: 'Build Chat' },
-    { id: 'sh10', g: 'ship', t: 'Visual DNA 200-image runtime manifest', d: 'Real curated images replacing placeholders, manifest-driven loader.', s: S.D, p: 'medium', o: 'Build Chat' },
-    { id: 'sh11', g: 'ship', t: 'Brand mark, lockups, favicons, OG images', d: 'Four colourways + horizontal/vertical lockups + web favicons + 1200x630 OG card in /img/brand/.', s: S.D, p: 'high', o: 'Build Chat' },
-    { id: 'sh12', g: 'ship', t: 'Canonical brand documents committed', d: 'Brand Codex v1, Design System v3.4, Voice Codex v1, Illustration Style Lock v1, Master Instruction v5 in /docs/brand/.', s: S.D, p: 'high', o: 'Build Chat' },
-    { id: 'sh13', g: 'ship', t: 'Merge gate protocol in CLAUDE.md', d: 'PR #2 (897a939). Hard rules for branch-only work, no main commits without explicit release language.', s: S.D, p: 'medium', o: 'Build Chat' },
-    { id: 'sh14', g: 'ship', t: 'a11y contrast pass on hero + footer text', d: 'PRs #1-#3. --ink-50 to --ink-75 bumps, --gold to --gold-deep on em spotlights, footer meta + links.', s: S.D, p: 'medium', o: 'Build Chat' },
-    { id: 'sh15', g: 'ship', t: 'Visual DNA swipe frame + immersive chassis hide', d: 'Commit 09072ed on branch fix/visual-dna-swipe-frame. Rectangular images no longer cropped, nav chrome hides during swipe rounds. Awaiting merge.', s: S.I, p: 'high', o: 'Build Chat' },
-
-    // Go Live
-    { id: 'gl1', g: 'go', t: 'Enable Anthropic auto-reload', d: 'console.anthropic.com > Billing > Edit > threshold $10, reload $25. Required so Hobby-tier defensive caps do not run dry.', s: S.N, p: 'critical', o: 'Nizzar' },
-    { id: 'gl2', g: 'go', t: 'Wire Stripe Dashboard endpoint to /api/stripe-webhook', d: 'Webhook file is shipped at api/stripe-webhook.js (Vercel Edge, not Supabase). Add endpoint URL https://app.quantumbranding.ai/api/stripe-webhook in Stripe > Developers > Webhooks, copy STRIPE_WEBHOOK_SECRET to Vercel env.', s: S.I, p: 'critical', o: 'Nizzar' },
-    { id: 'gl3', g: 'go', t: 'Smoke test Signal Scan end-to-end', d: 'Incognito > quantumbranding.ai/signal-scan.html > API key > Run. Defensive parsing now covers timeout HTML responses, but live test still owed.', s: S.N, p: 'critical', o: 'Nizzar' },
-    { id: 'gl4', g: 'go', t: 'Smoke test Brand Soul Map QBP write', d: 'brand-soul-map.html > Run one module > Check localStorage qb_qbp to confirm the soul axis writes through.', s: S.N, p: 'high', o: 'Nizzar' },
-    { id: 'gl5', g: 'go', t: 'Smoke test payment flow', d: 'payment.html > Create account > Starter tier > Stripe checkout > confirm profile row updates via webhook.', s: S.N, p: 'high', o: 'Nizzar' },
-    { id: 'gl6', g: 'go', t: 'Buffer access token (optional)', d: 'Buffer > Settings > Access Token > paste into content-scheduler.html. Only needed when scheduler goes from prototype to live publishing.', s: S.N, p: 'low', o: 'Nizzar' },
-
-    // Build Work
-    { id: 'bw1', g: 'build', t: 'QB Atelier landing page', d: 'Premium consulting service. Discovery call booking. Nizzar as face. No Atelier surface exists in the repo yet.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'bw2', g: 'build', t: 'Atelier CTA after Signal Scan result', d: 'Not enough time? Let us build it with you. Bridges the Scan output into a consulting funnel.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'bw3', g: 'build', t: 'Atelier card in pricing section', d: 'Below subscription tiers on ecosystem.html. Reframe the four-tier matrix as four products + one service.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'bw4', g: 'build', t: 'War Table: Audience Intelligence module', d: 'audienceBeliefs, audienceLanguage, audiencePlatforms, audiencePainPoints. Currently only Persona pill is wired. The four fields are not in the war-table.html builder yet.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'bw5', g: 'build', t: 'Predictive Panel: Gate 1 (post-Phase 02)', d: 'Journey Guide + Hub: pivot check after Creation but before Content. predictive-panel..html exists but does not gate phases.', s: S.N, p: 'medium', o: 'Build Chat' },
-    { id: 'bw6', g: 'build', t: 'Predictive Panel: Gate 2 (post-Phase 05)', d: 'Journey Guide + Hub: loop-close after Intelligence. Triggers updated QBP on pass.', s: S.N, p: 'medium', o: 'Build Chat' },
-    { id: 'bw7', g: 'build', t: 'PDF: Brand Performance Dashboard export', d: 'Brand Document Builder pattern. Quarterly snapshot PDF for stakeholder share.', s: S.N, p: 'medium', o: 'Build Chat' },
-    { id: 'bw8', g: 'build', t: 'PDF: Quarterly Brand Review export', d: 'Brand Document Builder pattern. Phase 05 deliverable as a downloadable artifact.', s: S.N, p: 'medium', o: 'Build Chat' },
-
-    // Managed Agents
-    { id: 'ma1', g: 'agents', t: 'Install Anthropic SDK', d: 'pip install anthropic OR npm install @anthropic-ai/sdk. Foundation for the agent-led phases.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'ma2', g: 'agents', t: 'Run Managed Agents quickstart', d: 'Create test agent, start session, send message. Smoke test the API surface.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'ma3', g: 'agents', t: 'Extract Phase 02 system prompts', d: 'From logo-direction-agent + logo-evaluation-agent + voice-guide-agent HTML. Distill the prompt strategy each tool already uses.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'ma4', g: 'agents', t: 'Create QB Creation Agent', d: 'POST /v1/agents with Phase 02 prompt + agent_toolset. First agent persona.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'ma5', g: 'agents', t: 'Create QB Environment', d: 'POST /v1/environments cloud unrestricted. Sandbox for the agent toolset.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'ma6', g: 'agents', t: 'Prove Phase 02 orchestration', d: 'Session: QBP > Logo Direction > approval > Voice Guide. End-to-end agent run.', s: S.N, p: 'critical', o: 'Build Chat' },
-    { id: 'ma7', g: 'agents', t: 'Build The Feed (SSE stream)', d: 'Stream events, render output, approval cards. The user-facing layer that watches agents work.', s: S.N, p: 'high', o: 'Build Chat' },
-    { id: 'ma8', g: 'agents', t: 'QB Content Agent (Phase 03)', d: 'Five content tools combined under one agent prompt. Editorial calendar generation.', s: S.N, p: 'medium', o: 'Build Chat' },
-    { id: 'ma9', g: 'agents', t: 'QB Execution Agent (Phase 04)', d: 'Repurposing + Scheduling. Pushes content live across channels.', s: S.N, p: 'medium', o: 'Build Chat' },
-    { id: 'ma10', g: 'agents', t: 'QB Intelligence Agent (Phase 05)', d: 'Dashboard + Review. Closes the loop back into an updated QBP.', s: S.N, p: 'medium', o: 'Build Chat' },
-    { id: 'ma11', g: 'agents', t: 'Phase handoff logic + gate wiring', d: 'P02 > Gate 1 > P03 > P04 > P05 > Gate 2. Connect the predictive panel to the agent runtime.', s: S.N, p: 'medium', o: 'Build Chat' },
-
-    // Native App
-    { id: 'na1', g: 'native', t: 'Choose framework', d: 'React Native vs Capacitor. Tradeoff is native polish vs HTML reuse.', s: S.N, p: 'medium', o: 'Arch Chat' },
-    { id: 'na2', g: 'native', t: 'WebView wrapper', d: 'Wrap existing HTML tools in a native shell for first beta.', s: S.N, p: 'medium', o: 'Build Chat' },
-    { id: 'na3', g: 'native', t: 'Native auth', d: 'Biometric + Supabase session bridge.', s: S.N, p: 'medium', o: 'Build Chat' },
-    { id: 'na4', g: 'native', t: 'Push notifications', d: 'Agent completions, approval requests, gate triggers.', s: S.N, p: 'low', o: 'Build Chat' },
-    { id: 'na5', g: 'native', t: 'Native Feed', d: 'Swipe to approve/reject agent output. Native answer to The Feed.', s: S.N, p: 'low', o: 'Build Chat' },
-    { id: 'na6', g: 'native', t: 'App Store submission', d: 'iOS + Android. Final long-tail step.', s: S.N, p: 'low', o: 'Nizzar' }
+  var TIERS = [
+    {
+      id: 't0', num: '00', name: 'Security gate', color: '#CA6180',
+      gate: 'No exfiltration, leakage, or abuse vector. Non-negotiable.',
+      tasks: [
+        { id: 't0a', t: 'Verify Stripe webhook signature check', d: 'Open api/stripe-webhook.js. Confirm stripe.webhooks.constructEvent(body, sig, secret) runs on every request and rejects on failure. Without this, anyone can POST fake payment events.', a: 'Open file. Grep constructEvent.', time: '10 min' },
+        { id: 't0b', t: 'Confirm Supabase RLS on every table', d: 'Supabase dashboard, Authentication, Policies. Every table with user data must have RLS enabled and policies that restrict reads to auth.uid() = user_id.', a: 'Supabase dashboard', time: '10 min' },
+        { id: 't0c', t: 'Add origin check to all /api/* routes', d: 'Reject requests where the Origin header is not quantumbranding.ai or app.quantumbranding.ai. Otherwise someone clones the frontend and bills your Anthropic account.', a: 'Build Chat', time: '20 min' },
+        { id: 't0d', t: 'Document the ?apikey= browser-side pattern', d: 'Known constraint per Master Instruction Part 15. Add a SECURITY.md note and a console.warn when the param is present. The server-side proxy is Tier 03 work.', a: 'Build Chat', time: '15 min' },
+        { id: 't0e', t: 'Verify magic link tokens are single-use and time-bounded', d: 'Default Supabase config is correct. Confirm you have not overridden it.', a: 'Supabase dashboard', time: '5 min' },
+        { id: 't0f', t: 'Privacy policy and terms of service pages live', d: 'GDPR applies, you are in France. Two pages linked from the footer. Standard SaaS templates are fine for v1.', a: 'Build Chat', time: '45 min' }
+      ]
+    },
+    {
+      id: 't1', num: '01', name: 'Transaction gate', color: '#B58840', requires: 't0',
+      gate: 'A stranger can complete: landing, scan, signup, checkout, webhook, access, first tool, output. One unbroken chain in incognito.',
+      tasks: [
+        { id: 't1a', t: 'Anthropic auto-reload enabled', d: 'console.anthropic.com, Billing, Edit. Threshold $10, reload $25. Defensive max_tokens caps already shipped.', a: 'Nizzar', time: '5 min' },
+        { id: 't1b', t: 'Stripe webhook endpoint wired in dashboard', d: 'Stripe, Developers, Webhooks. Add https://app.quantumbranding.ai/api/stripe-webhook. Copy STRIPE_WEBHOOK_SECRET to Vercel env vars.', a: 'Nizzar', time: '10 min' },
+        { id: 't1c', t: 'Signal Scan end-to-end smoke test', d: 'Incognito, quantumbranding.ai/signal-scan.html, real API key, run, result renders, email arrives if applicable. Document any failure.', a: 'Nizzar', time: '15 min' },
+        { id: 't1d', t: 'Account creation and magic link smoke test', d: 'Fresh email, signup, magic link arrives, click, land authenticated. Check the spam folder.', a: 'Nizzar', time: '10 min' },
+        { id: 't1e', t: 'Stripe checkout completes', d: 'Pick Starter tier, Stripe checkout opens, test card 4242, redirect lands cleanly on the success page.', a: 'Nizzar', time: '10 min' },
+        { id: 't1f', t: 'Webhook updates profile tier in Supabase', d: 'After test checkout, open Supabase profiles table, confirm the row updated. The critical link. Without this, payment opens nothing.', a: 'Nizzar', time: '5 min' },
+        { id: 't1g', t: 'Authenticated user runs a paid tool to output', d: 'Same session as the checkout. Open one Phase 02 agent. QBP loads. Tool calls AI. Output renders.', a: 'Nizzar', time: '15 min' },
+        { id: 't1h', t: 'QBP writes through to Supabase, not just localStorage', d: 'brand-soul-map.html, complete one module, check the Supabase qbp table for the row. War room gl4.', a: 'Nizzar', time: '10 min' }
+      ]
+    },
+    {
+      id: 't2', num: '02', name: 'Experience gate', color: '#5BA8B5', requires: 't1',
+      gate: 'Paying customers do not churn week one because the product feels broken, incoherent, or amateur.',
+      tasks: [
+        { id: 't2a', t: 'Merge or kill the Visual DNA swipe frame branch', d: 'fix/visual-dna-swipe-frame, commit 09072ed. Decide now so it does not rot on a branch.', a: 'Build Chat', time: '10 min' },
+        { id: 't2b', t: 'Walk the full flow as a fresh user, document every friction', d: 'New browser profile, fake email, real card or Stripe test mode. Every screen, every action. The doc becomes the reference for what "works" means.', a: 'Nizzar', time: '60 min' },
+        { id: 't2c', t: 'Mobile pass on actual phone, every tool', d: 'Open quantumbranding.ai on your phone. Walk the same flow. Note every layout break, tap target issue, and scroll trap.', a: 'Nizzar', time: '30 min' },
+        { id: 't2d', t: 'War Table audience module: build or remove', d: 'Four fields (beliefs, language, platforms, pain points) are not wired. Either ship the full tool or remove it from the v1 flow. Do not ship a half-tool.', a: 'Build Chat', time: 'Decision now' },
+        { id: 't2e', t: 'Error states have human messages and retry buttons', d: 'Defensive parsing covers the data side. Now check the UX side. AI timeout, rate limit, malformed response. User sees a clear message, not a stack trace.', a: 'Build Chat', time: '45 min' },
+        { id: 't2f', t: 'QBP pre-population verified across all Phase 01 tools', d: 'Complete one tool, confirm the next reads the new fields. Brand Soul Map, Sensescape, Visual DNA, War Table.', a: 'Nizzar', time: '20 min' },
+        { id: 't2g', t: 'Email deliverability tested from cold inbox', d: 'Send a magic link to a Gmail and an Outlook account you do not own. Confirm inbox placement, not spam.', a: 'Nizzar', time: '15 min' },
+        { id: 't2h', t: 'Support inbox and refund flow ready', d: 'support@quantumbranding.ai live. Refund flow in Stripe tested once. A known-issues note in a doc you can paste from.', a: 'Nizzar', time: '20 min' }
+      ]
+    },
+    {
+      id: 't3', num: '03', name: 'Post-launch backlog', color: '#B080A0', alwaysOpen: true,
+      gate: 'Build after revenue. None of this blocks launch. Locked from the runner until Tiers 00, 01, and 02 are clean.',
+      tasks: [
+        { id: 't3a', t: 'QB Atelier landing page', d: 'Premium consulting wedge. Highest-leverage backlog item because it monetises Scan traffic at higher price points. Shipped in PR #13.', a: 'Build Chat', time: 'Week 1 post-launch' },
+        { id: 't3b', t: 'Atelier CTA after Signal Scan result', d: 'Bridges the Scan output into a consulting funnel. Copy lead: "Not enough time. Let us build it with you."', a: 'Build Chat', time: 'Week 1 post-launch' },
+        { id: 't3c', t: 'Atelier card in pricing section', d: 'Reframe the four-tier matrix as four products and one service on ecosystem.html.', a: 'Build Chat', time: 'Week 1 post-launch' },
+        { id: 't3d', t: 'Predictive Panel gates 1 and 2: reposition or kill', d: 'Per the decisions panel, the call was "Reposition". Decide what they are before building.', a: 'Decision then Build Chat', time: 'Week 2 post-launch' },
+        { id: 't3e', t: 'PDF exports: Brand Performance and Quarterly Review', d: 'Brand Document Builder pattern. Easy to add when customers ask.', a: 'Build Chat', time: 'On demand' },
+        { id: 't3f', t: 'Managed Agents: prove Phase 02 orchestration end-to-end', d: 'SDK install, quickstart, extract Phase 02 prompts, create agent, create environment, end-to-end run. The v2 of the product.', a: 'Build Chat', time: '2 to 3 weeks' },
+        { id: 't3g', t: 'Build The Feed (SSE stream)', d: 'User-facing layer that watches agents work. Only after the Phase 02 agent is proven.', a: 'Build Chat', time: 'After 3f' },
+        { id: 't3h', t: 'Phase 03, 04, 05 agents and gate wiring', d: 'Sequenced after Phase 02 works in production.', a: 'Build Chat', time: '4 to 6 weeks' },
+        { id: 't3i', t: 'Server-side API proxy (replaces the ?apikey= pattern)', d: 'Architectural shift, not hotfix. The clean fix for the Tier 00 security note. After revenue is flowing.', a: 'Build Chat', time: '1 week focused' },
+        { id: 't3j', t: 'Native app: framework choice, WebView, Feed, App Store', d: 'Do not start until agents are proven. A native shell around a half-built web app is a worse product.', a: 'Arch Chat then Build', time: 'Q3 2026' },
+        { id: 't3k', t: 'Buffer integration for Content Scheduler', d: 'Only when paying customers want auto-posting. Token paste, 5 min.', a: 'Nizzar', time: 'On demand' }
+      ]
+    }
   ];
 
-  const GT = [
-    { g: 'ship', l: 'Hardening sprint', s: 0, e: 1 },
-    { g: 'ship', l: 'Brand docs + assets', s: 0, e: 1 },
-    { g: 'ship', l: 'Visual DNA fix', s: 1, e: 2 },
-    { g: 'go', l: 'Go-live smoke tests', s: 1, e: 2 },
-    { g: 'build', l: 'Atelier', s: 2, e: 3 },
-    { g: 'build', l: 'War Table audience', s: 2, e: 4 },
-    { g: 'build', l: 'PDF exports', s: 3, e: 5 },
-    { g: 'agents', l: 'SDK + quickstart', s: 2, e: 3 },
-    { g: 'agents', l: 'P02 proof', s: 3, e: 5 },
-    { g: 'agents', l: 'The Feed', s: 4, e: 6 },
-    { g: 'agents', l: 'P03-P05 agents', s: 5, e: 8 },
-    { g: 'agents', l: 'Loop close', s: 7, e: 9 },
-    { g: 'native', l: 'Framework + wrapper', s: 7, e: 9 },
-    { g: 'native', l: 'Native Feed', s: 9, e: 11 },
-    { g: 'native', l: 'App Store', s: 10, e: 12 }
-  ];
-  const WK = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
-
-  const JN = [
-    { l: 'Idea', ph: 'Entry', c: A.green, ps: ['Blank Slate'] },
-    { l: 'Scan', ph: 'Acq', c: A.green, ps: ['All personas'] },
-    { l: 'Path', ph: 'Fork', c: A.brass, ps: ['Builder','Atelier'] },
-    { l: 'Soul Map', ph: 'P01', c: A.purple, ps: ['Blank Slate','Pivot'] },
-    { l: 'Sensescape', ph: 'P01', c: A.purple, ps: [] },
-    { l: 'Visual DNA', ph: 'P01', c: A.purple, ps: [] },
-    { l: 'War Table', ph: 'P01', c: A.purple, ps: ['Player enters'] },
-    { l: 'QBP', ph: 'Gate', c: A.brass, ps: ['Agents activate'] },
-    { l: 'Creation', ph: 'P02', c: A.purple, ps: ['Agent-led'] },
-    { l: 'Gate 1', ph: 'Valid', c: A.amber, ps: ['Predictive'] },
-    { l: 'Content', ph: 'P03', c: A.pink, ps: ['5 agents'] },
-    { l: 'Exec', ph: 'P04', c: A.teal, ps: ['Live'] },
-    { l: 'Intel', ph: 'P05', c: A.blue, ps: ['Review'] },
-    { l: 'Gate 2', ph: 'Valid', c: A.amber, ps: ['Pivot check'] },
-    { l: 'Loop', ph: 'Cycle', c: A.blue, ps: ['Updated QBP'] }
-  ];
-
-  const DC = [
-    { t: '13 tools hardened vs Hobby edge timeout', v: 'Shipped', c: A.green },
-    { t: 'Vercel Edge over Supabase for webhooks', v: 'Locked', c: A.green },
-    { t: 'content-bridge + /qb-ai.js parked for Vercel Pro', v: 'Deferred', c: A.amber },
-    { t: 'War Table + Audience Intelligence', v: 'Build next', c: A.brass },
-    { t: 'Predictive Panel Gates 1+2', v: 'Reposition', c: A.amber },
-    { t: 'EXEC/INTEL as PDF', v: 'Define', c: A.blue },
-    { t: 'Kill Sales & Marketing surface', v: 'Kill', c: A.pink },
-    { t: 'P01 human. P02+ agents.', v: 'Principle', c: A.purple }
-  ];
-
-  // State
-  const LS_TASKS = 'qb_war_tasks_v1';
-  const LS_MODE = 'qb_war_mode_v1';
-
-  let state = {
-    tasks: tasks0.slice(),
-    mode: 'dark',
-    filter: 'all',
-    expanded: new Set(),
-    collapsed: new Set()
-  };
-
+  var state = { done: {} };
   try {
-    const raw = localStorage.getItem(LS_TASKS);
+    var raw = localStorage.getItem(LS);
     if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        const byId = {};
-        parsed.forEach(function (x) { byId[x.id] = x.s; });
-        state.tasks = tasks0.map(function (x) {
-          return byId[x.id] ? Object.assign({}, x, { s: byId[x.id] }) : x;
-        });
-      }
+      var parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && parsed.done) state = parsed;
     }
   } catch (e) {}
 
-  try {
-    const m = localStorage.getItem(LS_MODE);
-    if (m === 'light' || m === 'dark') state.mode = m;
-  } catch (e) {}
-
-  document.documentElement.setAttribute('data-mode', state.mode);
-
-  function persistTasks() {
-    try {
-      const slim = state.tasks.map(function (x) { return { id: x.id, s: x.s }; });
-      localStorage.setItem(LS_TASKS, JSON.stringify(slim));
-    } catch (e) {}
+  function save() {
+    try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {}
   }
 
-  function priorityColor(p) {
-    return p === 'critical' ? A.red : p === 'high' ? A.amber : p === 'medium' ? A.blue : '#555';
+  function tierProgress(tier) {
+    var total = tier.tasks.length;
+    var done = tier.tasks.filter(function (tk) { return state.done[tk.id]; }).length;
+    return { done: done, total: total, complete: done === total };
   }
 
-  function el(tag, attrs, children) {
-    const n = document.createElement(tag);
-    if (attrs) {
-      Object.keys(attrs).forEach(function (k) {
-        if (k === 'style') Object.assign(n.style, attrs[k]);
-        else if (k === 'on') Object.keys(attrs[k]).forEach(function (ev) { n.addEventListener(ev, attrs[k][ev]); });
-        else if (k === 'data') Object.keys(attrs[k]).forEach(function (d) { n.setAttribute('data-' + d, attrs[k][d]); });
-        else if (k === 'class') n.className = attrs[k];
-        else if (k === 'text') n.textContent = attrs[k];
-        else n.setAttribute(k, attrs[k]);
-      });
+  function tierLocked(tier) {
+    if (tier.alwaysOpen) {
+      return !(tierProgress(TIERS[0]).complete && tierProgress(TIERS[1]).complete && tierProgress(TIERS[2]).complete);
     }
-    if (children) children.forEach(function (c) { if (c) n.appendChild(c); });
+    if (!tier.requires) return false;
+    var req = TIERS.find(function (x) { return x.id === tier.requires; });
+    return !tierProgress(req).complete;
+  }
+
+  function shipStatus() {
+    var t0 = tierProgress(TIERS[0]).complete;
+    var t1 = tierProgress(TIERS[1]).complete;
+    var t2 = tierProgress(TIERS[2]).complete;
+    var el = document.getElementById('shipStatus');
+    var tx = document.getElementById('shipStatusText');
+    if (t0 && t1 && t2) {
+      el.setAttribute('data-state', 'green');
+      tx.textContent = 'Ship ready. Tiers 00, 01, and 02 are closed.';
+    } else if (t0 && t1) {
+      el.setAttribute('data-state', 'amber');
+      tx.textContent = 'Can take money. Polish remaining in Tier 02.';
+    } else if (t0) {
+      el.setAttribute('data-state', 'amber');
+      tx.textContent = 'Security clean. Tier 01 transaction chain is still open.';
+    } else {
+      el.setAttribute('data-state', 'red');
+      tx.textContent = 'Not ready. Tier 00 must close before anything else.';
+    }
+  }
+
+  function el(tag, cls) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
     return n;
   }
 
-  function renderFilters() {
-    const host = document.getElementById('filters');
+  function render() {
+    var host = document.getElementById('tiers');
     host.innerHTML = '';
-    Object.keys(GR).forEach(function (k) {
-      const g = GR[k];
-      const cnt = state.tasks.filter(function (x) { return x.g === k; }).length;
-      const dn = state.tasks.filter(function (x) { return x.g === k && x.s === S.D; }).length;
-      const b = el('button', {
-        class: 'filter',
-        style: { '--filter-c': g.c },
-        data: { active: state.filter === k ? '1' : '0' },
-        on: { click: function () {
-          state.filter = state.filter === k ? 'all' : k;
-          renderAll();
-        } }
-      });
-      b.style.setProperty('--filter-c', g.c);
-      b.appendChild(el('span', { text: g.i }));
-      b.appendChild(document.createTextNode(' ' + g.l + ' '));
-      b.appendChild(el('span', { class: 'filter_count', text: dn + '/' + cnt }));
-      host.appendChild(b);
-    });
-    if (state.filter !== 'all') {
-      host.appendChild(el('button', {
-        class: 'filter_clear', text: 'Clear',
-        on: { click: function () { state.filter = 'all'; renderAll(); } }
-      }));
-    }
-  }
+    TIERS.forEach(function (tier) {
+      var prog = tierProgress(tier);
+      var locked = tierLocked(tier);
 
-  function renderHeader() {
-    const done = state.tasks.filter(function (x) { return x.s === S.D; }).length;
-    const total = state.tasks.length;
-    const pct = total ? Math.round((done / total) * 100) : 0;
-    const pn = document.getElementById('pct');
-    pn.textContent = pct + '%';
-    pn.classList.toggle('full', pct === 100);
-    document.getElementById('pctLabel').textContent = done + '/' + total + ' tasks';
-    document.getElementById('pctBar').style.width = pct + '%';
-    document.getElementById('modeBtn').textContent = state.mode === 'dark' ? '☾' : '☀';
-    document.getElementById('footer').textContent = 'QB BrandOS War Room | May 2026 | ' + state.mode.toUpperCase() + ' mode';
-  }
+      var sec = el('section', 'tier');
+      sec.setAttribute('data-locked', locked ? '1' : '0');
+      sec.style.setProperty('--tier-c', tier.color);
 
-  function renderGroups() {
-    const host = document.getElementById('groups');
-    host.innerHTML = '';
-    const filtered = state.filter === 'all'
-      ? state.tasks
-      : state.tasks.filter(function (x) { return x.g === state.filter; });
+      var head = el('div', 'tier_head');
+      var num = el('span', 'tier_num'); num.textContent = 'Tier ' + tier.num;
+      head.appendChild(num);
+      var name = el('span', 'tier_name'); name.textContent = tier.name;
+      head.appendChild(name);
+      var count = el('span', 'tier_count');
+      count.innerHTML = '<strong>' + prog.done + '</strong> of ' + prog.total;
+      head.appendChild(count);
+      var lock = el('span', 'tier_lock'); lock.textContent = 'Locked';
+      head.appendChild(lock);
+      sec.appendChild(head);
 
-    Object.keys(GR).forEach(function (k) {
-      if (state.filter !== 'all' && state.filter !== k) return;
-      const g = GR[k];
-      const items = filtered.filter(function (x) { return x.g === k; });
-      if (!items.length) return;
-      const isCol = state.collapsed.has(k);
-      const dn = items.filter(function (x) { return x.s === S.D; }).length;
+      var gate = el('div', 'tier_gate');
+      gate.innerHTML = '<strong>Gate.</strong> ' + tier.gate;
+      sec.appendChild(gate);
 
-      const section = el('section');
-      const head = el('div', {
-        class: 'group_h',
-        on: { click: function () {
-          if (state.collapsed.has(k)) state.collapsed.delete(k);
-          else state.collapsed.add(k);
-          renderGroups();
-        } }
-      });
-      const caret = el('span', { class: 'group_caret', text: '▼' });
-      caret.setAttribute('data-col', isCol ? '1' : '0');
-      caret.style.color = g.c;
-      head.appendChild(caret);
-      const lbl = el('span', { class: 'group_label', text: g.i + ' ' + g.l });
-      lbl.style.color = g.c;
-      head.appendChild(lbl);
-      head.appendChild(el('span', { class: 'group_count', text: dn + '/' + items.length }));
-      section.appendChild(head);
+      var body = el('div', 'tier_body');
 
-      const list = el('div', { class: 'group_list' });
-      list.setAttribute('data-col', isCol ? '1' : '0');
+      tier.tasks.forEach(function (tk) {
+        var done = !!state.done[tk.id];
+        var row = el('div', 'task');
+        row.setAttribute('data-done', done ? '1' : '0');
 
-      items.forEach(function (tk) {
-        const isExp = state.expanded.has(tk.id);
-        const isDone = tk.s === S.D;
-        const card = el('div', {
-          class: 'card',
-          data: { exp: isExp ? '1' : '0', done: isDone ? '1' : '0' },
-          on: { click: function () {
-            if (state.expanded.has(tk.id)) state.expanded.delete(tk.id);
-            else state.expanded.add(tk.id);
-            renderGroups();
-          } }
-        });
-        card.style.setProperty('--st-c', sc(tk.s));
-
-        const row = el('div', { class: 'card_row' });
-
-        const chk = el('input', { type: 'checkbox', class: 'card_chk' });
-        if (isDone) chk.checked = true;
-        chk.addEventListener('click', function (e) { e.stopPropagation(); });
+        var chk = document.createElement('input');
+        chk.type = 'checkbox';
+        chk.className = 'task_chk';
+        chk.checked = done;
+        chk.setAttribute('aria-label', tk.t);
         chk.addEventListener('change', function () {
-          tk.s = isDone ? S.N : S.D;
-          persistTasks();
-          renderHeader();
-          renderFilters();
-          renderGroups();
+          state.done[tk.id] = chk.checked;
+          save();
+          render();
         });
+
+        var bodyDiv = el('div', 'task_body');
+        var title = el('div', 'task_t'); title.textContent = tk.t;
+        bodyDiv.appendChild(title);
+        var desc = el('div', 'task_d'); desc.textContent = tk.d;
+        bodyDiv.appendChild(desc);
+        var meta = el('div', 'task_meta');
+        var tagA = el('span', 'qb-tag'); tagA.textContent = tk.a;
+        meta.appendChild(tagA);
+        var tagT = el('span', 'qb-tag is-muted'); tagT.textContent = tk.time;
+        meta.appendChild(tagT);
+        bodyDiv.appendChild(meta);
+
         row.appendChild(chk);
-
-        const pr = el('span', { class: 'card_pr' });
-        pr.style.background = priorityColor(tk.p);
-        row.appendChild(pr);
-
-        row.appendChild(el('span', { class: 'card_t', text: tk.t }));
-
-        const badge = el('span', { class: 'badge' });
-        badge.style.setProperty('--st-c', sc(tk.s));
-        badge.appendChild(el('span', { class: 'badge_dot' }));
-        badge.appendChild(document.createTextNode(' ' + SL[tk.s]));
-        row.appendChild(badge);
-        card.appendChild(row);
-
-        const d = el('div', { class: 'card_d' });
-        d.textContent = tk.d;
-        const own = el('div', { class: 'card_owner', text: 'Owner: ' + tk.o });
-        d.appendChild(own);
-        card.appendChild(d);
-
-        list.appendChild(card);
+        row.appendChild(bodyDiv);
+        body.appendChild(row);
       });
 
-      section.appendChild(list);
-      host.appendChild(section);
+      sec.appendChild(body);
+      host.appendChild(sec);
     });
+
+    shipStatus();
   }
 
-  function renderGantt() {
-    const wks = document.getElementById('ganttWks');
-    wks.innerHTML = '';
-    WK.forEach(function (w) { wks.appendChild(el('div', { class: 'gantt_wk', text: w })); });
-    const rows = document.getElementById('ganttRows');
-    rows.innerHTML = '';
-    GT.forEach(function (item) {
-      const row = el('div', { class: 'gantt_row' });
-      const l = el('div', { class: 'gantt_l' });
-      const dot = el('span', { class: 'gantt_l_dot' });
-      dot.style.background = GR[item.g].c;
-      l.appendChild(dot);
-      l.appendChild(document.createTextNode(item.l));
-      row.appendChild(l);
-      const track = el('div', { class: 'gantt_track' });
-      track.style.setProperty('--bar-c', GR[item.g].c);
-      WK.forEach(function () { track.appendChild(el('div', { class: 'gantt_cell' })); });
-      const bar = el('div', { class: 'gantt_bar' });
-      bar.style.setProperty('--bar-c', GR[item.g].c);
-      bar.style.left = (item.s / WK.length * 100) + '%';
-      bar.style.width = ((item.e - item.s) / WK.length * 100) + '%';
-      track.appendChild(bar);
-      row.appendChild(track);
-      rows.appendChild(row);
-    });
-  }
-
-  function renderJourney() {
-    const host = document.getElementById('journey');
-    host.innerHTML = '';
-    JN.forEach(function (n, i) {
-      const node = el('div', { class: 'jn_node' });
-      const col = el('div', { class: 'jn_col' });
-      const ph = el('div', { class: 'jn_ph', text: n.ph });
-      ph.style.color = n.c;
-      col.appendChild(ph);
-      const c = el('div', { class: 'jn_circle', text: String(i + 1) });
-      c.style.setProperty('--jn-c', n.c);
-      col.appendChild(c);
-      col.appendChild(el('div', { class: 'jn_l', text: n.l }));
-      if (n.ps.length) {
-        const ps = el('div', { class: 'jn_ps' });
-        n.ps.forEach(function (p) { ps.appendChild(el('span', { text: p })); });
-        col.appendChild(ps);
-      }
-      node.appendChild(col);
-      if (i < JN.length - 1) {
-        const link = el('div', { class: 'jn_link' });
-        link.appendChild(el('div'));
-        node.appendChild(link);
-      }
-      host.appendChild(node);
-    });
-  }
-
-  function renderDecisions() {
-    const host = document.getElementById('decisions');
-    host.innerHTML = '';
-    DC.forEach(function (d) {
-      const card = el('div', { class: 'dec' });
-      card.style.setProperty('--dec-c', d.c);
-      card.appendChild(el('div', { class: 'dec_t', text: d.t }));
-      const v = el('span', { class: 'dec_v', text: d.v });
-      v.style.setProperty('--dec-c', d.c);
-      card.appendChild(v);
-      host.appendChild(card);
-    });
-  }
-
-  function renderAll() {
-    renderHeader();
-    renderFilters();
-    renderGroups();
-  }
-
-  document.getElementById('modeBtn').addEventListener('click', function () {
-    state.mode = state.mode === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-mode', state.mode);
-    try { localStorage.setItem(LS_MODE, state.mode); } catch (e) {}
-    renderHeader();
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    if (confirm('Reset every checkbox?')) {
+      state = { done: {} };
+      save();
+      render();
+    }
   });
 
-  renderAll();
-  renderGantt();
-  renderJourney();
-  renderDecisions();
+  render();
 })();
 </script>
 </body>
