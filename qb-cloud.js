@@ -329,7 +329,7 @@
   // Force the canonical host in the redirect target so it always lands on the
   // same origin where localStorage was written (defense alongside the early
   // host redirect at the top of this module).
-  async function sendMagicLink(email, firstName, sourceTool){
+  async function sendMagicLink(email, firstName, sourceTool, returnTo){
     if (!email) return { ok:false, error:'Email is required.' };
     // Custom magic-link delivery path. We POST to /api/send-magic-link which:
     //   1. Mints an action_link via Supabase admin /generate_link (does NOT
@@ -337,6 +337,8 @@
     //   2. Sends our own branded email through Resend from auth@send.nizzar.com
     //      (verified domain, much better deliverability than the default
     //      noreply@mail.app.supabase.io which Gmail/Apple aggressively filter).
+    // returnTo is the path the callback bounces to after exchanging the
+    // session. Defaults to /dashboard on the server when omitted.
     try {
       const res = await fetch('/api/send-magic-link', {
         method: 'POST',
@@ -344,7 +346,8 @@
         body: JSON.stringify({
           email,
           firstName: firstName || '',
-          sourceTool: sourceTool || 'unknown'
+          sourceTool: sourceTool || 'unknown',
+          returnTo: returnTo || '/dashboard'
         })
       });
       if (!res.ok) {
