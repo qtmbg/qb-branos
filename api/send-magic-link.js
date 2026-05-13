@@ -19,6 +19,36 @@
 
 export const config = { runtime: 'edge' };
 
+const ALLOWED_REDIRECT_ORIGINS = [
+  'https://app.quantumbranding.ai',
+  'https://quantumbranding.ai',
+  'https://www.quantumbranding.ai',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000'
+];
+const DEFAULT_REDIRECT_ORIGIN = 'https://app.quantumbranding.ai';
+const DEFAULT_RETURN_TO = '/dashboard';
+
+function resolveOrigin(req) {
+  const origin = req.headers.get('origin');
+  if (origin && ALLOWED_REDIRECT_ORIGINS.includes(origin)) return origin;
+  const referer = req.headers.get('referer');
+  if (referer) {
+    try {
+      const refOrigin = new URL(referer).origin;
+      if (ALLOWED_REDIRECT_ORIGINS.includes(refOrigin)) return refOrigin;
+    } catch {}
+  }
+  return DEFAULT_REDIRECT_ORIGIN;
+}
+
+function sanitizeReturnTo(value) {
+  if (typeof value !== 'string' || !value) return DEFAULT_RETURN_TO;
+  if (!value.startsWith('/') || value.startsWith('//')) return DEFAULT_RETURN_TO;
+  if (/[\r\n]/.test(value)) return DEFAULT_RETURN_TO;
+  return value;
+}
+
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -132,14 +162,27 @@ export default async function handler(req) {
   try { body = await req.json(); }
   catch { return new Response(JSON.stringify({ ok: false, error: 'Invalid body' }), { status: 400 }); }
 
-  const { email, firstName = '', sourceTool = '' } = body || {};
+  const { email, firstName = '', sourceTool = '', returnTo } = body || {};
   if (!email || !/.+@.+\..+/.test(email)) {
     return new Response(JSON.stringify({ ok: false, error: 'Valid email required' }), { status: 400 });
   }
 
   // Step 1 — mint a magic-link action_link via Supabase admin API.
-  // Setting redirect_to to the canonical app host so the session lands on the right origin.
-  const redirectTo = 'https://app.quantumbranding.ai/auth-callback.html';
+  //
+  // redirect_to must:
+  //   1. Land on the SAME origin the user signed up from. Hard-coding app.
+  //      orphaned bare-host sessions: user typed email on quantumbranding.ai,
+  //      callback wrote session to app.quantumbranding.ai's localStorage,
+  //      they navigated back to bare and looked signed out.
+  //   2. Carry a return_to so the callback sends them to /dashboard, not /
+  //      (which on app. is the hub and on bare is the marketing index).
+  //
+  // Every origin used here must be on the Supabase project's Auth → URL
+  // Configuration → Redirect URLs allowlist, otherwise Supabase silently
+  // falls back to Site URL and the access_token is lost.
+  const redirectOrigin = resolveOrigin(req);
+  const safeReturnTo = sanitizeReturnTo(returnTo);
+  const redirectTo = `${redirectOrigin}/auth-callback.html?return_to=${encodeURIComponent(safeReturnTo)}`;
   const adminRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {
     method: 'POST',
     headers: {
