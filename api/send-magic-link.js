@@ -179,6 +179,11 @@ export default async function handler(req) {
   //   https://www.quantumbranding.ai/auth-callback.html
   const redirectOrigin = resolveOrigin(req);
   const redirectTo = `${redirectOrigin}/auth-callback.html`;
+  // GoTrue admin generate_link expects redirect_to and data as top-level
+  // fields. The {options:{...}} nesting is a Supabase JS SDK convention
+  // that the SDK unwraps before sending. Calling the REST API with the
+  // wrapper made GoTrue ignore our redirect_to and substitute Site URL,
+  // which is exactly the failure mode we kept hitting in production.
   const adminRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {
     method: 'POST',
     headers: {
@@ -189,10 +194,8 @@ export default async function handler(req) {
     body: JSON.stringify({
       type: 'magiclink',
       email,
-      options: {
-        redirect_to: redirectTo,
-        data: { first_name: firstName, signup_source: sourceTool || 'qb-gate' },
-      },
+      redirect_to: redirectTo,
+      data: { first_name: firstName, signup_source: sourceTool || 'qb-gate' },
     }),
   });
 
