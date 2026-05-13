@@ -1,19 +1,10 @@
 /* ────────────────────────────────────────────────────────────────────────────
-   QB CLOUD — Shared module for auth, QBP sync, completion tracking,
-              Klaviyo bridge, and feature-access checks.
-   Loaded once per page via <script src="/qb-cloud.js"></script>.
-   Exposes window.QB.
+   QB CLOUD. Shared module for auth, QBP sync, completion tracking, and
+   feature-access checks. Loaded once per page via
+   <script src="/qb-cloud.js"></script>. Exposes window.QB.
    ──────────────────────────────────────────────────────────────────────────── */
 (function(){
   'use strict';
-
-  // Klaviyo public client-side config — intentionally embedded in client JS.
-  // The public key is designed for browser-side event ingestion; the list ID
-  // is the QB BrandOS subscriber list. Neither grants any read/write access
-  // to existing profiles or campaigns. Mutating Klaviyo state requires the
-  // private key, which never appears in client code.
-  window.QB_KLAVIYO_KEY = 'XnAGuL';
-  window.QB_KLAVIYO_LIST_ID = 'WSfkyj';
 
   const SUPA_URL = 'https://yushbxjwfhuokaezoioe.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0';
@@ -263,15 +254,14 @@
   async function recordCompletion(toolId){
     if (!toolId) return;
 
-    // Local mirror — stays even if user is anonymous
+    // Local mirror. Stays even if user is anonymous.
     const localKey = 'qb_' + toolId.replace(/-/g, '_') + '_done';
     localStorage.setItem(localKey, '1');
     const completions = getCompletions();
-    const wasComplete = !!completions[toolId];
     completions[toolId] = new Date().toISOString();
     localStorage.setItem('qb_completions', JSON.stringify(completions));
 
-    // Cloud (only if authed) — JWT auto-refreshes via cloudFetch on 401
+    // Cloud (only if authed). JWT auto-refreshes via cloudFetch on 401.
     if (isAuthed()) {
       const userId = getSession().userId;
       try {
@@ -288,22 +278,6 @@
           }
         }));
       } catch(e){ /* silent */ }
-    }
-
-    // Klaviyo per-tool event
-    sendKlaviyoEvent('Tool Completed', {
-      tool_id:   toolId,
-      tool_name: TOOL_NAMES[toolId] || toolId
-    });
-
-    // Klaviyo Phase 01 milestone event — fires only on the transition
-    // from "not all done" → "all done"
-    if (!wasComplete && PHASE_01_TOOLS.every(t => completions[t])) {
-      const firstAt = completions[PHASE_01_TOOLS[0]];
-      const totalDays = firstAt
-        ? Math.max(0, Math.round((Date.now() - new Date(firstAt).getTime()) / 86400000))
-        : 0;
-      sendKlaviyoEvent('Phase 01 Complete', { total_time_days: totalDays });
     }
   }
   function nextRecommendedTool(){
@@ -421,80 +395,6 @@
     return false;
   }
 
-  // ── Klaviyo bridge ────────────────────────────────────────────────────────
-  // Klaviyo public key + list ID can be injected via:
-  //   - window.QB_KLAVIYO_KEY / window.QB_KLAVIYO_LIST_ID (script-tag config)
-  //   - localStorage.qb_klaviyo_pk / qb_klaviyo_list (set by hub settings)
-  // If neither is present, all Klaviyo functions silently no-op.
-  function getKlaviyoConfig(){
-    return {
-      key:    window.QB_KLAVIYO_KEY     || localStorage.getItem('qb_klaviyo_pk')   || '',
-      listId: window.QB_KLAVIYO_LIST_ID || localStorage.getItem('qb_klaviyo_list') || ''
-    };
-  }
-  async function syncKlaviyoProfile(email, firstName, props){
-    const cfg = getKlaviyoConfig();
-    if (!cfg.key || !email) return;
-    try {
-      await fetch('https://a.klaviyo.com/client/profiles/?company_id=' + cfg.key, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'revision':'2024-10-15' },
-        body: JSON.stringify({
-          data: {
-            type: 'profile',
-            attributes: {
-              email,
-              first_name: firstName || undefined,
-              properties: props || {}
-            }
-          }
-        })
-      });
-      if (cfg.listId) {
-        await fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + cfg.key, {
-          method: 'POST',
-          headers: { 'Content-Type':'application/json', 'revision':'2024-10-15' },
-          body: JSON.stringify({
-            data: {
-              type: 'subscription',
-              attributes: {
-                profile: { data: { type:'profile', attributes:{ email } } },
-                custom_source: 'Brand Profile Gate'
-              },
-              relationships: { list: { data: { type:'list', id: cfg.listId } } }
-            }
-          })
-        });
-      }
-    } catch(e){ /* silent */ }
-  }
-  async function sendKlaviyoEvent(eventName, props){
-    const cfg = getKlaviyoConfig();
-    if (!cfg.key) return;
-    let email = null;
-    try {
-      const s = JSON.parse(localStorage.getItem('qb_session') || '{}');
-      email = s.email || null;
-    } catch(e){}
-    if (!email) return;
-    try {
-      await fetch('https://a.klaviyo.com/client/events/?company_id=' + cfg.key, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'revision':'2024-10-15' },
-        body: JSON.stringify({
-          data: {
-            type: 'event',
-            attributes: {
-              metric:     { data: { type:'metric',  attributes:{ name: eventName } } },
-              profile:    { data: { type:'profile', attributes:{ email } } },
-              properties: props || {}
-            }
-          }
-        })
-      });
-    } catch(e){ /* silent */ }
-  }
-
   // ── Cross-tab state sync ──────────────────────────────────────────────────
   // The browser fires `storage` events in OTHER tabs of the same origin when
   // localStorage changes. We bridge those into a single `qb:state-changed`
@@ -537,7 +437,6 @@
     recordCompletion, getCompletions, nextRecommendedTool, phase01Progress,
     sendMagicLink, logout,
     hasAccess, requireAccess,
-    syncKlaviyoProfile, sendKlaviyoEvent,
     cloudFetch, refreshAccessToken,
     TOOL_NAMES, TOOL_FILES, PHASE_01_TOOLS, PAID_TOOLS
   };

@@ -73,7 +73,7 @@ window.QB_AI = async function(systemPrompt, userPrompt, maxTokens) {
 What's missing:
 - **No QBP refresh** — the `window.QB_QBP` snapshot is stale the moment another tab updates QBP. Phase 01 has `QB.pullQBPFromCloud` for this.
 - **No QBP writeback** — output stays in the UI. Downstream tools can't read what the upstream tool just produced.
-- **No completion tracking** — tool runs aren't logged in `tool_completions`, so journey-guide/hub/Klaviyo never know.
+- **No completion tracking.** Tool runs aren't logged in `tool_completions`, so journey-guide, the hub, and the lock check never see them.
 - **No gate** — anonymous users can run paid Phase 02+ tools without ever hitting `QB.openGate`. (The paywall via `QB_HAS_ACCESS` does block them, but the UX doesn't connect to the funnel.)
 - **No streaming** — every Phase 02+ tool spends 8–30s spinning while Claude generates. Streaming would feel materially better.
 - **No tool use** — Claude can't reach into QBP, can't browse the web for context, can't call other agents.

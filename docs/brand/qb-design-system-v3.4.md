@@ -861,7 +861,7 @@ Paste this prompt at the start of any Claude Code session that involves rebuildi
 > 7. Illustrations come ONLY from the locked inventory in Part 17 of the spec. Never invent filenames. Never reference an asset that doesn't exist on disk. If a slot needs an illustration that isn't in inventory, flag it as missing.
 > 8. No frameworks. No JSX. No build step. Vanilla JS only. localStorage for state.
 > 9. AI calls use the Anthropic API with `claude-sonnet-4-20250514`.
-> 10. Every tool accepts URL params: `?apikey=`, `?provider=`, `?qbp=`. White-label entry points additionally accept `?brand=`, `?color=`, `?client=`. Signal Scan additionally accepts `?kpk=`, `?kli=` for Klaviyo.
+> 10. Every tool accepts URL params: `?apikey=`, `?provider=`, `?qbp=`. White-label entry points additionally accept `?brand=`, `?color=`, `?client=`.
 > 11. No quality-speed tradeoffs. A file is either production-ready or it is not built yet. There is no intermediate state that ships.
 >
 > When done, output the full file. No partials, no diffs, no instructions to apply patches manually.
@@ -872,7 +872,7 @@ Paste this prompt at the start of any Claude Code session that involves rebuildi
 
 - The brand mark, wordmark, lockups, and rules of use are now locked. See Part 21.
 - A meta descriptions library. Each page gets its own description, drafted per-file.
-- An email template system. Email styling lives in Klaviyo and is out of scope here.
+- An email template system. Email styling lives in the Resend templates inside `/api/send-*.js` and is out of scope here.
 - A documentation site for the system itself. This .md is the documentation.
 - Component testing infrastructure. No framework means no Storybook. Visual review happens in the live browser.
 
@@ -1921,7 +1921,7 @@ Five yeses. Otherwise, stop.
 ## Part 22 — What this spec deliberately does not include
 
 - A meta descriptions library. Each page gets its own description, drafted per-file.
-- An email template system. Email styling lives in Klaviyo and is out of scope here.
+- An email template system. Email styling lives in the Resend templates inside `/api/send-*.js` and is out of scope here.
 - A documentation site for the system itself. This .md is the documentation.
 - Component testing infrastructure. No framework means no Storybook. Visual review happens in the live browser.
 - Animation libraries. No GSAP, Framer Motion, Lottie, Rive. Native CSS + `IntersectionObserver` only. The system is fast because it imports nothing.

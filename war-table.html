@@ -3473,7 +3473,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     var md = dossierToMarkdown();
     var to = state.leadForm.email || '';
     var subject = 'Strategic Command Dossier · ' + (state.brandInfo.brandName || 'Brand');
-    // Fallback: mailto. (Klaviyo campaign send requires server-side - not suitable for client)
+    // Fallback: mailto. Server-side transactional delivery for the dossier is a separate flow.
     var href = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(md.slice(0, 1800));
     // Most clients cap mailto length. Warn user if truncated.
     var a = document.createElement('a');

@@ -224,13 +224,13 @@ The wordmark is "quantum branding" in Fraunces italic 600, SOFT axis 60, lowerca
 
 quantumbranding.ai is the front door. The marketing site. Vanilla HTML, CSS, JS. Deployed on Vercel from the `qb-branos` GitHub repo.
 
-app.quantumbranding.ai is the QB BrandOS Hub. The product. The twenty agents live here. Stack includes Supabase for the QBP, Stripe for payments, Klaviyo for email, Buffer for content scheduling.
+app.quantumbranding.ai is the QB BrandOS Hub. The product. The twenty agents live here. Stack includes Supabase for the QBP, Stripe for payments, Resend for transactional email, Buffer for content scheduling.
 
 thequantumbranding.com and thequantumbranding.ai redirect to quantumbranding.ai.
 
 The repo is `github.com/qtmbg/qb-branos`. Auto-deploys to Vercel from the `main` branch.
 
-The Supabase database is the QBP store. The Stripe webhook handles payment events. The Klaviyo integration handles transactional and marketing email. The Buffer integration handles content scheduling. The Anthropic API powers the AI agents (default model `claude-sonnet-4-6`, with `claude-sonnet-4-20250514` retained in the allowed models list).
+The Supabase database is the QBP store. The Stripe webhook handles payment events. Resend handles all transactional email (magic links, Signal Scan welcome, tool results, lock confirmations). The Buffer integration handles content scheduling. The Anthropic API powers the AI agents (default model `claude-sonnet-4-6`, with `claude-sonnet-4-20250514` retained in the allowed models list).
 
 ---
 

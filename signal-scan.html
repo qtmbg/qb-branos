@@ -1752,14 +1752,6 @@ window.addEventListener('load', function () {
   Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
 })();
 
-/* ============ White-label URL params ============ */
-(function(){
-  var p=new URLSearchParams(window.location.search);
-  var kpk=p.get('kpk');var kli=p.get('kli');
-  if(kpk) window.QB_KLAVIYO_KEY=kpk;
-  if(kli) window.QB_KLAVIYO_LIST_ID=kli;
-})();
-
 /* ============ Signal scan tool flow ============ */
 const QUESTIONS = [
   {
@@ -2086,88 +2078,33 @@ function buildEmail(){
     analyzing=true;
     step=9;render();
     try {
-    result = calcScores(answers);
-    const topGap = getTopGap(result.dims);
-    const verdict = getVerdict(result.overall, answers.moment);
-    const userEmail = email;
-    // M2 — server-side Klaviyo signup. The previous path went straight to
-    // manage.kmail-lists.com/ajax/subscriptions/subscribe from the browser
-    // and was silently suppressed by Klaviyo's bot-protection on a
-    // non-trivial slice of legitimate traffic. /api/klaviyo-signup uses
-    // the private API key server-side and accepts a `properties` object so
-    // Signal-Scan-specific fields ride along with the profile create.
-    try {
-      fetch('/api/klaviyo-signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: userEmail,
-          sourceTool: 'signal-scan',
-          listId: 'Rh3gvy',
-          properties: {
-            signal_scan_score:    result.overall,
-            signal_scan_grade:    verdict.grade,
-            signal_scan_verdict:  verdict.label,
-            signal_scan_top_gap:  topGap.label,
-            signal_scan_moment:   answers.moment,
-            signal_scan_describe: answers.describe || '',
-            signal_scan_date:     new Date().toISOString().split('T')[0]
-          }
-        })
-      })
-      .then(function(r){ return r.json().catch(function(){ return {}; }); })
-      .then(function(d){ if (d && !d.ok) console.warn('Klaviyo server response:', d); })
-      .catch(function(e){ console.warn('Klaviyo network error:', e); });
-    } catch(err) { console.warn('Klaviyo signal-scan sync failed:', err); }
-    } catch(err) {
-      console.error('Signal scan submit error:', err);
-    }
-    const QB_KLAVIYO_KEY = window.QB_KLAVIYO_KEY || '';
-    const QB_KLAVIYO_LIST_ID = window.QB_KLAVIYO_LIST_ID || '';
-    if(QB_KLAVIYO_KEY && QB_KLAVIYO_LIST_ID){
-      try{
-        const verdict2 = getVerdict(result.overall, answers.moment);
-        const topGap2 = getTopGap(result.dims);
-        const profileRes = await fetch('https://a.klaviyo.com/client/profiles/?company_id='+QB_KLAVIYO_KEY,{
-          method:'POST',
-          headers:{'Content-Type':'application/json','revision':'2026-01-15'},
-          body:JSON.stringify({
-            data:{
-              type:'profile',
-              attributes:{
-                email:email,
-                properties:{
-                  signal_scan_score:   result.overall,
-                  signal_scan_grade:   verdict2.grade,
-                  signal_scan_verdict: verdict2.label,
-                  signal_scan_top_gap: topGap2.label,
-                  signal_scan_moment:  answers.moment,
-                  signal_scan_describe:answers.describe||'',
-                  signal_scan_date:    new Date().toISOString().split('T')[0],
-                }
-              }
+      result = calcScores(answers);
+      const topGap = getTopGap(result.dims);
+      const verdict = getVerdict(result.overall, answers.moment);
+      // Fire-and-forget welcome email through Resend. The user advances
+      // regardless of email success; failure logs server-side and does
+      // not block the diagnostic render.
+      try {
+        fetch('/api/send-welcome-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            firstName: '',
+            signalScanResult: {
+              score:    result.overall,
+              grade:    verdict.grade,
+              verdict:  verdict.label,
+              topGap:   topGap.label,
+              moment:   answers.moment,
+              describe: answers.describe || '',
+              date:     new Date().toISOString().split('T')[0]
             }
           })
-        });
-        if(profileRes.ok||profileRes.status===409){
-          await fetch('https://a.klaviyo.com/client/subscriptions/?company_id='+QB_KLAVIYO_KEY,{
-            method:'POST',
-            headers:{'Content-Type':'application/json','revision':'2026-01-15'},
-            body:JSON.stringify({
-              data:{
-                type:'subscription',
-                attributes:{
-                  profile:{data:{type:'profile',attributes:{email:email}}},
-                  custom_source:'Signal Scan'
-                },
-                relationships:{list:{data:{type:'list',id:QB_KLAVIYO_LIST_ID}}}
-              }
-            })
-          });
-        }
-      }catch(err){
-        console.warn('Klaviyo sync failed silently:',err);
-      }
+        }).catch(function(e){ console.warn('welcome-email network error:', e && e.message); });
+      } catch(err) { console.warn('welcome-email send failed:', err); }
+    } catch(err) {
+      console.error('Signal scan submit error:', err);
     }
     setTimeout(()=>{analyzing=false;step=10;render();},3200);
   };
