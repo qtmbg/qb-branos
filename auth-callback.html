@@ -53,11 +53,20 @@
   const accessToken = params.get('access_token');
   const refreshToken = params.get('refresh_token');
   const queryParams = new URLSearchParams(window.location.search);
-  // Always strip www. from return_to - the canonicalizer in qb-cloud.js will
-  // send www visitors to non-www on the next page load anyway, but doing it
-  // here too avoids one round-trip + a flash of the wrong host.
-  const rawReturnTo = queryParams.get('return_to') || '/';
+  // Default post-auth destination is /dashboard. We do not thread return_to
+  // through the magic-link URL anymore (Supabase allowlist rejected the
+  // query-string form and silently fell back to Site URL). A localStorage
+  // override remains available for future per-flow destinations on the same
+  // browser. Strip www. from return_to so the canonicalizer in qb-cloud.js
+  // does not bounce us through an extra hop.
+  let rawReturnTo = queryParams.get('return_to');
+  if (!rawReturnTo) {
+    try { rawReturnTo = localStorage.getItem('qb_post_auth_return_to') || ''; }
+    catch(e) { rawReturnTo = ''; }
+  }
+  if (!rawReturnTo) rawReturnTo = '/dashboard';
   const returnTo = rawReturnTo.replace('://www.', '://');
+  try { localStorage.removeItem('qb_post_auth_return_to'); } catch(e) {}
 
   if (!accessToken) {
     showError('No token in the URL. The link may have expired or already been used.');

@@ -20,14 +20,13 @@
 export const config = { runtime: 'edge' };
 
 const ALLOWED_REDIRECT_ORIGINS = [
-  'https://app.quantumbranding.ai',
   'https://quantumbranding.ai',
   'https://www.quantumbranding.ai',
+  'https://app.quantumbranding.ai',
   'http://localhost:3000',
   'http://127.0.0.1:3000'
 ];
-const DEFAULT_REDIRECT_ORIGIN = 'https://app.quantumbranding.ai';
-const DEFAULT_RETURN_TO = '/dashboard';
+const DEFAULT_REDIRECT_ORIGIN = 'https://quantumbranding.ai';
 
 function resolveOrigin(req) {
   const origin = req.headers.get('origin');
@@ -40,13 +39,6 @@ function resolveOrigin(req) {
     } catch {}
   }
   return DEFAULT_REDIRECT_ORIGIN;
-}
-
-function sanitizeReturnTo(value) {
-  if (typeof value !== 'string' || !value) return DEFAULT_RETURN_TO;
-  if (!value.startsWith('/') || value.startsWith('//')) return DEFAULT_RETURN_TO;
-  if (/[\r\n]/.test(value)) return DEFAULT_RETURN_TO;
-  return value;
 }
 
 function escapeHtml(s) {
@@ -162,27 +154,31 @@ export default async function handler(req) {
   try { body = await req.json(); }
   catch { return new Response(JSON.stringify({ ok: false, error: 'Invalid body' }), { status: 400 }); }
 
-  const { email, firstName = '', sourceTool = '', returnTo } = body || {};
+  const { email, firstName = '', sourceTool = '' } = body || {};
   if (!email || !/.+@.+\..+/.test(email)) {
     return new Response(JSON.stringify({ ok: false, error: 'Valid email required' }), { status: 400 });
   }
 
   // Step 1 — mint a magic-link action_link via Supabase admin API.
   //
-  // redirect_to must:
-  //   1. Land on the SAME origin the user signed up from. Hard-coding app.
-  //      orphaned bare-host sessions: user typed email on quantumbranding.ai,
-  //      callback wrote session to app.quantumbranding.ai's localStorage,
-  //      they navigated back to bare and looked signed out.
-  //   2. Carry a return_to so the callback sends them to /dashboard, not /
-  //      (which on app. is the hub and on bare is the marketing index).
+  // redirect_to is a bare path with no query string. Supabase allowlist
+  // wildcards reliably match path segments but not URL-encoded query
+  // values, so an earlier attempt that threaded return_to as a query
+  // (?return_to=%2Fdashboard) got rejected by the allowlist and silently
+  // replaced with Site URL. Keeping the URL clean makes the allowlist
+  // entry a simple exact string and the rejection class disappears.
   //
-  // Every origin used here must be on the Supabase project's Auth → URL
-  // Configuration → Redirect URLs allowlist, otherwise Supabase silently
-  // falls back to Site URL and the access_token is lost.
+  // The post-auth destination is always /dashboard. auth-callback.html
+  // hardcodes that fallback. If we ever need a per-flow destination we
+  // can stash it in localStorage on the same origin before the redirect.
+  //
+  // Every origin used here must be on the Supabase project's
+  // Auth → URL Configuration → Redirect URLs allowlist:
+  //   https://quantumbranding.ai/auth-callback.html
+  //   https://app.quantumbranding.ai/auth-callback.html
+  //   https://www.quantumbranding.ai/auth-callback.html
   const redirectOrigin = resolveOrigin(req);
-  const safeReturnTo = sanitizeReturnTo(returnTo);
-  const redirectTo = `${redirectOrigin}/auth-callback.html?return_to=${encodeURIComponent(safeReturnTo)}`;
+  const redirectTo = `${redirectOrigin}/auth-callback.html`;
   const adminRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {
     method: 'POST',
     headers: {
