@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Dashboard · QB BrandOS</title>
+<meta name="description" content="Your QB BrandOS home. Where you are, what to run next, and the artifacts your agents produce as you move through the six phases.">
+
+<meta name="theme-color" content="#FBF5E6">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex,nofollow">
+
+<link rel="icon" type="image/svg+xml" href="/img/brand/web/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/brand/web/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/brand/web/favicon-16x16.png">
+<link rel="shortcut icon" href="/img/brand/web/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+<link rel="mask-icon" href="/img/brand/web/safari-pinned-tab.svg" color="#2D1521">
+<link rel="manifest" href="/img/brand/web/site.webmanifest">
+
+<link rel="canonical" href="https://quantumbranding.ai/dashboard">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Quantum Branding">
+<meta property="og:title" content="Dashboard · QB BrandOS">
+<meta property="og:description" content="Your QB BrandOS home. Where you are, what to run next, and the artifacts your agents produce.">
+<meta property="og:url" content="https://quantumbranding.ai/dashboard">
+<meta property="og:image" content="https://quantumbranding.ai/img/brand/og/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/og-image.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://quantumbranding.ai/dashboard#webpage",
+  "url": "https://quantumbranding.ai/dashboard",
+  "name": "Dashboard · QB BrandOS",
+  "description": "Customer dashboard for QB BrandOS. Tier-aware home with phase progress, artifacts, and quick actions.",
+  "isPartOf": { "@id": "https://quantumbranding.ai/#organization" },
+  "publisher": { "@id": "https://quantumbranding.ai/#organization" },
+  "inLanguage": "en-US"
+}
+</script>
+
+<script src="/qb-cloud.js"></script>
+
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+
+<style>
+  :root {
+    /* Surface */
+    --cream:#FBF5E6;
+    --cream-card:#F2EBD3;
+    --cream-warm:#ECDDB8;
+    --cream-edge:#DBD4C0;
+    --cream-rose:#F4D9DD;
+    --white:#FFFEF8;
+
+    /* Ink */
+    --ink:#2D1521;
+    --ink-75:rgba(45,21,33,0.75);
+    --ink-50:rgba(45,21,33,0.50);
+    --ink-33:rgba(45,21,33,0.33);
+    --ink-25:rgba(45,21,33,0.25);
+    --ink-10:rgba(45,21,33,0.10);
+
+    /* Brand triad */
+    --gold:#E0B069;
+    --rose:#CA6180;
+    --teal:#9ED3DC;
+
+    /* Depth */
+    --rose-deep:#8E3F58;
+    --teal-deep:#5BA8B5;
+    --gold-deep:#B58840;
+    --aubergine:#4A2B3A;
+
+    /* Phase swatches */
+    --phase-discovery:#9CC4A2;
+    --phase-creation:#B5C8E5;
+    --phase-content:#FCB7C7;
+    --phase-execution:#E89380;
+    --phase-intelligence:#B080A0;
+
+    /* Type */
+    --font-display:'Fraunces','Times New Roman',serif;
+    --font-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+
+    /* Type scale */
+    --step--2:clamp(0.7813rem,0.7548rem + 0.124vw,0.875rem);
+    --step--1:clamp(0.9375rem,0.8937rem + 0.2063vw,1.1rem);
+    --step-0:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+    --step-1:clamp(1.35rem,1.2505rem + 0.4683vw,1.7188rem);
+    --step-2:clamp(1.62rem,1.4773rem + 0.6714vw,2.1488rem);
+    --step-3:clamp(1.9438rem,1.7436rem + 0.9421vw,2.6856rem);
+    --step-4:clamp(2.3325rem,2.0561rem + 1.3008vw,3.3569rem);
+    --step-5:clamp(2.7994rem,2.4224rem + 1.7738vw,4.1963rem);
+
+    /* Space scale */
+    --space-3xs:clamp(0.375rem,0.353rem + 0.106vw,0.4375rem);
+    --space-2xs:clamp(0.5625rem,0.5288rem + 0.1587vw,0.6875rem);
+    --space-xs:clamp(0.875rem,0.8244rem + 0.2381vw,1.0625rem);
+    --space-s:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+    --space-m:clamp(1.6875rem,1.5863rem + 0.4762vw,2.0625rem);
+    --space-l:clamp(2.25rem,2.1151rem + 0.6349vw,2.75rem);
+    --space-xl:clamp(3.375rem,3.1726rem + 0.9524vw,4.125rem);
+    --space-2xl:clamp(4.5rem,4.2302rem + 1.2698vw,5.5rem);
+
+    /* Radii + motion */
+    --radius-card:18px;
+    --radius-pill:999px;
+    --ease-qb:cubic-bezier(0.19,1,0.22,1);
+
+    /* Hard offset shadow */
+    --shadow-card-mobile:0 9px 0 0 var(--ink);
+    --shadow-card-desktop:0 16px 0 0 var(--ink);
+  }
+
+  *,*::before,*::after { box-sizing:border-box; }
+  body,h1,h2,h3,p,ul,figure { margin:0; }
+  ul { padding:0; list-style:none; }
+  button { font:inherit; color:inherit; cursor:pointer; border:none; background:none; }
+  a { color:inherit; }
+
+  html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  html,body {
+    background:var(--cream);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:var(--step-0);
+    line-height:1.55;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* Pre-auth gate: keep everything hidden until the auth check resolves */
+  body[data-auth="checking"] .dash { visibility:hidden; }
+
+  .qb-skip {
+    position:absolute;
+    left:-9999px;
+    top:auto;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+  }
+  .qb-skip:focus {
+    left:var(--space-s);
+    top:var(--space-s);
+    width:auto;
+    height:auto;
+    z-index:200;
+    padding:var(--space-2xs) var(--space-s);
+    background:var(--ink);
+    color:var(--cream);
+    border-radius:var(--radius-pill);
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+  }
+
+  /* ── TYPE PRIMITIVES ─────────────────────────────────────────────── */
+  .qb-eyebrow {
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+    font-weight:700;
+  }
+  .qb-eyebrow_dot {
+    display:inline-block;
+    width:0.45em;
+    height:0.45em;
+    border-radius:50%;
+    background:var(--gold-deep);
+    margin-right:0.65em;
+    vertical-align:0.18em;
+  }
+  .qb-headline {
+    font-family:var(--font-display);
+    font-weight:400;
+    font-variation-settings:'opsz' 144, 'SOFT' 60;
+    line-height:1.05;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .qb-headline em {
+    font-style:italic;
+    color:var(--gold-deep);
+    font-variation-settings:'opsz' 144, 'SOFT' 60;
+  }
+
+  /* ── HEADER ───────────────────────────────────────────────────────── */
+  .nav {
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:color-mix(in srgb, var(--cream) 92%, transparent);
+    -webkit-backdrop-filter:saturate(140%) blur(10px);
+    backdrop-filter:saturate(140%) blur(10px);
+    border-bottom:1px solid var(--ink-10);
+  }
+  .nav_inner {
+    max-width:1240px;
+    margin:0 auto;
+    padding:var(--space-2xs) var(--space-s);
+    display:flex;
+    align-items:center;
+    gap:var(--space-s);
+  }
+  .nav_brand {
+    display:inline-flex;
+    align-items:center;
+    gap:var(--space-2xs);
+    text-decoration:none;
+    color:var(--ink);
+    font-family:var(--font-display);
+    font-style:italic;
+    font-variation-settings:'opsz' 36, 'SOFT' 60, 'wght' 600;
+    font-size:var(--step-0);
+    line-height:1;
+  }
+  .nav_brand_dot {
+    width:0.7em;
+    height:0.7em;
+    border-radius:50%;
+    background:var(--gold-deep);
+    box-shadow:0 0 0 0.18em color-mix(in srgb, var(--gold-deep) 22%, transparent);
+  }
+  .nav_spacer { flex:1; }
+  .nav_user {
+    display:inline-flex;
+    align-items:center;
+    gap:var(--space-2xs);
+  }
+  .tier_badge {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    font-weight:700;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    padding:0.35em 0.75em;
+    border-radius:var(--radius-pill);
+    border:1.5px solid var(--ink);
+    background:var(--cream-card);
+    color:var(--ink);
+    line-height:1;
+    white-space:nowrap;
+  }
+  .tier_badge[data-tier="free"]    { background:var(--cream-warm); }
+  .tier_badge[data-tier="starter"] { background:color-mix(in srgb, var(--teal) 35%, var(--cream-card)); }
+  .tier_badge[data-tier="pro"]     { background:color-mix(in srgb, var(--gold) 45%, var(--cream-card)); }
+  .tier_badge[data-tier="agency"]  { background:color-mix(in srgb, var(--rose) 35%, var(--cream-card)); color:var(--ink); }
+
+  .avatar {
+    width:2.2em;
+    height:2.2em;
+    border-radius:50%;
+    background:var(--cream-card);
+    border:1.5px solid var(--ink);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    font-weight:700;
+    color:var(--ink);
+    line-height:1;
+    flex-shrink:0;
+  }
+  .nav_user_name {
+    font-size:var(--step--1);
+    color:var(--ink-75);
+  }
+  .nav_logout {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-50);
+    text-decoration:none;
+    padding:0.4em 0.6em;
+    border-radius:6px;
+    transition:color 0.3s var(--ease-qb), background 0.3s var(--ease-qb);
+  }
+  .nav_logout:hover { color:var(--ink); background:var(--ink-10); }
+
+  @media (max-width:560px) {
+    .nav_user_name { display:none; }
+    .tier_badge { padding:0.3em 0.6em; }
+  }
+
+  /* ── LAYOUT ───────────────────────────────────────────────────────── */
+  .dash {
+    max-width:1240px;
+    margin:0 auto;
+    padding:var(--space-l) var(--space-s) var(--space-2xl);
+  }
+
+  /* ── WELCOME STRIP ────────────────────────────────────────────────── */
+  .welcome { margin-bottom:var(--space-xl); }
+  .welcome_eyebrow { margin-bottom:var(--space-xs); }
+  .welcome_h {
+    font-size:var(--step-5);
+    margin-bottom:var(--space-2xs);
+  }
+  .welcome_sub {
+    font-size:var(--step-1);
+    color:var(--ink-75);
+    max-width:54ch;
+    line-height:1.45;
+  }
+
+  /* ── SECTION ──────────────────────────────────────────────────────── */
+  .section { margin-bottom:var(--space-xl); }
+  .section_head {
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:var(--space-s);
+    margin-bottom:var(--space-m);
+    flex-wrap:wrap;
+  }
+  .section_eyebrow { font-size:var(--step--1); }
+
+  /* ── JOURNEY ROW ──────────────────────────────────────────────────── */
+  .journey {
+    display:grid;
+    grid-template-columns:1fr;
+    gap:var(--space-s);
+  }
+  @media (min-width:768px) {
+    .journey { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
+  @media (min-width:1100px) {
+    .journey { grid-template-columns:repeat(5, minmax(0,1fr)); gap:var(--space-xs); }
+  }
+
+  .phase {
+    --phase-c:var(--phase-discovery);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    padding:var(--space-m) var(--space-s) var(--space-s);
+    border:2px solid var(--ink);
+    border-radius:var(--radius-card);
+    background:var(--cream-card);
+    box-shadow:var(--shadow-card-mobile);
+    transition:transform 0.4s var(--ease-qb), box-shadow 0.4s var(--ease-qb), opacity 0.4s var(--ease-qb);
+    min-height:240px;
+  }
+  @media (min-width:640px) {
+    .phase { box-shadow:var(--shadow-card-desktop); }
+  }
+  .phase[data-state="locked"] {
+    opacity:0.55;
+    background:var(--cream-warm);
+  }
+  .phase[data-phase="01"] { --phase-c:var(--phase-discovery); }
+  .phase[data-phase="02"] { --phase-c:var(--phase-creation); }
+  .phase[data-phase="03"] { --phase-c:var(--phase-content); }
+  .phase[data-phase="04"] { --phase-c:var(--phase-execution); }
+  .phase[data-phase="05"] { --phase-c:var(--phase-intelligence); }
+
+  .phase_swatch {
+    position:absolute;
+    top:var(--space-s);
+    right:var(--space-s);
+    width:0.7em;
+    height:0.7em;
+    border-radius:50%;
+    background:var(--phase-c);
+    border:1.5px solid var(--ink);
+  }
+  .phase_num {
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    font-weight:700;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink-75);
+    margin-bottom:var(--space-3xs);
+  }
+  .phase_name {
+    font-family:var(--font-display);
+    font-size:var(--step-2);
+    font-variation-settings:'opsz' 144, 'SOFT' 55;
+    line-height:1.1;
+    color:var(--ink);
+    margin-bottom:var(--space-2xs);
+  }
+  .phase_sub {
+    font-size:var(--step--1);
+    color:var(--ink-75);
+    line-height:1.5;
+    margin-bottom:var(--space-s);
+    flex:1;
+  }
+  .phase_status {
+    display:inline-flex;
+    align-items:center;
+    gap:0.4em;
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-50);
+    margin-bottom:var(--space-s);
+  }
+  .phase_status_dot {
+    width:0.55em;
+    height:0.55em;
+    border-radius:50%;
+    background:var(--ink-33);
+  }
+  .phase[data-state="available"] .phase_status { color:var(--gold-deep); }
+  .phase[data-state="available"] .phase_status_dot { background:var(--gold-deep); }
+  .phase[data-state="in-progress"] .phase_status { color:var(--teal-deep); }
+  .phase[data-state="in-progress"] .phase_status_dot {
+    background:var(--teal-deep);
+    box-shadow:0 0 0 0.25em color-mix(in srgb, var(--teal-deep) 18%, transparent);
+  }
+  .phase[data-state="complete"] .phase_status { color:var(--phase-discovery); }
+  .phase[data-state="complete"] .phase_status_dot { background:var(--phase-discovery); }
+
+  /* ── BUTTON ───────────────────────────────────────────────────────── */
+  .qb-button {
+    display:inline-block;
+    padding:0;
+    font-size:var(--step--1);
+    font-family:var(--font-body);
+    color:var(--ink);
+    border-radius:var(--radius-pill);
+    position:relative;
+    text-decoration:none;
+    line-height:1;
+  }
+  .qb-button::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:var(--ink);
+    border-radius:var(--radius-pill);
+    transform:translateY(0.32em);
+    transition:transform 0.4s var(--ease-qb);
+    z-index:0;
+  }
+  .qb-button_content {
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--cream-card);
+    border:2px solid var(--ink);
+    color:var(--ink);
+    padding:0.7em 1.25em;
+    border-radius:var(--radius-pill);
+    font-weight:600;
+    transition:transform 0.4s var(--ease-qb), filter 0.4s var(--ease-qb), background 0.4s var(--ease-qb);
+    z-index:1;
+    white-space:nowrap;
+  }
+  .qb-button.is-primary .qb-button_content {
+    background:var(--gold-deep);
+    color:var(--cream);
+  }
+  .qb-button.is-block { display:block; }
+  .qb-button.is-block .qb-button_content { display:flex; width:100%; }
+  .qb-button.is-disabled { pointer-events:none; opacity:0.45; }
+  @media (hover:hover) {
+    .qb-button:hover .qb-button_content {
+      transform:translateY(-0.18em);
+      filter:brightness(1.04);
+    }
+    .qb-button:hover::before { transform:translateY(0.42em); }
+  }
+  .qb-button:active .qb-button_content {
+    transform:translateY(0.22em);
+    transition-duration:0.15s;
+  }
+  .qb-button:active::before {
+    transform:translateY(0.10em);
+    transition-duration:0.15s;
+  }
+
+  .phase_cta_wrap { margin-top:auto; }
+
+  /* ── EMPTY STATE / ARTIFACTS ──────────────────────────────────────── */
+  .empty {
+    border:2px solid var(--ink);
+    border-radius:var(--radius-card);
+    background:var(--cream-card);
+    box-shadow:var(--shadow-card-mobile);
+    padding:var(--space-m);
+    display:grid;
+    grid-template-columns:1fr;
+    gap:var(--space-m);
+    align-items:center;
+    margin-bottom:var(--space-l);
+  }
+  @media (min-width:640px) {
+    .empty { box-shadow:var(--shadow-card-desktop); }
+  }
+  @media (min-width:760px) {
+    .empty { grid-template-columns:minmax(0,1fr) 240px; gap:var(--space-l); }
+  }
+  .empty_t {
+    font-family:var(--font-display);
+    font-size:var(--step-2);
+    font-variation-settings:'opsz' 144, 'SOFT' 55;
+    line-height:1.2;
+    margin-bottom:var(--space-2xs);
+  }
+  .empty_d {
+    font-size:var(--step-0);
+    color:var(--ink-75);
+    line-height:1.55;
+    max-width:48ch;
+  }
+  .qb-illus-card {
+    background:var(--cream-warm);
+    border:2px solid var(--ink);
+    border-radius:var(--radius-card);
+    padding:var(--space-2xs);
+    overflow:hidden;
+    margin:0;
+  }
+  .qb-illus-card img {
+    width:100%;
+    height:auto;
+    display:block;
+    border-radius:calc(var(--radius-card) - 6px);
+  }
+
+  .artifacts_grid {
+    display:grid;
+    grid-template-columns:1fr;
+    gap:var(--space-s);
+  }
+  @media (min-width:640px) {
+    .artifacts_grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
+  @media (min-width:1024px) {
+    .artifacts_grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
+  }
+  .artifact_slot {
+    border:2px dashed var(--ink-25);
+    border-radius:var(--radius-card);
+    background:color-mix(in srgb, var(--cream-card) 55%, transparent);
+    padding:var(--space-m);
+    min-height:180px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:var(--space-s);
+    opacity:0.7;
+  }
+  .artifact_label {
+    font-family:var(--font-display);
+    font-size:var(--step-1);
+    font-variation-settings:'opsz' 144, 'SOFT' 55;
+    line-height:1.2;
+    color:var(--ink-75);
+  }
+  .artifact_locked {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink-50);
+    padding:0.3em 0.65em;
+    border:1px solid var(--ink-25);
+    border-radius:var(--radius-pill);
+    align-self:flex-start;
+  }
+
+  /* ── QUICK ACTIONS ────────────────────────────────────────────────── */
+  .actions {
+    display:flex;
+    flex-wrap:wrap;
+    gap:var(--space-s);
+    align-items:center;
+  }
+  .text_link {
+    font-family:var(--font-body);
+    font-size:var(--step--1);
+    color:var(--ink-75);
+    text-decoration:underline;
+    text-underline-offset:0.25em;
+    text-decoration-thickness:1px;
+    transition:color 0.3s var(--ease-qb);
+  }
+  .text_link:hover { color:var(--ink); }
+
+  /* ── TIER CARD ────────────────────────────────────────────────────── */
+  .tier_card {
+    border:2px solid var(--ink);
+    border-radius:var(--radius-card);
+    background:var(--cream-card);
+    box-shadow:var(--shadow-card-mobile);
+    padding:var(--space-m);
+  }
+  @media (min-width:640px) {
+    .tier_card { box-shadow:var(--shadow-card-desktop); }
+  }
+  .tier_card_head {
+    display:flex;
+    align-items:center;
+    gap:var(--space-s);
+    flex-wrap:wrap;
+    margin-bottom:var(--space-s);
+  }
+  .tier_card_name {
+    font-family:var(--font-display);
+    font-size:var(--step-3);
+    font-variation-settings:'opsz' 144, 'SOFT' 55;
+    line-height:1.1;
+  }
+  .tier_card_desc {
+    font-size:var(--step-0);
+    color:var(--ink-75);
+    line-height:1.55;
+    max-width:60ch;
+    margin-bottom:var(--space-m);
+  }
+  .tier_card_actions {
+    display:flex;
+    gap:var(--space-s);
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  /* ── FOOTER ───────────────────────────────────────────────────────── */
+  .footer {
+    background:var(--cream-card);
+    padding:var(--space-xl) var(--space-s) var(--space-l);
+    border-top:2px solid var(--ink);
+  }
+  .footer_grid {
+    max-width:1240px;
+    margin-inline:auto;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:var(--space-l);
+  }
+  @media (min-width:900px) {
+    .footer_grid { grid-template-columns:2fr 1fr 1fr 1fr; }
+  }
+  .footer_brand {
+    font-family:var(--font-display);
+    font-variation-settings:'wght' 600, 'opsz' 36, 'SOFT' 60;
+    font-style:italic;
+    font-size:var(--step-0);
+    display:inline-flex;
+    align-items:center;
+    gap:0.5em;
+    color:var(--ink);
+    text-decoration:none;
+  }
+  .footer_brand_dot {
+    width:0.65em;
+    height:0.65em;
+    border-radius:50%;
+    background:var(--gold-deep);
+  }
+  .footer_blurb {
+    margin-top:var(--space-xs);
+    font-size:var(--step--1);
+    color:var(--ink-75);
+    max-width:380px;
+  }
+  .footer_col-title {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-75);
+    margin-bottom:var(--space-xs);
+  }
+  .footer_col a {
+    display:block;
+    padding:0.4em 0;
+    font-size:var(--step--1);
+    color:var(--ink-75);
+    text-decoration:none;
+    transition:color 0.3s var(--ease-qb);
+  }
+  .footer_col a:hover { color:var(--ink); }
+  .footer_bottom {
+    max-width:1240px;
+    margin:var(--space-l) auto 0;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:var(--space-s);
+    padding-top:var(--space-s);
+    border-top:1px solid var(--ink-25);
+  }
+  .footer_bottom_meta,
+  .footer_bottom_links a {
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.06em;
+    color:var(--ink-75);
+    text-decoration:none;
+  }
+  .footer_bottom_links { display:inline-flex; gap:var(--space-s); flex-wrap:wrap; }
+  .footer_bottom_links a:hover { color:var(--ink); }
+
+  /* ── TOAST ────────────────────────────────────────────────────────── */
+  .qb-toast {
+    position:fixed;
+    bottom:var(--space-m);
+    left:50%;
+    transform:translateX(-50%) translateY(120%);
+    z-index:200;
+    padding:var(--space-2xs) var(--space-s);
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius-pill);
+    background:var(--cream-card);
+    color:var(--ink);
+    font-family:var(--font-mono);
+    font-size:var(--step--1);
+    letter-spacing:0.04em;
+    box-shadow:var(--shadow-card-mobile);
+    transition:transform 0.5s var(--ease-qb), opacity 0.5s var(--ease-qb);
+    opacity:0;
+    pointer-events:none;
+    max-width:min(90vw, 480px);
+    text-align:center;
+  }
+  .qb-toast[data-open="1"] {
+    transform:translateX(-50%) translateY(0);
+    opacity:1;
+  }
+
+  /* ── REDUCED MOTION ───────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration:0.01ms !important;
+      transition-duration:0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body data-auth="checking">
+
+<a class="qb-skip" href="#main">Skip to main content</a>
+
+<header class="nav" role="banner">
+  <div class="nav_inner">
+    <a href="/index.html" class="nav_brand" aria-label="Quantum Branding home">
+      <span class="nav_brand_dot" aria-hidden="true"></span>
+      <span>quantum branding</span>
+    </a>
+    <div class="nav_spacer"></div>
+    <div class="nav_user" aria-label="Account">
+      <span class="tier_badge" id="tierBadge" data-tier="free" aria-label="Plan tier">Free</span>
+      <span class="avatar" id="avatar" aria-hidden="true">·</span>
+      <span class="nav_user_name" id="navUserName"></span>
+      <a href="#" class="nav_logout" id="logoutBtn">Log out</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="dash" role="main">
+
+  <!-- Welcome strip -->
+  <section class="welcome" aria-labelledby="welcomeH">
+    <div class="qb-eyebrow welcome_eyebrow">
+      <span class="qb-eyebrow_dot"></span>Your QB BrandOS home
+    </div>
+    <h1 id="welcomeH" class="qb-headline welcome_h">
+      Welcome back, <em id="welcomeName">there</em>.
+    </h1>
+    <p class="welcome_sub" id="welcomeSub">
+      Your brand foundation is in progress. Continue where you left off, or run a fresh diagnostic.
+    </p>
+  </section>
+
+  <!-- Journey progress -->
+  <section class="section" aria-labelledby="journeyH">
+    <div class="section_head">
+      <h2 id="journeyH" class="qb-eyebrow section_eyebrow">
+        <span class="qb-eyebrow_dot"></span>Where you are
+      </h2>
+    </div>
+
+    <div class="journey" id="journey">
+      <article class="phase" data-phase="01" data-state="available" aria-labelledby="p01">
+        <span class="phase_swatch" aria-hidden="true"></span>
+        <div class="phase_num">Phase 01</div>
+        <h3 id="p01" class="phase_name">Foundation</h3>
+        <p class="phase_sub">Discover your brand's truth. Archetype, soul, sensescape, visual DNA, war table, profiles.</p>
+        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Available</span></div>
+        <div class="phase_cta_wrap">
+          <a class="qb-button is-primary is-block" href="/qb-branidos-hub.html"><span class="qb-button_content">Open Foundation</span></a>
+        </div>
+      </article>
+
+      <article class="phase" data-phase="02" data-state="locked" aria-labelledby="p02">
+        <span class="phase_swatch" aria-hidden="true"></span>
+        <div class="phase_num">Phase 02</div>
+        <h3 id="p02" class="phase_name">Creation</h3>
+        <p class="phase_sub">Visual identity and voice. Logo direction, logo evaluation, voice guide.</p>
+        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Locked</span></div>
+        <div class="phase_cta_wrap">
+          <a class="qb-button is-block is-disabled" aria-disabled="true" tabindex="-1"><span class="qb-button_content">Locked</span></a>
+        </div>
+      </article>
+
+      <article class="phase" data-phase="03" data-state="locked" aria-labelledby="p03">
+        <span class="phase_swatch" aria-hidden="true"></span>
+        <div class="phase_num">Phase 03</div>
+        <h3 id="p03" class="phase_name">Content</h3>
+        <p class="phase_sub">Strategy and first content. Content bridge, repurposing, scheduling.</p>
+        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Locked</span></div>
+        <div class="phase_cta_wrap">
+          <a class="qb-button is-block is-disabled" aria-disabled="true" tabindex="-1"><span class="qb-button_content">Locked</span></a>
+        </div>
+      </article>
+
+      <article class="phase" data-phase="04" data-state="locked" aria-labelledby="p04">
+        <span class="phase_swatch" aria-hidden="true"></span>
+        <div class="phase_num">Phase 04</div>
+        <h3 id="p04" class="phase_name">Execution</h3>
+        <p class="phase_sub">Scheduled production. Instagram, LinkedIn, YouTube, newsletter.</p>
+        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Locked</span></div>
+        <div class="phase_cta_wrap">
+          <a class="qb-button is-block is-disabled" aria-disabled="true" tabindex="-1"><span class="qb-button_content">Locked</span></a>
+        </div>
+      </article>
+
+      <article class="phase" data-phase="05" data-state="locked" aria-labelledby="p05">
+        <span class="phase_swatch" aria-hidden="true"></span>
+        <div class="phase_num">Phase 05</div>
+        <h3 id="p05" class="phase_name">Intelligence</h3>
+        <p class="phase_sub">Ongoing optimization. Quarterly review, brand performance, predictive panel.</p>
+        <div class="phase_status"><span class="phase_status_dot"></span><span class="phase_status_t">Locked</span></div>
+        <div class="phase_cta_wrap">
+          <a class="qb-button is-block is-disabled" aria-disabled="true" tabindex="-1"><span class="qb-button_content">Locked</span></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Artifacts -->
+  <section class="section" aria-labelledby="artifactsH">
+    <div class="section_head">
+      <h2 id="artifactsH" class="qb-eyebrow section_eyebrow">
+        <span class="qb-eyebrow_dot"></span>Your artifacts
+      </h2>
+    </div>
+
+    <div class="empty" role="region" aria-label="Artifacts empty state">
+      <div>
+        <h3 class="empty_t">Nothing here yet.</h3>
+        <p class="empty_d">Your brand artifacts will appear here as your agents produce them. Complete Phase 01 to begin.</p>
+      </div>
+      <figure class="qb-illus-card">
+        <img src="/img/illus/synergy.png" alt="A house cutaway showing many figures at work, the ecosystem in motion." loading="lazy" width="800" height="800">
+      </figure>
+    </div>
+
+    <div class="artifacts_grid" aria-label="Upcoming artifact slots">
+      <div class="artifact_slot">
+        <span class="artifact_label">Brand Document</span>
+        <span class="artifact_locked">Locked</span>
+      </div>
+      <div class="artifact_slot">
+        <span class="artifact_label">Voice Guide</span>
+        <span class="artifact_locked">Locked</span>
+      </div>
+      <div class="artifact_slot">
+        <span class="artifact_label">Logo Direction</span>
+        <span class="artifact_locked">Locked</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick actions -->
+  <section class="section" aria-labelledby="actionsH">
+    <div class="section_head">
+      <h2 id="actionsH" class="qb-eyebrow section_eyebrow">
+        <span class="qb-eyebrow_dot"></span>Quick actions
+      </h2>
+    </div>
+    <div class="actions">
+      <a class="qb-button is-primary" href="/qb-branidos-hub.html"><span class="qb-button_content">Continue Phase 01</span></a>
+      <a class="qb-button" href="/signal-scan.html"><span class="qb-button_content">Run Signal Scan</span></a>
+      <a class="text_link" href="/atelier">Apply for Atelier</a>
+    </div>
+  </section>
+
+  <!-- Tier -->
+  <section class="section" aria-labelledby="tierH">
+    <div class="section_head">
+      <h2 id="tierH" class="qb-eyebrow section_eyebrow">
+        <span class="qb-eyebrow_dot"></span>Your tier
+      </h2>
+    </div>
+
+    <div class="tier_card">
+      <div class="tier_card_head">
+        <span class="tier_badge" id="tierBadgeBody" data-tier="free">Free</span>
+        <h3 class="tier_card_name" id="tierName">Free</h3>
+      </div>
+      <p class="tier_card_desc" id="tierDesc">Brand foundation diagnostic. Phase 01 access.</p>
+      <div class="tier_card_actions">
+        <a class="qb-button" href="/ecosystem.html#pricing"><span class="qb-button_content">See what other tiers include</span></a>
+        <a class="text_link" id="manageSub" href="#" hidden>Manage subscription</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer_grid">
+    <div>
+      <a href="/index.html" class="footer_brand">
+        <span class="footer_brand_dot" aria-hidden="true"></span>
+        quantum branding
+      </a>
+      <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Product</div>
+      <a href="/ecosystem.html#how">How it works</a>
+      <a href="/tools.html">The 20 tools</a>
+      <a href="/ecosystem.html#pricing">Pricing</a>
+      <a href="/signal-scan.html">Free Signal Scan</a>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Company</div>
+      <a href="/ecosystem.html#about">About</a>
+      <a href="/atelier">Atelier</a>
+      <a href="https://nizzar.com" target="_blank" rel="noopener">nizzar.com</a>
+      <a href="mailto:me@qtmbg.com">Contact</a>
+    </div>
+    <div class="footer_col">
+      <div class="footer_col-title">Social</div>
+      <a href="https://linkedin.com/in/nizzar" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://instagram.com/thequantumbranding" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://x.com/quantumbranding" target="_blank" rel="noopener">X (Twitter)</a>
+    </div>
+  </div>
+
+  <div class="footer_bottom">
+    <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
+    <nav class="footer_bottom_links" aria-label="Legal">
+      <a href="/terms.html">Terms</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/privacy.html#data">Data</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="qb-toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Tier copy (single source of truth for this page) ────────────────
+  var TIERS = {
+    'free':    { name: 'Free',    desc: 'Brand foundation diagnostic. Phase 01 access.' },
+    'starter': { name: 'Starter', desc: 'Foundation, voice, and visual direction. Phases 01 and 02.' },
+    'pro':     { name: 'Pro',     desc: 'Foundation, creation, content, and intelligence. Phases 01 through 05.' },
+    'agency':  { name: 'Agency',  desc: 'Multi-client portals. Up to five client brands.' }
+  };
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.dataset.open = '1';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function () { t.dataset.open = '0'; }, 3500);
+  }
+
+  function initials(name, email) {
+    var src = (name && name.trim()) || (email || '').split('@')[0] || '·';
+    var parts = src.replace(/[^A-Za-z\s]/g, ' ').trim().split(/\s+/);
+    if (!parts[0]) return '·';
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  function normalizeTier(t) {
+    var v = (t || 'free').toString().toLowerCase().trim();
+    return TIERS[v] ? v : 'free';
+  }
+
+  function paint(profile) {
+    var tier = normalizeTier(profile.tier);
+    var firstName = (profile.first_name || '').trim();
+    var displayName = firstName || 'there';
+
+    // Welcome
+    document.getElementById('welcomeName').textContent = displayName;
+
+    // Nav user
+    var avatar = document.getElementById('avatar');
+    avatar.textContent = initials(firstName, profile.email);
+    var nav = document.getElementById('navUserName');
+    if (firstName) nav.textContent = firstName;
+
+    // Tier badges
+    var meta = TIERS[tier];
+    var b1 = document.getElementById('tierBadge');
+    var b2 = document.getElementById('tierBadgeBody');
+    [b1, b2].forEach(function (el) {
+      el.setAttribute('data-tier', tier);
+      el.textContent = meta.name;
+    });
+    document.getElementById('tierName').textContent = meta.name;
+    document.getElementById('tierDesc').textContent = meta.desc;
+
+    // Manage subscription link. Visible only for paying tiers with a customer record.
+    var manage = document.getElementById('manageSub');
+    if (tier !== 'free' && profile.stripe_customer_id) {
+      manage.hidden = false;
+      manage.addEventListener('click', openBillingPortal);
+    }
+
+    // Welcome sub line, tier-aware but still hardcoded for Day 1
+    var sub = document.getElementById('welcomeSub');
+    if (tier === 'free') {
+      sub.textContent = 'Your brand foundation is in progress. Continue where you left off, or run a fresh diagnostic.';
+    } else if (tier === 'agency') {
+      sub.textContent = 'Your studio is connected. Run a brand, open a client portal, or check the Atelier.';
+    } else {
+      sub.textContent = 'Your brand is in production. Pick up Phase 01, or move into Creation when you are ready.';
+    }
+  }
+
+  async function openBillingPortal(ev) {
+    ev.preventDefault();
+    if (!window.QB || !window.QB.isAuthed()) return;
+    var session = window.QB.getSession();
+    try {
+      var res = await fetch('/api/billing-portal', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + session.token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ return_url: window.location.href })
+      });
+      if (!res.ok) {
+        toast('Billing portal not available yet. Email me@qtmbg.com.');
+        return;
+      }
+      var data = await res.json();
+      if (data && data.url) window.location.href = data.url;
+    } catch (e) {
+      toast('Connection failed. Try again.');
+    }
+  }
+
+  async function ensureProfileRow(session) {
+    // Defense in depth: the auth.users trigger should have created the row,
+    // but if it didn't, write one so the dashboard has something to read.
+    // RLS allows the user to insert their own row (id = auth.uid()).
+    try {
+      var res = await fetch(window.QB.SUPA_URL + '/rest/v1/profiles?on_conflict=id', {
+        method: 'POST',
+        headers: {
+          'apikey': window.QB.SUPA_KEY,
+          'Authorization': 'Bearer ' + session.token,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=ignore-duplicates,return=minimal'
+        },
+        body: JSON.stringify({
+          id: session.userId,
+          email: session.email,
+          tier: 'free'
+        })
+      });
+      // 201 created, or 200 if Prefer caused ignore. Either is fine.
+      return res.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function loadProfile(session) {
+    try {
+      var res = await window.QB.cloudFetch(function (token) {
+        return {
+          url: window.QB.SUPA_URL + '/rest/v1/profiles?select=email,first_name,tier,subscription_status,stripe_customer_id&id=eq.' + session.userId,
+          init: { headers: { 'apikey': window.QB.SUPA_KEY, 'Authorization': 'Bearer ' + token } }
+        };
+      });
+      if (!res || !res.ok) return null;
+      var rows = await res.json();
+      return rows && rows[0] ? rows[0] : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function boot() {
+    if (!window.QB || !window.QB.isAuthed()) {
+      window.location.replace('/signal-scan.html?reason=signin');
+      return;
+    }
+
+    var session = window.QB.getSession();
+    var profile = await loadProfile(session);
+
+    if (!profile) {
+      // Row missing. Create it, then re-fetch.
+      await ensureProfileRow(session);
+      profile = await loadProfile(session);
+    }
+
+    if (!profile) {
+      // Still nothing. Fall back to session-only render so the page still works.
+      profile = {
+        email: session.email,
+        first_name: session.firstName || localStorage.getItem('qb_first_name') || '',
+        tier: localStorage.getItem('qb_user_tier') || 'free',
+        subscription_status: localStorage.getItem('qb_sub_status') || 'inactive',
+        stripe_customer_id: null
+      };
+    } else {
+      // Mirror to localStorage so other pages stay in sync.
+      if (profile.first_name) localStorage.setItem('qb_first_name', profile.first_name);
+      if (profile.tier) localStorage.setItem('qb_user_tier', profile.tier);
+      if (profile.subscription_status) localStorage.setItem('qb_sub_status', profile.subscription_status);
+    }
+
+    paint(profile);
+    document.body.setAttribute('data-auth', 'ok');
+  }
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', function (ev) {
+    ev.preventDefault();
+    if (window.QB) window.QB.logout();
+    window.location.replace('/index.html');
+  });
+
+  // Cross-tab state sync. Re-render if tier or first_name change in another tab.
+  window.addEventListener('qb:state-changed', function (e) {
+    var scope = e && e.detail && e.detail.scope;
+    if (scope === 'profile' || scope === 'session') boot();
+  });
+
+  boot();
+})();
+</script>
+
+</body>
+</html>
