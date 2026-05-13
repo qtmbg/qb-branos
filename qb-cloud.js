@@ -311,8 +311,13 @@
     //   2. Sends our own branded email through Resend from auth@send.nizzar.com
     //      (verified domain, much better deliverability than the default
     //      noreply@mail.app.supabase.io which Gmail/Apple aggressively filter).
-    // returnTo is the path the callback bounces to after exchanging the
-    // session. Defaults to /dashboard on the server when omitted.
+    // Optional returnTo overrides the default /dashboard landing. It is
+    // stashed in localStorage on this origin so auth-callback.html can read
+    // it back. We do not thread it through redirect_to because Supabase's
+    // allowlist matcher silently rejects URLs with non-static query strings.
+    if (returnTo && typeof returnTo === 'string' && returnTo.startsWith('/') && !returnTo.startsWith('//')) {
+      try { localStorage.setItem('qb_post_auth_return_to', returnTo); } catch(e){}
+    }
     try {
       const res = await fetch('/api/send-magic-link', {
         method: 'POST',
@@ -320,8 +325,7 @@
         body: JSON.stringify({
           email,
           firstName: firstName || '',
-          sourceTool: sourceTool || 'unknown',
-          returnTo: returnTo || '/dashboard'
+          sourceTool: sourceTool || 'unknown'
         })
       });
       if (!res.ok) {
