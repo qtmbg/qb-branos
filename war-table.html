@@ -1385,6 +1385,29 @@ select.glass-input{ cursor:pointer; appearance:none; background-image:linear-gra
   .wt-field-grid.two-one{ grid-template-columns:2fr 1fr; align-items:end; }
 }
 
+/* Audience Intelligence (phase 2) */
+.wt-audience-grid{
+  display:grid; grid-template-columns:1fr; gap:36px;
+}
+@media(min-width:760px){
+  .wt-audience-grid{ grid-template-columns:1fr 1fr; gap:40px 32px; }
+}
+.wt-audience-field{ display:flex; flex-direction:column; gap:10px; }
+.wt-audience-prompt{
+  font-family:var(--f-body), 'Inter', sans-serif;
+  font-size:0.92rem; line-height:1.55;
+  color:var(--text-2); margin:0;
+  max-width:60ch;
+}
+.wt-audience-field textarea.glass-input{
+  min-height:130px;
+}
+.wt-audience-counter{
+  align-self:flex-end;
+  font-size:0.7rem; letter-spacing:0.08em;
+  color:var(--text-3);
+}
+
 /* Brainstorm */
 .wt-brainstorm{
   display:grid; grid-template-columns:1fr; gap:32px;
@@ -2748,15 +2771,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
   /* --- Constants --- */
   var PHASES = [
-    { id:0, title:'Intro',         time:'3 min' },
-    { id:1, title:'The Brief',     time:'5 min' },
-    { id:2, title:'Brainstorm',    time:'10 min' },
-    { id:3, title:'Interrogation', time:'20 min' },
-    { id:4, title:'Scoring',       time:'10 min' },
-    { id:5, title:'Trade-Off',     time:'7 min' },
-    { id:6, title:'Unlock',        time:'1 min' },
-    { id:7, title:'Roadmap',       time:'5 min' },
-    { id:8, title:'Synthesis',     time:'5 min' }
+    { id:0, title:'Intro',                  time:'3 min' },
+    { id:1, title:'The Brief',              time:'5 min' },
+    { id:2, title:'Audience Intelligence',  time:'8 min' },
+    { id:3, title:'Brainstorm',             time:'10 min' },
+    { id:4, title:'Interrogation',          time:'20 min' },
+    { id:5, title:'Scoring',                time:'10 min' },
+    { id:6, title:'Trade-Off',              time:'7 min' },
+    { id:7, title:'Unlock',                 time:'1 min' },
+    { id:8, title:'Roadmap',                time:'5 min' },
+    { id:9, title:'Synthesis',              time:'5 min' }
   ];
   var PILLARS = [
     { id:'Revenue',    label:'Revenue',    color:'var(--patina)' },
@@ -2773,6 +2797,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     phase: 0,
     brandInfo: { brandName:'Our Brand', primaryPersona:'Primary Persona' },
     brief: { bottleneck:'', nextMonth:'', nextMonthDelay:'', working:'', personaGap:'', revenue:'', teamSize:'', keyMetric:'', constraint:'Time' },
+    audience: { fears:'', desires:'', language:'', friction:'' },
     initiatives: [],
     newInitiative: { name:'', description:'', pillar:'Revenue', persona:'' },
     expandedInterrogation: null,
@@ -2795,6 +2820,39 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     dossierSigned: false,
     expandedAcc: null              // 'kickoff' | 'ritual' | 'retro' | null
   };
+
+  /* --- Audience Intelligence: durability layer ---
+     The four audience fields must survive a tab close, refresh, or lost
+     connection. We hydrate state.audience from the QBP on script start,
+     persist on every keystroke, and write once more on pagehide as a
+     belt-and-suspenders safety net. */
+  (function hydrateAudienceFromQBP(){
+    try {
+      var qbp = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
+      state.audience.fears    = qbp.audienceFears    || '';
+      state.audience.desires  = qbp.audienceDesires  || '';
+      state.audience.language = qbp.audienceLanguage || '';
+      state.audience.friction = qbp.audienceFriction || '';
+    } catch(e){ /* default empty state */ }
+  })();
+  function persistAudience(){
+    try {
+      var existing = {};
+      try { existing = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); } catch(e){}
+      var updated = Object.assign({}, existing, {
+        audienceFears:    state.audience.fears,
+        audienceDesires:  state.audience.desires,
+        audienceLanguage: state.audience.language,
+        audienceFriction: state.audience.friction
+      });
+      if (window.QB && QB.setQBP) { QB.setQBP(updated); }
+      else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
+    } catch(e){ /* localStorage may be full or blocked */ }
+  }
+  window.addEventListener('pagehide', persistAudience);
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'hidden') persistAudience();
+  });
 
   /* Status rotation for loading */
   var DOSSIER_STATUS_MESSAGES = [
@@ -2893,20 +2951,24 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
                 a.brief.working.trim() && a.brief.personaGap.trim() &&
                 a.brief.revenue.trim() && a.brief.teamSize.trim() && a.brief.keyMetric.trim());
     }
-    if (phaseId === 2) return a.initiatives.length >= 3;
-    if (phaseId === 3){
+    if (phaseId === 2){
+      return !!(a.audience.fears.trim() && a.audience.desires.trim() &&
+                a.audience.language.trim() && a.audience.friction.trim());
+    }
+    if (phaseId === 3) return a.initiatives.length >= 3;
+    if (phaseId === 4){
       return a.initiatives.length > 0 && a.initiatives.every(function(i){
         return i.interrogation.utility.trim() && i.interrogation.timing.trim() &&
                i.interrogation.personaTest.trim() && i.interrogation.urgency.trim();
       });
     }
-    if (phaseId === 4) return true;
-    if (phaseId === 5){
+    if (phaseId === 5) return true;
+    if (phaseId === 6){
       return !!(a.tradeOffs.closeCall.choose.trim() && a.tradeOffs.closeCall.because.trim() && a.tradeOffs.closeCall.acceptWait.trim() &&
                 a.tradeOffs.pillarClash.buildFirst.trim() && a.tradeOffs.pillarClash.because.trim() &&
                 a.tradeOffs.brandTest.firstMove.trim() && a.tradeOffs.brandTest.makeItFeel.trim());
     }
-    if (phaseId === 6) return a.hasUnlocked;
+    if (phaseId === 7) return a.hasUnlocked;
     return true;
   }
   function isPhaseUnlocked(target){
@@ -3043,7 +3105,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
           }
         } catch(e){}
       } catch(e){ console.warn('War Table qb_qbp save failed:', e); }
-      state.phase = 7;
+      state.phase = 8;
       render();
     }, 1500);
   }
@@ -3557,8 +3619,82 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
   };
 
-  /* --- Brainstorm (phase 2) --- */
+  /* --- Audience Intelligence (phase 2) --- */
   views[2] = function(){
+    function audienceTextarea(id, field){
+      var t = el('textarea', {
+        id: id,
+        class: 'glass-input',
+        rows: '5',
+        maxlength: '600',
+        spellcheck: 'true'
+      });
+      t.value = state.audience[field] || '';
+      t.addEventListener('input', function(e){
+        state.audience[field] = e.target.value;
+        persistAudience();
+        var counter = document.getElementById(id + '-count');
+        if (counter) counter.textContent = (e.target.value.length) + ' / 600';
+      });
+      return t;
+    }
+    function audienceField(opts){
+      // opts: { id, field, label, prompt }
+      var ta = audienceTextarea(opts.id, opts.field);
+      return el('div', { class:'wt-audience-field' }, [
+        el('label', { class:'label-mono', 'for':opts.id, text:opts.label }),
+        el('p', { class:'wt-audience-prompt', text:opts.prompt }),
+        ta,
+        el('div', {
+          class:'wt-audience-counter mono',
+          id: opts.id + '-count',
+          text: (state.audience[opts.field] || '').length + ' / 600'
+        })
+      ]);
+    }
+    return el('div', { class:'wt-phase animate-in', style:{ maxWidth:'960px', margin:'0 auto' } }, [
+      el('div', { class:'wt-phase-head' }, [
+        el('div', { class:'kicker', text:'Phase 2' }),
+        el('h2', {}, [
+          document.createTextNode('Audience Intelligence. '),
+          el('em', { text:'Who you are speaking to, in their words.' })
+        ]),
+        el('p',  { class:'hook', text:'You are mapping the internal world of the audience. What they fear, what they want, how they speak, and what makes them hesitate. Downstream agents will read this verbatim. Write in their voice, not yours.' })
+      ]),
+      el('div', { class:'glass-card padded' }, [
+        el('div', { class:'wt-card-h' }, [ el('span', { class:'idx', text:'01' }), document.createTextNode('Inside the audience') ]),
+        el('div', { class:'wt-audience-grid' }, [
+          audienceField({
+            id: 'audience-fears',
+            field: 'fears',
+            label: 'WHAT THEY FEAR',
+            prompt: 'What is your audience afraid of? Write 3-5 sentences in their voice, the way they would say it to themselves at 3am.'
+          }),
+          audienceField({
+            id: 'audience-desires',
+            field: 'desires',
+            label: 'WHAT THEY WANT',
+            prompt: 'What does your audience actually want at the identity level? Not the surface want. The deeper one. Write in their voice.'
+          }),
+          audienceField({
+            id: 'audience-language',
+            field: 'language',
+            label: 'HOW THEY SPEAK',
+            prompt: 'What words, phrases, and idioms does your audience actually use? Capture their vocabulary, formality level, and any specific terms that mark them.'
+          }),
+          audienceField({
+            id: 'audience-friction',
+            field: 'friction',
+            label: 'WHAT MAKES THEM HESITATE',
+            prompt: 'What objections, hesitations, or resistance points come up when this audience considers a brand like yours? List the specific ones.'
+          })
+        ])
+      ])
+    ]);
+  };
+
+  /* --- Brainstorm (phase 3) --- */
+  views[3] = function(){
     function newInput(field, type, placeholder){
       var i = el(type === 'textarea' ? 'textarea' : 'input', { class:'glass-input' });
       if (type !== 'textarea') i.type = type || 'text';
@@ -3625,8 +3761,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
   };
 
-  /* --- Interrogation (phase 3) --- */
-  views[3] = function(){
+  /* --- Interrogation (phase 4) --- */
+  views[4] = function(){
     function textarea(id, field){
       var t = el('textarea', { class:'glass-input', style:{ minHeight:'96px', background:'var(--bg-void)' } });
       t.value = id.interrogation[field] || '';
@@ -3692,8 +3828,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
   };
 
-  /* --- Scoring (phase 4) --- */
-  views[4] = function(){
+  /* --- Scoring (phase 5) --- */
+  views[5] = function(){
     function numInput(init, metric){
       var i = el('input', { type:'number', class:'num-input', min:'1', max:'10' });
       i.value = String(init.scores[metric]);
@@ -3778,8 +3914,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
   };
 
-  /* --- Trade-offs (phase 5) --- */
-  views[5] = function(){
+  /* --- Trade-offs (phase 6) --- */
+  views[6] = function(){
     var d = getTradeOffData();
     var aName = (d.topNow[0] && d.topNow[0].name) || '[Asset Alpha]';
     var bName = (d.topNow[1] && d.topNow[1].name) || '[Asset Beta]';
@@ -3842,8 +3978,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
   };
 
-  /* --- Unlock (phase 6) --- */
-  views[6] = function(){
+  /* --- Unlock (phase 7) --- */
+  views[7] = function(){
     function leadInput(id, field, type){
       var i = el('input', { type: type || 'text', class:'glass-input', id:id });
       i.value = state.leadForm[field] || '';
@@ -3883,8 +4019,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
   };
 
-  /* --- Roadmap (phase 7) --- */
-  views[7] = function(){
+  /* --- Roadmap (phase 8) --- */
+  views[8] = function(){
     var sorted = state.initiatives.slice().sort(function(a,b){ return b.finalScore - a.finalScore; });
     var nowList   = sorted.filter(function(i){ return i.band === 'NOW'; }).slice(0, 5);
     var nextList  = sorted.filter(function(i){ return i.band === 'NEXT'; }).slice(0, 8);
@@ -3965,11 +4101,11 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
   };
 
-  /* --- Synthesis (phase 8) · Strategic Command Dossier --- */
-  views[8] = function(){
+  /* --- Synthesis (phase 9) · Strategic Command Dossier --- */
+  views[9] = function(){
     // On first mount, kick off AI synthesis
     if (!state.dossier && !state.isDossierLoading && !state.dossierError){
-      setTimeout(function(){ if (state.phase === 8) triggerDossierGeneration(); }, 60);
+      setTimeout(function(){ if (state.phase === 9) triggerDossierGeneration(); }, 60);
     }
     if (state.isDossierLoading) return renderDossierLoading();
     if (state.dossierError) return renderDossierError();
@@ -4370,10 +4506,11 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     var canProceed = isPhaseComplete(state.phase);
     var validationMessage = !canProceed
       ? (state.phase === 1 ? 'System halt: complete all diagnostic fields.'
-       : state.phase === 2 ? 'System halt: insufficient data. Add 3 initiatives. (' + state.initiatives.length + '/3)'
-       : state.phase === 3 ? 'System halt: complete all interrogation protocols.'
-       : state.phase === 5 ? 'System halt: resolve all strategic conflicts.'
-       : state.phase === 6 ? 'Authorization required: submit credentials to unlock.'
+       : state.phase === 2 ? 'System halt: map all four audience layers before advancing.'
+       : state.phase === 3 ? 'System halt: insufficient data. Add 3 initiatives. (' + state.initiatives.length + '/3)'
+       : state.phase === 4 ? 'System halt: complete all interrogation protocols.'
+       : state.phase === 6 ? 'System halt: resolve all strategic conflicts.'
+       : state.phase === 7 ? 'Authorization required: submit credentials to unlock.'
        : '')
       : '';
     $actionbar.appendChild(el('button', {
@@ -4385,7 +4522,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     if (validationMessage){
       right.appendChild(el('span', { class:'wt-validation' }, [ document.createTextNode('⚠ '), document.createTextNode(validationMessage) ]));
     }
-    if (state.phase < 8){
+    if (state.phase < 9){
       right.appendChild(el('button', {
         class:'btn btn-primary btn-sm', type:'button',
         disabled: !canProceed ? '' : null,
