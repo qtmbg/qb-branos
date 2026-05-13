@@ -1,8 +1,8 @@
 // QB BrandOS — Send Results API
 // Vercel Edge Function
-// Handles: Resend email + Klaviyo lead sync + optional Supabase logging
+// Handles: Resend email + optional Supabase logging
 // Env vars required: RESEND_API_KEY
-// Env vars optional: KLAVIYO_PRIVATE_KEY, SUPABASE_URL, SUPABASE_ANON_KEY
+// Env vars optional: SUPABASE_URL, SUPABASE_ANON_KEY
 
 export const config = { runtime: 'edge' };
 
@@ -250,18 +250,6 @@ export default async function handler(req) {
   if (!resendRes.ok) {
     console.error('Resend error:', resendData);
     return new Response(JSON.stringify({ error: 'Email delivery failed', detail: resendData }), { status: 502 });
-  }
-
-  // Optional: Klaviyo sync
-  const klaviyoKey = process.env.KLAVIYO_PRIVATE_KEY;
-  if (klaviyoKey) {
-    try {
-      await fetch('https://a.klaviyo.com/api/profiles/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Klaviyo-API-Key ${klaviyoKey}`, 'revision': '2024-02-15' },
-        body: JSON.stringify({ data: { type: 'profile', attributes: { email, first_name: firstName, last_name: lastName, organization: company || '', properties: { source: 'QB BrandOS', tool: toolId, brand_name: brandName } } } })
-      });
-    } catch(e) { console.warn('Klaviyo sync optional, non-blocking:', e.message); }
   }
 
   return new Response(JSON.stringify({ success: true, emailId: resendData.id }), {

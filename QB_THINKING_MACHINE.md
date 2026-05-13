@@ -139,7 +139,7 @@ This principle governs every UX decision, every copy choice, every tool input re
 - **Users/Auth:** Supabase
 - **Content scheduling:** Buffer API
 - **AI:** Anthropic API (Claude) — agent tools call Claude with `claude-sonnet-4-6` (current default in `api/claude.js`) or the latest Sonnet model. The retired `claude-sonnet-4-20250514` is kept in `ALLOWED_MODELS` for transition; do not write new code against it.
-- **Lead capture:** Klaviyo (Signal Scan integration via `kpk` and `kli` URL params)
+- **Lead capture and lifecycle email:** Resend (transactional: magic links, Signal Scan welcome, tool results, lock confirmation). No third-party marketing automation.
 - **Config:** vercel.json for routing, stripe-webhook.ts for payment events, supabase-setup.sql for schema
 
 ---
@@ -454,7 +454,6 @@ When building HTML/CSS/JS files for QB BrandOS:
 - Use the v3.2 design system (Part 5). All tokens come from `:root`. No hardcoded colors or spacing.
 - All tools accept `?apikey=`, `?provider=`, and `?qbp=` URL parameters.
 - All white-label entry points additionally accept `?brand=`, `?color=`, `?client=`.
-- Signal Scan additionally accepts `?kpk=` and `?kli=` for Klaviyo integration.
 - QBP data flows in on load and writes back on completion.
 - AI calls use the Anthropic API with `claude-sonnet-4-6` (current default in `api/claude.js`) or the latest Sonnet model. `claude-sonnet-4-20250514` is retired — kept in `ALLOWED_MODELS` only for transition.
 - Every agent tool includes the Content Approval Loop (up to 3 revision rounds per output).

@@ -744,6 +744,55 @@
     opacity:1;
   }
 
+  /* ── FOUNDATION (Lock surface) ────────────────────────────────────── */
+  .foundation {
+    margin-bottom:var(--space-xl);
+    padding:var(--space-l) var(--space-m);
+    border:2px solid var(--ink);
+    border-radius:var(--radius-card);
+    background:var(--cream-card);
+    box-shadow:var(--shadow-card-mobile);
+    display:none;
+  }
+  @media (min-width:640px) {
+    .foundation { box-shadow:var(--shadow-card-desktop); }
+  }
+  .foundation[data-state="ready"],
+  .foundation[data-state="locked"] { display:block; }
+  .foundation[data-state="ready"] {
+    background:linear-gradient(180deg, color-mix(in srgb, var(--gold) 14%, transparent), var(--cream-card));
+  }
+  .foundation[data-state="locked"] {
+    background:linear-gradient(180deg, color-mix(in srgb, var(--phase-discovery) 18%, transparent), var(--cream-card));
+  }
+  .foundation_eyebrow { margin-bottom:var(--space-xs); }
+  .foundation_h {
+    font-size:var(--step-4);
+    margin-bottom:var(--space-s);
+    line-height:1.05;
+  }
+  .foundation_d {
+    font-size:var(--step-1);
+    color:var(--ink-75);
+    line-height:1.5;
+    max-width:60ch;
+    margin-bottom:var(--space-m);
+  }
+  .foundation_actions {
+    display:flex;
+    gap:var(--space-s);
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .foundation_meta {
+    margin-top:var(--space-m);
+    font-family:var(--font-mono);
+    font-size:var(--step--2);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-50);
+  }
+
   /* ── REDUCED MOTION ───────────────────────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -786,6 +835,26 @@
     <p class="welcome_sub" id="welcomeSub">
       Your brand foundation is in progress. Continue where you left off, or run a fresh diagnostic.
     </p>
+  </section>
+
+  <!-- Foundation status (Lock surface). Hidden until Phase 01 is complete. -->
+  <section class="foundation" id="foundation" aria-labelledby="foundationH" aria-live="polite">
+    <div class="qb-eyebrow foundation_eyebrow" id="foundationEyebrow">
+      <span class="qb-eyebrow_dot"></span><span id="foundationEyebrowT">Phase 01 complete</span>
+    </div>
+    <h2 id="foundationH" class="qb-headline foundation_h">
+      <span id="foundationHt">Your foundation is ready.</span>
+    </h2>
+    <p class="foundation_d" id="foundationD">
+      You have answered the four foundational exercises. Take a moment to review your brand profile. When you lock it, your agents begin producing your brand kit.
+    </p>
+    <div class="foundation_actions" id="foundationActions">
+      <button type="button" class="qb-button is-primary" id="lockBtn">
+        <span class="qb-button_content">Lock my foundation</span>
+      </button>
+      <a class="text_link" href="/brand-document.html" id="reviewLink">Review your profile</a>
+    </div>
+    <div class="foundation_meta" id="foundationMeta" hidden></div>
   </section>
 
   <!-- Journey progress -->
@@ -1034,14 +1103,18 @@
       manage.addEventListener('click', openBillingPortal);
     }
 
-    // Welcome sub line, tier-aware but still hardcoded for Day 1
+    // Welcome sub line. Reflects foundation state first, tier second.
     var sub = document.getElementById('welcomeSub');
-    if (tier === 'free') {
-      sub.textContent = 'Your brand foundation is in progress. Continue where you left off, or run a fresh diagnostic.';
+    if (profile.foundation_locked_at) {
+      sub.textContent = 'Your foundation is locked. Your agents are producing your brand kit.';
+    } else if (isPhase01Done(profile.tool_completions)) {
+      sub.textContent = 'Phase 01 is complete. Review your profile, then lock your foundation.';
     } else if (tier === 'agency') {
       sub.textContent = 'Your studio is connected. Run a brand, open a client portal, or check the Atelier.';
-    } else {
+    } else if (tier !== 'free') {
       sub.textContent = 'Your brand is in production. Pick up Phase 01, or move into Creation when you are ready.';
+    } else {
+      sub.textContent = 'Your brand foundation is in progress. Continue where you left off, or run a fresh diagnostic.';
     }
   }
 
@@ -1099,7 +1172,7 @@
     try {
       var res = await window.QB.cloudFetch(function (token) {
         return {
-          url: window.QB.SUPA_URL + '/rest/v1/profiles?select=email,first_name,tier,subscription_status,stripe_customer_id&id=eq.' + session.userId,
+          url: window.QB.SUPA_URL + '/rest/v1/profiles?select=email,first_name,tier,subscription_status,stripe_customer_id,tool_completions,foundation_locked_at&id=eq.' + session.userId,
           init: { headers: { 'apikey': window.QB.SUPA_KEY, 'Authorization': 'Bearer ' + token } }
         };
       });
@@ -1108,6 +1181,128 @@
       return rows && rows[0] ? rows[0] : null;
     } catch (e) {
       return null;
+    }
+  }
+
+  // Phase 01 completion is gated on these four tools. Archetype Compass
+  // is the top-of-funnel entry diagnostic; The Profiles is a reference page.
+  // Neither produces QBP fields the synthesis agents need.
+  var LOCK_TOOLS = ['soul-map', 'sensescape', 'visual-dna', 'war-table'];
+
+  function isPhase01Done(completions) {
+    if (!completions || typeof completions !== 'object') return false;
+    return LOCK_TOOLS.every(function (t) { return !!completions[t]; });
+  }
+
+  function formatLockTimestamp(iso) {
+    if (!iso) return '';
+    try {
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleString(undefined, {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+      });
+    } catch (e) { return ''; }
+  }
+
+  function paintFoundation(profile) {
+    var foundation = document.getElementById('foundation');
+    var locked = !!profile.foundation_locked_at;
+    var done = isPhase01Done(profile.tool_completions);
+
+    if (locked) {
+      foundation.setAttribute('data-state', 'locked');
+      document.getElementById('foundationEyebrowT').textContent = 'Foundation locked';
+      document.getElementById('foundationHt').textContent = 'Your brand kit is being produced.';
+      document.getElementById('foundationD').textContent = 'Your agents are working. You will receive an email when each artifact is ready. Estimated time: 5 to 15 minutes for the first artifacts.';
+      var actions = document.getElementById('foundationActions');
+      actions.innerHTML = '';
+      var meta = document.getElementById('foundationMeta');
+      meta.hidden = false;
+      meta.textContent = 'Locked ' + formatLockTimestamp(profile.foundation_locked_at);
+      return;
+    }
+
+    if (done) {
+      foundation.setAttribute('data-state', 'ready');
+      // Markup is already in the ready state by default. Wire the button.
+      var btn = document.getElementById('lockBtn');
+      if (btn && !btn._wired) {
+        btn._wired = true;
+        btn.addEventListener('click', onLockClick);
+      }
+      return;
+    }
+
+    // Not done. Surface stays hidden.
+    foundation.removeAttribute('data-state');
+  }
+
+  function paintPhase01Card(profile) {
+    var card = document.querySelector('.phase[data-phase="01"]');
+    if (!card) return;
+    var statusT = card.querySelector('.phase_status_t');
+    var ctaWrap = card.querySelector('.phase_cta_wrap');
+    var locked = !!profile.foundation_locked_at;
+    var done = isPhase01Done(profile.tool_completions);
+
+    if (locked) {
+      card.setAttribute('data-state', 'complete');
+      if (statusT) statusT.textContent = 'Locked';
+      if (ctaWrap) ctaWrap.innerHTML = '<a class="qb-button is-block" href="/brand-document.html"><span class="qb-button_content">View profile</span></a>';
+    } else if (done) {
+      card.setAttribute('data-state', 'in-progress');
+      if (statusT) statusT.textContent = 'Ready to lock';
+      if (ctaWrap) ctaWrap.innerHTML = '<a class="qb-button is-block" href="/qb-branidos-hub.html"><span class="qb-button_content">Open Foundation</span></a>';
+    }
+  }
+
+  async function onLockClick(ev) {
+    ev.preventDefault();
+    var btn = document.getElementById('lockBtn');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    var label = btn.querySelector('.qb-button_content');
+    var prev = label ? label.textContent : '';
+    if (label) label.textContent = 'Locking…';
+
+    if (!window.QB || !window.QB.isAuthed()) {
+      toast('Sign in to lock your foundation.');
+      btn.disabled = false;
+      if (label) label.textContent = prev;
+      return;
+    }
+
+    try {
+      var session = window.QB.getSession();
+      var res = await fetch('/api/lock-foundation', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + session.token,
+          'Content-Type': 'application/json'
+        }
+      });
+      var data = {};
+      try { data = await res.json(); } catch (e) {}
+      if (!res.ok || !data.ok) {
+        if (res.status === 409) {
+          toast('Phase 01 is not yet complete.');
+        } else if (res.status === 401) {
+          toast('Sign in again to lock.');
+        } else {
+          toast('Lock failed. Try again in a moment.');
+        }
+        btn.disabled = false;
+        if (label) label.textContent = prev;
+        return;
+      }
+      // Locked. Re-fetch and re-render so the UI flips to the locked state.
+      await boot();
+      toast('Foundation locked. Email on its way.');
+    } catch (e) {
+      toast('Connection failed. Try again.');
+      btn.disabled = false;
+      if (label) label.textContent = prev;
     }
   }
 
@@ -1143,6 +1338,8 @@
     }
 
     paint(profile);
+    paintFoundation(profile);
+    paintPhase01Card(profile);
     document.body.setAttribute('data-auth', 'ok');
   }
 

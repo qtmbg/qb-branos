@@ -25,7 +25,13 @@ alter table public.profiles
   add column if not exists tool_completions jsonb default '{}'::jsonb,
   add column if not exists drip_stage text default 'pre_signup',
   add column if not exists last_active_at timestamptz default now(),
-  add column if not exists klaviyo_synced boolean default false;
+  add column if not exists foundation_locked_at timestamptz,
+  add column if not exists foundation_lock_qbp jsonb;
+
+-- Drop the legacy Klaviyo flag if it exists on this project. Safe no-op
+-- if the column is already gone.
+alter table public.profiles
+  drop column if exists klaviyo_synced;
 
 -- Indexes for funnel + reactivation queries
 create index if not exists idx_profiles_drip_stage      on public.profiles(drip_stage);
@@ -33,6 +39,7 @@ create index if not exists idx_profiles_last_active     on public.profiles(last_
 create index if not exists idx_profiles_signup_source   on public.profiles(signup_source);
 create index if not exists idx_profiles_tier            on public.profiles(tier);
 create index if not exists idx_profiles_subscription    on public.profiles(subscription_status);
+create index if not exists idx_profiles_foundation_locked on public.profiles(foundation_locked_at) where foundation_locked_at is not null;
 
 -- 2. ROW LEVEL SECURITY ─────────────────────────────────────────────────────
 alter table public.profiles enable row level security;

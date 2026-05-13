@@ -140,34 +140,6 @@
       } catch(e){}
     }
 
-    // Klaviyo: identify profile + record events via server-side route.
-    // /api/klaviyo-signup uses the Klaviyo private key on the server,
-    // bypassing the public-client bot protection that silently dropped
-    // browser-originated POSTs. Fires:
-    //   - profile create/update (with first_name + properties)
-    //   - subscription to list WSfkyj
-    //   - Brand Profile Saved event
-    //   - Tool Completed event for each pre-signup completion
-    try {
-      const r = await fetch('/api/klaviyo-signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email:      user.email,
-          firstName:  pending.firstName || '',
-          sourceTool: pending.sourceTool || 'unknown',
-          completions: localCompletions || {},
-          qbp:         localQBP || {}
-        })
-      });
-      if (!r.ok) {
-        const body = await r.text().catch(() => '');
-        console.warn('[auth-callback] klaviyo-signup non-OK', r.status, body);
-      }
-    } catch (e) {
-      console.warn('[auth-callback] klaviyo-signup threw', e && e.message);
-    }
-
     // Success → redirect back
     $('spinner').style.display = 'none';
     $('title').textContent = "You're in.";
