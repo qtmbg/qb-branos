@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB Component Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+<style>
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: var(--space-l) var(--space-m);
+    line-height: 1.5;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: var(--step-5);
+    line-height: 1;
+    margin: 0 0 var(--space-xs);
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    margin: var(--space-l) 0 var(--space-s);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--ink-25);
+  }
+  .gallery-summary {
+    padding: var(--space-s) var(--space-m);
+    background: var(--cream-warm);
+    border: var(--border-default) solid var(--ink);
+    border-radius: var(--radius-box);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    margin-bottom: var(--space-l);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    flex-wrap: wrap;
+  }
+  .gallery-summary.is-ok { background: var(--phase-discovery); }
+  .gallery-summary.is-fail { background: var(--cream-rose); color: var(--rose-deep); }
+  .gallery-summary button {
+    font: inherit;
+    color: inherit;
+    background: var(--cream);
+    border: var(--border-bubble) solid var(--ink);
+    border-radius: var(--radius-pill);
+    padding: 0.4em 1em;
+    cursor: pointer;
+  }
+  .gallery-summary button.is-active { background: var(--ink); color: var(--cream); }
+  section {
+    margin-bottom: var(--space-m);
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    align-items: stretch;
+  }
+  .row > * { flex: 1 1 280px; min-width: 0; }
+  .stack { display: flex; flex-direction: column; gap: var(--space-s); }
+  .small-row { display: flex; flex-wrap: wrap; gap: var(--space-xs); align-items: center; }
+  .note {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--ink-50);
+    margin: var(--space-3xs) 0;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .container {
+    max-width: 1240px;
+    margin-inline: auto;
+  }
+  .paywall-mount {
+    position: relative;
+    min-height: 280px;
+    border: 1px dashed var(--ink-25);
+    border-radius: var(--radius-box);
+    overflow: hidden;
+    background: var(--cream);
+  }
+  .paywall-mount .qb-paywall-modal { position: absolute; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>QB Component Gallery</h1>
+  <p>Visual QA harness for Chapter 1 components. Open and scroll. Toggle reduced-motion below to verify transforms degrade gracefully.</p>
+
+  <div class="gallery-summary" id="summary">
+    <span id="summary-text">Initializing…</span>
+    <button id="reduced-toggle" type="button">Simulate reduced motion</button>
+  </div>
+
+  <section id="sec-tags">
+    <h2>qb-tag</h2>
+    <div class="small-row" id="mount-tags"></div>
+  </section>
+
+  <section id="sec-cards">
+    <h2>qb-card</h2>
+    <div class="row" id="mount-cards"></div>
+  </section>
+
+  <section id="sec-buttons">
+    <h2>qb-button (primary / secondary / sm / lg / expand / disabled)</h2>
+    <div class="small-row" id="mount-buttons"></div>
+  </section>
+
+  <section id="sec-status">
+    <h2>qb-status-pill</h2>
+    <div class="small-row" id="mount-status"></div>
+  </section>
+
+  <section id="sec-tier">
+    <h2>qb-tier-badge</h2>
+    <div class="small-row" id="mount-tier"></div>
+  </section>
+
+  <section id="sec-phase">
+    <h2>qb-phase-card (available / complete / locked across phases)</h2>
+    <div class="row" id="mount-phase"></div>
+  </section>
+
+  <section id="sec-exercise">
+    <h2>qb-exercise-card (not-started / in-progress / complete / locked)</h2>
+    <div class="row" id="mount-exercise"></div>
+  </section>
+
+  <section id="sec-artifact">
+    <h2>qb-artifact-row</h2>
+    <div class="stack" id="mount-artifact"></div>
+  </section>
+
+  <section id="sec-empty">
+    <h2>qb-empty-state (cold-start / waiting / failed / locked)</h2>
+    <div class="row" id="mount-empty"></div>
+  </section>
+
+  <section id="sec-paywall">
+    <h2>qb-paywall-modal (rendered inline for QA)</h2>
+    <div class="paywall-mount" id="mount-paywall"></div>
+  </section>
+
+  <section id="sec-share">
+    <h2>qb-share-controls (free vs paid)</h2>
+    <div class="stack" id="mount-share"></div>
+  </section>
+
+  <section id="sec-lock-cta">
+    <h2>qb-lock-foundation-cta (disabled / enabled)</h2>
+    <div class="row" id="mount-lock-cta"></div>
+  </section>
+
+  <section id="sec-qbp">
+    <h2>qb-qbp-section (filled / empty)</h2>
+    <div class="stack" id="mount-qbp"></div>
+  </section>
+</div>
+
+<script type="module">
+import QB, {
+  createTag, createCard, createPhaseCard, createExerciseCard, createArtifactRow,
+  createLockFoundationCta, createPaywallModal, createEmptyState, createTierBadge,
+  createShareControls, createQbpSection, createStatusPill,
+} from '/js/qb-components.js';
+
+let RENDERED = 0;
+let FAILED = 0;
+
+function mount(id, builder) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  try {
+    const result = builder();
+    const items = Array.isArray(result) ? result : [result];
+    for (const node of items) target.appendChild(node);
+    RENDERED += items.length;
+  } catch (e) {
+    FAILED += 1;
+    console.error(`Mount failed for #${id}:`, e);
+    target.appendChild(document.createTextNode(`mount error: ${e.message}`));
+  }
+}
+
+// ─── Tags ───────────────────────────────────────────────────────────────────
+mount('mount-tags', () => [
+  createTag({ children: '01 Discovery' }),
+  createTag({ children: 'Soul Axis', modifier: 'is-rose' }),
+  createTag({ children: 'Sensescape', modifier: 'is-teal' }),
+  createTag({ children: 'Visual DNA', modifier: 'is-gold' }),
+  createTag({ children: 'War Table', modifier: 'is-pink' }),
+  createTag({ children: 'Soft', modifier: 'is-soft' }),
+]);
+
+// ─── Cards ──────────────────────────────────────────────────────────────────
+mount('mount-cards', () => [
+  createCard({ children: el('div', 'A plain qb-card body.') }),
+  createCard({ children: el('div', 'Warm variant.'),     modifier: 'is-warm' }),
+  createCard({ children: el('div', 'Discovery tinted.'), modifier: 'is-discovery' }),
+]);
+function el(_, text) {
+  const d = document.createElement('div');
+  d.style.padding = 'var(--space-m)';
+  d.style.fontFamily = 'var(--font-body)';
+  d.textContent = text;
+  return d;
+}
+
+// ─── Buttons ────────────────────────────────────────────────────────────────
+mount('mount-buttons', () => {
+  function pill({ label, variant, size, expand, disabled }) {
+    const b = document.createElement('button');
+    b.className = ['qb-button',
+      variant === 'primary' ? 'is-primary' : '',
+      variant === 'secondary' ? 'is-secondary' : '',
+      size === 'sm' ? 'is-sm' : '',
+      size === 'lg' ? 'is-lg' : '',
+      expand ? 'is-expand' : '',
+      disabled ? 'is-disabled' : '',
+    ].filter(Boolean).join(' ');
+    b.type = 'button';
+    if (disabled) b.disabled = true;
+    const c = document.createElement('span');
+    c.className = 'qb-button_content';
+    c.textContent = label;
+    b.appendChild(c);
+    return b;
+  }
+  return [
+    pill({ label: 'Primary', variant: 'primary' }),
+    pill({ label: 'Secondary', variant: 'secondary' }),
+    pill({ label: 'Small', variant: 'primary', size: 'sm' }),
+    pill({ label: 'Large', variant: 'primary', size: 'lg' }),
+    pill({ label: 'Disabled', variant: 'primary', disabled: true }),
+  ];
+});
+
+// ─── Status pill ────────────────────────────────────────────────────────────
+mount('mount-status', () => ['queued','generating','delivered','failed','locked'].map(s => createStatusPill({ status: s })));
+
+// ─── Tier badge ─────────────────────────────────────────────────────────────
+mount('mount-tier', () => ['free','starter','pro','agency','atelier'].map(t => createTierBadge({ tier: t })));
+
+// ─── Phase cards ────────────────────────────────────────────────────────────
+mount('mount-phase', () => [
+  createPhaseCard({ phase: '01', name: 'Discovery', state: 'available', count: 2, total: 4, ctaLabel: 'Continue', ctaHref: '#' }),
+  createPhaseCard({ phase: '01', name: 'Discovery', state: 'complete', ctaLabel: 'View artifacts', ctaHref: '#' }),
+  createPhaseCard({ phase: '02', name: 'Brand Creation', state: 'locked', lockReason: 'Unlock Phase 02 with Starter', ctaLabel: 'Upgrade', ctaHref: '#' }),
+  createPhaseCard({ phase: '04', name: 'Execution', state: 'locked', lockReason: 'Unlock Phase 04 with Starter', ctaLabel: 'Upgrade', ctaHref: '#' }),
+  createPhaseCard({ phase: '05', name: 'Intelligence', state: 'locked', lockReason: 'Unlock Phase 05 with Pro', ctaLabel: 'Upgrade', ctaHref: '#' }),
+]);
+
+// ─── Exercise cards ─────────────────────────────────────────────────────────
+mount('mount-exercise', () => [
+  createExerciseCard({ slug: 'archetype-compass', name: 'Archetype Compass', description: 'Your operating archetype, named.', state: 'complete', lastSavedAt: '2026-05-14T08:00:00Z', ctaLabel: 'Review', ctaHref: '#' }),
+  createExerciseCard({ slug: 'brand-soul-map',   name: 'Brand Soul Map',   description: 'Essence, paradox, manifesto.',    state: 'in-progress', lastSavedAt: '2026-05-14T09:30:00Z', ctaLabel: 'Continue', ctaHref: '#' }),
+  createExerciseCard({ slug: 'sensescape',       name: 'Sensescape',       description: 'The five senses of the brand.',    state: 'not-started', ctaLabel: 'Begin', ctaHref: '#' }),
+  createExerciseCard({ slug: 'visual-dna',       name: 'Visual DNA',       description: 'Palette and type direction.',      state: 'not-started', locked: true, ctaLabel: 'Upgrade', ctaHref: '#' }),
+  createExerciseCard({ slug: 'war-table',        name: 'War Table',        description: 'Position, paradox, priorities.',   state: 'not-started', locked: true, ctaLabel: 'Upgrade', ctaHref: '#' }),
+]);
+
+// ─── Artifact rows ──────────────────────────────────────────────────────────
+mount('mount-artifact', () => [
+  createArtifactRow({ id: '1', title: 'The Soul of Atelier Verdant',           phase: '01', agentSlug: 'soul_map_synthesizer',   generatedAt: '2026-05-14T12:00:00Z', status: 'delivered',  href: '#' }),
+  createArtifactRow({ id: '2', title: 'The Sensory World of Atelier Verdant',  phase: '01', agentSlug: 'sensescape_synthesizer', generatedAt: '2026-05-14T12:05:00Z', status: 'delivered',  locked: true, href: '#' }),
+  createArtifactRow({ id: '3', title: 'Artifact (generating)',                 phase: '01', agentSlug: 'visual_dna_synthesizer', status: 'generating', href: '#' }),
+  createArtifactRow({ id: '4', title: 'Artifact (failed)',                     phase: '01', agentSlug: 'war_table_synthesizer',  status: 'failed',     href: '#' }),
+]);
+
+// ─── Empty states ───────────────────────────────────────────────────────────
+mount('mount-empty', () => [
+  createEmptyState({ variant: 'cold-start', eyebrow: 'Begin',    headline: 'Your foundation starts with one question.', body: 'Identity comes before tactics. Start with the Archetype Compass.', ctaLabel: 'Begin the Archetype Compass', ctaHref: '#' }),
+  createEmptyState({ variant: 'waiting',    eyebrow: 'Working',  headline: 'Your artifacts are being prepared.',         body: 'This usually takes under a minute.' }),
+  createEmptyState({ variant: 'failed',     eyebrow: 'Failed',   headline: 'This artifact did not generate cleanly.',    body: 'Try regenerating.', ctaLabel: 'Try again', ctaHref: '#' }),
+  createEmptyState({ variant: 'locked',     eyebrow: 'Locked',   headline: 'Unlock the rest of your foundation.',        body: 'Upgrade to Starter to read this artifact.', ctaLabel: 'Upgrade', ctaHref: '#' }),
+]);
+
+// ─── Paywall modal ──────────────────────────────────────────────────────────
+mount('mount-paywall', () => createPaywallModal({
+  reason: 'artifact',
+  eyebrow: 'Locked',
+  headline: 'Unlock the rest of your foundation.',
+  body: 'Visual DNA, War Table, three remaining synthesis artifacts, and QBP export.',
+  price: 'Starter, $97 / month. Cancel anytime.',
+  primaryCta: 'Upgrade to Starter',
+  secondaryCta: 'Not now',
+  onPrimary: () => console.log('primary'),
+  onSecondary: () => console.log('secondary'),
+}));
+
+// ─── Share controls ─────────────────────────────────────────────────────────
+mount('mount-share', () => [
+  createShareControls({ artifactId: 'demo', canDownloadPdf: false, canShareEmail: false, onAction: (a) => console.log('free', a) }),
+  createShareControls({ artifactId: 'demo', canDownloadPdf: true,  canShareEmail: true,  onAction: (a) => console.log('paid', a) }),
+]);
+
+// ─── Lock-foundation CTA ────────────────────────────────────────────────────
+mount('mount-lock-cta', () => [
+  createLockFoundationCta({ enabled: false, disabledReason: 'Complete all four Phase 01 exercises to lock your foundation.', label: 'Lock my foundation' }),
+  createLockFoundationCta({ enabled: true,  onClick: () => console.log('lock!'), label: 'Lock my foundation' }),
+]);
+
+// ─── QBP sections ───────────────────────────────────────────────────────────
+mount('mount-qbp', () => [
+  createQbpSection({ eyebrow: 'Soul Axis', title: 'Essence', prose: 'A workshop before it is a brand. Each piece carries the trace of a hand. The brand is the refusal of speed.' }),
+  createQbpSection({ eyebrow: 'Sensescape', title: 'Sound', isEmpty: true, emptyHint: 'This will populate when you complete ', exerciseLink: '#', exerciseLabel: 'the Sensescape exercise' }),
+]);
+
+// ─── Summary banner ─────────────────────────────────────────────────────────
+const summary = document.getElementById('summary');
+const summaryText = document.getElementById('summary-text');
+summaryText.textContent = `Status: ${RENDERED} components rendered, ${FAILED} failures`;
+summary.classList.add(FAILED === 0 ? 'is-ok' : 'is-fail');
+
+// ─── Reduced-motion toggle ──────────────────────────────────────────────────
+const toggle = document.getElementById('reduced-toggle');
+toggle.addEventListener('click', () => {
+  document.documentElement.classList.toggle('qb-reduced-motion');
+  toggle.classList.toggle('is-active');
+  toggle.textContent = document.documentElement.classList.contains('qb-reduced-motion')
+    ? 'Reduced motion ON (click to disable)'
+    : 'Simulate reduced motion';
+});
+</script>
+</body>
+</html>
