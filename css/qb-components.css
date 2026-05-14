@@ -2094,3 +2094,296 @@
     page-break-inside: avoid;
   }
 }
+
+/* =====================================================
+   FOUNDATION SURFACE (step 12)
+   ===================================================== */
+
+.qb-foundation { background: var(--cream); }
+.qb-foundation__inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--space-l) var(--space-m) var(--space-3xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+@media (min-width: 640px) {
+  .qb-foundation__inner { padding: var(--space-xl) var(--space-l) var(--space-3xl); }
+}
+
+/* ── Nav ─────────────────────────────────────────────── */
+.qb-foundation-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--cream);
+  border-bottom: 1px solid var(--ink-25);
+  padding: var(--space-s) var(--space-m);
+}
+@media (min-width: 640px) {
+  .qb-foundation-nav { padding: var(--space-s) var(--space-l); }
+}
+.qb-foundation-nav__wordmark {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-variation-settings: "wght" 600, "SOFT" 60;
+  font-size: var(--step-0);
+  color: var(--ink);
+}
+.qb-foundation-nav .qb-nav__links {
+  align-items: center;
+  gap: var(--space-s);
+}
+@media (max-width: 639px) {
+  .qb-foundation-nav .qb-nav__links {
+    display: none;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    flex-direction: column;
+    background: var(--cream);
+    padding: var(--space-s) var(--space-m);
+    border-bottom: 1px solid var(--ink-25);
+    align-items: flex-start;
+  }
+  .qb-foundation-nav .qb-nav__links.is-open { display: flex; }
+}
+
+/* ── Top banner (post-lock confirmation, etc.) ───────── */
+.qb-foundation-banner {
+  margin: 0 auto;
+  max-width: 1240px;
+  background: var(--cream-warm);
+  border: var(--border-default) solid var(--ink);
+  border-radius: var(--radius-raised);
+  padding: var(--space-s) var(--space-m);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  box-shadow: var(--shadow-hard);
+  margin-top: var(--space-m);
+}
+.qb-foundation-banner.is-success { background: var(--phase-discovery); }
+.qb-foundation-banner__text { margin: 0; }
+
+/* ── Hero ───────────────────────────────────────────── */
+.qb-foundation-hero {
+  display: grid;
+  gap: var(--space-l);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+@media (min-width: 1024px) {
+  .qb-foundation-hero.is-cold {
+    grid-template-columns: 1fr minmax(0, 420px);
+  }
+}
+.qb-foundation-hero__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  max-width: 60ch;
+}
+.qb-foundation-hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+.qb-foundation-hero__title {
+  font-family: var(--font-display);
+  font-variation-settings: "wght" 500, "opsz" 96, "SOFT" 60, "WONK" 0;
+  font-size: var(--step-5);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+.qb-foundation-hero__body {
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  color: var(--ink-75);
+}
+.qb-foundation-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin-top: var(--space-xs);
+}
+.qb-foundation-hero__illustration {
+  max-width: 420px;
+  width: 100%;
+  justify-self: center;
+}
+
+/* ── Progress bar ────────────────────────────────────── */
+.qb-foundation-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  margin-top: var(--space-xs);
+}
+.qb-foundation-progress__bar {
+  display: flex;
+  gap: 4px;
+}
+.qb-foundation-progress__seg {
+  flex: 1;
+  height: 8px;
+  background: var(--cream-edge);
+  border-radius: var(--radius-box);
+  border: 1px solid var(--ink-25);
+}
+.qb-foundation-progress__seg.is-filled {
+  background: var(--gold);
+  border-color: var(--gold-deep);
+}
+.qb-foundation-progress__label {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+
+/* ── Exercise grid ───────────────────────────────────── */
+.qb-foundation-exercises__grid {
+  display: grid;
+  gap: var(--space-s);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px)  { .qb-foundation-exercises__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .qb-foundation-exercises__grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ── Phase roadmap ───────────────────────────────────── */
+.qb-foundation-roadmap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding-top: var(--space-l);
+  border-top: 1px solid var(--ink-25);
+}
+.qb-foundation-roadmap__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+.qb-foundation-roadmap__grid {
+  display: grid;
+  gap: var(--space-s);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px)  { .qb-foundation-roadmap__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .qb-foundation-roadmap__grid { grid-template-columns: repeat(5, 1fr); } }
+
+/* ── Queue (post-lock, generating) ───────────────────── */
+.qb-foundation-queue {
+  margin-top: var(--space-m);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  background: var(--cream-card);
+  border: var(--border-default) solid var(--ink);
+  border-radius: var(--radius-raised);
+  box-shadow: var(--shadow-hard);
+  padding: var(--space-s) var(--space-m);
+}
+.qb-foundation-queue__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  padding: var(--space-3xs) 0;
+}
+.qb-foundation-queue__row + .qb-foundation-queue__row {
+  border-top: 1px solid var(--ink-25);
+}
+.qb-foundation-queue__agent {
+  font-family: var(--font-body);
+  font-size: var(--step--1);
+  color: var(--ink);
+  text-transform: capitalize;
+}
+
+/* ── Tiles grid (post-lock delivered) ───────────────── */
+.qb-foundation-tiles__grid {
+  display: grid;
+  gap: var(--space-s);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 1024px) { .qb-foundation-tiles__grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Upgrade banner ──────────────────────────────────── */
+.qb-foundation-upgrade-banner {
+  display: grid;
+  gap: var(--space-m);
+  padding: var(--space-l);
+  background: var(--cream-card);
+  border: var(--border-default) solid var(--ink);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-hard);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+@media (min-width: 768px) {
+  .qb-foundation-upgrade-banner { grid-template-columns: 1fr auto; }
+}
+.qb-foundation-upgrade-banner__title {
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: var(--space-xs);
+}
+.qb-foundation-upgrade-banner__body {
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  color: var(--ink-75);
+  max-width: 48ch;
+}
+.qb-foundation-upgrade-banner__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-xs);
+}
+.qb-foundation-upgrade-banner__price {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+
+/* ── "Next phase" plain note (starter, delivered) ────── */
+.qb-foundation-next {
+  padding: var(--space-m);
+  background: var(--cream-warm);
+  border: 1px dashed var(--ink-25);
+  border-radius: var(--radius-raised);
+}
+.qb-foundation-next__text {
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  color: var(--ink-75);
+  max-width: 56ch;
+}
+
+/* ── Print ──────────────────────────────────────────── */
+@media print {
+  .qb-foundation-nav,
+  .qb-foundation-banner,
+  .qb-foundation-upgrade-banner__cta,
+  .qb-toast { display: none !important; }
+  .qb-foundation__inner { padding: 0 !important; }
+  .qb-foundation-hero__title,
+  .qb-foundation-hero__eyebrow,
+  .qb-foundation-hero__body { color: #000 !important; }
+}

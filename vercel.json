@@ -7,7 +7,7 @@
     {
       "src": "/",
       "has": [{"type": "host", "value": "app.quantumbranding.ai"}],
-      "dest": "/dashboard.html"
+      "dest": "/foundation.html"
     },
     {
       "src": "/",
@@ -16,17 +16,31 @@
     {
       "src": "/os",
       "status": 301,
-      "headers": {"Location": "/dashboard"}
+      "headers": {"Location": "/foundation"}
     },
     {
       "src": "/hub",
       "status": 301,
-      "headers": {"Location": "/dashboard"}
+      "headers": {"Location": "/foundation"}
     },
     {
       "src": "/qb-branidos-hub(\\.html)?",
       "status": 301,
-      "headers": {"Location": "/dashboard"}
+      "headers": {"Location": "/foundation"}
+    },
+    {
+      "src": "/dashboard(\\.html)?",
+      "status": 301,
+      "headers": {"Location": "/foundation"}
+    },
+    {
+      "src": "/journey-guide(\\.html)?",
+      "status": 410,
+      "headers": {"Content-Type": "text/plain"}
+    },
+    {
+      "src": "/foundation",
+      "dest": "/foundation.html"
     },
     {
       "src": "/scan",
@@ -39,10 +53,6 @@
     {
       "src": "/war-room",
       "dest": "/war-room.html"
-    },
-    {
-      "src": "/dashboard",
-      "dest": "/dashboard.html"
     },
     {
       "src": "/atelier",

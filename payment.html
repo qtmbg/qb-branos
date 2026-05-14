@@ -1980,7 +1980,7 @@ function renderSuccess() {
       <div class="success-icon">✓</div>
       <h2 style="font-size: 36px; margin-bottom: 16px;">You're in.</h2>
       <p style="margin-bottom: 32px;">Your account is active. Your API key and QBP are waiting in the system.</p>
-      <button type="button" class="btn-primary" onclick="window.location.href='/dashboard'">Enter QB BrandOS →</button>
+      <button type="button" class="btn-primary" onclick="window.location.href='/foundation'">Enter QB BrandOS →</button>
     </div>
   `;
 }
@@ -2090,7 +2090,7 @@ async function handleAuth(email, password) {
       if (selectedPlan) {
         await redirectToStripe(email);
       } else {
-        window.location.href = '/dashboard';
+        window.location.href = '/foundation';
       }
       return;
     }

@@ -240,7 +240,7 @@ function readyEmailHtml({ firstName }) {
         <p style="margin:0 0 16px;">Your Soul Map synthesis is complete. It is waiting for you in your dashboard.</p>
         <p style="margin:0 0 24px;">This is the first of your brand artifacts. The others are being produced now.</p>
         <p style="margin:0 0 32px;">
-          <a href="https://quantumbranding.ai/dashboard" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">View it</a>
+          <a href="https://quantumbranding.ai/foundation" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">View it</a>
         </p>
         <p style="margin:0;">Nizzar</p>
       </td></tr>
@@ -262,7 +262,7 @@ Your Soul Map synthesis is complete. It is waiting for you in your dashboard.
 
 This is the first of your brand artifacts. The others are being produced now.
 
-View it: https://quantumbranding.ai/dashboard
+View it: https://quantumbranding.ai/foundation
 
 Nizzar
 
