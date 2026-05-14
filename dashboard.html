@@ -1140,7 +1140,7 @@
     <div class="artifacts_grid" id="artifactsGrid" aria-label="Brand artifacts">
       <!-- Soul Map slot. Replaced in place by paintArtifacts() once the
            corresponding row appears in public.artifacts. -->
-      <div class="artifact_slot" data-artifact-type="soul-map-synthesis">
+      <div class="artifact_slot" data-artifact-type="soul_map_synthesizer">
         <span class="artifact_label">Soul Map synthesis</span>
         <span class="artifact_locked">Locked</span>
       </div>
@@ -1410,6 +1410,37 @@
     var c = (content && typeof content === 'object') ? content : {};
     var html = '';
 
+    // New envelope shape (schema v1.0): body_sections + data_blocks.
+    if (Array.isArray(c.body_sections) && c.body_sections.length) {
+      c.body_sections.forEach(function (s) {
+        if (!s || !s.heading || !s.prose) return;
+        html += '<div class="artifact_section_eyebrow">' + escapeText(s.heading) + '</div>'
+              + '<p class="artifact_section_body">'
+              + escapeText(s.prose).replace(/\n+/g, '</p><p class="artifact_section_body">')
+              + '</p>';
+      });
+      if (Array.isArray(c.data_blocks)) {
+        c.data_blocks.forEach(function (b) {
+          if (!b || b.type !== 'always_never' || !b.content) return;
+          var bc = b.content;
+          if (Array.isArray(bc.always) && bc.always.length) {
+            html += '<div class="artifact_section_eyebrow">Always</div>'
+                  + '<ul class="artifact_list">'
+                  + bc.always.map(function (it) { return '<li>' + escapeText(it) + '</li>'; }).join('')
+                  + '</ul>';
+          }
+          if (Array.isArray(bc.never) && bc.never.length) {
+            html += '<div class="artifact_section_eyebrow">Never</div>'
+                  + '<ul class="artifact_list">'
+                  + bc.never.map(function (it) { return '<li>' + escapeText(it) + '</li>'; }).join('')
+                  + '</ul>';
+          }
+        });
+      }
+      return html;
+    }
+
+    // Legacy flat shape, retained for any artifact still on the old format.
     if (c.essence) {
       html += '<div class="artifact_section_eyebrow">Essence</div>'
             + '<p class="artifact_section_body artifact_section_body--display">' + escapeText(c.essence) + '</p>';
@@ -1448,11 +1479,6 @@
       html += '<div class="artifact_section_eyebrow">A pattern we noticed</div>'
             + '<p class="artifact_section_body">' + escapeText(c.observed_pattern) + '</p>';
     }
-    if (c._meta && Array.isArray(c._meta.missing_inputs) && c._meta.missing_inputs.length) {
-      html += '<div class="artifact_missing_note">Some answers were not captured before you locked: '
-            + c._meta.missing_inputs.map(escapeText).join(', ')
-            + '. Return to the Soul Map to fill these in. Your synthesis will sharpen on the next lock.</div>';
-    }
     return html;
   }
 
@@ -1476,7 +1502,7 @@
         body: JSON.stringify({
           userId: session.userId,
           qbp: qbp || {},
-          agentName: 'soul-map-synthesizer'
+          agentName: 'soul_map_synthesizer'
         })
       });
       var data = {};
@@ -1504,20 +1530,24 @@
     if (anyReal && empty) empty.hidden = true;
     if (!anyReal && empty) empty.hidden = false;
 
-    var soulSlot = grid.querySelector('[data-artifact-type="soul-map-synthesis"]');
+    var soulSlot = grid.querySelector('[data-artifact-type="soul_map_synthesizer"]');
     if (!soulSlot) return;
-    var row = byType['soul-map-synthesis'];
+    // Accept the canonical artifact_type and the legacy kebab variant
+    // for any in-flight rows mid-migration.
+    var row = byType['soul_map_synthesizer'] || byType['soul-map-synthesis'];
     if (!row) {
       // Locked still applies if the lock has not fired yet.
       return;
     }
 
-    var status = row.status || 'producing';
+    var status = row.status || 'queued';
+    var isReady = (status === 'delivered' || status === 'ready');
+    var isInFlight = (status === 'queued' || status === 'generating' || status === 'producing');
     var ageS = ageInSeconds(row.updated_at || row.created_at);
 
     var details = document.createElement('details');
     details.className = 'artifact_card';
-    details.setAttribute('data-artifact-type', 'soul-map-synthesis');
+    details.setAttribute('data-artifact-type', 'soul_map_synthesizer');
 
     var summary = document.createElement('summary');
 
@@ -1528,8 +1558,9 @@
     var statusEl = document.createElement('span');
     statusEl.className = 'artifact_status';
     statusEl.setAttribute('data-status', status);
-    if (status === 'producing') statusEl.textContent = 'Producing';
-    else if (status === 'ready') statusEl.textContent = 'Ready';
+    if (status === 'queued') statusEl.textContent = 'Queued';
+    else if (status === 'generating' || status === 'producing') statusEl.textContent = 'Generating';
+    else if (isReady) statusEl.textContent = 'Ready';
     else statusEl.textContent = 'Failed';
 
     var chevron = document.createElement('span');
@@ -1537,15 +1568,15 @@
 
     summary.appendChild(label);
     summary.appendChild(statusEl);
-    if (status === 'ready') summary.appendChild(chevron);
+    if (isReady) summary.appendChild(chevron);
     details.appendChild(summary);
 
-    if (status === 'ready') {
+    if (isReady) {
       var body = document.createElement('div');
       body.className = 'artifact_body';
       body.innerHTML = renderSoulMapBody(row.content);
       details.appendChild(body);
-    } else if (status === 'producing') {
+    } else if (isInFlight) {
       var bodyP = document.createElement('div');
       bodyP.className = 'artifact_body__producing';
       var stuck = ageS > 60;
