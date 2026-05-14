@@ -279,7 +279,7 @@ export default async function handler(req) {
     });
   }
 
-  // Step 6: agent dispatch. Day 3 only ships soul-map-synthesizer. We
+  // Step 6: agent dispatch. Day 3 only ships soul_map_synthesizer. We
   // build the same-origin URL from the inbound request so this works
   // identically on the bare and app hosts. Dispatch errors do not roll
   // back the lock — the dashboard surfaces a Retry on stuck rows.
@@ -288,7 +288,7 @@ export default async function handler(req) {
     token,
     userId: user.id,
     qbp: lockQbp,
-    agentName: 'soul-map-synthesizer',
+    agentName: 'soul_map_synthesizer',
   });
 
   return new Response(JSON.stringify({ ok: true, lockedAt, dispatch: dispatchResult }), {

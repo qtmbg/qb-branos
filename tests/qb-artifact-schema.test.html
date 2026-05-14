@@ -34,6 +34,8 @@
 <ul id="pass-list"></ul>
 <div class="section-title">Fail cases</div>
 <ul id="fail-list"></ul>
+<div class="section-title">Fixtures (round-trip)</div>
+<ul id="fixture-list"></ul>
 
 <script type="module">
 import {
@@ -405,8 +407,16 @@ function renderRow(parent, name, ok, detail) {
 
 const passList = document.getElementById("pass-list");
 const failList = document.getElementById("fail-list");
+const fixtureList = document.getElementById("fixture-list");
 let passing = 0;
 let total = 0;
+
+const FIXTURE_SLUGS = [
+  "soul_map_synthesizer",
+  "sensescape_synthesizer",
+  "visual_dna_synthesizer",
+  "war_table_synthesizer"
+];
 
 for (const c of passCases) {
   total += 1;
@@ -439,6 +449,36 @@ for (const c of failCases) {
   } else {
     passing += 1;
     renderRow(failList, c.name, true);
+  }
+}
+
+async function loadAndValidateFixture(slug) {
+  const url = `../chapter-01/fixtures/${slug}.sample.json`;
+  let json;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`fetch ${url} → ${res.status}`);
+    json = await res.json();
+  } catch (e) {
+    return { ok: false, name: `Fixture ${slug}`, detail: `fetch failed: ${e.message}` };
+  }
+  const r = validateArtifact(json);
+  if (r.valid) return { ok: true, name: `Fixture ${slug}` };
+  return {
+    ok: false,
+    name: `Fixture ${slug}`,
+    detail: "validator errors:\n" + JSON.stringify(r.errors, null, 2)
+  };
+}
+
+for (const slug of FIXTURE_SLUGS) {
+  total += 1;
+  const r = await loadAndValidateFixture(slug);
+  if (r.ok) {
+    passing += 1;
+    renderRow(fixtureList, r.name, true);
+  } else {
+    renderRow(fixtureList, r.name, false, r.detail);
   }
 }
 
