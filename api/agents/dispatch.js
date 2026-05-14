@@ -28,6 +28,7 @@
 
 import { runSoulMapSynthesizer } from './soul-map-synthesizer.js';
 import { runSensescapeSynthesizer } from './sensescape-synthesizer.js';
+import { runVisualDnaSynthesizer } from './visual-dna-synthesizer.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
 
 export const config = { runtime: 'edge' };
@@ -76,11 +77,18 @@ const AGENT_REGISTRY = {
     phase: '01',
     run: runSensescapeSynthesizer,
   },
+  visual_dna_synthesizer: {
+    slug: 'visual_dna_synthesizer',
+    artifactType: 'visual_dna_synthesizer',
+    phase: '01',
+    run: runVisualDnaSynthesizer,
+  },
 };
 
 const AGENT_NAME_ALIASES = {
   'soul-map-synthesizer': 'soul_map_synthesizer',
   'sensescape-synthesizer': 'sensescape_synthesizer',
+  'visual-dna-synthesizer': 'visual_dna_synthesizer',
 };
 
 function resolveAgent(agentName) {

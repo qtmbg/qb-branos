@@ -289,6 +289,7 @@ export default async function handler(req) {
   const AGENTS_TO_ENQUEUE = [
     'soul_map_synthesizer',
     'sensescape_synthesizer',
+    'visual_dna_synthesizer',
   ];
 
   const dispatchResults = await Promise.all(
