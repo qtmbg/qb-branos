@@ -290,6 +290,7 @@ export default async function handler(req) {
     'soul_map_synthesizer',
     'sensescape_synthesizer',
     'visual_dna_synthesizer',
+    'war_table_synthesizer',
   ];
 
   const dispatchResults = await Promise.all(
