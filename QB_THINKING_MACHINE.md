@@ -230,7 +230,7 @@ The following 11 source files are the canonical illustration set. Filenames list
 - `blank-slate.png` — solo skater with coffee, drink-in-hand pose. Persona: The Blank Slate (Door 01).
 - `doubter.png` — seated figure at café table, hand-on-chin contemplative pose. Persona: The Doubter (Door 02).
 - `player.png` — runner with dog on leash, forward motion. Persona: The Player (Door 03).
-- `agency.png` — figure holding oversized framed portrait, multi-brand metaphor. Persona: The Multi-Brand (Door 04).
+- `agency.png` — figure holding oversized framed portrait, agency metaphor. Persona: The Multi-Brand (Door 04).
 - `guide.png` — figure on tandem bicycle (two riders), wayfinding metaphor. Persona-adjacent: navigation, journey, partnership.
 
 **Scene set (heavier line weight, denser composition, denoted by group activity):**
@@ -245,7 +245,7 @@ The following 11 source files are the canonical illustration set. Filenames list
 
 ### Format Notes
 - All current files are PNG with transparent backgrounds.
-- Two motion variants exist: `synergy.mov`, `nizzarfounder.mov`, `execution-phase-04.mov`. These are hover-play videos used in mock cards and the founder block. Do not treat them as substitutes for static fallbacks.
+- Two motion variants exist: `synergy.mov`, `nizzarfounder.mov`, `phase_4.mov`. These are hover-play videos used in mock cards and the founder block. Do not treat them as substitutes for static fallbacks.
 - No SVG versions exist yet. Inline SVG conversion is on the roadmap but not done.
 
 ### Tonal Cohesion Map
