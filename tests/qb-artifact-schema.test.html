@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QB Artifact Schema · Test Runner</title>
+<style>
+  :root {
+    --ink: #2D1521;
+    --cream: #FAF6EF;
+    --pass: #2F6B3A;
+    --fail: #B83B2E;
+    --muted: #6B5F58;
+  }
+  body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         background: var(--cream); color: var(--ink); margin: 0; padding: 2rem; }
+  header { padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;
+           font-weight: 600; font-size: 18px; }
+  header.pass { background: var(--pass); color: white; }
+  header.fail { background: var(--fail); color: white; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(45,21,33,0.1); }
+  li.pass::before { content: "PASS  "; color: var(--pass); font-weight: 700; }
+  li.fail::before { content: "FAIL  "; color: var(--fail); font-weight: 700; }
+  .name { font-weight: 500; }
+  .detail { color: var(--muted); font-size: 13px; margin-top: 0.25rem; }
+  pre { white-space: pre-wrap; word-break: break-word; margin: 0; font: 12px/1.4 ui-monospace, monospace; }
+  .section-title { margin-top: 2rem; font-weight: 700; text-transform: uppercase;
+                   letter-spacing: 0.08em; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header id="summary">Running…</header>
+<div class="section-title">Pass cases</div>
+<ul id="pass-list"></ul>
+<div class="section-title">Fail cases</div>
+<ul id="fail-list"></ul>
+
+<script type="module">
+import {
+  validateArtifact,
+  ARTIFACT_SCHEMA_VERSION,
+  KNOWN_AGENT_SLUGS,
+  ILLUSTRATION_INVENTORY,
+  DATA_BLOCK_TYPES
+} from "../js/qb-artifact-schema.js";
+
+const ISO_NOW = "2026-05-14T12:00:00Z";
+
+function header(agent = "soul_map_synthesizer", overrides = {}) {
+  return {
+    eyebrow: "01 Discovery · Soul Axis",
+    title: "The Soul of Atelier Verdant",
+    agent,
+    generated_at: ISO_NOW,
+    version: 1,
+    ...overrides
+  };
+}
+function section(overrides = {}) {
+  return { heading: "Opening", prose: "The brand begins with...", ...overrides };
+}
+function footer(overrides = {}) {
+  return { qbp_fields_referenced: ["brandEssence"], ...overrides };
+}
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+const passCases = [
+  {
+    name: "P1 minimal valid",
+    input: {
+      schema_version: "1.0",
+      header: {
+        eyebrow: "01",
+        title: "T",
+        agent: "soul_map_synthesizer",
+        generated_at: ISO_NOW,
+        version: 1
+      },
+      body_sections: [{ heading: "H", prose: "P" }],
+      footer: { qbp_fields_referenced: [] }
+    }
+  },
+  {
+    name: "P2 Soul Map style with pull_quote, illustration_slot, always_never",
+    input: {
+      schema_version: "1.0",
+      header: header("soul_map_synthesizer", { subtitle: "A synthesis." }),
+      body_sections: [
+        section({ pull_quote: "A quote stands here.", illustration_slot: "blank-slate" }),
+        section({ heading: "Essence", prose: "The essence is..." })
+      ],
+      data_blocks: [
+        {
+          type: "always_never",
+          title: "Binding Commitments",
+          content: { always: ["Show work in materials."], never: ["Mass-market."] }
+        }
+      ],
+      footer: footer({ qbp_fields_referenced: ["brandEssence", "manifesto"] })
+    }
+  },
+  {
+    name: "P3 Visual DNA style with palette + type_pairing",
+    input: {
+      schema_version: "1.0",
+      header: header("visual_dna_synthesizer", {
+        eyebrow: "01 Discovery · Visual",
+        title: "The Visual Language of Atelier Verdant"
+      }),
+      body_sections: [section({ heading: "Posture", prose: "Restrained, classical." })],
+      data_blocks: [
+        {
+          type: "palette",
+          title: "The Color System",
+          content: {
+            swatches: [
+              { label: "Primary", hex: "#2D1521", rationale: "Ink anchors." },
+              { label: "Accent", hex: "#D4B85A", rationale: "Gold lifts." }
+            ]
+          }
+        },
+        {
+          type: "type_pairing",
+          title: "Type Direction",
+          content: {
+            display: { family: "Fraunces", weight: "500", rationale: "Editorial gravity." },
+            body: { family: "Inter", weight: "400", rationale: "Clean read." }
+          }
+        }
+      ],
+      footer: footer({ qbp_fields_referenced: ["visualDNA", "colorDirection"] })
+    }
+  },
+  {
+    name: "P4 War Table style with positioning_map + priority_list",
+    input: {
+      schema_version: "1.0",
+      header: header("war_table_synthesizer", {
+        eyebrow: "01 Discovery · Strategy",
+        title: "The Strategic Position of Atelier Verdant"
+      }),
+      body_sections: [section({ heading: "The Field", prose: "Among workshops and brands..." })],
+      data_blocks: [
+        {
+          type: "positioning_map",
+          title: "The Field",
+          content: {
+            x_axis: { low: "Mass", high: "Bespoke" },
+            y_axis: { low: "Quiet", high: "Bold" },
+            placements: [
+              { label: "Competitor A", x: 0.3, y: 0.7, is_self: false },
+              { label: "Atelier Verdant", x: 0.85, y: 0.4, is_self: true }
+            ]
+          }
+        },
+        {
+          type: "priority_list",
+          title: "Strategic Priorities",
+          content: {
+            items: [
+              { rank: 1, label: "Refuse the discount channel.", rationale: "Discount kills meaning." },
+              { rank: 2, label: "Show the maker.", rationale: "Provenance is the moat." }
+            ]
+          }
+        }
+      ],
+      footer: footer({ qbp_fields_referenced: ["competitorLandscape", "strategicPriorities"] })
+    }
+  },
+  {
+    name: "P5 Sensescape style with descriptor_list",
+    input: {
+      schema_version: "1.0",
+      header: header("sensescape_synthesizer", {
+        eyebrow: "01 Discovery · Sensory",
+        title: "The Sensory World of Atelier Verdant"
+      }),
+      body_sections: [section({ heading: "Opening", prose: "How it sounds, looks, feels." })],
+      data_blocks: [
+        {
+          type: "descriptor_list",
+          title: "Sensory Descriptors",
+          content: {
+            groups: [
+              { label: "Sound", items: ["Footsteps on wood", "Distant chiming"] },
+              { label: "Touch", items: ["Linen", "Brushed brass"] }
+            ]
+          }
+        }
+      ],
+      footer: footer({ qbp_fields_referenced: ["sensoryProfile"] })
+    }
+  }
+];
+
+// Helpers to build a fully valid artifact then mutate one piece for fail cases.
+function valid() {
+  return clone(passCases[1].input);
+}
+
+const failCases = [
+  {
+    name: "F1 missing schema_version",
+    input: (() => { const a = valid(); delete a.schema_version; return a; })(),
+    expectPathContains: "schema_version"
+  },
+  {
+    name: "F2 wrong schema_version",
+    input: (() => { const a = valid(); a.schema_version = "2.0"; return a; })(),
+    expectPathContains: "schema_version"
+  },
+  {
+    name: "F3 missing header",
+    input: (() => { const a = valid(); delete a.header; return a; })(),
+    expectPathContains: "header"
+  },
+  {
+    name: "F4 unknown agent slug",
+    input: (() => { const a = valid(); a.header.agent = "fake_agent_slug"; return a; })(),
+    expectPathContains: "header.agent"
+  },
+  {
+    name: "F5 invalid generated_at",
+    input: (() => { const a = valid(); a.header.generated_at = "not-a-date"; return a; })(),
+    expectPathContains: "header.generated_at"
+  },
+  {
+    name: "F6 version=0",
+    input: (() => { const a = valid(); a.header.version = 0; return a; })(),
+    expectPathContains: "header.version"
+  },
+  {
+    name: "F7 empty body_sections",
+    input: (() => { const a = valid(); a.body_sections = []; return a; })(),
+    expectPathContains: "body_sections"
+  },
+  {
+    name: "F8 empty prose in a body_section",
+    input: (() => { const a = valid(); a.body_sections[0].prose = ""; return a; })(),
+    expectPathContains: "prose"
+  },
+  {
+    name: "F9 unknown illustration_slot",
+    input: (() => {
+      const a = valid();
+      a.body_sections[0].illustration_slot = "unknown-character";
+      return a;
+    })(),
+    expectPathContains: "illustration_slot"
+  },
+  {
+    name: "F10 unknown top-level key",
+    input: (() => { const a = valid(); a.unexpected_top = true; return a; })(),
+    expectPathContains: "unexpected_top"
+  },
+  {
+    name: "F11 unknown body_section key",
+    input: (() => { const a = valid(); a.body_sections[0].extra = "x"; return a; })(),
+    expectPathContains: "extra"
+  },
+  {
+    name: "F12 unknown data_block type",
+    input: (() => {
+      const a = valid();
+      a.data_blocks = [{ type: "unknown_type", title: "X", content: {} }];
+      return a;
+    })(),
+    expectPathContains: "type"
+  },
+  {
+    name: "F13 malformed hex in palette swatch",
+    input: (() => {
+      const a = valid();
+      a.data_blocks = [{
+        type: "palette",
+        title: "Color",
+        content: { swatches: [{ label: "P", hex: "#XYZ", rationale: "r" }] }
+      }];
+      return a;
+    })(),
+    expectPathContains: "hex"
+  },
+  {
+    name: "F14 positioning_map with zero is_self placements",
+    input: (() => {
+      const a = valid();
+      a.data_blocks = [{
+        type: "positioning_map",
+        title: "The Field",
+        content: {
+          x_axis: { low: "L", high: "H" },
+          y_axis: { low: "L", high: "H" },
+          placements: [
+            { label: "A", x: 0.2, y: 0.2, is_self: false },
+            { label: "B", x: 0.8, y: 0.8, is_self: false }
+          ]
+        }
+      }];
+      return a;
+    })(),
+    expectPathContains: "placements"
+  },
+  {
+    name: "F15 positioning_map with two is_self placements",
+    input: (() => {
+      const a = valid();
+      a.data_blocks = [{
+        type: "positioning_map",
+        title: "The Field",
+        content: {
+          x_axis: { low: "L", high: "H" },
+          y_axis: { low: "L", high: "H" },
+          placements: [
+            { label: "A", x: 0.2, y: 0.2, is_self: true },
+            { label: "B", x: 0.8, y: 0.8, is_self: true }
+          ]
+        }
+      }];
+      return a;
+    })(),
+    expectPathContains: "placements"
+  },
+  {
+    name: "F16 priority_list with non-sequential ranks",
+    input: (() => {
+      const a = valid();
+      a.data_blocks = [{
+        type: "priority_list",
+        title: "Priorities",
+        content: {
+          items: [
+            { rank: 1, label: "L1", rationale: "R1" },
+            { rank: 3, label: "L3", rationale: "R3" }
+          ]
+        }
+      }];
+      return a;
+    })(),
+    expectPathContains: "items"
+  },
+  {
+    name: "F17 priority_list with duplicate ranks",
+    input: (() => {
+      const a = valid();
+      a.data_blocks = [{
+        type: "priority_list",
+        title: "Priorities",
+        content: {
+          items: [
+            { rank: 1, label: "L1", rationale: "R1" },
+            { rank: 1, label: "L2", rationale: "R2" }
+          ]
+        }
+      }];
+      return a;
+    })(),
+    expectPathContains: "rank"
+  },
+  {
+    name: "F18 always_never with empty always array",
+    input: (() => {
+      const a = valid();
+      a.data_blocks = [{
+        type: "always_never",
+        title: "Commitments",
+        content: { always: [], never: ["X"] }
+      }];
+      return a;
+    })(),
+    expectPathContains: "always"
+  },
+  {
+    name: "F19 missing footer",
+    input: (() => { const a = valid(); delete a.footer; return a; })(),
+    expectPathContains: "footer"
+  },
+  {
+    name: "F20 non-uuid related_artifact id",
+    input: (() => {
+      const a = valid();
+      a.footer.related_artifacts = [{ id: "not-a-uuid", title: "X" }];
+      return a;
+    })(),
+    expectPathContains: "id"
+  }
+];
+
+function renderRow(parent, name, ok, detail) {
+  const li = document.createElement("li");
+  li.className = ok ? "pass" : "fail";
+  const n = document.createElement("div");
+  n.className = "name";
+  n.textContent = name;
+  li.appendChild(n);
+  if (detail) {
+    const d = document.createElement("div");
+    d.className = "detail";
+    const pre = document.createElement("pre");
+    pre.textContent = detail;
+    d.appendChild(pre);
+    li.appendChild(d);
+  }
+  parent.appendChild(li);
+}
+
+const passList = document.getElementById("pass-list");
+const failList = document.getElementById("fail-list");
+let passing = 0;
+let total = 0;
+
+for (const c of passCases) {
+  total += 1;
+  const res = validateArtifact(c.input);
+  if (res.valid) {
+    passing += 1;
+    renderRow(passList, c.name, true);
+  } else {
+    renderRow(passList, c.name, false, "expected valid, got errors:\n" + JSON.stringify(res.errors, null, 2));
+  }
+}
+
+for (const c of failCases) {
+  total += 1;
+  const res = validateArtifact(c.input);
+  if (res.valid) {
+    renderRow(failList, c.name, false, "expected invalid, got valid");
+    continue;
+  }
+  if (c.expectPathContains) {
+    const found = res.errors.some(e => e.path.includes(c.expectPathContains));
+    if (found) {
+      passing += 1;
+      renderRow(failList, c.name, true, res.errors.map(e => `${e.path}: ${e.message}`).join("\n"));
+    } else {
+      renderRow(failList, c.name, false,
+        `expected error path to contain "${c.expectPathContains}", got:\n` +
+        res.errors.map(e => `${e.path}: ${e.message}`).join("\n"));
+    }
+  } else {
+    passing += 1;
+    renderRow(failList, c.name, true);
+  }
+}
+
+const summary = document.getElementById("summary");
+summary.textContent = `${passing} of ${total} tests passing`;
+summary.className = passing === total ? "pass" : "fail";
+</script>
+</body>
+</html>
