@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>Artifact · QB BrandOS</title>
+
+<link rel="icon" href="/img/brand/web/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+
+<style>
+  :root { /* fallback if qb-tokens didn't load */ }
+  html, body {
+    margin: 0;
+    background: var(--cream, #FBF5E6);
+    color: var(--ink, #2D1521);
+    font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.5;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  img, svg, video { display: block; max-width: 100%; }
+  main#artifact-root { min-height: 70vh; }
+  /* Toast */
+  .qb-toast {
+    position: fixed;
+    left: 50%; bottom: var(--space-l);
+    transform: translateX(-50%);
+    background: var(--ink); color: var(--cream);
+    padding: 0.6em 1.2em;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity var(--duration-pill) var(--ease-pill);
+    pointer-events: none;
+    z-index: 200;
+  }
+  .qb-toast.is-visible { opacity: 1; }
+</style>
+</head>
+<body>
+<main id="artifact-root" aria-live="polite"></main>
+<div id="qb-toast" class="qb-toast" aria-live="polite"></div>
+
+<script src="/qb-cloud.js"></script>
+<script type="module">
+import {
+  renderArtifact, renderLocked, renderFailed, renderNotFound, renderLoading,
+} from '/js/qb-artifact-renderer.js';
+
+const root = document.getElementById('artifact-root');
+const toast = document.getElementById('qb-toast');
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('is-visible');
+  setTimeout(() => toast.classList.remove('is-visible'), 1800);
+}
+
+function extractId() {
+  // Support both /artifact?id=<uuid> and /artifact/<uuid>.
+  const url = new URL(window.location.href);
+  const q = url.searchParams.get('id');
+  if (q) return q;
+  const m = url.pathname.match(/\/artifact\/([^\/?]+)$/);
+  return m ? m[1] : '';
+}
+
+function isUuid(s) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
+}
+
+function redirectToAuth(id) {
+  const next = encodeURIComponent(`/artifact?id=${id}`);
+  window.location.replace(`/signal-scan.html?reason=signin&return_to=${next}`);
+}
+
+async function load() {
+  const id = extractId();
+  if (!id || !isUuid(id)) {
+    renderNotFound(root);
+    return;
+  }
+
+  renderLoading(root);
+
+  if (!window.QB || !window.QB.isAuthed || !window.QB.isAuthed()) {
+    redirectToAuth(id);
+    return;
+  }
+  const session = window.QB.getSession();
+  const tier = (session && session.tier) || 'free';
+
+  let res, data;
+  try {
+    res = await fetch(`/api/artifacts/${id}`, {
+      headers: { Authorization: `Bearer ${session.token}` },
+    });
+    data = await res.json().catch(() => ({}));
+  } catch (e) {
+    renderFailed(root, { title: null, agent_slug: null }, { reason: 'network', canRegenerate: false });
+    return;
+  }
+
+  if (res.status === 200) {
+    renderArtifact(root, data.content, {
+      artifactId: id,
+      canDownloadPdf: tier !== 'free',
+      canShareEmail:  tier !== 'free',
+      onShareAction: handleShareAction,
+    });
+    return;
+  }
+  if (res.status === 402) {
+    renderLocked(root, data.artifact_meta || {}, data.upgrade_url || '/paywall?reason=artifact');
+    return;
+  }
+  if (res.status === 404) {
+    renderNotFound(root);
+    return;
+  }
+  if (res.status === 401) {
+    redirectToAuth(id);
+    return;
+  }
+  renderFailed(root, { title: null, agent_slug: null }, {
+    reason: `http_${res.status}`,
+    canRegenerate: false,
+  });
+}
+
+async function handleShareAction(action, ev) {
+  const id = extractId();
+  if (action === 'copy-link') {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      showToast('Link copied');
+    } catch (_) {
+      showToast('Copy failed');
+    }
+  } else if (action === 'print') {
+    window.print();
+  } else if (action === 'download') {
+    showToast('Download starting…');
+    try {
+      const session = window.QB.getSession();
+      const res = await fetch('/api/qbp/export', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.token}` },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.signed_url) {
+        window.location.href = data.signed_url;
+      } else {
+        showToast('Download unavailable');
+      }
+    } catch (_) {
+      showToast('Download failed');
+    }
+  } else if (action === 'email') {
+    const subject = encodeURIComponent('Your QB BrandOS artifact');
+    const body = encodeURIComponent(`Read it here: ${window.location.href}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', load);
+// If qb-cloud already ran, kick load immediately too.
+if (document.readyState !== 'loading') load();
+</script>
+</body>
+</html>
