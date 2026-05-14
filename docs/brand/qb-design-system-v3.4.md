@@ -895,7 +895,7 @@ Eleven source illustrations exist in the repo under `/img/`. The library is clos
 - `blank-slate.png` — solo skater with coffee, drink-in-hand pose. Persona: The Blank Slate (Door 01, "I have an idea, no brand yet").
 - `doubter.png` — seated figure at café table, hand-on-chin contemplative pose. Persona: The Doubter (Door 02, "I have a brand, something feels off").
 - `player.png` — runner with dog on leash, forward motion. Persona: The Player (Door 03, "Competition is coming fast").
-- `agency.png` — figure holding oversized framed portrait, multi-brand metaphor. Persona: The Multi-Brand (Door 04, "I build for clients").
+- `agency.png` — figure holding oversized framed portrait, agency metaphor. Persona: The Multi-Brand (Door 04, "I build for clients").
 - `guide.png` — figure on tandem bicycle (two riders), wayfinding metaphor. Persona-adjacent: navigation, journey, partnership.
 
 **Scene set (Style B — heavier line weight, denser composition, group activity):**
@@ -914,7 +914,7 @@ Eleven source illustrations exist in the repo under `/img/`. The library is clos
 
 - `synergy.mov`
 - `nizzarfounder.mov`
-- `execution-phase-04.mov`
+- `phase_4.mov`
 
 These are hover-play videos used in mock cards and the founder block. They are NOT substitutes for the static `.png` fallback. Always provide the static image as the fallback. The `.mov` files render only on devices that support inline video playback.
 
@@ -970,8 +970,8 @@ The signature media interaction: a video plays on hover/touch and pauses when no
 
 ```html
 <div class="qb-hover-video" data-hover-play>
-  <video src="img/execution-phase-04.mov" muted loop playsinline preload="metadata"></video>
-  <img src="img/execution-phase-04-fallback.png" alt="Phase 04 execution mock" class="qb-hover-video_fallback">
+  <video src="img/phase_4.mov" muted loop playsinline preload="metadata"></video>
+  <img src="img/phase_4-fallback.png" alt="Phase 04 execution mock" class="qb-hover-video_fallback">
 </div>
 ```
 

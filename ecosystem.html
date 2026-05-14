@@ -1224,7 +1224,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   .persona-stage[data-p="0"] { background:var(--butter);           box-shadow:14px 14px 0 var(--rose-soft),     28px 28px 0 var(--phase-discovery); } /* blank-slate: mustard yellow PNG */
   .persona-stage[data-p="1"] { background:var(--rose-soft);        box-shadow:14px 14px 0 var(--phase-creation),28px 28px 0 var(--gold); }            /* doubter: pink PNG */
   .persona-stage[data-p="2"] { background:var(--illus-lavender);   box-shadow:14px 14px 0 var(--gold),          28px 28px 0 var(--phase-content); }   /* player: lavender PNG */
-  .persona-stage[data-p="3"] { background:var(--phase-discovery);  box-shadow:14px 14px 0 var(--rose),          28px 28px 0 var(--gold); }            /* multi-brand: green PNG */
+  .persona-stage[data-p="3"] { background:var(--phase-discovery);  box-shadow:14px 14px 0 var(--rose),          28px 28px 0 var(--gold); }            /* agency: green PNG */
   @media (hover:hover) {
     .persona-stage:hover { transform:translate(-6px,-6px); }
   }
@@ -1482,7 +1482,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     align-items:center;
   }
   @media (min-width:800px) { .founder-grid { grid-template-columns:auto 1fr; gap:var(--space-l-xl); } }
-  .founder-portrait {
+  .nizzarfounder {
     width:200px; height:200px; border-radius:32px;
     border:2px solid var(--cream); overflow:hidden;
     background:var(--cream-rose);
@@ -1490,19 +1490,19 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     margin-inline:auto;
     position:relative;
   }
-  @media (min-width:640px) { .founder-portrait { width:240px; height:240px; box-shadow:0 12px rgba(251,245,230,0.18); } }
-  .founder-portrait video,
-  .founder-portrait img,
-  .founder-portrait_fallback {
+  @media (min-width:640px) { .nizzarfounder { width:240px; height:240px; box-shadow:0 12px rgba(251,245,230,0.18); } }
+  .nizzarfounder video,
+  .nizzarfounder img,
+  .nizzarfounder_fallback {
     width:100%; height:100%; object-fit:cover; display:block;
   }
-  .founder-portrait {
+  .nizzarfounder {
     transition:transform 0.5s var(--ease-qb), box-shadow 0.5s var(--ease-qb);
   }
   @media (hover:hover) {
-    .founder-portrait:hover { transform:translateY(-6px) rotate(-1.5deg); }
+    .nizzarfounder:hover { transform:translateY(-6px) rotate(-1.5deg); }
   }
-  .founder-portrait_fallback {
+  .nizzarfounder_fallback {
     display:flex; align-items:center; justify-content:center;
     font-family:'Fraunces',serif;
     font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 80;
@@ -1786,7 +1786,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   }
 
   /* Founder portrait gentle bob */
-  .founder-portrait img {
+  .nizzarfounder img {
     animation:qb-float-y 10s ease-in-out infinite;
   }
 
@@ -1819,7 +1819,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     .qb-button:hover .qb-button_content,.qb-button:active .qb-button_content { transform:none; }
     .agent-pill,.featured-track,.nav-brand_dot,.persona-avatar { animation:none; }
     .reveal { opacity:1; transform:none; filter:none; }
-    .qb-illus-card, .qb-phone, .founder-portrait img, .feature-media { animation:none !important; }
+    .qb-illus-card, .qb-phone, .nizzarfounder img, .feature-media { animation:none !important; }
     .hero_h1, .hero_body, .hero_cta, .hero_meta, .agent-cluster { animation:none !important; opacity:1; }
     .cta-bike_carrier { animation:none !important; transform:translateX(30vw) !important; }
     .cta-bike_image { animation:none !important; transform:none !important; }
@@ -2401,7 +2401,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
           </div>
           <div class="phase-spread_visual">
             <figure class="qb-illus-card is-execution">
-              <video src="img/illus/phase-04.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Phase 04 Execution scene. Production studio with crew, spotlights, and sticky notes."></video>
+              <video src="img/illus/phase_4.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Phase 04 Execution scene. Production studio with crew, spotlights, and sticky notes."></video>
             </figure>
           </div>
         </article>
@@ -2416,7 +2416,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
           </div>
           <div class="phase-spread_visual">
             <figure class="qb-illus-card is-intel">
-              <video src="img/illus/phase-05.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Phase 05 Intelligence scene."></video>
+              <video src="img/illus/phase_5.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Phase 05 Intelligence scene."></video>
             </figure>
           </div>
         </article>
@@ -2436,7 +2436,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
         <button class="persona-tag active" data-p="0">Starting from zero</button>
         <button class="persona-tag" data-p="1">Something feels off</button>
         <button class="persona-tag" data-p="2">Scaling fast</button>
-        <button class="persona-tag" data-p="3">Agency / multi-brand</button>
+        <button class="persona-tag" data-p="3">Agency / agency</button>
       </div>
 
       <div class="persona-shell">
@@ -2462,8 +2462,8 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
             </div>
             <div class="persona-avatar" data-avatar="3">
               <picture>
-                <source srcset="img/illus/multi-brand.webp" type="image/webp">
-                <img src="img/illus/multi-brand.png" alt="The Multi-Brand. Figure holding oversized framed portrait." loading="lazy" decoding="async">
+                <source srcset="img/illus/agency.webp" type="image/webp">
+                <img src="img/illus/agency.png" alt="The Multi-Brand. Figure holding oversized framed portrait." loading="lazy" decoding="async">
               </picture>
             </div>
           </div>
@@ -2725,10 +2725,10 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   <section class="section is-dark is-tight" id="about">
     <div class="qb-x-narrow">
       <div class="founder-grid">
-        <div class="founder-portrait">
+        <div class="nizzarfounder">
           <picture>
-            <source srcset="img/illus/founder-portrait.webp" type="image/webp">
-            <img src="img/illus/founder-portrait.png" alt="Nizzar Ben Chekroune at his desk with headphones, world map behind." loading="lazy" decoding="async">
+            <source srcset="img/illus/nizzarfounder.webp" type="image/webp">
+            <img src="img/illus/nizzarfounder.png" alt="Nizzar Ben Chekroune at his desk with headphones, world map behind." loading="lazy" decoding="async">
           </picture>
         </div>
         <div>

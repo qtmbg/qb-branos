@@ -163,14 +163,14 @@ Additional voice rules:
 │       ├── blank-slate.png
 │       ├── doubter.png
 │       ├── player.png
-│       ├── multi-brand.png
+│       ├── agency.png
 │       ├── guide.png
 │       ├── synergy.png
 │       ├── three-steps.png
 │       ├── start-building.png
-│       ├── phase-04.png
-│       ├── phase-05.png
-│       └── founder-portrait.png
+│       ├── phase_4.png
+│       ├── phase_5.png
+│       └── nizzarfounder.png
 │
 ├── api/                       serverless functions (Vercel)
 ├── *.html                     the 25 production tool/page files
@@ -190,20 +190,20 @@ The QB illustration library is closed and lives at `/img/illus/`. Reference thes
 | `blank-slate.png` | The Blank Slate persona (Door 01). Solo skater with coffee, drink-in-hand pose. | Persona cards, "I have an idea" door. |
 | `doubter.png` | The Doubter persona (Door 02). Seated figure at café table, hand-on-chin contemplative. | Persona cards, "Something feels off" door. |
 | `player.png` | The Player persona (Door 03). Runner with dog on leash, forward motion. | Persona cards, "Competition coming fast" door. |
-| `multi-brand.png` | The Multi-Brand persona (Door 04). Figure holding oversized framed portrait. | Persona cards, "I build for clients" door, agency tier. |
+| `agency.png` | The Multi-Brand persona (Door 04). Figure holding oversized framed portrait. | Persona cards, "I build for clients" door, agency tier. |
 | `guide.png` | The Guide character. Figure on tandem bicycle, two riders, partnership. | journey-guide.html, navigation contexts. |
 | `synergy.png` | Ecosystem scene. House cutaway with multiple figures. | ecosystem.html connection visualization. |
 | `three-steps.png` | "How it works" scene. Figure with feet up, two figures stacked on shoulders. | index.html "Three steps. That's it." section. |
 | `start-building.png` | Final CTA scene. Group photo shoot with plant headpiece. | index.html final CTA, "Start building" sections. |
-| `phase-04.png` | Phase 04 Execution scene. Production studio with crew, spotlights, sticky notes. | ecosystem.html Phase 04 mock card. |
-| `phase-05.png` | Phase 05 Intelligence scene. Group in park with phones, social moment. | ecosystem.html Phase 05 mock card. |
-| `founder-portrait.png` | Founder block. Figure at desk with headphones, world map. | index.html "From the founder" section. Restricted: never use this file outside the founder block. |
+| `phase_4.png` | Phase 04 Execution scene. Production studio with crew, spotlights, sticky notes. | ecosystem.html Phase 04 mock card. |
+| `phase_5.png` | Phase 05 Intelligence scene. Group in park with phones, social moment. | ecosystem.html Phase 05 mock card. |
+| `nizzarfounder.png` | Founder block. Figure at desk with headphones, world map. | index.html "From the founder" section. Restricted: never use this file outside the founder block. |
 
 ### Rules of use for illustrations
 
 - Every illustration sits inside a `qb-illus-card` frame (cream-card surface, 2px ink border, hard offset shadow). Never as a bare floating image.
 - The illustration palette is locked. Do not recolor an illustration via CSS filters. Use the file as delivered.
-- Persona illustrations are paired with their door: `blank-slate` with Door 01, `doubter` with Door 02, `player` with Door 03, `multi-brand` with Door 04. Do not swap.
+- Persona illustrations are paired with their door: `blank-slate` with Door 01, `doubter` with Door 02, `player` with Door 03, `agency` with Door 04. Do not swap.
 - The founder portrait is restricted to the founder block. Using it elsewhere implies endorsement.
 - If a slot needs an illustration that is not in this inventory, flag it as a missing asset and stop. Do not substitute an unrelated file.
 - New illustrations enter the library only through the QB Character Machine using the master prompt in Illustration Style Lock Section 10. The inventory is not extended ad hoc.
