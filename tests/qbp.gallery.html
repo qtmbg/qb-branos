@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB QBP Renderer Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+<style>
+  body { background: var(--cream); color: var(--ink); font-family: var(--font-body); margin: 0; }
+  .toolbar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; gap: var(--space-xs); align-items: center;
+    padding: var(--space-s) var(--space-m);
+    background: var(--cream-warm);
+    border-bottom: var(--border-default) solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+  .toolbar button {
+    font: inherit; color: inherit;
+    background: var(--cream);
+    border: var(--border-bubble) solid var(--ink);
+    border-radius: var(--radius-pill);
+    padding: 0.4em 1em; cursor: pointer;
+  }
+  .toolbar button.is-active { background: var(--ink); color: var(--cream); }
+  .toolbar .summary { margin-left: auto; }
+  .toolbar .summary.is-ok   { color: var(--phase-discovery); }
+  .toolbar .summary.is-fail { color: var(--rose-deep); }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <button id="btn-empty"  type="button" class="is-active">Empty (free)</button>
+  <button id="btn-partial" type="button">Partial (Soul + Sensescape only, free)</button>
+  <button id="btn-full"   type="button">Full Atelier Verdant (starter, locked)</button>
+  <button id="btn-loading" type="button">Loading</button>
+  <button id="btn-error"  type="button">Error</button>
+  <button id="btn-print"  type="button">Print</button>
+  <button id="btn-reduced" type="button">Simulate reduced motion</button>
+  <span class="summary" id="summary">Ready</span>
+</div>
+<main id="root"></main>
+
+<script type="module">
+import { renderQbp, renderQbpLoading, renderQbpError } from '/js/qb-qbp.js';
+
+const root = document.getElementById('root');
+const summary = document.getElementById('summary');
+
+function setSummary(ok, label) {
+  summary.textContent = label;
+  summary.classList.toggle('is-ok', ok);
+  summary.classList.toggle('is-fail', !ok);
+}
+function setActive(btnId) {
+  for (const b of document.querySelectorAll('.toolbar button')) b.classList.remove('is-active');
+  document.getElementById(btnId).classList.add('is-active');
+}
+
+const EMPTY_QBP = {};
+
+const PARTIAL_QBP = {
+  brandName: 'Atelier Verdant',
+  brandEssence: 'A workshop before it is a brand. Each piece carries the trace of a hand. The brand is the refusal of speed.',
+  manifesto: 'We work in materials that age. We work in hours that cannot be compressed.\n\nWe show the maker, the workshop, the day. We refuse the discount channel. We refuse the algorithm’s pace.',
+  paradox: 'The brand must grow without scaling.',
+  antiBrand: 'Not glossy. Not fast. Not synthetic.',
+  archetypePrimary: 'The Maker',
+  archetypeSecondary: 'The Sage',
+  archetypeTension: 'The Hero',
+  archetypeHeadline: 'Your brand reads as a Maker primary with a Sage texture and a Hero tension.',
+  archetypeEpigraph: 'The brand isn’t being invented here. It’s being uncovered.',
+  alwaysNever: {
+    always: ['Name the maker on every piece.', 'Quote real lead times.', 'Photograph the workshop.'],
+    never:  ['Sell through marketplaces that hide the maker.', 'Run discount sales.', 'Manufacture urgency.'],
+  },
+  // Sensescape
+  colorTerritory: 'Cream to oak to brass to ink. Color appears in proportion, not in saturation.',
+  forbiddenColor: 'No neon. No gradient. No warm-LED gold of hotel lobbies.',
+  typographyNote: 'A quiet serif at display; a clean grotesque at body. Loose tracking at small sizes.',
+  antiVoice: 'It will never sound like an advert. It will never speak in upward inflection.',
+  brandObject: 'A brass key. Dense, cool, conductive. It records the hand that holds it.',
+  brandMoment: 'A heavy door closing softly behind you.',
+  signatureGesture: 'A closing fold: linen, cotton tape, wax seal.',
+  soundSignature: 'A film for the brand opens with a single chime far enough away to be a question.',
+  visualTerritoryNote: 'Photography-led, high contrast, futuristic visual language',
+};
+
+const FULL_QBP = Object.assign({}, PARTIAL_QBP, {
+  // Visual DNA
+  visualDnaKeepCount: 14,
+  visualDnaDiscardRate: 53,
+  visualDnaKeptImages: ['img_2','img_5','img_8','img_11','img_14','img_17','img_19','img_22','img_25','img_28'],
+  visualDnaFastDiscards: ['img_3','img_6','img_9','img_12','img_15','img_18'],
+  // War Table
+  warTablePosture: 'Atelier Verdant occupies a quiet bespoke quadrant of a market that is loud, mass, and overstimulated. The strategic position is built on patience.',
+  warTableTopInitiatives: ['Build the workshop video library.', 'Open one private viewing per quarter.', 'Refuse two marketplace approaches per quarter.'],
+  warTablePrinciples: ['Provenance is the moat.', 'Discipline is shown by what is declined.', 'Trust is built one room at a time.'],
+  warTableBrief: { challenge: 'Sustaining margin without scaling production.', goal: 'Open the next showroom by end of quarter.', constraint: 'No paid social this year.' },
+  audienceFears: 'They worry about buying something that arrives feeling cheap. They worry that their taste signals naivety.',
+  audienceDesires: 'They want one heirloom-grade purchase rather than a stack of unremarkable ones.',
+  audienceLanguage: 'Slow. Sentence fragments. Quiet conviction.',
+  audienceFriction: 'Lead times longer than competitors. Price visible up front.',
+});
+
+const FULL_LOCK_TS = '2026-05-12T16:00:00Z';
+const LAST_UPDATED  = '2026-05-14T12:00:00Z';
+
+function showEmpty() {
+  setActive('btn-empty');
+  try {
+    renderQbp(root, EMPTY_QBP, { foundationLockedAt: null, lastUpdated: null, tier: 'free', canExport: false, onExportClick: () => alert('Paywall (gallery sim)') });
+    setSummary(true, 'Rendered empty (free)');
+  } catch (e) { setSummary(false, e.message); console.error(e); }
+}
+function showPartial() {
+  setActive('btn-partial');
+  try {
+    renderQbp(root, PARTIAL_QBP, { foundationLockedAt: null, lastUpdated: LAST_UPDATED, tier: 'free', canExport: false, onExportClick: () => alert('Paywall (gallery sim)') });
+    setSummary(true, 'Rendered partial (free, Soul + Sensescape filled)');
+  } catch (e) { setSummary(false, e.message); console.error(e); }
+}
+function showFull() {
+  setActive('btn-full');
+  try {
+    renderQbp(root, FULL_QBP, { foundationLockedAt: FULL_LOCK_TS, lastUpdated: LAST_UPDATED, tier: 'starter', canExport: true, onExportClick: () => alert('Export starts (gallery sim)') });
+    setSummary(true, 'Rendered full Atelier Verdant (starter, locked)');
+  } catch (e) { setSummary(false, e.message); console.error(e); }
+}
+function showLoading() {
+  setActive('btn-loading');
+  try { renderQbpLoading(root); setSummary(true, 'Rendered loading'); }
+  catch (e) { setSummary(false, e.message); console.error(e); }
+}
+function showError() {
+  setActive('btn-error');
+  try { renderQbpError(root, new Error('GET /api/qbp returned 503 (network)')); setSummary(true, 'Rendered error'); }
+  catch (e) { setSummary(false, e.message); console.error(e); }
+}
+
+document.getElementById('btn-empty')   .addEventListener('click', showEmpty);
+document.getElementById('btn-partial') .addEventListener('click', showPartial);
+document.getElementById('btn-full')    .addEventListener('click', showFull);
+document.getElementById('btn-loading') .addEventListener('click', showLoading);
+document.getElementById('btn-error')   .addEventListener('click', showError);
+document.getElementById('btn-print')   .addEventListener('click', () => window.print());
+document.getElementById('btn-reduced') .addEventListener('click', (ev) => {
+  document.documentElement.classList.toggle('qb-reduced-motion');
+  ev.currentTarget.classList.toggle('is-active');
+});
+
+showEmpty();
+</script>
+</body>
+</html>
