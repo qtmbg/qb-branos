@@ -27,6 +27,7 @@
 //   RESEND_API_KEY                       Optional; artifact-ready email.
 
 import { runSoulMapSynthesizer } from './soul-map-synthesizer.js';
+import { runSensescapeSynthesizer } from './sensescape-synthesizer.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
 
 export const config = { runtime: 'edge' };
@@ -69,10 +70,17 @@ const AGENT_REGISTRY = {
     phase: '01',
     run: runSoulMapSynthesizer,
   },
+  sensescape_synthesizer: {
+    slug: 'sensescape_synthesizer',
+    artifactType: 'sensescape_synthesizer',
+    phase: '01',
+    run: runSensescapeSynthesizer,
+  },
 };
 
 const AGENT_NAME_ALIASES = {
   'soul-map-synthesizer': 'soul_map_synthesizer',
+  'sensescape-synthesizer': 'sensescape_synthesizer',
 };
 
 function resolveAgent(agentName) {

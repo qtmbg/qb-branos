@@ -279,19 +279,31 @@ export default async function handler(req) {
     });
   }
 
-  // Step 6: agent dispatch. Day 3 only ships soul_map_synthesizer. We
-  // build the same-origin URL from the inbound request so this works
-  // identically on the bare and app hosts. Dispatch errors do not roll
-  // back the lock — the dashboard surfaces a Retry on stuck rows.
-  const dispatchResult = await runAgentDispatch({
-    req,
-    token,
-    userId: user.id,
-    qbp: lockQbp,
-    agentName: 'soul_map_synthesizer',
-  });
+  // Step 6: agent dispatch. Enqueues every Phase 01 synthesizer in parallel.
+  // Each dispatch call hits /api/agents/dispatch which is its own Edge
+  // function with its own ~25 s budget — running them concurrently means the
+  // total wall time stays close to the slowest single agent. Dispatch errors
+  // do not roll back the lock; the dashboard surfaces a Retry on stuck rows.
+  //
+  // Append future agents here as steps 5 (visual_dna) and 6 (war_table) ship.
+  const AGENTS_TO_ENQUEUE = [
+    'soul_map_synthesizer',
+    'sensescape_synthesizer',
+  ];
 
-  return new Response(JSON.stringify({ ok: true, lockedAt, dispatch: dispatchResult }), {
+  const dispatchResults = await Promise.all(
+    AGENTS_TO_ENQUEUE.map(agentName =>
+      runAgentDispatch({
+        req,
+        token,
+        userId: user.id,
+        qbp: lockQbp,
+        agentName,
+      })
+    )
+  );
+
+  return new Response(JSON.stringify({ ok: true, lockedAt, dispatch: dispatchResults }), {
     status: 200,
     headers: { 'Content-Type': 'application/json', ...cors_h },
   });
