@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB Archive Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+<style>
+  body { background: var(--cream); color: var(--ink); font-family: var(--font-body); margin: 0; }
+  .toolbar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; gap: var(--space-xs); align-items: center;
+    padding: var(--space-s) var(--space-m);
+    background: var(--cream-warm);
+    border-bottom: var(--border-default) solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+  .toolbar button {
+    font: inherit; color: inherit;
+    background: var(--cream);
+    border: var(--border-bubble) solid var(--ink);
+    border-radius: var(--radius-pill);
+    padding: 0.4em 1em;
+    cursor: pointer;
+  }
+  .toolbar button.is-active { background: var(--ink); color: var(--cream); }
+  .summary { margin-left: auto; font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.14em; }
+  .summary.is-ok   { color: var(--phase-discovery); }
+  .summary.is-fail { color: var(--rose-deep); }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <button id="btn-loading"      type="button">Loading</button>
+  <button id="btn-empty-nolock"  type="button">Empty (no lock)</button>
+  <button id="btn-empty-locked"  type="button">Empty (locked, anomaly)</button>
+  <button id="btn-free"          type="button" class="is-active">Free tier (4 artifacts)</button>
+  <button id="btn-starter"       type="button">Starter (8 artifacts, multi-version)</button>
+  <button id="btn-reduced"       type="button">Reduced motion</button>
+  <span class="summary" id="summary">Initializing…</span>
+</div>
+<main id="root"></main>
+
+<script type="module">
+import {
+  renderArchive, renderArchiveLoading, renderArchiveError, renderArchiveEmpty,
+} from '/js/qb-archive.js';
+
+const root = document.getElementById('root');
+const summary = document.getElementById('summary');
+
+let ok = 0, fail = 0;
+function setSummary() {
+  summary.textContent = `${ok} rendered, ${fail} failures`;
+  summary.classList.toggle('is-ok',   fail === 0);
+  summary.classList.toggle('is-fail', fail  >  0);
+}
+function setActive(id) {
+  ['btn-loading','btn-empty-nolock','btn-empty-locked','btn-free','btn-starter'].forEach(n => {
+    document.getElementById(n).classList.toggle('is-active', n === id);
+  });
+}
+function show(builder) {
+  root.innerHTML = '';
+  try { builder(); ok += 1; }
+  catch (e) {
+    fail += 1; console.error(e);
+    const err = document.createElement('p');
+    err.style.color = 'red'; err.style.padding = '1rem';
+    err.textContent = 'Render error: ' + e.message;
+    root.appendChild(err);
+  }
+  setSummary();
+}
+
+// Sample data
+const NOW = Date.now();
+const minutesAgo = (m) => new Date(NOW - m * 60_000).toISOString();
+const hoursAgo   = (h) => new Date(NOW - h * 3600_000).toISOString();
+const daysAgo    = (d) => new Date(NOW - d * 86400_000).toISOString();
+
+const FREE_TIER_ARTIFACTS = [
+  { id: '00000000-0000-0000-0000-000000000001', title: 'The Soul of Atelier Verdant',          agent_slug: 'soul_map_synthesizer',   phase: '01', status: 'delivered',  version: 1, created_at: hoursAgo(2),  locked: false },
+  { id: '00000000-0000-0000-0000-000000000002', title: 'Artifact',                              agent_slug: 'sensescape_synthesizer', phase: '01', status: 'delivered',  version: 1, created_at: hoursAgo(2),  locked: true  },
+  { id: '00000000-0000-0000-0000-000000000003', title: 'Artifact',                              agent_slug: 'visual_dna_synthesizer', phase: '01', status: 'delivered',  version: 1, created_at: hoursAgo(2),  locked: true  },
+  { id: '00000000-0000-0000-0000-000000000004', title: 'Artifact',                              agent_slug: 'war_table_synthesizer',  phase: '01', status: 'delivered',  version: 1, created_at: hoursAgo(2),  locked: true  },
+];
+const STARTER_ARTIFACTS = [
+  // Soul Map: v1 + v2 + v3 (regenerated)
+  { id: '00000000-0000-0000-0000-000000010001', title: 'The Soul of Atelier Verdant (v3)',     agent_slug: 'soul_map_synthesizer',   phase: '01', status: 'delivered',  version: 3, created_at: minutesAgo(10), locked: false },
+  { id: '00000000-0000-0000-0000-000000010002', title: 'The Soul of Atelier Verdant (v2)',     agent_slug: 'soul_map_synthesizer',   phase: '01', status: 'delivered',  version: 2, created_at: hoursAgo(6),    locked: false },
+  { id: '00000000-0000-0000-0000-000000010003', title: 'The Soul of Atelier Verdant (v1)',     agent_slug: 'soul_map_synthesizer',   phase: '01', status: 'delivered',  version: 1, created_at: daysAgo(1),     locked: false },
+  // Sensescape v1 + v2
+  { id: '00000000-0000-0000-0000-000000020001', title: 'The Sensory World of Atelier Verdant (v2)', agent_slug: 'sensescape_synthesizer', phase: '01', status: 'delivered', version: 2, created_at: hoursAgo(4),    locked: false },
+  { id: '00000000-0000-0000-0000-000000020002', title: 'The Sensory World of Atelier Verdant (v1)', agent_slug: 'sensescape_synthesizer', phase: '01', status: 'delivered', version: 1, created_at: daysAgo(1),     locked: false },
+  // Visual DNA: failed v1, delivered v2
+  { id: '00000000-0000-0000-0000-000000030001', title: 'The Visual Language of Atelier Verdant', agent_slug: 'visual_dna_synthesizer', phase: '01', status: 'delivered', version: 2, created_at: hoursAgo(3),    locked: false },
+  { id: '00000000-0000-0000-0000-000000030002', title: 'Artifact',                             agent_slug: 'visual_dna_synthesizer', phase: '01', status: 'failed',     version: 1, created_at: daysAgo(2),     locked: false },
+  // War Table generating in flight
+  { id: '00000000-0000-0000-0000-000000040001', title: 'Artifact',                             agent_slug: 'war_table_synthesizer',  phase: '01', status: 'generating', version: 1, created_at: minutesAgo(2),  locked: false },
+];
+
+function showLoading() {
+  setActive('btn-loading');
+  show(() => renderArchiveLoading(root));
+}
+function showEmptyNoLock() {
+  setActive('btn-empty-nolock');
+  show(() => renderArchiveEmpty(root, { foundationLockedAt: null }));
+}
+function showEmptyLocked() {
+  setActive('btn-empty-locked');
+  show(() => renderArchiveEmpty(root, { foundationLockedAt: '2026-05-14T08:00:00Z' }));
+}
+function showFree() {
+  setActive('btn-free');
+  show(() => renderArchive(root, FREE_TIER_ARTIFACTS, {
+    tier: 'free',
+    foundationLockedAt: '2026-05-14T08:00:00Z',
+  }));
+}
+function showStarter() {
+  setActive('btn-starter');
+  show(() => renderArchive(root, STARTER_ARTIFACTS, {
+    tier: 'starter',
+    foundationLockedAt: '2026-05-14T08:00:00Z',
+  }));
+}
+
+document.getElementById('btn-loading').addEventListener('click', showLoading);
+document.getElementById('btn-empty-nolock').addEventListener('click', showEmptyNoLock);
+document.getElementById('btn-empty-locked').addEventListener('click', showEmptyLocked);
+document.getElementById('btn-free').addEventListener('click', showFree);
+document.getElementById('btn-starter').addEventListener('click', showStarter);
+document.getElementById('btn-reduced').addEventListener('click', (ev) => {
+  document.documentElement.classList.toggle('qb-reduced-motion');
+  ev.currentTarget.classList.toggle('is-active');
+});
+
+showFree();
+</script>
+</body>
+</html>
