@@ -17,7 +17,7 @@
 export const config = { runtime: 'edge' };
 
 const MODEL = 'claude-sonnet-4-6';
-const MAX_TOKENS = 2800;
+const MAX_TOKENS = 2400;
 const CLAUDE_TIMEOUT_MS = 24000;
 const AGENT_SLUG = 'war_table_synthesizer';
 const PHASE = '01';
@@ -60,50 +60,45 @@ Produce the textual body of a War Table artifact: a strategic position read on t
 Voice: calm, editorial, direct. No marketing language, no jargon, no AI talk. Address the user as "you / your brand". Be concise. Do not pad.
 
 Length rules (strict):
-- Each prose field: exactly TWO short paragraphs, joined with \\n\\n. Each paragraph is 2-3 sentences. No more.
+- Each prose field: ONE short paragraph, 2-3 sentences. No more.
 - Each priority and placement rationale: ONE short sentence. No more.
-- Always and Never items: ONE short imperative each.
+- Always and Never items: ONE short imperative each (under 12 words).
 
 Positioning map discipline:
-- Choose two meaningful axes for this brand's category. Patterns to consider: Mass ↔ Bespoke, Quiet ↔ Loud, Heritage ↔ Modern, Function ↔ Emotion, Insider ↔ Open. Pick whichever two best reveal the strategic position.
-- Place between 2 and 8 entities on the map total. EXACTLY ONE must be the user's brand with "is_self": true. All other placements are competitors or category archetypes with "is_self": false.
-- Every "x" and "y" value is a number between 0.0 and 1.0 inclusive.
-- If the QBP names competitors (e.g. archetypeMarketLandscape.occupiers), use those names verbatim. Otherwise place 3-4 representative category archetypes (named honestly, e.g. "Generic homeware brand", "Polished design gallery").
-- The user's brand placement is the synthesis insight, not flattery. Place it honestly.
+- Choose two meaningful axes (e.g. Mass ↔ Bespoke, Quiet ↔ Loud, Heritage ↔ Modern, Function ↔ Emotion, Insider ↔ Open). Pick whichever two best reveal position.
+- 3 or 4 placements total. EXACTLY ONE has "is_self": true. Others are competitors or category archetypes with "is_self": false.
+- Every x and y is a number 0.0-1.0.
+- If archetypeMarketLandscape.occupiers names competitors, use those names verbatim.
 
-Always / Never discipline:
-- Each list contains 3 to 7 items.
-- Items are short imperatives (under 12 words), not adjectives.
+Always / Never: each list contains exactly 3 items.
 
-Priority discipline:
-- Exactly THREE priorities. Ranks 1, 2, 3 in that order.
-- Ordered by urgency × leverage. The top priority is what the next quarter is for.
+Priorities: exactly THREE, ranked 1-2-3. Ordered by urgency × leverage.
 
 Return ONLY a JSON object with this shape. No prose preamble. No markdown fencing.
 
 {
-  "opening": "two short paragraphs framing the strategic position",
-  "field_rationale": "two short paragraphs on how the competitive field is shaped and why these two axes matter",
-  "paradox_rationale": "two short paragraphs on the productive tension this brand holds and why it cannot be resolved",
-  "commitments_rationale": "two short paragraphs on why these always/never commitments, what they cost",
-  "priorities_rationale": "two short paragraphs on why these three priorities, why this order",
-  "decisions_ahead": "three short strategic decisions joined with \\n\\n",
+  "opening": "one short paragraph framing the strategic position",
+  "field_rationale": "one short paragraph on why these two axes reveal the position",
+  "paradox_rationale": "one short paragraph on the productive tension",
+  "commitments_rationale": "one short paragraph on why these commitments and what they cost",
+  "priorities_rationale": "one short paragraph on why these three and why this order",
+  "decisions_ahead": "three short decisions joined with \\n\\n",
   "positioning_map": {
     "x_axis": { "low": "...", "high": "..." },
     "y_axis": { "low": "...", "high": "..." },
     "placements": [
       { "label": "Competitor or archetype name", "x": 0.30, "y": 0.55, "is_self": false },
-      { "label": "Your brand name or 'Your Brand'", "x": 0.82, "y": 0.30, "is_self": true }
+      { "label": "Your Brand", "x": 0.82, "y": 0.30, "is_self": true }
     ]
   },
   "always_never": {
-    "always": ["short imperative", "short imperative", "short imperative"],
-    "never":  ["short imperative", "short imperative", "short imperative"]
+    "always": ["imperative", "imperative", "imperative"],
+    "never":  ["imperative", "imperative", "imperative"]
   },
   "priorities": [
-    { "rank": 1, "label": "Concrete priority in 4-10 words", "rationale": "one short sentence" },
-    { "rank": 2, "label": "Concrete priority in 4-10 words", "rationale": "one short sentence" },
-    { "rank": 3, "label": "Concrete priority in 4-10 words", "rationale": "one short sentence" }
+    { "rank": 1, "label": "concrete priority", "rationale": "one short sentence" },
+    { "rank": 2, "label": "concrete priority", "rationale": "one short sentence" },
+    { "rank": 3, "label": "concrete priority", "rationale": "one short sentence" }
   ]
 }
 
