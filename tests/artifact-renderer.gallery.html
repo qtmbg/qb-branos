@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB Artifact Renderer Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+<style>
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    margin: 0;
+  }
+  .gallery-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+    padding: var(--space-s) var(--space-m);
+    background: var(--cream-warm);
+    border-bottom: var(--border-default) solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+  .gallery-toolbar button,
+  .gallery-toolbar select {
+    font: inherit;
+    color: inherit;
+    background: var(--cream);
+    border: var(--border-bubble) solid var(--ink);
+    border-radius: var(--radius-pill);
+    padding: 0.4em 1em;
+    cursor: pointer;
+  }
+  .gallery-toolbar button.is-active { background: var(--ink); color: var(--cream); }
+  .gallery-toolbar .summary { margin-left: auto; }
+  .gallery-toolbar .summary.is-ok   { color: var(--phase-discovery); }
+  .gallery-toolbar .summary.is-fail { color: var(--rose-deep); }
+  main { padding: 0 0 var(--space-3xl); }
+  .section-label {
+    margin: var(--space-2xl) var(--space-m) var(--space-s);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+  }
+  .section-divider {
+    height: 1px;
+    background: var(--ink-25);
+    margin: var(--space-2xl) var(--space-m);
+  }
+</style>
+</head>
+<body>
+<div class="gallery-toolbar">
+  <button id="btn-fixtures" type="button" class="is-active">Fixtures</button>
+  <button id="btn-states"   type="button">States</button>
+  <button id="btn-reduced"  type="button">Simulate reduced motion</button>
+  <button id="btn-print"    type="button">Print preview</button>
+  <span class="summary" id="summary">Initializing…</span>
+</div>
+<main id="root"></main>
+
+<script type="module">
+import {
+  renderArtifact, renderLocked, renderFailed, renderNotFound, renderLoading,
+} from '/js/qb-artifact-renderer.js';
+
+const FIXTURES = ['soul_map_synthesizer','sensescape_synthesizer','visual_dna_synthesizer','war_table_synthesizer'];
+const root = document.getElementById('root');
+const summary = document.getElementById('summary');
+
+let RENDERED = 0;
+let FAILED = 0;
+
+function header(label) {
+  const h = document.createElement('div');
+  h.className = 'section-label';
+  h.textContent = label;
+  return h;
+}
+function divider() {
+  const d = document.createElement('div');
+  d.className = 'section-divider';
+  return d;
+}
+function mount(label, builder) {
+  root.appendChild(header(label));
+  const wrap = document.createElement('div');
+  try {
+    builder(wrap);
+    RENDERED += 1;
+  } catch (e) {
+    FAILED += 1;
+    console.error('Mount failed for', label, e);
+    wrap.textContent = `mount error: ${e.message}`;
+  }
+  root.appendChild(wrap);
+  root.appendChild(divider());
+}
+
+async function loadFixtures() {
+  root.innerHTML = '';
+  RENDERED = 0; FAILED = 0;
+  for (const slug of FIXTURES) {
+    let content;
+    try {
+      const r = await fetch(`/chapter-01/fixtures/${slug}.sample.json`);
+      if (!r.ok) throw new Error(`fetch ${r.status}`);
+      content = await r.json();
+    } catch (e) {
+      FAILED += 1;
+      const err = document.createElement('div');
+      err.style.padding = '1rem'; err.style.color = 'red';
+      err.textContent = `Failed to fetch fixture ${slug}: ${e.message}`;
+      root.appendChild(err);
+      continue;
+    }
+    mount(slug, (wrap) => renderArtifact(wrap, content, { artifactId: slug, canDownloadPdf: true, canShareEmail: true }));
+  }
+  setSummary();
+}
+
+function loadStates() {
+  root.innerHTML = '';
+  RENDERED = 0; FAILED = 0;
+  mount('renderLoading', (w) => renderLoading(w));
+  mount('renderLocked',  (w) => renderLocked(w, {
+    title: 'The Sensory World of Atelier Verdant',
+    agent_slug: 'sensescape_synthesizer',
+    phase: '01',
+  }, '/paywall?reason=artifact&agent=sensescape_synthesizer'));
+  mount('renderFailed (with regenerate)', (w) => renderFailed(w, {
+    title: 'The Visual Language of Atelier Verdant',
+    agent_slug: 'visual_dna_synthesizer',
+  }, { canRegenerate: true, onRegenerate: () => alert('regenerate clicked') }));
+  mount('renderFailed (no regenerate)', (w) => renderFailed(w, {
+    title: null,
+    agent_slug: null,
+  }, { canRegenerate: false }));
+  mount('renderNotFound', (w) => renderNotFound(w));
+  setSummary();
+}
+
+function setSummary() {
+  summary.textContent = `${RENDERED} rendered, ${FAILED} failures`;
+  summary.classList.toggle('is-ok',   FAILED === 0);
+  summary.classList.toggle('is-fail', FAILED  >  0);
+}
+
+document.getElementById('btn-fixtures').addEventListener('click', () => {
+  document.getElementById('btn-fixtures').classList.add('is-active');
+  document.getElementById('btn-states').classList.remove('is-active');
+  loadFixtures();
+});
+document.getElementById('btn-states').addEventListener('click', () => {
+  document.getElementById('btn-states').classList.add('is-active');
+  document.getElementById('btn-fixtures').classList.remove('is-active');
+  loadStates();
+});
+document.getElementById('btn-reduced').addEventListener('click', (ev) => {
+  document.documentElement.classList.toggle('qb-reduced-motion');
+  ev.currentTarget.classList.toggle('is-active');
+});
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+loadFixtures();
+</script>
+</body>
+</html>
