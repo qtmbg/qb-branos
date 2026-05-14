@@ -38,7 +38,10 @@ async function ensureBucket(env) {
     headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY),
   });
   if (r.ok) return true;
-  if (r.status !== 404) return false;
+  // Storage REST returns HTTP 400 with body.statusCode === '404' when the
+  // bucket is missing — not a real HTTP 404. Always attempt creation when
+  // GET is not 200; POST is idempotent (returns 409 with name=Duplicate
+  // when the bucket already exists, which a follow-up GET resolves).
 
   const create = await fetch(`${env.SUPABASE_URL}/storage/v1/bucket`, {
     method: 'POST',
@@ -50,7 +53,13 @@ async function ensureBucket(env) {
       file_size_limit: 10485760,
     }),
   });
-  return create.ok;
+  if (create.ok) return true;
+
+  // Race or pre-existing bucket — verify with a fresh GET.
+  const verify = await fetch(`${env.SUPABASE_URL}/storage/v1/bucket/${BUCKET}`, {
+    headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY),
+  });
+  return verify.ok;
 }
 
 async function uploadFile(env, path, bodyText, contentType) {
