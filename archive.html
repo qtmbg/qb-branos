@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>Brand Archive · QB BrandOS</title>
+
+<link rel="icon" href="/img/brand/web/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.5;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  img, svg, video { display: block; max-width: 100%; }
+  main#archive-root { min-height: 70vh; }
+</style>
+</head>
+<body>
+<main id="archive-root" aria-live="polite"></main>
+
+<script src="/qb-cloud.js"></script>
+<script type="module">
+import {
+  renderArchive, renderArchiveLoading, renderArchiveError, renderArchiveEmpty,
+} from '/js/qb-archive.js';
+
+const root = document.getElementById('archive-root');
+
+function redirectToAuth() {
+  const next = encodeURIComponent('/archive');
+  window.location.replace(`/signal-scan.html?reason=signin&return_to=${next}`);
+}
+
+async function load() {
+  renderArchiveLoading(root);
+
+  if (!window.QB || !window.QB.isAuthed || !window.QB.isAuthed()) {
+    redirectToAuth();
+    return;
+  }
+  const session = window.QB.getSession();
+
+  // Need foundation_locked_at for empty-state branching. Fetch both in
+  // parallel: /api/qbp is cheap and gives the lock state authoritatively.
+  let artifactsRes, qbpRes;
+  try {
+    [artifactsRes, qbpRes] = await Promise.all([
+      fetch('/api/artifacts?limit=200', { headers: { Authorization: `Bearer ${session.token}` } }),
+      fetch('/api/qbp',                  { headers: { Authorization: `Bearer ${session.token}` } }),
+    ]);
+  } catch (e) {
+    renderArchiveError(root, e);
+    return;
+  }
+
+  if (artifactsRes.status === 401 || qbpRes.status === 401) {
+    redirectToAuth();
+    return;
+  }
+
+  const artifactsData = await artifactsRes.json().catch(() => ({}));
+  const qbpData       = await qbpRes.json().catch(() => ({}));
+
+  if (!artifactsRes.ok) {
+    renderArchiveError(root, new Error(`HTTP ${artifactsRes.status}: ${artifactsData?.error || 'unknown'}`));
+    return;
+  }
+
+  const list = Array.isArray(artifactsData.artifacts) ? artifactsData.artifacts : [];
+  const foundationLockedAt = qbpData?.foundation_locked_at || null;
+  const tier = String(session.tier || 'free').toLowerCase();
+
+  if (list.length === 0) {
+    renderArchiveEmpty(root, { foundationLockedAt });
+    return;
+  }
+
+  renderArchive(root, list, { tier, foundationLockedAt });
+}
+
+document.addEventListener('DOMContentLoaded', load);
+if (document.readyState !== 'loading') load();
+</script>
+</body>
+</html>
