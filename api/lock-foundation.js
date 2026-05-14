@@ -81,7 +81,7 @@ function lockHtml({ firstName }) {
         <p style="margin:0 0 16px;">Your foundation is locked. Your agents are now producing your brand kit.</p>
         <p style="margin:0 0 24px;">The first artifacts (Brand Soul synthesis, Sensory profile, Visual direction, Strategic priorities) will appear in your dashboard within 5 to 15 minutes.</p>
         <p style="margin:0 0 32px;">
-          <a href="https://quantumbranding.ai/dashboard" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">Open your dashboard</a>
+          <a href="https://quantumbranding.ai/foundation" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">Open your dashboard</a>
         </p>
         <p style="margin:0;">Nizzar</p>
       </td></tr>
@@ -103,7 +103,7 @@ Your foundation is locked. Your agents are now producing your brand kit.
 
 The first artifacts (Brand Soul synthesis, Sensory profile, Visual direction, Strategic priorities) will appear in your dashboard within 5 to 15 minutes.
 
-You can return to your dashboard at any time: https://quantumbranding.ai/dashboard
+You can return to your dashboard at any time: https://quantumbranding.ai/foundation
 
 Nizzar
 

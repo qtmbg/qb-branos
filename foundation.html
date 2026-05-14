@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>Foundation · QB BrandOS</title>
+
+<link rel="icon" href="/img/brand/web/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.5;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  img, svg, video { display: block; max-width: 100%; }
+  main#foundation-root { min-height: 70vh; }
+  .qb-toast {
+    position: fixed; left: 50%; bottom: var(--space-l);
+    transform: translateX(-50%);
+    background: var(--ink); color: var(--cream);
+    padding: 0.6em 1.2em; border-radius: var(--radius-pill);
+    font-family: var(--font-mono); font-size: var(--step--2);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    opacity: 0; transition: opacity var(--duration-pill) var(--ease-pill);
+    pointer-events: none; z-index: 200;
+  }
+  .qb-toast.is-visible { opacity: 1; }
+</style>
+</head>
+<body>
+<main id="foundation-root" aria-live="polite"></main>
+<div id="qb-toast" class="qb-toast" aria-live="polite"></div>
+
+<script src="/qb-cloud.js"></script>
+<script type="module">
+import {
+  computeFoundationState,
+  renderFoundation,
+  renderFoundationLoading,
+  renderFoundationError,
+  startArtifactPolling,
+} from '/js/qb-foundation.js';
+
+const root  = document.getElementById('foundation-root');
+const toast = document.getElementById('qb-toast');
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('is-visible');
+  setTimeout(() => toast.classList.remove('is-visible'), 2200);
+}
+function redirectToAuth() {
+  const next = encodeURIComponent('/foundation');
+  window.location.replace(`/signal-scan.html?reason=signin&return_to=${next}`);
+}
+
+let stopPolling = null;
+let bannerText  = null;
+
+async function fetchAll(token) {
+  const [qbpRes, artRes] = await Promise.all([
+    fetch('/api/qbp',                   { headers: { Authorization: `Bearer ${token}` } }),
+    fetch('/api/artifacts?limit=200',   { headers: { Authorization: `Bearer ${token}` } }),
+  ]);
+  if (qbpRes.status === 401 || artRes.status === 401) return { unauthorized: true };
+  const qbpData = await qbpRes.json().catch(() => ({}));
+  const artData = await artRes.json().catch(() => ({}));
+  if (!qbpRes.ok) throw new Error(qbpData?.error || `HTTP ${qbpRes.status}`);
+  if (!artRes.ok) throw new Error(artData?.error || `HTTP ${artRes.status}`);
+  return {
+    qbp: qbpData.qbp || {},
+    foundationLockedAt: qbpData.foundation_locked_at || null,
+    artifacts: Array.isArray(artData.artifacts) ? artData.artifacts : [],
+  };
+}
+
+async function triggerLock(session) {
+  showToast('Locking your foundation...');
+  try {
+    const res = await fetch('/api/foundation/lock', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${session.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data?.ok === false) {
+      showToast('Lock failed: ' + (data?.error || `HTTP ${res.status}`));
+      return;
+    }
+    bannerText = 'Your foundation is locked. Your artifacts are being prepared.';
+    await rerender(session);
+  } catch (e) {
+    showToast('Lock failed: network error');
+  }
+}
+
+async function triggerUpgrade(session) {
+  // The Starter price ID lives on the server (api/stripe/checkout.js).
+  // Free-tier clients send the canonical starter price to receive a
+  // checkout session URL.
+  const STARTER_PRICE = 'price_1TGZtpEHEAcWrG55WWEgeFAv';
+  showToast('Opening checkout...');
+  try {
+    const res = await fetch('/api/stripe/checkout', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${session.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ price_id: STARTER_PRICE }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data?.checkout_url) {
+      window.location.href = data.checkout_url;
+    } else {
+      showToast('Checkout failed: ' + (data?.error || `HTTP ${res.status}`));
+    }
+  } catch (e) {
+    showToast('Checkout failed: network error');
+  }
+}
+
+async function rerender(session) {
+  if (stopPolling) { stopPolling(); stopPolling = null; }
+  let pkt;
+  try { pkt = await fetchAll(session.token); }
+  catch (e) { renderFoundationError(root, e); return; }
+  if (pkt.unauthorized) { redirectToAuth(); return; }
+
+  const tier = String(session.tier || 'free').toLowerCase();
+  const state = computeFoundationState({
+    qbp: pkt.qbp,
+    artifacts: pkt.artifacts,
+    foundationLockedAt: pkt.foundationLockedAt,
+    tier,
+  });
+
+  renderFoundation(root, state, {
+    onLockClick:     () => triggerLock(session),
+    onUpgradeClick:  () => triggerUpgrade(session),
+    banner: bannerText ? { text: bannerText, modifier: 'is-success' } : null,
+  });
+  // Clear the success banner after it has been shown once.
+  if (bannerText) setTimeout(() => { bannerText = null; }, 100);
+
+  if (state.bucket === 'locked' && state.inFlight) {
+    stopPolling = startArtifactPolling({
+      token: session.token,
+      onUpdate: (rows) => {
+        const next = computeFoundationState({
+          qbp: pkt.qbp,
+          artifacts: rows,
+          foundationLockedAt: pkt.foundationLockedAt,
+          tier,
+        });
+        renderFoundation(root, next, {
+          onLockClick:    () => triggerLock(session),
+          onUpgradeClick: () => triggerUpgrade(session),
+        });
+      },
+      onStuck: () => {
+        showToast('Taking longer than expected. You can refresh manually.');
+      },
+    });
+  }
+}
+
+async function load() {
+  renderFoundationLoading(root);
+  if (!window.QB || !window.QB.isAuthed || !window.QB.isAuthed()) {
+    redirectToAuth();
+    return;
+  }
+  const session = window.QB.getSession();
+  await rerender(session);
+}
+
+document.addEventListener('DOMContentLoaded', load);
+if (document.readyState !== 'loading') load();
+
+// Stop polling when the tab is hidden; the polling function itself
+// detects visibility too, but stopping cleanly avoids stale closures
+// if the user navigates back.
+window.addEventListener('beforeunload', () => {
+  if (stopPolling) stopPolling();
+});
+</script>
+</body>
+</html>

@@ -53,7 +53,7 @@
   const accessToken = params.get('access_token');
   const refreshToken = params.get('refresh_token');
   const queryParams = new URLSearchParams(window.location.search);
-  // Default post-auth destination is /dashboard. We do not thread return_to
+  // Default post-auth destination is /foundation. We do not thread return_to
   // through the magic-link URL anymore (Supabase allowlist rejected the
   // query-string form and silently fell back to Site URL). A localStorage
   // override remains available for future per-flow destinations on the same
@@ -64,7 +64,7 @@
     try { rawReturnTo = localStorage.getItem('qb_post_auth_return_to') || ''; }
     catch(e) { rawReturnTo = ''; }
   }
-  if (!rawReturnTo) rawReturnTo = '/dashboard';
+  if (!rawReturnTo) rawReturnTo = '/foundation';
   const returnTo = rawReturnTo.replace('://www.', '://');
   try { localStorage.removeItem('qb_post_auth_return_to'); } catch(e) {}
 

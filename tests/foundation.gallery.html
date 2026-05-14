@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB Foundation Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+<style>
+  body { background: var(--cream); color: var(--ink); font-family: var(--font-body); margin: 0; }
+  .toolbar {
+    position: sticky; top: 0; z-index: 60;
+    display: flex; gap: var(--space-xs); align-items: center;
+    padding: var(--space-s) var(--space-m);
+    background: var(--cream-warm);
+    border-bottom: var(--border-default) solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+  .toolbar button {
+    font: inherit; color: inherit;
+    background: var(--cream);
+    border: var(--border-bubble) solid var(--ink);
+    border-radius: var(--radius-pill);
+    padding: 0.4em 1em;
+    cursor: pointer;
+  }
+  .toolbar button.is-active { background: var(--ink); color: var(--cream); }
+  .summary { margin-left: auto; font-family: var(--font-mono); }
+  .summary.is-ok   { color: var(--phase-discovery); }
+  .summary.is-fail { color: var(--rose-deep); }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <button id="b1" type="button" class="is-active">Loading</button>
+  <button id="b2" type="button">Cold start</button>
+  <button id="b3" type="button">In progress</button>
+  <button id="b4" type="button">Lock ready</button>
+  <button id="b5" type="button">Locked, generating</button>
+  <button id="b6" type="button">Locked, delivered, free</button>
+  <button id="b7" type="button">Locked, delivered, starter</button>
+  <button id="b-reduced" type="button">Reduced motion</button>
+  <span class="summary" id="summary">Initializing…</span>
+</div>
+<main id="root"></main>
+
+<script type="module">
+import {
+  computeFoundationState,
+  renderFoundation,
+  renderFoundationLoading,
+  renderFoundationError,
+} from '/js/qb-foundation.js';
+
+const root = document.getElementById('root');
+const summary = document.getElementById('summary');
+let ok = 0, fail = 0;
+function setSummary() {
+  summary.textContent = `${ok} rendered, ${fail} failures`;
+  summary.classList.toggle('is-ok',   fail === 0);
+  summary.classList.toggle('is-fail', fail  >  0);
+}
+function setActive(id) {
+  ['b1','b2','b3','b4','b5','b6','b7'].forEach(n => {
+    document.getElementById(n).classList.toggle('is-active', n === id);
+  });
+}
+function show(builder) {
+  root.innerHTML = '';
+  try { builder(); ok += 1; }
+  catch (e) { fail += 1; console.error(e); }
+  setSummary();
+}
+
+// ─── Sample data ────────────────────────────────────────────
+const QBP_EMPTY    = {};
+const QBP_PROGRESS = {
+  archetypePrimary: 'The Rebel',
+  archetype: 'The Rebel',
+  archetypeCompassComplete: true,
+  brandEssence: 'A workshop before it is a brand.',
+};
+const QBP_READY = {
+  ...QBP_PROGRESS,
+  manifesto: 'We work in materials that age. We work in hours that cannot be compressed.',
+  paradox: 'Grow without scaling.',
+  antiBrand: 'Not glossy, not warm-LED.',
+  sensescapeCompletedAt: '2026-05-14T09:00:00Z',
+  colorTerritory: 'Cream to brass to ink.',
+  brandObject: 'A brass key.',
+};
+const QBP_LOCKED_STARTER = {
+  ...QBP_READY,
+  brandName: 'Atelier Verdant',
+  visualDnaCompletedAt: '2026-05-14T11:00:00Z',
+  visualDnaKeepCount: 12,
+  warTableCompletedAt: '2026-05-14T12:00:00Z',
+  warTablePosture: 'Quiet, bespoke quadrant.',
+};
+
+const NOW = Date.now();
+const minutesAgo = (m) => new Date(NOW - m * 60_000).toISOString();
+const hoursAgo   = (h) => new Date(NOW - h * 3600_000).toISOString();
+
+const ARTIFACTS_GENERATING = [
+  { id: '10000000-0000-0000-0000-000000000001', title: 'The Soul of Your Brand',  agent_slug: 'soul_map_synthesizer',   phase: '01', status: 'delivered',  version: 1, created_at: minutesAgo(1), locked: false },
+  { id: '10000000-0000-0000-0000-000000000002', title: 'Artifact (generating)',   agent_slug: 'sensescape_synthesizer', phase: '01', status: 'generating', version: 1, created_at: minutesAgo(2), locked: true  },
+  { id: '10000000-0000-0000-0000-000000000003', title: 'Artifact (waiting)',      agent_slug: 'visual_dna_synthesizer', phase: '01', status: 'queued',     version: 1, created_at: minutesAgo(2), locked: true  },
+  { id: '10000000-0000-0000-0000-000000000004', title: 'Artifact (waiting)',      agent_slug: 'war_table_synthesizer',  phase: '01', status: 'queued',     version: 1, created_at: minutesAgo(2), locked: true  },
+];
+const ARTIFACTS_DELIVERED_FREE = [
+  { id: '20000000-0000-0000-0000-000000000001', title: 'The Soul of Atelier Verdant',          agent_slug: 'soul_map_synthesizer',   phase: '01', status: 'delivered', version: 1, created_at: hoursAgo(2), locked: false },
+  { id: '20000000-0000-0000-0000-000000000002', title: 'The Sensory World of Atelier Verdant', agent_slug: 'sensescape_synthesizer', phase: '01', status: 'delivered', version: 1, created_at: hoursAgo(2), locked: true  },
+  { id: '20000000-0000-0000-0000-000000000003', title: 'The Visual Language of Atelier Verdant', agent_slug: 'visual_dna_synthesizer', phase: '01', status: 'delivered', version: 1, created_at: hoursAgo(2), locked: true  },
+  { id: '20000000-0000-0000-0000-000000000004', title: 'The Strategic Position of Atelier Verdant', agent_slug: 'war_table_synthesizer', phase: '01', status: 'delivered', version: 1, created_at: hoursAgo(2), locked: true  },
+];
+const ARTIFACTS_DELIVERED_STARTER = ARTIFACTS_DELIVERED_FREE.map(a => ({ ...a, locked: false }));
+
+const OPTS = {
+  onLockClick:    () => alert('Lock clicked'),
+  onUpgradeClick: () => alert('Upgrade clicked'),
+};
+
+document.getElementById('b1').addEventListener('click', () => {
+  setActive('b1');
+  show(() => renderFoundationLoading(root));
+});
+document.getElementById('b2').addEventListener('click', () => {
+  setActive('b2');
+  show(() => {
+    const s = computeFoundationState({ qbp: QBP_EMPTY, artifacts: [], foundationLockedAt: null, tier: 'free' });
+    renderFoundation(root, s, OPTS);
+  });
+});
+document.getElementById('b3').addEventListener('click', () => {
+  setActive('b3');
+  show(() => {
+    const s = computeFoundationState({ qbp: QBP_PROGRESS, artifacts: [], foundationLockedAt: null, tier: 'free' });
+    renderFoundation(root, s, OPTS);
+  });
+});
+document.getElementById('b4').addEventListener('click', () => {
+  setActive('b4');
+  show(() => {
+    const s = computeFoundationState({ qbp: QBP_READY, artifacts: [], foundationLockedAt: null, tier: 'free' });
+    renderFoundation(root, s, OPTS);
+  });
+});
+document.getElementById('b5').addEventListener('click', () => {
+  setActive('b5');
+  show(() => {
+    const s = computeFoundationState({ qbp: QBP_READY, artifacts: ARTIFACTS_GENERATING, foundationLockedAt: minutesAgo(3), tier: 'free' });
+    renderFoundation(root, s, OPTS);
+  });
+});
+document.getElementById('b6').addEventListener('click', () => {
+  setActive('b6');
+  show(() => {
+    const s = computeFoundationState({ qbp: QBP_READY, artifacts: ARTIFACTS_DELIVERED_FREE, foundationLockedAt: hoursAgo(2), tier: 'free' });
+    renderFoundation(root, s, OPTS);
+  });
+});
+document.getElementById('b7').addEventListener('click', () => {
+  setActive('b7');
+  show(() => {
+    const s = computeFoundationState({ qbp: QBP_LOCKED_STARTER, artifacts: ARTIFACTS_DELIVERED_STARTER, foundationLockedAt: hoursAgo(2), tier: 'starter' });
+    renderFoundation(root, s, OPTS);
+  });
+});
+document.getElementById('b-reduced').addEventListener('click', (ev) => {
+  document.documentElement.classList.toggle('qb-reduced-motion');
+  ev.currentTarget.classList.toggle('is-active');
+});
+
+document.getElementById('b1').click();
+</script>
+</body>
+</html>

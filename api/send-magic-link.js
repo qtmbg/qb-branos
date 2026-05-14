@@ -168,7 +168,7 @@ export default async function handler(req) {
   // replaced with Site URL. Keeping the URL clean makes the allowlist
   // entry a simple exact string and the rejection class disappears.
   //
-  // The post-auth destination is always /dashboard. auth-callback.html
+  // The post-auth destination is always /foundation. auth-callback.html
   // hardcodes that fallback. If we ever need a per-flow destination we
   // can stash it in localStorage on the same origin before the redirect.
   //
