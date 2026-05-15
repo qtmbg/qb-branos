@@ -26,7 +26,10 @@
 //   ANTHROPIC_API_KEY                    Agent model call.
 //   RESEND_API_KEY                       Optional; artifact-ready email.
 
-import { runSoulMapSynthesizer } from './soul-map-synthesizer.js';
+// Soul Map retrofitted to the §3.5 contract in /agents/soul-map.js as
+// part of Chapter 2 step 3. The legacy export name is preserved on the
+// new module for one chapter. Dispatch behavior is unchanged.
+import { runSoulMapSynthesizer } from '../../agents/soul-map.js';
 import { runSensescapeSynthesizer } from './sensescape-synthesizer.js';
 import { runVisualDnaSynthesizer } from './visual-dna-synthesizer.js';
 import { runWarTableSynthesizer } from './war-table-synthesizer.js';
