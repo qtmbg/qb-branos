@@ -26,8 +26,13 @@ const PAGES = [
   ['ecosystem','/ecosystem.html'],
   ['payment','/payment.html'],
   ['tools','/tools.html'],
-  ['journey-guide','/journey-guide.html'],
-  ['qb-branidos-hub','/qb-branidos-hub.html'],
+  // /journey-guide and /qb-branidos-hub deprecated in step 12.
+  // Source files archived under /_archive/chapter-1-deprecations/ in step 16.
+  ['foundation','/foundation.html'],
+  ['archive','/archive.html'],
+  ['qbp','/qbp.html'],
+  ['paywall','/paywall.html'],
+  ['account','/account.html'],
   ['the-profiles','/the-profiles.html'],
   ['archetype-compass','/archetype-compass.html'],
   ['visual-dna','/visual-dna.html'],

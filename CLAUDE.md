@@ -69,7 +69,7 @@ When the user issues a hold instruction such as "branch only", "do not merge", "
 - `localStorage` is the persistence layer for tool state and the QBP.
 - Reduced-motion is respected on every animation.
 - All tools accept `?apikey=`, `?provider=`, and `?qbp=` URL parameters. White-label entry points additionally accept `?brand=`, `?color=`, `?client=`. Signal Scan additionally accepts `?kpk=` and `?kli=`.
-- AI calls go to the Anthropic API with `claude-sonnet-4-20250514` or the latest Sonnet.
+- AI calls go to the Anthropic API with `claude-sonnet-4-6` (the canonical Sonnet default in `api/claude.js`). `claude-sonnet-4-20250514` is retired and kept in `ALLOWED_MODELS` only for transition. Update both `api/claude.js` and `ALLOWED_MODELS` together when changing the default.
 - Every agent tool includes the Content Approval Loop (up to 3 revision rounds per output).
 
 ### Voice
@@ -191,7 +191,7 @@ The QB illustration library is closed and lives at `/img/illus/`. Reference thes
 | `doubter.png` | The Doubter persona (Door 02). Seated figure at café table, hand-on-chin contemplative. | Persona cards, "Something feels off" door. |
 | `player.png` | The Player persona (Door 03). Runner with dog on leash, forward motion. | Persona cards, "Competition coming fast" door. |
 | `agency.png` | The Multi-Brand persona (Door 04). Figure holding oversized framed portrait. | Persona cards, "I build for clients" door, agency tier. |
-| `guide.png` | The Guide character. Figure on tandem bicycle, two riders, partnership. | journey-guide.html, navigation contexts. |
+| `guide.png` | The Guide character. Figure on tandem bicycle, two riders, partnership. | Navigation contexts. (Was used by `journey-guide.html`, retired in Chapter 1 step 12; file archived under `/_archive/chapter-1-deprecations/` step 16.) |
 | `synergy.png` | Ecosystem scene. House cutaway with multiple figures. | ecosystem.html connection visualization. |
 | `three-steps.png` | "How it works" scene. Figure with feet up, two figures stacked on shoulders. | index.html "Three steps. That's it." section. |
 | `start-building.png` | Final CTA scene. Group photo shoot with plant headpiece. | index.html final CTA, "Start building" sections. |

@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <!--
-  DEPRECATED 2026-05-14. Retired in CHAPTER_01 step 12 in favour of /foundation.
-  This file stays in the repo for historical reference; production routing
-  redirects /dashboard, /hub, /qb-branidos-hub.html to /foundation, and
-  /journey-guide returns HTTP 410 Gone.
--->
-<!--
-  Archived as of 2026-05-13. Replaced by /dashboard.
-  Do not modify. Reference only. URL routes /os, /hub, and /qb-branidos-hub.html
-  now 301 to /dashboard via vercel.json.
+  DEPRECATED. Chapter 1 retirement, 2026-05-15.
+  Replaced by /foundation, /archive, /qbp.
+  Production routing redirects /dashboard, /hub, /qb-branidos-hub.html to
+  /foundation, and /journey-guide returns HTTP 410 Gone.
+  Kept for reference only. Do not link to. Do not edit.
 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QB BrandOS · Command Center</title>
-<meta name="description" content="The QB BrandOS hub. Twenty agents across six phases. Your full brand operating system.">
+<title>Journey Guide · QB BrandOS</title>
+<meta name="description" content="Your guided journey through the QB BrandOS. Twenty agents across six phases. Pick up where you left off.">
 
 <meta name="theme-color" content="#2D1521">
 <meta name="color-scheme" content="light">
@@ -28,17 +24,16 @@
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Quantum Branding">
-<meta property="og:title" content="QB BrandOS · Command Center">
-<meta property="og:description" content="Your full brand operating system: 20 agents, 6 phases, 1 brain.">
-<meta property="og:image" content="https://quantumbranding.ai/img/brand/og/qb-branidos-hub.png">
+<meta property="og:title" content="Journey Guide · QB BrandOS">
+<meta property="og:description" content="Your guided journey through the brand operating system.">
+<meta property="og:image" content="https://quantumbranding.ai/img/brand/og/journey-guide.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/qb-branidos-hub.png">
+<meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/journey-guide.png">
 <meta name="twitter:card" content="summary_large_image">
 
 <script src="/qb-cloud.js"></script>
-<script src="/qb-gate.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -962,6 +957,7 @@ body [role="button"]:not(.qb-button):not(.banner *):not(.nav-wrap *):not(.footer
   --illus-mustard:#D4B85A; --illus-rust:#B8704D; --illus-lavender:#B8A0C7;
   --illus-pink-soft:#F4C4D0;
   --scrim:rgba(251,245,230,0.90); --skeleton:rgba(224,176,105,0.33);
+
   --step--2:clamp(0.7813rem,0.7546rem + 0.1254vw,0.88rem);
   --step--1:clamp(0.9375rem,0.8937rem + 0.2063vw,1.1rem);
   --step-0:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
@@ -999,22 +995,28 @@ body [role="button"]:not(.qb-button):not(.banner *):not(.nav-wrap *):not(.footer
   --f-display:'Fraunces','Times New Roman',serif;
   --f-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
   --f-mono:'JetBrains Mono',ui-monospace,monospace;
-  --bg-void:var(--cream); --bg-deep:var(--cream-card); --bg-base:var(--cream); --bg:var(--cream); --bg2:var(--cream-card);
-  --bg-surface:var(--cream-card); --bg-elevated:var(--white); --bg-overlay:var(--white);
-  --border-subtle:var(--ink-25); --border-medium:var(--ink-33); --border-strong:var(--ink-50);
-  --border:var(--ink-25); --border2:var(--ink-33);
-  --text-1:var(--ink); --text-2:var(--ink-75); --text-3:var(--ink-50); --text-4:var(--ink-33);
-  --ink-soft:var(--ink-75); --ink-mute:var(--ink-50); --ink-faint:var(--ink-33);
-  --patina:var(--phase-discovery); --patina-lit:var(--illus-forest);
-  --patina-dim:rgba(156,196,162,0.25); --patina-faint:rgba(156,196,162,0.10); --patina-deep:var(--ink);
-  --brass:var(--gold); --brass-lit:var(--gold-deep);
-  --brass-dim:rgba(224,176,105,0.25); --brass-faint:rgba(224,176,105,0.10);
-  --terra:var(--phase-execution); --plum:var(--phase-intelligence);
-  --warmred:var(--rose-deep);
-  --pill-bg:var(--cream-card); --pill-bg-hover:var(--cream-warm);
-  --pill-border:var(--ink); --pill-ink:var(--ink);
-  --ease:var(--ease-qb);
-  --r-pill:9999px; --r-card:18px; --r-card-lg:24px;
+  --bg-void:var(--cream);
+  --bg-deep:var(--cream-card);
+  --bg-base:var(--cream);
+  --bg-surface:var(--cream-card);
+  --bg-elevated:var(--white);
+  --bg-overlay:var(--white);
+  --border-subtle:var(--ink-25);
+  --border-medium:var(--ink-33);
+  --border-strong:var(--ink-50);
+  --text-1:var(--ink);
+  --text-2:var(--ink-75);
+  --text-3:var(--ink-50);
+  --text-4:var(--ink-33);
+  --patina:var(--phase-discovery);
+  --patina-lit:var(--illus-forest);
+  --brass:var(--gold);
+  --brass-lit:var(--gold-deep);
+  --phase-1:var(--phase-discovery);
+  --phase-2:var(--phase-creation);
+  --phase-3:var(--phase-content);
+  --phase-4:var(--phase-execution);
+  --phase-5:var(--phase-intelligence);
 }
 
 *,*::before,*::after { box-sizing:border-box; }
@@ -1023,7 +1025,7 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,figure,blockquote { margin:0; }
 ul,ol { padding:0; list-style:none; }
 img,svg,video { display:block; max-width:100%; }
 button { font:inherit; color:inherit; cursor:pointer; border:none; outline:none; background:transparent; }
-a { color:inherit; }
+a { color:inherit; text-decoration:none; }
 html,body {
   font-family:var(--f-body); font-weight:500;
   color:var(--ink); background:var(--cream);
@@ -1036,19 +1038,6 @@ body { min-height:100vh; -webkit-font-smoothing:antialiased; -moz-osx-font-smoot
 ::-webkit-scrollbar-thumb:hover { background:var(--gold); }
 ::selection { background:var(--teal); color:var(--ink); }
 
-input, textarea, select {
-  background:var(--cream-card); border:2px solid var(--ink); color:var(--ink);
-  font-family:var(--f-body); font-weight:500;
-  border-radius:16px; padding:1em 1.25em; font-size:1.0625rem; line-height:1.5;
-  width:100%; outline:none;
-  box-shadow:0 4px var(--ink);
-  -webkit-appearance:none; appearance:none;
-  transition:transform 0.25s var(--ease-qb),box-shadow 0.25s var(--ease-qb),border-color 0.25s var(--ease-qb),background 0.25s var(--ease-qb);
-}
-input:focus, textarea:focus, select:focus { background:var(--white); border-color:var(--rose-deep); transform:translateY(-2px); box-shadow:0 6px var(--ink); }
-input::placeholder, textarea::placeholder { color:var(--ink-50); font-style:normal; opacity:1; font-weight:400; }
-textarea { resize:vertical; line-height:1.6; min-height:9rem; }
-
 .qb-type-nav {
   font-family:var(--f-body); font-weight:600; font-size:var(--step--2);
   letter-spacing:0.1em; text-transform:uppercase; color:var(--ink); text-decoration:none;
@@ -1058,6 +1047,7 @@ textarea { resize:vertical; line-height:1.6; min-height:9rem; }
 .qb-type-subtext { font-family:var(--f-body); font-weight:500; font-size:var(--step--2); color:var(--ink); }
 em { font-style:italic; }
 
+/* BUTTON */
 .qb-button {
   position:relative; display:inline-flex; align-items:center; justify-content:center;
   background:transparent; border:0; padding:0; font-size:var(--space-m); cursor:pointer;
@@ -1076,10 +1066,12 @@ em { font-style:italic; }
   font-family:var(--f-body); font-weight:700; font-size:0.5em; line-height:1.5em;
   letter-spacing:0.02em;
   transform:translateY(-0.17em);
-  transition:transform 0.4s var(--ease-qb),filter 0.4s var(--ease-qb),background 0.4s var(--ease-qb);
+  transition:transform 0.4s var(--ease-qb),filter 0.4s var(--ease-qb),background 0.4s var(--ease-qb),color 0.4s var(--ease-qb);
   white-space:nowrap;
 }
-@media (hover:hover) { .qb-button:hover .qb-button_content { transform:translateY(-0.35em); filter:brightness(1.05); } }
+@media (hover:hover) {
+  .qb-button:hover .qb-button_content { transform:translateY(-0.35em); filter:brightness(1.05); }
+}
 .qb-button:active .qb-button_content { transform:translateY(0.28em) scale(0.99); filter:brightness(0.9); }
 .qb-button.is-primary   .qb-button_content { background:var(--gold); color:var(--ink); }
 .qb-button.is-sm        .qb-button_content { padding:0.8em 1.4em; font-size:0.4em; }
@@ -1087,24 +1079,7 @@ em { font-style:italic; }
 .qb-button.is-expand { width:100%; }
 .qb-button.is-expand .qb-button_content { width:100%; }
 
-.btn {
-  display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
-  font-family:var(--f-body); font-weight:700; font-size:0.92rem;
-  letter-spacing:0.02em; text-transform:none;
-  padding:1em 1.85em;
-  border:2px solid var(--ink); border-radius:9999px;
-  background:var(--cream-card); color:var(--ink);
-  cursor:pointer; text-decoration:none; white-space:nowrap;
-  min-height:48px;
-  box-shadow:0 4px var(--ink);
-  transition:background 0.3s var(--ease-qb),color 0.3s var(--ease-qb),transform 0.3s var(--ease-qb),box-shadow 0.3s var(--ease-qb),filter 0.3s var(--ease-qb);
-}
-.btn:hover { background:var(--white); transform:translateY(-2px); box-shadow:0 6px var(--ink); }
-.btn:active { transform:translateY(1px); box-shadow:0 2px var(--ink); transition-duration:0.15s; }
-.btn-primary { background:var(--gold); color:var(--ink); box-shadow:0 4px var(--ink); }
-.btn-primary:hover { background:var(--gold); color:var(--ink); transform:translateY(-3px); box-shadow:0 7px var(--ink); filter:brightness(1.06); }
-.btn-primary:active { transform:translateY(2px); box-shadow:0 2px var(--ink); transition-duration:0.15s; }
-
+/* LOADING BAR */
 .qb-loading-bar {
   position:fixed; top:0; left:0; right:0; height:4px; z-index:100; pointer-events:none;
   background:linear-gradient(to right,rgba(158,211,220,0) 0%,var(--teal) 50%,rgba(158,211,220,0) 100%);
@@ -1114,6 +1089,7 @@ em { font-style:italic; }
 .qb-loading-bar[data-state="idle"] { opacity:0; }
 @keyframes qb-loading-bar { 0%,100% { transform:translateX(-100%); } 99.99% { transform:translateX(100%); } }
 
+/* BANNER */
 .banner {
   background:var(--ink); color:var(--cream); text-align:center;
   padding:0.7em var(--space-m-l);
@@ -1122,8 +1098,8 @@ em { font-style:italic; }
 .banner a { color:var(--gold); text-decoration:none; font-weight:600; margin-left:0.5em; }
 .banner a:hover { text-decoration:underline; text-underline-offset:3px; }
 
-/* STICKY NAV - app surface (Design System v3.4 Part 20.14) */
-.nav-wrap { padding:var(--space-s) var(--space-m-l); position:sticky; top:0; z-index:80; background:var(--cream); }
+/* NAV */
+.nav-wrap { padding:var(--space-s) var(--space-m-l); }
 .nav {
   max-width:1320px; margin-inline:auto;
   display:flex; align-items:center; justify-content:space-between; gap:var(--space-m);
@@ -1153,6 +1129,7 @@ em { font-style:italic; }
 @media (min-width:1000px) { .hamburger { display:none; } }
 .hamburger span { display:block; width:18px; height:2px; background:var(--ink); }
 
+/* MOBILE MENU */
 .mobile-menu {
   position:fixed; inset:0; z-index:90; background:var(--cream);
   padding:var(--space-l) var(--space-m-l);
@@ -1173,6 +1150,7 @@ em { font-style:italic; }
 }
 .mobile-menu_foot { margin-top:auto; padding-top:var(--space-l); }
 
+/* FOOTER */
 .footer {
   background:var(--cream);
   padding:var(--space-l) var(--space-m-l);
@@ -1193,9 +1171,292 @@ em { font-style:italic; }
 .footer_links a { color:var(--ink-75); text-decoration:none; font-size:var(--step--1); }
 .footer_links a:hover { color:var(--ink); text-decoration:underline; text-underline-offset:4px; }
 
-main.app-shell {
-  max-width:1240px; margin:0 auto;
-  padding:var(--space-l) var(--space-m-l) var(--space-2xl);
+/* ============ JOURNEY GUIDE - page-specific ============ */
+#progress-bar-wrap {
+  position:fixed; top:0; left:0; right:0; height:3px; z-index:50;
+  background:var(--ink-25);
+}
+.progress-fill {
+  height:100%;
+  background:linear-gradient(90deg,var(--gold),var(--phase-discovery));
+  transition:width 0.6s var(--ease-qb);
+}
+
+.journey-head {
+  max-width:1100px; margin:0 auto;
+  padding:var(--space-l) var(--space-m-l);
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:var(--space-m);
+}
+.journey-head .badge-guide {
+  display:inline-flex; align-items:center; gap:0.4em;
+  background:var(--cream); border:1px solid var(--ink); border-radius:9999px;
+  padding:0.4em 1em;
+  font-family:var(--f-mono); font-size:0.7rem; font-weight:600;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-75);
+}
+.journey-head .step-counter {
+  font-family:var(--f-mono); font-size:0.85rem; color:var(--ink-75);
+  letter-spacing:0.04em;
+}
+
+.mono-label {
+  font-family:var(--f-mono); font-size:0.7rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-50);
+}
+
+main.journey {
+  max-width:1100px; margin:0 auto;
+  padding:var(--space-m) var(--space-m-l) var(--space-2xl);
+}
+
+#return-banner {
+  background:var(--phase-discovery); color:var(--ink);
+  border:2px solid var(--ink); border-radius:18px;
+  padding:var(--space-s) var(--space-m); margin-bottom:var(--space-m);
+  display:none; align-items:center; justify-content:space-between; gap:var(--space-s); flex-wrap:wrap;
+  box-shadow:0 6px var(--ink);
+}
+#return-banner #rb-eyebrow { font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink); margin-bottom:4px; }
+#return-banner #rb-msg { font-size:var(--step--1); line-height:1.5; color:var(--ink); }
+#return-banner #rb-cta {
+  background:var(--ink); color:var(--cream);
+  border:2px solid var(--ink); border-radius:9999px;
+  padding:0.7em 1.4em;
+  font-family:var(--f-body); font-size:0.8rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+  cursor:pointer; white-space:nowrap;
+  transition:transform 0.3s var(--ease-qb);
+}
+#return-banner #rb-cta:hover { transform:translateY(-2px); }
+
+.glass-card {
+  background:var(--cream-card);
+  border:2px solid var(--ink); border-radius:24px;
+  padding:var(--space-m);
+  box-shadow:0 6px var(--ink);
+  position:relative;
+  overflow:hidden;
+}
+@media (min-width:640px) { .glass-card { box-shadow:0 9px var(--ink); padding:var(--space-l); } }
+
+#current-step-hero { margin-bottom:var(--space-l); }
+.csh-eyebrow {
+  display:inline-flex; align-items:center; gap:0.5em;
+  font-family:var(--f-mono); font-size:0.7rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-75);
+  margin-bottom:var(--space-s);
+}
+.csh-title {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 100,"WONK" 0;
+  font-size:clamp(2rem,5vw,3.5rem);
+  line-height:1; letter-spacing:-0.018em;
+  color:var(--ink);
+  margin-bottom:var(--space-s);
+  text-wrap:balance;
+}
+.csh-title em {
+  font-style:italic; color:var(--gold);
+  font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 100,"WONK" 1;
+}
+.csh-desc {
+  font-size:1.0625rem; line-height:1.65; font-weight:400;
+  color:var(--ink-75);
+  margin-bottom:var(--space-s);
+  max-width:65ch;
+}
+.csh-time {
+  display:inline-flex; align-items:center; gap:0.5em;
+  font-family:var(--f-mono); font-size:0.78rem; font-weight:600;
+  color:var(--ink-75); letter-spacing:0.04em; text-transform:uppercase;
+  margin-bottom:var(--space-m);
+}
+
+.manifesto-block {
+  position:relative;
+  padding:1.5rem 1.75rem 1.5rem 3rem;
+  margin-top:var(--space-s);
+  background:var(--cream-rose);
+  border:2px solid var(--ink);
+  border-radius:20px;
+  box-shadow:0 6px var(--ink);
+  font-family:var(--f-display); font-style:italic; font-weight:600;
+  font-variation-settings:"wght" 600,"opsz" 48,"SOFT" 100,"WONK" 1;
+  font-size:1.2rem; line-height:1.45;
+  color:var(--ink);
+}
+.manifesto-block::before {
+  content:'\201C'; position:absolute; left:0.6rem; top:-0.15em;
+  font-family:var(--f-display); font-weight:700;
+  font-variation-settings:"wght" 700,"opsz" 144,"SOFT" 100,"WONK" 1;
+  font-size:4.5rem; line-height:1; color:var(--rose-deep);
+  pointer-events:none;
+}
+.csh-output-label { margin-bottom:var(--space-2xs); }
+.csh-output-item {
+  display:flex; align-items:flex-start; gap:0.6em;
+  padding:0.5em 0;
+  font-size:1.0625rem; color:var(--ink-75); line-height:1.5; font-weight:400;
+}
+.csh-output-dot { color:var(--gold); flex-shrink:0; font-weight:700; }
+
+.btn-primary {
+  display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
+  background:var(--gold); color:var(--ink);
+  border:2px solid var(--ink); border-radius:9999px;
+  padding:1em 1.85em;
+  font-family:var(--f-body); font-weight:700; font-size:0.92rem;
+  letter-spacing:0.02em; text-transform:none;
+  box-shadow:0 4px var(--ink); min-height:48px;
+  transition:transform 0.3s var(--ease-qb),box-shadow 0.3s var(--ease-qb),filter 0.3s var(--ease-qb);
+  cursor:pointer; margin-top:var(--space-s);
+}
+.btn-primary:hover { transform:translateY(-3px); box-shadow:0 7px var(--ink); filter:brightness(1.06); }
+.btn-primary:active { transform:translateY(2px); box-shadow:0 2px var(--ink); transition-duration:0.15s; }
+
+.btn-secondary {
+  display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
+  background:var(--cream-card); color:var(--ink);
+  border:2px solid var(--ink); border-radius:9999px;
+  padding:1em 1.6em;
+  font-family:var(--f-body); font-weight:700; font-size:0.92rem;
+  letter-spacing:0.02em; text-transform:none;
+  box-shadow:0 4px var(--ink); min-height:48px;
+  transition:background 0.3s var(--ease-qb),color 0.3s var(--ease-qb),transform 0.3s var(--ease-qb),box-shadow 0.3s var(--ease-qb);
+  cursor:pointer;
+}
+.btn-secondary:hover { background:var(--white); transform:translateY(-2px); box-shadow:0 6px var(--ink); }
+.btn-secondary:active { transform:translateY(1px); box-shadow:0 2px var(--ink); transition-duration:0.15s; }
+
+#journey-map { display:flex; flex-direction:column; gap:var(--space-m); margin-top:var(--space-m); }
+
+.progress-summary {
+  display:flex; align-items:center; gap:var(--space-m);
+  padding:var(--space-m);
+}
+.ps-number {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 600,"opsz" 144";
+  font-size:clamp(3rem,7vw,5rem);
+  line-height:1; letter-spacing:-0.02em;
+}
+.ps-text { display:flex; flex-direction:column; gap:0.4em; }
+.ps-title {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 500,"opsz" 48";
+  font-size:var(--step-2);
+  color:var(--ink);
+}
+.ps-sub { font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-50); }
+
+.phase-zone {
+  background:var(--cream-card);
+  border:2px solid var(--ink); border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 6px var(--ink);
+}
+@media (min-width:640px) { .phase-zone { box-shadow:0 9px var(--ink); } }
+.phase-header {
+  width:100%;
+  display:flex; align-items:center; gap:var(--space-s);
+  padding:var(--space-s) var(--space-m);
+  text-align:left;
+  background:transparent;
+  cursor:pointer;
+}
+.phase-header:hover { background:rgba(45,21,33,0.04); }
+.phase-dot {
+  width:44px; height:44px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-mono); font-size:0.85rem; font-weight:700;
+  flex-shrink:0;
+}
+.phase-title {
+  flex:1;
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 600,"opsz" 48";
+  font-size:var(--step-1);
+  color:var(--ink);
+}
+.phase-status {
+  font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase;
+  border:1px solid var(--ink-25); border-radius:9999px;
+  padding:0.4em 0.9em;
+  white-space:nowrap;
+}
+.phase-chevron { color:var(--ink-50); transition:transform 0.3s var(--ease-qb); flex-shrink:0; }
+.phase-chevron.open { transform:rotate(180deg); }
+
+.steps-container { padding:0 var(--space-m) var(--space-m); display:flex; flex-direction:column; gap:var(--space-s); }
+.step-card {
+  background:var(--cream); border:2px solid var(--ink-25); border-radius:18px;
+  padding:var(--space-s) var(--space-m);
+  transition:border-color 0.3s var(--ease-qb),transform 0.3s var(--ease-qb);
+}
+.step-card.active-step { border-color:var(--ink); border-width:2px; box-shadow:0 4px var(--ink); }
+.step-card.done-step { background:rgba(156,196,162,0.18); }
+.step-card.locked-step { opacity:0.5; }
+.step-header { display:flex; gap:var(--space-s); align-items:flex-start; }
+.step-num {
+  font-family:var(--f-mono); font-size:0.85rem; font-weight:700;
+  width:36px; flex-shrink:0; padding-top:0.2em;
+}
+.step-body { flex:1; }
+.step-name {
+  font-family:var(--f-display);
+  font-variation-settings:"wght" 600,"opsz" 48";
+  font-size:var(--step-1); color:var(--ink); line-height:1.15;
+  margin-bottom:0.4em;
+}
+.step-desc {
+  font-size:var(--step--1); line-height:1.55;
+  color:var(--ink-75);
+  margin-bottom:var(--space-s);
+}
+.step-meta { display:flex; flex-wrap:wrap; gap:0.5em; margin-bottom:var(--space-s); }
+.step-tag {
+  font-family:var(--f-mono); font-size:0.65rem; font-weight:600;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--ink-75);
+  background:var(--cream-card);
+  border:1px solid var(--ink-25); border-radius:9999px;
+  padding:0.35em 0.85em;
+}
+.step-action { display:flex; gap:0.5em; flex-wrap:wrap; margin-top:var(--space-xs); }
+.step-done-badge {
+  font-family:var(--f-mono); font-size:0.75rem; font-weight:700;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--phase-discovery);
+}
+
+.completion-card { text-align:center; padding:var(--space-2xl) var(--space-m); }
+.completion-check {
+  width:64px; height:64px; margin:0 auto var(--space-m);
+  background:var(--phase-discovery); color:var(--ink);
+  border:2px solid var(--ink); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+}
+.completion-sub {
+  font-size:var(--step-0); color:var(--ink-75); line-height:1.55;
+  max-width:560px; margin:var(--space-s) auto var(--space-m);
+}
+.completion-ctas { display:flex; gap:var(--space-s); justify-content:center; flex-wrap:wrap; }
+
+.fade-in { animation:fadeIn 0.5s var(--ease-qb) both; }
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:none; }
+}
+
+.pulse-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--gold);
+  animation:beat 3s ease infinite;
+  display:inline-block;
+}
+@keyframes beat {
+  0%,100% { transform:scale(1); opacity:1; }
+  50% { transform:scale(1.3); opacity:0.7; }
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -1207,7 +1468,8 @@ main.app-shell {
   }
   .qb-button:hover .qb-button_content,
   .qb-button:active .qb-button_content { transform:none; }
-  .nav-brand_dot { animation:none; }
+  .nav-brand_dot, .pulse-dot { animation:none; }
+  .fade-in { animation:none; opacity:1; transform:none; }
 }
 
 /* =====================================================
@@ -1415,350 +1677,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 /* === END TOOL TYPOGRAPHY CONTINUITY === */
 
-/* =====================================================
-   QB-BRANIDOS-HUB.HTML — internal chrome restore (v3.4 SOT)
-   The hub's render() injects an internal chassis using legacy
-   class names (system-header, meter-section, phase-section,
-   tool-card, label-mono, title-large, badge-mono, etc.). The
-   CSS for those was stripped by an earlier paint sweep. This
-   block restores the chrome in v3.4 cream + ink + gold tokens.
-   Also caps the brand-core meter SVG which was inflating to
-   ~1060x1060 because it has only viewBox set, no width/height.
-   ===================================================== */
-
-/* App container — center column, breathing room */
-#app { display: block; }
-#app > .container { max-width: 1140px; margin: 0 auto; padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem); }
-
-/* Internal system header — sits inside #app, ABOVE the meter section.
-   Marketing-style chassis (banner + nav) already lives above #app.
-   We render this as a minimal in-app secondary header. */
-.system-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1.1rem clamp(1rem, 3vw, 2rem);
-  border-bottom: 2px solid var(--ink);
-  background: var(--cream);
-  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
-}
-.header-brand { display: inline-flex; align-items: center; gap: 0.75rem; }
-.header-brand-name {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  font-size: 0.82rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-.badge-mono {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 500;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 0.3em 0.8em;
-  border: 2px solid var(--ink);
-  border-radius: 9999px;
-  background: var(--gold);
-  color: var(--ink);
-  box-shadow: 0 3px var(--ink);
-}
-.system-header .nav-links {
-  display: inline-flex;
-  gap: 1.1rem;
-  flex-wrap: wrap;
-}
-.system-header .nav-link {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  font-size: 0.74rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-75);
-  text-decoration: none;
-  transition: color 0.25s cubic-bezier(0.19,1,0.22,1);
-}
-.system-header .nav-link:hover { color: var(--ink); }
-
-/* Theme toggle pill */
-.theme-toggle {
-  background: var(--cream-card);
-  border: 2px solid var(--ink);
-  border-radius: 9999px;
-  width: 38px; height: 38px;
-  display: inline-flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 3px var(--ink);
-  transition: transform 0.25s cubic-bezier(0.19,1,0.22,1),
-              box-shadow 0.25s cubic-bezier(0.19,1,0.22,1);
-}
-.theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 5px var(--ink); }
-
-/* Notification toasts */
-#notifs {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-  z-index: 200;
-  display: flex; flex-direction: column; gap: 0.5rem;
-  pointer-events: none;
-}
-.notif {
-  background: var(--ink);
-  color: var(--cream);
-  padding: 0.85em 1.2em;
-  border-radius: 16px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 0.95rem;
-  box-shadow: 0 9px 32px rgba(45,21,33,0.18);
-}
-
-/* Typography utility classes used inside #app */
-.font-serif { font-family: 'Fraunces', serif; }
-.font-mono  { font-family: 'JetBrains Mono', monospace; }
-.title-large {
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100, "WONK" 1;
-  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
-  line-height: 1.05;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-  margin: 0;
-}
-.title-medium {
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 100, "WONK" 1;
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin: 0;
-}
-.title-small {
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "wght" 650, "opsz" 144, "SOFT" 100, "WONK" 1;
-  font-size: 1.2rem;
-  line-height: 1.2;
-  color: var(--ink);
-  margin: 0;
-}
-.body-large {
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: var(--ink-75);
-  margin: 0;
-}
-.body-regular {
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 0.96rem;
-  line-height: 1.55;
-  color: var(--ink-75);
-  margin: 0;
-}
-.label-mono {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 500;
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-75);
-}
-
-/* Brand-core meter section */
-.meter-section {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: clamp(1.25rem, 3vw, 2rem);
-  align-items: center;
-  padding: clamp(1.5rem, 3vw, 2rem);
-  background: var(--cream-card);
-  border: 2px solid var(--ink);
-  border-radius: 28px;
-  box-shadow: 0 9px var(--ink);
-  margin-bottom: clamp(2rem, 4vw, 3rem);
-}
-@media (min-width: 768px) {
-  .meter-section { grid-template-columns: 220px 1fr; box-shadow: 0 16px var(--ink); }
-}
-.meter-chart {
-  position: relative;
-  width: 200px; height: 200px;
-  margin: 0 auto;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.meter-chart svg {
-  width: 200px;
-  height: 200px;
-  transform: rotate(-90deg);
-}
-.meter-bg, .meter-fill { fill: none; stroke-width: 12; stroke-linecap: round; }
-.meter-bg   { stroke: var(--cream-edge); }
-.meter-fill { stroke: var(--rose-deep); transition: stroke-dashoffset 1.2s cubic-bezier(0.19,1,0.22,1); }
-.meter-text {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center;
-  pointer-events: none;
-}
-.meter-percent {
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "wght" 750, "opsz" 144, "SOFT" 100;
-  font-size: 2.4rem;
-  line-height: 1;
-  color: var(--ink);
-}
-.meter-text .label-mono { margin-top: 0.25rem; color: var(--ink-50); }
-
-.meter-content { display: flex; flex-direction: column; gap: 0.85rem; }
-.meter-status  { display: inline-flex; align-items: center; gap: 0.6rem; }
-.meter-status .label-mono { color: var(--ink); }
-
-.pulse-dot {
-  width: 10px; height: 10px;
-  border-radius: 9999px;
-  background: var(--rose-deep);
-  box-shadow: 0 0 0 3px var(--cream-rose);
-  animation: qb-hub-pulse 2.4s ease-in-out infinite;
-}
-@keyframes qb-hub-pulse {
-  0%,100% { transform: scale(1); }
-  50%     { transform: scale(0.85); }
-}
-
-/* Btn-primary inside the meter content area (uses the page-level rule
-   that already sets gold + 0 4px ink shadow). We add layout. */
-.meter-content .btn-primary {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.75em 1.5em;
-  border: 2px solid var(--ink);
-  border-radius: 9999px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-decoration: none;
-  width: fit-content;
-  margin-top: 0.4rem;
-}
-
-/* Phase section + grid */
-.phase-section {
-  margin-bottom: clamp(2rem, 4vw, 3rem);
-  scroll-margin-top: 80px;
-}
-.phase-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 0.85rem;
-  margin-bottom: 1.25rem;
-  border-bottom: 2px solid var(--ink);
-}
-.phase-header-left { display: flex; align-items: baseline; gap: 0.9rem; flex-wrap: wrap; }
-.phase-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
-  color: var(--phase-color, var(--gold-deep));
-  padding: 0.3em 0.7em;
-  border: 2px solid var(--ink);
-  border-radius: 8px;
-  background: var(--cream-card);
-  box-shadow: 0 3px var(--ink);
-}
-.phase-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem;
-}
-
-/* Tool card — extends .glass-card (already styled to cream + ink + shadow) */
-.tool-card {
-  display: flex; flex-direction: column; gap: 0.75rem;
-  padding: 1.25rem;
-  cursor: pointer;
-  position: relative;
-}
-.tool-card.state-locked  { opacity: 0.55; cursor: not-allowed; }
-.tool-card.is-next       { border-color: var(--gold-deep); }
-.tool-card.is-next .start-badge {
-  position: absolute; top: -10px; left: 1rem;
-  padding: 0.3em 0.65em;
-  background: var(--gold);
-  border: 2px solid var(--ink);
-  border-radius: 9999px;
-  color: var(--ink);
-  font-size: 0.66rem;
-  box-shadow: 0 2px var(--ink);
-}
-.card-header { display: flex; align-items: center; gap: 0.6rem; }
-.card-icon {
-  width: 36px; height: 36px;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: var(--cream-warm);
-  border: 2px solid var(--ink);
-  border-radius: 8px;
-  font-size: 1.1rem;
-  color: var(--ink);
-  flex-shrink: 0;
-}
-.card-title { line-height: 1.2; }
-.card-desc  { flex: 1; }
-.card-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 0.5rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid var(--cream-edge);
-}
-.card-status { display: inline-flex; align-items: center; gap: 0.3rem; }
-.card-status.status-completed { color: var(--phase-discovery); }
-.card-status.status-progress  { color: var(--rose-deep); }
-.card-status.status-locked    { color: var(--ink-50); }
-.card-btn {
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--gold-deep);
-  text-decoration: none;
-  transition: transform 0.25s cubic-bezier(0.19,1,0.22,1);
-}
-.tool-card:not(.state-locked):hover .card-btn { transform: translateX(3px); }
-
-/* Animate-cascade — gentle reveal on tool-card mount.
-   Uses --idx custom property set inline. */
-.animate-cascade {
-  opacity: 0; transform: translateY(8px);
-  animation: qb-hub-cascade 0.6s cubic-bezier(0.19,1,0.22,1) forwards;
-  animation-delay: calc(var(--idx, 0) * 50ms);
-}
-@keyframes qb-hub-cascade {
-  to { opacity: 1; transform: translateY(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .animate-cascade { animation: none; opacity: 1; transform: none; }
-  .pulse-dot       { animation: none; }
-  .meter-fill      { transition: none; }
-}
-
-/* === END QB-BRANIDOS-HUB.HTML internal chrome restore === */
-
 </style>
-<link rel="canonical" href="https://quantumbranding.ai/qb-branidos-hub.html">
+<link rel="canonical" href="https://quantumbranding.ai/journey-guide.html">
 <!-- QB JSON-LD -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "QB BrandOS Hub",
-  "description": "The signed-in workspace for QB BrandOS: tools, agents, Quantum Brand Profile.",
-  "url": "https://quantumbranding.ai/qb-branidos-hub.html",
+  "name": "Find your path",
+  "description": "A guided path through QB BrandOS based on where you are starting from.",
+  "url": "https://quantumbranding.ai/journey-guide.html",
   "isPartOf": {
     "@id": "https://quantumbranding.ai/#website"
   },
@@ -1820,9 +1748,55 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   </div>
 </div>
 
-<main class="app-shell" id="app"></main>
+<div id="progress-bar-wrap"><div class="progress-fill" id="progress-bar-fill"></div></div>
 
-<div id="notifs"></div>
+<section class="journey-head">
+  <span class="badge-guide">
+    <span class="pulse-dot"></span>
+    Journey Guide
+  </span>
+  <div class="step-counter">Step <span id="current-step-display">-</span> of <span id="total-steps-display">-</span> · <span id="phase-display"></span></div>
+</section>
+
+<main class="journey">
+
+  <div id="return-banner">
+    <div style="flex:1; min-width:240px;">
+      <div id="rb-eyebrow">Welcome back</div>
+      <div id="rb-msg">Phase 01 is in progress.</div>
+    </div>
+    <button id="rb-cta" type="button">Continue →</button>
+  </div>
+
+  <div id="current-step-hero" class="glass-card fade-in">
+    <div class="csh-eyebrow" id="hero-eyebrow"><span class="pulse-dot"></span>Your next step</div>
+    <h1 class="csh-title" id="hero-title">Loading your journey…</h1>
+    <p class="csh-desc" id="hero-desc"></p>
+    <div class="csh-time">
+      <span>⏱</span>
+      <span id="hero-time"></span>
+    </div>
+    <div class="manifesto-block" id="hero-output" style="display:none;">
+      <div class="csh-output-label mono-label">You will get</div>
+      <div id="hero-output-items"></div>
+    </div>
+    <button type="button" class="btn-primary" onclick="openCurrentStep()">Open tool →</button>
+  </div>
+
+  <div id="journey-map"></div>
+
+  <div id="completion-card" class="glass-card completion-card" style="display:none;">
+    <div class="completion-check">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h1 class="csh-title">Your brand is built.</h1>
+    <p class="completion-sub">You have completed the full QB BrandOS journey. Your QBP is fully populated, your brand system is live, and the intelligence cycle begins. Every quarter, the system gets smarter.</p>
+    <div class="completion-ctas">
+      <a href="/dashboard" class="btn-secondary">Return to dashboard</a>
+      <a href="brand-performance-dashboard.html" class="btn-primary">Start review</a>
+    </div>
+  </div>
+</main>
 
 <script>
 window.addEventListener('load', function () {
@@ -1840,617 +1814,391 @@ window.addEventListener('load', function () {
   mc.addEventListener('click', closeMM);
   Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
 })();
-</script>
 
-<!-- SVG Gradient Definitions for health meter ring -->
-<svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
-  <defs>
-    <linearGradient id="meter-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="var(--patina)" />
-      <stop offset="100%" stop-color="var(--brass)" />
-    </linearGradient>
-  </defs>
-</svg>
-
-<script>
-// ── QB OS: Supabase Access Check ──────────────────────────────────────────────
-
-// FIX #4 (part A): QB_HAS_ACCESS defined synchronously here so launchTool() always
-// has a callable reference even before the async Supabase IIFE resolves.
-window.QB_HAS_ACCESS = function(feature) {
-  const tier   = localStorage.getItem('qb_user_tier') || 'free';
-  const paid   = localStorage.getItem('qb_paid') === '1';
-  const status = localStorage.getItem('qb_sub_status') || 'inactive';
-  const isActive = paid || status === 'active';
-  if (feature === 'panel')  return isActive && (tier === 'pro' || tier === 'agency');
-  if (feature === 'agency') return isActive && tier === 'agency';
-  if (feature === 'free')   return true;
-  return isActive;
-};
-
-(async function(){
-  const SUPA_URL = 'https://yushbxjwfhuokaezoioe.supabase.co';
-  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0';
-
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('payment') === 'success') {
-    const plan = params.get('plan') || 'starter';
-    localStorage.setItem('qb_user_tier', plan);
-    localStorage.setItem('qb_paid', '1');
-    window.history.replaceState({}, '', window.location.pathname);
+const JOURNEY = [
+  {
+    phase: 1, phaseLabel: 'Discovery', phaseColor: 'var(--phase-discovery)',
+    steps: [
+      { id: 'archetype-compass', name: 'Archetype Compass', storageKey: 'qb_archetype_compass_done', time: '5–10 min', desc: 'The first step. 10 exercises read your brand\'s archetype trinity. Primary identity, secondary texture, and the tension you must manage. Everything downstream sharpens once this is set.', outputs: ['Archetype trinity (primary · secondary · tension)','Central paradox statement','Strategic moat and open-space read','Operating mode (decision style · rhythm · yes/no)','13-section strategic reading'], file: 'archetype-compass.html', phase: 1 },
+      { id: 'soul-map', name: 'Brand Soul Map', storageKey: 'qb_soul_map_done', time: '45–60 min', desc: 'Uncover your brand\'s irreducible truth. 12 modules. 15 exercises. The foundational identity document that every other tool in the system reads from.', outputs: ['Your Brand Essence: one precise sentence','The Spark: your full brand narrative','Primary + Secondary Archetype','Manifesto line and Anti-Brand','Your primary persona defined'], file: 'brand-soul-map.html', phase: 1 },
+      { id: 'sensescape', name: 'Sensescape', storageKey: 'qb_sensescape_done', time: '30–40 min', desc: 'Map the sensory universe of your brand through 47 spectrums across 7 chapters. Color, type, form, motion, texture. Produces the Designer Brief and Sensescape Codex.', outputs: ['Color territory with emotional logic','Typography direction and weight','Designer Brief ready to send','Visual paradoxes identified'], file: 'sensescape.html', phase: 1 },
+      { id: 'visual-dna', name: 'Visual DNA', storageKey: 'qb_visual_dna_done', time: '20–30 min', desc: 'Three rounds of instinctive image selection build your visual reference library. What you keep reveals the brand\'s true visual personality. Faster and more accurate than any mood board exercise.', outputs: ['10 reference images defining your visual world','Visual DNA Brief for your designer','Fast-discard blocklist: what to avoid','Texture and form vocabulary'], file: 'visual-dna.html', phase: 1 },
+      { id: 'war-table', name: 'The War Table', storageKey: 'qb_war_table_done', time: '30–45 min', desc: 'Strategic prioritization across 6 dimensions. Takes all your potential moves and outputs a ranked 60-day action plan with a full Strategic Command Document.', outputs: ['Ranked initiative list with scores','60-day field plan','Strategic Command Document','Trade-off analysis'], file: 'war-table.html', phase: 1 },
+      { id: 'profiles', name: 'The Profiles', storageKey: 'qb_profiles_done', time: '25–35 min', desc: 'Build three personas in one journey. NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.', outputs: ['NOW persona: ad-ready brief','NEXT persona: growth lane brief','NORTH STAR persona: long-arc brief','Anti-targeting exclusions per persona','Trigger Map per persona for ad sequencing'], file: 'the-profiles.html', phase: 1 }
+    ]
+  },
+  {
+    phase: 2, phaseLabel: 'Brand Creation', phaseColor: 'var(--phase-creation)',
+    steps: [
+      { id: 'logo-direction', name: 'Logo Direction Agent', storageKey: 'qb_logo_dir_done', time: '15–20 min', desc: 'The AI reads your complete QBP and produces a full logo brief: visual direction, reference examples, and exact Midjourney/Ideogram prompts ready to generate your logo concepts.', outputs: ['Complete logo brief','3 directional concepts','Midjourney + Ideogram prompts','Typography shortlist','Color application guide'], file: 'logo-direction-agent.html', phase: 2 },
+      { id: 'logo-evaluation', name: 'Logo Evaluation Agent', storageKey: 'qb_logo_eval_done', time: '10–15 min', desc: 'Upload your logo concepts. The agent scores each one against your QBP identity (pass, refine, or reject) with detailed reasoning so you know exactly why and what to do next.', outputs: ['Per-concept verdict (pass/refine/reject)','Identity alignment score','Specific revision directions','Final selection recommendation'], file: 'logo-evaluation-agent.html', phase: 2 },
+      { id: 'voice-guide', name: 'Voice Guide Agent', storageKey: 'qb_voice_done', time: '20–25 min', desc: 'Your complete verbal identity system. Voice DNA, writing rules, tone modes per platform, brand vocabulary, and a live copy generator that writes in your exact voice.', outputs: ['Voice DNA document','Platform-specific tone modes','Writing rules and examples','10 brand vocabulary words','Live copy generator'], file: 'voice-guide-agent.html', phase: 2 }
+    ]
+  },
+  {
+    phase: 3, phaseLabel: 'Content Creation', phaseColor: 'var(--phase-content)',
+    steps: [
+      { id: 'instagram', name: 'Instagram Seed Agent', storageKey: 'qb_ig_done', time: '15–20 min', desc: 'First 12 posts built on a 4-arc strategic sequence. Each post has a caption, visual brief, Midjourney prompt, hook, and hashtag set. Your Instagram is live-ready.', outputs: ['12 complete post packs','Grid strategy and arc sequence','Visual briefs for each post','Midjourney prompts','Hashtag strategy'], file: 'instagram-seed-agent.html', phase: 3 },
+      { id: 'linkedin', name: 'LinkedIn Strategy Agent', storageKey: 'qb_li_done', time: '20–25 min', desc: 'Rewrites your personal profile and company page. Scripts 12 founder posts and 8 brand posts across 4 themed weeks. Your LinkedIn is positioned and stocked.', outputs: ['Rewritten personal profile','Rewritten company page','12 founder posts scripted','8 brand posts scripted','4-week content calendar'], file: 'linkedin-strategy-agent.html', phase: 3 },
+      { id: 'youtube', name: 'YouTube Strategy Agent', storageKey: 'qb_yt_done', time: '20–25 min', desc: 'Channel strategy, positioning, and 6 full video scripts. Each with hook, structure, talking points, and a short-form repurpose brief. Your YouTube channel is ready to launch.', outputs: ['Channel positioning and about text','6 full video scripts','Short-form repurpose briefs','Thumbnail direction per video','Upload cadence strategy'], file: 'youtube-strategy-agent.html', phase: 3 },
+      { id: 'newsletter', name: 'Newsletter Architecture', storageKey: 'qb_nl_done', time: '15–20 min', desc: 'The newsletter as a publishing platform. Name, structure, cadence, recurring sections, and first 4 issues fully drafted and ready to send.', outputs: ['Newsletter name and positioning','Issue structure template','First 4 issues drafted','Welcome email written','Growth strategy'], file: 'newsletter-architecture-agent.html', phase: 3 },
+      { id: 'content-bridge', name: 'Content Bridge', storageKey: 'qb_bridge_done', time: '20–30 min', desc: 'Takes your scripts and produces platform-ready production briefs for HeyGen (video), Creatify (UGC ads), or Canva (static posts). Step-by-step instructions for each platform.', outputs: ['Production brief per piece','Formatted script with pacing marks','Platform settings and export specs','Brand application guide','Quality checklist'], file: 'content-bridge.html', phase: 3 }
+    ]
+  },
+  {
+    phase: 4, phaseLabel: 'Execution', phaseColor: 'var(--phase-execution)',
+    steps: [
+      { id: 'repurposing', name: 'Content Repurposing Engine', storageKey: 'qb_rep_done', time: '10–15 min', desc: 'Paste one piece of long-form content. The engine rebuilds it natively across 10 platforms (up to 25 pieces) all on-brand, all platform-specific in format and tone.', outputs: ['25 platform-adapted pieces','LinkedIn article version','Twitter/X thread','Instagram carousel script','Email newsletter version','YouTube short script'], file: 'content-repurposing-engine.html', phase: 4 },
+      { id: 'scheduler', name: 'Content Scheduler', storageKey: 'qb_scheduler_done', time: '15–20 min', desc: 'Organize, tag, and map your generated content to a publishing timeline via Buffer integration.', outputs: ['Content calendar','Platform-specific scheduling','Buffer API integration','Publishing queue'], file: 'content-scheduler.html', phase: 4 }
+    ]
+  },
+  {
+    phase: 5, phaseLabel: 'Intelligence', phaseColor: 'var(--phase-intelligence)',
+    steps: [
+      { id: 'performance', name: 'Brand Performance Dashboard', storageKey: 'qb_perf_done', time: '20–30 min', desc: 'Bring your platform analytics. The dashboard reads them as brand signals, not metrics. Returns health scores across 5 dimensions, signal cards with specific actions, and strategic directions.', outputs: ['5-dimension health score','Signal cards with actions','Audience alignment analysis','3 strategic directions','Next 30 days plan'], file: 'brand-performance-dashboard.html', phase: 5 },
+      { id: 'quarterly', name: 'Quarterly Brand Review', storageKey: 'qb_qr_done', time: '30–40 min', desc: 'The tool that makes the system self-evolving. Updates your QBP from what was learned, grades the quarter across 5 dimensions, and sets the full strategic direction for the next 90 days.', outputs: ['Updated QBP with learnings','Quarter grade across 5 dimensions','Quarter narrative','Next quarter theme + north star','Full War Table for Q+1'], file: 'quarterly-brand-review-agent.html', phase: 5 }
+    ]
   }
-
-  const session = (() => {
-    try { return JSON.parse(localStorage.getItem('qb_session') || '{}'); }
-    catch(e) { return {}; }
-  })();
-
-  // FIX #4 (part B): localStorage override placed BEFORE the first await so it runs
-  // synchronously. load() (in the next script block) runs after this entire script tag
-  // executes but before the async fetch resolves - the override is active in time.
-  const _orig = localStorage.setItem.bind(localStorage);
-  localStorage.setItem = function(key, value) {
-    _orig(key, value);
-    if (key === 'qb_qbp' && session && session.token) {
-      // FIX #2: Guard against undefined supabaseId - was producing /profiles?id=eq.undefined
-      if (!session.supabaseId) return;
-      try {
-        const qbp = JSON.parse(value);
-        fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + session.supabaseId, {
-          method: 'PATCH',
-          headers: {
-            'apikey': SUPA_KEY,
-            'Authorization': 'Bearer ' + session.token,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify({ qbp, updated_at: new Date().toISOString() })
-        }).catch(() => {});
-      } catch(e) {}
-    }
-  };
-
-  // ── Async: fetch verified Supabase profile ──
-  if (session && session.token) {
-    try {
-      const res = await fetch(SUPA_URL + '/rest/v1/profiles?select=tier,subscription_status,qbp', {
-        headers: {
-          'apikey': SUPA_KEY,
-          'Authorization': 'Bearer ' + session.token,
-          'Content-Type': 'application/json'
-        }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data[0]) {
-          const profile = data[0];
-          // Use _orig to bypass the qb_qbp sync loop for non-QBP keys
-          if (profile.tier)                _orig('qb_user_tier', profile.tier);
-          if (profile.subscription_status) _orig('qb_sub_status', profile.subscription_status);
-          if (profile.qbp && Object.keys(profile.qbp).length > 0) {
-            const localQBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}');
-            if (Object.keys(localQBP).length === 0) {
-              _orig('qb_qbp', JSON.stringify(profile.qbp));
-            }
-          }
-          // Refresh QB_HAS_ACCESS with verified Supabase data
-          window.QB_HAS_ACCESS = function(feature) {
-            const tier   = localStorage.getItem('qb_user_tier') || 'free';
-            const paid   = localStorage.getItem('qb_paid') === '1';
-            const status = localStorage.getItem('qb_sub_status') || 'inactive';
-            const isActive = paid || status === 'active';
-            if (feature === 'panel')  return isActive && (tier === 'pro' || tier === 'agency');
-            if (feature === 'agency') return isActive && tier === 'agency';
-            if (feature === 'free')   return true;
-            return isActive;
-          };
-        }
-      }
-    } catch(e) {}
-  }
-
-  window.QB_TIER     = localStorage.getItem('qb_user_tier') || 'free';
-  window.QB_SUPA_URL = SUPA_URL;
-  window.QB_SUPA_KEY = SUPA_KEY;
-})();
-// ── END QB OS Access Check ────────────────────────────────────────────────────
-</script>
-
-<script>
-// ── DATA & CONSTANTS ──────────────────────────────────────────────────────────
-
-// FIX #1 + #6: color now references var(--phase-N) defined in CSS.
-// RGB values correctly correspond to each phase's hex color.
-const PHASES = [
-  { n: 1, id: '01', label: 'Discovery',      color: 'var(--phase-1)', rgb: '74, 122, 94'  },
-  { n: 2, id: '02', label: 'Brand Creation', color: 'var(--phase-2)', rgb: '74, 122, 138' },
-  { n: 3, id: '03', label: 'Content',        color: 'var(--phase-3)', rgb: '138, 90, 90'  },
-  { n: 4, id: '04', label: 'Execution',      color: 'var(--phase-4)', rgb: '90, 122, 106' },
-  { n: 5, id: '05', label: 'Intelligence',   color: 'var(--phase-5)', rgb: '168, 144, 62' },
 ];
 
-// FIX #11: Duplicate icons removed - ◈ (was on logo-dir + panel), ◫ (was on visual-dna + scheduler)
-// FIX #13: panel is ph:5 directly - phantom ph:6 + post-hoc remapping forEach removed
-const TOOLS = [
-  // Phase 01 - Discovery
-  { id: 'archetype-compass', ph: 1, name: 'Archetype Compass',     desc: 'The first step. Read your trinity - primary archetype, secondary texture, and tension.', file: 'archetype-compass.html',     icon: '✦' },
-  { id: 'soul-map',    ph: 1, name: 'Brand Soul Map',              desc: 'Uncover your brand identity through 6 modules and 15 exercises.',        file: 'brand-soul-map.html',                icon: '◬' },
-  { id: 'sensescape',  ph: 1, name: 'Sensescape',                  desc: 'Map the sensory universe of your brand across 47 spectrums.',             file: 'sensescape.html',                    icon: '◌' },
-  { id: 'visual-dna',  ph: 1, name: 'Visual DNA',                  desc: 'Build your visual reference library through instinctive selection.',      file: 'visual-dna.html',                    icon: '◫' },
-  { id: 'war-table',   ph: 1, name: 'The War Table',               desc: 'Strategic prioritization tool. Score initiatives across 6 dimensions.',   file: 'war-table.html',                     icon: '◧' },
-  { id: 'profiles', ph: 1, name: 'The Profiles',         desc: 'Build three personas in one journey - NOW, NEXT, and NORTH STAR. Outputs ad-grade buyer profiles for each one, written into the QBP.', file: 'the-profiles.html',          icon: '◭' },
-  { id: 'brand-doc',   ph: 1, name: 'Brand Document',              desc: 'Compile all Phase 01 outputs into your master foundational document.',     file: 'brand-document.html',                icon: '■' },
+const ALL_STEPS = [];
+JOURNEY.forEach(phase => {
+  phase.steps.forEach(step => {
+    ALL_STEPS.push({ ...step, phaseLabel: phase.phaseLabel, phaseColor: phase.phaseColor });
+  });
+});
 
-  // Phase 02 - Brand Creation
-  { id: 'logo-dir',    ph: 2, name: 'Logo Direction Agent',        desc: 'Complete logo brief and prompt generation derived from your QBP.',        file: 'logo-direction-agent.html',          icon: '◈' },
-  { id: 'logo-eval',   ph: 2, name: 'Logo Evaluation Agent',       desc: 'Upload concepts for AI scoring against your established identity.',       file: 'logo-evaluation-agent.html',         icon: '◎' },
-  { id: 'voice',       ph: 2, name: 'Voice Guide Agent',           desc: 'Complete verbal identity: tone modes, rules, and live copy generator.',   file: 'voice-guide-agent.html',             icon: '◉' },
-
-  // Phase 03 - Content
-  { id: 'instagram',   ph: 3, name: 'Instagram Seed Agent',        desc: 'First 12 posts: captions, briefs, hooks, and strategic sequence.',        file: 'instagram-seed-agent.html',          icon: '⬡' },
-  { id: 'linkedin',    ph: 3, name: 'LinkedIn Strategy Agent',     desc: 'Profile rewrites and 20 targeted posts scripted across 4 weeks.',         file: 'linkedin-strategy-agent.html',       icon: '⬢' },
-  { id: 'youtube',     ph: 3, name: 'YouTube Strategy Agent',      desc: 'Channel strategy, 6 full scripts, and short-form repurpose briefs.',      file: 'youtube-strategy-agent.html',        icon: '▷' },
-  { id: 'newsletter',  ph: 3, name: 'Newsletter Architecture',     desc: 'Structure your publishing platform: first 4 issues fully drafted.',       file: 'newsletter-architecture-agent.html', icon: '✉' },
-  { id: 'bridge',      ph: 3, name: 'Content Bridge',              desc: 'Translate scripts into production briefs for HeyGen, Canva, etc.',        file: 'content-bridge.html',                icon: '⇢' },
-
-  // Phase 04 - Execution
-  { id: 'repurpose',   ph: 4, name: 'Content Repurposing Engine',  desc: '1 long-form piece → 25 native pieces across 10 platforms.',               file: 'content-repurposing-engine.html',    icon: '⟳' },
-  { id: 'scheduler',   ph: 4, name: 'Content Scheduler',           desc: 'Organize, tag, and map your generated content to a timeline.',            file: 'content-scheduler.html',             icon: '◱' }, /* was ◫ - duplicate of visual-dna */
-
-  // Phase 05 - Intelligence
-  { id: 'performance', ph: 5, name: 'Brand Performance Dashboard', desc: 'Translate data into brand signals, health scores, and directions.',       file: 'brand-performance-dashboard.html',   icon: '◐' },
-  { id: 'quarterly',   ph: 5, name: 'Quarterly Brand Review',      desc: 'Update QBP, grade the quarter, and set the 90-day trajectory.',          file: 'quarterly-brand-review-agent.html',  icon: '↻' },
-  { id: 'panel',       ph: 5, name: 'Predictive Panel',            desc: 'Test before launch via synthetic persona panels and scenarios.',          file: 'predictive-panel.html',              icon: '◑' }, /* was ◈ (duplicate) + was ph:6 remapped */
-];
-// FIX #13: The TOOLS.forEach ph:6→ph:5 remapping line has been removed
-
-const QBP_FIELDS  = ['brandName','brandEssence','spark','naturalForce','archetype','manifesto','antiBrand','paradox','primaryPersona','offer','voiceNotes','alwaysNever','colorTerritory','exemplarWords'];
-const CORE_FIELDS = ['brandName','brandEssence','naturalForce','archetype','primaryPersona'];
-
-// ── STATE ─────────────────────────────────────────────────────────────────────
-const S = { qbp: {}, theme: 'dark', completedTools: [] };
-
-function load() {
-  try { const q = localStorage.getItem('qb_qbp');             if (q)  S.qbp            = JSON.parse(q);  } catch(e) {}
-  try { const c = localStorage.getItem('qb_completed_tools'); if (c)  S.completedTools = JSON.parse(c);  } catch(e) {}
-  try { const t = localStorage.getItem('qb-theme');           if (t)  S.theme          = t;               } catch(e) {}
-
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('apikey'))   localStorage.setItem('qb_apikey', params.get('apikey'));
-  if (params.get('provider')) localStorage.setItem('qb_provider', params.get('provider'));
-  if (params.get('qbp')) {
-    try {
-      S.qbp = JSON.parse(atob(params.get('qbp')));
-      localStorage.setItem('qb_qbp', JSON.stringify(S.qbp));
-    } catch(e) {}
+function isStepDone(step) {
+  const qbLoaded = !!(window.QB && QB.getCompletions);
+  if (qbLoaded) {
+    const completions = QB.getCompletions();
+    if (completions && completions[step.id]) return true;
   }
-}
-
-// FIX #10: toggleTheme no longer calls render(). CSS transitions on data-theme handle
-// all visual changes. render() was destroying + rebuilding the entire DOM on every toggle,
-// restarting all animations and causing a visible flash.
-function toggleTheme() {
-  S.theme = S.theme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', S.theme);
-  localStorage.setItem('qb-theme', S.theme);
-  const btn = document.querySelector('.theme-toggle');
-  if (btn) btn.textContent = S.theme === 'dark' ? '☀️' : '🌙';
-}
-
-// FIX #5: showNotif was referenced but never defined - would throw ReferenceError on any call
-function showNotif(msg, duration = 3000) {
-  const n = el('div', { class: 'notif' }, msg);
-  document.getElementById('notifs').appendChild(n);
-  setTimeout(() => n.remove(), duration);
-}
-
-function getHealth() {
-  const coreDone = CORE_FIELDS.filter(k => { const v = S.qbp[k]; return v && (typeof v === 'string' ? v.trim() : true); }).length;
-  const allDone  = QBP_FIELDS.filter( k => { const v = S.qbp[k]; return v && (typeof v === 'string' ? v.trim() : true); }).length;
-  return {
-    corePct:        Math.round((coreDone / CORE_FIELDS.length) * 100) || 0,
-    allPct:         Math.round((allDone  / QBP_FIELDS.length)  * 100) || 0,
-    isCoreComplete: coreDone === CORE_FIELDS.length
-  };
-}
-
-function computeToolStates() {
-  const health = getHealth();
-  let nextToStartFound = false;
-
-  const isPh1Unlocked = true;
-  const isPh2Unlocked = health.isCoreComplete;
-  const isPh3Unlocked = health.isCoreComplete;
-  const isPh4Unlocked = health.isCoreComplete && S.completedTools.includes('instagram');
-  const isPh5Unlocked = health.isCoreComplete;
-
-  // Bug-2 fix: cloud-truth completion (QB.getCompletions) is now the primary
-  // signal. QBP-field fallbacks remain so pre-funnel users with populated
-  // qbp but no completions JSON still show as done. Mirrors the same
-  // precedence used in journey-guide.html → isStepDone().
-  const cloudCompletions = (window.QB && QB.getCompletions) ? QB.getCompletions() : {};
-  TOOLS.forEach(tool => {
-    let isCompleted = !!(cloudCompletions && cloudCompletions[tool.id])
-                   || S.completedTools.includes(tool.id);
-
-    if (tool.id === 'archetype-compass' && S.qbp.archetypeCompassComplete) isCompleted = true;
-    if (tool.id === 'soul-map'   && (S.qbp.brandEssence || S.qbp.soulMapComplete))            isCompleted = true;
-    if (tool.id === 'sensescape' && (S.qbp.colorTerritory || S.qbp.sensescapeCompletedAt))    isCompleted = true;
-    if (tool.id === 'visual-dna' && (S.qbp.visualDnaCompletedAt || S.qbp.visualReferences))   isCompleted = true;
-    if (tool.id === 'war-table'  && (S.qbp.warTableCompletedAt  || S.qbp.warTableBrief))      isCompleted = true;
-    if (tool.id === 'profiles' && (S.qbp.profilesComplete || (Array.isArray(S.qbp.personaProfiles) && S.qbp.personaProfiles.length))) isCompleted = true;
-
-    let isUnlocked =
-      tool.ph === 1 ? isPh1Unlocked :
-      tool.ph === 2 ? isPh2Unlocked :
-      tool.ph === 3 ? isPh3Unlocked :
-      tool.ph === 4 ? isPh4Unlocked :
-      tool.ph === 5 ? isPh5Unlocked : false;
-
-    if (isCompleted) {
-      tool.state = 'completed'; tool.isNext = false;
-    } else if (isUnlocked) {
-      tool.state = 'progress';
-      tool.isNext = !nextToStartFound;
-      if (!nextToStartFound) nextToStartFound = true;
-    } else {
-      tool.state = 'locked'; tool.isNext = false;
-    }
-  });
-}
-
-// ── DOM HELPERS ───────────────────────────────────────────────────────────────
-function el(tag, props={}, children=[]) {
-  const e = document.createElement(tag);
-  Object.entries(props).forEach(([k, v]) => {
-    if (k === 'style' && typeof v === 'object') Object.assign(e.style, v);
-    else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2).toLowerCase(), v);
-    else if (k === 'class') e.className = v;
-    else if (k === 'html')  e.innerHTML = v;
-    else e.setAttribute(k, v);
-  });
-  [children].flat(Infinity).forEach(c => {
-    if (c == null) return;
-    if (c instanceof Node) e.appendChild(c);
-    else e.appendChild(document.createTextNode(String(c)));
-  });
-  return e;
-}
-
-// ── UI BUILDERS ───────────────────────────────────────────────────────────────
-
-function buildHeader() {
-  const header = el('header', { class: 'system-header' });
-
-  header.appendChild(el('div', { class: 'header-brand' }, [
-    el('span', { class: 'header-brand-name font-mono' }, 'QB_BRANDOS'),
-    el('span', { class: 'badge-mono' }, 'Entangled Time')
-  ]));
-
-  const right = el('div', { style: { display: 'flex', gap: '16px', alignItems: 'center' } });
-
-  const navLinks = el('div', { class: 'nav-links' });
-  ['Discovery', 'Creation', 'Content', 'Execution', 'Intelligence'].forEach((name, i) => {
-    navLinks.appendChild(el('a', { class: 'nav-link', href: `#phase-${i+1}` }, name));
-  });
-  right.appendChild(navLinks);
-
-  // Auth pill: shows Log In when anonymous, [NAME · LOGOUT] when authed.
-  // Reuses qb-gate.js openGate() in 'hub-login' mode for the login modal.
-  right.appendChild(buildAuthPill());
-
-  // FIX #10: button only updates its own text + data-theme; does not call render()
-  right.appendChild(el('button', {
-    class: 'theme-toggle',
-    type: 'button',
-    onClick: toggleTheme,
-    title: 'Toggle Theme'
-  }, [S.theme === 'dark' ? '☀️' : '🌙']));
-
-  header.appendChild(right);
-  return header;
-}
-
-// Mono pill — v3.4 SOT (cream-card body, 2px ink border, hard 0 3px ink shadow).
-// Variant controls the fill: 'gold' for primary action, 'rose' for tier badge
-// on paid users, default cream-card for neutral.
-function pillStyle(variant) {
-  const map = {
-    gold:  { bg: 'var(--gold)',       text: 'var(--ink)' },
-    rose:  { bg: 'var(--cream-rose)', text: 'var(--ink)' },
-    plain: { bg: 'var(--cream-card)', text: 'var(--ink)' }
-  };
-  const c = map[variant] || map.plain;
-  return {
-    background: c.bg,
-    color: c.text,
-    border: '2px solid var(--ink)',
-    fontSize: '0.7rem',
-    padding: '6px 12px',
-    borderRadius: '9999px',
-    cursor: 'pointer',
-    fontFamily: "'JetBrains Mono', monospace",
-    letterSpacing: '0.12em',
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    boxShadow: '0 3px var(--ink)',
-    transition: 'transform 0.2s cubic-bezier(0.19,1,0.22,1), box-shadow 0.2s cubic-bezier(0.19,1,0.22,1)'
-  };
-}
-
-function buildAuthPill() {
-  const authed = window.QB && QB.isAuthed();
-  if (!authed) {
-    return el('button', {
-      type: 'button',
-      style: pillStyle('gold'),
-      onClick: openLoginModal
-    }, ['LOG IN']);
-  }
-
-  // Authed — return a row container with tier badge + manage + logout.
-  const row = el('div', { style: { display: 'inline-flex', gap: '8px', alignItems: 'center' } });
-
-  // Tier badge (M6) — rose if paid, neutral cream-card if free
-  const tier   = (localStorage.getItem('qb_user_tier')   || 'free').toLowerCase();
-  const status = (localStorage.getItem('qb_sub_status')  || 'inactive').toLowerCase();
-  const isPaid = (tier !== 'free') && (status === 'active');
-  row.appendChild(el('span', {
-    title: isPaid ? 'Active subscription' : 'Free plan',
-    style: Object.assign({}, pillStyle(isPaid ? 'rose' : 'plain'), { cursor: 'default' })
-  }, [tier.toUpperCase()]));
-
-  // Manage subscription (H7) — only shown when paid
-  if (isPaid) {
-    row.appendChild(el('button', {
-      type: 'button',
-      style: pillStyle('plain'),
-      onClick: openBillingPortal
-    }, ['MANAGE']));
-  }
-
-  // Account name + logout
-  const name = (localStorage.getItem('qb_first_name') || 'Account').toUpperCase();
-  row.appendChild(el('button', {
-    type: 'button',
-    title: 'Click to log out',
-    style: pillStyle('plain'),
-    onClick: () => {
-      if (confirm('Log out?')) { QB.logout(); render(); }
-    }
-  }, [name + ' · OUT']));
-
-  return row;
-}
-
-async function openBillingPortal() {
-  const session = QB.getSession && QB.getSession();
-  const token = session && session.token;
-  if (!token) { showNotif('Sign in first to manage billing.'); return; }
   try {
-    const res = await fetch('/api/billing-portal', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify({ return_url: window.location.origin + '/os' })
-    });
-    if (res.status === 404) { showNotif('Subscribe first to manage billing.'); return; }
-    if (!res.ok) { showNotif('Could not open billing portal. Try again.'); return; }
-    const data = await res.json();
-    if (data && data.url) window.location.href = data.url;
-  } catch(e) {
-    showNotif('Could not open billing portal. Try again.');
-  }
+    const qbpStr = localStorage.getItem('qb_qbp');
+    if (qbpStr) {
+      const qbp = JSON.parse(qbpStr);
+      if (step.id === 'archetype-compass' && qbp.archetypeCompassComplete) return true;
+      if (step.id === 'soul-map'   && (qbp.brandEssence || qbp.soulMapComplete)) return true;
+      if (step.id === 'sensescape' && (qbp.colorTerritory || qbp.sensescapeCompletedAt)) return true;
+      if (step.id === 'visual-dna' && (qbp.visualDnaCompletedAt || qbp.visualReferences)) return true;
+      if (step.id === 'war-table'  && (qbp.warTableCompletedAt || qbp.strategicPriorities || qbp.warTableBrief)) return true;
+      if (step.id === 'profiles' && (qbp.profilesComplete || (Array.isArray(qbp.personaProfiles) && qbp.personaProfiles.length))) return true;
+    }
+  } catch(e) {}
+  const isCloudTrackedPhase01 = qbLoaded && Array.isArray(QB.PHASE_01_TOOLS) && QB.PHASE_01_TOOLS.indexOf(step.id) !== -1;
+  if (!isCloudTrackedPhase01 && localStorage.getItem(step.storageKey)) return true;
+  return false;
 }
 
-function openLoginModal() {
-  if (!window.QB || !QB.openGate) return;
-  QB.openGate({
-    toolId: 'hub-login',
-    toolName: 'Welcome back',
-    onClose: () => render()
-  });
-}
-
-function buildHealthMeter(health) {
-  const section = el('div', { class: 'meter-section glass-card animate-cascade', style: { '--idx': 0 } });
-
-  const radius = 80;
-  const circum = 2 * Math.PI * radius;
-  const offset = circum - (health.allPct / 100) * circum;
-
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(svgNS, 'svg');
-  svg.setAttribute('viewBox', '0 0 180 180');
-
-  const bg = document.createElementNS(svgNS, 'circle');
-  bg.setAttribute('cx', '90'); bg.setAttribute('cy', '90'); bg.setAttribute('r', radius);
-  bg.setAttribute('class', 'meter-bg');
-
-  const fill = document.createElementNS(svgNS, 'circle');
-  fill.setAttribute('cx', '90'); fill.setAttribute('cy', '90'); fill.setAttribute('r', radius);
-  fill.setAttribute('class', 'meter-fill');
-  fill.setAttribute('stroke-dasharray', circum);
-  fill.setAttribute('stroke-dashoffset', circum);
-  setTimeout(() => fill.setAttribute('stroke-dashoffset', offset), 150);
-
-  svg.appendChild(bg);
-  svg.appendChild(fill);
-
-  const chart = el('div', { class: 'meter-chart' });
-  chart.appendChild(svg);
-  chart.appendChild(el('div', { class: 'meter-text' }, [
-    el('span', { class: 'meter-percent' }, `${health.allPct}%`),
-    el('span', { class: 'label-mono' }, 'Profile Health')
-  ]));
-  section.appendChild(chart);
-
-  const content    = el('div', { class: 'meter-content' });
-  const statusWrap = el('div', { class: 'meter-status' });
-
-  let headingText, bodyText;
-  if (health.allPct === 0) {
-    statusWrap.appendChild(el('div', { class: 'pulse-dot', style: { background: 'var(--error)', boxShadow: '0 0 8px var(--error)' } }));
-    statusWrap.appendChild(el('span', { class: 'label-mono' }, 'Awaiting Initialization'));
-    headingText = 'Brand Core Undefined';
-    bodyText    = 'The intelligence layer requires foundational identity data to power its agents. Begin with the Brand Soul Map to establish the core truth.';
-  } else if (!health.isCoreComplete) {
-    statusWrap.appendChild(el('div', { class: 'pulse-dot', style: { background: 'var(--warning)', boxShadow: '0 0 8px var(--warning)' } }));
-    statusWrap.appendChild(el('span', { class: 'label-mono' }, 'Core Incomplete'));
-    headingText = 'Synthesis Paused';
-    bodyText    = 'Identity mapping in progress. Complete Phase 01 to unlock downstream creation and content agents.';
+function markDone(stepId) {
+  if (window.QB && QB.recordCompletion) {
+    QB.recordCompletion(stepId);
   } else {
-    statusWrap.appendChild(el('div', { class: 'pulse-dot' }));
-    statusWrap.appendChild(el('span', { class: 'label-mono' }, 'System Active'));
-    headingText = S.qbp.brandName || 'Unnamed Brand';
-    bodyText    = 'Core foundation established. All intelligence agents are unlocked and reading from your live QBP. Proceed with generation.';
+    const step = ALL_STEPS.find(s => s.id === stepId);
+    if (step) localStorage.setItem(step.storageKey, '1');
   }
-
-  content.appendChild(statusWrap);
-  content.appendChild(el('h1', { class: 'title-large font-serif' }, headingText));
-  // FIX #9: card-desc class removed - it carries flex:1 for tool-card flex columns,
-  // not applicable in this meter-content context; body-large alone is correct here.
-  content.appendChild(el('p', { class: 'body-large' }, bodyText));
-
-  const nextTool = TOOLS.find(t => t.isNext) || TOOLS.find(t => t.state === 'progress') || TOOLS[0];
-  content.appendChild(el('a', {
-    class: 'btn-primary',
-    href: '#',
-    onClick: e => { e.preventDefault(); launchTool(nextTool); }
-  }, [health.allPct === 0 ? 'Initialize Soul Map →' : `Resume: ${nextTool.name} →`]));
-
-  section.appendChild(content);
-  return section;
+  render();
 }
 
-// FIX #12: startCardIdx passed in so animation delays are computed from a correct
-// running total - was hardcoded as (idx * 5) + tIdx which assumed 5 tools per phase.
-function buildPhaseSection(phaseDef, phaseTools, idx, startCardIdx) {
-  const section = el('div', {
-    id: `phase-${phaseDef.n}`,
-    class: 'phase-section animate-cascade',
-    style: { '--idx': idx + 1, '--phase-color': phaseDef.color, '--phase-rgb': phaseDef.rgb }
-  });
-
-  section.appendChild(el('div', { class: 'phase-header' }, [
-    el('div', { class: 'phase-header-left' }, [
-      el('span', { class: 'font-mono phase-num' }, phaseDef.id),
-      el('h2',  { class: 'title-medium font-serif', style: { color: 'var(--text-1)' } }, phaseDef.label)
-    ])
-  ]));
-
-  const grid = el('div', { class: 'phase-grid' });
-
-  phaseTools.forEach((tool, tIdx) => {
-    const cardIdx = startCardIdx + tIdx; // FIX #12
-
-    const card = el('div', {
-      class: `tool-card glass-card state-${tool.state} animate-cascade${tool.isNext ? ' is-next' : ''}`,
-      style: { '--idx': cardIdx }
-    });
-
-    if (tool.isNext) {
-      card.appendChild(el('div', { class: 'start-badge label-mono' }, 'Next Recommended'));
-    }
-
-    // FIX #15: card-title class added so CSS margin-bottom:8px applies to tool name
-    card.appendChild(el('div', { class: 'card-header' }, [
-      el('div', { class: 'card-icon font-serif' }, tool.icon),
-      el('div', { class: 'title-small font-serif card-title', style: { color: 'var(--text-1)' } }, tool.name)
-    ]));
-
-    card.appendChild(el('div', { class: 'body-regular card-desc' }, tool.desc));
-
-    const footer = el('div', { class: 'card-footer' });
-
-    const statusMap = { completed: ['✓', 'Completed'], progress: ['-', 'Ready'], locked: ['×', 'Locked'] };
-    const [icon, text] = statusMap[tool.state] || ['×', 'Locked'];
-    footer.appendChild(el('div', { class: `card-status status-${tool.state} label-mono` }, [
-      el('span', {}, icon + ' ' + text)
-    ]));
-
-    if (tool.state !== 'locked') {
-      footer.appendChild(el('span', { class: 'card-btn' },
-        tool.state === 'completed' ? 'Review →' : 'Launch →'
-      ));
-      // FIX #14: addEventListener used - was card.onclick = ... (direct assignment),
-      // inconsistent with the el() helper's onClick → addEventListener pattern
-      card.addEventListener('click', () => launchTool(tool));
-    } else {
-      footer.appendChild(el('div', { class: 'label-mono', style: { color: 'var(--text-4)' } }, 'Req: Core QBP'));
-    }
-
-    card.appendChild(footer);
-    grid.appendChild(card);
-  });
-
-  section.appendChild(grid);
-  return section;
+function getCurrentStep() {
+  for (let i = 0; i < ALL_STEPS.length; i++) {
+    if (!isStepDone(ALL_STEPS[i])) return i;
+  }
+  return ALL_STEPS.length;
 }
 
-function launchTool(tool) {
-  if (tool.state === 'locked') return;
+function getProgress() {
+  const done = ALL_STEPS.filter(s => isStepDone(s)).length;
+  return { done, total: ALL_STEPS.length, pct: Math.round((done / ALL_STEPS.length) * 100) };
+}
 
-  // FIX #3: Access tier enforced for gated tools - was completely absent; any free user
-  // with a complete QBP could open the Predictive Panel
-  if (tool.id === 'panel' && !window.QB_HAS_ACCESS('panel')) {
-    showNotif('Predictive Panel requires a Pro or Agency plan.');
-    return;
+function openStep(step) {
+  const provider = localStorage.getItem('qb_provider') || 'anthropic';
+  const url = step.file + '?provider=' + provider;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function openCurrentStep() {
+  const idx = getCurrentStep();
+  if (idx < ALL_STEPS.length) openStep(ALL_STEPS[idx]);
+}
+
+function renderReturnBanner(progress, currentStep, allDone) {
+  const wrap = document.getElementById('return-banner');
+  if (!wrap) return;
+  if (!window.QB || !QB.isAuthed()) { wrap.style.display = 'none'; return; }
+  const firstName = localStorage.getItem('qb_first_name') || '';
+  const phase01 = QB.phase01Progress();
+  const eyebrow = 'WELCOME BACK' + (firstName ? ' · ' + firstName.toUpperCase() : '');
+  let msg, ctaLabel = 'Continue →', ctaHref = null;
+  if (allDone) {
+    msg = 'You have completed every step of the journey. Open your dashboard to revisit any tool.';
+    ctaLabel = 'Open dashboard →';
+    ctaHref = '/dashboard';
+  } else if (phase01.percent === 100 && currentStep && currentStep.phase > 1) {
+    msg = 'Phase 01 is complete. Phase 02 unlocks ' + currentStep.name + ' next. Visit your dashboard to see everything that is now available.';
+    ctaLabel = 'Open dashboard →';
+    ctaHref = '/dashboard';
+  } else if (phase01.percent < 100 && currentStep && currentStep.phase === 1) {
+    msg = 'Phase 01 is ' + phase01.percent + '% complete. ' + currentStep.name + ' compounds next.';
+    ctaHref = currentStep.file;
+  } else if (currentStep) {
+    msg = 'Picking up at ' + currentStep.name + '.';
+    ctaHref = currentStep.file;
+  } else {
+    wrap.style.display = 'none'; return;
   }
-
-  const params = new URLSearchParams();
-  const provider = localStorage.getItem('qb_provider');
-  if (provider) params.set('provider', provider);
-
-  // Security: API key NOT passed via URL - visible in address bar, server logs, Referer headers.
-  // Tool pages on the same origin read qb_apikey from localStorage directly.
-
-  // FIX #8: QBP encoded and passed via URL so tools open with fresh context even in
-  // edge cases (private tabs, cross-session). The load() decode path exists in all tools.
-  const qbpStr = localStorage.getItem('qb_qbp');
-  if (qbpStr) {
-    try { params.set('qbp', btoa(qbpStr)); } catch(e) {}
-  }
-
-  const qs = params.toString();
-  // Security: noopener,noreferrer prevents reverse tabnapping via window.opener
-  window.open(qs ? `${tool.file}?${qs}` : tool.file, '_blank', 'noopener,noreferrer');
+  document.getElementById('rb-eyebrow').textContent = eyebrow;
+  document.getElementById('rb-msg').textContent = msg;
+  const cta = document.getElementById('rb-cta');
+  cta.textContent = ctaLabel;
+  cta.onclick = ctaHref ? function(){ window.location.href = ctaHref; } : null;
+  wrap.style.display = 'flex';
 }
 
 function render() {
-  computeToolStates();
-  const health = getHealth();
+  const progress = getProgress();
+  const currentIdx = getCurrentStep();
+  const currentStep = ALL_STEPS[currentIdx];
+  const allDone = currentIdx >= ALL_STEPS.length;
+  renderReturnBanner(progress, currentStep, allDone);
 
-  const app = document.getElementById('app');
-  app.innerHTML = '';
-  app.appendChild(buildHeader());
+  let delayCounter = 1;
 
-  const main = el('main', { class: 'container' });
-  main.appendChild(buildHealthMeter(health));
+  document.getElementById('progress-bar-fill').style.width = progress.pct + '%';
 
-  // FIX #12: Running counter tracks true tool count across phases for correct animation delays
-  let toolRunningIdx = 2; // 0 = meter, 1 = first phase section header offset
-  PHASES.forEach((phaseDef, idx) => {
-    const phaseTools = TOOLS.filter(t => t.ph === phaseDef.n);
-    if (phaseTools.length > 0) {
-      main.appendChild(buildPhaseSection(phaseDef, phaseTools, idx, toolRunningIdx));
-      toolRunningIdx += phaseTools.length;
+  document.getElementById('current-step-display').textContent = Math.min(currentIdx + 1, progress.total);
+  document.getElementById('total-steps-display').textContent = progress.total;
+  if (currentStep) {
+    document.getElementById('phase-display').textContent = 'Phase ' + String(currentStep.phase).padStart(2, '0') + ' · ' + currentStep.phaseLabel;
+  } else {
+    document.getElementById('phase-display').textContent = 'Journey complete';
+  }
+
+  if (allDone) {
+    document.getElementById('current-step-hero').style.display = 'none';
+    const card = document.getElementById('completion-card');
+    card.style.display = 'block';
+    setTimeout(() => card.classList.add('fade-in'), 10);
+  } else {
+    document.getElementById('current-step-hero').style.display = 'block';
+    const card = document.getElementById('completion-card');
+    card.style.display = 'none';
+    card.classList.remove('fade-in');
+
+    const eyebrow = document.getElementById('hero-eyebrow');
+    eyebrow.innerHTML = `<span class="pulse-dot"></span><span>Phase ${String(currentStep.phase).padStart(2, '0')} · Step ${currentIdx + 1} of ${progress.total}</span>`;
+
+    document.getElementById('hero-title').textContent = currentStep.name;
+    document.getElementById('hero-desc').textContent = currentStep.desc;
+    document.getElementById('hero-time').textContent = currentStep.time + ' · Opens in new tab';
+
+    const outputBox = document.getElementById('hero-output');
+    const outputItems = document.getElementById('hero-output-items');
+
+    if (currentStep.outputs && currentStep.outputs.length) {
+      outputBox.style.display = 'block';
+      outputItems.innerHTML = currentStep.outputs.map(o =>
+        `<div class="csh-output-item"><span class="csh-output-dot">✦</span><span>${o}</span></div>`
+      ).join('');
+    } else {
+      outputBox.style.display = 'none';
     }
-  });
+  }
 
-  app.appendChild(main);
+  const map = document.getElementById('journey-map');
+  map.innerHTML = '';
+
+  const summary = document.createElement('div');
+  summary.className = 'glass-card progress-summary fade-in';
+  summary.style.animationDelay = (delayCounter++ * 0.05) + 's';
+  summary.innerHTML = `
+    <div class="ps-number" style="color:var(--phase-discovery);">${progress.done}</div>
+    <div class="ps-text">
+      <div class="ps-title">Steps completed</div>
+      <div class="ps-sub">${progress.pct}% through your journey</div>
+    </div>
+  `;
+  map.appendChild(summary);
+
+  JOURNEY.forEach(phase => {
+    const phDone = phase.steps.every(s => isStepDone(s));
+    const phaseAccessible = phase.phase === 1 || JOURNEY[phase.phase - 2].steps.every(s => isStepDone(s));
+    const phActive = phaseAccessible && !phDone && phase.steps.some(s => !isStepDone(s) && (
+      phase.steps.indexOf(s) === 0 ||
+      isStepDone(phase.steps[phase.steps.indexOf(s) - 1])
+    ));
+
+    const section = document.createElement('div');
+    section.className = 'phase-zone fade-in';
+    section.style.animationDelay = (delayCounter++ * 0.05) + 's';
+
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'phase-header';
+    header.setAttribute('aria-expanded', String(phActive || phDone));
+    header.setAttribute('aria-label', `Toggle Phase ${String(phase.phase).padStart(2, '0')} ${phase.phaseLabel}`);
+
+    const dot = document.createElement('div');
+    dot.className = 'phase-dot';
+    dot.textContent = phDone ? '✓' : String(phase.phase).padStart(2, '0');
+    if (phDone) {
+      dot.style.background = phase.phaseColor;
+      dot.style.color = 'var(--ink)';
+      dot.style.border = '2px solid var(--ink)';
+    } else if (phActive) {
+      dot.style.background = phase.phaseColor;
+      dot.style.color = 'var(--ink)';
+      dot.style.border = '2px solid var(--ink)';
+    } else {
+      dot.style.background = 'var(--cream)';
+      dot.style.color = 'var(--ink-50)';
+      dot.style.border = '2px solid var(--ink-25)';
+    }
+
+    const title = document.createElement('div');
+    title.className = 'phase-title';
+    title.textContent = phase.phaseLabel;
+    if (!phDone && !phActive) title.style.color = 'var(--ink-50)';
+
+    const statusEl = document.createElement('div');
+    statusEl.className = 'phase-status';
+    const doneCt = phase.steps.filter(s => isStepDone(s)).length;
+    if (phDone) {
+      statusEl.textContent = 'Complete';
+      statusEl.style.background = phase.phaseColor;
+      statusEl.style.color = 'var(--ink)';
+      statusEl.style.borderColor = 'var(--ink)';
+    } else if (phActive) {
+      statusEl.textContent = doneCt + ' / ' + phase.steps.length;
+      statusEl.style.color = 'var(--ink)';
+      statusEl.style.background = 'var(--cream-card)';
+    } else {
+      statusEl.textContent = 'Locked';
+      statusEl.style.color = 'var(--ink-33)';
+    }
+
+    const chevron = document.createElement('div');
+    chevron.className = 'phase-chevron' + (phActive || phDone ? ' open' : '');
+    chevron.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+    header.appendChild(dot);
+    header.appendChild(title);
+    header.appendChild(statusEl);
+    header.appendChild(chevron);
+
+    const stepsContainer = document.createElement('div');
+    stepsContainer.className = 'steps-container';
+    if (!phActive && !phDone) stepsContainer.style.display = 'none';
+
+    header.addEventListener('click', () => {
+      const isOpen = stepsContainer.style.display !== 'none';
+      stepsContainer.style.display = isOpen ? 'none' : 'block';
+      chevron.classList.toggle('open', !isOpen);
+      header.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    phase.steps.forEach((step, stepIdx) => {
+      const done = isStepDone(step);
+      const isCurrentStep = ALL_STEPS.findIndex(s => s.id === step.id) === currentIdx;
+      const prevStep = phase.steps[stepIdx - 1];
+      const accessible = stepIdx === 0 || (prevStep && isStepDone(prevStep));
+      const phaseAccessible = phase.phase === 1 || JOURNEY[phase.phase - 2].steps.every(s => isStepDone(s));
+      const canOpen = phaseAccessible && accessible;
+
+      const card = document.createElement('div');
+      card.className = 'step-card ' + (done ? 'done-step' : isCurrentStep ? 'active-step' : !canOpen ? 'locked-step' : '');
+
+      const h = document.createElement('div');
+      h.className = 'step-header';
+
+      const num = document.createElement('div');
+      num.className = 'step-num';
+      num.textContent = String(ALL_STEPS.findIndex(s => s.id === step.id) + 1).padStart(2, '0');
+      if (done || isCurrentStep) num.style.color = 'var(--ink)';
+      else num.style.color = 'var(--ink-33)';
+
+      const body = document.createElement('div');
+      body.className = 'step-body';
+
+      const name = document.createElement('div');
+      name.className = 'step-name';
+      name.textContent = step.name;
+
+      const desc = document.createElement('p');
+      desc.className = 'step-desc';
+      desc.textContent = step.desc;
+
+      const meta = document.createElement('div');
+      meta.className = 'step-meta';
+
+      const timeTag = document.createElement('span');
+      timeTag.className = 'step-tag';
+      timeTag.textContent = '⏱ ' + step.time;
+      meta.appendChild(timeTag);
+
+      const phaseTag = document.createElement('span');
+      phaseTag.className = 'step-tag';
+      phaseTag.textContent = 'Phase ' + String(step.phase).padStart(2, '0');
+      phaseTag.style.background = phase.phaseColor;
+      phaseTag.style.borderColor = 'var(--ink)';
+      phaseTag.style.color = 'var(--ink)';
+      meta.appendChild(phaseTag);
+
+      body.appendChild(name);
+      body.appendChild(desc);
+      body.appendChild(meta);
+
+      if (!done) {
+        const actions = document.createElement('div');
+        actions.className = 'step-action';
+        if (canOpen) {
+          const goBtn = document.createElement('button');
+          goBtn.type = 'button';
+          goBtn.className = isCurrentStep ? 'btn-primary' : 'btn-secondary';
+          goBtn.textContent = isCurrentStep ? 'Open now →' : 'Open →';
+          goBtn.addEventListener('click', () => openStep(step));
+          actions.appendChild(goBtn);
+
+          const doneBtn = document.createElement('button');
+          doneBtn.type = 'button';
+          doneBtn.className = 'btn-secondary';
+          doneBtn.textContent = '✓ Mark complete';
+          doneBtn.addEventListener('click', () => markDone(step.id));
+          actions.appendChild(doneBtn);
+        }
+        body.appendChild(actions);
+      } else {
+        const doneBadge = document.createElement('div');
+        doneBadge.className = 'step-done-badge';
+        doneBadge.textContent = '✓ Complete';
+        body.appendChild(doneBadge);
+      }
+
+      h.appendChild(num);
+      h.appendChild(body);
+      card.appendChild(h);
+      stepsContainer.appendChild(card);
+    });
+
+    section.appendChild(header);
+    section.appendChild(stepsContainer);
+    map.appendChild(section);
+  });
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
-// Pull cloud state (qbp + tool_completions) before first render when authed
-// so the per-card status reflects the latest cross-device truth.
-(async function init(){
-  load();
-  if (window.QB && QB.isAuthed && QB.isAuthed() && QB.pullQBPFromCloud) {
-    try { await QB.pullQBPFromCloud(); } catch(e){}
-    load(); // re-read localStorage after pull populated it
+let renderDebounce;
+window.addEventListener('storage', function(e) {
+  if (e.key && e.key.startsWith('qb_')) {
+    clearTimeout(renderDebounce);
+    renderDebounce = setTimeout(render, 300);
+  }
+});
+
+(async function initJourney(){
+  if (window.QB && QB.isAuthed()) {
+    try { await QB.pullQBPFromCloud(); } catch(e) {}
   }
   render();
 })();
