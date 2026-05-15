@@ -93,7 +93,7 @@ async function fetchAll(token) {
 async function triggerLock(session) {
   showToast('Locking your foundation...');
   try {
-    const res = await fetch('/api/foundation/lock', {
+    const res = await fetch('/api/lock-foundation', {
       method: 'POST',
       headers: { Authorization: `Bearer ${session.token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
