@@ -83,9 +83,11 @@ async function fetchAll(token) {
   const artData = await artRes.json().catch(() => ({}));
   if (!qbpRes.ok) throw new Error(qbpData?.error || `HTTP ${qbpRes.status}`);
   if (!artRes.ok) throw new Error(artData?.error || `HTTP ${artRes.status}`);
+  // tier is read from /api/qbp, never from localStorage. Server is the source of truth.
   return {
     qbp: qbpData.qbp || {},
     foundationLockedAt: qbpData.foundation_locked_at || null,
+    tier: qbpData.tier || 'free',
     artifacts: Array.isArray(artData.artifacts) ? artData.artifacts : [],
   };
 }
@@ -140,7 +142,8 @@ async function rerender(session) {
   catch (e) { renderFoundationError(root, e); return; }
   if (pkt.unauthorized) { redirectToAuth(); return; }
 
-  const tier = String(session.tier || 'free').toLowerCase();
+  // tier is read from /api/qbp, never from localStorage. Server is the source of truth.
+  const tier = String(pkt.tier || 'free').toLowerCase();
   const state = computeFoundationState({
     qbp: pkt.qbp,
     artifacts: pkt.artifacts,
