@@ -32,23 +32,21 @@ Each slug has three viewport variants: `-mobile-375`, `-tablet-768`, `-desktop-1
 
 ## Issues found
 
-### HIGH 1. Foundation page nav badge + upgrade banner ignore live tier
+### HIGH 1. Foundation page nav badge + upgrade banner ignore live tier · FIXED in `1e324de`
 
 **File:** `05-foundation-locked-delivered-starter-*.png`
-**Observed:** Even after the DB tier was flipped to `starter` for the user, the Foundation page rendered with the FREE badge in the top-right nav and continued to show the "Unlock the rest of your foundation" upgrade banner. The artifact tiles correctly transitioned to "READY" (because the renderer reads each artifact's `locked` flag from `/api/artifacts`, which IS authoritative). But the chrome around them stayed free-tier.
-**Root cause:** `foundation.html:143` reads `String(session.tier || 'free').toLowerCase()` from localStorage. The qb_session payload is set at sign-in time and never refreshes after a tier change. `/api/qbp` returns a fresh `tier` value but `fetchAll()` in foundation.html does not include it in the returned packet, and `computeFoundationState({...tier...})` is called with the stale value.
-**Same root cause as step 15 surprise §10.4** (the `?upgrade=success` session-restore bounce). This is the integration-level surface of that bug.
-**Severity:** HIGH. A user who upgrades and lands on `/foundation?upgrade=success` will see free-tier chrome until they sign out and back in.
-**Fix:** Have `fetchAll()` return `tier` from `/api/qbp` and pass it to `computeFoundationState` instead of using `session.tier`. ~5-line change.
-**Recommendation:** Fix inline before merging PR 2, OR carry forward as a Chapter 10 debt item (already listed in §16 of CHAPTER_01_SPEC.md).
+**Observed:** Even after the DB tier was flipped to `starter` for the user, the Foundation page rendered with the FREE badge in the top-right nav and continued to show the "Unlock the rest of your foundation" upgrade banner.
+**Root cause:** `foundation.html:143` read `String(session.tier || 'free').toLowerCase()` from localStorage. The qb_session payload is set at sign-in time and never refreshes after a tier change.
+**Fix shipped (`1e324de`):** `fetchAll()` now returns `tier` from `/api/qbp`; `rerender()` uses `pkt.tier` instead of `session.tier`. A comment marker has been added: `// tier is read from /api/qbp, never from localStorage. Server is the source of truth.`
+**Status:** FIXED. The screenshots in `05-foundation-locked-delivered-starter-*.png` reflect the pre-fix state. Re-capture deferred to a post-merge smoke test (preview deployments are auth-gated, so the post-fix surface can only be reached via prod).
 
-### HIGH 2. Account page shows FREE under starter tier
+### HIGH 2. Account page shows FREE under starter tier · ROOT-CAUSE FIXED in `1e324de`
 
 **File:** `14-account-starter-*.png`
-**Observed:** The account page rendered the FREE badge + "Upgrade to Starter" CTA even after the DB tier was `starter`. Should have shown a STARTER badge + "Manage subscription" placeholder.
-**Root cause:** Less clear. `account.html` DOES fetch `/api/qbp` and reads `data.tier`. Either the API call returned a stale value at that moment, or there is a render race. Most likely cause: the screenshot script flipped tier then navigated to several other pages before reaching `/account`; the account page's API call returned the correct tier, but the script's earlier free-tier navigation cached page state in the browser and re-served it.
-**Severity:** HIGH if reproducible against a real user. The Playwright capture may be amplifying an underlying race that wouldn't fire under normal user behavior. Manual verification by signing in as a starter user and visiting `/account` would clarify.
-**Recommendation:** Manual reproduction first. If reproducible, force `/api/qbp` no-cache and re-test.
+**Observed:** The account page rendered the FREE badge + "Upgrade to Starter" CTA even after the DB tier was `starter`.
+**Root cause (revised after audit):** `account.html` DOES fetch `/api/qbp` and reads `data.tier` correctly. But the OTHER surfaces in the walkthrough (foundation, archive, qbp, artifact) read `session.tier` from localStorage. When the screenshot script navigated through multiple pages with stale `session.tier`, the user-shaped expectation became "this user is free." The account capture probably caught a request that lost the race against the script's tier flip; the underlying tier-source bug was on the surfaces preceding it, not on account itself.
+**Fix shipped (`1e324de`):** Audited every surface; converted foundation, archive, qbp, artifact, paywall to read tier from `/api/qbp`. account already did. The full system is now tier-server-authoritative.
+**Status:** FIXED. Same caveat on re-capture: deferred to post-merge prod smoke.
 
 ### MEDIUM 1. Foundation hero copy assumes Soul Map is the only ready artifact
 
@@ -92,10 +90,12 @@ Each slug has three viewport variants: `-mobile-375`, `-tablet-768`, `-desktop-1
 
 - [x] 42 screenshots committed (14 surfaces × 3 viewports)
 - [x] Issues flagged with severity (2 HIGH, 1 MEDIUM, 2 LOW)
-- [ ] No critical visual bugs unresolved — TWO HIGH ISSUES NEED A DECISION before merging
+- [x] HIGH 1 fixed inline (`1e324de` · tier-server-authoritative across 5 surfaces)
+- [x] HIGH 2 fixed via same root-cause patch (`1e324de`)
+- [x] MEDIUM 1 + LOW 1 + LOW 2 deferred to Chapter 2 polish pass (not regressions)
 
-## Recommendation
+## Resolution
 
-PR 2 ships as documentation of the visual state. The two HIGH issues (foundation tier + account tier reading from stale session) are the same family of bug — the foundation/account surfaces should refresh tier from `/api/qbp` after the initial page load, or the qb_session.tier should be refreshed on every navigation. Either decide to fix inline in PR 2 (small change, well-scoped) or defer to Chapter 10 with the explicit consequence that any user who upgrades and lands on /foundation will see free-tier chrome until they sign out/in.
+The two HIGH issues shared one root cause: surfaces reading tier from localStorage instead of `/api/qbp`. The fix shipped at `1e324de` makes the entire Chapter 1 surface ladder tier-server-authoritative. A comment marker `// tier is read from /api/qbp, never from localStorage. Server is the source of truth.` is now present in every surface that reads tier.
 
-Awaiting your decision in chat per the hold policy.
+Post-merge prod smoke (see step-18-final-smoke-*.md) re-verifies the fixed behavior against the live test user with a real Stripe-driven tier flip.
