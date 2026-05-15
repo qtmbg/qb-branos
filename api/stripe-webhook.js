@@ -24,12 +24,13 @@
 
 export const config = { runtime: 'edge' };
 
-// Price ID → tier mapping. Sourced from payment.html:1740-1742.
-// Update here when Stripe prices change. Unknown price IDs leave tier untouched.
+// Price ID → tier mapping. Live IDs are the defaults. Env overrides let
+// preview/staging environments wire test-mode price IDs without rebuilding.
+// Same shape as api/stripe/checkout.js so both endpoints honor the same env.
 const TIER_BY_PRICE = {
-  'price_1TGZtpEHEAcWrG55WWEgeFAv': 'starter',
-  'price_1TGZtsEHEAcWrG55IaXsFRd9': 'pro',
-  'price_1TGZtvEHEAcWrG55Ti8Db9mX': 'agency',
+  [process.env.STRIPE_STARTER_PRICE_ID || 'price_1TGZtpEHEAcWrG55WWEgeFAv']: 'starter',
+  [process.env.STRIPE_PRO_PRICE_ID     || 'price_1TGZtsEHEAcWrG55IaXsFRd9']: 'pro',
+  [process.env.STRIPE_AGENCY_PRICE_ID  || 'price_1TGZtvEHEAcWrG55Ti8Db9mX']: 'agency',
 };
 
 // Stripe signature header: t=<unix>,v1=<hex>. Tolerance 5 min replay window.
