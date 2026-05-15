@@ -691,7 +691,7 @@ Cod-recommended order. Each step is one PR + one verification report PR.
 7. **Regenerate endpoint refactor.** Same pattern. Accepts `qbp_source='current'` (default) or `'original'`. 10-run concurrent regenerate verification.
 8. **Reaper cron.** Wire `/api/cron/reaper` with the 30 s / 2 min / 5 min backoff schedule. Test: induce stuck dispatch (manual artifact in `queued` state with parent `dispatch_jobs` in `producing`), watch the reaper retry, exhaust at retry 3, observe `failed_permanently` + email + notification.
 9. **Chain orchestration.** Wire the chain-trigger logic per §5.4. Verify tier-gate short-circuit for free users. Chapter 2 has no Phase 02 agents to chain INTO, but the framework is testable by adding a synthetic test agent in a feature-flagged dev module.
-10. **`/agents` surface · Phase view.** Phase 01 agents with state, Phase 02-05 as locked rows with unlock copy, two-button rerun for prior-delivered agents.
+10. **`/agents` surface · Phase view.** Phase 01 agents with state, Phase 02-05 as locked rows with the gating copy ("Unlocks when Starter tier is active"), two-button rerun for prior-delivered agents.
 11. **`/agents` surface · Run history view + replay panel.** List of `agent_runs` with click-through to the replay panel. Replay panel surfaces frozen inputs from `qbp_snapshot`, `file_refs`, `runtime_args`, `agent_version`.
 12. **Notifications.** Build the bell component, wire it to every signed-in surface, build the dropdown with click-to-clear, ship the `dispatch_failed` and `chain_ready` email templates. Migration 013 already applied in step 2.
 13. **Foundation `?upgrade=success` banner.** Small UX fix in foundation.html (§11.11).
