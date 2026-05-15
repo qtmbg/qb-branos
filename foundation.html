@@ -100,14 +100,12 @@ async function triggerLock(session) {
       headers: { Authorization: `Bearer ${session.token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
     });
-    // 202 Accepted: async dispatch in flight. 200 OK: already locked.
-    // Anything else: real failure.
-    if (res.status !== 200 && res.status !== 202) {
-      const data = await res.json().catch(() => ({}));
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data?.ok === false) {
       showToast('Lock failed: ' + (data?.error || `HTTP ${res.status}`));
       return;
     }
-    bannerText = 'Foundation locked. Your agents are producing your brand kit.';
+    bannerText = 'Your foundation is locked. Your artifacts are being prepared.';
     await rerender(session);
   } catch (e) {
     showToast('Lock failed: network error');
