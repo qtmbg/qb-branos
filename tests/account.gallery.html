@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB Account Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+<style>
+  body { background: var(--cream); color: var(--ink); font-family: var(--font-body); margin: 0; }
+  .toolbar {
+    position: sticky; top: 0; z-index: 60;
+    display: flex; gap: var(--space-xs); align-items: center;
+    padding: var(--space-s) var(--space-m);
+    background: var(--cream-warm);
+    border-bottom: var(--border-default) solid var(--ink);
+    font-family: var(--font-mono); font-size: var(--step--2);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+  .toolbar button {
+    font: inherit; color: inherit;
+    background: var(--cream);
+    border: var(--border-bubble) solid var(--ink);
+    border-radius: var(--radius-pill);
+    padding: 0.4em 1em; cursor: pointer;
+  }
+  .toolbar button.is-active { background: var(--ink); color: var(--cream); }
+  .summary { margin-left: auto; font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+<div class="toolbar" id="toolbar">
+  <button data-state="loading" class="is-active">Loading</button>
+  <button data-state="free">Free tier</button>
+  <button data-state="starter">Starter tier</button>
+  <button data-state="pro">Pro tier</button>
+  <button data-state="agency">Agency tier</button>
+  <button data-state="error">Error</button>
+  <span class="summary" id="summary">—</span>
+</div>
+<main id="root"></main>
+
+<script type="module">
+import {
+  renderAccount,
+  renderAccountLoading,
+  renderAccountError,
+} from '/js/qb-account.js';
+
+const root = document.getElementById('root');
+const summary = document.getElementById('summary');
+
+const USER = { email: 'nizzar.ben+kvtest-srv-1037@gmail.com', id: '3a92ffba-…' };
+
+const STATES = {
+  loading: () => renderAccountLoading(root),
+  free:    () => renderAccount(root, USER, { tier: 'free', tier_started_at: null },
+                                { onSignOut: () => alert('Sign out (free)') }),
+  starter: () => renderAccount(root, USER, { tier: 'starter', tier_started_at: '2026-04-29T11:15:47.315767Z' },
+                                { onSignOut: () => alert('Sign out (starter)') }),
+  pro:     () => renderAccount(root, USER, { tier: 'pro', tier_started_at: '2026-03-15T10:00:00Z' },
+                                { onSignOut: () => alert('Sign out (pro)') }),
+  agency:  () => renderAccount(root, USER, { tier: 'agency', tier_started_at: '2026-02-01T10:00:00Z' },
+                                { onSignOut: () => alert('Sign out (agency)') }),
+  error:   () => renderAccountError(root, new Error('Could not reach the server.')),
+};
+
+function setActive(state) {
+  document.querySelectorAll('#toolbar button[data-state]')
+    .forEach(b => b.classList.toggle('is-active', b.dataset.state === state));
+}
+function show(builder, state) {
+  root.innerHTML = '';
+  try { builder(); summary.textContent = `state: ${state}`; }
+  catch (e) { summary.textContent = `failed: ${state}`; console.error(e); }
+}
+document.querySelectorAll('#toolbar button[data-state]').forEach(b => {
+  b.addEventListener('click', () => { setActive(b.dataset.state); show(STATES[b.dataset.state], b.dataset.state); });
+});
+
+show(STATES.loading, 'loading');
+</script>
+</body>
+</html>

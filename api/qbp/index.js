@@ -48,6 +48,8 @@ export default async function handler(req) {
   return json(200, {
     qbp: profile.qbp || {},
     foundation_locked_at: profile.foundation_locked_at || null,
+    tier: profile.tier || 'free',
+    tier_started_at: profile.tier_started_at || null,
     last_updated: lastRevisionAt || profile.updated_at || null,
   }, corsH);
 }

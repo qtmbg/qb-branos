@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB Paywall Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+<style>
+  body { background: var(--cream); color: var(--ink); font-family: var(--font-body); margin: 0; }
+  .toolbar {
+    position: sticky; top: 0; z-index: 60;
+    display: flex; gap: var(--space-xs); align-items: center;
+    padding: var(--space-s) var(--space-m);
+    background: var(--cream-warm);
+    border-bottom: var(--border-default) solid var(--ink);
+    font-family: var(--font-mono); font-size: var(--step--2);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+  .toolbar button {
+    font: inherit; color: inherit;
+    background: var(--cream);
+    border: var(--border-bubble) solid var(--ink);
+    border-radius: var(--radius-pill);
+    padding: 0.4em 1em; cursor: pointer;
+  }
+  .toolbar button.is-active { background: var(--ink); color: var(--cream); }
+  .summary { margin-left: auto; font-family: var(--font-mono); }
+  .summary.is-ok   { color: var(--phase-discovery); }
+  .summary.is-fail { color: var(--rose-deep); }
+</style>
+</head>
+<body>
+<div class="toolbar" id="toolbar">
+  <button data-state="generic"     class="is-active">Generic</button>
+  <button data-state="qbp_export">QBP export</button>
+  <button data-state="qbp_visual">QBP / Visual DNA</button>
+  <button data-state="qbp_war">QBP / War Table</button>
+  <button data-state="artifact">Artifact</button>
+  <button data-state="phase_03">Phase 03</button>
+  <button data-state="exercise">Exercise</button>
+  <button data-state="cancelled">Cancelled</button>
+  <button data-state="starter">Starter (current)</button>
+  <button data-state="loading">Loading</button>
+  <button data-state="error">Error</button>
+  <button id="b-reduced">Reduced motion</button>
+  <span class="summary" id="summary">Initializing…</span>
+</div>
+<main id="root"></main>
+
+<script type="module">
+import {
+  renderPaywall,
+  renderPaywallLoading,
+  renderPaywallError,
+} from '/js/qb-paywall.js';
+
+const root = document.getElementById('root');
+const summary = document.getElementById('summary');
+let ok = 0, fail = 0;
+function setSummary() {
+  summary.textContent = `${ok} rendered, ${fail} failures`;
+  summary.classList.toggle('is-ok',   fail === 0);
+  summary.classList.toggle('is-fail', fail  >  0);
+}
+function show(builder) {
+  root.innerHTML = '';
+  try { builder(); ok += 1; }
+  catch (e) { fail += 1; console.error(e); }
+  setSummary();
+}
+function setActive(state) {
+  document.querySelectorAll('#toolbar button[data-state]')
+    .forEach(b => b.classList.toggle('is-active', b.dataset.state === state));
+}
+
+const STATES = {
+  generic:    () => renderPaywall(root, { reason: null,                  tier: 'free', token: 'x' }),
+  qbp_export: () => renderPaywall(root, { reason: 'qbp_export',          tier: 'free', token: 'x' }),
+  qbp_visual: () => renderPaywall(root, { reason: 'qbp_section', params: { section: 'visual_dna' }, tier: 'free', token: 'x' }),
+  qbp_war:    () => renderPaywall(root, { reason: 'qbp_section', params: { section: 'war_table' },  tier: 'free', token: 'x' }),
+  artifact:   () => renderPaywall(root, { reason: 'artifact',    params: { agent: 'visual_dna_synthesizer' }, tier: 'free', token: 'x' }),
+  phase_03:   () => renderPaywall(root, { reason: 'phase_03',                          tier: 'free', token: 'x' }),
+  exercise:   () => renderPaywall(root, { reason: 'exercise',    params: { exercise: 'visual_dna' }, tier: 'free', token: 'x' }),
+  cancelled:  () => renderPaywall(root, { reason: null,          params: { cancelled: '1' },        tier: 'free', token: 'x' }),
+  starter:    () => renderPaywall(root, { reason: null,                  tier: 'starter', token: 'x' }),
+  loading:    () => renderPaywallLoading(root),
+  error:      () => renderPaywallError(root, new Error('Stripe checkout temporarily unavailable.')),
+};
+
+document.querySelectorAll('#toolbar button[data-state]').forEach(b => {
+  b.addEventListener('click', () => {
+    setActive(b.dataset.state);
+    show(STATES[b.dataset.state]);
+  });
+});
+document.getElementById('b-reduced').addEventListener('click', (ev) => {
+  document.documentElement.classList.toggle('qb-reduced-motion');
+  ev.currentTarget.classList.toggle('is-active');
+});
+
+show(STATES.generic);
+</script>
+</body>
+</html>

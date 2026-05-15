@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>Upgrade · QB BrandOS</title>
+
+<link rel="icon" href="/img/brand/web/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.5;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  img, svg, video { display: block; max-width: 100%; }
+  main#paywall-root { min-height: 70vh; }
+  .qb-toast {
+    position: fixed; left: 50%; bottom: var(--space-l);
+    transform: translateX(-50%);
+    background: var(--ink); color: var(--cream);
+    padding: 0.6em 1.2em; border-radius: var(--radius-pill);
+    font-family: var(--font-mono); font-size: var(--step--2);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    opacity: 0; transition: opacity var(--duration-pill) var(--ease-pill);
+    pointer-events: none; z-index: 200;
+  }
+  .qb-toast.is-visible { opacity: 1; }
+</style>
+</head>
+<body>
+<main id="paywall-root" aria-live="polite"></main>
+<div id="qb-toast" class="qb-toast" aria-live="polite"></div>
+
+<script src="/qb-cloud.js"></script>
+<script type="module">
+import {
+  renderPaywall,
+  renderPaywallLoading,
+  renderPaywallError,
+} from '/js/qb-paywall.js';
+
+const root = document.getElementById('paywall-root');
+
+function parseQuery() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    reason:   params.get('reason'),
+    section:  params.get('section'),
+    agent:    params.get('agent'),
+    exercise: params.get('exercise'),
+    cancelled: params.get('cancelled'),
+  };
+}
+
+function redirectToAuth() {
+  const ret = encodeURIComponent('/paywall' + window.location.search);
+  window.location.href = `/signal-scan.html?reason=signin&return_to=${ret}`;
+}
+
+async function fetchTier(token) {
+  const res = await fetch('/api/qbp', { headers: { Authorization: `Bearer ${token}` } });
+  if (res.status === 401) return { unauthorized: true };
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return { tier: data.tier || null };
+}
+
+(async () => {
+  renderPaywallLoading(root);
+
+  if (!window.QB || !window.QB.isAuthed()) {
+    redirectToAuth();
+    return;
+  }
+  const session = window.QB.getSession();
+
+  let serverTier = null;
+  try {
+    const pkt = await fetchTier(session.token);
+    if (pkt.unauthorized) { redirectToAuth(); return; }
+    serverTier = pkt.tier;
+  } catch (e) {
+    renderPaywallError(root, e);
+    return;
+  }
+
+  const params = parseQuery();
+  const reason = params.reason;
+  const tier = serverTier || session.tier || 'free';
+
+  renderPaywall(root, {
+    reason,
+    params: {
+      section:   params.section,
+      agent:     params.agent,
+      exercise:  params.exercise,
+      cancelled: params.cancelled,
+    },
+    tier,
+    token: session.token,
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>Account · QB BrandOS</title>
+
+<link rel="icon" href="/img/brand/web/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.5;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  img, svg, video { display: block; max-width: 100%; }
+  main#account-root { min-height: 70vh; }
+  .qb-toast {
+    position: fixed; left: 50%; bottom: var(--space-l);
+    transform: translateX(-50%);
+    background: var(--ink); color: var(--cream);
+    padding: 0.6em 1.2em; border-radius: var(--radius-pill);
+    font-family: var(--font-mono); font-size: var(--step--2);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    opacity: 0; transition: opacity var(--duration-pill) var(--ease-pill);
+    pointer-events: none; z-index: 200;
+  }
+  .qb-toast.is-visible { opacity: 1; }
+</style>
+</head>
+<body>
+<main id="account-root" aria-live="polite"></main>
+<div id="qb-toast" class="qb-toast" aria-live="polite"></div>
+
+<script src="/qb-cloud.js"></script>
+<script type="module">
+import {
+  renderAccount,
+  renderAccountLoading,
+  renderAccountError,
+} from '/js/qb-account.js';
+
+const root = document.getElementById('account-root');
+
+function redirectToAuth() {
+  window.location.href = '/signal-scan.html?reason=signin&return_to=%2Faccount';
+}
+
+async function fetchProfile(token) {
+  const res = await fetch('/api/qbp', { headers: { Authorization: `Bearer ${token}` } });
+  if (res.status === 401) return { unauthorized: true };
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return {
+    tier:             data.tier || 'free',
+    tier_started_at:  data.tier_started_at || null,
+  };
+}
+
+function showToast(msg) {
+  const t = document.getElementById('qb-toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('is-visible');
+  clearTimeout(showToast._tid);
+  showToast._tid = setTimeout(() => t.classList.remove('is-visible'), 2400);
+}
+
+async function handleSignOut(session) {
+  showToast('Signing out…');
+  try {
+    if (session?.token) {
+      try {
+        await fetch(window.QB.SUPA_URL + '/auth/v1/logout', {
+          method: 'POST',
+          headers: {
+            'apikey': window.QB.SUPA_KEY,
+            'Authorization': `Bearer ${session.token}`,
+          },
+        });
+      } catch (_) {}
+    }
+  } finally {
+    window.QB.logout();
+    window.location.href = '/';
+  }
+}
+
+(async () => {
+  renderAccountLoading(root);
+
+  if (!window.QB || !window.QB.isAuthed()) {
+    redirectToAuth();
+    return;
+  }
+
+  const session = window.QB.getSession();
+
+  let profile;
+  try {
+    const pkt = await fetchProfile(session.token);
+    if (pkt.unauthorized) { redirectToAuth(); return; }
+    profile = pkt;
+  } catch (e) {
+    renderAccountError(root, e);
+    return;
+  }
+
+  const user = { email: session.email || '(unknown)', id: session.userId };
+
+  renderAccount(root, user, profile, {
+    onSignOut: () => handleSignOut(session),
+  });
+})();
+</script>
+</body>
+</html>
