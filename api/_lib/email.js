@@ -25,12 +25,31 @@ const REPLY_TO_DEFAULT = 'me@qtmbg.com';
 
 /* ──────────────────────────────────────────────
    sendEmail
-   ────────────────────────────────────────────── */
-export async function sendEmail({ to, subject, html, text, replyTo, refId }) {
+   ──────────────────────────────────────────────
+   `transactional: true` (default) sends WITHOUT a List-Unsubscribe header.
+   Per Gmail's transactional-vs-bulk heuristic and Resend's deliverability
+   guidance, the unsubscribe headers are a strong "promotional" signal and
+   often push purely transactional mail out of Primary. The headers stay
+   for marketing/borderline emails (see callers).
+
+   `transactional: false` re-enables the unsubscribe headers for any future
+   bulk or marketing-adjacent send.
+
+   See EMAIL_DELIVERABILITY.md for the full header decision matrix.
+*/
+export async function sendEmail({ to, subject, html, text, replyTo, refId, transactional = true }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { ok: false, error: 'RESEND_API_KEY missing' };
   if (!to) return { ok: false, error: 'to required' };
   if (!subject) return { ok: false, error: 'subject required' };
+
+  const headers = {
+    'X-Entity-Ref-ID': refId || 'qb-brandos',
+  };
+  if (!transactional) {
+    headers['List-Unsubscribe'] = '<mailto:me@qtmbg.com?subject=unsubscribe>';
+    headers['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click';
+  }
 
   try {
     const res = await fetch('https://api.resend.com/emails', {
@@ -46,11 +65,7 @@ export async function sendEmail({ to, subject, html, text, replyTo, refId }) {
         subject,
         html,
         text,
-        headers: {
-          'List-Unsubscribe': '<mailto:me@qtmbg.com?subject=unsubscribe>',
-          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-          'X-Entity-Ref-ID': refId || 'qb-brandos',
-        },
+        headers,
       }),
     });
     if (!res.ok) {

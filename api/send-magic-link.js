@@ -227,10 +227,10 @@ export default async function handler(req) {
       subject: 'Your sign-in link to Quantum Branding',
       html: emailHTML,
       text: `Hello${firstName ? ' ' + firstName : ''},\n\nClick the link below to sign in to your Brand Profile. No password needed.\n\n${actionLink}\n\nThe link expires in 60 minutes. If you did not request this, you can ignore this email and nothing happens.\n\nQuantum Branding\nThe Brand Operating System`,
-      // Spam-classifier signals: transactional sender + clear unsubscribe path
+      // Purely transactional. No List-Unsubscribe header (it's a positive
+      // promotional signal to Gmail's tab classifier). Per step 18 PR 3
+      // deliverability pass and EMAIL_DELIVERABILITY.md.
       headers: {
-        'List-Unsubscribe': '<mailto:me@qtmbg.com?subject=unsubscribe>',
-        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
         'X-Entity-Ref-ID': 'qb-brandos-magic-link',
       },
     }),
