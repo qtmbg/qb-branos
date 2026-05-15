@@ -165,8 +165,11 @@ Each agent declares:
 ### 3.2 Inputs
 
 Each agent declares the data it reads. Four kinds:
-- `qbp_fields[]` · keys from `profiles.qbp` the agent needs (e.g. `brandEssence`, `manifesto`)
-- `artifact_dependencies[]` · slugs of other agents whose latest delivered artifact this agent reads (e.g. War Table reads the latest delivered Soul Map)
+- `qbp_fields[]` · typed array of QBP fields the agent reads. Each entry `{ field, required }`:
+  - `field` · the key in `profiles.qbp` (e.g. `'brandEssence'`, `'manifesto'`).
+  - `required` · boolean. If `true`, the runtime refuses to dispatch when the field is missing or empty, and emits `qbp_field_missing` without calling Claude. If `false`, the field is passed through to the agent function, which decides how to handle absence (graceful degradation, placeholder copy, conditional logic).
+  - Rationale: agents differ in tolerance for sparse QBPs. Soul Map serves a fresh user with an incomplete QBP by rendering "Not yet captured" placeholders · graceful degradation is correct. Visual DNA and War Table cannot produce honest output without specific inputs · strict refusal is correct. The flag puts the decision with the agent author, not the runtime. Mirrors the `files[]` `{ type, source, optional }` shape.
+- `artifact_dependencies[]` · slugs of other agents whose latest delivered artifact this agent reads (e.g. War Table reads the latest delivered Soul Map). All dependencies are implicitly required; the runtime refuses to dispatch when any declared dependency has no `delivered` artifact.
 - `files[]` · typed array of file inputs the agent needs. Each entry `{ type, source, optional }`:
   - `type` · semantic type. Initial vocabulary: `'logo-source'`, `'reference-image'`, `'brand-asset'`, `'transcript'`, `'document'`. New types added as agents declare them.
   - `source` · how the file is provided. Initial values: `'user-upload'` (the user attaches it via the UI in Chapter 3+), `'agent-output'` (a previous agent emitted a file artifact). Forward-compatible.
@@ -174,7 +177,7 @@ Each agent declares the data it reads. Four kinds:
   - **Chapter 2 status:** the contract field is declared and accepted; the asset layer that fulfills it is built in Chapter 3. No Chapter 2 agent declares non-optional files. Agents may declare optional files now for forward-compat, but the runtime treats them as always-empty until Chapter 3 wires uploads.
 - `runtime_args{}` · optional kwargs (e.g. a regenerate event might carry a `feedback` arg from the Content Approval Loop, or a `qbp_source` arg of `'current'` or `'original'` per §6 manual rerun semantics)
 
-The runtime validates: if any required `qbp_field` is missing, any `artifact_dependency` isn't `delivered`, or any non-optional `file` is unavailable, the agent fails with `missing_inputs` and does not call Claude.
+The runtime validates: if any `qbp_field` marked `required: true` is missing or empty in the QBP snapshot, any `artifact_dependency` isn't `delivered`, or any non-optional `file` is unavailable, the agent fails with the matching error code (`qbp_field_missing`, `missing_dependency`, or `missing_inputs`) and does not call Claude.
 
 ### 3.3 Triggers
 
@@ -208,12 +211,24 @@ export const META = {
   artifact_type: 'soul_map_synthesizer',
   version: 2,
   inputs: {
-    qbp_fields: ['brandEssence', 'manifesto', 'paradox', 'antiBrand', 'alwaysNever'],
+    // Each qbp_fields entry is { field, required }. Soul Map degrades
+    // gracefully on missing fields; Visual DNA / War Table set required:true
+    // on the inputs they cannot work without.
+    qbp_fields: [
+      { field: 'brandEssence', required: false },
+      { field: 'manifesto',    required: false },
+      { field: 'paradox',      required: false },
+      { field: 'antiBrand',    required: false },
+      { field: 'alwaysNever',  required: false },
+    ],
     artifact_dependencies: [],
     files: [],                          // forward-compat for Chapter 3 asset layer
     runtime_args: { feedback: 'optional', qbp_source: 'optional' },
   },
   triggers: ['lock', 'manual', 'regenerate'],
+  // Per §11.12.1 every agent declares the error codes it may emit.
+  // The conformance suite asserts each declared code is triggerable.
+  error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
 };
 
 export async function run({ qbp, dependencies, files, runtime_args, anthropicKey }) {
