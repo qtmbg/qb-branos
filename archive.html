@@ -85,7 +85,8 @@ async function load() {
 
   const list = Array.isArray(artifactsData.artifacts) ? artifactsData.artifacts : [];
   const foundationLockedAt = qbpData?.foundation_locked_at || null;
-  const tier = String(session.tier || 'free').toLowerCase();
+  // Server-authoritative tier from /api/qbp. Never read session.tier.
+  const tier = String(qbpData?.tier || 'free').toLowerCase();
 
   if (list.length === 0) {
     renderArchiveEmpty(root, { foundationLockedAt });

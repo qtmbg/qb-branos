@@ -102,14 +102,22 @@ async function load() {
     return;
   }
   const session = window.QB.getSession();
-  const tier = (session && session.tier) || 'free';
 
-  let res, data;
+  // Fetch artifact + tier in parallel. Server-authoritative tier from
+  // /api/qbp. Never read session.tier; localStorage lags behind tier
+  // flips after Stripe upgrade.
+  let res, data, tier = 'free';
   try {
-    res = await fetch(`/api/artifacts/${id}`, {
-      headers: { Authorization: `Bearer ${session.token}` },
-    });
+    const [artRes, qbpRes] = await Promise.all([
+      fetch(`/api/artifacts/${id}`, { headers: { Authorization: `Bearer ${session.token}` } }),
+      fetch('/api/qbp',             { headers: { Authorization: `Bearer ${session.token}` } }),
+    ]);
+    res = artRes;
     data = await res.json().catch(() => ({}));
+    if (qbpRes.ok) {
+      const qbpData = await qbpRes.json().catch(() => ({}));
+      tier = String(qbpData?.tier || 'free').toLowerCase();
+    }
   } catch (e) {
     renderFailed(root, { title: null, agent_slug: null }, { reason: 'network', canRegenerate: false });
     return;
