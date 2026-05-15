@@ -117,7 +117,7 @@ function svcHeaders(serviceKey) {
   };
 }
 
-async function findOrCreateArtifact({ supaUrl, serviceKey, userId, registry }) {
+async function findOrCreateArtifact({ supaUrl, serviceKey, userId, registry, dispatchId }) {
   const inFlightRes = await fetch(
     `${supaUrl}/rest/v1/artifacts` +
     `?user_id=eq.${encodeURIComponent(userId)}` +
@@ -149,19 +149,22 @@ async function findOrCreateArtifact({ supaUrl, serviceKey, userId, registry }) {
   const nextVersion = latestRow ? (Number(latestRow.version) || 1) + 1 : 1;
   const parent = latestRow ? latestRow.id : null;
 
+  const insertBody = {
+    user_id: userId,
+    artifact_type: registry.artifactType,
+    status: 'queued',
+    version: nextVersion,
+    parent_artifact_id: parent,
+    phase: registry.phase,
+    content: {},
+    error: null,
+  };
+  if (dispatchId) insertBody.dispatch_id = dispatchId;
+
   const insRes = await fetch(`${supaUrl}/rest/v1/artifacts`, {
     method: 'POST',
     headers: { ...svcHeaders(serviceKey), Prefer: 'return=representation' },
-    body: JSON.stringify({
-      user_id: userId,
-      artifact_type: registry.artifactType,
-      status: 'queued',
-      version: nextVersion,
-      parent_artifact_id: parent,
-      phase: registry.phase,
-      content: {},
-      error: null,
-    }),
+    body: JSON.stringify(insertBody),
   });
   if (!insRes.ok) {
     const t = await insRes.text().catch(() => '');
@@ -271,7 +274,7 @@ export default async function handler(req) {
   try { body = await req.json(); }
   catch { return json(400, { ok: false, error: 'Invalid body' }, corsH); }
 
-  const { userId, qbp, agentName } = body || {};
+  const { userId, qbp, agentName, dispatch_id: dispatchId } = body || {};
   if (!userId || !UUID_RE.test(userId)) return json(400, { ok: false, error: 'Invalid userId' }, corsH);
   const registry = resolveAgent(agentName);
   if (!registry) {
@@ -292,7 +295,7 @@ export default async function handler(req) {
   let artifact;
   try {
     artifact = await findOrCreateArtifact({
-      supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, userId, registry,
+      supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, userId, registry, dispatchId,
     });
   } catch (e) {
     console.error('[dispatch] artifact-create error', e && e.message);
