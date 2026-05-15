@@ -130,6 +130,19 @@ PR #59 shipped fire-and-forget dispatch. 1 of 10 verification runs landed 0 arti
 - [ ] Explicit confirmation that the Option A pattern (§5) addresses that mechanism
 - [ ] Reproduction report committed to the repo
 
+### Definition of proof · evidence bar
+
+The gate is passed only when the reproduction provides evidence that the bug exists. Specifically:
+
+- **Minimum reproduction rate:** the test must trigger the stuck-dispatch failure mode at **minimum 2 of 10 runs** (matching or exceeding PR #59's observed 1/10 rate; the 2/10 floor accounts for sampling variance and guarantees the test isn't pattern-matching a one-off).
+- **Reproducibility:** the test must be runnable from a clean test user with a **single command**. No multi-step orchestration. No "click this, then run that." A script.
+- **Mechanism captured in logs:** the log trail must show the specific moment of failure. Examples of acceptable evidence: a fetch cancellation event, an orphaned worker entry with no return, a race condition with conflicting timestamps, a Vercel-side concurrency rejection. "Nothing happened" is not evidence.
+- **Zero-failure runs do NOT pass the gate.** If 10 runs produce 0 stuck dispatches, the gate is **not** passed. It means we have not reproduced the bug, only its absence. Two outcomes from there:
+  - Iterate on the harness (increase load, change region, simulate cold-start) until the bug reproduces. Most likely path.
+  - If after sustained effort the bug refuses to reproduce, escalate the architectural decision: the failure may have been a transient Vercel-side issue, in which case Option A still ships but the reaper's role shifts from "patch the known mechanism" to "catch whatever the actual mechanism turns out to be in production." This is a downgrade in confidence and triggers a separate review with Nizzar before code lands.
+
+This evidence bar prevents the gate from being closed by a "we couldn't reproduce it, looks fine now" report. The bug must be caught before the fix is trusted.
+
 Until this gate is cleared, Chapter 2 build step 1 (migrations) is the only allowable forward motion. No runtime code merges to main on top of an unconfirmed hypothesis.
 
 ---
@@ -474,6 +487,29 @@ New components added to the library (`js/qb-components.js`):
 
 Chapter 2 ships the MVP shape. No preferences UI. No mark-all-read button. Persistence in `public.notifications` with RLS.
 
+### 7.0 What counts as a notification in Chapter 2 · exhaustive
+
+This list is the source of truth. Anything not on it does not fire a bell, does not write a `notifications` row, does not send an email under the new templates.
+
+**Fires a notification:**
+
+1. **Artifact ready** · one per artifact. Includes regenerations (each new version that lands `delivered` produces one notification). Kind: `artifact_ready`.
+2. **Agent run failed permanently** · after the reaper exhausts 3 retries and flips `dispatch_jobs.status = 'failed_permanently'`. One per dispatch. Kind: `dispatch_failed`.
+3. **Foundation locked** · the existing Chapter 1 foundation-locked email already fires; Chapter 2 adds the in-app notification row alongside it so the bell badge shows immediately after lock. Kind: `foundation_locked`.
+4. **Manual rerun completed** · success or failure. One per rerun. The success case routes through `artifact_ready`; the failure case routes through `dispatch_failed` once it reaches `failed_permanently` (intermediate retries stay silent per §5.5).
+
+**Does NOT fire a notification (prevents scope drift):**
+
+- Tier changes (already surfaced on `/account`; the bell isn't where billing state belongs)
+- Login events (sign-in, sign-out, session-refresh)
+- Marketing announcements (no inbound marketing surface in Chapter 2; marketing comms route through the welcome-email cadence)
+- File uploads · Chapter 3 owns the asset layer and decides whether file ingest fires notifications
+- QBP edits (the live document; not eventful enough to interrupt)
+- Stripe webhook events other than the tier flips already covered above
+- Anything sent by the reaper before the terminal state (retries 1, 2, 3 in-flight are silent by design)
+
+Anything added to either list after Chapter 2 close is a spec change, not an implementation detail.
+
 ### 7.1 In-app · bell icon
 
 Bell icon top-right of every signed-in surface (Foundation, Archive, QBP, Account, Agents, Paywall). One component, one wiring; amortizes the cost from the start.
@@ -503,9 +539,12 @@ All new emails are transactional (no `List-Unsubscribe` header per EMAIL_DELIVER
 
 ### 7.3 Notification trigger logic
 
-- `artifact_ready`: emitted by `/api/agents/run` when an artifact delivers successfully. One per artifact. Triggers in-app notification AND the Chapter 1 artifact-ready email.
-- `chain_ready`: emitted by chain orchestration when a downstream agent auto-fires after upstream delivery. Triggers in-app notification AND a `chain_ready` email.
+`notifications.kind` enum values for Chapter 2, matching the §7.0 list:
+
+- `artifact_ready`: emitted by `/api/agents/run` when an artifact delivers successfully. Includes regenerations (each new version produces one). Triggers in-app notification AND the Chapter 1 artifact-ready email.
+- `foundation_locked`: emitted at the end of `/api/lock-foundation` after the artifact rows are pre-inserted. Triggers in-app notification AND the Chapter 1 foundation-locked email.
 - `dispatch_failed`: emitted by the reaper ONLY when a dispatch reaches `failed_permanently` (retry_count = 3). Triggers in-app notification AND a `dispatch_failed` email. No notifications on retries 1, 2, or 3 in-flight · only the terminal state.
+- `chain_ready`: emitted by chain orchestration when a downstream agent auto-fires after upstream delivery AND the downstream artifact reaches `delivered`. Triggers in-app notification AND a `chain_ready` email. In Chapter 2 this is reachable only via the framework's test harness (no Phase 02 agents until Chapter 4).
 - `quarterly_due`: deferred to Chapter 9 (Quarterly Brand Review surface). Listed for completeness in the `notifications.kind` enum.
 
 ### 7.4 GET /api/notifications
@@ -659,6 +698,23 @@ Chapter 2 closes when:
 - [ ] All four agents declare `triggers` explicitly
 - [ ] `META.version` integer set per agent; bumps tracked when prompt or schema changes
 - [ ] Runtime accepts `runtime_args.qbp_source` of `'current'` or `'original'`
+- [ ] **Every agent passes the conformance test (§11.12.1) before registration.** Soul Map Synthesizer is retrofit to pass conformance as part of Chapter 2 build step 3.
+
+### 11.12.1 Agent conformance test · automated
+
+Every agent registered in `agents/registry.js` must pass a conformance test before the runtime accepts dispatches for it. The test lives at `tests/agent-conformance.mjs` and is invoked per-agent via `node tests/agent-conformance.mjs <agent_slug>`. CI runs it for the full registry on every PR. Adding a new agent without a passing conformance test is rejected at registry import time.
+
+The conformance test asserts:
+
+1. **Contract schema valid.** META declares: `slug` (canonical underscored), `phase` (`00`-`05`), `tier_required`, `display_name`, `description`, `artifact_type`, `version` (int), `inputs.qbp_fields[]`, `inputs.artifact_dependencies[]`, `inputs.files[]` (each entry has `type`, `source`, `optional`), `inputs.runtime_args{}`, `triggers[]` (each value in the canonical enum). Each field is type-checked.
+2. **Happy path returns valid output.** Test fixture: a synthetic QBP with all required `qbp_fields` set, all `artifact_dependencies` satisfied via stub delivered artifacts, `files = []`, no `runtime_args.feedback`. Run the agent. Assert: `{ ok: true, content, meta }` shape; `content` validates against the artifact schema in `js/qb-artifact-schema.js`; `meta.tokens_in` and `meta.tokens_out` are positive integers; `meta.duration_ms` is positive.
+3. **Documented error codes on each known failure mode.** Each agent's META declares an `error_codes[]` enum (e.g. `missing_inputs`, `model_call_failed`, `schema_validation_failed`, `edge_timeout`). For each declared code, the test runs the agent with inputs designed to trigger that code and asserts the returned `{ ok: false, error, stage }` matches.
+4. **Writes correct `agent_version` to `dispatch_jobs`.** A test run via `/api/agents/run` confirms the `agent_runs.agent_version` and the parent `dispatch_jobs.agent_version` match `META.version` at run time.
+5. **Writes `qbp_snapshot` to `agent_runs`.** Test run confirms the `qbp_snapshot` column is populated with a non-null frozen copy of the QBP used for the run.
+
+Conformance test output is a single line per agent: `<slug> · PASS` or `<slug> · FAIL: <reason>`. CI rejects the PR if any agent fails. The conformance suite is committed under `tests/agent-conformance/` with one fixture per agent.
+
+**Soul Map Synthesizer retrofit.** The Chapter 1 Soul Map Synthesizer was built before the contract existed. Build step 3 (the contract scaffold) retrofits it to conform. If retrofitting surfaces a contract gap (e.g. Soul Map needs an input shape the contract doesn't model), the contract evolves and the spec is amended before Chapter 2 closes. This is the first stress test of the contract; treat findings as load-bearing.
 
 ### 11.13 Sign-off
 Nizzar runs through the free-tier path, hits the paywall, upgrades, sees Phase 01 deliver in <60 s, sees notifications land in the bell, sees the Agent Console show the full workforce in one glance (Phase 02-05 visible as locked rows with "Unlocks when Starter tier is active" copy). Reruns Soul Map with current QBP, reruns again with original QBP, confirms different inputs produce different outputs. Triggers a permanent dispatch failure (e.g. by killing the Edge function mid-run via a manual deploy), observes the reaper email after retry 3, clicks "Retry manually" from the Agent Console, sees recovery. Only then is Chapter 2 closed.
