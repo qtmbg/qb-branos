@@ -89,6 +89,49 @@ Replace the fire-and-forget pattern with an explicit job queue. The lock endpoin
 
 If you pick Option B instead, sections §5 and §6 of this spec swap "fire dispatch fetch" for "enqueue job"; everything else stays.
 
+**Status (per Nizzar's spec review):** Option A confirmed. Move forward, subject to the pre-implementation gate in §2.5.
+
+---
+
+## 2.5 Pre-implementation gate · PR #59 failure reproduction
+
+**Non-negotiable.** No production code lands on Option A until the PR #59 stuck-dispatch failure mode is reproduced, the root cause is confirmed, and the new pattern is explicitly verified to address it.
+
+### Why this gate exists
+
+PR #59 shipped fire-and-forget dispatch. 1 of 10 verification runs landed 0 artifacts at 60 s. The working hypothesis (`fetch()` cancellation when the parent Edge function returns before child connections establish) was named but not instrumented. Shipping a fix on top of an unconfirmed hypothesis risks shipping a fix to the wrong bug. If the actual mechanism is something else (Vercel runtime concurrency cap, network jitter, child function cold-start failure under load), `waitUntil` + reaper might not address it.
+
+### Reproduction protocol
+
+1. **Build a controlled test harness.** A local Vercel dev environment OR a dedicated preview branch with deployment protection disabled (or bypass-token wired). Inject diagnostic logs at every fetch boundary:
+   - parent Edge function entry + return timestamps
+   - each child `fetch()` initiation timestamp
+   - child Edge function entry timestamp (added log line in `/api/agents/run`)
+   - connection establishment receipt (TCP-level if accessible via Node's `lookup` callback equivalent; otherwise the child's first log line)
+
+2. **Reproduce the PR #59 pattern.** Restore the reverted code path (fire 4 child fetches without `await`, no pre-inserted artifact rows, no `waitUntil`). Run 50 lock attempts against fresh test users. Capture the per-run log trail. Target: reproduce the 1/10 stuck rate with high confidence (5+ stuck runs in 50). If the rate doesn't reproduce, the bug may have been a transient Vercel issue and the architecture call needs re-evaluation.
+
+3. **Identify the failed path.** For each stuck run:
+   - Did the parent function fire 4 fetches? (look for the 4 initiation logs)
+   - Did any child function start? (look for child entry logs)
+   - At what timestamp did the parent return vs each child fetch initiate?
+   - Is there a consistent pattern in which fetch position fails (first, last, any)?
+
+4. **Confirm or reject the hypothesis.** Two outcomes:
+   - **Hypothesis confirmed:** parent returns before child connection establishes; child fetches never reach their handler. `waitUntil` + pre-inserted rows + reaper is the right fix.
+   - **Hypothesis rejected:** the bug is elsewhere (e.g. Edge concurrency cap, regional cold-start, supabase write race). Identify the actual mechanism. Re-evaluate Option A. May require switching to Option B earlier than planned.
+
+5. **Document findings.** A short report under `chapter-02/verification/step-N-repro-<timestamp>.md` covering: harness setup, log methodology, 50-run results, identified mechanism, mapping from mechanism to fix.
+
+### Definition of done
+
+- [ ] Documented test that reliably reproduces the 1/10 stuck rate (or shows the rate was transient)
+- [ ] Identified mechanism (with log evidence)
+- [ ] Explicit confirmation that the Option A pattern (§5) addresses that mechanism
+- [ ] Reproduction report committed to the repo
+
+Until this gate is cleared, Chapter 2 build step 1 (migrations) is the only allowable forward motion. No runtime code merges to main on top of an unconfirmed hypothesis.
+
 ---
 
 ## 3. The agent contract
@@ -108,12 +151,17 @@ Each agent declares:
 
 ### 3.2 Inputs
 
-Each agent declares the data it reads. Three kinds:
+Each agent declares the data it reads. Four kinds:
 - `qbp_fields[]` · keys from `profiles.qbp` the agent needs (e.g. `brandEssence`, `manifesto`)
 - `artifact_dependencies[]` · slugs of other agents whose latest delivered artifact this agent reads (e.g. War Table reads the latest delivered Soul Map)
-- `runtime_args{}` · optional kwargs (e.g. a regenerate event might carry a `feedback` arg from the Content Approval Loop)
+- `files[]` · typed array of file inputs the agent needs. Each entry `{ type, source, optional }`:
+  - `type` · semantic type. Initial vocabulary: `'logo-source'`, `'reference-image'`, `'brand-asset'`, `'transcript'`, `'document'`. New types added as agents declare them.
+  - `source` · how the file is provided. Initial values: `'user-upload'` (the user attaches it via the UI in Chapter 3+), `'agent-output'` (a previous agent emitted a file artifact). Forward-compatible.
+  - `optional` · boolean. If false, missing files block the run with `missing_inputs`.
+  - **Chapter 2 status:** the contract field is declared and accepted; the asset layer that fulfills it is built in Chapter 3. No Chapter 2 agent declares non-optional files. Agents may declare optional files now for forward-compat, but the runtime treats them as always-empty until Chapter 3 wires uploads.
+- `runtime_args{}` · optional kwargs (e.g. a regenerate event might carry a `feedback` arg from the Content Approval Loop, or a `qbp_source` arg of `'current'` or `'original'` per §6 manual rerun semantics)
 
-The runtime validates: if any required `qbp_field` is missing, or any `artifact_dependency` isn't `delivered`, the agent fails with `missing_inputs` and does not call Claude.
+The runtime validates: if any required `qbp_field` is missing, any `artifact_dependency` isn't `delivered`, or any non-optional `file` is unavailable, the agent fails with `missing_inputs` and does not call Claude.
 
 ### 3.3 Triggers
 
@@ -149,12 +197,13 @@ export const META = {
   inputs: {
     qbp_fields: ['brandEssence', 'manifesto', 'paradox', 'antiBrand', 'alwaysNever'],
     artifact_dependencies: [],
-    runtime_args: { feedback: 'optional' },
+    files: [],                          // forward-compat for Chapter 3 asset layer
+    runtime_args: { feedback: 'optional', qbp_source: 'optional' },
   },
   triggers: ['lock', 'manual', 'regenerate'],
 };
 
-export async function run({ qbp, dependencies, runtime_args, anthropicKey }) {
+export async function run({ qbp, dependencies, files, runtime_args, anthropicKey }) {
   // Returns { ok, content, meta } or { ok: false, error, stage }
 }
 ```
@@ -178,6 +227,9 @@ A single `agents/registry.js` exports `AGENTS` keyed by slug. The runtime import
 | `user_id` | uuid fk → auth.users | for RLS |
 | `artifact_id` | uuid fk → artifacts.id | the row this run produced/will produce |
 | `trigger` | text | enum: `lock`, `chain`, `manual`, `regenerate`, `scheduled` |
+| `qbp_snapshot` | jsonb | frozen copy of `profiles.qbp` at run start. Powers replay. |
+| `file_refs` | jsonb | array of file references at run start (empty until Chapter 3 wires uploads). Powers replay. |
+| `runtime_args` | jsonb | the runtime args this run received (e.g. `feedback`, `qbp_source`). Powers replay. |
 | `status` | text | enum: `started`, `succeeded`, `failed` |
 | `started_at` | timestamptz | default now() |
 | `completed_at` | timestamptz | null until done |
@@ -187,7 +239,14 @@ A single `agents/registry.js` exports `AGENTS` keyed by slug. The runtime import
 | `model` | text | `claude-sonnet-4-6` |
 | `error` | jsonb | `{ stage, message, missing_inputs?, raw? }` |
 
-`artifact_runs` from Chapter 1 is renamed to `agent_runs` via migration. Same columns + new ones. RLS: user can SELECT own runs.
+`artifact_runs` from Chapter 1 is renamed to `agent_runs` via migration. Old rows backfill `qbp_snapshot = null`, `file_refs = []`, `runtime_args = {}`. From this migration forward, every run writes those three columns at run start. RLS: user can SELECT own runs.
+
+**Replay support.** Given an `artifact_id`, the user can ask "what produced this?". The path:
+1. Look up the `agent_runs` row where `artifact_id = <id>`.
+2. Read `qbp_snapshot`, `file_refs`, `runtime_args`, `agent_version`.
+3. Surface in the Agent Console + the artifact reading surface as "What produced this version" with a detail panel.
+
+This is the non-negotiable trust primitive: every artifact is reproducible back to its inputs. See §5.x and §6 for the surface treatment.
 
 ### 4.2 Extend: `dispatch_jobs`
 
@@ -196,6 +255,9 @@ Already exists from migration 010. Extend with:
 - `parent_agent_slug` · for chain triggers, which upstream agent's completion caused this dispatch
 - `agents_count` · how many agents were enqueued (4 for lock, 1 for chain/manual/regenerate)
 - `agents_settled` · running count of agents that have reached terminal state
+- `agent_version` · the META.version of the agent(s) at dispatch time. For multi-agent dispatches (lock), stores the highest version among the dispatched set. The per-row agent version still lives on `agent_runs.agent_version` for precision.
+- `retry_count` · integer, default 0. Reaper increments on each retry.
+- `status` enum extended: `queued`, `producing`, `completed`, `partial`, `failed`, `failed_permanently` (NEW). `failed_permanently` is the terminal state the reaper sets when retry_count > 3.
 
 ### 4.3 New: `notifications`
 
@@ -250,20 +312,37 @@ POST `{ user_id, agent_slug, dispatch_id, artifact_id, trigger, runtime_args }`.
 
 1. Verify caller. Either: same-origin authenticated user, OR same-origin service call from lock/regenerate with a signed inter-edge token (HMAC-SHA256 over the body using `INTER_EDGE_SECRET`).
 2. Look up agent META from registry.
-3. Read inputs: pull qbp_fields from profile; pull artifact_dependencies (latest delivered per slug).
-4. If any required input is missing → write artifact row to `failed` with `missing_inputs`; open + close `agent_runs` row; return 200 with `{ ok: false, error: 'missing_inputs', missing }`.
-5. Insert `agent_runs` row: `status='started'`, `trigger`, `dispatch_id`, etc.
-6. Flip artifact `status='generating'`.
-7. Run agent (Claude call inside the 25 s budget).
-8. Validate output schema.
-9. On success: PATCH artifact to `delivered` + content; close run as `succeeded`; send artifact-ready email; check chain triggers (see §5.4).
-10. On failure: PATCH artifact to `failed` + error; close run as `failed`.
-11. Update `dispatch_jobs.agents_settled` and flip `dispatch_jobs.status` to `completed` when all four artifacts reach terminal state.
-12. Return 200 with run summary.
+3. **Resolve QBP source.** `runtime_args.qbp_source` is `'current'` (default) or `'original'`. Default reads the user's live `profiles.qbp`. The original mode reads the `qbp_snapshot` from the source artifact's `agent_runs` row (only meaningful on regenerate triggers; manual triggers default to current).
+4. Read inputs: pull `qbp_fields` from the resolved QBP source; pull `artifact_dependencies` (latest delivered per slug); pull `files` from the file refs in `runtime_args` (Chapter 2 always empty).
+5. If any required input is missing → write artifact row to `failed` with `missing_inputs`; open + close `agent_runs` row (still capturing `qbp_snapshot`, `file_refs`, `runtime_args`, `agent_version`); return 200 with `{ ok: false, error: 'missing_inputs', missing }`.
+6. **Insert `agent_runs` row.** Set `status='started'`, `trigger`, `dispatch_id`, `agent_slug`, `agent_version` (from META), `qbp_snapshot` (frozen copy of the resolved QBP), `file_refs`, `runtime_args`. This row is the replay record.
+7. Flip artifact `status='generating'`.
+8. Run agent (Claude call inside the 25 s budget) with the frozen inputs.
+9. Validate output schema.
+10. On success: PATCH artifact to `delivered` + content; close run as `succeeded`; send artifact-ready email; check chain triggers (see §5.4).
+11. On failure: PATCH artifact to `failed` + error; close run as `failed`.
+12. Update `dispatch_jobs.agents_settled` and flip `dispatch_jobs.status` to `completed` when all child artifacts reach terminal state.
+13. Return 200 with run summary.
 
 ### 5.3 `/api/artifacts/[id]/regenerate` (refactored)
 
-Same pattern as lock but for a single agent. Insert a new `dispatch_jobs` row with `kind='regenerate'`, `agents_count=1`. Insert one new artifact row with bumped version. Fire one `/api/agents/run` via `waitUntil`. Return 202.
+POST `{ qbp_source }`. Default `qbp_source = 'current'`. Accepts `'original'` to rerun against the QBP snapshot at the time the source artifact was produced.
+
+Same pattern as lock but for a single agent. Insert a new `dispatch_jobs` row with `kind='regenerate'`, `agents_count=1`, `agent_version=<META.version>`. Insert one new artifact row with bumped version and `parent_artifact_id` pointing at the source. Fire one `/api/agents/run` via `waitUntil` with the chosen `qbp_source`. Return 202.
+
+### 5.3.1 `/api/agent-runs/[id]/replay` (new, GET-only read surface)
+
+Given an `agent_runs.id` (looked up by `artifact_id` from the source artifact), return the frozen inputs:
+
+```
+{
+  agent_slug, agent_version, trigger, qbp_snapshot, file_refs, runtime_args,
+  started_at, completed_at, duration_ms, tokens_in, tokens_out,
+  artifact_id, artifact_version, status, error
+}
+```
+
+Used by the Agent Console "What produced this version" panel and the artifact reading surface's "Replay details" link. RLS scopes to caller's own runs.
 
 ### 5.4 Chain orchestration
 
@@ -279,16 +358,25 @@ Tier gating: chain triggers respect tier. A free user who completes Phase 01 wil
 
 ### 5.5 Reaper
 
-`/api/cron/reaper` · a Vercel Cron job that runs every 2 minutes. For each `dispatch_jobs` row with `status='producing'` AND `created_at < now() - 2 minutes`:
+`/api/cron/reaper` · a Vercel Cron job that runs every 30 seconds (the tightest interval Vercel offers; the per-row check below enforces the backoff curve precisely). For each `dispatch_jobs` row with `status='producing'`:
 
-1. Read child artifacts. If any are still `queued`, treat as stuck.
-2. Re-fire `/api/agents/run` for each stuck artifact.
-3. Increment a `retry_count` column on `dispatch_jobs` (add via migration 012). If retry_count > 3, flip dispatch_jobs status to `failed` and emit a `dispatch_failed` notification.
+1. Determine the row's age: `seconds_since_dispatch = now() - created_at`. Determine the row's most recent retry attempt: `seconds_since_last_retry = now() - last_retry_at` (new column, default `created_at`).
+2. **Backoff schedule.** The reaper acts only when the elapsed time since the most recent attempt has crossed the next backoff threshold:
+   - Retry 1 fires when `seconds_since_last_retry >= 30 s` AND `retry_count = 0`.
+   - Retry 2 fires when `seconds_since_last_retry >= 120 s` AND `retry_count = 1`.
+   - Retry 3 fires when `seconds_since_last_retry >= 300 s` AND `retry_count = 2`.
+3. Read child artifacts for the dispatch. If any are still `queued`, treat as stuck.
+4. Re-fire `/api/agents/run` for each stuck artifact. Increment `retry_count`. Update `last_retry_at = now()`.
+5. **Permanent failure.** If `retry_count = 3` AND the dispatch is still `producing` at the next reaper tick, flip `dispatch_jobs.status = 'failed_permanently'`. Emit a single `dispatch_failed` notification (in-app + email). Email is sent ONLY at this terminal state, not on intermediate retries. The Agent Console surfaces a manual retry CTA on the affected agent row.
+
+`last_retry_at` is added to `dispatch_jobs` via migration 012 alongside `retry_count`.
 
 Cron is declared in `vercel.json`:
 ```json
-"crons": [{ "path": "/api/cron/reaper", "schedule": "*/2 * * * *" }]
+"crons": [{ "path": "/api/cron/reaper", "schedule": "* * * * *" }]
 ```
+
+(Vercel Cron's minimum granularity is one minute; the 30 s backoff arm fires on the first tick after threshold, so effective worst-case latency is 30 s + cron jitter.)
 
 ### 5.6 Inter-edge auth
 
@@ -318,78 +406,117 @@ The four agents themselves stay functionally identical. The framework wraps them
 
 ### 6.2 Layout
 
-Three tab views switchable via the eyebrow row:
+Two tab views switchable via the eyebrow row:
 
-**Phase view (default).** Five phase cards (01-05). Each card shows the phase name, the agents in that phase, per-agent status (ready / producing / delivered / failed / locked), and a "Run" button per manual-trigger-eligible agent. Free users see Phase 01 agents unlocked, Phase 02-05 paywalled with tier-locked treatment.
+**Phase view (default).** Five phase cards (01-05). Each card shows the phase name and the agents in that phase as a list of rows. Each row shows:
+- Agent name + one-line description (from META.description)
+- Status pill (ready / producing / delivered / failed / locked)
+- Last run timestamp (from `agent_runs.completed_at`)
+- Next run cue (for `scheduled` agents; null in Chapter 2)
+- "Depends on: X, Y" plain-text line under the description, derived from META.inputs.artifact_dependencies (display_name list)
+- "Run" pill, two-button variant on agents with a prior version delivered (see §6.4)
 
-**Run history view.** Reverse-chronological list of every `agent_runs` row for this user. Each row shows agent name, trigger, status, duration, tokens. Click a run to see the input snapshot + error if failed. This is the diagnostic surface.
+**Run history view.** Reverse-chronological list of every `agent_runs` row for this user. Each row shows agent name, trigger, status, duration, tokens, and the `agent_version` at run time. Click a row to open the "What produced this run" panel · the replay view per §5.3.1. This is the diagnostic surface.
 
-**Chain view.** Visualization of dependency DAG. Each agent is a node. Edges are `artifact_dependencies`. Nodes are colored by status. Hovering shows the artifact_id + last-delivered timestamp.
+**Chain view: out of scope for Chapter 2.** Dependencies surface as plain text on the agent rows. Visual DAG is a post-launch enhancement once agent count justifies the visualization.
 
-### 6.3 Components
+### 6.3 Phase 02-05 cards · locked state
+
+Phase 02-05 agents are visible in the Phase view from chapter close forward. Each phase card renders as a tier-locked treatment:
+- Phase 02: card shows the phase name + the three Chapter 4 agents (Logo Direction, Logo Evaluation, Voice Guide) as a list with locked-glyph status pills.
+- Phase 03-05: same treatment, with the agents that are planned per the roadmap doc.
+- **Unlock-criteria copy** under each locked agent row: "Unlocks when Starter tier is active" (or the relevant tier per the agent's `tier_required` in META).
+- The card itself stays visible. No paywall modal on click in Chapter 2 (Chapter 4 wires the actual agents). Clicking a locked Phase 02 agent in Chapter 2 navigates to `/paywall?reason=phase_02` (existing surface from Chapter 1).
+
+This is the user-visible answer to "what comes next." The console is the surface in Chapter 2; the agents themselves ship in Chapter 4. No Phase 02 agent code is written in Chapter 2.
+
+### 6.4 Manual rerun · two-button semantics
+
+When an agent has a prior delivered artifact AND the agent is in `manual` triggers AND the user's tier permits the agent, the Phase view row shows TWO rerun pills:
+- **"Rerun with current QBP"** (default, primary pill) · POSTs `/api/artifacts/<id>/regenerate` with `qbp_source='current'`. The runtime reads the user's live `profiles.qbp` at run time.
+- **"Rerun with original QBP"** (secondary pill) · POSTs `/api/artifacts/<id>/regenerate` with `qbp_source='original'`. The runtime reads the `qbp_snapshot` from the source artifact's `agent_runs` row.
+
+Two semantics, two visible buttons. The user picks. If the source artifact has no `qbp_snapshot` (e.g. legacy artifacts from Chapter 1 before migration 011), the "original" pill is disabled with a tooltip explaining why.
+
+### 6.5 Components
 
 New components added to the library (`js/qb-components.js`):
-- `createAgentCard({ agent, status, lastRunAt, onRun })` · used in Phase view
+- `createAgentRow({ agent, status, lastRunAt, agentVersion, dependencies, onRunCurrent, onRunOriginal })` · used in Phase view. Two-button rerun handled by the component.
 - `createRunRow({ run, onClick })` · used in Run history view
-- `createAgentDAG({ agents, runs })` · used in Chain view (SVG-rendered)
-- `createNotificationBell({ count, onClick })` · top-right of the nav
+- `createReplayPanel({ runDetails })` · the "What produced this run" panel triggered from a run row click
+- `createNotificationBell({ count, onClick })` · top-right of the nav, used on every signed-in surface (see §7)
 
-### 6.4 States
+### 6.6 States
 
-- **Cold:** user hasn't locked foundation. Phase 01 agents show "Complete the foundation to run." Phase 02-05 show "Phase 01 first."
-- **Foundation locked, agents producing:** "Producing" badge with a small spinner. Polling cadence 3 s.
-- **All Phase 01 delivered, free tier:** Phase 01 agents show "Delivered." Phase 02-05 cards show paywall.
-- **All Phase 01 delivered, starter tier:** Phase 02 agents become runnable.
-- **Failed run:** Failed badge on the agent card. "Run again" pill. Clicking shows the error from `agent_runs.error`.
+- **Cold:** user hasn't locked foundation. Phase 01 agents show "Complete the foundation to run." Phase 02-05 cards visible but every row locked.
+- **Foundation locked, agents producing:** "Producing" badge with a small spinner on the relevant rows. Polling cadence 3 s.
+- **All Phase 01 delivered, free tier:** Phase 01 agents show "Delivered." Phase 02-05 cards visible with "Unlocks when Starter tier is active" on every row.
+- **All Phase 01 delivered, starter tier:** Phase 02 cards visible; agents marked as Chapter 4 ship target ("Available soon" status, not runnable in Chapter 2).
+- **Failed run:** Failed badge on the agent row. "Run again" pill. Clicking shows the error from `agent_runs.error`.
+- **Dispatch permanently failed:** Phase view row shows a "Retry manually" CTA (per §5.5 permanent-failure surfacing). One-click starts a fresh manual run.
 
-### 6.5 Empty + error states
+### 6.7 Empty + error states
 
 | state | render |
 | --- | --- |
 | No agents yet (anonymous) | Redirect to `/auth?next=/agents` |
 | Foundation not locked | "Lock your foundation to see your agents at work" + CTA to `/foundation` |
-| Phase X has no agents yet (Phases 04-05 in Chapter 2 reality) | Show the phase card with "Coming soon" status and roadmap |
 | API failure on initial load | Generic error empty state with reload CTA |
+| Run history is empty | "Your run history will populate after your first agent completes" |
 
-### 6.6 Mobile
+### 6.8 Mobile
 
-360 px minimum width. Phase cards stack. Run history rows compress to two-line stacked layout. Chain DAG falls back to a vertical list with arrow indicators on mobile (the SVG is desktop-only).
+360 px minimum width. Phase cards stack. Run history rows compress to two-line stacked layout. The two-button rerun stacks vertically on mobile (current QBP on top, original underneath). Locked-state Phase 02-05 cards collapse to a single-line "Unlocks with Starter" treatment with a tap-to-expand affordance.
 
 ---
 
 ## 7. Notifications
 
-### 7.1 In-app
+Chapter 2 ships the MVP shape. No preferences UI. No mark-all-read button. Persistence in `public.notifications` with RLS.
 
-Bell icon top-right of the Agent Console (and Foundation, Archive, QBP, Account once we add it). Count shows unread notifications. Click opens a popover with the last 20.
+### 7.1 In-app · bell icon
 
-Each notification is a `notifications` row. Read state is `read_at` timestamp.
+Bell icon top-right of every signed-in surface (Foundation, Archive, QBP, Account, Agents, Paywall). One component, one wiring; amortizes the cost from the start.
+
+**Badge.** Shows the unread count (`notifications.read_at IS NULL`). Caps at "9+" visually but the API returns the precise count.
+
+**Click reveals a dropdown** anchored under the bell with the last 10 notifications (any read state). Each row:
+- Eyebrow line: notification kind + agent name (e.g. "Artifact ready · Soul Map Synthesizer")
+- Body line: one-sentence summary (e.g. "Your Soul Map is ready to read.")
+- Timestamp (relative: "2 minutes ago")
+- A click target that navigates to the relevant artifact / run history row / paywall
+
+**Click-to-clear behavior.** Clicking a notification in the dropdown marks that row read AND navigates to its destination. No separate mark-as-read button. No mark-all-read button. The user clears notifications by clicking through them, one at a time. This is deliberate · it forces the user to actually look at each notification before it disappears from the unread count.
+
+**Empty state.** "No notifications yet. Your agents will let you know when work is done."
 
 ### 7.2 Email
 
-Existing artifact-ready + foundation-locked emails (from Chapter 1) continue. New emails for Chapter 2:
+Existing artifact-ready + foundation-locked emails (from Chapter 1) continue. New email for Chapter 2:
 
-| trigger | template | sent to |
-| --- | --- | --- |
-| `chain_ready` | "Your Logo Direction is ready" (when Phase 02 agents chain-fire after Phase 01) | user |
-| `dispatch_failed` | "Something went wrong producing your <artifact>" (after reaper exhausts retries) | user + me@qtmbg.com |
+| trigger | template | sent to | when |
+| --- | --- | --- | --- |
+| `chain_ready` | "Your <Artifact> is ready" (when Phase 02 chain-fires after Phase 01 · Chapter 4 ships the actual chain) | user | on chain-trigger delivery |
+| `dispatch_failed` | "Something went wrong producing your <artifact>" | user + me@qtmbg.com | **only after reaper reaches `failed_permanently`** (retry_count = 3 exhausted). No emails on intermediate retries. |
 
 All new emails are transactional (no `List-Unsubscribe` header per EMAIL_DELIVERABILITY.md).
 
 ### 7.3 Notification trigger logic
 
-- `artifact_ready`: emitted by `/api/agents/run` when an artifact delivers successfully. One per artifact.
-- `chain_ready`: emitted by chain orchestration when a downstream agent auto-fires. The notification is for the upstream agent's success that unlocked the downstream.
-- `dispatch_failed`: emitted by the reaper when retry count exceeds 3.
-- `quarterly_due`: deferred to Chapter 9 (Quarterly Brand Review surface).
+- `artifact_ready`: emitted by `/api/agents/run` when an artifact delivers successfully. One per artifact. Triggers in-app notification AND the Chapter 1 artifact-ready email.
+- `chain_ready`: emitted by chain orchestration when a downstream agent auto-fires after upstream delivery. Triggers in-app notification AND a `chain_ready` email.
+- `dispatch_failed`: emitted by the reaper ONLY when a dispatch reaches `failed_permanently` (retry_count = 3). Triggers in-app notification AND a `dispatch_failed` email. No notifications on retries 1, 2, or 3 in-flight · only the terminal state.
+- `quarterly_due`: deferred to Chapter 9 (Quarterly Brand Review surface). Listed for completeness in the `notifications.kind` enum.
 
 ### 7.4 GET /api/notifications
 
-Returns `{ notifications: [...], unread_count: int }`. Filterable by `?unread=true&limit=20`.
+Returns `{ notifications: [...], unread_count: int }`. Default returns the last 10 (the dropdown's pagination unit). `?limit=N` accepts up to 100 for the eventual full-history view. `?unread=true` filters to unread only.
 
-### 7.5 POST /api/notifications/mark-read
+### 7.5 POST /api/notifications/[id]/read
 
-Body: `{ ids: [uuid] }` or `{ all: true }`. Updates `read_at`.
+Marks a single notification read by setting `read_at = now()`. Click-to-clear in the dropdown calls this endpoint for the clicked row before navigating.
+
+No bulk mark-read endpoint in Chapter 2. The user clears notifications individually by clicking through them.
 
 ---
 
@@ -399,13 +526,14 @@ Body: `{ ids: [uuid] }` or `{ all: true }`. Updates `read_at`.
 | --- | --- | --- |
 | `/agents` | new | sticky-nav app surface |
 | `/api/agents/run` | new | runtime |
-| `/api/agents/registry` | new | GET, returns sanitized META for the registered agents (used by Agent Console) |
+| `/api/agents/registry` | new | GET, returns sanitized META for the registered agents (used by Agent Console). Includes Phase 02-05 entries with locked-status flag. |
+| `/api/agent-runs/[id]/replay` | new | GET, returns the frozen-input replay record per §5.3.1 |
 | `/api/cron/reaper` | new | Vercel Cron-triggered |
-| `/api/notifications` | new | GET list |
-| `/api/notifications/mark-read` | new | POST |
+| `/api/notifications` | new | GET list (default 10, accepts `?limit=N&unread=true`) |
+| `/api/notifications/[id]/read` | new | POST, marks single notification read |
 | `/api/agents/dispatch` | deprecated | redirect to `/api/agents/run` or 410 after migration |
 | `/api/lock-foundation` | refactored | returns 202, uses pre-inserted artifact rows |
-| `/api/artifacts/[id]/regenerate` | refactored | returns 202, same pattern |
+| `/api/artifacts/[id]/regenerate` | refactored | returns 202, accepts `qbp_source` body field |
 
 ---
 
@@ -413,11 +541,11 @@ Body: `{ ids: [uuid] }` or `{ all: true }`. Updates `read_at`.
 
 | surface | change |
 | --- | --- |
-| `/agents` | NEW. Phase / Run history / Chain views. |
+| `/agents` | NEW. Phase view (default) + Run history view. Phase 02-05 cards visible with locked-state treatment. No DAG view in Chapter 2. |
 | `/foundation` | Update polling cadence to 3 s; banner copy stays. Pull tier from /api/qbp (already done). |
-| Top nav | NEW notification bell on every signed-in surface. |
-| `/account` | Add a "Agent activity" link to `/agents`. |
-| Phase 02 stubs | Logo Direction, Logo Evaluation, Voice Guide. Migrated to the contract but kept under feature-flag for Cod's review before user-facing exposure. |
+| Top nav | NEW notification bell on every signed-in surface (Foundation, Archive, QBP, Account, Agents, Paywall). |
+| `/account` | Add an "Agent activity" link to `/agents`. |
+| Phase 02-05 agents | NOT built in Chapter 2. Phase 02 agents (Logo Direction, Logo Evaluation, Voice Guide) ship in Chapter 4. Console renders them as locked-status rows with "Unlocks when Starter tier is active" copy per §6.3. |
 
 ---
 
@@ -431,6 +559,15 @@ Body: `{ ids: [uuid] }` or `{ all: true }`. Updates `read_at`.
 - **A Phase 02 chain fires for a free-tier user.** `canRun(tier, agent_slug)` short-circuits the chain. No artifact row created. No notification sent.
 - **Stripe downgrade mid-Phase-02-dispatch.** Tier flips to free. The Phase 02 artifact row remains in DB but the read endpoint 402s under the tier-gating module.
 - **Agent META version bump between runs.** Old runs keep their `agent_version` value. The Run history view shows the version at run time. Manual re-run uses current version.
+- **User clicks "Rerun with original QBP" on a Chapter 1 legacy artifact.** That artifact's `agent_runs` row has `qbp_snapshot = null` (migration backfill default). The Phase view's secondary pill is disabled with a tooltip: "No snapshot available for this version. Original QBP rerun unsupported."
+- **User clicks "Rerun with original QBP" on a v2 regenerate of an original.** The runtime reads the v1 artifact's `agent_runs.qbp_snapshot` (the version BEFORE the user rerendered with current QBP). This preserves the original lock-time inputs across the version chain.
+- **Reaper retry triggers same-second as user's manual rerun.** Both POSTs hit `/api/agents/run` concurrently. The first to write the `agent_runs` row wins; the second hits the in-flight check (queued or generating artifact row already exists) and 409s. The reaper backs off on 409 (treats it as "someone else is handling it").
+- **Permanent failure email fires twice.** Reaper increments retry_count past 3 and sets `failed_permanently` once. The status check on subsequent reaper ticks short-circuits before re-emitting the email (only the transition from `producing` → `failed_permanently` emits; idempotent terminal state).
+- **User clicks an unread notification mid-polling.** `POST /api/notifications/[id]/read` updates `read_at`. The next polling tick refreshes the badge count downward by one.
+- **Notification dropdown opened with 0 unread.** Renders the last 10 read notifications. Badge hidden when count = 0.
+- **Bell on signal-scan (anonymous user).** Bell does not render on anonymous surfaces. Signed-in only.
+- **Phase 02 card click on free tier.** Navigates to `/paywall?reason=phase_02`. No agent dispatch.
+- **File input declared but unavailable in Chapter 2.** Agent META declares `files[]` with optional entries. Runtime treats files as empty array (Chapter 3 wires the asset layer). Agent run completes with empty files; no `missing_inputs` because the entries are marked optional.
 
 ---
 
@@ -445,63 +582,99 @@ Chapter 2 closes when:
 - [ ] Inter-edge HMAC auth verified by code-read and unit-style check
 - [ ] Reaper runs every 2 minutes via Vercel Cron; can be triggered manually via a dev endpoint
 
-### 11.2 Lock + regenerate
+### 11.2 Pre-implementation gate (§2.5)
+- [ ] PR #59 stuck-dispatch failure reproduced in a controlled environment
+- [ ] Root cause identified (with log evidence) OR hypothesis explicitly rejected and re-evaluated
+- [ ] Reproduction report committed to `chapter-02/verification/`
+- [ ] No runtime code merges to main before this gate is cleared
+
+### 11.3 Lock + regenerate
 - [ ] Lock returns 202 in <1 s (single-digit, not 1.0-1.6 s as PR #59)
 - [ ] **10 of 10 fresh-user locks complete successfully end-to-end (zero stuck dispatches)**
 - [ ] 10 of 10 same-family concurrent regenerates succeed
 - [ ] No 504s on prod across 10 test runs
 - [ ] Foundation polling detects all artifact transitions within 6 s of state change
 - [ ] User-facing toast: "Foundation locked. Producing your kit." then per-artifact toast as each delivers. No more failure lie.
+- [ ] Regenerate accepts `qbp_source='current'` AND `qbp_source='original'`; uses correct QBP per request
 
-### 11.3 Chain orchestration
+### 11.4 Chain orchestration
 - [ ] Locking foundation as starter user fires all 4 Phase 01 agents
-- [ ] When all 4 Phase 01 deliver, Phase 02 chain-eligible agents auto-fire
+- [ ] When all 4 Phase 01 deliver, the framework's chain orchestration is wired and verifiable (Chapter 4 brings the actual Phase 02 agents that complete the loop)
 - [ ] Free user's chain is short-circuited at the tier gate (no Phase 02 work)
-- [ ] DAG view renders the dependency graph correctly
+- [ ] Dependencies surface as plain text on Phase view rows. No DAG visualization in Chapter 2.
 
-### 11.4 Agent Console
+### 11.5 Reaper + permanent failure
+- [ ] Reaper backoff schedule (30 s, 2 min, 5 min) verified in a controlled test (insert a `producing` row with stuck child artifacts; observe retry cadence)
+- [ ] `failed_permanently` is the terminal state after retry_count = 3
+- [ ] Single `dispatch_failed` notification emitted on permanent failure; no notifications on intermediate retries
+- [ ] Agent Console surfaces a "Retry manually" CTA on permanently-failed rows
+
+### 11.6 Agent Console
 - [ ] `/agents` renders at 360, 768, 1440 viewports
-- [ ] Phase view shows agent state correctly across all five buckets
-- [ ] Run history view lists every run with click-through to error detail
+- [ ] Phase view shows agent state correctly across all five buckets (cold, producing, delivered free, delivered starter, failed)
+- [ ] Phase 02-05 cards visible with locked-state treatment; "Unlocks when Starter tier is active" copy under each row
+- [ ] Click on a locked Phase 02 agent navigates to `/paywall?reason=phase_02`
+- [ ] Run history view lists every run with click-through to the replay panel (per §5.3.1)
+- [ ] Run row shows `agent_version` from `agent_runs`
+- [ ] Two-button rerun renders on agents with prior delivered artifact: "Rerun with current QBP" (primary) + "Rerun with original QBP" (secondary)
+- [ ] Secondary pill disabled with tooltip when source artifact has null `qbp_snapshot` (Chapter 1 legacy)
 - [ ] Manual "Run" pill triggers `/api/agents/run` with trigger=manual
 - [ ] Reduced-motion respected
 - [ ] All design system v3.4 components used (no inline styles)
 
-### 11.5 Notifications
-- [ ] Bell icon renders on every signed-in surface
-- [ ] Unread count updates in real-time during polling
-- [ ] Clicking the bell shows the last 20 notifications
-- [ ] Marking-read clears the count
-- [ ] In-app + email both fire for `artifact_ready`, `chain_ready`, `dispatch_failed`
+### 11.7 Replay
+- [ ] Every new `agent_runs` row writes `qbp_snapshot`, `file_refs`, `runtime_args` at run start
+- [ ] `/api/agent-runs/[id]/replay` returns the frozen inputs for any run the caller owns
+- [ ] Run history click opens the replay panel with full input detail
+- [ ] Artifact reading surface has a "What produced this version" link to the replay panel
+
+### 11.8 Notifications (MVP shape)
+- [ ] Bell icon renders on every signed-in surface (Foundation, Archive, QBP, Account, Agents, Paywall)
+- [ ] Badge count shows unread; caps visually at "9+"; API returns precise count
+- [ ] Click bell reveals dropdown with last 10 notifications (any read state)
+- [ ] Click notification row marks it read AND navigates to destination (click-to-clear)
+- [ ] No mark-all-read button (deliberate)
+- [ ] No notification preferences UI (deliberate)
+- [ ] `dispatch_failed` email fires ONLY at `failed_permanently`; no emails on intermediate retries
 - [ ] All new transactional emails ship without `List-Unsubscribe` (per EMAIL_DELIVERABILITY.md)
 
-### 11.6 Database
+### 11.9 Database
 - [ ] Migrations 011, 012, 013 applied to prod
 - [ ] RLS verified on every new table
 - [ ] `agent_runs` preserves all existing `artifact_runs` rows (renamed, columns added)
+- [ ] `dispatch_jobs.agent_version`, `dispatch_jobs.retry_count`, `dispatch_jobs.last_retry_at` columns present
+- [ ] `dispatch_jobs.status` CHECK includes `failed_permanently`
 - [ ] No legacy `artifact_runs` references remain in code
 
-### 11.7 Carry-overs from Chapter 1
-- [ ] 504 UX lie at lock: gone. 10 of 10 lock runs return 202 in <1 s.
-- [ ] Concurrent regenerate timeout: gone. 10 of 10 same-family regenerates succeed.
-- [ ] `?upgrade=success` browser auth-gate fixed (see §11.8)
+### 11.10 Carry-overs from Chapter 1
+- [ ] 504 UX lie at lock: gone (covered by §11.3).
+- [ ] Concurrent regenerate timeout: gone (covered by §11.3).
+- [ ] `?upgrade=success` browser auth-gate fixed (see §11.11).
 
-### 11.8 Foundation `?upgrade=success` bug
+### 11.11 Foundation `?upgrade=success` bug
 - [ ] Foundation page recognizes `?upgrade=success`. If the user's localStorage session is stale or absent, show a "Your upgrade succeeded. Sign in to see your paid content." banner with sign-in CTA. Do not silently bounce to signal-scan.
 
-### 11.9 Sign-off
-Nizzar runs through the free-tier path, hits the paywall, upgrades, sees Phase 01 deliver in <60 s, sees Phase 02 chain-fire, sees notifications land, sees the Agent Console show the full workforce in one glance. Only then is Chapter 2 closed.
+### 11.12 Agent contract conformance (§3)
+- [ ] All four Phase 01 synthesizers declare `inputs.files` (empty array; forward-compat for Chapter 3)
+- [ ] All four agents declare `triggers` explicitly
+- [ ] `META.version` integer set per agent; bumps tracked when prompt or schema changes
+- [ ] Runtime accepts `runtime_args.qbp_source` of `'current'` or `'original'`
+
+### 11.13 Sign-off
+Nizzar runs through the free-tier path, hits the paywall, upgrades, sees Phase 01 deliver in <60 s, sees notifications land in the bell, sees the Agent Console show the full workforce in one glance (Phase 02-05 visible as locked rows with "Unlocks when Starter tier is active" copy). Reruns Soul Map with current QBP, reruns again with original QBP, confirms different inputs produce different outputs. Triggers a permanent dispatch failure (e.g. by killing the Edge function mid-run via a manual deploy), observes the reaper email after retry 3, clicks "Retry manually" from the Agent Console, sees recovery. Only then is Chapter 2 closed.
 
 ---
 
 ## 12. Known debt entering Chapter 3
 
-- Reaper retry strategy is fixed (3 tries, 2-minute interval). No exponential backoff. Chapter 3 hardens.
-- DAG view is desktop-only SVG. Mobile fallback is a vertical list. Could be richer.
-- Inter-edge HMAC secret is a single shared `INTER_EDGE_SECRET`. No per-caller credentials. Acceptable for our size; not Web-scale.
-- Run history view shows all runs forever. Pagination + cleanup policy deferred.
-- Phase 02-05 agent contracts conform but their actual logic + prompts are scaffolded. Each agent's prompt + schema is Chapter-specific (Phase 02 in Chapter 3, etc).
-- No retry from the user-facing surfaces. If a run fails, the user clicks "Run again" manually. Chapter 3 could add policy.
+- **DAG view is out of scope for Chapter 2.** Dependencies surface as plain text on each agent row. Post-launch enhancement once the agent count + chain depth justify the visualization.
+- **Reaper retry curve is hardcoded** (30 s, 2 min, 5 min, then `failed_permanently`). No per-agent override. Chapter 3 or later hardens if specific agents warrant a different policy.
+- **Inter-edge HMAC secret is a single shared `INTER_EDGE_SECRET`.** No per-caller credentials. Acceptable for our size; not Web-scale.
+- **Run history view shows all runs forever.** No pagination, no archival, no cleanup policy. Chapter 3+ when history depth becomes a Postgres performance concern.
+- **Phase 02-05 agents not built.** Console shows them as locked rows with "Unlocks when Starter tier is active" copy. Phase 02 agents (Logo Direction, Logo Evaluation, Voice Guide) ship in Chapter 4.
+- **Asset layer (file uploads) not built.** Agent contract declares `inputs.files` for forward-compat with Chapter 3. No Chapter 2 agent requires non-optional files. Chapter 3 builds upload + storage + asset records.
+- **No retry from the user-facing surfaces beyond the manual CTA.** If a run fails for a recoverable reason (rate limit, transient API error), there's no automatic retry policy. Chapter 3 or 4 can add per-agent retry config.
+- **Notification dropdown is read-only display.** No full-history view, no filtering by kind, no archive. Last 10 only. Chapter 3+ when the user has enough history to warrant a full page.
 
 ---
 
@@ -509,32 +682,52 @@ Nizzar runs through the free-tier path, hits the paywall, upgrades, sees Phase 0
 
 Cod-recommended order. Each step is one PR + one verification report PR.
 
-1. **Migrations 011 + 012 + 013** (data model + RLS). Apply to prod via Supabase MCP.
-2. **`agents/registry.js` + contract scaffold.** Move four Phase 01 agents to the new shape. NO behavior change yet.
-3. **`/api/agents/run` + inter-edge HMAC.** New endpoint, but lock + regenerate still call the old `/api/agents/dispatch` for now.
-4. **Lock endpoint refactor.** Pre-insert artifact rows, fire `waitUntil` child fetches to `/api/agents/run`, return 202. 10-run verification.
-5. **Regenerate endpoint refactor.** Same pattern. 10-run concurrent verification.
-6. **Reaper cron.** Verify with intentional fetch-cancellation: insert a `producing` dispatch_jobs row with no artifact movement, watch the reaper pick it up.
-7. **Chain orchestration.** Wire Phase 01 → Phase 02 chain triggers. Verify free user short-circuit + starter user follow-through.
-8. **`/agents` surface.** Phase view + Run history view.
-9. **Chain view (DAG).** Desktop-only SVG.
-10. **Notifications.** Migration 013 already applied; build the bell, the popover, the API, the emails.
-11. **Foundation `?upgrade=success` banner.** Small UX fix in foundation.html.
-12. **Phase 02 agent scaffolding.** Logo Direction, Logo Evaluation, Voice Guide migrated to the contract but feature-flagged.
-13. **End-to-end QA pass.** Same shape as step 17 in Chapter 1.
-14. **Final sign-off + smoke + CHAPTER_02_COMPLETION.md.**
+1. **PR #59 reproduction + root cause confirmation (§2.5 gate).** Controlled test environment, 50-run failure trace, identified mechanism, explicit confirmation the Option A pattern addresses that mechanism. Reproduction report committed under `chapter-02/verification/`. No runtime code moves until this is cleared.
+2. **Migrations 011 + 012 + 013** (data model + RLS). Apply to prod via Supabase MCP. Includes `agent_runs` rename + new columns, `dispatch_jobs` extension (`agent_version`, `retry_count`, `last_retry_at`, `failed_permanently` status), `notifications` table.
+3. **`agents/registry.js` + contract scaffold.** Move four Phase 01 agents to the contract shape from §3.5. Declare `inputs.files` (empty), `triggers`, `META.version`. NO behavior change yet.
+4. **`/api/agents/run` + inter-edge HMAC.** New endpoint with the contract runtime per §5.2. Writes `qbp_snapshot`, `file_refs`, `runtime_args`, `agent_version` on every `agent_runs` row. Accepts `runtime_args.qbp_source`. Lock + regenerate still call the old `/api/agents/dispatch` for now.
+5. **`/api/agent-runs/[id]/replay` endpoint (§5.3.1).** GET only. RLS-scoped to caller. Used by the Console replay panel.
+6. **Lock endpoint refactor (Option A pattern).** Pre-insert artifact rows with `status='queued'` and `dispatch_id` BEFORE firing child fetches. Use `context.waitUntil()` for the child fetches to `/api/agents/run`. Return 202. **10-run prod verification: zero stuck dispatches, zero 504s.** This is the §11.9 acceptance gate.
+7. **Regenerate endpoint refactor.** Same pattern. Accepts `qbp_source='current'` (default) or `'original'`. 10-run concurrent regenerate verification.
+8. **Reaper cron.** Wire `/api/cron/reaper` with the 30 s / 2 min / 5 min backoff schedule. Test: induce stuck dispatch (manual artifact in `queued` state with parent `dispatch_jobs` in `producing`), watch the reaper retry, exhaust at retry 3, observe `failed_permanently` + email + notification.
+9. **Chain orchestration.** Wire the chain-trigger logic per §5.4. Verify tier-gate short-circuit for free users. Chapter 2 has no Phase 02 agents to chain INTO, but the framework is testable by adding a synthetic test agent in a feature-flagged dev module.
+10. **`/agents` surface · Phase view.** Phase 01 agents with state, Phase 02-05 as locked rows with unlock copy, two-button rerun for prior-delivered agents.
+11. **`/agents` surface · Run history view + replay panel.** List of `agent_runs` with click-through to the replay panel. Replay panel surfaces frozen inputs from `qbp_snapshot`, `file_refs`, `runtime_args`, `agent_version`.
+12. **Notifications.** Build the bell component, wire it to every signed-in surface, build the dropdown with click-to-clear, ship the `dispatch_failed` and `chain_ready` email templates. Migration 013 already applied in step 2.
+13. **Foundation `?upgrade=success` banner.** Small UX fix in foundation.html (§11.11).
+14. **`api/agents/dispatch` deprecation.** Route to `/api/agents/run` or 410. Lock + regenerate already migrated.
+15. **End-to-end QA pass.** Same shape as Chapter 1 step 17. Fresh user, full path, all gates.
+16. **Final sign-off + smoke + CHAPTER_02_COMPLETION.md.**
 
-Each step starts only when the prior is merged AND verified.
+Each step starts only when the prior is merged AND verified. **Step 1 is a hard gate on every subsequent step.**
 
 ---
 
-## 14. Open questions for Nizzar's review
+## 14. Open questions · ANSWERED in spec review
 
-1. **Architectural decision (§2).** Option A or Option B? Cod recommends A.
-2. **Phase 02 agent visibility.** Build Phase 02 agents to feature-flag in Chapter 2, or keep them as scaffolds and ship the user-facing Phase 02 surfaces in Chapter 3? Cod recommends scaffold-only in Chapter 2.
-3. **DAG view scope.** Worth the build cost in Chapter 2, or defer to Chapter 4 once the agent count justifies the visualization? Cod recommends defer if budget pressure.
-4. **Notification bell scope.** Build only on `/agents` in Chapter 2, or roll out to all signed-in surfaces? Cod recommends all-surface from the start to amortize the cost.
-5. **Reaper retry count.** 3 tries reasonable? Or aggressive backoff (1 → 5 → 25 minutes)? Cod recommends fixed 3 / 2-minute for Chapter 2; tune in Chapter 3.
+All five questions resolved in Nizzar's PR #66 review. Recorded here so the resolution is traceable.
+
+1. **Architectural decision (§2).** **ANSWERED: Option A confirmed.** Cod's five reasoning points hold. Non-negotiable addition: the §2.5 pre-implementation gate. No production code lands on Option A until the PR #59 stuck-dispatch failure mode is reproduced, the root cause is confirmed, and the new pattern is explicitly verified to address it. Build step 1 is the gate.
+
+2. **Phase 02 agent visibility.** **ANSWERED: Phase 02 cards remain visible in the Agent Console as locked rows with explicit unlock copy ("Unlocks when Starter tier is active").** No Phase 02 agents are built in Chapter 2. The console is the surface; the framework is the substrate. Phase 02 agents ship in Chapter 4. See §6.3.
+
+3. **DAG view scope.** **ANSWERED: out of scope for Chapter 2.** Agent Console shows agents as a list with status, last run, next run, manual rerun, plain-text dependencies ("Depends on: Soul Map synthesis"). Visual DAG view is a post-launch enhancement. See §6.2 + §12.
+
+4. **Notification bell scope.** **ANSWERED: in scope, MVP shape only.** Bell icon in every signed-in surface, badge count for unread, click reveals dropdown with last 10 notifications. No preferences UI. No mark-all-read button (each notification clears on click). Persisted in `public.notifications` with RLS. See §7.
+
+5. **Reaper retry count.** **ANSWERED: 3 retries with exponential backoff (30 s, 2 min, 5 min).** After retry 3, `dispatch_jobs.status = 'failed_permanently'` and the Agent Console surfaces a manual retry CTA. Email user only on permanent failure, not on intermediate retries. See §5.5 + §7.
+
+## 15. Additional spec requirements · integrated from PR #66 review
+
+Beyond the five §14 answers, Nizzar's review added four requirements. All integrated into the spec:
+
+1. **Agent contract `inputs.files` declared as forward-compat for Chapter 3.** Typed array of `{ type, source, optional }`. Chapter 2 agents declare empty arrays; the asset layer that fulfills them ships in Chapter 3. See §3.2 + §3.5.
+
+2. **Run history supports replay.** Every `agent_runs` row writes `qbp_snapshot`, `file_refs`, `runtime_args`, `agent_version` at run start. Replay surfaces both in the Agent Console run-history view and on the artifact reading surface ("What produced this version" link). See §4.1 + §5.3.1 + §6.5 + §11.7.
+
+3. **`agent_version` on every `dispatch_jobs` row.** When a synthesizer's prompt or schema bumps, downstream queries can distinguish artifacts produced by v1 vs v2. The per-row precision lives on `agent_runs.agent_version`. See §4.2.
+
+4. **Manual rerun two-button semantics.** "Rerun with current QBP" (default, primary) vs "Rerun with original QBP" (secondary). Different `qbp_source` runtime arg. Original-pill disabled with tooltip for Chapter 1 legacy artifacts. See §5.3 + §6.4.
 
 ---
 
