@@ -13,14 +13,10 @@
 // working without behavior change · this is the step 3 acceptance criterion
 // "NO behavior change yet" from §13 build sequence.
 //
-// FINDING surfaced in the step-3 verification report: Soul Map's behavior
-// on missing qbp_fields is graceful degradation (placeholder text), not
-// strict failure. Spec §3.2 implies strict failure ("agent fails with
-// missing_inputs and does not call Claude"). This module preserves the
-// graceful behavior · qbp_fields is declared as [] so the runtime never
-// blocks on missing inputs. The spec gap is documented in the verification
-// report for the user to amend §3.2 (e.g. by adopting the files{} pattern
-// of `{name, optional}` for qbp_fields).
+// Spec amendment (step 3 amendment PR): §3.2 now models qbp_fields as
+// typed entries `{ field, required }`. Soul Map declares every field as
+// required:false so the runtime hands sparse QBPs through to the agent,
+// which renders "Not yet captured" placeholders rather than refusing.
 
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 4000;
@@ -47,11 +43,22 @@ export const META = {
   artifact_type: 'soul_map_synthesizer',
   version: 1,
   inputs: {
-    // FINDING: Soul Map degrades gracefully on missing fields rather
-    // than failing with missing_inputs. Declared as [] until §3.2 is
-    // amended to support optional qbp_fields. See step-3 verification
-    // report §5.1.
-    qbp_fields: [],
+    // Per §3.2 (amended): qbp_fields entries are { field, required }.
+    // Soul Map degrades gracefully on missing fields by rendering
+    // "Not yet captured" placeholders, so every field is required:false.
+    // The eight fields below mirror SOUL_MAP_FIELDS; Soul Map reads all
+    // eight, the runtime hands them through, the agent function decides
+    // how to handle absences.
+    qbp_fields: [
+      { field: 'brandName',    required: false },
+      { field: 'brandEssence', required: false },
+      { field: 'spark',        required: false },
+      { field: 'archetype',    required: false },
+      { field: 'manifesto',    required: false },
+      { field: 'antiBrand',    required: false },
+      { field: 'paradox',      required: false },
+      { field: 'alwaysNever',  required: false },
+    ],
     artifact_dependencies: [],
     // Forward-compat for Chapter 3 asset layer. Chapter 2 agents take
     // no files; the runtime accepts the declaration as documentation.

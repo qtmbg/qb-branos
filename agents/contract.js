@@ -19,6 +19,8 @@ export const CANONICAL_FILE_SOURCES = ['user-upload', 'agent-output'];
 // the spec §11.12.1 enum together.
 export const CANONICAL_ERROR_CODES = [
   'missing_inputs',
+  'qbp_field_missing',
+  'missing_dependency',
   'model_call_failed',
   'schema_validation_failed',
   'edge_timeout',
@@ -88,8 +90,17 @@ export function validateAgentMeta(meta) {
   } else {
     const i = meta.inputs;
 
-    if (!isStringArray(i.qbp_fields)) {
-      err('inputs.qbp_fields', 'must be an array of strings (may be empty)');
+    // Per §3.2 (amended): qbp_fields is an array of { field, required }.
+    // The string-array form is no longer accepted.
+    if (!Array.isArray(i.qbp_fields)) {
+      err('inputs.qbp_fields', 'must be an array (may be empty)');
+    } else {
+      i.qbp_fields.forEach((f, idx) => {
+        const p = `inputs.qbp_fields[${idx}]`;
+        if (!isPlainObject(f))            err(p, 'each qbp_fields entry must be an object { field, required }');
+        if (!isNonEmptyString(f?.field))  err(`${p}.field`, 'must be a non-empty string');
+        if (typeof f?.required !== 'boolean') err(`${p}.required`, 'must be a boolean');
+      });
     }
 
     if (!isStringArray(i.artifact_dependencies)) {
