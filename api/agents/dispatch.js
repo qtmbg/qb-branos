@@ -31,6 +31,9 @@ import { runSensescapeSynthesizer } from './sensescape-synthesizer.js';
 import { runVisualDnaSynthesizer } from './visual-dna-synthesizer.js';
 import { runWarTableSynthesizer } from './war-table-synthesizer.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
+import { sendEmail, renderTemplate, EMAIL_TEMPLATES, getAgentEmailVars } from '../_lib/email.js';
+
+const ARTIFACT_URL_BASE = 'https://app.quantumbranding.ai/artifact';
 
 export const config = { runtime: 'edge' };
 
@@ -221,84 +224,26 @@ async function closeArtifactRun({ supaUrl, serviceKey, runId, patch }) {
   }
 }
 
-function readyEmailHtml({ firstName }) {
-  const safeName = String(firstName || '').replace(/[<>&"]/g, '');
-  const greeting = safeName ? `Hi ${safeName},` : 'Hi there,';
-  return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Your Soul Map synthesis is ready</title></head>
-<body style="margin:0;padding:0;background:#FBF5E6;color:#2D1521;font-family:'Inter','Helvetica Neue',Arial,sans-serif;">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#FBF5E6;padding:40px 16px;">
-  <tr><td align="center">
-    <table role="presentation" width="540" cellspacing="0" cellpadding="0" border="0" style="max-width:540px;width:100%;background:#F2EBD3;border:2px solid #2D1521;border-radius:18px;">
-      <tr><td style="padding:32px 32px 8px;">
-        <p style="font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#B58840;margin:0 0 12px;font-weight:700;">Artifact ready</p>
-        <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.15;color:#2D1521;margin:0 0 24px;letter-spacing:-0.01em;">Your Soul Map synthesis is <em style="color:#B58840;">ready</em>.</h1>
-      </td></tr>
-      <tr><td style="padding:0 32px 32px;font-size:16px;line-height:1.6;color:#2D1521;">
-        <p style="margin:0 0 16px;">${greeting}</p>
-        <p style="margin:0 0 16px;">Your Soul Map synthesis is complete. It is waiting for you in your dashboard.</p>
-        <p style="margin:0 0 24px;">This is the first of your brand artifacts. The others are being produced now.</p>
-        <p style="margin:0 0 32px;">
-          <a href="https://quantumbranding.ai/foundation" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">View it</a>
-        </p>
-        <p style="margin:0;">Nizzar</p>
-      </td></tr>
-      <tr><td style="padding:16px 32px 28px;border-top:1px solid rgba(45,21,33,0.10);font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.08em;color:rgba(45,21,33,0.50);">
-        Quantum Branding · quantumbranding.ai
-      </td></tr>
-    </table>
-  </td></tr>
-</table>
-</body>
-</html>`;
-}
-
-function readyEmailText({ firstName }) {
-  const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
-  return `${greeting}
-
-Your Soul Map synthesis is complete. It is waiting for you in your dashboard.
-
-This is the first of your brand artifacts. The others are being produced now.
-
-View it: https://quantumbranding.ai/foundation
-
-Nizzar
-
-Quantum Branding
-quantumbranding.ai`;
-}
-
-async function sendReadyEmail({ resendKey, email, firstName }) {
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'Quantum Branding <auth@quantumbranding.ai>',
-        to: [email],
-        reply_to: 'me@qtmbg.com',
-        subject: 'Your Soul Map synthesis is ready',
-        html: readyEmailHtml({ firstName }),
-        text: readyEmailText({ firstName }),
-        headers: {
-          'List-Unsubscribe': '<mailto:me@qtmbg.com?subject=unsubscribe>',
-          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-          'X-Entity-Ref-ID': 'qb-brandos-artifact-ready',
-        },
-      }),
-    });
-    if (!res.ok) {
-      const t = await res.text().catch(() => '');
-      console.error('[dispatch] resend failed', res.status, t.slice(0, 300));
-    }
-  } catch (e) {
-    console.error('[dispatch] resend threw', e && e.message);
+async function sendReadyEmail({ email, firstName, agentSlug, artifactId }) {
+  const agentVars = getAgentEmailVars(agentSlug);
+  if (!agentVars) return { ok: false, error: `no email vars for ${agentSlug}` };
+  const vars = {
+    ...agentVars,
+    first_name: firstName || 'there',
+    artifact_url: `${ARTIFACT_URL_BASE}?id=${encodeURIComponent(artifactId)}`,
+  };
+  const tpl = EMAIL_TEMPLATES.ARTIFACT_READY;
+  const result = await sendEmail({
+    to: email,
+    subject: tpl.subjectFor(vars),
+    html: renderTemplate(tpl.html, vars),
+    text: renderTemplate(tpl.text, vars),
+    refId: tpl.refId,
+  });
+  if (!result.ok) {
+    console.error('[dispatch] artifact-ready email failed', result.status || '', String(result.error || '').slice(0, 300));
   }
+  return result;
 }
 
 export default async function handler(req) {
@@ -439,20 +384,11 @@ export default async function handler(req) {
     supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, artifactId: artifact.id,
     patch: { status: 'delivered', error: null, content: validation.content },
   });
-  await closeArtifactRun({
-    supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, runId,
-    patch: {
-      status: 'succeeded',
-      error: (result.missing && result.missing.length)
-        ? JSON.stringify({ missing_inputs: result.missing }).slice(0, 1000)
-        : null,
-      duration_ms,
-      tokens_in: result.meta?.tokens_in ?? null,
-      tokens_out: result.meta?.tokens_out ?? null,
-    },
-  });
 
-  // Step 6: artifact-ready email. Fire-and-forget.
+  // Step 6: artifact-ready email. Email failure NEVER blocks delivery.
+  // The audit record (success or failure) is folded into artifact_runs.error
+  // alongside any missing_inputs payload so we can debug bounces from logs.
+  let emailAudit = null;
   if (RESEND_API_KEY) {
     try {
       const profRes = await fetch(
@@ -462,16 +398,41 @@ export default async function handler(req) {
       const profiles = profRes.ok ? await profRes.json().catch(() => []) : [];
       const profile = profiles?.[0];
       if (profile?.email) {
-        await sendReadyEmail({
-          resendKey: RESEND_API_KEY,
+        const emailRes = await sendReadyEmail({
           email: profile.email,
           firstName: profile.first_name || '',
+          agentSlug: registry.slug,
+          artifactId: artifact.id,
         });
+        emailAudit = emailRes.ok
+          ? { ok: true, id: emailRes.id }
+          : { ok: false, error: String(emailRes.error || '').slice(0, 200) };
+      } else {
+        emailAudit = { ok: false, error: 'no_email_on_profile' };
       }
     } catch (e) {
+      emailAudit = { ok: false, error: (e && e.message || 'threw').slice(0, 200) };
       console.error('[dispatch] ready-email lookup threw', e && e.message);
     }
+  } else {
+    emailAudit = { ok: false, error: 'RESEND_API_KEY missing' };
   }
+
+  const runAuditPayload = {};
+  if (result.missing && result.missing.length) runAuditPayload.missing_inputs = result.missing;
+  if (emailAudit) runAuditPayload.email = emailAudit;
+  await closeArtifactRun({
+    supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, runId,
+    patch: {
+      status: 'succeeded',
+      error: Object.keys(runAuditPayload).length
+        ? JSON.stringify(runAuditPayload).slice(0, 1000)
+        : null,
+      duration_ms,
+      tokens_in: result.meta?.tokens_in ?? null,
+      tokens_out: result.meta?.tokens_out ?? null,
+    },
+  });
 
   return json(200, {
     ok: true,

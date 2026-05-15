@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB Email Preview</title>
+<style>
+  body {
+    margin: 0; padding: 24px;
+    background: #2D1521; color: #FBF5E6;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+  }
+  h1 { font-family: Georgia, serif; font-size: 22px; margin: 0 0 16px; letter-spacing: 0.04em; }
+  .controls { margin-bottom: 24px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  select, button {
+    font: inherit;
+    background: #FBF5E6; color: #2D1521;
+    border: 2px solid #FBF5E6; border-radius: 999px;
+    padding: 6px 14px; cursor: pointer;
+  }
+  .pane-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 1024px) { .pane-row { grid-template-columns: 1fr; } }
+  .pane {
+    background: #FBF5E6; color: #2D1521;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .pane h2 {
+    font-family: Georgia, serif; font-size: 16px;
+    margin: 0; padding: 12px 16px;
+    background: #2D1521; color: #FBF5E6;
+    letter-spacing: 0.04em;
+  }
+  .pane .subject {
+    padding: 8px 16px;
+    background: #ECDDB8; color: #2D1521;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid #2D1521;
+  }
+  .pane iframe {
+    border: 0; width: 100%; height: 760px; background: #FBF5E6;
+    display: block;
+  }
+  .pane pre {
+    margin: 0; padding: 16px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    background: #F2EBD3; color: #2D1521;
+    white-space: pre-wrap; word-break: break-word;
+    max-height: 320px; overflow: auto;
+    border-top: 1px solid #2D1521;
+  }
+</style>
+</head>
+<body>
+<h1>QB email preview · Step 14</h1>
+<div class="controls">
+  <label>Artifact-ready agent
+    <select id="agent">
+      <option value="soul_map_synthesizer" selected>Soul Map</option>
+      <option value="sensescape_synthesizer">Sensescape</option>
+      <option value="visual_dna_synthesizer">Visual DNA</option>
+      <option value="war_table_synthesizer">War Table</option>
+    </select>
+  </label>
+  <label>First name
+    <select id="name">
+      <option value="">(blank — uses "there")</option>
+      <option value="Nizzar" selected>Nizzar</option>
+      <option value="Margot">Margot</option>
+    </select>
+  </label>
+</div>
+
+<div class="pane-row">
+  <section class="pane">
+    <h2>Foundation locked</h2>
+    <div class="subject" id="subject-lock">Subject: …</div>
+    <iframe id="iframe-lock" title="foundation-locked"></iframe>
+    <pre id="text-lock">…</pre>
+  </section>
+  <section class="pane">
+    <h2>Artifact ready</h2>
+    <div class="subject" id="subject-art">Subject: …</div>
+    <iframe id="iframe-art" title="artifact-ready"></iframe>
+    <pre id="text-art">…</pre>
+  </section>
+</div>
+
+<script type="module">
+const AGENT_EMAIL_VARS = {
+  soul_map_synthesizer: {
+    artifact_title: 'Soul Map',
+    artifact_name: 'Soul Map',
+    agent_eyebrow: '01 DISCOVERY · SOUL MAP SYNTHESIZER',
+    paragraph_one: 'Your Soul Map names what your brand stands for at its center. The essence, the manifesto, the paradox that gives it life.',
+    preheader: 'The center of your brand has a name. Read it.',
+  },
+  sensescape_synthesizer: {
+    artifact_title: 'Sensory World',
+    artifact_name: 'Sensory World',
+    agent_eyebrow: '01 DISCOVERY · SENSESCAPE SYNTHESIZER',
+    paragraph_one: 'Your Sensory World captures how your brand feels across all five senses. What it sounds, looks, tastes, smells, and touches like.',
+    preheader: 'Your brand has a body. This is what it feels like.',
+  },
+  visual_dna_synthesizer: {
+    artifact_title: 'Visual Language',
+    artifact_name: 'Visual Language',
+    agent_eyebrow: '01 DISCOVERY · VISUAL DNA SYNTHESIZER',
+    paragraph_one: 'Your Visual Language defines how your brand looks. The color system, the typography, the visual posture.',
+    preheader: 'How your brand sees itself. Now ready to read.',
+  },
+  war_table_synthesizer: {
+    artifact_title: 'Strategic Position',
+    artifact_name: 'Strategic Position',
+    agent_eyebrow: '01 DISCOVERY · WAR TABLE SYNTHESIZER',
+    paragraph_one: 'Your Strategic Position maps the field your brand operates in. The competitors, the paradox, the three priorities ahead.',
+    preheader: 'The field, mapped. Three priorities, named.',
+  },
+};
+const FOUNDATION_URL = 'https://app.quantumbranding.ai/foundation';
+const ARTIFACT_URL_BASE = 'https://app.quantumbranding.ai/artifact';
+const SAMPLE_ID = '20000000-0000-0000-0000-000000000001';
+
+function render(tpl, vars) {
+  return String(tpl).replace(/\{\{(\w+)\}\}/g, (_, k) => vars[k] == null ? '' : String(vars[k]));
+}
+
+async function fetchTpl(path) {
+  return await (await fetch(path)).text();
+}
+
+const [lockHtml, lockTxt, artHtml, artTxt] = await Promise.all([
+  fetchTpl('/emails/foundation-locked.html'),
+  fetchTpl('/emails/foundation-locked.txt'),
+  fetchTpl('/emails/artifact-ready.html'),
+  fetchTpl('/emails/artifact-ready.txt'),
+]);
+
+const agentSel = document.getElementById('agent');
+const nameSel = document.getElementById('name');
+
+function updateAll() {
+  const firstName = nameSel.value || 'there';
+  const lockVars = { first_name: firstName, foundation_url: FOUNDATION_URL };
+  const lockSubject = 'Your foundation is locked. Your artifacts are being prepared.';
+  const lockIframe = document.getElementById('iframe-lock');
+  lockIframe.srcdoc = render(lockHtml, lockVars);
+  document.getElementById('subject-lock').textContent = `Subject: ${lockSubject}`;
+  document.getElementById('text-lock').textContent = render(lockTxt, lockVars);
+
+  const av = AGENT_EMAIL_VARS[agentSel.value];
+  const artVars = { ...av, first_name: firstName, artifact_url: `${ARTIFACT_URL_BASE}?id=${SAMPLE_ID}` };
+  const artSubject = `Your ${av.artifact_title} is ready`;
+  const artIframe = document.getElementById('iframe-art');
+  artIframe.srcdoc = render(artHtml, artVars);
+  document.getElementById('subject-art').textContent = `Subject: ${artSubject}`;
+  document.getElementById('text-art').textContent = render(artTxt, artVars);
+}
+
+agentSel.addEventListener('change', updateAll);
+nameSel.addEventListener('change', updateAll);
+updateAll();
+</script>
+</body>
+</html>
