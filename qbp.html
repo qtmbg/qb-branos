@@ -151,10 +151,9 @@ async function load() {
     return;
   }
 
-  // Tier comes from the session bag (mirrored from profiles by qb-cloud)
-  // OR is fetched alongside the QBP via /api/qbp returning the lock state.
-  // The session bag is the read of record on the client.
-  const tier = String(session.tier || 'free').toLowerCase();
+  // Server-authoritative tier from /api/qbp. Never read session.tier;
+  // localStorage lags behind tier flips after Stripe upgrade.
+  const tier = String(data.tier || 'free').toLowerCase();
   lastTier = tier;
   lastFoundationLockedAt = data.foundation_locked_at || null;
 
