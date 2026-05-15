@@ -85,11 +85,32 @@ export default async function handler(req) {
     }
   }
 
-  // Hand off to /api/agents/dispatch on the same origin. Dispatch handles
-  // the new version row, parent_artifact_id linkage, validate-before-save,
-  // and artifact_runs row writes.
+  // Async dispatch. Insert a regenerate dispatch_job, fire the agent
+  // dispatch without awaiting (Edge fetch keeps the connection alive long
+  // enough for the child function to start its own budget), return 202.
+  // Client polls /api/artifacts for the v2 row to land.
+  let dispatchId = null;
+  try {
+    const jobRes = await fetch(`${env.SUPABASE_URL}/rest/v1/dispatch_jobs`, {
+      method: 'POST',
+      headers: {
+        ...svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY),
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify({ user_id: authResult.user.id, kind: 'regenerate', status: 'producing' }),
+    });
+    if (jobRes.ok) {
+      const rows = await jobRes.json().catch(() => []);
+      dispatchId = Array.isArray(rows) && rows.length ? rows[0].id : null;
+    } else {
+      console.error('[regenerate] dispatch_jobs insert failed', jobRes.status);
+    }
+  } catch (e) {
+    console.error('[regenerate] dispatch_jobs threw', e && e.message);
+  }
+
   const base = new URL(req.url).origin;
-  const dispatchRes = await fetch(`${base}/api/agents/dispatch`, {
+  fetch(`${base}/api/agents/dispatch`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${authResult.token}`,
@@ -99,21 +120,15 @@ export default async function handler(req) {
       userId: authResult.user.id,
       qbp: profile.qbp || {},
       agentName: source.artifact_type,
+      dispatch_id: dispatchId,
     }),
-  });
-  const dispatchData = await dispatchRes.json().catch(() => ({}));
+  }).catch(e => console.error('[regenerate] background dispatch threw', e && e.message));
 
-  if (!dispatchRes.ok || !dispatchData.ok) {
-    console.error('[regenerate] dispatch failed', dispatchRes.status, JSON.stringify(dispatchData).slice(0, 300));
-    return json(502, {
-      error: 'dispatch_failed',
-      detail: dispatchData?.error || `status ${dispatchRes.status}`,
-    }, corsH);
-  }
-
-  return json(200, {
-    new_artifact_id: dispatchData.artifact_id,
-    version: dispatchData.version,
-    status: dispatchData.status || 'queued',
+  return json(202, {
+    ok: true,
+    dispatch_id: dispatchId,
+    dispatch: 'queued',
+    agent: source.artifact_type,
+    parent_artifact_id: source.id,
   }, corsH);
 }

@@ -552,8 +552,14 @@ export function renderFoundationError(container, error) {
 }
 
 /* ─── Public: startArtifactPolling ───────────────────────── */
-const POLL_INTERVAL_MS = 10_000;
-const POLL_MAX_MS = 5 * 60_000;
+// Polling cadence chosen per step 18 spec: 3s intervals. Stop once all
+// expected artifacts are settled (delivered or failed) OR after 90s wall.
+// The previous 10s / 5min cadence was tuned for the synchronous-dispatch
+// era when the lock endpoint already awaited completion before returning.
+// With async dispatch, the client carries the wait, so the cadence is
+// tighter and the window is shorter.
+const POLL_INTERVAL_MS = 3_000;
+const POLL_MAX_MS = 90_000;
 
 export function startArtifactPolling({ token, onUpdate, onStuck }) {
   let stopped = false;
@@ -591,7 +597,9 @@ export function startArtifactPolling({ token, onUpdate, onStuck }) {
     timer = setTimeout(tick, POLL_INTERVAL_MS);
   }
 
-  // Kick off after a short head-start so the initial render finishes first.
+  // Kick off immediately. With async dispatch the lock returns 202 right
+  // away and the artifacts begin transitioning; the user expects activity
+  // on screen within a few seconds.
   timer = setTimeout(tick, POLL_INTERVAL_MS);
 
   return function stop() {
