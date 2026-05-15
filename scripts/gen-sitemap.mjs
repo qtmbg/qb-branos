@@ -21,9 +21,10 @@ const URLS = [
   // Tier 2: marketing / hub
   { path:'/ecosystem.html',                  priority:'0.9', changefreq:'weekly' },
   { path:'/tools.html',                      priority:'0.9', changefreq:'weekly' },
-  { path:'/journey-guide.html',              priority:'0.8', changefreq:'monthly' },
   { path:'/payment.html',                    priority:'0.8', changefreq:'monthly' },
-  { path:'/qb-branidos-hub.html',            priority:'0.7', changefreq:'monthly' },
+  // Deprecated surfaces (/dashboard, /hub, /qb-branidos-hub, /journey-guide)
+  // are redirected or 410 Gone per vercel.json. Source files moved to
+  // /_archive/chapter-1-deprecations/ in step 16 cleanup. Not sitemapped.
 
   // Phase 01 — Discovery
   { path:'/the-profiles.html',               priority:'0.7', changefreq:'monthly' },
