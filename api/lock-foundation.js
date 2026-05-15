@@ -37,7 +37,15 @@ import { sendEmail, renderTemplate, EMAIL_TEMPLATES } from './_lib/email.js';
 
 export const config = { runtime: 'edge' };
 
-const REQUIRED_TOOLS = ['soul-map', 'sensescape', 'visual-dna', 'war-table'];
+// Free tier must complete the three free-tier exercises to lock.
+// Visual DNA and War Table are paid-tier exercises and intentionally NOT
+// required for lock. The lock dispatches all four synthesizers regardless;
+// Visual DNA and War Table run against whatever data exists in qbp at lock
+// time and are tier-gated at read. Post-upgrade, those exercises become
+// completable and trigger artifact regeneration with the new data.
+// Slugs are the canonical tool_completions keys written by the exercise
+// pages via QB.openGate({ toolId: ... }).
+const REQUIRED_TOOLS = ['archetype-compass', 'soul-map', 'sensescape'];
 const FOUNDATION_URL = 'https://app.quantumbranding.ai/foundation';
 
 const ALLOWED_ORIGINS = new Set([
