@@ -93,10 +93,9 @@ export default async function handler(req) {
 
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
-  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_SERVICE_ROLE_KEY) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     return new Response(JSON.stringify({ ok: false, error: 'Lock service not configured' }), {
       status: 503,
       headers: { 'Content-Type': 'application/json', ...cors_h },
@@ -217,27 +216,13 @@ export default async function handler(req) {
     });
   }
 
-  // Step 6: async agent dispatch.
+  // Step 6: agent dispatch. Enqueues every Phase 01 synthesizer in parallel.
+  // Each dispatch call hits /api/agents/dispatch which is its own Edge
+  // function with its own ~25 s budget — running them concurrently means the
+  // total wall time stays close to the slowest single agent. Dispatch errors
+  // do not roll back the lock; the dashboard surfaces a Retry on stuck rows.
   //
-  // Previously this awaited four parallel Claude calls inside the lock
-  // endpoint's Edge budget (~25s). On any contention the lock returned 504
-  // even when the lock + dispatch had succeeded server-side, lying to the
-  // user at the conversion moment.
-  //
-  // New flow:
-  //   a. Insert a dispatch_jobs row (kind='lock', status='queued').
-  //   b. Fire the four agent dispatches WITHOUT awaiting. Each dispatch is
-  //      its own Edge function with its own ~25s budget.
-  //   c. Return 202 Accepted with { ok, lockedAt, dispatch_id } immediately.
-  //   d. Client polls /api/artifacts to observe queued -> generating ->
-  //      delivered transitions; the dispatch_id lets the client filter
-  //      cleanly to this run.
-  //
-  // Vercel Edge: the runtime allows fire-and-forget fetches to start before
-  // the parent function returns. We use `Promise.allSettled` without await
-  // to kick off the connections, then return immediately. The dispatcher
-  // is keyed by user_id + artifact_type, so duplicate dispatches reuse the
-  // in-flight row (already enforced by findOrCreateArtifact).
+  // Append future agents here as steps 5 (visual_dna) and 6 (war_table) ship.
   const AGENTS_TO_ENQUEUE = [
     'soul_map_synthesizer',
     'sensescape_synthesizer',
@@ -245,50 +230,43 @@ export default async function handler(req) {
     'war_table_synthesizer',
   ];
 
-  // Insert dispatch_job row.
-  let dispatchId = null;
-  try {
-    const jobRes = await fetch(`${SUPABASE_URL}/rest/v1/dispatch_jobs`, {
-      method: 'POST',
-      headers: {
-        apikey: SUPABASE_SERVICE_ROLE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=representation',
-      },
-      body: JSON.stringify({ user_id: user.id, kind: 'lock', status: 'producing' }),
-    });
-    if (jobRes.ok) {
-      const rows = await jobRes.json().catch(() => []);
-      dispatchId = Array.isArray(rows) && rows.length ? rows[0].id : null;
-    } else {
-      const t = await jobRes.text().catch(() => '');
-      console.error('[lock-foundation] dispatch_jobs insert failed', jobRes.status, t.slice(0, 200));
-    }
-  } catch (e) {
-    console.error('[lock-foundation] dispatch_jobs threw', e && e.message);
-  }
+  const dispatchResults = await Promise.all(
+    AGENTS_TO_ENQUEUE.map(agentName =>
+      runAgentDispatch({
+        req,
+        token,
+        userId: user.id,
+        qbp: lockQbp,
+        agentName,
+      })
+    )
+  );
 
-  // Fire dispatches without awaiting. The fetches start before this function
-  // returns; Vercel Edge keeps the connections open. Each child fetch is a
-  // standalone Edge function with its own budget.
-  const base = new URL(req.url).origin;
-  for (const agentName of AGENTS_TO_ENQUEUE) {
-    fetch(`${base}/api/agents/dispatch`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: user.id, qbp: lockQbp, agentName, dispatch_id: dispatchId }),
-    }).catch(e => console.error(`[lock-foundation] background dispatch ${agentName} threw`, e && e.message));
-  }
-
-  return new Response(JSON.stringify({
-    ok: true,
-    lockedAt,
-    dispatch_id: dispatchId,
-    dispatch: 'queued',
-    agents: AGENTS_TO_ENQUEUE,
-  }), {
-    status: 202,
+  return new Response(JSON.stringify({ ok: true, lockedAt, dispatch: dispatchResults }), {
+    status: 200,
     headers: { 'Content-Type': 'application/json', ...cors_h },
   });
+}
+
+async function runAgentDispatch({ req, token, userId, qbp, agentName }) {
+  try {
+    const base = new URL(req.url).origin;
+    const res = await fetch(`${base}/api/agents/dispatch`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, qbp, agentName }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.error('[lock-foundation] dispatch non-OK', res.status, JSON.stringify(data).slice(0, 300));
+      return { ok: false, status: res.status, error: data?.error || 'dispatch failed' };
+    }
+    return data;
+  } catch (e) {
+    console.error('[lock-foundation] dispatch threw', e && e.message);
+    return { ok: false, error: e && e.message || 'dispatch threw' };
+  }
 }
