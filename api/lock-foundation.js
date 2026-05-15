@@ -33,9 +33,12 @@
 //   SUPABASE_URL, SUPABASE_ANON_KEY    For /auth/v1/user + RLS read/patch.
 //   RESEND_API_KEY                     Confirmation email send.
 
+import { sendEmail, renderTemplate, EMAIL_TEMPLATES } from './_lib/email.js';
+
 export const config = { runtime: 'edge' };
 
 const REQUIRED_TOOLS = ['soul-map', 'sensescape', 'visual-dna', 'war-table'];
+const FOUNDATION_URL = 'https://app.quantumbranding.ai/foundation';
 
 const ALLOWED_ORIGINS = new Set([
   'https://quantumbranding.ai',
@@ -53,93 +56,20 @@ function cors(origin) {
   };
 }
 
-function escapeHtml(s) {
-  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[c]));
-}
-
-function lockHtml({ firstName }) {
-  const greeting = firstName ? `Hi ${escapeHtml(firstName)},` : 'Hi there,';
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Your foundation is locked</title>
-</head>
-<body style="margin:0;padding:0;background:#FBF5E6;color:#2D1521;font-family:'Inter','Helvetica Neue',Arial,sans-serif;">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#FBF5E6;padding:40px 16px;">
-  <tr><td align="center">
-    <table role="presentation" width="540" cellspacing="0" cellpadding="0" border="0" style="max-width:540px;width:100%;background:#F2EBD3;border:2px solid #2D1521;border-radius:18px;">
-      <tr><td style="padding:32px 32px 8px;">
-        <p style="font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#B58840;margin:0 0 12px;font-weight:700;">Foundation locked</p>
-        <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.15;color:#2D1521;margin:0 0 24px;letter-spacing:-0.01em;">Your foundation is <em style="color:#B58840;">locked</em>.</h1>
-      </td></tr>
-      <tr><td style="padding:0 32px 32px;font-size:16px;line-height:1.6;color:#2D1521;">
-        <p style="margin:0 0 16px;">${greeting}</p>
-        <p style="margin:0 0 16px;">Your foundation is locked. Your agents are now producing your brand kit.</p>
-        <p style="margin:0 0 24px;">The first artifacts (Brand Soul synthesis, Sensory profile, Visual direction, Strategic priorities) will appear in your dashboard within 5 to 15 minutes.</p>
-        <p style="margin:0 0 32px;">
-          <a href="https://quantumbranding.ai/foundation" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">Open your dashboard</a>
-        </p>
-        <p style="margin:0;">Nizzar</p>
-      </td></tr>
-      <tr><td style="padding:16px 32px 28px;border-top:1px solid rgba(45,21,33,0.10);font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.08em;color:rgba(45,21,33,0.50);">
-        Quantum Branding · quantumbranding.ai
-      </td></tr>
-    </table>
-  </td></tr>
-</table>
-</body>
-</html>`;
-}
-
-function lockText({ firstName }) {
-  const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
-  return `${greeting}
-
-Your foundation is locked. Your agents are now producing your brand kit.
-
-The first artifacts (Brand Soul synthesis, Sensory profile, Visual direction, Strategic priorities) will appear in your dashboard within 5 to 15 minutes.
-
-You can return to your dashboard at any time: https://quantumbranding.ai/foundation
-
-Nizzar
-
-Quantum Branding
-quantumbranding.ai`;
-}
-
-async function sendLockEmail({ resendKey, email, firstName }) {
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'Quantum Branding <auth@quantumbranding.ai>',
-        to: [email],
-        reply_to: 'me@qtmbg.com',
-        subject: 'Your foundation is locked',
-        html: lockHtml({ firstName }),
-        text: lockText({ firstName }),
-        headers: {
-          'List-Unsubscribe': '<mailto:me@qtmbg.com?subject=unsubscribe>',
-          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-          'X-Entity-Ref-ID': 'qb-brandos-lock-confirm',
-        },
-      }),
-    });
-    if (!res.ok) {
-      const errText = await res.text().catch(() => '');
-      console.error('[lock-foundation] resend failed', res.status, errText.slice(0, 300));
-    }
-  } catch (e) {
-    console.error('[lock-foundation] resend threw', e && e.message);
+async function sendLockEmail({ email, firstName }) {
+  const vars = { first_name: firstName || 'there', foundation_url: FOUNDATION_URL };
+  const tpl = EMAIL_TEMPLATES.FOUNDATION_LOCKED;
+  const result = await sendEmail({
+    to: email,
+    subject: tpl.subject,
+    html: renderTemplate(tpl.html, vars),
+    text: renderTemplate(tpl.text, vars),
+    refId: tpl.refId,
+  });
+  if (!result.ok) {
+    console.error('[lock-foundation] email send failed', result.status || '', String(result.error || '').slice(0, 300));
   }
+  return result;
 }
 
 export default async function handler(req) {
@@ -273,7 +203,6 @@ export default async function handler(req) {
   // email send fails; the dashboard is the source of truth.
   if (RESEND_API_KEY && profile.email) {
     await sendLockEmail({
-      resendKey: RESEND_API_KEY,
       email: profile.email,
       firstName: profile.first_name || '',
     });
