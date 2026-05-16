@@ -57,6 +57,11 @@ export const META = {
   // faster on similarly-shaped editorial prose. Per-agent model
   // selection is methodology metadata, not implementation detail.
   model: 'claude-haiku-4-5-20251001',
+  // Per §5.2.1 latency-budget pre-check: Sensescape worst case 12.7s × 2
+  // = 25.4s exceeds the 22 000 ms warning AND 25 000 ms Edge ceiling.
+  // Ships retry_budget:0 until step 6+ streaming runtime dissolves the
+  // per-call wall constraint. Documented in §12 known debt.
+  retry_budget: 0,
 };
 
 // Resolved at module load, used by callClaude. Falls back to the

@@ -17,7 +17,7 @@
 //   api/agents/*-synthesizer.js modules are no longer imported anywhere
 //   and become dead code in step 14 deprecation.
 
-import { assertAgentMetaOrThrow } from './contract.js';
+import { assertAgentMetaOrThrow, checkLatencyBudget } from './contract.js';
 import { META as soulMapMeta,    run as soulMapRun }    from './soul-map.js';
 import { META as sensescapeMeta, run as sensescapeRun } from './sensescape.js';
 import { META as visualDnaMeta,  run as visualDnaRun }  from './visual-dna.js';
@@ -27,6 +27,19 @@ assertAgentMetaOrThrow(soulMapMeta,    'agents/soul-map.js');
 assertAgentMetaOrThrow(sensescapeMeta, 'agents/sensescape.js');
 assertAgentMetaOrThrow(visualDnaMeta,  'agents/visual-dna.js');
 assertAgentMetaOrThrow(warTableMeta,   'agents/war-table.js');
+
+// Per §5.2.1: latency-budget pre-check at registry load. Warnings collect
+// here so the runtime can route them through §5.8.2 operator-notify on
+// first dispatch (the operator-notify module needs Resend at runtime, not
+// at module-load).
+export const LATENCY_BUDGET_WARNINGS = [];
+for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta]) {
+  const check = checkLatencyBudget(meta);
+  if (!check.withinBudget) {
+    LATENCY_BUDGET_WARNINGS.push(check);
+    console.warn(`[agents/registry] latency-budget warning: ${check.message}`);
+  }
+}
 
 export const AGENTS = Object.freeze({
   [soulMapMeta.slug]:    { META: soulMapMeta,    run: soulMapRun },

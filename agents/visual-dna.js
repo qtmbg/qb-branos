@@ -55,6 +55,12 @@ export const META = {
   triggers: ['lock', 'manual', 'regenerate'],
   error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
   // model field omitted · resolves to the canonical default below.
+  // Per §5.2.1 (amended in step 4 amendment): latency × (retry_budget + 1)
+  // must fit inside the 22 000 ms Edge budget. Visual DNA's observed
+  // 22.9 s worst case × 2 = 45.8 s far exceeds the budget at
+  // retry_budget: 1 (the heaviest violation of the four agents). Schema-
+  // invalid recovery is deferred to the reaper layer (§5.5).
+  retry_budget: 0,
 };
 
 // Resolved from META.model with the canonical default fallback. See
