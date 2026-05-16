@@ -14,7 +14,7 @@
  *   transient-failed    · 4 agents · one in failed (transient) state with rerun CTAs
  *   failed-permanently  · 4 agents · one in failed_permanently state with retry pill
  *   locked-phase-cards  · any signed-in user, Phase 02-05 locked rows visible
- *   replay-modal-v3     · 3-version chain on one agent, captures replay on v1 (root of chain, non-latest)
+ *   replay-modal-v1-of-3     · 3-version chain on one agent, captures replay on v1 (root of chain, non-latest)
  *
  * Seeds happen via Supabase admin + service-role direct writes against
  * the production database (project yushbxjwfhuokaezoioe). Each invocation
@@ -81,7 +81,7 @@ const AGENT_SLUGS = [
 const STATE = process.argv[2];
 const VALID_STATES = [
   'neutral', 'green', 'yellow-latency', 'rose-latency', 'rose-retry',
-  'transient-failed', 'failed-permanently', 'locked-phase-cards', 'replay-modal-v3',
+  'transient-failed', 'failed-permanently', 'locked-phase-cards', 'replay-modal-v1-of-3',
 ];
 if (!VALID_STATES.includes(STATE)) {
   console.error(`Usage: node seed-and-capture.mjs <${VALID_STATES.join('|')}>`);
@@ -362,14 +362,14 @@ const SEED_RECIPES = {
   'transient-failed': seedTransientFailed,
   'failed-permanently': seedFailedPermanently,
   'locked-phase-cards': seedLockedPhaseCards,
-  'replay-modal-v3': seedReplayModalV3,
+  'replay-modal-v1-of-3': seedReplayModalV3,
 };
 
 // ── Playwright capture ──────────────────────────────────────────────────────
 async function capture({ userId, email, session, state, outPath }) {
   const { chromium } = await import('playwright');
   const browser = await chromium.launch({ headless: HEADLESS });
-  const isReplay = state === 'replay-modal-v3';
+  const isReplay = state === 'replay-modal-v1-of-3';
   const viewport = state === 'mobile-stack'
     ? { width: 360, height: 1200 }
     : { width: 1280, height: 1200 };
@@ -398,7 +398,7 @@ async function capture({ userId, email, session, state, outPath }) {
   // Give the data render a moment to paint
   await page.waitForTimeout(2_000);
 
-  // For replay-modal-v3 · navigate to Run history view and click the
+  // For replay-modal-v1-of-3 · navigate to Run history view and click the
   // OLDEST row (v1, root of chain) to demonstrate replay's specific-run
   // version semantics. Rows order is `started_at desc` per console.js,
   // so the last row is the oldest run · v1, which has no parent_artifact_id

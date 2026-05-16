@@ -1,53 +1,62 @@
 # Step 5 verification screenshots
 
-This directory holds the six visual surfaces required to close step 5 per PR #79.
+This directory holds the nine visual surfaces required to close step 5 per PR #79.
 
-Capture against `https://quantumbranding.ai/agents` after signing in. Vercel auto-deployed commit `1c4dce4` (PR #78 merge) to production on 2026-05-16. Mobile capture at 360 px viewport; desktop at 1280 px.
+Capture via the seed-and-capture script · `node seed-and-capture.mjs <state>`. Script seeds a fresh test user into the target state via Supabase admin + service-role writes, mints a session, drives Playwright headless against `https://quantumbranding.ai/agents` with `localStorage.qb_session` injected, captures fullPage PNG, cleans up. Persistent provenance · re-runnable end-to-end.
 
-Persistent provenance lives in this directory (not in PR comments) per PR #79 approval: screenshots survive PR archival and are accessible to step 6+ without GitHub API calls.
+Vercel auto-deployed commit `1c4dce4` (PR #78 merge) to production on 2026-05-16. The script targets that deployment.
 
-## Manifest
+## Prerequisites
 
-| File | Surface | Required state | Expected color / treatment |
-| --- | --- | --- | --- |
-| `01-phase-view-green.png` | Phase view · all four agents healthy | All Phase 01 delivered, rolling avgs within thresholds | All four dots `var(--phase-discovery)` forest green (#5B7E6A) |
-| `02-phase-view-yellow.png` | Phase view · one threshold elevated | At least one agent's rolling latency in 20-23 s band | That agent's dot `var(--gold-deep)` (#B89540), others green |
-| `03-phase-view-red.png` | Phase view · failure or threshold rose | One agent failed OR rolling avg > 23 s / 0.5 retries | That agent's dot `var(--rose-deep)` (#B8704D) |
-| `04-phase-view-neutral.png` | Phase view · fresh foundation lock, no runs yet | Foundation newly locked, no completed runs in 7-day window | All four dots `rgba(45, 21, 33, 0.4)` muted ink |
-| `05-run-history-badges.png` | Run history · badge thresholds at boundaries | Mix of rows showing latency badges at 20 s (gold), 23 s+ (rose), 0 retries (monochrome), 1 retry (rose) | Per-row badges in three colors visible in single screenshot |
-| `06-replay-modal-non-latest.png` | Replay modal opened on v2 of a multi-version chain | Agent with at least v3+ versions; click on a v2 run row | Modal header reads `agent_slug · v2`; qbp_snapshot block contains v2's QBP; collapsibles for runtime_args, file_refs, error_payload visible |
-| `07-transient-failed.png` | Phase view · transient-failed agent row | Force a `model_call_failed` on one agent | §5.8.1 generic transient copy below meta; two-button rerun CTAs visible |
-| `08-failed-permanently-pill.png` | Phase view · failed_permanently agent row | Manually advance `dispatch_jobs.status='failed_permanently'` on an agent's dispatch, OR wait for reaper exhaustion | §5.8.1 permanent copy; single "Retry manually" pill; two-button rerun NOT visible |
-| `09-locked-phase-cards.png` | Phase view · Phase 02-05 locked cards | Any signed-in user (free or starter) | Four locked sections (Brand Creation, Content Creation, Execution, Intelligence) with locked-glyph ◐ rows and "Unlocks when Starter tier is active" copy |
-| `10-mobile-stack.png` | Mobile (360 px) · agent row with stacked rerun CTAs | Any agent with delivered artifact, viewed at 360 px | Rerun buttons stack vertically (current QBP on top, original below) |
+1. `/tmp/.env.qb-branos.live-backup` exists with `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY` (prod values).
+2. `npm install playwright --no-save` from repo root. Chromium binaries must be cached at `~/Library/Caches/ms-playwright/` (they are if you've run Playwright before).
 
-Optional · helpful for the verification report appendix but not required to close step 5:
+## States (nine PNGs)
 
-| File | Surface | Note |
+Run each one at a time (not in a bash loop). Verify each PNG visually before the next state fires. Costs ~10 min wall time per state given Supabase round-trip + Playwright headless + prod page load. Total ~90 min for the nine.
+
+| State command | Output PNG | Expected surface |
 | --- | --- | --- |
-| `11-run-history-list.png` | Full Run history view with multiple agents' runs interleaved | Confirms cross-agent chronological order + click-through behavior |
-| `12-empty-state-foundation-not-locked.png` | Console viewed before foundation lock | Should show "Lock your foundation to see your agents at work" + CTA to `/foundation` |
+| `neutral` | `neutral.png` | Phase view · four agents with muted-ink dots (40% opacity), foundation locked, no runs in window. Locked Phase 02-05 cards render below. |
+| `green` | `green.png` | Phase view · four agents with forest-green dots, rolling avgs within thresholds. Locked Phase 02-05 cards below. |
+| `yellow-latency` | `yellow-latency.png` | Phase view · Visual DNA's dot in gold-deep (latency rolling avg 20-23 s band). Other three green. Locked cards below. |
+| `rose-latency` | `rose-latency.png` | Phase view · Visual DNA's dot in rose-deep (latency rolling avg >23 s). Other three green. Locked cards below. |
+| `rose-retry` | `rose-retry.png` | Phase view · Soul Map's dot in rose-deep (retry rolling avg >0.5). Other three green. Locked cards below. |
+| `transient-failed` | `transient-failed.png` | Phase view · Soul Map row in transient-failed state · §5.8.1 generic transient copy + standard rerun CTAs (or hidden per Case C since latest is failed not delivered · see PR #79 §3 finding). Three others delivered. |
+| `failed-permanently` | `failed-permanently.png` | Phase view · Soul Map row in failed_permanently · §5.8.1 permanent copy + single "Retry manually" pill (no two-button rerun). Three others delivered. |
+| `locked-phase-cards` | `locked-phase-cards.png` | Phase view · green state + explicit subject framing on the Phase 02-05 locked sections. Logo Direction, Logo Evaluation, Voice Guide, Content Strategist, Campaign Planner, Execution Planner, Predictive Panel, Quarterly Brand Review listed under locked-glyph rows with "Unlocks when Starter tier is active" copy. (Redundant coverage with every other PNG · explicit-subject capture for spec §6.3.) |
+| `replay-modal-v1-of-3` | `replay-modal-v1-of-3.png` | Run history view with replay modal open on Soul Map v1 (root of 3-version chain). Modal header `soul_map_synthesizer · v1`; qbp_snapshot block contains v1's QBP (distinguishable by `_capture_version: 1` field); collapsibles for runtime_args, file_refs visible. Demonstrates §5.3.1 specific-run version semantics. |
 
-## Verification process
+## After capture
 
-For each screenshot:
-1. Capture the state in the browser
-2. Save as PNG with the filename from the manifest above
-3. Commit to this directory
-4. PR #79 picks up the addition; reviewer cross-checks against the manifest before merge
+Once all nine PNGs land in this directory:
 
-## How to produce specific states
+```bash
+git add chapter-02/verification/step-5-screenshots/*.png
+git commit -m "verify(chapter-2/step-5): nine screenshots committed · step 5 close"
+git push
+```
 
-**Green (01):** sign in to a test user with all four Phase 01 artifacts delivered. Wait for the 7-day window to have data.
+Signal: "Screenshots committed, proceed." That's the trigger to merge PR #79 and open step 6 spec.
 
-**Yellow (02):** the fastest path is Visual DNA · its 22.9 s observed latency on Sonnet should land it in the gold band on a fresh 7-day window with one or two runs. If the rolling average stays below 20 s, fire a few more Visual DNA reruns to bring the average up.
+## Boundary case coverage map
 
-**Red (03):** force one agent to fail via `/tests/chapter-02/step-4-live-verification.mjs` using the service-path `force_error='model_call_failed'` hook · the failed run drops the rolling retry to 1 (above the 0.5 rose threshold).
+Per PR #79 verification report:
 
-**Neutral (04):** create a fresh test user, lock the foundation, screenshot before any agent completes. The 7-day window is empty until at least one run lands.
+- **Case A (null duration_ms safe render)** · code-path verified, no screenshot needed
+- **Case B (deep parent chain replay)** · covered by `replay-modal-v1-of-3.png` (v1 is the root of the chain; replay surfaces v1's snapshot, not v3's)
+- **Case C (stuck queued v2 hides rerun button)** · finding deferred to step 6 · `transient-failed.png` partially demonstrates this if Soul Map's latest is failed (rerunCtas hides). Captured incidentally.
 
-**Transient failed (07):** same as red · use `force_error` once. The status pill reads "Failed" (not "Permanently failed").
+## Failure surface
 
-**Failed permanently (08):** either advance manually via SQL `UPDATE dispatch_jobs SET status='failed_permanently' WHERE id=...`, or wait for the reaper (step 8) which exhausts 3 retries on a stuck queued artifact. Until step 8 ships the reaper, manual SQL is the only path.
+If any `<state>` invocation fails (schema collision, Supabase 4xx, Playwright timeout, Edge function error from prod):
 
-**Mobile stack (10):** browser dev tools, set viewport to 360 px, capture an agent row with rerun CTAs visible.
+1. Paste the terminal output verbatim to the PR #79 thread.
+2. Cod debugs from the trace and pushes a script fix on the same branch.
+3. Resume from the failing state.
+
+Each invocation creates AND cleans up its own test user via `deleteUser(userId)` in the `finally` block. A failed run that exits early may leave a test user in the auth schema with the prefix `nizzar.ben+s5-<tag>-`; cleanup is non-blocking but worth a sweep before declaring step 5 closed.
+
+## Why this isn't in `tests/`
+
+The screenshots and the script that produces them are verification artifacts for a specific chapter step, not part of the long-running test suite. They live next to the verification report for provenance and discoverability. The conformance suite at `tests/agent-conformance.mjs` and the reproduction harness at `tests/chapter-02/run-repro.mjs` remain the canonical test infrastructure.
