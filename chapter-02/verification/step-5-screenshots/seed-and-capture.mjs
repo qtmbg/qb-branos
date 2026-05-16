@@ -184,6 +184,18 @@ async function deleteUser(userId) {
   await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, { method: 'DELETE', headers: svc }).catch(() => {});
 }
 
+// Drop a slug's prior agent_runs for this user so subsequent inserts define
+// the rolling-window mean cleanly. console.js computes latencyAvg over every
+// succeeded run in the 7-day window, not the last N · without this, the
+// seedGreen baseline at ~12 s drags any later bad-band runs back under
+// threshold.
+async function deleteAgentRunsForSlug(userId, slug) {
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/agent_runs?user_id=eq.${userId}&agent_slug=eq.${slug}`,
+    { method: 'DELETE', headers: svc }
+  ).catch(() => {});
+}
+
 // ── State recipes ───────────────────────────────────────────────────────────
 async function seedNeutral(userId) {
   await setProfile(userId, {
@@ -212,33 +224,35 @@ async function seedGreen(userId) {
 
 async function seedYellowLatency(userId) {
   await seedGreen(userId);
-  // Push Visual DNA's rolling average into 20-23s gold band by adding
-  // three additional runs at 22 s · the existing 3 runs at ~12 s plus
-  // 3 at 22 s averages 17 s · re-tune to land in band.
-  // Simpler · insert 5 fresh runs at 21 s each (drowns out the 12 s ones).
+  // Visual DNA into 20-23 s gold band. seedGreen leaves 3 runs at ~12 s on
+  // this slug · the server averages over every succeeded run in the 7d
+  // window, so we drop those first, then insert clean bad-band runs.
   const slug = 'visual_dna_synthesizer';
+  await deleteAgentRunsForSlug(userId, slug);
   const art = (await fetch(
     `${SUPABASE_URL}/rest/v1/artifacts?user_id=eq.${userId}&artifact_type=eq.${slug}&select=id&order=version.desc&limit=1`,
     { headers: svc }
   ).then(r => r.json()))?.[0];
   for (let i = 0; i < 5; i++) {
     await insertAgentRun(userId, slug, {
-      artifactId: art?.id, durationMs: 20_500 + i * 100, retryCount: 0, status: 'succeeded',
+      artifactId: art?.id, durationMs: 21_000 + i * 200, retryCount: 0, status: 'succeeded',
     });
   }
 }
 
 async function seedRoseLatency(userId) {
   await seedGreen(userId);
-  // Push Visual DNA into rose band (>23 s rolling avg)
+  // Visual DNA into rose band (>23 s). Drop seedGreen's baseline runs for
+  // this slug first so the rolling mean reflects only the bad-band values.
   const slug = 'visual_dna_synthesizer';
+  await deleteAgentRunsForSlug(userId, slug);
   const art = (await fetch(
     `${SUPABASE_URL}/rest/v1/artifacts?user_id=eq.${userId}&artifact_type=eq.${slug}&select=id&order=version.desc&limit=1`,
     { headers: svc }
   ).then(r => r.json()))?.[0];
   for (let i = 0; i < 5; i++) {
     await insertAgentRun(userId, slug, {
-      artifactId: art?.id, durationMs: 24_500 + i * 100, retryCount: 0, status: 'succeeded',
+      artifactId: art?.id, durationMs: 24_000 + i * 200, retryCount: 0, status: 'succeeded',
     });
   }
 }
@@ -437,6 +451,24 @@ async function capture({ userId, email, session, state, outPath }) {
     await SEED_RECIPES[STATE](user.id);
     const session = await signIn(user.email);
     console.log(`Session minted · token ${session.token.slice(0, 20)}...`);
+
+    // Diagnostic · hit the Console API with the user's session and print the
+    // server-decided health.dot per agent. Confirms the seed produced the
+    // intended threshold state before the screenshot is captured.
+    try {
+      const apiRes = await fetch(`${BASE}/api/agents/console`, {
+        headers: { Authorization: `Bearer ${session.token}` },
+      });
+      if (apiRes.ok) {
+        const payload = await apiRes.json();
+        for (const a of (payload.agents || [])) {
+          const avg = a.rolling?.duration_avg_7d_ms;
+          console.log(`  · ${a.slug.padEnd(24)} dot=${a.health?.dot.padEnd(7)} retry=${a.health?.retry_state} latency=${a.health?.latency_state} avg_ms=${avg ? Math.round(avg) : 'null'}`);
+        }
+      } else {
+        console.log(`  (api/agents/console returned ${apiRes.status})`);
+      }
+    } catch (e) { console.log(`  (api probe failed: ${e?.message})`); }
 
     const outPath = path.join(__dirname, `${STATE}.png`);
     await capture({ userId: user.id, email: user.email, session, state: STATE, outPath });
