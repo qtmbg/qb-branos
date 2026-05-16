@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>Agent Console · QB BrandOS</title>
+
+<link rel="icon" href="/img/brand/web/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+
+<link rel="stylesheet" href="/css/qb-tokens.css">
+<link rel="stylesheet" href="/css/qb-components.css">
+
+<style>
+  html, body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.5;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  img, svg, video { display: block; max-width: 100%; }
+  main#agents-root { min-height: 70vh; }
+</style>
+</head>
+<body>
+<main id="agents-root" aria-live="polite"></main>
+
+<script src="/qb-cloud.js"></script>
+<script type="module">
+import {
+  renderConsole, renderConsoleLoading, renderConsoleError,
+} from '/js/qb-agents-console.js';
+
+const root = document.getElementById('agents-root');
+
+function redirectToAuth() {
+  const next = encodeURIComponent('/agents');
+  window.location.replace(`/signal-scan.html?reason=signin&return_to=${next}`);
+}
+
+async function load() {
+  renderConsoleLoading(root);
+
+  if (!window.QB || !window.QB.isAuthed || !window.QB.isAuthed()) {
+    redirectToAuth();
+    return;
+  }
+  const session = window.QB.getSession();
+
+  let consoleRes;
+  try {
+    consoleRes = await fetch('/api/agents/console', {
+      headers: { Authorization: `Bearer ${session.token}` },
+    });
+  } catch (e) {
+    renderConsoleError(root, e);
+    return;
+  }
+
+  if (consoleRes.status === 401) {
+    redirectToAuth();
+    return;
+  }
+
+  const data = await consoleRes.json().catch(() => ({}));
+
+  if (!consoleRes.ok) {
+    renderConsoleError(root, new Error(`HTTP ${consoleRes.status}: ${data?.error || 'unknown'}`));
+    return;
+  }
+
+  renderConsole(root, data, { session });
+}
+
+document.addEventListener('DOMContentLoaded', load);
+if (document.readyState !== 'loading') load();
+</script>
+</body>
+</html>
