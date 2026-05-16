@@ -169,7 +169,7 @@ Each agent declares the data it reads. Four kinds:
   - `field` · the key in `profiles.qbp` (e.g. `'brandEssence'`, `'manifesto'`).
   - `required` · boolean. If `true`, the runtime refuses to dispatch when the field is missing or empty, and emits `qbp_field_missing` without calling Claude. If `false`, the field is passed through to the agent function, which decides how to handle absence (graceful degradation, placeholder copy, conditional logic).
   - Rationale: agents differ in tolerance for sparse QBPs. Soul Map serves a fresh user with an incomplete QBP by rendering "Not yet captured" placeholders · graceful degradation is correct. Visual DNA and War Table cannot produce honest output without specific inputs · strict refusal is correct. The flag puts the decision with the agent author, not the runtime. Mirrors the `files[]` `{ type, source, optional }` shape.
-- `artifact_dependencies[]` · slugs of other agents whose latest delivered artifact this agent reads (e.g. War Table reads the latest delivered Soul Map). All dependencies are implicitly required; the runtime refuses to dispatch when any declared dependency has no `delivered` artifact.
+- `artifact_dependencies[]` · slugs of other agents whose latest delivered artifact this agent reads (e.g. Logo Direction, a Phase 02 agent shipping in Chapter 4, reads the latest delivered Visual DNA synthesis for color and type direction). All dependencies are implicitly required; the runtime refuses to dispatch when any declared dependency has no `delivered` artifact. **Chapter 2 status:** no Phase 01 agent uses `artifact_dependencies` · the four synthesizers read overlapping `qbp_fields` directly rather than each other's artifacts. The first real use lands in Chapter 4 (Phase 02).
 - `files[]` · typed array of file inputs the agent needs. Each entry `{ type, source, optional }`:
   - `type` · semantic type. Initial vocabulary: `'logo-source'`, `'reference-image'`, `'brand-asset'`, `'transcript'`, `'document'`. New types added as agents declare them.
   - `source` · how the file is provided. Initial values: `'user-upload'` (the user attaches it via the UI in Chapter 3+), `'agent-output'` (a previous agent emitted a file artifact). Forward-compatible.
@@ -229,6 +229,15 @@ export const META = {
   // Per §11.12.1 every agent declares the error codes it may emit.
   // The conformance suite asserts each declared code is triggerable.
   error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
+  // Optional. Anthropic model used for this agent's run(). If omitted,
+  // resolves to DEFAULT_MODEL ('claude-sonnet-4-6') at callClaude time.
+  // Declare explicitly when the agent's prompt size, latency profile,
+  // or quality requirements justify a non-default model (e.g. Sensescape
+  // uses Haiku to fit its multi-paragraph synthesis inside the 25 s Edge
+  // budget · see step-3 phase B verification). Allowed set in
+  // agents/contract.js CANONICAL_MODELS, mirrors ALLOWED_MODELS in
+  // api/claude.js.
+  // model: 'claude-haiku-4-5-20251001',
 };
 
 export async function run({ qbp, dependencies, files, runtime_args, anthropicKey }) {

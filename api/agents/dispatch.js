@@ -26,13 +26,14 @@
 //   ANTHROPIC_API_KEY                    Agent model call.
 //   RESEND_API_KEY                       Optional; artifact-ready email.
 
-// Soul Map retrofitted to the §3.5 contract in /agents/soul-map.js as
-// part of Chapter 2 step 3. The legacy export name is preserved on the
-// new module for one chapter. Dispatch behavior is unchanged.
-import { runSoulMapSynthesizer } from '../../agents/soul-map.js';
-import { runSensescapeSynthesizer } from './sensescape-synthesizer.js';
-import { runVisualDnaSynthesizer } from './visual-dna-synthesizer.js';
-import { runWarTableSynthesizer } from './war-table-synthesizer.js';
+// Chapter 2 step 3 (phase A + B) retrofitted all four Phase 01 agents to
+// the §3.5 contract in /agents/*.js. Each module re-exports the legacy
+// runXxxSynthesizer name for one chapter so this dispatch path keeps
+// working unchanged. Step 14 deprecates dispatch.js entirely.
+import { runSoulMapSynthesizer }    from '../../agents/soul-map.js';
+import { runSensescapeSynthesizer } from '../../agents/sensescape.js';
+import { runVisualDnaSynthesizer }  from '../../agents/visual-dna.js';
+import { runWarTableSynthesizer }   from '../../agents/war-table.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
 import { sendEmail, renderTemplate, EMAIL_TEMPLATES, getAgentEmailVars } from '../_lib/email.js';
 

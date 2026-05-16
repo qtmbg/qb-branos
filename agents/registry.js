@@ -1,5 +1,5 @@
 // agents/registry.js
-// Chapter 2 · Step 3
+// Chapter 2 · Step 3 · phase B complete
 //
 // Single import map for every contract-conformant agent. The runtime
 // (/api/agents/run, shipping in step 4) imports AGENTS from this file
@@ -11,21 +11,28 @@
 // agent · this is the §11.12.1 "rejected at registry import time"
 // requirement.
 //
-// Scope note · Chapter 2 step 3 phase A:
-//   Only Soul Map Synthesizer is retrofitted. sensescape_synthesizer,
-//   visual_dna_synthesizer, and war_table_synthesizer are deliberately
-//   NOT in this registry yet. They are still served via the legacy
-//   /api/agents/dispatch.js path until step 3 phase B retrofits them.
-//   This keeps Chapter 1 lock-foundation behavior unchanged while the
-//   new framework is validated against one agent first.
+// Chapter 2 status:
+//   All four Phase 01 agents (Soul Map, Sensescape, Visual DNA, War
+//   Table) are retrofitted to the §3.5 contract. The legacy
+//   api/agents/*-synthesizer.js modules are no longer imported anywhere
+//   and become dead code in step 14 deprecation.
 
 import { assertAgentMetaOrThrow } from './contract.js';
-import { META as soulMapMeta, run as soulMapRun } from './soul-map.js';
+import { META as soulMapMeta,    run as soulMapRun }    from './soul-map.js';
+import { META as sensescapeMeta, run as sensescapeRun } from './sensescape.js';
+import { META as visualDnaMeta,  run as visualDnaRun }  from './visual-dna.js';
+import { META as warTableMeta,   run as warTableRun }   from './war-table.js';
 
-assertAgentMetaOrThrow(soulMapMeta, 'agents/soul-map.js');
+assertAgentMetaOrThrow(soulMapMeta,    'agents/soul-map.js');
+assertAgentMetaOrThrow(sensescapeMeta, 'agents/sensescape.js');
+assertAgentMetaOrThrow(visualDnaMeta,  'agents/visual-dna.js');
+assertAgentMetaOrThrow(warTableMeta,   'agents/war-table.js');
 
 export const AGENTS = Object.freeze({
-  [soulMapMeta.slug]: { META: soulMapMeta, run: soulMapRun },
+  [soulMapMeta.slug]:    { META: soulMapMeta,    run: soulMapRun },
+  [sensescapeMeta.slug]: { META: sensescapeMeta, run: sensescapeRun },
+  [visualDnaMeta.slug]:  { META: visualDnaMeta,  run: visualDnaRun },
+  [warTableMeta.slug]:   { META: warTableMeta,   run: warTableRun },
 });
 
 export function getAgent(slug) {
