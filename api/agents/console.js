@@ -73,8 +73,15 @@ function thresholdState(value, gold, rose) {
 // §6.6.3 aggregate health · derive from rolling averages + latest run
 // status. Uses thresholdState() so the dot's color logic is identical to
 // the badge's color logic.
-function aggregateHealth({ retryState, latencyState, runs7d, latestStatus, hasInflight }) {
-  if (runs7d === 0 && !hasInflight) return 'neutral';
+//
+// Per PR #78 audit item 2: zero runs in the 7-day window == neutral,
+// period. An inflight dispatch on an agent with no completed history
+// produces neutral on the dot · the "producing" signal lives on the
+// status pill, not the aggregate-health dot. A long-running or stuck
+// dispatch that started >7 days ago is also neutral (no completed runs
+// in window). hasInflight is no longer consulted by the dot logic.
+function aggregateHealth({ retryState, latencyState, runs7d, latestStatus }) {
+  if (runs7d === 0) return 'neutral';
   const failedRecent = latestStatus === 'failed' || latestStatus === 'failed_permanently';
   if (failedRecent || retryState === 'rose' || latencyState === 'rose') return 'red';
   if (retryState === 'gold' || latencyState === 'gold') return 'yellow';
@@ -226,7 +233,6 @@ export default async function handler(req) {
       retryState: retry_state, latencyState: latency_state, runs7d,
       latestStatus: permanentlyFailed ? 'failed_permanently'
         : (latestArtifact?.status === 'failed' ? 'failed' : (latestRun?.status || null)),
-      hasInflight: Boolean(inflightDispatch),
     });
 
     return {
