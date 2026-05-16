@@ -170,7 +170,7 @@ If `foundation_lock_qbp` is null (Chapter 1 legacy artifact), `qbp_source='origi
 | `api/cron/reaper.js` (new) | Reaper handler. Reads `dispatch_jobs` rows with `status='producing'`, applies backoff schedule, re-fires `/api/agents/run` for each stuck child agent, increments `retry_count`, updates `last_retry_at`, flips to `failed_permanently` at exhaustion. |
 | `api/_lib/notifications.js` (new) | Helper to emit `dispatch_failed` notification (in-app row + email). Used by reaper at terminal state only. |
 | `api/_lib/inter-edge-auth.js` | No new code; reaper reuses `INTER_EDGE_SECRET` HMAC pattern from §5.6 for the cron-trigger-to-reaper handshake. The cron trigger is a Vercel-controlled GET; the reaper still validates the `vercel-cron/1.0` user agent + a configurable bearer token to prevent unauthenticated public POSTs from invoking it. |
-| `vercel.json` | Add `crons` array: `{ "path": "/api/cron/reaper", "schedule": "* * * * *" }`. New route may not be needed if filesystem handler resolves `api/cron/reaper.js` directly; if not, add an explicit src/dest rewrite (same pattern as PRs #80 / #82). |
+| `vercel.json` | Two additions, both mandatory. (1) `crons` array entry: `{ "path": "/api/cron/reaper", "schedule": "* * * * *" }`. (2) Explicit route rewrite for the cron path: `{ "src": "/api/cron/reaper", "dest": "/api/cron/reaper" }`. The self-mapping rewrite costs nothing if filesystem resolution would have worked, prevents the silent-404 debug cycle that broke `/agents` (PR #80) and `/api/agent-runs/<uuid>/replay` (PR #82) if filesystem resolution does not work. No hedging. |
 | `CHAPTER_02_SPEC.md` | §5.5 prose amendment per §3 of this spec (1 min / 2 min / 5 min, not 30 s / 2 min / 5 min). |
 
 ### 6.2 Reaper state machine
@@ -183,24 +183,38 @@ Per row of `dispatch_jobs` with `status='producing'`, on every cron tick:
    - `retry_count=1` → fire if elapsed ≥ 120 s
    - `retry_count=2` → fire if elapsed ≥ 300 s
    - `retry_count=3` → no fire; check terminal flip condition below
-3. **Identify stuck children.** Read child `artifacts` for the dispatch. Stuck = `status in ('queued', 'producing', 'failed')` with a `failed` reason in `agent_runs.error_payload.code` matching a retry-eligible code per §5.8 (`edge_timeout`, `model_call_failed`, `schema_validation_failed`). User-fixable codes (`qbp_field_missing`, `missing_inputs`, `missing_dependency`) are NOT retried by the reaper; the artifact stays `failed` with the user-action copy surfaced.
+3. **Identify stuck children.** Read child `artifacts` for the dispatch + their corresponding `agent_runs` rows. A child is stuck under any of three conditions:
+   - (a) `agent_runs.status='failed'` with `error_payload.code` matching a retry-eligible code per §5.8 (`edge_timeout`, `model_call_failed`, `schema_validation_failed`). User-fixable codes (`qbp_field_missing`, `missing_inputs`, `missing_dependency`) are NOT retried; the artifact stays `failed` with user-action copy surfaced.
+   - (b) `artifacts.status='producing'` with the most recent `agent_runs` row in `status='started'` for more than 25 seconds (the Edge timeout ceiling). The Edge invocation cannot legitimately still be running past this window; the run is orphaned.
+   - (c) **Ghost dispatch.** `artifacts.status='queued'` AND no `agent_runs` row exists for the artifact AND `coalesce(dispatch_jobs.last_retry_at, dispatch_jobs.created_at) < now() - 25 s`. This is the PR #59 / #68 mechanism: the parent Edge function returned 202 before the child fetch handler established, the child never wrote a `started` row, the dispatch sits in `producing` with zero observable progress. Reaper treats this child as a fresh stuck and re-fires.
 4. **Re-fire.** For each retry-eligible stuck child, `fetch('/api/agents/run')` with inter-edge HMAC headers + the same `agent_slug` + `artifact_id` + `qbp_source` as the original dispatch. The re-fire is a fresh Edge invocation with its own 25 000 ms ceiling.
 5. **Record retry.** Atomically increment `dispatch_jobs.retry_count`, set `last_retry_at = now()`. One increment per cron tick per dispatch, regardless of how many child agents the reaper re-fired in that tick.
 6. **Terminal flip.** If `retry_count = 3` AND dispatch is still `producing` at the next reaper tick after the +5 min window has elapsed since the retry-3 attempt, flip `status = 'failed_permanently'`. Emit ONE `dispatch_failed` notification (in-app + email) per dispatch. No notifications at intermediate retries.
 
-### 6.3 HMAC trigger auth
+### 6.3 Auth · two distinct secrets, two distinct paths
 
-Reaper handler validates request origin in this order:
-1. Check `user-agent` header equals `vercel-cron/1.0` (Vercel cron contract; see Vercel cron docs).
-2. Check `authorization: Bearer <INTER_EDGE_SECRET>` header. Vercel cron jobs support `CRON_SECRET` env var which Vercel injects as `Authorization: Bearer <secret>` per the platform contract. Reaper reuses `INTER_EDGE_SECRET` for symmetry with §5.6.
-3. If either fails, return 401 with `error.code='unauthorized_cron_trigger'`. Log the rejected request user-agent + ip prefix so anomalous probe attempts surface.
+The reaper sits across two trust boundaries with separate threat models. They use separate secrets. Do not alias them.
+
+**Path 1 · Vercel cron trigger → reaper handler.** The cron platform makes a GET to `/api/cron/reaper`. Trust contract is Vercel-to-handler. Secret is `CRON_SECRET`, an env var Vercel injects into the cron-triggered request as `Authorization: Bearer <CRON_SECRET>` per the platform's cron contract. Reaper validates in this order:
+1. `user-agent === 'vercel-cron/1.0'` (Vercel cron contract).
+2. `authorization === 'Bearer ' + process.env.CRON_SECRET`.
+3. If either check fails, return 401 with `error.code='unauthorized_cron_trigger'`. Log the rejected request user-agent + ip prefix so anomalous probe attempts surface.
+
+**Path 2 · Reaper handler → child re-fire of `/api/agents/run`.** Trust contract is Edge-function-to-Edge-function (service call, no user session). Secret is `INTER_EDGE_SECRET`, the existing inter-Edge HMAC secret introduced in §5.6 and already used by `/api/lock-foundation` → `/api/agents/run` and `/api/agents/rerun` → `/api/agents/run`. Reaper signs each child re-fire with the same HMAC envelope the lock-foundation refactor uses.
+
+The two secrets are independent env vars. Both must exist in the Vercel environment before sub-PR 6C ships. `CRON_SECRET` is a new variable; `INTER_EDGE_SECRET` is already set per step 4. Step 6 closure does not generate or rotate either; that is operator action sequenced through the deployment surface, not the spec.
 
 ### 6.4 Acceptance for 6C
 
-1. Induced stuck-dispatch trace: insert a `dispatch_jobs` row with `status='producing'` + `created_at = now() - 70 s` + four `agent_runs` rows in `status='failed'` with `error_payload.code='edge_timeout'`. Verify the reaper re-fires at the next tick, increments retry_count to 1, writes last_retry_at.
-2. Backoff schedule trace: stuck dispatch at insert + 130 s elapsed shows retry_count=2 after second cron tick. Stuck at insert + 310 s shows retry_count=3 after third tick. Stuck at insert + 320 s shows terminal flip to `failed_permanently` on next tick + one `dispatch_failed` notification row + one email sent.
-3. User-fixable code non-retry: stuck dispatch with `error_payload.code='qbp_field_missing'` is NOT retried by the reaper. Artifact stays `failed`, user-action copy surfaces in Console.
-4. Unauthenticated POST to `/api/cron/reaper` returns 401. Authenticated cron tick returns 200 with reap summary (rows examined, rows retried, rows flipped).
+The reaper algorithm in §6.2 is since-last-retry: `elapsed = now() - coalesce(last_retry_at, created_at)`. The acceptance trace below is measured in absolute time from dispatch insert, which is the timeline an operator watching the Console actually sees. The two representations are consistent: each retry resets the since-last-retry clock, and the absolute times below are the cumulative sum of the per-retry thresholds (60 s → 120 s → 300 s).
+
+1. **Retry 1 trace.** Insert a `dispatch_jobs` row with `status='producing'` + `created_at = now()` + four `agent_runs` rows in `status='failed'` with `error_payload.code='edge_timeout'`. At absolute time +60 s (first cron tick where `elapsed = 60 s ≥ 60 s` since `created_at`), reaper re-fires, sets `retry_count=1`, writes `last_retry_at = now()`.
+2. **Retry 2 trace.** Child re-fires from retry 1 fail again (re-inject `edge_timeout` failure rows). At absolute time +180 s (`elapsed = 120 s ≥ 120 s` since `last_retry_at` of +60 s), reaper re-fires, sets `retry_count=2`.
+3. **Retry 3 trace.** Same. At absolute time +480 s (`elapsed = 300 s ≥ 300 s` since `last_retry_at` of +180 s), reaper re-fires, sets `retry_count=3`.
+4. **Terminal flip.** At absolute time +780 s (`elapsed = 300 s` since `last_retry_at` of +480 s, no further backoff threshold to wait on), reaper flips `status='failed_permanently'`, inserts exactly one `notifications` row of kind `dispatch_failed`, sends exactly one email. No notifications row inserted on retries 1, 2, 3.
+5. **User-fixable code non-retry.** Stuck dispatch with `error_payload.code='qbp_field_missing'` is NOT retried by the reaper at any tick. Artifact stays `failed`; user-action copy surfaces in Console. `retry_count` stays at 0. No permanent flip; no notification.
+6. **Ghost dispatch detection.** Insert a `dispatch_jobs` row with `status='producing'` + `created_at = now() - 30 s` + four `artifacts` rows in `status='queued'` and ZERO `agent_runs` rows for any of them (simulates the PR #59 / #68 ghost-dispatch case where the Edge function died before writing). Reaper detects the children as stuck via §6.2 step 3 condition (c), re-fires them at the next tick (subject to the standard backoff curve starting from `created_at`).
+7. **Trigger auth.** Unauthenticated GET to `/api/cron/reaper` (no `vercel-cron/1.0` user-agent, no `CRON_SECRET` bearer) returns 401. Authenticated cron tick returns 200 with reap summary JSON: `{ rows_examined, rows_retried, rows_flipped, ghost_dispatches_detected }`.
 
 ---
 
@@ -247,14 +261,14 @@ CSS uses tokens from `:root` per the design system (cream-card surface, ink bord
 
 ### 7.4 Notification kinds and target URLs
 
-Per `notifications.kind` enum in migration 013:
+Per `notifications.kind` enum in migration 013. Chapter 2 ships exactly one emitter (the reaper). The bell renders any kind it finds in the table, but step 6 acceptance only obligates the `dispatch_failed` row + click target. Other kinds are forward-only: the bell can render them if a future chapter inserts them, but step 6 ships no emitter for them and no acceptance check covers their behavior.
 
-| kind | Source | Target URL on click |
-| --- | --- | --- |
-| `artifact_ready` | Lock-foundation completes a child agent | `/artifact/<artifact_id>` |
-| `chain_ready` | Chain orchestration writes (Chapter 2 emits no chain_ready notifications; placeholder for Chapter 4+) | `/artifact/<artifact_id>` |
-| `dispatch_failed` | Reaper terminal flip (only source in Chapter 2) | `/agents` with hash `#agent=<slug>` to scroll the failed row into view |
-| `quarterly_due` | Step 9+ Quarterly Brand Review cadence (no Chapter 2 emitter) | `/agents` |
+| kind | Step 6 emitter? | Step 6 acceptance obligation | Target URL on click |
+| --- | --- | --- | --- |
+| `dispatch_failed` | YES · reaper terminal flip | Full per §7.5 (insert, bell render, click clears + routes) | `/agents` with hash `#agent=<slug>` to scroll the failed row into view |
+| `artifact_ready` | NO · would emit on lock-foundation child delivery, not wired in step 6 | None in step 6. Bell renders the row if seeded; no Chapter 2 code inserts it. | `/artifact/<artifact_id>` (forward-defined; routes work but no test fires this path in step 6) |
+| `chain_ready` | NO · Chapter 4 chain orchestration | None. No Chapter 2 code path inserts this kind. Documented as forward-only. | n/a in Chapter 2; defer URL definition to Chapter 4 spec |
+| `quarterly_due` | NO · Step 9+ Quarterly Brand Review cadence | None. No Chapter 2 code path inserts this kind. Documented as forward-only. | n/a in Chapter 2; defer URL definition to step 9+ spec |
 
 ### 7.5 Acceptance for 6D
 
@@ -292,7 +306,7 @@ Add to `chapter-02/verification/step-5-screenshots/seed-and-capture.mjs` (same s
 | State | Source seed | Surface captured |
 | --- | --- | --- |
 | `latest-delivered-with-queued` | Lock + deliver v1, then simulate regen producing v2 (insert artifact v2 with status='queued', leave v1 delivered). | Console renders v1's two-button rerun CTAs + v2's producing pill independently. PR #79 §3 Case C resolution. |
-| `reaper-mid-backoff` | Insert stuck dispatch_jobs row at `created_at - 90 s`, retry_count=1, last_retry_at = `now - 30 s`. | Console shows producing with retry_count badge ("retry 1 of 3"). |
+| `reaper-mid-backoff` | Insert stuck dispatch_jobs row at `created_at - 90 s`, retry_count=1, last_retry_at = `now - 30 s`. | Console shows the producing pill on the affected agent row. Per-attempt retry state is operator-side (Vercel logs, the cron reap summary JSON, dispatch_jobs.retry_count column read directly); no in-flight retry-count indicator surfaces in the user-facing Console for step 6. If a product reason emerges to surface in-flight retries, raise as a separate adjudication and amend §6.6 of the master spec. |
 | `reaper-recovered` | Stuck dispatch that the reaper successfully retried, child artifact now `delivered`. | Console shows delivered with recent_runs row showing the retry history (one row with status=failed, one with status=succeeded). |
 | `permanent-failure-with-notification` | Permanent-failure flip + one `notifications` row of kind `dispatch_failed`. Bell badge shows 1. | Both the Console permanent-failure pill (existing PR #79 state) AND the bell badge with the dispatch_failed dropdown entry. Cross-surface composition. |
 | `bell-empty` | Signed-in user, zero notifications rows. | Bell renders with no badge, dropdown empty-state copy. |
