@@ -604,17 +604,55 @@ New components added to the library (`js/qb-components.js`):
 
 Every agent row in the Run history view surfaces an inline metric: the agent's **7-day rolling average of `agent_runs.schema_retry_count`**. Computed as `AVG(schema_retry_count) WHERE created_at > now() - interval '7 days' GROUP BY agent_slug` and refreshed on every Console load (no caching needed at this scale).
 
-Three visual states:
+**Step-5 amendment · display the count for ALL agents regardless of retry_budget.** The prior version of this section rendered "n/a" for agents at `retry_budget: 0`, on the assumption that schema_retry_count would always be 0 at that budget. Step 4 verification proved this assumption wrong: a single-shot run that returns schema-invalid increments the counter to 1 before the loop exits with `schema_validation_failed`. The count IS a meaningful signal at every budget level.
+
+For `retry_budget: 0` agents (all four current Chapter 2 agents), the count's range is `{0, 1}` per run:
+- 0 · agent returned schema-valid on first attempt
+- 1 · agent returned schema-invalid on first attempt; runtime exited the loop with `schema_validation_failed`
+
+The 7-day rolling average is the fraction of dispatches that produced schema-invalid output. For an agent shipping at zero retry budget, an average above 0.5 means more than half of dispatches surface as failed to the user (modulo reaper recovery). Same operator-actionable signal, sharper interpretation at zero budget.
+
+Three visual states · same thresholds as before:
 
 - `< 0.1` · steady state · the metric renders as small monochrome text ("retry avg 0.04 · 7d"), low visual weight
 - `0.1 to 0.5` · elevated · same text rendered in gold (`var(--gold-deep)`), with a tooltip explaining the threshold
 - `> 0.5` · drift warning · text rendered in rose-deep (`var(--rose-deep)`) plus a small inline icon (a circular arrow at 12 px), tooltip reads "Schema retries above threshold. Investigate model drift or prompt rot."
 
-The 0.5 threshold is the empirical line: at retry_budget=1, an average above 0.5 means more than half of all runs needed a retry. Either the model degraded or the prompt is brittle; both are operator-actionable signals. Below 0.5 is normal noise.
+The 0.5 threshold reading at `retry_budget: 0`: more than half of dispatches return schema-invalid on first attempt · prompt rot or model drift, operator should investigate. At `retry_budget: 1+` (when streaming runtime ships in step 6+ and agents migrate back up): more than half of dispatches needed at least one retry, same operator signal, with the difference that the user usually didn't see the failure thanks to the in-call retry.
 
-For agents with `retry_budget: 0` (Sensescape today), the rolling average is meaningless (always 0). The Console renders "n/a" with a tooltip "Retry budget disabled · see §5.2.1 known debt." Once the agent migrates to `retry_budget: 1`, the metric activates.
+If an agent has zero runs in the 7-day window (newly registered, no traffic), the display reads "no recent data" in monochrome.
 
 This metric is read-only in Chapter 2. Chapter 3+ may add an operator drill-down to per-run detail when an agent crosses the warning threshold.
+
+### 6.6.2 Latency monitoring · per-agent duration rolling average
+
+Step-5 amendment · adds an inline latency badge alongside the schema_retry_count badge on every Run history row. Computed as `AVG(duration_ms) WHERE status='succeeded' AND created_at > now() - interval '7 days' GROUP BY agent_slug` and refreshed on every Console load.
+
+The badge is the operator's wall-time visibility layer. Step 4 verification surfaced Visual DNA at 25.3 s wall · marginal against the 25 000 ms Edge ceiling. The latency badge makes the marginality visible in normal operation rather than buried in the operator notification stream.
+
+Three visual states:
+
+- `< 20 000 ms` · steady state · small monochrome text ("avg 12.4 s · 7d"), low visual weight
+- `20 000 to 23 000 ms` · elevated · same text rendered in gold (`var(--gold-deep)`), tooltip: "Within Edge budget but approaching the ceiling. Watch for sustained drift."
+- `> 23 000 ms` · ceiling warning · text rendered in rose-deep (`var(--rose-deep)`) plus a small inline timer icon (12 px), tooltip: "Latency at or above 23 s · within 2 s of the Edge ceiling. Reduce prompt size, switch models, or defer to streaming."
+
+The 23 s threshold corresponds to the Edge ceiling minus a 2 s safety margin (25 000 ms hard wall − 2 000 ms buffer for cold-start and DB-write tail). Crossing 23 s means the agent is one slow Claude call away from timing out. Below 20 s leaves comfortable headroom.
+
+Visual DNA's step-4 verification result of 25.3 s would land in the `> 23 000 ms` rose-deep band as soon as it appears in the 7-day window · the Console signals the operator immediately on the first dispatch, not after a drift cycle.
+
+If an agent has zero successful runs in the 7-day window, the badge reads "no recent data" in monochrome (same shape as §6.6.1).
+
+### 6.6.3 Badge layout · the two metrics together
+
+Both the schema_retry_count badge (§6.6.1) and the latency badge (§6.6.2) render on every agent row in the Run history view, in this order:
+
+```text
+[ Status pill ] · [ Last run timestamp ] · [ Latency badge ] · [ Retry badge ] · [ Rerun CTAs ]
+```
+
+Visual rhythm: status pill is the loudest element, then timestamp (monochrome), then the two badges (color reflects threshold state), then the rerun CTAs (tag-style pills). On mobile (<640 px), badges stack vertically below the status row, each on its own line, threshold colors preserved.
+
+The Phase view does not render either badge · it shows aggregate health per agent ("delivered", "producing", "failed") without operational telemetry. The Run history view is where operators look when something needs investigation.
 
 ### 6.7 Empty + error states
 
@@ -808,6 +846,12 @@ Chapter 2 closes when:
 - [ ] Manual "Run" pill triggers `/api/agents/run` with trigger=manual
 - [ ] Reduced-motion respected
 - [ ] All design system v3.4 components used (no inline styles)
+- [ ] **Step-5 amendment · schema_retry_count badge (§6.6.1) renders the actual rolling average for ALL agents, not "n/a" at retry_budget: 0.** Threshold colors apply uniformly (monochrome <0.1, gold 0.1-0.5, rose-deep >0.5). "no recent data" when 7-day window is empty.
+- [ ] **Step-5 amendment · latency badge (§6.6.2) renders the 7-day rolling average of `agent_runs.duration_ms` on every Run history row.** Threshold colors (monochrome <20 s, gold 20-23 s, rose-deep >23 s). Visual DNA's marginal-zone latency surfaces here without operator action.
+- [ ] Badge layout per §6.6.3 · status pill, timestamp, latency badge, retry badge, rerun CTAs · in that order. Mobile stacks badges vertically with thresholds preserved.
+- [ ] Failed runs surface §5.8.1 canonical user-action copy on user-fixable codes (missing_inputs, qbp_field_missing, missing_dependency). Other codes render the generic transient/operator copy per §5.8.2.
+- [ ] Permanent-failure rows (`failed_permanently`) surface the manual-retry CTA per §5.5; one-click fires a new dispatch with `trigger=manual`.
+- [ ] Notification bell (§7) is mounted on `/agents` and reflects unread badge count.
 
 ### 11.7 Replay
 - [ ] Every new `agent_runs` row writes `qbp_snapshot`, `file_refs`, `runtime_args` at run start
