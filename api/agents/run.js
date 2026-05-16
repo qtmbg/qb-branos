@@ -573,11 +573,24 @@ export default async function handler(req) {
   // ─── 8. Run with schema-validate-and-retry ────────────────────────────
   const retryBudget = Number.isInteger(meta.retry_budget) ? meta.retry_budget : DEFAULT_RETRY_BUDGET;
   const t_run_start = Date.now();
+
+  // test_force_error hook · gated to authMode==='service' only. The hook
+  // exists so the §11.12.1 a3-live conformance suite can deterministically
+  // trigger edge_timeout / model_call_failed / schema_validation_failed
+  // paths without waiting for production to produce them. User-path callers
+  // (JWT auth) cannot pass it. Service-path callers must hold INTER_EDGE_SECRET
+  // to sign the inter-edge HMAC, which gates the conformance runner only.
+  // Without this gate a hostile user could spam /api/agents/run with
+  // test_force_error to churn dispatch_jobs through reaper retries.
+  const forceError = authMode === 'service'
+    ? (force_error || runtime_args?.test_force_error || null)
+    : null;
+
   const result = await runWithSchemaRetry({
     agent,
     runArgs: { qbp, dependencies, files, runtime_args, anthropicKey: ANTHROPIC_API_KEY },
     retryBudget,
-    forceError: force_error || runtime_args?.test_force_error || null,
+    forceError,
   });
   const duration_ms = Date.now() - t_run_start;
 
