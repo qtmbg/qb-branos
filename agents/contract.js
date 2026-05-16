@@ -31,6 +31,90 @@ export const CANONICAL_MODELS = [
 ];
 export const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
+// Per §3.5 (amended): schema-validate-and-retry budget. Default 1. The
+// framework safety net beneath per-agent prompt tightening · a transient
+// model schema miss self-corrects without a user-visible failure. Agents
+// can override (e.g. Sensescape ships retry_budget:0 per §5.2.1 latency
+// constraint).
+export const DEFAULT_RETRY_BUDGET = 1;
+export const MAX_RETRY_BUDGET = 5;
+
+// Per §5.2.1 latency-budget pre-check. Edge function wall-clock ceiling is
+// 25 000 ms; we reserve 3 000 ms for fetch handshake + shutdown so the
+// effective per-dispatch budget is 22 000 ms. An agent's worst-case wall
+// time is observed_latency × (retry_budget + 1). Exceeding the threshold
+// triggers a warning at registry load (also fired through §5.8.2 operator
+// channel when wired).
+export const LATENCY_BUDGET_WARNING_MS = 22_000;
+export const EDGE_FUNCTION_CEILING_MS = 25_000;
+
+// Hand-maintained per-agent observed latency, sourced from each agent's
+// verification report. Step 5+ replaces this with a live query on the
+// last 50 agent_runs rows. The constant is a step-4 placeholder per §5.2.1.
+//
+// Sources:
+//   soul_map_synthesizer  · step-3 phase A live happy-path · ~14-15 s
+//   sensescape_synthesizer · step-3 phase B finishing (Pass 2 worst case) · 12.7 s
+//   visual_dna_synthesizer · step-3 phase B live happy-path · ~22.9 s
+//   war_table_synthesizer  · step-3 phase B live happy-path · ~17.0 s
+export const AGENT_OBSERVED_LATENCY_MS = {
+  soul_map_synthesizer:    15_000,
+  sensescape_synthesizer:  12_700,
+  visual_dna_synthesizer:  22_900,
+  war_table_synthesizer:   17_000,
+};
+
+// Per §5.8.1: qbp_field → human-readable exercise name. Used to fill the
+// {exercise name} placeholder in the canonical user-action copy for the
+// qbp_field_missing code. Missing entries fall back to "the relevant
+// exercise."
+export const QBP_FIELD_TO_EXERCISE = {
+  // Soul Map fields
+  brandName:         'Soul Map exercise',
+  brandEssence:      'Soul Map exercise',
+  spark:             'Soul Map exercise',
+  archetype:         'Soul Map exercise',
+  manifesto:         'Soul Map exercise',
+  antiBrand:         'Soul Map exercise',
+  paradox:           'Soul Map exercise',
+  alwaysNever:       'Soul Map exercise',
+  // Sensescape fields
+  colorTerritory:        'Sensescape exercise',
+  forbiddenColor:        'Sensescape exercise',
+  visualTerritoryNote:   'Sensescape exercise',
+  typographyNote:        'Sensescape exercise',
+  antiVoice:             'Sensescape exercise',
+  brandObject:           'Sensescape exercise',
+  brandMoment:           'Sensescape exercise',
+  signatureGesture:      'Sensescape exercise',
+  soundSignature:        'Sensescape exercise',
+  sensescapeRawAnswers:  'Sensescape exercise',
+  // Visual DNA exercise outputs
+  visualDnaKeepCount:     'Visual DNA exercise',
+  visualDnaDiscardRate:   'Visual DNA exercise',
+  visualDnaKeptImages:    'Visual DNA exercise',
+  visualDnaFastDiscards:  'Visual DNA exercise',
+  // Archetype Compass fields
+  archetypePrimary:                  'Archetype Compass exercise',
+  archetypeSecondary:                'Archetype Compass exercise',
+  archetypeVisualImplications:       'Archetype Compass exercise',
+  archetypeVisualImplicationsFull:   'Archetype Compass exercise',
+  archetypeMarketLandscape:          'Archetype Compass exercise',
+  archetypeStrategicMoat:            'Archetype Compass exercise',
+  archetypeCentralParadox:           'Archetype Compass exercise',
+  // War Table exercise outputs
+  warTableBrief:           'War Table exercise',
+  warTableTopInitiatives:  'War Table exercise',
+  warTablePosture:         'War Table exercise',
+  warTablePrinciples:      'War Table exercise',
+  warTableNextHandoff:     'War Table exercise',
+  // Audience block
+  audienceFears:    'Audience block in the War Table exercise',
+  audienceDesires:  'Audience block in the War Table exercise',
+  audienceLanguage: 'Audience block in the War Table exercise',
+  audienceFriction: 'Audience block in the War Table exercise',
+};
+
 // The canonical error_codes vocabulary, per §11.12.1. Agents may
 // declare a subset · the conformance test only runs the codes the
 // agent declares. New codes can be added by extending this list AND
@@ -169,6 +253,16 @@ export function validateAgentMeta(meta) {
     });
   }
 
+  // retry_budget · optional per §3.5 (amended). Integer in [0, MAX_RETRY_BUDGET].
+  // Default DEFAULT_RETRY_BUDGET (1) when absent. Validator only checks bounds
+  // when the field is present; latency-budget pre-check (§5.2.1) is a
+  // separate function called from the registry.
+  if (meta.retry_budget !== undefined) {
+    if (!Number.isInteger(meta.retry_budget) || meta.retry_budget < 0 || meta.retry_budget > MAX_RETRY_BUDGET) {
+      err('retry_budget', `must be an integer in [0, ${MAX_RETRY_BUDGET}] when declared`);
+    }
+  }
+
   // model · optional per §3.5. If present, must be in CANONICAL_MODELS.
   // Absence resolves to DEFAULT_MODEL ('claude-sonnet-4-6') at callClaude
   // time inside each agent module. The validator does NOT require model
@@ -207,4 +301,34 @@ export function assertAgentMetaOrThrow(meta, originLabel) {
       .join('\n');
     throw new Error(`Agent contract violation in ${originLabel || meta?.slug || '<unknown>'}:\n${summary}`);
   }
+}
+
+// Per §5.2.1 latency-budget pre-check. Returns { withinBudget, worstCaseMs,
+// budgetMs, message }. `withinBudget=false` means the operator should
+// either drop retry_budget to 0 + tighten the prompt, OR defer to streaming
+// when it lands. Caller decides what to do with the signal (log, fire
+// operator notification, throw). The contract module is pure · no side
+// effects.
+export function checkLatencyBudget(meta) {
+  const slug = meta?.slug;
+  const retryBudget = Number.isInteger(meta?.retry_budget) ? meta.retry_budget : DEFAULT_RETRY_BUDGET;
+  const observed = AGENT_OBSERVED_LATENCY_MS[slug];
+  if (typeof observed !== 'number') {
+    return {
+      withinBudget: true,
+      worstCaseMs: null,
+      budgetMs: LATENCY_BUDGET_WARNING_MS,
+      message: `no AGENT_OBSERVED_LATENCY_MS entry for ${slug || '<unknown>'} · pre-check skipped`,
+    };
+  }
+  const worstCaseMs = observed * (retryBudget + 1);
+  const withinBudget = worstCaseMs <= LATENCY_BUDGET_WARNING_MS;
+  return {
+    withinBudget,
+    worstCaseMs,
+    budgetMs: LATENCY_BUDGET_WARNING_MS,
+    message: withinBudget
+      ? `${slug} · worst case ${worstCaseMs}ms within ${LATENCY_BUDGET_WARNING_MS}ms budget`
+      : `${slug} · worst case ${worstCaseMs}ms exceeds ${LATENCY_BUDGET_WARNING_MS}ms budget at retry_budget=${retryBudget} · drop retry_budget to 0 + tighten prompt, OR defer to streaming runtime`,
+  };
 }

@@ -71,6 +71,13 @@ export const META = {
     'model_call_failed',  // Claude returned non-2xx OR returned text we could not parse
   ],
   // model field omitted · resolves to the canonical default below.
+  // Per §5.2.1 (amended in step 4 amendment): latency × (retry_budget + 1)
+  // must fit inside the 22 000 ms Edge budget. Soul Map's observed 15 s
+  // worst case × 2 = 30 s would exceed the budget at retry_budget: 1.
+  // Schema-invalid recovery is deferred to the reaper layer (§5.5):
+  // the runtime writes failed, the reaper re-fires /api/agents/run as a
+  // fresh Edge invocation within the 30s cron window.
+  retry_budget: 0,
 };
 
 // Resolved from META.model with the canonical default fallback. See

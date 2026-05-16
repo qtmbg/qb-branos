@@ -239,16 +239,23 @@ export const META = {
   // api/claude.js.
   // model: 'claude-haiku-4-5-20251001',
 
-  // Optional. How many times the runtime re-calls run() when the
-  // returned artifact fails schema validation. Default 1. The retry
-  // budget is the framework's safety net beneath per-agent prompt
-  // tightening: Sensescape's Pass 2 prompt clears 5/5 on the test
-  // fixture, but production traffic varies. With retry_budget:1 a
-  // transient model miss self-corrects without a user-visible failure.
-  // Declared per-agent so methodology owners can tune; set to 0 for
-  // agents that must surface schema failures immediately (e.g. high-
-  // stakes deterministic outputs in later phases).
-  // retry_budget: 1,
+  // Optional. How many times the runtime re-calls run() inside a SINGLE
+  // Edge invocation when the returned artifact fails schema validation.
+  //
+  // Step 4 amendment (mandatory rule): when latency × (retry_budget + 1)
+  // exceeds the Edge budget, the agent MUST declare retry_budget: 0 and
+  // defer retry semantics to the reaper layer (§5.5). The reaper re-fires
+  // /api/agents/run as a fresh Edge invocation with its own 25 000 ms
+  // ceiling. In-call retry is reserved for agents whose worst-case
+  // latency × 2 fits inside the 22 000 ms warning threshold.
+  //
+  // Current Chapter 2 agents (soul_map, sensescape, visual_dna, war_table)
+  // all declare retry_budget: 0 because Sonnet 4.6 (or Haiku 4.5 for
+  // Sensescape) on Phase 01 prompts exceeds the 22 000 ms threshold at
+  // any retry_budget > 0. Reaper-layer recovery is the safety net.
+  // retry_budget: 1 becomes available again for agents that fit budget
+  // when streaming/async runtime lands in step 6+.
+  retry_budget: 0,
 };
 
 export async function run({ qbp, dependencies, files, runtime_args, anthropicKey }) {
@@ -385,14 +392,18 @@ The registry's `assertAgentMetaOrThrow` (called at module load) computes the age
 
 Until step 5+ implements an `observed_avg_latency_ms` rolling-window tracker on `agent_runs`, the pre-check reads from a per-agent constant in `agents/contract.js` (`AGENT_OBSERVED_LATENCY_MS`, hand-maintained from each agent's verification report). This is acceptable as a step-4 placeholder · once step 5+ ships, the constant is replaced by a live query on the last 50 runs.
 
-**Methodology rule:** an agent whose latency × (retry_budget + 1) exceeds 22 000 ms must EITHER set `retry_budget: 0` AND ship a documented prompt-tightening pass to compensate, OR defer to the streaming/async runtime that lands in a later step. Silent shipping with a warning-only fix is not acceptable; the methodology rule names the choice explicitly.
+**Methodology rule (amended in step 4 amendment):** when latency × (retry_budget + 1) exceeds the Edge budget, the agent **MUST** declare `retry_budget: 0` and defer retry semantics to the reaper layer (§5.5). In-call retry is reserved for agents whose worst-case latency × 2 fits inside the 22 000 ms warning threshold. The mandatory `retry_budget: 0` declaration eliminates silent runtime debt by routing the recovery path through the reaper, where each retry is a fresh Edge invocation with its own 25 000 ms ceiling.
 
-**Sensescape · known constraint violation, documented deferral.** Sensescape's verified Pass 2 latency is 8.8-12.7 s (Haiku 4.5). With `retry_budget: 1`, worst-case wall is 12.7 × 2 = **25.4 s**, exceeding both the 22 000 ms warning threshold AND the 25 000 ms Edge ceiling. Two paths:
+**The pre-check enforces this in two layers:**
 
-- **Ship now with `retry_budget: 0`.** Sensescape's Pass 2 cleared 5/5 on the fixture, so the empirical schema-success rate at zero retry is high enough to ship. Adds risk of a single-shot schema miss surfacing to the user; mitigated by the user-fixable next-action copy and a manual re-run from the Console.
-- **Ship with `retry_budget: 1` AND accept the budget violation as known debt.** The Edge function would terminate the second Claude call mid-stream if the first attempt was unusually slow. This is silent runtime debt and is NOT acceptable per the methodology rule above.
+- **Warning (logged + operator-notified, non-fatal):** worst case > 22 000 ms but ≤ 25 000 ms. The agent ships but the operator sees that headroom is thin.
+- **Hard fail at registration (fatal, throws on `assertAgentMetaOrThrow`):** worst case > 25 000 ms (the Edge ceiling). The agent's `retry_budget` declaration is incompatible with single-invocation execution. Registration fails; the runtime never accepts dispatches for the agent until the META is fixed.
 
-**Chosen path: `retry_budget: 0` for Sensescape until step 6+ ships streaming/async** (when the per-call wall constraint dissolves). Documented in §12 (Known debt). All other agents default to `retry_budget: 1` and stay inside the budget.
+The conformance suite (§11.12) treats the hard-fail path as the registration test; an agent whose declared `retry_budget × declared latency` does not fit the budget fails conformance and cannot register.
+
+**Step-4 amendment: all four Chapter 2 synthesizers ship `retry_budget: 0`.** The framework caught the budget violation across three of four agents (Soul Map 30 s, Visual DNA 45.8 s, War Table 34 s would all exceed 22 000 ms at retry_budget: 1; Visual DNA's 45.8 s would also exceed the 25 000 ms ceiling). Per the mandatory rule, all four declare `retry_budget: 0` and rely on reaper-layer recovery for schema-invalid completions. Documented in §12 known debt.
+
+**Visual DNA remains marginal at retry_budget: 0.** Its observed 22.9 s single-shot wall is 900 ms above the warning threshold but 2 100 ms below the Edge ceiling. The pre-check warns at registration; the operator sees the signal; the reaper handles any schema-invalid completion. Resolution path is step 6+ streaming/async runtime.
 
 ### 5.3 `/api/artifacts/[id]/regenerate` (refactored)
 
@@ -435,9 +446,14 @@ Tier gating: chain triggers respect tier. A free user who completes Phase 01 wil
    - Retry 1 fires when `seconds_since_last_retry >= 30 s` AND `retry_count = 0`.
    - Retry 2 fires when `seconds_since_last_retry >= 120 s` AND `retry_count = 1`.
    - Retry 3 fires when `seconds_since_last_retry >= 300 s` AND `retry_count = 2`.
-3. Read child artifacts for the dispatch. If any are still `queued`, treat as stuck.
-4. Re-fire `/api/agents/run` for each stuck artifact. Increment `retry_count`. Update `last_retry_at = now()`.
+3. Read child artifacts for the dispatch. The reaper handles **two distinct recoverable failure modes**:
+   - **(a) Stuck dispatches** · child artifact still in `queued` state because the parent Edge context tore down before children executed (the PR #59 mechanism).
+   - **(b) Schema-invalid completions** · child artifact in `failed` state with `agent_runs.error_payload.code = 'schema_validation_failed'` (or any other transient code: `edge_timeout`, `model_call_failed`). The agent returned but the result was unusable.
+   Both modes are recoverable by re-firing `/api/agents/run` as a fresh Edge invocation with its own 25 000 ms ceiling. The reaper does not distinguish between them in its retry logic; both count against `retry_count`.
+4. Re-fire `/api/agents/run` for each recoverable artifact (stuck OR schema-invalid). Increment `retry_count`. Update `last_retry_at = now()`. For mode (b), the re-fire deletes the prior `failed` artifact's status (re-set to `queued`) AND opens a fresh `agent_runs` row · the prior failed run stays in history as audit. For mode (a), no artifact mutation is needed beyond re-running.
 5. **Permanent failure.** If `retry_count = 3` AND the dispatch is still `producing` at the next reaper tick, flip `dispatch_jobs.status = 'failed_permanently'`. Emit a single `dispatch_failed` notification (in-app + email). Email is sent ONLY at this terminal state, not on intermediate retries. The Agent Console surfaces a manual retry CTA on the affected agent row.
+
+**The reaper is the framework's retry safety net.** With `retry_budget: 0` declared across all four Chapter 2 synthesizers (per §5.2.1), the reaper is the only retry mechanism in play. Each `/api/agents/run` invocation is single-shot inside its own Edge budget; transient failures (timeout, 5xx, schema-invalid) write `failed` immediately; the reaper picks them up at the next cron tick (≤30 s recovery window) and re-fires. The user experience matches the in-call retry pattern with a small added latency for cron pickup.
 
 `last_retry_at` is added to `dispatch_jobs` via migration 012 alongside `retry_count`.
 
@@ -831,6 +847,8 @@ Chapter 2 closes when:
 - [ ] `META.version` integer set per agent; bumps tracked when prompt or schema changes
 - [ ] Runtime accepts `runtime_args.qbp_source` of `'current'` or `'original'`
 - [ ] **Every agent passes the conformance test (§11.12.1) before registration.** Soul Map Synthesizer is retrofit to pass conformance as part of Chapter 2 build step 3.
+- [ ] **Step-4 amendment: retry_budget validation enforced at registration.** The conformance check verifies that `(retry_budget + 1) × declared_latency ≤ EDGE_FUNCTION_CEILING_MS`. Failure of this check fails agent registration · `assertAgentMetaOrThrow` throws and the runtime does not accept dispatches for the agent. The 22 000 ms warning threshold logs a non-fatal signal (and routes to the operator notification channel); the 25 000 ms ceiling is the hard fail. Implementation lands with step 4 code.
+- [ ] All four Chapter 2 agents declare `retry_budget: 0` and pass the registration check at the ceiling.
 - [ ] **Step 4 lift: all five §11.12.1 assertions PASS live across all four registered agents.** Step 3 cleared a1 + a2 + a3-offline; step 4 closes the deferred surface:
   - a3 live · `edge_timeout` triggerable via a tunable timeout knob on a test endpoint (or a known-slow Claude call) · PASS on every agent
   - a3 live · `model_call_failed` triggerable via a test endpoint that injects a non-2xx Claude response · PASS on every agent
@@ -875,7 +893,7 @@ Nizzar runs through the free-tier path, hits the paywall, upgrades, sees Phase 0
 - **Asset layer (file uploads) not built.** Agent contract declares `inputs.files` for forward-compat with Chapter 3. No Chapter 2 agent requires non-optional files. Chapter 3 builds upload + storage + asset records.
 - **No retry from the user-facing surfaces beyond the manual CTA.** If a run fails for a recoverable reason (rate limit, transient API error), there's no automatic retry policy. Chapter 3 or 4 can add per-agent retry config.
 - **Notification dropdown is read-only display.** No full-history view, no filtering by kind, no archive. Last 10 only. Chapter 3+ when the user has enough history to warrant a full page.
-- **Sensescape ships with `retry_budget: 0`** per §5.2.1 latency-budget pre-check. Pass 2 prompt clears 5/5 on the test fixture but a single-shot schema miss in production surfaces directly to the user rather than self-correcting. Mitigation: §5.8 user-action copy explains the failure and offers a manual rerun. Resolution: step 6+ ships streaming/async runtime, at which point the per-call wall constraint dissolves and Sensescape can declare `retry_budget: 1` without violating the 22 000 ms safety threshold. The constraint is logged at registry load and surfaced via the operator notification channel (§5.8.2).
+- **All four Chapter 2 synthesis agents ship `retry_budget: 0`** per the §5.2.1 mandatory rule (amended in step 4 amendment). The framework's pre-check caught that Soul Map (30 s), Visual DNA (45.8 s), and War Table (34 s) all exceed the 22 000 ms warning threshold at `retry_budget: 1`; Sensescape (25.4 s) exceeds both warning and ceiling. All four declare `retry_budget: 0` and rely on the reaper layer (§5.5) for schema-invalid recovery. Each `/api/agents/run` invocation is single-shot inside its own Edge budget; the reaper re-fires failed runs as fresh invocations within the 30 s cron window. Resolution path: step 6+ streaming/async runtime, at which point the per-call wall constraint dissolves and agents that fit budget can declare `retry_budget: 1` again. Visual DNA remains marginal even at `retry_budget: 0` (observed 22.9 s vs 22 000 ms warning), surfaced by the pre-check on every registry load and routed to the operator notification channel (§5.8.2).
 
 ---
 
