@@ -229,6 +229,15 @@ export const META = {
   // Per §11.12.1 every agent declares the error codes it may emit.
   // The conformance suite asserts each declared code is triggerable.
   error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
+  // Optional. Anthropic model used for this agent's run(). If omitted,
+  // resolves to DEFAULT_MODEL ('claude-sonnet-4-6') at callClaude time.
+  // Declare explicitly when the agent's prompt size, latency profile,
+  // or quality requirements justify a non-default model (e.g. Sensescape
+  // uses Haiku to fit its multi-paragraph synthesis inside the 25 s Edge
+  // budget · see step-3 phase B verification). Allowed set in
+  // agents/contract.js CANONICAL_MODELS, mirrors ALLOWED_MODELS in
+  // api/claude.js.
+  // model: 'claude-haiku-4-5-20251001',
 };
 
 export async function run({ qbp, dependencies, files, runtime_args, anthropicKey }) {

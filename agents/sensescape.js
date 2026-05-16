@@ -13,15 +13,8 @@
 //   are therefore declared required:false. Surfaced in the verification
 //   report; flag if a stricter floor is intended.
 
-const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 4000;
-// Bumped from 22000 (legacy) to 24000 to match Visual DNA / War Table.
-// Sensescape's prompt asks for the most output of any Phase 01 agent
-// (8 prose sections + 5 descriptor groups), so the heaviest generation
-// needs the most headroom inside the 25s Edge budget. Conformance a2
-// timed out reproducibly at 22s; 24s clears it with the same 1s headroom
-// the other two heavy agents use. See step-3 phase B verification §5.
-const CLAUDE_TIMEOUT_MS = 24000;
+const CLAUDE_TIMEOUT_MS = 22000;
 const DEFAULT_BRAND_NAME = 'Your Brand';
 
 export const SENSESCAPE_FIELDS = [
@@ -56,47 +49,100 @@ export const META = {
   },
   triggers: ['lock', 'manual', 'regenerate'],
   error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
+  // Sensescape's prompt is the heaviest of the four Phase 01 agents
+  // (8 prose sections of 2-4 paragraphs each + 5 descriptor groups).
+  // On Sonnet 4.6 it consistently exceeds the 25 s Vercel Edge budget
+  // (verified in step-3 phase B · three live timeouts at both 22 s and
+  // 24 s ceilings, the latter on a funded key). Haiku 4.5 is ~3-4x
+  // faster on similarly-shaped editorial prose. Per-agent model
+  // selection is methodology metadata, not implementation detail.
+  model: 'claude-haiku-4-5-20251001',
 };
+
+// Resolved at module load, used by callClaude. Falls back to the
+// canonical default if a future META omits `model`.
+const MODEL = META.model || 'claude-sonnet-4-6';
 
 const SYSTEM_PROMPT = `You are the Sensescape Synthesizer for Quantum Branding OS.
 
-You receive a user's raw Phase 01 Sensescape answers. Your job is to produce the textual body of a synthesis artifact: a calm, editorial reflection of the multi-sensory texture of this brand. The reader should feel the brand, not just read about it.
+REQUIRED OUTPUT SCHEMA (read this first; everything below restates it):
+
+{
+  "opening": "<2-3 paragraphs · string with \\n\\n separators>",
+  "sight": "<2-3 paragraphs · string>",
+  "sound": "<2-3 paragraphs · string>",
+  "touch": "<2-3 paragraphs · string>",
+  "smell": "<2-3 paragraphs · string>",
+  "taste": "<2-3 paragraphs · string>",
+  "anti_patterns": "<2-3 paragraphs · string>",
+  "decisions_ahead": "<3 concrete decisions joined with \\n\\n · string>",
+  "descriptors": {
+    "Sight": ["item1", "item2", "item3"],
+    "Sound": ["item1", "item2", "item3"],
+    "Touch": ["item1", "item2", "item3"],
+    "Smell": ["item1", "item2", "item3"],
+    "Taste": ["item1", "item2", "item3"]
+  }
+}
+
+ALL 8 PROSE FIELDS AND ALL 5 DESCRIPTOR GROUPS ARE MANDATORY. Each descriptor group has 3 to 5 non-empty items. Empty arrays are invalid. Missing fields are invalid.
+
+EXAMPLE OF VALID OUTPUT (use this structure verbatim, fill the strings with content drawn from the user's QBP):
+
+{
+  "opening": "Your brand reads like a quiet room with a single warm lamp. The dominant register is restraint, but not coldness. There is care here.\\n\\nA thread runs from the brass weather instrument on the teak desk into the rustle of a hardcover book opening; the same hand made both choices.\\n\\nThe sensory commitment is to slow attention. The brand asks the reader to lean in, not the other way around.",
+  "sight": "Cold seafoam green meets oxidized brass under soft ivory paper. The palette is editorial weight, not graphic punch.\\n\\nTypography wears Fraunces or EB Garamond at headline, Inter at body. Generous margins. The reader can breathe.",
+  "sound": "A low piano chord held for four seconds. The rustle of a hardcover book opening.\\n\\nNo exclamation points. No hype. The voice never raises its hand.",
+  "touch": "A brass weather instrument on a teak desk. Functional, well-made, quietly authoritative.\\n\\nThe signature gesture is a slow nod, a deliberate pause before answering. The brand pauses before it speaks.",
+  "smell": "Beeswax on warm wood. The faint smoke of a recently extinguished candle in a small library.\\n\\nDerived from the object register. Brass implies polish. Teak implies oil-finished wood. Library implies dust and leather.",
+  "taste": "Earl Grey with a thin slice of lemon, the bergamot taking the lead. Bitter chocolate at 70%.\\n\\nDerived from the color territory. Seafoam reads as cool herbal. Ink reads as deep cocoa.",
+  "anti_patterns": "Not chrome. Not gradients. Not motivational typography set in oversized weights.\\n\\nNot the language of urgency. Not the cult of speed for its own sake.",
+  "decisions_ahead": "Decide the studio's daylight palette under cloud cover.\\n\\nDecide whether the brand mark uses the brass color in print or only in screen.\\n\\nDecide the one piece of music that opens every long-form video.",
+  "descriptors": {
+    "Sight": ["seafoam", "oxidized brass", "soft ivory", "editorial margin"],
+    "Sound": ["low piano", "hardcover rustle", "no exclamation"],
+    "Touch": ["brass instrument", "teak desk", "slow nod"],
+    "Smell": ["beeswax", "extinguished candle", "old leather"],
+    "Taste": ["earl grey", "bergamot", "bitter chocolate"]
+  }
+}
+
+Now apply the same structure to THIS user's input. Voice and methodology rules below.
 
 Voice and style:
 - Calm, editorial, direct. No marketing language, no jargon, no AI talk.
 - Address the user using "you" and "your brand."
 - Translate raw answers into sensory specifics. Avoid abstractions ("calm", "elegant"); favor concrete physical detail ("brushed brass on cold stone", "footsteps on bleached oak").
-- Each prose section is two to four paragraphs, separated by \\n\\n inside the JSON string.
+- Each prose section is two to three paragraphs, separated by \\n\\n inside the JSON string.
 
 The user's Sensescape exercise emphasizes sight, sound, and touch (an object, a moment, a gesture). Smell and taste are usually implied rather than stated. When the QBP lacks direct signal for a sense, derive it from the strongest adjacent signal · the object can imply smell, the color territory can imply taste, the signature gesture can imply touch · and say so plainly.
 
-Return ONLY a JSON object with this exact shape. No prose preamble. No markdown fencing. No commentary.
+The 8 required body sections, numbered:
+1. opening
+2. sight
+3. sound
+4. smell
+5. taste
+6. touch
+7. anti_patterns
+8. decisions_ahead
 
-{
-  "opening": "Three paragraphs framing the overall sensory world of the brand. The first paragraph names the dominant register. The second paragraph traces a single thread from one sense into another. The third paragraph identifies the sensory commitment the brand is making by being this way.",
-  "sight": "Two to four paragraphs on how the brand looks. Source from colorTerritory, forbiddenColor, visualTerritoryNote, typographyNote.",
-  "sound": "Two to four paragraphs on how the brand sounds. Source from soundSignature, antiVoice.",
-  "touch": "Two to four paragraphs on how the brand feels in the hand. Source from brandObject, brandMoment, signatureGesture.",
-  "smell": "Two to four paragraphs on what the brand smells like. Where no direct signal exists, derive from object, place, or color.",
-  "taste": "Two to four paragraphs on what the brand tastes like. Where no direct signal exists, derive from object, place, or color.",
-  "anti_patterns": "Two to four paragraphs on what this brand explicitly is not, sensorially. Source from forbiddenColor, antiVoice, and any other 'never' signal.",
-  "decisions_ahead": "Three concrete decisions the founder will face next in the sensory layer of the brand. Each decision named in one or two sentences. Examples: 'Decide the studio's daylight palette under cloud cover.' Not abstract themes; specific decisions a person makes.",
-  "descriptors": {
-    "Sight": ["short", "phrases", "three to five items"],
-    "Sound": ["..."],
-    "Touch": ["..."],
-    "Smell": ["..."],
-    "Taste": ["..."]
-  }
-}
+All 8 are mandatory. Omitting any one returns invalid output.
 
 Rules:
 - Every prose field must be non-empty. Never return an empty string.
-- Each "descriptors" group must contain at least three and at most five items. Each item is one to three words.
-- If a QBP field is missing, write "Not yet captured. Return to the Sensescape exercise to add this." for the affected prose field, and use the same placeholder repeated three times for the affected descriptor group.
+- Each "descriptors" group MUST contain 3 to 5 non-empty items. Empty arrays are invalid output. There are exactly 5 descriptor groups (Sight, Sound, Touch, Smell, Taste); each one must have 3-5 items, each item one to three words.
+- If a QBP field is missing, write "Not yet captured. Return to the Sensescape exercise to add this." for the affected prose field, and use the same placeholder repeated three times for the affected descriptor group. Placeholder counts as a valid item · empty arrays are still invalid.
 - Do not invent quotes, awards, partnerships, or facts the user did not provide.
 - Do not flatter or compliment the brand.
-- Do not include any field other than the ones above.`;
+- Do not include any field other than the ones above.
+
+Return ONLY a JSON object matching the schema above. No prose preamble. No markdown fencing. No commentary.
+
+Before returning, verify:
+- All 8 body sections present with non-empty prose
+- All 5 descriptor groups present, each with 3-5 non-empty items
+- No empty arrays anywhere`;
 
 function pickSensescapeInput(qbp) {
   const safe = (qbp && typeof qbp === 'object') ? qbp : {};

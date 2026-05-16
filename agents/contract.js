@@ -13,6 +13,24 @@ export const CANONICAL_PHASES   = ['00', '01', '02', '03', '04', '05'];
 export const CANONICAL_TIERS    = ['free', 'starter', 'pro', 'agency', 'atelier'];
 export const CANONICAL_FILE_SOURCES = ['user-upload', 'agent-output'];
 
+// Per §3.5 (amended in step 3 phase B): each agent may declare which
+// Anthropic model serves its run(). Matches ALLOWED_MODELS in
+// api/claude.js. Agents that omit `model` resolve to DEFAULT_MODEL at
+// callClaude time. The validator only enforces "if present, must be
+// in the canonical set" · absence is allowed (and idiomatic for
+// agents on the default).
+export const CANONICAL_MODELS = [
+  'claude-opus-4-7',
+  'claude-opus-4-6',
+  'claude-sonnet-4-6',
+  'claude-haiku-4-5',
+  'claude-haiku-4-5-20251001',
+  // Legacy IDs retained while tools migrate
+  'claude-sonnet-4-20250514',
+  'claude-opus-4-20250514',
+];
+export const DEFAULT_MODEL = 'claude-sonnet-4-6';
+
 // The canonical error_codes vocabulary, per §11.12.1. Agents may
 // declare a subset · the conformance test only runs the codes the
 // agent declares. New codes can be added by extending this list AND
@@ -149,6 +167,16 @@ export function validateAgentMeta(meta) {
         err(`error_codes[${idx}]`, `${JSON.stringify(c)} not in canonical set ${JSON.stringify(CANONICAL_ERROR_CODES)}`);
       }
     });
+  }
+
+  // model · optional per §3.5. If present, must be in CANONICAL_MODELS.
+  // Absence resolves to DEFAULT_MODEL ('claude-sonnet-4-6') at callClaude
+  // time inside each agent module. The validator does NOT require model
+  // because Soul Map / Visual DNA / War Table run on the default and
+  // omitting the field is idiomatic. Sensescape declares Haiku explicitly
+  // (see step-3 phase B verification report).
+  if (meta.model !== undefined && !CANONICAL_MODELS.includes(meta.model)) {
+    err('model', `${JSON.stringify(meta.model)} not in canonical set ${JSON.stringify(CANONICAL_MODELS)}`);
   }
 
   // artifact_type vs slug · spec §3.1 says artifact_type is the value

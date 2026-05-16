@@ -18,7 +18,6 @@
 // required:false so the runtime hands sparse QBPs through to the agent,
 // which renders "Not yet captured" placeholders rather than refusing.
 
-const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 4000;
 const CLAUDE_TIMEOUT_MS = 22000;
 const DEFAULT_BRAND_NAME = 'Your Brand';
@@ -71,7 +70,12 @@ export const META = {
     'edge_timeout',       // Claude call exceeded CLAUDE_TIMEOUT_MS
     'model_call_failed',  // Claude returned non-2xx OR returned text we could not parse
   ],
+  // model field omitted · resolves to the canonical default below.
 };
+
+// Resolved from META.model with the canonical default fallback. See
+// agents/contract.js DEFAULT_MODEL.
+const MODEL = META.model || 'claude-sonnet-4-6';
 
 const SYSTEM_PROMPT = `You are the Soul Map Synthesizer for Quantum Branding OS.
 

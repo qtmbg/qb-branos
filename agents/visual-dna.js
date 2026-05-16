@@ -11,7 +11,6 @@
 //   as required:true. Every other field handles absence via the prompt's
 //   fallback path and is declared required:false.
 
-const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 2400;
 const CLAUDE_TIMEOUT_MS = 24000;
 const DEFAULT_BRAND_NAME = 'Your Brand';
@@ -55,7 +54,12 @@ export const META = {
   },
   triggers: ['lock', 'manual', 'regenerate'],
   error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
+  // model field omitted · resolves to the canonical default below.
 };
+
+// Resolved from META.model with the canonical default fallback. See
+// agents/contract.js DEFAULT_MODEL.
+const MODEL = META.model || 'claude-sonnet-4-6';
 
 const SYSTEM_PROMPT = `You are the Visual DNA Synthesizer for Quantum Branding OS.
 
