@@ -2,7 +2,7 @@
 
 This directory holds the nine visual surfaces required to close step 5 per PR #79.
 
-Capture via the seed-and-capture script · `node seed-and-capture.mjs <state>`. Script seeds a fresh test user into the target state via Supabase admin + service-role writes, mints a session, drives Playwright headless against `https://quantumbranding.ai/agents` with `localStorage.qb_session` injected, captures fullPage PNG, cleans up. Persistent provenance · re-runnable end-to-end.
+Capture via the seed-and-capture script · `node seed-and-capture.mjs <state>` for one state, or `node seed-and-capture.mjs all` to fire all nine sequentially and build a 3x3 contact sheet PNG at the end. Script seeds a fresh test user into the target state via Supabase admin + service-role writes, mints a session, drives Playwright headless against `https://quantumbranding.ai/agents` with `localStorage.qb_session` injected, captures fullPage PNG, cleans up. Persistent provenance · re-runnable end-to-end.
 
 Vercel auto-deployed commit `1c4dce4` (PR #78 merge) to production on 2026-05-16. The script targets that deployment.
 
@@ -13,7 +13,10 @@ Vercel auto-deployed commit `1c4dce4` (PR #78 merge) to production on 2026-05-16
 
 ## States (nine PNGs)
 
-Run each one at a time (not in a bash loop). Verify each PNG visually before the next state fires. Costs ~10 min wall time per state given Supabase round-trip + Playwright headless + prod page load. Total ~90 min for the nine.
+Two modes:
+
+- **One at a time** · for debugging or first-pass capture, run each state alone and eyeball the PNG before the next state fires. ~30-60 s per state.
+- **All in one pass** · `node seed-and-capture.mjs all` runs the nine in sequence and writes `contact-sheet.png` (3x3 grid, ~320 px thumbnails, state labels, missing PNGs flagged as placeholders) so review collapses to one image. Use this once the per-state seeds are known-good. ~5-8 min total.
 
 | State command | Output PNG | Expected surface |
 | --- | --- | --- |
