@@ -598,30 +598,35 @@ export function renderConsole(container, payload, opts) {
       : `Rerun ${agent.display_name} with your current QBP?`;
     if (!confirm(confirmMsg)) return;
 
-    // Use the legacy dispatch path for now · /api/agents/run requires
-    // an artifact_id + dispatch_id which the regenerate flow creates.
-    // Until §13 step 7 (regenerate endpoint refactor) lands, route
-    // through the existing /api/artifacts/[id]/regenerate which is the
-    // Chapter 1 surface that produces a new artifact version.
+    // Per PR #78 audit item 3 · routes through /api/agents/rerun, the
+    // contract-conformant path. Server creates the new artifact + dispatch
+    // rows, then context.waitUntil()'s a child fetch to /api/agents/run.
+    // agent_runs gets the §3.5-conformant shape (agent_version, qbp_snapshot,
+    // schema_retry_count, error_payload jsonb). /api/artifacts/[id]/regenerate
+    // is no longer the rerun path; retires fully in §13 step 7.
     if (!agent.latest_artifact?.id) {
       alert('No prior artifact to regenerate.');
       return;
     }
     try {
-      const r = await fetch(`/api/artifacts/${agent.latest_artifact.id}/regenerate`, {
+      const r = await fetch('/api/agents/rerun', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${session.token}`,
           'content-type': 'application/json',
         },
-        body: JSON.stringify({ qbp_source: source }),
+        body: JSON.stringify({
+          artifact_id: agent.latest_artifact.id,
+          qbp_source: source,
+        }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) {
         alert(`Rerun failed: ${d?.error || r.status}`);
         return;
       }
-      // Reload the Console to reflect the new in-flight artifact.
+      // 202 expected · the run is in-flight on a child Edge invocation.
+      // Reload to surface the new artifact row with status='queued'.
       location.reload();
     } catch (e) {
       alert(`Rerun failed: ${e?.message || e}`);
