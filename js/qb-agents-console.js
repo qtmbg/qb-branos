@@ -246,6 +246,17 @@ function phaseAgentRow(agent, opts) {
         : 'No runs yet',
   ]);
 
+  // §6.6.1 + §6.6.2 rolling-average badges. Only present when the agent has
+  // completed runs in the 7-day window · the badge state (monochrome / gold /
+  // rose) is decided server-side and painted verbatim, matching the
+  // aggregate dot's threshold logic.
+  const rollingBadges = (agent.rolling?.runs_7d && agent.health?.latency_state)
+    ? el('div', { class: 'agent-row_rolling' }, [
+        latencyBadge(agent.rolling, agent.health),
+        retryBadge(agent.rolling, agent.health),
+      ])
+    : null;
+
   // Failure copy (user-fixable or generic) below the meta line.
   const errStatus = agent.permanently_failed_dispatch_id ? 'failed_permanently'
     : (agent.latest_artifact?.status === 'failed' || agent.latest_run?.status === 'failed') ? 'failed'
@@ -256,6 +267,7 @@ function phaseAgentRow(agent, opts) {
     row.appendChild(header);
     row.appendChild(description);
     row.appendChild(meta);
+    if (rollingBadges) row.appendChild(rollingBadges);
     row.appendChild(el('div', { class: 'agent-row_failure-copy' }, copy));
     // Manual retry CTA for permanent failure per §5.5.
     if (errStatus === 'failed_permanently') {
@@ -276,6 +288,7 @@ function phaseAgentRow(agent, opts) {
   row.appendChild(header);
   row.appendChild(description);
   row.appendChild(meta);
+  if (rollingBadges) row.appendChild(rollingBadges);
   const ctas = rerunCtas(agent, opts);
   if (ctas) row.appendChild(el('div', { class: 'agent-row_ctas' }, [ctas]));
   return row;
@@ -669,6 +682,7 @@ export function renderConsole(container, payload, opts) {
       .agent-row_name-meta { font-family: var(--font-mono, 'JetBrains Mono', monospace); font-size: 0.75em; color: rgba(45, 21, 33, 0.6); margin-top: 0.1em; }
       .agent-row_description { color: rgba(45, 21, 33, 0.75); font-size: 0.95em; margin: 0.6em 0 0; }
       .agent-row_meta { font-family: var(--font-mono, 'JetBrains Mono', monospace); font-size: 0.75em; color: rgba(45, 21, 33, 0.55); margin-top: 0.5em; }
+      .agent-row_rolling { display: flex; gap: 0.4em; flex-wrap: wrap; margin-top: 0.45em; }
       .agent-row_failure-copy { background: rgba(184, 112, 77, 0.08); border-left: 3px solid var(--rose-deep, #B8704D); padding: 0.6em 0.8em; margin-top: 0.6em; font-size: 0.9em; border-radius: 0.3em; }
       .agent-row_ctas { margin-top: 0.8em; }
       .agent-rerun-ctas { display: flex; gap: 0.6em; flex-wrap: wrap; }
