@@ -652,7 +652,18 @@ Both the schema_retry_count badge (§6.6.1) and the latency badge (§6.6.2) rend
 
 Visual rhythm: status pill is the loudest element, then timestamp (monochrome), then the two badges (color reflects threshold state), then the rerun CTAs (tag-style pills). On mobile (<640 px), badges stack vertically below the status row, each on its own line, threshold colors preserved.
 
-The Phase view does not render either badge · it shows aggregate health per agent ("delivered", "producing", "failed") without operational telemetry. The Run history view is where operators look when something needs investigation.
+The Phase view does not render either numerical badge · it shows **aggregate health per agent** without operational telemetry. The Run history view is where operators look when something needs investigation.
+
+**Aggregate health · the per-agent status indicator on Phase view.** A single colored dot (12 px, positioned to the left of the agent name) summarizing both rolling averages from §6.6.1 + §6.6.2 into one glance:
+
+- **Green** (`var(--phase-discovery)` or the matching phase color) · both rolling averages within their monochrome (steady-state) thresholds AND the most recent run is `delivered` or `succeeded`. The agent is healthy by every available signal.
+- **Yellow** (`var(--gold-deep)`) · at least one of the two rolling averages is in its elevated band (schema_retry_count 0.1-0.5, OR latency 20-23 s), AND the most recent run is not `failed`. Warning state · operator should investigate but the user-facing surface is still working.
+- **Red** (`var(--rose-deep)`) · at least one of the two rolling averages is in its warning band (schema_retry_count >0.5, OR latency >23 s), OR the most recent run is `failed`/`failed_permanently`. Action state · either degraded reliability or active failure.
+- **Neutral** (`var(--ink)` at 40% opacity) · the agent has zero runs in the 7-day window AND no current dispatch (cold state). No health signal until data exists. Distinct from green, which would falsely read "everything's fine."
+
+This maps the same threshold concept that drives the numerical badges into a single decodable signal at the Phase view level. The operator opening Phase view to ask "is my workforce OK?" sees one dot per agent and can spot the problem agent without scanning numbers. The operator who wants to know WHY clicks through to the Run history view where the numerical badges and the per-run detail live.
+
+The most-recent-run state still controls the row's badge text ("Producing", "Delivered", "Failed") and rerun CTAs per §6.6. The aggregate-health dot is an additional summary signal, not a replacement.
 
 ### 6.7 Empty + error states
 
