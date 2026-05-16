@@ -59,16 +59,25 @@ const RETRY_THRESHOLD_ROSE = 0.5;
 const LATENCY_THRESHOLD_GOLD_MS = 20_000;
 const LATENCY_THRESHOLD_ROSE_MS = 23_000;
 
-// §6.6.3 aggregate health · derive from rolling averages + latest run status.
-function aggregateHealth({ retryAvg, latencyAvg, runs7d, latestStatus, hasInflight }) {
+// Single source of truth for threshold-to-state mapping. Used for both
+// the aggregate health dot (§6.6.3) AND the per-row badge state on
+// recent_runs (§6.6.1, §6.6.2). The client never re-applies thresholds;
+// it paints the state string the server decided.
+function thresholdState(value, gold, rose) {
+  if (value == null || Number.isNaN(value)) return null;
+  if (value > rose) return 'rose';
+  if (value >= gold) return 'gold';
+  return 'monochrome';
+}
+
+// §6.6.3 aggregate health · derive from rolling averages + latest run
+// status. Uses thresholdState() so the dot's color logic is identical to
+// the badge's color logic.
+function aggregateHealth({ retryState, latencyState, runs7d, latestStatus, hasInflight }) {
   if (runs7d === 0 && !hasInflight) return 'neutral';
-  const retryGold   = retryAvg !== null && retryAvg >= RETRY_THRESHOLD_GOLD;
-  const retryRose   = retryAvg !== null && retryAvg > RETRY_THRESHOLD_ROSE;
-  const latencyGold = latencyAvg !== null && latencyAvg >= LATENCY_THRESHOLD_GOLD_MS;
-  const latencyRose = latencyAvg !== null && latencyAvg > LATENCY_THRESHOLD_ROSE_MS;
   const failedRecent = latestStatus === 'failed' || latestStatus === 'failed_permanently';
-  if (failedRecent || retryRose || latencyRose) return 'red';
-  if (retryGold || latencyGold) return 'yellow';
+  if (failedRecent || retryState === 'rose' || latencyState === 'rose') return 'red';
+  if (retryState === 'gold' || latencyState === 'gold') return 'yellow';
   return 'green';
 }
 
@@ -209,8 +218,12 @@ export default async function handler(req) {
         .some(([artId, dispId]) => dispId === d.id && latestArtifact?.id === artId)
     );
 
-    const health = aggregateHealth({
-      retryAvg, latencyAvg, runs7d,
+    // Threshold states computed server-side · client paints these verbatim.
+    const retry_state   = thresholdState(retryAvg,   RETRY_THRESHOLD_GOLD,       RETRY_THRESHOLD_ROSE);
+    const latency_state = thresholdState(latencyAvg, LATENCY_THRESHOLD_GOLD_MS,  LATENCY_THRESHOLD_ROSE_MS);
+
+    const dot = aggregateHealth({
+      retryState: retry_state, latencyState: latency_state, runs7d,
       latestStatus: permanentlyFailed ? 'failed_permanently'
         : (latestArtifact?.status === 'failed' ? 'failed' : (latestRun?.status || null)),
       hasInflight: Boolean(inflightDispatch),
@@ -247,11 +260,25 @@ export default async function handler(req) {
         duration_avg_7d_ms: latencyAvg,
         success_runs_7d: successRuns.length,
       },
-      health,
+      // §6.6.3 · health.dot drives the Phase view colored dot. retry_state
+      // and latency_state expose the same threshold decisions the server
+      // made on the rolling averages, in case any aggregate-level badge
+      // needs them. The Run history per-row badges read recent_runs[]
+      // .retry_state / .latency_state below (computed on point-in-time
+      // values, not rolling averages).
+      health: {
+        dot,
+        retry_state,
+        latency_state,
+      },
     };
   });
 
   // ─── Recent runs (Run history view) ────────────────────────────────────
+  // recent_runs per-row state · threshold decision applied to the row's
+  // own value, not a rolling average. A single run at duration_ms = 25000
+  // surfaces rose on the Run history badge even when the rolling average
+  // is steady. Operator sees exactly where individual outliers fall.
   const recentRuns = runs.slice(0, 50).map(r => ({
     id: r.id,
     agent_slug: r.agent_slug,
@@ -267,6 +294,8 @@ export default async function handler(req) {
     started_at: r.started_at,
     completed_at: r.completed_at,
     error_payload: r.error_payload,
+    retry_state:   thresholdState(r.schema_retry_count, RETRY_THRESHOLD_GOLD,      RETRY_THRESHOLD_ROSE),
+    latency_state: thresholdState(r.duration_ms,        LATENCY_THRESHOLD_GOLD_MS, LATENCY_THRESHOLD_ROSE_MS),
   }));
 
   return json(200, {

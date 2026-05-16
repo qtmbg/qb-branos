@@ -117,39 +117,42 @@ function healthDot(state = 'neutral') {
 }
 
 /* ─── §6.6.1 retry badge + §6.6.2 latency badge ──────────── */
-function retryBadge(rolling, thresholds) {
-  const avg = rolling?.schema_retry_avg_7d;
-  if (rolling?.runs_7d === 0 || avg == null) {
+/* Threshold decisions are made server-side and shipped as discrete state
+   strings ('monochrome' | 'gold' | 'rose' | null). The client paints what
+   the server decided · no threshold comparison in the browser. Same state
+   field on health.dot drives the Phase view aggregate dot. */
+const RETRY_BADGE_TITLE = {
+  rose:       'Schema retries above threshold. Investigate model drift or prompt rot.',
+  gold:       'Schema retries elevated. Watch for drift.',
+  monochrome: 'Schema retries steady.',
+};
+const LATENCY_BADGE_TITLE = {
+  rose:       'Latency at or above 23 s · within 2 s of the Edge ceiling. Reduce prompt, switch models, or defer to streaming.',
+  gold:       'Within Edge budget but approaching the ceiling. Watch for sustained drift.',
+  monochrome: 'Latency steady.',
+};
+
+function retryBadge(rolling, agentHealth) {
+  // Aggregate retry badge on Phase / Run history headers · reads
+  // agent.health.retry_state (server-decided) plus rolling avg for display.
+  const state = agentHealth?.retry_state;
+  if (!state) {
     return el('span', { class: 'agent-badge agent-badge_muted' }, 'no recent data');
   }
-  let state = 'monochrome';
-  if (avg > thresholds.retry_rose) state = 'rose';
-  else if (avg >= thresholds.retry_gold) state = 'gold';
   return el('span', {
     class: `agent-badge agent-badge_retry agent-badge_${state}`,
-    title: state === 'rose'
-      ? 'Schema retries above threshold. Investigate model drift or prompt rot.'
-      : state === 'gold'
-        ? 'Schema retries elevated. Watch for drift.'
-        : 'Schema retries steady.',
-  }, `retry avg ${fmtAvg(avg)} · 7d`);
+    title: RETRY_BADGE_TITLE[state] || RETRY_BADGE_TITLE.monochrome,
+  }, `retry avg ${fmtAvg(rolling?.schema_retry_avg_7d)} · 7d`);
 }
-function latencyBadge(rolling, thresholds) {
-  const avg = rolling?.duration_avg_7d_ms;
-  if (rolling?.success_runs_7d === 0 || avg == null) {
+function latencyBadge(rolling, agentHealth) {
+  const state = agentHealth?.latency_state;
+  if (!state) {
     return el('span', { class: 'agent-badge agent-badge_muted' }, 'no recent data');
   }
-  let state = 'monochrome';
-  if (avg > thresholds.latency_rose_ms) state = 'rose';
-  else if (avg >= thresholds.latency_gold_ms) state = 'gold';
   return el('span', {
     class: `agent-badge agent-badge_latency agent-badge_${state}`,
-    title: state === 'rose'
-      ? 'Latency at or above 23 s · within 2 s of the Edge ceiling. Reduce prompt, switch models, or defer to streaming.'
-      : state === 'gold'
-        ? 'Within Edge budget but approaching the ceiling. Watch for sustained drift.'
-        : 'Latency steady.',
-  }, `avg ${fmtMs(avg)} · 7d`);
+    title: LATENCY_BADGE_TITLE[state] || LATENCY_BADGE_TITLE.monochrome,
+  }, `avg ${fmtMs(rolling?.duration_avg_7d_ms)} · 7d`);
 }
 
 /* ─── status pill ─────────────────────────────────────────── */
@@ -224,7 +227,7 @@ function phaseAgentRow(agent, opts) {
   const row = el('div', { class: 'agent-row agent-row_phase' });
 
   const header = el('div', { class: 'agent-row_header' }, [
-    healthDot(agent.health),
+    healthDot(agent.health?.dot || 'neutral'),
     el('div', { class: 'agent-row_name' }, [
       el('div', { class: 'agent-row_name-title' }, agent.display_name),
       el('div', { class: 'agent-row_name-meta' },
@@ -317,14 +320,22 @@ function runHistoryRow(run, agentsBySlug, thresholds, opts) {
     el('span', { class: 'run-row_time' }, fmtRelativeTime(run.completed_at || run.started_at)),
   ]);
 
-  // Per-row latency + retry · the row's own duration_ms and schema_retry_count,
-  // not the rolling average. The rolling-average badges live on the Phase view's
-  // aggregate health dot; per-row badges show point-in-time values.
+  // Per-row latency + retry · the row's own duration_ms and schema_retry_count
+  // checked against the same §6.6.1 / §6.6.2 thresholds the aggregate dot uses.
+  // Server decides the state (run.retry_state, run.latency_state); client
+  // paints it. A single slow run shows rose even when the rolling average is
+  // steady · operators see exactly where individual outliers fall.
+  const latencyState = run.latency_state || 'monochrome';
+  const retryState   = run.retry_state   || 'monochrome';
   const badges = el('div', { class: 'run-row_badges' }, [
-    el('span', { class: 'agent-badge agent-badge_latency agent-badge_monochrome' },
-      `${fmtMs(run.duration_ms)}`),
-    el('span', { class: 'agent-badge agent-badge_retry agent-badge_monochrome' },
-      `retry ${run.schema_retry_count ?? 0}`),
+    el('span', {
+      class: `agent-badge agent-badge_latency agent-badge_${latencyState}`,
+      title: LATENCY_BADGE_TITLE[latencyState] || LATENCY_BADGE_TITLE.monochrome,
+    }, `${fmtMs(run.duration_ms)}`),
+    el('span', {
+      class: `agent-badge agent-badge_retry agent-badge_${retryState}`,
+      title: RETRY_BADGE_TITLE[retryState] || RETRY_BADGE_TITLE.monochrome,
+    }, `retry ${run.schema_retry_count ?? 0}`),
   ]);
 
   row.appendChild(top);
