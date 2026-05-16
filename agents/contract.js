@@ -301,6 +301,22 @@ export function assertAgentMetaOrThrow(meta, originLabel) {
       .join('\n');
     throw new Error(`Agent contract violation in ${originLabel || meta?.slug || '<unknown>'}:\n${summary}`);
   }
+
+  // §5.2.1 two-layer enforcement: hard-fail registration when
+  // (retry_budget + 1) × observed_latency exceeds EDGE_FUNCTION_CEILING_MS.
+  // The warning threshold (LATENCY_BUDGET_WARNING_MS) is non-fatal and
+  // routed through the operator notification channel by the registry; the
+  // ceiling check throws here because at that point the agent cannot fit
+  // inside a single Edge invocation regardless of operator awareness.
+  const check = checkLatencyBudget(meta);
+  if (typeof check.worstCaseMs === 'number' && check.worstCaseMs > EDGE_FUNCTION_CEILING_MS) {
+    throw new Error(
+      `Agent registration rejected in ${originLabel || meta?.slug || '<unknown>'}: ` +
+      `worst-case wall ${check.worstCaseMs}ms exceeds Edge ceiling ${EDGE_FUNCTION_CEILING_MS}ms ` +
+      `at retry_budget=${meta?.retry_budget ?? DEFAULT_RETRY_BUDGET}. ` +
+      `Drop retry_budget to 0 + tighten the prompt, OR defer to the streaming runtime (§5.2.1).`
+    );
+  }
 }
 
 // Per §5.2.1 latency-budget pre-check. Returns { withinBudget, worstCaseMs,
