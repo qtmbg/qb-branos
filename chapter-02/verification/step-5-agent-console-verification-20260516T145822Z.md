@@ -97,9 +97,60 @@ Real finding. Cosmetic only as long as the reaper (step 6+) sweeps stuck queued 
 
 ### Where this lands
 
-Per PR #78 approval: not a step-5 blocker. Step 6 (lock-foundation refactor) does not need to fix this. Step 8 (reaper) is where the gap closes structurally. Surface in the verification report; track as known debt entering step 6.
+Per PR #78 approval: not a step-5 blocker. Per PR #79 approval (this report): **fold the fix into step 6 lock-foundation refactor**, which touches `readLatestArtifacts` anyway. Server-side `latest_delivered_artifact` is the chosen fix shape · one change instead of two.
 
-**Status: DEFERRED · step 8 closes the gap structurally · Option 1 is the recommended UI hardening if the operator wants to close it before step 8.**
+**Status: DEFERRED to step 6 lock-foundation refactor. Server-side `latest_delivered_artifact` is the fix path.**
+
+### Gating-window caveat for the step 5 → step 6 gap
+
+Between merge of step 5 (PR #78 · already on prod) and lock-foundation landing in step 6, the user-visible behavior is:
+
+- User clicks rerun on v1 (delivered) → `/api/agents/rerun` creates v2 in `queued` → Console reloads → v2 is `latest_artifact` → rerun CTAs disappear from the agent row
+- v2 reaches `delivered` → rerun CTAs reappear (gated on the new latest's status)
+- v2 reaches `failed` (transient) → rerun CTAs reappear under the failure branch
+- v2 reaches `failed_permanently` → "Retry manually" pill appears (see §3.1 below · independence confirmed)
+- v2 stalls in `queued` indefinitely → **user is locked out of further reruns until reaper or operator intervention**
+
+In practice, Phase 01 happy-path latencies (8.8-22.9 s observed) mean the CTA-hidden window is seconds. The user clicks rerun, the button hides briefly, the new artifact lands, the button reappears with v2 as the new anchor.
+
+The risk surface is dispatch stalls. If `/api/agents/run` gets cancelled mid-Claude-call (the PR #59 mechanism · which still lives until step 6 refactors the parent), v2 sits queued indefinitely. The reaper at step 8 sweeps it within the 30s/2min/5min backoff. **Worst-case lockout: ~8 minutes before reaper recovers v2 to `failed_permanently` and the manual-retry pill takes over.**
+
+**Acceptable as step 5 → step 6 known debt. Flagged here explicitly so it does not surface as a regression complaint mid-window.**
+
+### §3.1 Permanent-failure "Retry manually" pill independence · trace
+
+The user's question at PR #79 approval: does the §5.5 "Retry manually" pill share Case C's gating problem? **Trace confirms it does not.**
+
+Server compute path (`api/agents/console.js`):
+- Line 140: `readActiveDispatches` includes `status=in.(producing,failed_permanently)` · pulls both in-flight and terminal-permanent rows
+- Lines 220-225: `permanentlyFailed = activeDispatches.find(d => d.status === 'failed_permanently' && <maps to latestArtifact.id>)` · independent computation; reads `dispatch_jobs.status`, not `artifacts.status`
+- Line 262: ships `permanently_failed_dispatch_id` in the per-agent payload
+
+Client gate (`js/qb-agents-console.js:250-262`):
+```js
+const errStatus = agent.permanently_failed_dispatch_id ? 'failed_permanently'
+  : (agent.latest_artifact?.status === 'failed' || agent.latest_run?.status === 'failed') ? 'failed'
+  : null;
+if (errStatus) {
+  // copy renders for both
+  if (errStatus === 'failed_permanently') {
+    // "Retry manually" pill
+  } else {
+    // standard rerunCtas (current / original QBP)
+  }
+}
+```
+
+The "Retry manually" pill is gated by `permanently_failed_dispatch_id` (a server-computed `dispatch_jobs` lookup), **not** by `latest_artifact.status`. When v2 reaches `failed_permanently`:
+- `dispatch_jobs.status = 'failed_permanently'`
+- Server's `permanentlyFailed.find(...)` returns the v2 dispatch (it maps to `latestArtifact.id = v2.id`)
+- `permanently_failed_dispatch_id` is set
+- `errStatus = 'failed_permanently'`
+- "Retry manually" pill renders
+
+The permanent-failure recovery path stays live regardless of what `latest_artifact.status` reads. Case C does **not** propagate to the failed_permanently surface. It is isolated to the transient rerun CTAs only.
+
+**Step 6 fix shape (server-side `latest_delivered_artifact`) addresses Case C without needing to touch the permanent-failure path.** The two surfaces are orthogonal.
 
 Screenshot slot: a Console state with a stuck queued v2 · expected: status pill reads "Producing" (or "Queued"), the rerun CTAs row is absent. After the reaper sweeps, the row recovers.
 
