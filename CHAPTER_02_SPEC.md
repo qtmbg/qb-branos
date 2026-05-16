@@ -238,6 +238,17 @@ export const META = {
   // agents/contract.js CANONICAL_MODELS, mirrors ALLOWED_MODELS in
   // api/claude.js.
   // model: 'claude-haiku-4-5-20251001',
+
+  // Optional. How many times the runtime re-calls run() when the
+  // returned artifact fails schema validation. Default 1. The retry
+  // budget is the framework's safety net beneath per-agent prompt
+  // tightening: Sensescape's Pass 2 prompt clears 5/5 on the test
+  // fixture, but production traffic varies. With retry_budget:1 a
+  // transient model miss self-corrects without a user-visible failure.
+  // Declared per-agent so methodology owners can tune; set to 0 for
+  // agents that must surface schema failures immediately (e.g. high-
+  // stakes deterministic outputs in later phases).
+  // retry_budget: 1,
 };
 
 export async function run({ qbp, dependencies, files, runtime_args, anthropicKey }) {
@@ -352,14 +363,21 @@ POST `{ user_id, agent_slug, dispatch_id, artifact_id, trigger, runtime_args }`.
 3. **Resolve QBP source.** `runtime_args.qbp_source` is `'current'` (default) or `'original'`. Default reads the user's live `profiles.qbp`. The original mode reads the `qbp_snapshot` from the source artifact's `agent_runs` row (only meaningful on regenerate triggers; manual triggers default to current).
 4. Read inputs: pull `qbp_fields` from the resolved QBP source; pull `artifact_dependencies` (latest delivered per slug); pull `files` from the file refs in `runtime_args` (Chapter 2 always empty).
 5. If any required input is missing → write artifact row to `failed` with `missing_inputs`; open + close `agent_runs` row (still capturing `qbp_snapshot`, `file_refs`, `runtime_args`, `agent_version`); return 200 with `{ ok: false, error: 'missing_inputs', missing }`.
-6. **Insert `agent_runs` row.** Set `status='started'`, `trigger`, `dispatch_id`, `agent_slug`, `agent_version` (from META), `qbp_snapshot` (frozen copy of the resolved QBP), `file_refs`, `runtime_args`. This row is the replay record.
+6. **Insert `agent_runs` row.** Set `status='started'`, `trigger`, `dispatch_id`, `agent_slug`, `agent_version` (from META), `qbp_snapshot` (frozen copy of the resolved QBP), `file_refs`, `runtime_args`. This row is the replay record. Also propagate `agent_version` onto the parent `dispatch_jobs` row (matches §11.12.1 assertion 4).
 7. Flip artifact `status='generating'`.
-8. Run agent (Claude call inside the 25 s budget) with the frozen inputs.
-9. Validate output schema.
-10. On success: PATCH artifact to `delivered` + content; close run as `succeeded`; send artifact-ready email; check chain triggers (see §5.4).
-11. On failure: PATCH artifact to `failed` + error; close run as `failed`.
-12. Update `dispatch_jobs.agents_settled` and flip `dispatch_jobs.status` to `completed` when all child artifacts reach terminal state.
-13. Return 200 with run summary.
+8. **Run agent with schema-validate-and-retry loop.** Read `model` from META (default `claude-sonnet-4-6`) and `retry_budget` (default 1). For attempt 0 through `retry_budget`:
+   - Call `agent.run({ qbp, dependencies, files, runtime_args, anthropicKey })` where the agent's internal `callClaude` uses `META.model`.
+   - If the run returns `{ ok: false, ... }`, exit the loop with that failure (model_call_failed, edge_timeout, config_missing are surface-immediately codes; no retry value).
+   - If the run returns `{ ok: true, content, meta }`, validate `content` against `js/qb-artifact-schema.js`.
+   - If valid: exit the loop with success.
+   - If invalid AND attempts remaining: increment a per-run `schema_retry_count`, re-call. The Claude call's non-determinism is the corrective signal · Sensescape on Haiku saw ~80% schema validity in baseline Pass-A; one retry budget shifts the user-visible failure rate from 20% to ~4% under the same conditions.
+   - If invalid AND budget exhausted: exit the loop with `{ ok: false, error: 'schema_validation_failed' }`.
+
+   Annotate the closing `agent_runs` row with `schema_retry_count` so operations can monitor model drift over time. The retry loop fires inside the same 25 s Edge budget · agents whose worst-case latency × (retry_budget + 1) exceeds the budget cannot safely declare retries (Sensescape at 12 s × 2 = 24 s · still inside the wall).
+9. On success: PATCH artifact to `delivered` + validated content; close run as `succeeded` with token + duration meta; send artifact-ready email; check chain triggers (see §5.4).
+10. On failure: PATCH artifact to `failed`; close run as `failed` with `error_payload` (jsonb) containing the canonical error code, stage, and detail. The runtime writes `error_payload` directly; the legacy `error` text column is no longer populated (deprecated per migration 011 §11.5).
+11. Update `dispatch_jobs.agents_settled` and flip `dispatch_jobs.status` to `completed` (all delivered) or `partial` (mix of delivered + failed) when all child artifacts reach terminal state.
+12. Return 200 with run summary `{ ok, agent_slug, artifact_id, version, status, schema_retry_count? }`.
 
 ### 5.3 `/api/artifacts/[id]/regenerate` (refactored)
 
@@ -432,6 +450,30 @@ The agent code currently lives at `api/agents/<name>-synthesizer.js`. Each file 
 4. Migration 011 renames `artifact_runs` → `agent_runs` and adds the new columns.
 
 The four agents themselves stay functionally identical. The framework wraps them.
+
+### 5.8 Failure surface · state-to-effect mapping
+
+Every failure path the runtime can produce lands on a known state across four observable surfaces: the `artifacts` row, the `dispatch_jobs` row, the in-app notification bell, and the Agent Console row (Agent Console UI ships in step 10/11; the row state is the API contract those surfaces read).
+
+| Failure code | artifacts.status | dispatch_jobs.status (final) | agent_runs.status | Notification fired | Agent Console row state | Retryable? |
+| --- | --- | --- | --- | --- | --- | --- |
+| `missing_inputs` (required file unmet) | `failed` | `partial` or `completed` (other agents may have delivered) | `failed` | none (user-fixable) | "Missing input · upload the requested file" CTA | by user, not reaper |
+| `qbp_field_missing` (required qbp_field unmet) | `failed` | `partial` or `completed` | `failed` | none (user-fixable) | "Missing input · complete the named exercise" CTA linking to the exercise | by user, not reaper |
+| `missing_dependency` (artifact_dependency not delivered) | `failed` | `partial` or `completed` | `failed` | none (chain-dependent) | "Waiting on upstream agent" with link to that agent's row | auto-fires when upstream delivers (§5.4) |
+| `edge_timeout` (Claude call exceeded model timeout) | `failed` (transient) | `producing` → reaper retries up to 3 → `failed_permanently` if exhausted | `failed` | `dispatch_failed` only at `failed_permanently` (one email + one bell entry) | "Run failed, retry manually" CTA, surfaces retry count | yes, by reaper (§5.5) |
+| `model_call_failed` (Claude returned non-2xx or unparseable) | `failed` (transient) | same as edge_timeout | `failed` | same | same | yes, by reaper |
+| `schema_validation_failed` (output invalid after retry_budget exhausted) | `failed` | same as edge_timeout | `failed` (with `schema_retry_count` annotated) | same | same · Console row shows "Schema retries: N" so model drift surfaces operationally | yes, by reaper |
+| `config_missing` (anthropicKey or other env unconfigured) | `failed` | `failed` (terminal, no retry) | `failed` | `dispatch_failed` immediately (operator-actionable, not user-fixable) | "Service misconfigured. Contact support." | no, requires deploy fix |
+| Successful delivery | `delivered` | `completed` (when all agents settle) or `partial` (when some failed permanently) | `succeeded` | `artifact_ready` (one per artifact) | green delivered checkmark with timestamp | n/a |
+| Successful chain dispatch | new artifact row `queued`, then standard run lifecycle | new `dispatch_jobs` row, `kind='chain'` | new agent_runs row | `chain_ready` when the downstream artifact delivers | downstream row shows "producing" then "delivered" | n/a |
+
+The user-fixable codes (`missing_inputs`, `qbp_field_missing`, `missing_dependency`) intentionally do NOT emit notifications. The user is the one who creates and resolves them; surfacing them via the bell would be noise. They show up only on the Agent Console row, where the user is already looking.
+
+The transient codes (`edge_timeout`, `model_call_failed`, `schema_validation_failed`) only emit `dispatch_failed` at the terminal `failed_permanently` state, never on intermediate retries. The user gets one notification per truly-failed dispatch, not one per attempt.
+
+The `config_missing` code is operator-only · it indicates the deployment itself is broken, so the notification is fired immediately and the row is marked terminal-failed with no retry. Service is back when the operator deploys a fix; the user's run row stays as the audit trail.
+
+`schema_retry_count` on `agent_runs` is the operational signal for monitoring model drift. A query like `SELECT agent_slug, AVG(schema_retry_count), MAX(schema_retry_count) FROM agent_runs WHERE created_at > now() - interval '24h' GROUP BY agent_slug` surfaces an agent whose model is degrading before users notice. Step 4 ships the column population; the monitoring query is a Chapter 3 observability concern.
 
 ---
 
@@ -723,6 +765,18 @@ Chapter 2 closes when:
 - [ ] `META.version` integer set per agent; bumps tracked when prompt or schema changes
 - [ ] Runtime accepts `runtime_args.qbp_source` of `'current'` or `'original'`
 - [ ] **Every agent passes the conformance test (§11.12.1) before registration.** Soul Map Synthesizer is retrofit to pass conformance as part of Chapter 2 build step 3.
+- [ ] **Step 4 lift: all five §11.12.1 assertions PASS live across all four registered agents.** Step 3 cleared a1 + a2 + a3-offline; step 4 closes the deferred surface:
+  - a3 live · `edge_timeout` triggerable via a tunable timeout knob on a test endpoint (or a known-slow Claude call) · PASS on every agent
+  - a3 live · `model_call_failed` triggerable via a test endpoint that injects a non-2xx Claude response · PASS on every agent
+  - a4 · `agent_runs.agent_version` and parent `dispatch_jobs.agent_version` both equal `META.version` after a live dispatch · PASS on every agent
+  - a5 · `agent_runs.qbp_snapshot` is non-null and matches the resolved QBP snapshot after a live dispatch · PASS on every agent
+
+### 11.12.2 Step 4 runtime-specific criteria
+
+- [ ] `META.model` resolution honored · Sensescape dispatches go to Haiku, the other three to Sonnet, verified via `agent_runs.meta.model` + Anthropic billing console
+- [ ] Schema-validate-and-retry loop active per `retry_budget` · induced schema invalidity (e.g. by temporarily mutating the agent's parser output in a feature-flagged test mode) triggers a retry, surfaces in `agent_runs.schema_retry_count`
+- [ ] `error_payload` (jsonb) populated on every failure path · legacy `error` text column NOT written by the new runtime (still readable for backward compat)
+- [ ] Failure surface (§5.8) verified · for each row in the table, the runtime produces the listed effect: artifact status, dispatch_jobs status, notification, console row state
 
 ### 11.12.1 Agent conformance test · automated
 
