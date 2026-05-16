@@ -14,7 +14,7 @@
  *   transient-failed    · 4 agents · one in failed (transient) state with rerun CTAs
  *   failed-permanently  · 4 agents · one in failed_permanently state with retry pill
  *   locked-phase-cards  · any signed-in user, Phase 02-05 locked rows visible
- *   replay-modal-v3     · 3-version chain on one agent, captures replay on v2 (non-latest)
+ *   replay-modal-v3     · 3-version chain on one agent, captures replay on v1 (root of chain, non-latest)
  *
  * Seeds happen via Supabase admin + service-role direct writes against
  * the production database (project yushbxjwfhuokaezoioe). Each invocation
@@ -398,16 +398,24 @@ async function capture({ userId, email, session, state, outPath }) {
   // Give the data render a moment to paint
   await page.waitForTimeout(2_000);
 
-  // For replay-modal-v3 · navigate to Run history view and click a v2 row
+  // For replay-modal-v3 · navigate to Run history view and click the
+  // OLDEST row (v1, root of chain) to demonstrate replay's specific-run
+  // version semantics. Rows order is `started_at desc` per console.js,
+  // so the last row is the oldest run · v1, which has no parent_artifact_id
+  // and is strictly non-latest in a 3-version chain.
   if (isReplay) {
     await page.click('.console-view-toggle_btn:nth-child(2)'); // Run history
     await page.waitForSelector('.run-row', { timeout: 10_000 });
-    // Click the middle row (likely v2 in chronological desc order: v3 first, v2 middle, v1 last)
     const rows = await page.$$('.run-row');
-    if (rows.length >= 3) {
-      await rows[1].click();
-    } else if (rows.length >= 1) {
-      await rows[0].click();
+    if (rows.length >= 1) {
+      // Find the row whose agent is Soul Map (the seeded 3-version chain)
+      // and click the oldest among them. Falls back to last row overall.
+      let targetRow = rows[rows.length - 1];
+      for (let i = rows.length - 1; i >= 0; i--) {
+        const text = await rows[i].innerText();
+        if (text && text.includes('Soul Map')) { targetRow = rows[i]; break; }
+      }
+      await targetRow.click();
     }
     await page.waitForSelector('.replay-modal', { timeout: 5_000 });
     await page.waitForTimeout(500);
