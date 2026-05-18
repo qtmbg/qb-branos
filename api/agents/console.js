@@ -105,17 +105,32 @@ async function readUserAgentRuns({ env, userId, sevenDaysAgoIso }) {
   return await r.json().catch(() => []);
 }
 
-async function readLatestArtifacts({ env, userId, slugs }) {
-  // For each slug, the latest delivered artifact (id, version, status).
-  // Single query with artifact_type IN (...) plus DISTINCT ON would be
-  // ideal but PostgREST doesn't expose DISTINCT ON cleanly; one query
-  // per slug is fine at our scale (4 agents).
+async function readLatestDeliveredArtifact({ env, userId, slugs }) {
+  // Per step-6 spec §4.3: latest artifact with status='delivered' per
+  // slug. queued / producing / failed rows do NOT gate the rerun CTAs
+  // against the prior delivered row. The inflight surface continues to
+  // ride on dispatch_jobs.status='producing' plus the dispatch→artifact
+  // join below (inflight_dispatch_id).
+  //
+  // PR #79 §3 Case C resolution: a regenerate that lands a queued v2
+  // while v1 is still delivered no longer hides v1's CTAs from the
+  // Console. The queued v2 shows up as a producing pill via the
+  // dispatch surface; v1's two-button rerun row stays clickable.
+  //
+  // Permanent-failure surface (PR #79 §3.1) reads from
+  // permanently_failed_dispatch_id, independent of artifact status, and
+  // is unaffected by this query.
+  //
+  // Returns { [slug]: artifact | null }. Caller shape stays identical
+  // to the prior readLatestArtifacts() helper; only the per-slug value
+  // is now the latest delivered row instead of the latest row.
   const out = {};
   await Promise.all(slugs.map(async slug => {
     const r = await fetch(
       `${env.SUPABASE_URL}/rest/v1/artifacts` +
       `?user_id=eq.${encodeURIComponent(userId)}` +
       `&artifact_type=eq.${encodeURIComponent(slug)}` +
+      `&status=eq.delivered` +
       `&select=id,status,version,updated_at,dispatch_id` +
       `&order=version.desc&limit=1`,
       { headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
@@ -177,26 +192,43 @@ export default async function handler(req) {
 
   const [runs, artifacts, activeDispatches] = await Promise.all([
     readUserAgentRuns({ env, userId, sevenDaysAgoIso }),
-    readLatestArtifacts({ env, userId, slugs: listAgentSlugs() }),
+    readLatestDeliveredArtifact({ env, userId, slugs: listAgentSlugs() }),
     readActiveDispatches({ env, userId }),
   ]);
 
+  // Per-slug join to the active dispatch surfaces (producing +
+  // failed_permanently). With the readLatestDeliveredArtifact rename
+  // (step-6 spec §4.3), the per-slug `artifacts` map only carries
+  // delivered rows; the queued / producing / failed_permanently row that
+  // actually carries the inflight dispatch_id no longer appears there.
+  // The inflight / permanent-failure surface keys on artifact_type
+  // (= agent slug) instead.
   const dispatchById = Object.fromEntries(activeDispatches.map(d => [d.id, d]));
-  const dispatchByArtifact = new Map();
-  // Build artifact → dispatch for the failed_permanently CTA · separate
-  // read because dispatch_jobs doesn't directly join to artifacts in the
-  // RLS scope.
+  const inflightDispatchBySlug = new Map();
+  const permanentlyFailedDispatchBySlug = new Map();
   if (activeDispatches.length > 0) {
     const r = await fetch(
       `${env.SUPABASE_URL}/rest/v1/artifacts` +
       `?user_id=eq.${encodeURIComponent(userId)}` +
       `&dispatch_id=in.(${activeDispatches.map(d => d.id).join(',')})` +
-      `&select=id,dispatch_id`,
+      `&select=id,dispatch_id,artifact_type`,
       { headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
     );
     if (r.ok) {
       for (const row of (await r.json().catch(() => []))) {
-        dispatchByArtifact.set(row.id, row.dispatch_id);
+        const dispatch = dispatchById[row.dispatch_id];
+        if (!dispatch) continue;
+        if (dispatch.status === 'producing') {
+          // Latest producing dispatch wins per slug. activeDispatches is
+          // ordered created_at.desc so the first hit is the most recent.
+          if (!inflightDispatchBySlug.has(row.artifact_type)) {
+            inflightDispatchBySlug.set(row.artifact_type, dispatch);
+          }
+        } else if (dispatch.status === 'failed_permanently') {
+          if (!permanentlyFailedDispatchBySlug.has(row.artifact_type)) {
+            permanentlyFailedDispatchBySlug.set(row.artifact_type, dispatch);
+          }
+        }
       }
     }
   }
@@ -216,14 +248,11 @@ export default async function handler(req) {
 
     const latestRun = agentRuns[0] || null;
     const latestArtifact = artifacts[slug] || null;
-    const inflightDispatch = activeDispatches.find(d =>
-      d.status === 'producing' && Array.from(dispatchByArtifact.entries())
-        .some(([artId, dispId]) => dispId === d.id && latestArtifact?.id === artId)
-    );
-    const permanentlyFailed = activeDispatches.find(d =>
-      d.status === 'failed_permanently' && Array.from(dispatchByArtifact.entries())
-        .some(([artId, dispId]) => dispId === d.id && latestArtifact?.id === artId)
-    );
+    // Inflight + permanent-failure surfaces key on slug (not on
+    // latestArtifact.id), so a queued v2 producing dispatch surfaces
+    // independently of a delivered v1 row. Step-6 spec §4.3 Case C.
+    const inflightDispatch = inflightDispatchBySlug.get(slug) || null;
+    const permanentlyFailed = permanentlyFailedDispatchBySlug.get(slug) || null;
 
     // Threshold states computed server-side · client paints these verbatim.
     const retry_state   = thresholdState(retryAvg,   RETRY_THRESHOLD_GOLD,       RETRY_THRESHOLD_ROSE);
