@@ -5,7 +5,7 @@
 //
 //   1. Pre-insert dispatch_jobs row (status='producing').
 //   2. Pre-insert the artifact row(s) (status='queued', dispatch_id set).
-//   3. Fire child /api/agents/run fetches inside context.waitUntil().
+//   3. Fire child /api/agents/run fetches via @vercel/functions waitUntil().
 //   4. Return 202 from the caller before any child resolves.
 //
 // Used by:
@@ -18,9 +18,13 @@
 // same-user JWT through instead, keeping authMode='user' on the child
 // side. Both modes are first-class in /api/agents/run.
 //
-// Edge-runtime safe. Pure ESM. No Node-only globals.
+// Edge-runtime safe. Pure ESM. waitUntil is the Vercel-canonical import
+// from @vercel/functions per docs verified 2026-05-19. The handler
+// signature is `handler(request)` with no second arg on Vercel Edge.
+// The Cloudflare-Workers `context.waitUntil` pattern is NOT used here.
 
 import { svcHeaders } from './auth.js';
+import { waitUntil } from '@vercel/functions';
 
 // ─── HMAC envelope for inter-edge calls ──────────────────────────────────
 //
@@ -224,16 +228,23 @@ export async function fireChildRuns({
 
 // ─── waitUntil hookup ───────────────────────────────────────────────────
 //
-// Vercel Edge supplies context.waitUntil; local dev / non-Vercel does not.
-// On platforms without it, we await the promise so the response delays
-// but the children still complete. Production always takes the waitUntil
-// branch; the await fallback is a safety net for local tests.
+// Vercel Edge runtime exposes waitUntil through the @vercel/functions
+// package, not through a context arg on the handler. The handler
+// signature is `handler(request)` (single arg). The import-based pattern
+// works in prod; the typeof-check fallback awaits inline for local-dev
+// environments where @vercel/functions noops or throws.
 
-export function holdOpenForChildren({ context, childPromises }) {
+export function holdOpenForChildren({ childPromises }) {
   const all = Promise.allSettled(childPromises);
-  if (context && typeof context.waitUntil === 'function') {
-    context.waitUntil(all);
-    return null;
+  if (typeof waitUntil === 'function') {
+    try {
+      waitUntil(all);
+      return null;
+    } catch (e) {
+      // Local dev fallback when @vercel/functions cannot register
+      // (e.g. vercel dev outside an active request context).
+      return all;
+    }
   }
   return all;
 }

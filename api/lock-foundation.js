@@ -116,7 +116,7 @@ async function findInflightLock({ supaUrl, serviceKey, userId }) {
   return rows?.[0] || null;
 }
 
-export default async function handler(req, context) {
+export default async function handler(req) {
   const origin = req.headers.get('origin') || '';
   const corsH = cors(origin);
 
@@ -325,7 +325,7 @@ export default async function handler(req, context) {
   // Hold the Edge function open so the child fetches can establish past
   // the 202 return. context.waitUntil keeps the runtime alive; the local
   // dev fallback awaits the promise inline.
-  const localPending = holdOpenForChildren({ context, childPromises });
+  const localPending = holdOpenForChildren({ childPromises });
 
   // Spec §4.2 invariant 4: return 202 BEFORE any child resolves. The
   // Console sees dispatch_jobs.status='producing' and four queued

@@ -32,12 +32,13 @@
 
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
 import { AGENTS } from '../../agents/registry.js';
+import { waitUntil } from '@vercel/functions';
 
 export const config = { runtime: 'edge' };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export default async function handler(req, context) {
+export default async function handler(req) {
   const origin = req.headers.get('origin') || '';
   const corsH = cors(origin);
 
@@ -172,23 +173,17 @@ export default async function handler(req, context) {
     console.error('[agents/rerun] runFetch threw', e?.message);
   });
 
-  // context.waitUntil keeps the Edge function alive past the 202 return
-  // so the runFetch can establish + complete · the Option A defense
-  // against the PR #59 parent-context-teardown cancellation. Without
-  // this, the same fire-and-forget pattern that PR #59 produced 6/10
-  // stuck rate on would silently fail here.
+  // waitUntil from @vercel/functions keeps the Edge function alive past
+  // the 202 return so the runFetch can establish + complete. Vercel Edge
+  // does NOT pass context as a second handler arg (verified against the
+  // Edge runtime docs 2026-05-19). The import-based pattern is canonical.
   try {
-    if (context && typeof context.waitUntil === 'function') {
-      context.waitUntil(runFetch);
-    } else {
-      // Local dev / non-Vercel runtimes: no waitUntil available · await
-      // the call so the response is delayed but correct. Production
-      // Vercel always supplies context.waitUntil; this branch is purely
-      // a local-test safety net.
-      await runFetch;
-    }
+    waitUntil(runFetch);
   } catch (e) {
-    console.error('[agents/rerun] waitUntil hookup failed', e?.message);
+    // Local dev fallback: await inline so the response is delayed but
+    // correct on non-Vercel runtimes.
+    console.error('[agents/rerun] waitUntil unavailable, awaiting inline', e?.message);
+    await runFetch;
   }
 
   // ─── 8. Return 202 ─────────────────────────────────────────────────────
