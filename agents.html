@@ -30,12 +30,20 @@
   *, *::before, *::after { box-sizing: border-box; }
   img, svg, video { display: block; max-width: 100%; }
   main#agents-root { min-height: 70vh; }
+  #qb-bell-slot {
+    position: fixed;
+    top: var(--space-s);
+    right: var(--space-s);
+    z-index: 50;
+  }
 </style>
 </head>
 <body>
 <main id="agents-root" aria-live="polite"></main>
+<div id="qb-bell-slot"></div>
 
 <script src="/qb-cloud.js"></script>
+<script src="/js/qb-notification-bell.js" defer></script>
 <script type="module">
 import {
   renderConsole, renderConsoleLoading, renderConsoleError,
@@ -80,6 +88,15 @@ async function load() {
   }
 
   renderConsole(root, data, { session });
+  mountBell(session);
+}
+
+function mountBell(session) {
+  const slot = document.getElementById('qb-bell-slot');
+  if (!slot || slot.dataset.bellMounted === 'true') return;
+  if (!window.QBNotificationBell || !session || !session.token) return;
+  window.QBNotificationBell.mount(slot, { authToken: session.token });
+  slot.dataset.bellMounted = 'true';
 }
 
 document.addEventListener('DOMContentLoaded', load);

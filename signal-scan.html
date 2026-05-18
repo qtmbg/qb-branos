@@ -2313,5 +2313,35 @@ render();
 <!-- QB analytics -->
 <script defer src="https://va.vercel-scripts.com/v1/script.js"></script>
 <script defer src="https://va.vercel-scripts.com/v1/speed-insights/script.js"></script>
+
+<!-- Notification bell mounts on the scan continuation surface for signed-in
+     users only. Anonymous scan visitors see no bell. Per Chapter 2 step 6D. -->
+<div id="qb-bell-slot" style="position:fixed;top:var(--space-s);right:var(--space-s);z-index:50;"></div>
+<script src="/js/qb-notification-bell.js" defer></script>
+<script>
+(function () {
+  function readSession() {
+    try { return JSON.parse(localStorage.getItem('qb_session') || '{}'); }
+    catch (e) { return {}; }
+  }
+  function tryMount() {
+    var slot = document.getElementById('qb-bell-slot');
+    if (!slot || slot.dataset.bellMounted === 'true') return;
+    if (!window.QBNotificationBell) return;
+    var s = readSession();
+    if (!s || !s.token || !s.userId) return;
+    window.QBNotificationBell.mount(slot, { authToken: s.token });
+    slot.dataset.bellMounted = 'true';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryMount);
+  } else {
+    tryMount();
+  }
+  // qb-notification-bell.js loads with defer, so try again after load to
+  // catch the window where DOMContentLoaded fires before the script.
+  window.addEventListener('load', tryMount);
+})();
+</script>
 </body>
 </html>

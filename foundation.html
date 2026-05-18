@@ -41,13 +41,21 @@
     pointer-events: none; z-index: 200;
   }
   .qb-toast.is-visible { opacity: 1; }
+  #qb-bell-slot {
+    position: fixed;
+    top: var(--space-s);
+    right: var(--space-s);
+    z-index: 50;
+  }
 </style>
 </head>
 <body>
 <main id="foundation-root" aria-live="polite"></main>
 <div id="qb-toast" class="qb-toast" aria-live="polite"></div>
+<div id="qb-bell-slot"></div>
 
 <script src="/qb-cloud.js"></script>
+<script src="/js/qb-notification-bell.js" defer></script>
 <script type="module">
 import {
   computeFoundationState,
@@ -189,6 +197,15 @@ async function load() {
   }
   const session = window.QB.getSession();
   await rerender(session);
+  mountBell(session);
+}
+
+function mountBell(session) {
+  const slot = document.getElementById('qb-bell-slot');
+  if (!slot || slot.dataset.bellMounted === 'true') return;
+  if (!window.QBNotificationBell || !session || !session.token) return;
+  window.QBNotificationBell.mount(slot, { authToken: session.token });
+  slot.dataset.bellMounted = 'true';
 }
 
 document.addEventListener('DOMContentLoaded', load);
