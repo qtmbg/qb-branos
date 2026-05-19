@@ -295,7 +295,26 @@ function phaseAgentRow(agent, opts) {
 }
 
 /* ─── Phase view · locked phase card ─────────────────────── */
-function lockedPhaseCard(card) {
+// Phase-to-chapter mapping for tier-active locked-row copy. Phase 02
+// ships in Chapter 4 (Brand Creation); Phase 03/04/05 ship in 5/6/7.
+const PHASE_CHAPTER = { '02': 4, '03': 5, '04': 6, '05': 7 };
+
+// §6.3 + step 9 §3.2 · tier-aware locked-row copy. Free users see the
+// upsell narrative (Starter unlock); Starter+ users see the build-ahead
+// narrative (chapter in which this phase ships). Empty/unknown tier
+// defaults to the Free copy.
+function lockedPhaseCopy(card, userTier) {
+  const tier = String(userTier || 'free').toLowerCase();
+  if (tier === 'free') {
+    return 'Unlocks when Starter tier is active';
+  }
+  const chapter = PHASE_CHAPTER[card.phase];
+  return chapter
+    ? `Available in Chapter ${chapter} · ${card.label} phase`
+    : 'Coming soon';
+}
+
+function lockedPhaseCard(card, userTier) {
   return el('div', { class: 'phase-section phase-section_locked' }, [
     el('div', { class: 'phase-section_header' }, [
       el('span', { class: 'qb-tag is-soft' }, [
@@ -303,7 +322,7 @@ function lockedPhaseCard(card) {
       ]),
       el('h3', { class: 'phase-section_title' }, card.label),
     ]),
-    el('div', { class: 'phase-section_locked-copy' }, 'Unlocks when Starter tier is active'),
+    el('div', { class: 'phase-section_locked-copy' }, lockedPhaseCopy(card, userTier)),
     el('ul', { class: 'phase-section_locked-agents' }, card.agents.map(a =>
       el('li', { class: 'phase-section_locked-agent' }, [
         el('span', { class: 'agent-locked-glyph', 'aria-hidden': 'true' }, '◐'),
@@ -580,9 +599,9 @@ export function renderConsole(container, payload, opts) {
       )),
     ]));
 
-    // Locked phase cards · Phase 02-05.
+    // Locked phase cards · Phase 02-05. Tier-aware copy per step 9 §3.2.
     for (const card of (payload.locked_phase_cards || [])) {
-      viewMount.appendChild(lockedPhaseCard(card));
+      viewMount.appendChild(lockedPhaseCard(card, tier));
     }
   }
 
