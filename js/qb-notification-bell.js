@@ -312,9 +312,25 @@
   }
 
   /* ─── Bell instance ───────────────────────────────────────── */
+  // Decode the JWT 'sub' claim to extract the user_id for Realtime
+  // channel name + filter. The JWT comes from Supabase auth /token; sub
+  // is the user_id (UUID).
+  function decodeJwtSub(jwt) {
+    try {
+      const parts = jwt.split('.');
+      if (parts.length !== 3) return null;
+      const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const padded = b64 + '='.repeat((4 - b64.length % 4) % 4);
+      const payload = JSON.parse(atob(padded));
+      return payload?.sub || null;
+    } catch { return null; }
+  }
+
   function createBell(parentEl, opts) {
     let token = opts && opts.authToken;
     if (!parentEl || !token) return null;
+    const userId = decodeJwtSub(token);
+    if (!userId) return null;
 
     injectStyles();
 
