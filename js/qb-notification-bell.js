@@ -481,21 +481,40 @@
     let realtimeChannel = null;
     let supabaseClient = null;
 
+    // Grace period for SUBSCRIBED · if the WebSocket connection cannot
+    // establish within this window (firewall, network issue, blocked
+    // upgrade), the bell flips to poll mode and starts the 30 s interval.
+    // The Supabase SDK does not always surface CHANNEL_ERROR cleanly on
+    // a blocked upgrade · it retries silently. The timeout is the
+    // resilience guarantee that the bell always reaches a usable state.
+    const SUBSCRIBED_TIMEOUT_MS = 10_000;
+
+    function flipToPoll() {
+      if (isDestroyed) return;
+      if (realtimeState === 'realtime') return; // no-op if Realtime is already active
+      realtimeState = 'poll';
+      root.setAttribute('data-realtime', 'false');
+      if (pollHandle === null) {
+        pollHandle = setInterval(poll, POLL_MS);
+      }
+    }
+
     async function startRealtime() {
       if (isDestroyed) return;
       const url = window.QB?.SUPA_URL;
       const anon = window.QB?.SUPA_KEY;
       if (!url || !anon) {
-        // No Supabase wiring · fall back to poll
-        realtimeState = 'poll';
-        if (pollHandle === null) {
-          pollHandle = setInterval(poll, POLL_MS);
-        }
+        flipToPoll();
         return;
       }
+      let subscribedFired = false;
+      const subscribedTimeout = setTimeout(() => {
+        if (!subscribedFired) flipToPoll();
+      }, SUBSCRIBED_TIMEOUT_MS);
+
       try {
         const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-        if (isDestroyed) return;
+        if (isDestroyed) { clearTimeout(subscribedTimeout); return; }
         const { createClient } = mod;
         supabaseClient = createClient(url, anon, {
           auth: { persistSession: false, autoRefreshToken: false },
@@ -511,25 +530,21 @@
           .subscribe((status) => {
             if (isDestroyed) return;
             if (status === 'SUBSCRIBED') {
+              subscribedFired = true;
+              clearTimeout(subscribedTimeout);
               realtimeState = 'realtime';
               if (pollHandle) { clearInterval(pollHandle); pollHandle = null; }
               root.setAttribute('data-realtime', 'true');
             } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-              realtimeState = 'poll';
-              root.setAttribute('data-realtime', 'false');
-              if (pollHandle === null) {
-                pollHandle = setInterval(poll, POLL_MS);
-              }
+              subscribedFired = true;
+              clearTimeout(subscribedTimeout);
+              flipToPoll();
             }
           });
       } catch (e) {
-        // SDK load failure or runtime error · fall back to poll
+        clearTimeout(subscribedTimeout);
         console.warn('[bell] Realtime unavailable, falling back to poll:', e?.message);
-        realtimeState = 'poll';
-        root.setAttribute('data-realtime', 'false');
-        if (pollHandle === null) {
-          pollHandle = setInterval(poll, POLL_MS);
-        }
+        flipToPoll();
       }
     }
 
