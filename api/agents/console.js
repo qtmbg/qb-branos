@@ -234,7 +234,16 @@ export default async function handler(req) {
   }
 
   // ─── Per-agent rollup ──────────────────────────────────────────────────
-  const agentsPayload = listAgentSlugs().map(slug => {
+  // Filter out framework-internal agents (phase '00' sentinel) so they
+  // never appear in the user-facing Phase view. The chain_test_agent
+  // (step 8B) lands at phase '00' when CHAIN_TEST_AGENT=1 is set; this
+  // filter keeps it invisible to real users even when the env var leaks
+  // into prod for verification windows.
+  const userVisibleSlugs = listAgentSlugs().filter(slug => {
+    const meta = AGENTS[slug]?.META;
+    return meta?.phase && meta.phase !== '00';
+  });
+  const agentsPayload = userVisibleSlugs.map(slug => {
     const agent = AGENTS[slug];
     const meta = agent.META;
     const agentRuns = runs.filter(r => r.agent_slug === slug);
