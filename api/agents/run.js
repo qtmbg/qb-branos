@@ -39,6 +39,8 @@ import { DEFAULT_RETRY_BUDGET, DEFAULT_MODEL } from '../../agents/contract.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
 import { sendEmail, renderTemplate, EMAIL_TEMPLATES, getAgentEmailVars } from '../_lib/email.js';
 import { sendOperatorNotification } from '../_lib/operator-notify.js';
+import { triggerChainIfReady } from '../_lib/chain-trigger.js';
+import { waitUntil } from '@vercel/functions';
 
 const ARTIFACT_URL_BASE = 'https://app.quantumbranding.ai/artifact';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -660,6 +662,32 @@ export default async function handler(req) {
   // ─── 11. Settle dispatch ──────────────────────────────────────────────
   await settleDispatch({ supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY,
                           dispatchId: dispatch_id, terminalOk: true });
+
+  // ─── 11.5 Chain orchestration (step 8A) ──────────────────────────────
+  // After successful delivery, fire any downstream agents whose
+  // dependencies are now satisfied. Fan-out happens inside waitUntil so
+  // the parent's 202 response is not blocked. DB-enforced idempotency
+  // via the unique partial index on dispatch_jobs (chain_id, agent_slug)
+  // where kind='chain' (migration 016).
+  try {
+    const chainBaseUrl = new URL(req.url).origin;
+    waitUntil(
+      triggerChainIfReady({
+        supaUrl: SUPABASE_URL,
+        serviceKey: SERVICE_KEY,
+        baseUrl: chainBaseUrl,
+        userId: user_id,
+        upstreamSlug: agent_slug,
+        parentDispatchId: dispatch_id,
+        interEdgeSecret: INTER_EDGE_SECRET,
+        resendKey: RESEND_API_KEY,
+      }).catch(e => {
+        console.error('[run] chain-trigger threw', e?.message);
+      })
+    );
+  } catch (e) {
+    console.error('[run] chain-trigger setup threw', e?.message);
+  }
 
   // ─── 12. Return ──────────────────────────────────────────────────────
   return json(200, {
