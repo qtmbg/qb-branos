@@ -94,6 +94,27 @@ export default async function handler(req) {
   const agent = AGENTS[slug];
   if (!agent) return json(400, { error: 'unknown_agent', agent_slug: slug }, corsH);
 
+  // ─── 4.5 §5.3 conformance · qbp_source='original' requires lock snapshot ─
+  // Refused at this endpoint (not in /api/agents/run) so the runtime never
+  // receives an empty snapshot. Chapter 1 legacy artifacts have null
+  // foundation_lock_qbp; the Console two-button rerun already disables the
+  // "original" button for them per §6.4, but server-side enforcement is
+  // the canonical guard. Step 7A conformance fix.
+  if (resolvedSource === 'original') {
+    const lockRes = await fetch(
+      `${env.SUPABASE_URL}/rest/v1/profiles?select=foundation_lock_qbp&id=eq.${encodeURIComponent(userId)}`,
+      { headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
+    );
+    const lockRows = lockRes.ok ? (await lockRes.json().catch(() => [])) : [];
+    const lockSnap = lockRows?.[0]?.foundation_lock_qbp;
+    if (!lockSnap || (typeof lockSnap === 'object' && Object.keys(lockSnap).length === 0)) {
+      return json(422, {
+        ok: false,
+        error: { code: 'no_original_snapshot', message: 'foundation_lock_qbp is empty; use qbp_source=current' },
+      }, corsH);
+    }
+  }
+
   // ─── 5. Insert dispatch_jobs row ──────────────────────────────────────
   const djRes = await fetch(
     `${env.SUPABASE_URL}/rest/v1/dispatch_jobs`,
