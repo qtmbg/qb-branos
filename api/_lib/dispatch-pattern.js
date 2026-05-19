@@ -139,6 +139,13 @@ export async function preInsertDispatch({
   trigger,
   agentVersion,
   artifacts,
+  // Chain orchestration (step 8A) · all optional, all NULL on user-
+  // triggered paths (rerun, regenerate). Lock-foundation passes none
+  // and the helper self-seeds chain_id = dispatchId post-insert.
+  parentAgentSlug,
+  agentSlug,
+  chainId,
+  chainDepth,
 }) {
   const dispatchPayload = {
     user_id: userId,
@@ -150,11 +157,33 @@ export async function preInsertDispatch({
     retry_count: 0,
     last_retry_at: null,
   };
-  if (agentVersion != null) dispatchPayload.agent_version = agentVersion;
+  if (agentVersion != null)    dispatchPayload.agent_version    = agentVersion;
+  if (parentAgentSlug != null) dispatchPayload.parent_agent_slug = parentAgentSlug;
+  if (agentSlug != null)       dispatchPayload.agent_slug        = agentSlug;
+  if (chainId != null)         dispatchPayload.chain_id          = chainId;
+  if (chainDepth != null)      dispatchPayload.chain_depth       = chainDepth;
 
   const dispatchId = await insertDispatchJob({
     supaUrl, serviceKey, payload: dispatchPayload,
   });
+
+  // Lock-foundation root · seed chain_id = dispatchId so the tree's root
+  // node is self-referential. Reruns/regenerates do NOT inherit chain_id
+  // (chain_id stays NULL for those paths · user-triggered, not chain-
+  // triggered).
+  if (kind === 'lock' && chainId == null) {
+    try {
+      await fetch(`${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`, {
+        method: 'PATCH',
+        headers: { ...svcHeaders(serviceKey), Prefer: 'return=minimal' },
+        body: JSON.stringify({ chain_id: dispatchId }),
+      });
+    } catch (e) {
+      console.error('[dispatch-pattern] chain_id self-seed PATCH failed', e?.message);
+      // Non-fatal · chain orchestration still functions with chain_id=NULL
+      // on the root, just loses the "what fired in this lock run" group query.
+    }
+  }
 
   let artifactMap;
   try {
