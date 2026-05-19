@@ -22,6 +22,16 @@ import { META as soulMapMeta, run as soulMapRun } from './soul-map.js';
 import { META as sensescapeMeta, run as sensescapeRun } from './sensescape.js';
 import { META as visualDnaMeta, run as visualDnaRun } from './visual-dna.js';
 import { META as warTableMeta, run as warTableRun } from './war-table.js';
+// Chain-test agent · eager static ESM import to eliminate the race
+// condition introduced by PR #114's dynamic import().then() pattern.
+// AGENTS is constructed + frozen synchronously at module init; if the
+// chain-test entry depends on an async resolution, the freeze locks in
+// chainTestEntry=null and the synthetic agent never appears in AGENTS
+// regardless of env var. Static import resolves before AGENTS builds.
+// Cost: ~2 KB extra bundle always loaded; the Console phase '00'
+// filter (step 8C, api/agents/console.js) is the user-facing guard
+// against UI leak if the env var is set in prod.
+import { META as chainTestMeta, run as chainTestRun } from './chain-test-agent.js';
 
 assertAgentMetaOrThrow(soulMapMeta, 'agents/soul-map.js');
 assertAgentMetaOrThrow(sensescapeMeta, 'agents/sensescape.js');
@@ -53,22 +63,19 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta]) {
 const CHAIN_TEST_ENABLED = process.env.CHAIN_TEST_AGENT === '1';
 let chainTestEntry = null;
 
-// CJS-safe dynamic import: top-level await is not supported by Vercel's CJS
-// output format. Use Promise.then() instead to defer the async work.
+// Synchronous gate · the import above already loaded the module. We
+// either expose it in AGENTS (env var set) or leave chainTestEntry null
+// (env var absent). No async resolution; AGENTS construction below is
+// race-free.
 if (CHAIN_TEST_ENABLED) {
-  import('./chain-test-agent.js').then((chainTest) => {
-    try {
-      assertAgentMetaOrThrow(chainTest.META, 'agents/chain-test-agent.js');
-      chainTestEntry = { META: chainTest.META, run: chainTest.run };
-      console.log('agent registry loaded · 4 prod agents + 1 test agent (CHAIN_TEST_AGENT=1)');
-    } catch (e) {
-      console.error('[agents/registry] chain-test-agent load failed:', e?.message);
-    }
-  }).catch((e) => {
-    console.error('[agents/registry] chain-test-agent import failed:', e?.message);
-  });
+  try {
+    assertAgentMetaOrThrow(chainTestMeta, 'agents/chain-test-agent.js');
+    chainTestEntry = { META: chainTestMeta, run: chainTestRun };
+    console.log('agent registry loaded · 4 prod agents + 1 test agent (CHAIN_TEST_AGENT=1)');
+  } catch (e) {
+    console.error('[agents/registry] chain-test-agent validation failed:', e?.message);
+  }
 } else {
-  // Synchronous path when env var is not set (production default)
   console.log('agent registry loaded · 4 prod agents');
 }
 
