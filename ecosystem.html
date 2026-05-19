@@ -1840,7 +1840,8 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   }
 
   /* Founder portrait gentle bob */
-  .nizzarfounder img {
+  .nizzarfounder img,
+  .nizzarfounder video {
     animation:qb-float-y 10s ease-in-out infinite;
   }
 
@@ -1873,7 +1874,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     .qb-button:hover .qb-button_content,.qb-button:active .qb-button_content { transform:none; }
     .agent-pill,.featured-track,.nav-brand_dot,.persona-avatar { animation:none; }
     .reveal { opacity:1; transform:none; filter:none; }
-    .qb-illus-card, .qb-phone, .nizzarfounder img, .feature-media { animation:none !important; }
+    .qb-illus-card, .qb-phone, .nizzarfounder img, .nizzarfounder video, .feature-media { animation:none !important; }
     .hero_h1, .hero_body, .hero_cta, .hero_meta, .agent-cluster { animation:none !important; opacity:1; }
     .cta-bike_carrier { animation:none !important; transform:translateX(30vw) !important; }
     .cta-bike_image { animation:none !important; transform:none !important; }
@@ -2770,10 +2771,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     <div class="qb-x-narrow">
       <div class="founder-grid">
         <div class="nizzarfounder">
-          <picture>
-            <source srcset="img/illus/nizzarfounder.webp" type="image/webp">
-            <img src="img/illus/nizzarfounder.png" alt="Nizzar Ben Chekroune at his desk with headphones, world map behind." loading="lazy" decoding="async">
-          </picture>
+          <video src="img/illus/nizzarfounder.mp4" autoplay muted loop playsinline preload="metadata" poster="img/illus/nizzarfounder.png" aria-label="Nizzar Ben Chekroune at his desk with headphones, world map behind."></video>
         </div>
         <div>
           <span class="qb-tag on-dark"><span class="qb-tag_content">From the founder</span></span>
