@@ -41,11 +41,43 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta]) {
   }
 }
 
+// ─── Chain test agent · feature-flagged · step 8B ────────────────────────
+// Loaded only when CHAIN_TEST_AGENT === '1' (strict string equality per
+// chapter-02/step-8-spec.md §2.2 condition A · truthy checks fail open;
+// strict equality fails closed).
+//
+// Production has no such env var, so the synthetic agent never appears in
+// the prod registry. Verification environments set the env var; the
+// chain-orchestration harness exercises the chain-trigger path through
+// this agent.
+
+const CHAIN_TEST_ENABLED = process.env.CHAIN_TEST_AGENT === '1';
+let chainTestEntry = null;
+if (CHAIN_TEST_ENABLED) {
+  try {
+    const chainTest = await import('./chain-test-agent.js');
+    assertAgentMetaOrThrow(chainTest.META, 'agents/chain-test-agent.js');
+    chainTestEntry = { META: chainTest.META, run: chainTest.run };
+  } catch (e) {
+    console.error('[agents/registry] chain-test-agent load failed:', e?.message);
+  }
+}
+
+// Startup log line · names whether the test agent is loaded (per §2.2
+// condition B). If the test agent ever appears in prod deploy logs, the
+// anomaly surfaces immediately in observability.
+if (chainTestEntry) {
+  console.log('agent registry loaded · 4 prod agents + 1 test agent (CHAIN_TEST_AGENT=1)');
+} else {
+  console.log('agent registry loaded · 4 prod agents');
+}
+
 export const AGENTS = Object.freeze({
   [soulMapMeta.slug]:    { META: soulMapMeta,    run: soulMapRun },
   [sensescapeMeta.slug]: { META: sensescapeMeta, run: sensescapeRun },
   [visualDnaMeta.slug]:  { META: visualDnaMeta,  run: visualDnaRun },
   [warTableMeta.slug]:   { META: warTableMeta,   run: warTableRun },
+  ...(chainTestEntry ? { [chainTestEntry.META.slug]: chainTestEntry } : {}),
 });
 
 export function getAgent(slug) {
