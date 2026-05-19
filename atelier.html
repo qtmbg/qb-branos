@@ -318,7 +318,8 @@
   @media (min-width: 640px) {
     .qb-illus-card { box-shadow: 0 16px var(--ink); border-radius: 28px; }
   }
-  .qb-illus-card img { width: 100%; height: auto; display: block; }
+  .qb-illus-card img,
+  .qb-illus-card video { width: 100%; height: auto; display: block; }
 
   /* =====================================================
      ATELIER. Page-specific.
@@ -585,11 +586,11 @@
       </div>
       <figure class="at-hero_illus reveal">
         <div class="qb-illus-card">
-          <img src="/img/illus/nizzarfounder.png"
-               alt="Nizzar Ben Chekroune at his desk, headphones on, a world map behind him."
-               loading="eager"
-               decoding="async"
-               width="900" height="900">
+          <video src="/img/illus/nizzarfounder.mp4"
+                 autoplay muted loop playsinline preload="metadata"
+                 poster="/img/illus/nizzarfounder.png"
+                 width="900" height="900"
+                 aria-label="Nizzar Ben Chekroune at his desk, headphones on, a world map behind him."></video>
         </div>
       </figure>
     </div>
