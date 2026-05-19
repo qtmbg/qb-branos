@@ -12,21 +12,21 @@
 // requirement.
 //
 // Chapter 2 status:
-//   All four Phase 01 agents (Soul Map, Sensescape, Visual DNA, War
-//   Table) are retrofitted to the §3.5 contract. The legacy
-//   api/agents/*-synthesizer.js modules are no longer imported anywhere
-//   and become dead code in step 14 deprecation.
+// All four Phase 01 agents (Soul Map, Sensescape, Visual DNA, War
+// Table) are retrofitted to the §3.5 contract. The legacy
+// api/agents/*-synthesizer.js modules are no longer imported anywhere
+// and become dead code in step 14 deprecation.
 
 import { assertAgentMetaOrThrow, checkLatencyBudget } from './contract.js';
-import { META as soulMapMeta,    run as soulMapRun }    from './soul-map.js';
+import { META as soulMapMeta, run as soulMapRun } from './soul-map.js';
 import { META as sensescapeMeta, run as sensescapeRun } from './sensescape.js';
-import { META as visualDnaMeta,  run as visualDnaRun }  from './visual-dna.js';
-import { META as warTableMeta,   run as warTableRun }   from './war-table.js';
+import { META as visualDnaMeta, run as visualDnaRun } from './visual-dna.js';
+import { META as warTableMeta, run as warTableRun } from './war-table.js';
 
-assertAgentMetaOrThrow(soulMapMeta,    'agents/soul-map.js');
+assertAgentMetaOrThrow(soulMapMeta, 'agents/soul-map.js');
 assertAgentMetaOrThrow(sensescapeMeta, 'agents/sensescape.js');
-assertAgentMetaOrThrow(visualDnaMeta,  'agents/visual-dna.js');
-assertAgentMetaOrThrow(warTableMeta,   'agents/war-table.js');
+assertAgentMetaOrThrow(visualDnaMeta, 'agents/visual-dna.js');
+assertAgentMetaOrThrow(warTableMeta, 'agents/war-table.js');
 
 // Per §5.2.1: latency-budget pre-check at registry load. Warnings collect
 // here so the runtime can route them through §5.8.2 operator-notify on
@@ -50,33 +50,33 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta]) {
 // the prod registry. Verification environments set the env var; the
 // chain-orchestration harness exercises the chain-trigger path through
 // this agent.
-
 const CHAIN_TEST_ENABLED = process.env.CHAIN_TEST_AGENT === '1';
 let chainTestEntry = null;
-if (CHAIN_TEST_ENABLED) {
-  try {
-    const chainTest = await import('./chain-test-agent.js');
-    assertAgentMetaOrThrow(chainTest.META, 'agents/chain-test-agent.js');
-    chainTestEntry = { META: chainTest.META, run: chainTest.run };
-  } catch (e) {
-    console.error('[agents/registry] chain-test-agent load failed:', e?.message);
-  }
-}
 
-// Startup log line · names whether the test agent is loaded (per §2.2
-// condition B). If the test agent ever appears in prod deploy logs, the
-// anomaly surfaces immediately in observability.
-if (chainTestEntry) {
-  console.log('agent registry loaded · 4 prod agents + 1 test agent (CHAIN_TEST_AGENT=1)');
+// CJS-safe dynamic import: top-level await is not supported by Vercel's CJS
+// output format. Use Promise.then() instead to defer the async work.
+if (CHAIN_TEST_ENABLED) {
+  import('./chain-test-agent.js').then((chainTest) => {
+    try {
+      assertAgentMetaOrThrow(chainTest.META, 'agents/chain-test-agent.js');
+      chainTestEntry = { META: chainTest.META, run: chainTest.run };
+      console.log('agent registry loaded · 4 prod agents + 1 test agent (CHAIN_TEST_AGENT=1)');
+    } catch (e) {
+      console.error('[agents/registry] chain-test-agent load failed:', e?.message);
+    }
+  }).catch((e) => {
+    console.error('[agents/registry] chain-test-agent import failed:', e?.message);
+  });
 } else {
+  // Synchronous path when env var is not set (production default)
   console.log('agent registry loaded · 4 prod agents');
 }
 
 export const AGENTS = Object.freeze({
-  [soulMapMeta.slug]:    { META: soulMapMeta,    run: soulMapRun },
+  [soulMapMeta.slug]: { META: soulMapMeta, run: soulMapRun },
   [sensescapeMeta.slug]: { META: sensescapeMeta, run: sensescapeRun },
-  [visualDnaMeta.slug]:  { META: visualDnaMeta,  run: visualDnaRun },
-  [warTableMeta.slug]:   { META: warTableMeta,   run: warTableRun },
+  [visualDnaMeta.slug]: { META: visualDnaMeta, run: visualDnaRun },
+  [warTableMeta.slug]: { META: warTableMeta, run: warTableRun },
   ...(chainTestEntry ? { [chainTestEntry.META.slug]: chainTestEntry } : {}),
 });
 
