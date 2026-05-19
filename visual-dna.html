@@ -2118,40 +2118,41 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   box-shadow: 0 5px var(--ink);
   border-color: var(--rose-deep);
 }
-.vd-intro_demo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  cursor: pointer;
-  user-select: none;
-}
-.vd-demo-toggle {
-  width: 20px; height: 20px;
-  -webkit-appearance: none; appearance: none;
-  background: var(--cream);
+.vd-intro_resume {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.9rem 1rem;
+  background: var(--cream-card);
   border: 2px solid var(--ink);
-  border-radius: 6px;
-  cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px var(--ink);
 }
-.vd-demo-toggle:checked { background: var(--gold); }
-.vd-demo-toggle:checked::after {
-  content: '✓';
+.vd-intro_resumeMeta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-75);
+}
+.vd-intro_resumeLine {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
   color: var(--ink);
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 500;
 }
-.vd-intro_demoText {
+.vd-intro_startOver {
+  background: transparent;
+  border: 0;
+  padding: 0;
   font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   color: var(--ink-75);
-  line-height: 1.4;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
 }
-.vd-intro_demoText strong {
-  color: var(--ink);
-  font-weight: 600;
-}
+.vd-intro_startOver:hover { color: var(--rose-deep); }
 .vd-intro_cta {
   display: flex;
   justify-content: flex-end;
@@ -2429,7 +2430,6 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   /* --- State --- */
   var state = {
     phase: 'studio',
-    demoMode: true,
     session: { client: '', code: 'DNA001' },
     images: [],
     history: [],
@@ -2438,8 +2438,55 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     tournamentQueue: [],
     finalists: [],
     leadData: { firstName:'', lastName:'', company:'', email:'' },
-    isSubmitting: false
+    isSubmitting: false,
+    startedAt: null,
+    _resumeTarget: null
   };
+
+  /* --- Persistence (autosave + resume) ---
+     One run, no demo. Every commit (swipe, tournament pick, phase change past
+     intro) writes the full session snapshot to localStorage. A user who closes
+     the tab, loses internet, or steps away gets a welcome-back card on return
+     instead of a fresh studio. intro is intentionally excluded · no swipes yet,
+     no run to resume. */
+  var SESSION_KEY = 'qb_visualdna_session_v1';
+  var SESSION_VERSION = 1;
+  var RESUMABLE_PHASES = { r1:1, t1:1, r2:1, t2:1, r3:1, t3:1, finals:1, reveal:1, capture:1 };
+
+  function persistSession(){
+    try {
+      var snap = {
+        v: SESSION_VERSION,
+        phase: state.phase,
+        session: state.session,
+        images: state.images,
+        history: state.history,
+        currentIndex: state.currentIndex,
+        currentRoundImages: state.currentRoundImages,
+        tournamentQueue: state.tournamentQueue,
+        finalists: state.finalists,
+        leadData: state.leadData,
+        startedAt: state.startedAt || Date.now(),
+        savedAt: Date.now()
+      };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(snap));
+    } catch(e){ /* quota or private mode, fail silent */ }
+  }
+
+  function loadSavedSession(){
+    try {
+      var raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return null;
+      var data = JSON.parse(raw);
+      if (!data || data.v !== SESSION_VERSION) return null;
+      if (!RESUMABLE_PHASES[data.phase]) return null;
+      return data;
+    } catch(e){ return null; }
+  }
+
+  function clearSavedSession(){
+    try { localStorage.removeItem(SESSION_KEY); } catch(e){}
+  }
 
   var IMMERSIVE_PHASES = { r1:1, r2:1, r3:1, t1:1, t2:1, t3:1, finals:1 };
 
@@ -2477,6 +2524,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   function setPhase(next){
     state.phase = next;
     updateImmersive();
+    if (RESUMABLE_PHASES[next]) persistSession();
     render();
   }
 
@@ -2484,15 +2532,37 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   function startSession(){
     var old = document.getElementById('qb-float-results');
     if (old) old.remove();
-    var imgCount = state.demoMode ? 15 : 200;
-    state.images = generateMockImages(imgCount);
+    state.images = generateMockImages(200);
     state.currentRoundImages = state.images.slice();
     state.history = [];
     state.currentIndex = 0;
     state.tournamentQueue = [];
     state.finalists = [];
     state.leadData = { firstName:'', lastName:'', company:'', email:'' };
+    state.startedAt = Date.now();
+    state._resumeTarget = null;
     setPhase('intro');
+  }
+
+  function startOver(){
+    clearSavedSession();
+    state._resumeTarget = null;
+    state.images = [];
+    state.history = [];
+    state.currentIndex = 0;
+    state.currentRoundImages = [];
+    state.tournamentQueue = [];
+    state.finalists = [];
+    state.leadData = { firstName:'', lastName:'', company:'', email:'' };
+    state.startedAt = null;
+    state.isSubmitting = false;
+    setPhase('studio');
+  }
+
+  function resumeRun(){
+    var target = state._resumeTarget;
+    state._resumeTarget = null;
+    setPhase(target);
   }
 
   /* --- Round transition logic --- */
@@ -2544,6 +2614,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
     if (state.currentIndex < state.currentRoundImages.length - 1){
       state.currentIndex++;
+      persistSession();
       renderRoundCard(); // just re-mount the card
     } else {
       if (state.phase === 'r1') setPhase('t1');
@@ -2556,6 +2627,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     state.finalists.push(winner);
     if (state.tournamentQueue.length > 1){
       state.tournamentQueue.shift();
+      persistSession();
       render();
     } else {
       setPhase('reveal');
@@ -2572,13 +2644,11 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
   var views = {};
 
-  /* --- STUDIO (Phase 01 Question Frame v1) --- */
+  /* --- STUDIO (Phase 01 Question Frame v1) ---
+     One run, two hundred images, autosave on. No demo, no shortcut. The
+     session name is optional. If they stop, the welcome-back card catches
+     them on return. */
   views.studio = function(){
-    // Phase 01 entry to Visual DNA. Warm, elder-friendly intro that reads as
-    // an invitation to a sensing exercise, not a "facilitator terminal".
-    // The session-name field and demo toggle are kept but tucked into a
-    // single subtle row so they don't compete with the headline.
-
     var clientInput = el('input', {
       type: 'text',
       class: 'vd-session-input',
@@ -2586,10 +2656,6 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       placeholder: 'A name for this session (optional)'
     });
     clientInput.addEventListener('input', function(e){ state.session.client = e.target.value; });
-
-    var demoToggle = el('input', { type: 'checkbox', class: 'vd-demo-toggle' });
-    demoToggle.checked = !!state.demoMode;
-    demoToggle.addEventListener('change', function(e){ state.demoMode = e.target.checked; });
 
     var wrap = el('section', { class: 'vd-intro animate-in' },
       el('div', { class: 'vd-intro_inner' }, [
@@ -2601,24 +2667,77 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
           h.appendChild(em);
           return h;
         })(),
-        el('p', { class: 'vd-intro_deck', text: 'You will see images one by one. Keep what feels like your brand. Discard what does not. Five minutes. No second-guessing. The pattern will reveal itself.' }),
+        el('p', { class: 'vd-intro_deck', text: 'Two hundred images, one at a time. Keep what feels like your brand. Discard what does not. About twenty minutes. Stop anytime. Your run saves itself and waits for you.' }),
         el('div', { class: 'vd-intro_panel' }, [
           el('div', { class: 'vd-intro_field' }, [
             el('label', { class: 'vd-intro_label', text: 'Session name' }),
             clientInput
-          ]),
-          el('label', { class: 'vd-intro_demo' }, [
-            demoToggle,
-            el('span', { class: 'vd-intro_demoText' }, [
-              el('strong', { text: 'Short demo' }),
-              document.createTextNode(' — 15 images instead of 200. Untick for the full session.')
-            ])
           ])
         ]),
         el('div', { class: 'vd-intro_cta' }, [
           el('button', { class: 'qb-button is-primary is-lg', type: 'button', onclick: startSession },
             el('span', { class: 'qb-button_content', text: 'Begin →' })
           )
+        ])
+      ])
+    );
+    return wrap;
+  };
+
+  /* --- RESUME (welcome-back card) ---
+     Shown on boot when a saved session exists. Tells the user where they
+     left off and offers one clear way back in, plus a quiet ghost link
+     to start over if they want to. */
+  views.resume = function(){
+    var target = state._resumeTarget;
+    var isSwipe = (target === 'r1' || target === 'r2' || target === 'r3');
+    var isTransition = (target === 't1' || target === 't2' || target === 't3');
+    var isFinals = (target === 'finals');
+    var isReveal = (target === 'reveal' || target === 'capture');
+
+    var roundWord = isSwipe ? (target === 'r1' ? 'one' : target === 'r2' ? 'two' : 'three') : null;
+
+    var headline, meta, line;
+    if (isSwipe){
+      headline = 'Pick up where you stopped.';
+      meta = 'Round ' + (target === 'r1' ? '01' : target === 'r2' ? '02' : '03') + ' in progress';
+      line = 'Image ' + (state.currentIndex + 1) + ' of ' + (state.currentRoundImages.length || state.images.length) + ' in round ' + roundWord + '. Your keeps are saved.';
+    } else if (isTransition){
+      headline = 'Pick up where you stopped.';
+      meta = 'Between rounds';
+      line = 'You finished a round. The next one is queued and ready.';
+    } else if (isFinals){
+      headline = 'Your finals are waiting.';
+      meta = 'Head-to-head round';
+      line = 'You made it to the bracket. The pairings are saved.';
+    } else if (isReveal){
+      headline = 'Your reveal is ready.';
+      meta = 'Pattern compiled';
+      line = 'The pattern is on the other side of this button.';
+    } else {
+      headline = 'Pick up where you stopped.';
+      meta = 'Session in progress';
+      line = 'Your run is saved.';
+    }
+
+    var wrap = el('section', { class: 'vd-intro animate-in' },
+      el('div', { class: 'vd-intro_inner' }, [
+        el('div', { class: 'vd-intro_eyebrow', text: 'Phase 01 · Visual DNA · Welcome back' }),
+        el('h1', { class: 'vd-intro_h', text: headline }),
+        el('p', { class: 'vd-intro_deck', text: "Your run is exactly where you left it. Continue when you're ready." }),
+        el('div', { class: 'vd-intro_panel' }, [
+          el('div', { class: 'vd-intro_resume' }, [
+            el('div', { class: 'vd-intro_resumeMeta', text: meta }),
+            el('div', { class: 'vd-intro_resumeLine', text: line })
+          ])
+        ]),
+        el('div', { class: 'vd-intro_cta' }, [
+          el('button', { class: 'qb-button is-primary is-lg', type: 'button', onclick: resumeRun },
+            el('span', { class: 'qb-button_content', text: 'Resume the run →' })
+          )
+        ]),
+        el('div', { style: { textAlign: 'center', marginTop: '0.75rem' } }, [
+          el('button', { class: 'vd-intro_startOver', type: 'button', onclick: startOver, text: 'Start over' })
         ])
       ])
     );
@@ -2795,8 +2914,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
   function renderTransition(cls, nextPhase){
     var node = el('div', { class:'phase-transition ' + cls });
-    var ms = state.demoMode ? 3000 : 30000;
-    setTimeout(function(){ setupNextRound(nextPhase); }, ms);
+    // 9s interstitial · breathing room between rounds, not a penalty.
+    setTimeout(function(){ setupNextRound(nextPhase); }, 9000);
     return node;
   }
 
@@ -2864,6 +2983,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       if (submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Processing…'; }
       setTimeout(function(){
         state.isSubmitting = false;
+        clearSavedSession();
         setPhase('report');
         saveToQBP();
         mountFloatResults();
@@ -2955,7 +3075,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
               clientLine
             ]),
             el('div', { class:'report-actions' }, [
-              el('button', { class:'btn-reset', type:'button', onclick:function(){ setPhase('studio'); } }, 'Reset')
+              el('button', { class:'btn-reset', type:'button', onclick:startOver }, 'Reset')
             ])
           ])
         ]),
@@ -3179,9 +3299,27 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     } catch(e){}
   }
 
-  /* --- BOOT --- */
-  updateImmersive();
-  render();
+  /* --- BOOT ---
+     If a resumable run is saved, restore the state and route to the welcome-
+     back card. Otherwise start clean at the studio screen. */
+  (function boot(){
+    var saved = loadSavedSession();
+    if (saved){
+      state.phase = 'resume';
+      state.session = saved.session || state.session;
+      state.images = saved.images || [];
+      state.history = saved.history || [];
+      state.currentIndex = saved.currentIndex || 0;
+      state.currentRoundImages = saved.currentRoundImages || [];
+      state.tournamentQueue = saved.tournamentQueue || [];
+      state.finalists = saved.finalists || [];
+      state.leadData = saved.leadData || state.leadData;
+      state.startedAt = saved.startedAt || null;
+      state._resumeTarget = saved.phase;
+    }
+    updateImmersive();
+    render();
+  })();
 
 })();
 </script>
