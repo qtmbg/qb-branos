@@ -146,8 +146,9 @@ export async function triggerChainIfReady({
   const candidates = allSlugs.filter(slug => {
     if (slug === upstreamSlug) return false;
     const agent = AGENTS[slug];
-    const deps = agent?.INPUTS?.dependencies || agent?.inputs?.dependencies || [];
-    return Array.isArray(deps) && deps.includes(upstreamSlug);
+    const deps = agent?.META?.inputs?.artifact_dependencies || [];
+    return Array.isArray(deps) && deps.includes(upstreamSlug)
+      && Array.isArray(agent?.META?.triggers) && agent.META.triggers.includes('chain');
   });
   summary.candidates = candidates;
   if (candidates.length === 0) return summary;
@@ -159,7 +160,7 @@ export async function triggerChainIfReady({
   const childrenToFire = [];
   for (const downstreamSlug of candidates) {
     const agent = AGENTS[downstreamSlug];
-    const deps = agent?.INPUTS?.dependencies || agent?.inputs?.dependencies || [];
+    const deps = agent?.META?.inputs?.artifact_dependencies || [];
     const required = agent?.META?.tier_required || 'starter';
 
     // Tier-gate short-circuit
