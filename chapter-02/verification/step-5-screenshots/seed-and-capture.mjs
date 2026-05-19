@@ -82,6 +82,9 @@ const STATE = process.argv[2];
 const VALID_STATES = [
   'neutral', 'green', 'yellow-latency', 'rose-latency', 'rose-retry',
   'transient-failed', 'failed-permanently', 'locked-phase-cards', 'replay-modal-v1-of-3',
+  // Six new states added in step 6E closure per step-6-spec.md §9.2
+  'latest-delivered-with-queued', 'reaper-mid-backoff', 'reaper-recovered',
+  'permanent-failure-with-notification', 'bell-empty', 'bell-with-unread',
 ];
 const ALL_TOKEN = 'all';
 if (STATE !== ALL_TOKEN && !VALID_STATES.includes(STATE)) {
@@ -383,6 +386,168 @@ async function seedReplayModalV3(userId) {
   }
 }
 
+// ── Step 6E · six new capture states ─────────────────────────────────────────
+
+async function seedLatestDeliveredWithQueued(userId) {
+  // PR #79 §3 Case C resolution surface. Lock + 4 delivered, then insert a
+  // v2 Soul Map artifact in 'generating' (the in-flight enum value per
+  // migration 008) with parent_artifact_id=v1.id and a fresh dispatch_id.
+  // The Console must surface v1's rerun CTAs (delivered) AND v2's
+  // producing pill (inflight_dispatch_id) independently.
+  await seedGreen(userId);
+  const slug = 'soul_map_synthesizer';
+  const v1Res = await fetch(
+    `${SUPABASE_URL}/rest/v1/artifacts?user_id=eq.${userId}&artifact_type=eq.${slug}&select=id&order=version.desc&limit=1`,
+    { headers: svc }
+  );
+  const v1 = (await v1Res.json())?.[0];
+  if (!v1) throw new Error('latest-delivered-with-queued: no v1 to chain off');
+  // Fresh dispatch for the in-flight regen
+  const dj = await insertDispatch(userId, 'regenerate', 'producing', 1);
+  // Manually insert v2 with parent_artifact_id linkage. status='generating'
+  // is the in-flight enum value the Console renders as 'Producing'.
+  await fetch(`${SUPABASE_URL}/rest/v1/artifacts`, {
+    method: 'POST', headers: { ...svc, Prefer: 'return=representation' },
+    body: JSON.stringify({
+      user_id: userId, artifact_type: slug, status: 'generating',
+      version: 2, parent_artifact_id: v1.id, phase: '01',
+      content: {}, error: null, dispatch_id: dj.id,
+    }),
+  });
+  // Insert a started agent_runs row so the inflight surface is consistent
+  await insertAgentRun(userId, slug, {
+    dispatchId: dj.id,
+    artifactId: null,
+    durationMs: 5_000,
+    status: 'started',
+  });
+}
+
+async function seedReaperMidBackoff(userId) {
+  // Reaper has fired retry 1; dispatch sits in producing with retry_count=1,
+  // last_retry_at recent. Console renders Soul Map row in failed state with
+  // user-action copy (since the latest agent_runs.error is still failed).
+  // Per the 6 corrections, the in-flight retry-attempt indicator is operator
+  // -side; the Console surfaces the producing pill on the inflight, not a
+  // retry-of-N badge.
+  await seedNeutral(userId);
+  const failingSlug = 'soul_map_synthesizer';
+  for (const slug of AGENT_SLUGS) {
+    const isStuck = slug === failingSlug;
+    const status = isStuck ? 'failed_permanently' : 'completed';
+    // Mark the failing dispatch with retry_count=1 + last_retry_at=now-30s
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/dispatch_jobs`, {
+      method: 'POST', headers: { ...svc, Prefer: 'return=representation' },
+      body: JSON.stringify({
+        user_id: userId,
+        kind: 'lock',
+        status: isStuck ? 'producing' : 'completed',
+        agents_count: 1,
+        agents_settled: 0,
+        trigger: 'lock',
+        retry_count: isStuck ? 1 : 0,
+        last_retry_at: isStuck ? new Date(Date.now() - 30_000).toISOString() : null,
+      }),
+    });
+    const dj = (await r.json())?.[0];
+    if (isStuck) {
+      const art = await insertArtifact(userId, slug, 'failed', 1, dj.id);
+      await insertAgentRun(userId, slug, {
+        dispatchId: dj.id, artifactId: art.id,
+        durationMs: 22_000, retryCount: 0, status: 'failed',
+        errorPayload: { code: 'edge_timeout', stage: 'claude-call' },
+      });
+    } else {
+      const art = await insertArtifact(userId, slug, 'delivered', 1, dj.id);
+      await insertAgentRun(userId, slug, {
+        dispatchId: dj.id, artifactId: art.id, durationMs: 13_000, retryCount: 0,
+      });
+    }
+  }
+}
+
+async function seedReaperRecovered(userId) {
+  // Reaper retried a transient failure and the child eventually delivered.
+  // Console shows all delivered; Run history shows the retry trace (one
+  // failed run earlier, one succeeded later, same artifact_id).
+  await seedGreen(userId);
+  // Add a second agent_runs row for Soul Map showing the prior failed
+  // attempt that the reaper recovered from.
+  const slug = 'soul_map_synthesizer';
+  const artRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/artifacts?user_id=eq.${userId}&artifact_type=eq.${slug}&select=id,dispatch_id&order=version.desc&limit=1`,
+    { headers: svc }
+  );
+  const art = (await artRes.json())?.[0];
+  if (!art) throw new Error('reaper-recovered: no Soul Map artifact');
+  // Insert the prior-failed run · started_at 5 min ago so the Run history
+  // orders it below the success row (started_at desc).
+  await insertAgentRun(userId, slug, {
+    dispatchId: art.dispatch_id,
+    artifactId: art.id,
+    durationMs: 22_000,
+    completedAt: Date.now() - 300_000, // 5 min ago
+    status: 'failed',
+    errorPayload: { code: 'edge_timeout', stage: 'claude-call' },
+  });
+}
+
+async function seedPermanentFailureWithNotification(userId) {
+  // Composite of seedFailedPermanently + one dispatch_failed notification.
+  // Captures both the Console permanent-failure pill AND the bell badge
+  // showing the corresponding notification.
+  await seedFailedPermanently(userId);
+  // Find the failed_permanently dispatch
+  const djRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/dispatch_jobs?user_id=eq.${userId}&status=eq.failed_permanently&select=id&limit=1`,
+    { headers: svc }
+  );
+  const dj = (await djRes.json())?.[0];
+  if (!dj) throw new Error('permanent-failure-with-notification: no failed_permanently dispatch');
+  await fetch(`${SUPABASE_URL}/rest/v1/notifications`, {
+    method: 'POST', headers: { ...svc, Prefer: 'return=minimal' },
+    body: JSON.stringify({
+      user_id: userId,
+      kind: 'dispatch_failed',
+      payload: {
+        dispatch_id: dj.id,
+        agent_slug: 'soul_map_synthesizer',
+        reason: 'edge_timeout',
+      },
+      read_at: null,
+    }),
+  });
+}
+
+async function seedBellEmpty(userId) {
+  // Signed-in user, baseline green state, zero notifications. Capture
+  // opens the bell dropdown to show the empty-state copy per §7.5.
+  await seedGreen(userId);
+}
+
+async function seedBellWithUnread(userId) {
+  // Signed-in user with two unread notifications. Capture opens the bell
+  // dropdown to show badge count + two rows.
+  await seedGreen(userId);
+  await fetch(`${SUPABASE_URL}/rest/v1/notifications`, {
+    method: 'POST', headers: { ...svc, Prefer: 'return=minimal' },
+    body: JSON.stringify([
+      {
+        user_id: userId,
+        kind: 'dispatch_failed',
+        payload: { agent_slug: 'soul_map_synthesizer', reason: 'edge_timeout · capture seed' },
+        read_at: null,
+      },
+      {
+        user_id: userId,
+        kind: 'dispatch_failed',
+        payload: { agent_slug: 'visual_dna_synthesizer', reason: 'edge_timeout · capture seed' },
+        read_at: null,
+      },
+    ]),
+  });
+}
+
 const SEED_RECIPES = {
   neutral: seedNeutral,
   green: seedGreen,
@@ -393,6 +558,12 @@ const SEED_RECIPES = {
   'failed-permanently': seedFailedPermanently,
   'locked-phase-cards': seedLockedPhaseCards,
   'replay-modal-v1-of-3': seedReplayModalV3,
+  'latest-delivered-with-queued': seedLatestDeliveredWithQueued,
+  'reaper-mid-backoff': seedReaperMidBackoff,
+  'reaper-recovered': seedReaperRecovered,
+  'permanent-failure-with-notification': seedPermanentFailureWithNotification,
+  'bell-empty': seedBellEmpty,
+  'bell-with-unread': seedBellWithUnread,
 };
 
 // ── Playwright capture ──────────────────────────────────────────────────────
@@ -449,6 +620,26 @@ async function capture({ userId, email, session, state, outPath }) {
     }
     await page.waitForSelector('.replay-modal', { timeout: 5_000 });
     await page.waitForTimeout(500);
+  }
+
+  // Bell-related states · open the notification dropdown so the screenshot
+  // captures the badge + dropdown rows (or empty-state copy).
+  const needsBellOpen = state === 'bell-empty'
+    || state === 'bell-with-unread'
+    || state === 'permanent-failure-with-notification';
+  if (needsBellOpen) {
+    // Bell polls /api/notifications once on mount; give it a moment to land.
+    await page.waitForTimeout(1_500);
+    const bellTrigger = await page.$('.qb-notification-bell_trigger');
+    if (bellTrigger) {
+      await bellTrigger.click();
+      // Wait for the dropdown to be visible (data-open="true")
+      await page.waitForFunction(() => {
+        const d = document.querySelector('.qb-notification-bell_dropdown');
+        return d && d.getAttribute('data-open') === 'true';
+      }, { timeout: 5_000 }).catch(() => {});
+      await page.waitForTimeout(500); // let the open transition settle
+    }
   }
 
   await page.screenshot({ path: outPath, fullPage: true });
