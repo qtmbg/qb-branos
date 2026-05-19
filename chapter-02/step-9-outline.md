@@ -1,4 +1,10 @@
-# Chapter 2 · Step 9 spec outline
+# Chapter 2 · Step 9 spec outline · SUPERSEDED
+
+> **Status: superseded by `step-9-spec.md` after Nizzar adjudication.** This outline defaulted to archive UI tree-view as the step 9 scope. Open call #1 (sequencing) was OVERRIDDEN · step 9 instead ships the Agent Console Phase view per master spec §13.10. Open call #5 (Realtime on the surface) was OVERRIDDEN · Realtime is enabled for the Phase view via the bell's existing channel. Calls #2/#3 captured as preferences for whenever archive tree-view ships. Call #4 reframed for Phase view scope. Call #6 moot for Phase view. See `step-9-spec.md` for the canonical step 9 specification.
+>
+> Retained below as historical record of the pre-adjudication framing.
+
+---
 
 Status: draft outline. Awaiting Nizzar adjudication on the open calls in §5 below. Full spec follows on the same branch once the outline lands.
 
