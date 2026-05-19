@@ -1167,6 +1167,59 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   .pm_next strong { font-weight:700; color:var(--gold); margin-right:0.3em; }
 
   /* =====================================================
+     PHONE-SCREEN SCROLL CHOREOGRAPHY
+     Triggered when the parent .phase-spread.reveal gets .in
+     ===================================================== */
+  .qb-phone_body .pm_eye,
+  .qb-phone_body .pm_h,
+  .qb-phone_body .pm_quote { opacity:0; transform:translateY(10px); }
+
+  .qb-phone_body .pm_swatch { opacity:0; transform:scale(0.55) rotate(-6deg); transform-origin:center; }
+  .qb-phone_body .pm_grid9 > div { opacity:0; transform:scale(0.65); transform-origin:center; }
+  .qb-phone_body .pm_chip { opacity:0; transform:translateX(-10px); }
+  .qb-phone_body .pm_tags span { opacity:0; transform:translateY(6px) scale(0.9); }
+
+  @keyframes pm-rise   { to { opacity:1; transform:none; } }
+  @keyframes pm-pop    { 60% { transform:scale(1.06); } to { opacity:1; transform:none; } }
+  @keyframes pm-slide  { to { opacity:1; transform:none; } }
+
+  .phase-spread.in .qb-phone_body .pm_eye   { animation:pm-rise 0.5s var(--ease-qb) 0.25s forwards; }
+  .phase-spread.in .qb-phone_body .pm_h     { animation:pm-rise 0.6s var(--ease-qb) 0.38s forwards; }
+  .phase-spread.in .qb-phone_body .pm_quote { animation:pm-rise 0.5s var(--ease-qb) 0.95s forwards; }
+
+  /* Swatches pop in left to right (Phase 02) */
+  .phase-spread.in .qb-phone_body .pm_swatch { animation:pm-pop 0.45s var(--ease-qb) forwards; }
+  .phase-spread.in .qb-phone_body .pm_swatch:nth-child(1) { animation-delay:0.55s; }
+  .phase-spread.in .qb-phone_body .pm_swatch:nth-child(2) { animation-delay:0.63s; }
+  .phase-spread.in .qb-phone_body .pm_swatch:nth-child(3) { animation-delay:0.71s; }
+  .phase-spread.in .qb-phone_body .pm_swatch:nth-child(4) { animation-delay:0.79s; }
+  .phase-spread.in .qb-phone_body .pm_swatch:nth-child(5) { animation-delay:0.87s; }
+  .phase-spread.in .qb-phone_body .pm_swatch:nth-child(6) { animation-delay:0.95s; }
+
+  /* Grid9 tiles fill row by row (Phase 03) */
+  .phase-spread.in .qb-phone_body .pm_grid9 > div { animation:pm-pop 0.4s var(--ease-qb) forwards; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(1) { animation-delay:0.55s; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(2) { animation-delay:0.61s; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(3) { animation-delay:0.67s; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(4) { animation-delay:0.73s; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(5) { animation-delay:0.79s; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(6) { animation-delay:0.85s; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(7) { animation-delay:0.91s; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(8) { animation-delay:0.97s; }
+  .phase-spread.in .qb-phone_body .pm_grid9 > div:nth-child(9) { animation-delay:1.03s; }
+
+  /* Chips slide in (all three phones) */
+  .phase-spread.in .qb-phone_body .pm_chips .pm_chip { animation:pm-slide 0.45s var(--ease-qb) forwards; }
+  .phase-spread.in .qb-phone_body .pm_chips .pm_chip:nth-child(1) { animation-delay:1.10s; }
+  .phase-spread.in .qb-phone_body .pm_chips .pm_chip:nth-child(2) { animation-delay:1.20s; }
+  .phase-spread.in .qb-phone_body .pm_chips .pm_chip:nth-child(3) { animation-delay:1.30s; }
+
+  /* Tag pills pop in (Phase 01) */
+  .phase-spread.in .qb-phone_body .pm_tags span { animation:pm-pop 0.4s var(--ease-qb) forwards; }
+  .phase-spread.in .qb-phone_body .pm_tags span:nth-child(1) { animation-delay:1.45s; }
+  .phase-spread.in .qb-phone_body .pm_tags span:nth-child(2) { animation-delay:1.55s; }
+
+  /* =====================================================
      PERSONAS - tab switcher on dark
      ===================================================== */
   .persona-shell {
