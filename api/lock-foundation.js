@@ -244,7 +244,16 @@ export default async function handler(req) {
   // Console will see no in-flight dispatch and the operator can re-fire
   // via the rerun path if needed. Spec §4.2 invariant 1: pre-insert
   // happens BEFORE any child fetch fires.
-  const slugs = listAgentSlugs();
+  // Step 8C fix · filter to agents that opt into the 'lock' trigger.
+  // Without this, chain-only agents (META.triggers=['chain'], e.g. the
+  // synthetic chain_test_agent under CHAIN_TEST_AGENT=1) get dispatched
+  // at lock time and fail with missing_dependency because their upstream
+  // deps haven't delivered yet. Chain-triggered agents must be fired by
+  // chain-trigger.js after their deps deliver, not by the lock fan-out.
+  const slugs = listAgentSlugs().filter(slug => {
+    const triggers = AGENTS[slug]?.META?.triggers;
+    return Array.isArray(triggers) && triggers.includes('lock');
+  });
   const artifactInputs = slugs.map(slug => {
     const agent = AGENTS[slug];
     return {
