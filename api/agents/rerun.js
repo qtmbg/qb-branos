@@ -67,11 +67,16 @@ export default async function handler(req) {
   try { body = await req.json(); }
   catch { return json(400, { error: 'invalid_body' }, corsH); }
 
-  const { artifact_id, qbp_source } = body || {};
+  const { artifact_id, qbp_source, feedback } = body || {};
   if (!artifact_id || !UUID_RE.test(artifact_id)) {
     return json(400, { error: 'invalid_artifact_id' }, corsH);
   }
   const resolvedSource = qbp_source === 'original' ? 'original' : 'current';
+  // §3.5 Content Approval Loop runtime arg per step 7B. Framework ships
+  // the pipe · agent prompt builders read runtime_args.feedback at
+  // construction time. No loop counter at framework layer per
+  // adjudication #2.
+  const resolvedFeedback = typeof feedback === 'string' && feedback.trim() ? feedback.trim() : null;
 
   // ─── 3. Load source artifact ──────────────────────────────────────────
   const srcRes = await fetch(
@@ -194,7 +199,9 @@ export default async function handler(req) {
     dispatch_id: dispatchId,
     artifact_id: newArt.id,
     trigger: 'regenerate',
-    runtime_args: { qbp_source: resolvedSource },
+    runtime_args: resolvedFeedback
+      ? { qbp_source: resolvedSource, feedback: resolvedFeedback }
+      : { qbp_source: resolvedSource },
     source_artifact_id: source.id,
   });
 
