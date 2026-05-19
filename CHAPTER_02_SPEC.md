@@ -439,11 +439,11 @@ Tier gating: chain triggers respect tier. A free user who completes Phase 01 wil
 
 ### 5.5 Reaper
 
-`/api/cron/reaper` · a Vercel Cron job that runs every 30 seconds (the tightest interval Vercel offers; the per-row check below enforces the backoff curve precisely). For each `dispatch_jobs` row with `status='producing'`:
+`/api/cron/reaper` · a Vercel Cron job that runs every 1 minute (the tightest interval Vercel supports across all tiers; verified against Vercel cron docs 2026-05-16). The per-row backoff check below enforces the curve precisely. For each `dispatch_jobs` row with `status='producing'`:
 
 1. Determine the row's age: `seconds_since_dispatch = now() - created_at`. Determine the row's most recent retry attempt: `seconds_since_last_retry = now() - last_retry_at` (new column, default `created_at`).
 2. **Backoff schedule.** The reaper acts only when the elapsed time since the most recent attempt has crossed the next backoff threshold:
-   - Retry 1 fires when `seconds_since_last_retry >= 30 s` AND `retry_count = 0`.
+   - Retry 1 fires when `seconds_since_last_retry >= 60 s` AND `retry_count = 0`.
    - Retry 2 fires when `seconds_since_last_retry >= 120 s` AND `retry_count = 1`.
    - Retry 3 fires when `seconds_since_last_retry >= 300 s` AND `retry_count = 2`.
 3. Read child artifacts for the dispatch. The reaper handles **two distinct recoverable failure modes**:
@@ -453,7 +453,7 @@ Tier gating: chain triggers respect tier. A free user who completes Phase 01 wil
 4. Re-fire `/api/agents/run` for each recoverable artifact (stuck OR schema-invalid). Increment `retry_count`. Update `last_retry_at = now()`. For mode (b), the re-fire deletes the prior `failed` artifact's status (re-set to `queued`) AND opens a fresh `agent_runs` row · the prior failed run stays in history as audit. For mode (a), no artifact mutation is needed beyond re-running.
 5. **Permanent failure.** If `retry_count = 3` AND the dispatch is still `producing` at the next reaper tick, flip `dispatch_jobs.status = 'failed_permanently'`. Emit a single `dispatch_failed` notification (in-app + email). Email is sent ONLY at this terminal state, not on intermediate retries. The Agent Console surfaces a manual retry CTA on the affected agent row.
 
-**The reaper is the framework's retry safety net.** With `retry_budget: 0` declared across all four Chapter 2 synthesizers (per §5.2.1), the reaper is the only retry mechanism in play. Each `/api/agents/run` invocation is single-shot inside its own Edge budget; transient failures (timeout, 5xx, schema-invalid) write `failed` immediately; the reaper picks them up at the next cron tick (≤30 s recovery window) and re-fires. The user experience matches the in-call retry pattern with a small added latency for cron pickup.
+**The reaper is the framework's retry safety net.** With `retry_budget: 0` declared across all four Chapter 2 synthesizers (per §5.2.1), the reaper is the only retry mechanism in play. Each `/api/agents/run` invocation is single-shot inside its own Edge budget; transient failures (timeout, 5xx, schema-invalid) write `failed` immediately; the reaper picks them up at the next cron tick (≤1 min recovery window) and re-fires. The user experience matches the in-call retry pattern with a small added latency for cron pickup.
 
 `last_retry_at` is added to `dispatch_jobs` via migration 012 alongside `retry_count`.
 
@@ -462,7 +462,7 @@ Cron is declared in `vercel.json`:
 "crons": [{ "path": "/api/cron/reaper", "schedule": "* * * * *" }]
 ```
 
-(Vercel Cron's minimum granularity is one minute; the 30 s backoff arm fires on the first tick after threshold, so effective worst-case latency is 30 s + cron jitter.)
+(Vercel Cron's minimum granularity is one minute across all tiers; the 1 min backoff arm fires on the first tick after threshold, so effective worst-case latency is 1 min + cron jitter.)
 
 ### 5.6 Inter-edge auth
 

@@ -3,6 +3,12 @@
   "name": "quantumbranding-ai",
   "buildCommand": null,
   "outputDirectory": ".",
+  "crons": [
+    {
+      "path": "/api/cron/reaper",
+      "schedule": "* * * * *"
+    }
+  ],
   "routes": [
     {
       "src": "/",
@@ -106,6 +112,10 @@
     {
       "src": "/api/notifications",
       "dest": "/api/notifications"
+    },
+    {
+      "src": "/api/cron/reaper",
+      "dest": "/api/cron/reaper"
     },
     {
       "src": "/artifact/([0-9a-fA-F-]{36})",
