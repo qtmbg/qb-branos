@@ -141,6 +141,23 @@ export default async function handler(req) {
   if (!dispatchId) return json(500, { error: 'dispatch_insert_returned_no_id' }, corsH);
 
   // ─── 6. Insert new artifacts row ─────────────────────────────────────
+  // Version is GLOBAL per (user_id, artifact_type) · max+1. The branched
+  // semantics per adjudication #4 keep parent_artifact_id pointing at the
+  // SOURCE artifact (which can be mid-chain), while version proceeds in
+  // the linear sequence across all reruns. Using source.version+1 here
+  // would collide on the (user_id, artifact_type, version) unique index
+  // for any second rerun on the same source. Surfaced during step 7A
+  // gate 1 verification · this comment is the conformance-fix marker.
+  const verRes = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/artifacts` +
+    `?user_id=eq.${encodeURIComponent(userId)}` +
+    `&artifact_type=eq.${encodeURIComponent(slug)}` +
+    `&select=version&order=version.desc&limit=1`,
+    { headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
+  );
+  const verRows = verRes.ok ? (await verRes.json().catch(() => [])) : [];
+  const nextVersion = (verRows?.[0]?.version || 0) + 1;
+
   const artRes = await fetch(
     `${env.SUPABASE_URL}/rest/v1/artifacts`,
     {
@@ -150,7 +167,7 @@ export default async function handler(req) {
         user_id: userId,
         artifact_type: slug,
         status: 'queued',
-        version: (Number(source.version) || 1) + 1,
+        version: nextVersion,
         parent_artifact_id: source.id,
         phase: source.phase || agent.META.phase,
         content: {},
