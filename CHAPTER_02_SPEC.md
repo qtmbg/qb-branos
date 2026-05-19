@@ -956,6 +956,14 @@ Nizzar runs through the free-tier path, hits the paywall, upgrades, sees Phase 0
 
 Cod-recommended order. Each step is one PR + one verification report PR.
 
+**Prerequisites · operator action required before code merges.** Three environment variables must be live in Vercel Production scope before the build sequence starts producing dispatching code. Surfaced explicitly at step 6 close (per the §13 amendment in PR #93 / step 6E closure):
+
+- `INTER_EDGE_SECRET` · used by `/api/lock-foundation`, `/api/agents/rerun`, and `/api/cron/reaper` to HMAC-sign outgoing service-to-service Edge calls per §5.6. Required from step 4 onwards (any Edge function that fans out to `/api/agents/run`).
+- `CRON_SECRET` · used by `/api/cron/reaper` to validate incoming Vercel cron triggers per §6.3 of step-6-spec.md. Vercel injects this as `Authorization: Bearer <CRON_SECRET>` on cron-triggered requests. Required from step 8 (reaper) onwards.
+- `RESEND_API_KEY` · used by the reaper's terminal-flip notification path to send the `dispatch_failed` email per §7.2. Optional · the notification falls back to in-app-only (no email) when the key is absent. Required from step 8 onwards if email notifications are part of the user contract.
+
+Vercel Pro tier is also a prerequisite for the cron primitives shipped in step 8. Cron schedules are available across all tiers; the 1-minute granularity verified against Vercel cron docs 2026-05-16 is platform-wide.
+
 1. **PR #59 reproduction + root cause confirmation (§2.5 gate).** Controlled test environment, 50-run failure trace, identified mechanism, explicit confirmation the Option A pattern addresses that mechanism. Reproduction report committed under `chapter-02/verification/`. No runtime code moves until this is cleared.
 2. **Migrations 011 + 012 + 013** (data model + RLS). Apply to prod via Supabase MCP. Includes `agent_runs` rename + new columns, `dispatch_jobs` extension (`agent_version`, `retry_count`, `last_retry_at`, `failed_permanently` status), `notifications` table.
 3. **`agents/registry.js` + contract scaffold.** Move four Phase 01 agents to the contract shape from §3.5. Declare `inputs.files` (empty), `triggers`, `META.version`. NO behavior change yet.
