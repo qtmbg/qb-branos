@@ -65,6 +65,16 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
     };
   });
 
+  // Embed dep traces as JSON inside body_sections[0].prose so the
+  // artifact stays §3-schema compliant (data_blocks have a strict
+  // type enum that does not include 'chain_trace'). Verification
+  // harness parses the JSON marker out of prose.
+  // Marker: `<!-- chain-trace-json: { ... } -->`
+  const traceMarker = `<!-- chain-trace-json: ${JSON.stringify({
+    dependencies_satisfied: depTraces,
+    runtime_args_received: runtime_args || {},
+  })} -->`;
+
   const content = {
     schema_version: '1.0',
     header: {
@@ -74,13 +84,14 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
       generated_at: new Date().toISOString(),
       version: META.version,
     },
-    body_sections: [],
-    data_blocks: [{
-      kind: 'chain_trace',
-      dependencies_satisfied: depTraces,
-      runtime_args_received: runtime_args || {},
+    body_sections: [{
+      heading: 'Chain trace',
+      prose: `Synthetic chain_test_agent dispatched after deps ${META.inputs.artifact_dependencies.join(' and ')} delivered. Step 8C verification artifact.\n\n${traceMarker}`,
     }],
-    footer: {},
+    data_blocks: [],
+    footer: {
+      qbp_fields_referenced: [],
+    },
   };
 
   return {

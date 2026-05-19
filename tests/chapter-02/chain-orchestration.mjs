@@ -212,9 +212,17 @@ async function gate1() {
     if (!TARGET_DEPS.includes(result.chainDispatch.parent_agent_slug)) {
       issues.push(`parent_agent_slug=${result.chainDispatch.parent_agent_slug} (expected one of ${TARGET_DEPS.join(',')})`);
     }
-    const traces = result.synArt.content?.data_blocks?.[0]?.dependencies_satisfied;
+    // Parse the chain-trace JSON marker from body_sections[0].prose. The
+    // synthetic agent embeds dep traces inside an HTML-comment marker
+    // because data_blocks has a strict type enum.
+    const prose = result.synArt.content?.body_sections?.[0]?.prose || '';
+    const traceMatch = prose.match(/<!-- chain-trace-json: (.+?) -->/);
+    let traces = null;
+    if (traceMatch) {
+      try { traces = JSON.parse(traceMatch[1]).dependencies_satisfied; } catch {}
+    }
     if (!Array.isArray(traces) || traces.length !== 2) {
-      issues.push(`dependencies_satisfied missing or wrong count`);
+      issues.push(`dependencies_satisfied missing or wrong count (parsed=${traces?.length ?? 'null'})`);
     } else {
       for (const dep of TARGET_DEPS) {
         const entry = traces.find(t => t.agent_slug === dep);
