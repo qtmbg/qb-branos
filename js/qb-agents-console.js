@@ -525,14 +525,23 @@ export function renderConsoleError(container, error) {
   ]));
 }
 
+// Step 9C · poll fallback cadence matches the bell. The Realtime manager
+// owns the realtime ↔ poll state machine; this is the consumer-side
+// cadence when state='poll'.
+const PHASE_POLL_MS = 30_000;
+
 export function renderConsole(container, payload, opts) {
   clear(container);
 
   const session = opts?.session;
-  const tier = String(payload?.user?.tier || 'free').toLowerCase();
+  // `payload` mutates on Realtime-triggered refetch (step 9C). All
+  // helpers below close over `payload` via this `let` so paintView()
+  // always reads the latest state.
+  let livePayload = payload;
+  let tier = String(payload?.user?.tier || 'free').toLowerCase();
   const firstName = payload?.user?.first_name || 'there';
   const foundationLocked = Boolean(payload?.user?.foundation_locked_at);
-  const agentsBySlug = Object.fromEntries((payload.agents || []).map(a => [a.slug, a]));
+  let agentsBySlug = Object.fromEntries((payload.agents || []).map(a => [a.slug, a]));
   const thresholds = payload.thresholds || {
     retry_gold: 0.1, retry_rose: 0.5, latency_gold_ms: 20_000, latency_rose_ms: 23_000,
   };
@@ -592,7 +601,7 @@ export function renderConsole(container, payload, opts) {
         ]),
         el('h2', { class: 'phase-section_title' }, PHASE_LABELS['01']),
       ]),
-      el('div', { class: 'phase-section_agents' }, (payload.agents || []).map(a =>
+      el('div', { class: 'phase-section_agents' }, (livePayload.agents || []).map(a =>
         phaseAgentRow(a, {
           onRerun: ({ agent, source }) => triggerRerun(agent, source),
         })
@@ -600,13 +609,13 @@ export function renderConsole(container, payload, opts) {
     ]));
 
     // Locked phase cards · Phase 02-05. Tier-aware copy per step 9 §3.2.
-    for (const card of (payload.locked_phase_cards || [])) {
+    for (const card of (livePayload.locked_phase_cards || [])) {
       viewMount.appendChild(lockedPhaseCard(card, tier));
     }
   }
 
   function paintRunHistoryView() {
-    const list = payload.recent_runs || [];
+    const list = livePayload.recent_runs || [];
     if (list.length === 0) {
       viewMount.appendChild(el('div', { class: 'console-empty' }, [
         el('p', {}, 'Your run history will populate after your first agent completes.'),
@@ -663,6 +672,51 @@ export function renderConsole(container, payload, opts) {
     } catch (e) {
       alert(`Rerun failed: ${e?.message || e}`);
     }
+  }
+
+  // Step 9C · Realtime subscription via the shared QBRealtimeManager.
+  // Phase view refetches /api/agents/console on notification arrival
+  // (chain_ready / dispatch_failed events) so agent state is live.
+  // Falls back to 30 s poll when the manager state is 'poll' (Realtime
+  // unavailable or SUBSCRIBED grace timeout). Manager owns the state
+  // machine + Supabase client; this consumer owns its own fetch.
+  let phasePollHandle = null;
+  let refetchInFlight = false;
+
+  async function refetchAndRepaint() {
+    if (!session?.token || refetchInFlight) return;
+    refetchInFlight = true;
+    try {
+      const r = await fetch('/api/agents/console', {
+        headers: { Authorization: `Bearer ${session.token}` },
+      });
+      if (!r.ok) return; // silent · the next event or poll re-tries
+      const fresh = await r.json().catch(() => null);
+      if (!fresh || !fresh.ok) return;
+      livePayload = fresh;
+      tier = String(fresh?.user?.tier || 'free').toLowerCase();
+      agentsBySlug = Object.fromEntries((fresh.agents || []).map(a => [a.slug, a]));
+      paintView();
+    } catch {
+      // Network errors are non-fatal · next event or poll re-tries
+    } finally {
+      refetchInFlight = false;
+    }
+  }
+
+  const mgr = window.QBRealtimeManager;
+  if (mgr && session?.token) {
+    mgr.start({ authToken: session.token });
+    mgr.onNotification(() => refetchAndRepaint());
+    mgr.onState(s => {
+      if (s === 'realtime') {
+        if (phasePollHandle) { clearInterval(phasePollHandle); phasePollHandle = null; }
+      } else if (s === 'poll') {
+        if (phasePollHandle === null) {
+          phasePollHandle = setInterval(refetchAndRepaint, PHASE_POLL_MS);
+        }
+      }
+    });
   }
 
   // Initial paint.
