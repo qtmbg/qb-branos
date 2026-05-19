@@ -470,88 +470,21 @@
     document.addEventListener('keydown', onKeydown);
 
     // ─── Realtime · INSERT + UPDATE on notifications · primary path ─────
-    // State machine per chapter-02/step-7-spec.md §5.2 (adjudication #5):
-    //   - Bell mounts → fetch initial state once → open Realtime channel
-    //   - On SUBSCRIBED → state = 'realtime'; no recurring poll
-    //   - On CHANNEL_ERROR / TIMED_OUT / CLOSED → state = 'poll';
-    //     start 30 s setInterval
-    //   - On Realtime reconnect → stop poll, return to state = 'realtime'
-    // Single state machine, two paths, never both active.
-    let realtimeState = null; // 'realtime' | 'poll' | null
-    let realtimeChannel = null;
-    let supabaseClient = null;
+    // State machine inherited from step 7C, extracted into the shared
+    // QBRealtimeManager in step 9C. The manager owns the Supabase client,
+    // the channel, and the realtime ↔ poll transitions. The bell is now
+    // a consumer that registers callbacks for notification events +
+    // state transitions; it still owns its own poll behavior (because
+    // the bell polls /api/notifications, not the same endpoint as other
+    // consumers).
+    //
+    // Single subscription channel, single state machine, two consumers.
+    let realtimeState = null; // mirrors manager state for visibility-handler logic
+    let unsubscribeNotification = null;
+    let unsubscribeState = null;
 
-    // Grace period for SUBSCRIBED · if the WebSocket connection cannot
-    // establish within this window (firewall, network issue, blocked
-    // upgrade), the bell flips to poll mode and starts the 30 s interval.
-    // The Supabase SDK does not always surface CHANNEL_ERROR cleanly on
-    // a blocked upgrade · it retries silently. The timeout is the
-    // resilience guarantee that the bell always reaches a usable state.
-    const SUBSCRIBED_TIMEOUT_MS = 10_000;
-
-    function flipToPoll() {
-      if (isDestroyed) return;
-      if (realtimeState === 'realtime') return; // no-op if Realtime is already active
-      realtimeState = 'poll';
-      root.setAttribute('data-realtime', 'false');
-      if (pollHandle === null) {
-        pollHandle = setInterval(poll, POLL_MS);
-      }
-    }
-
-    async function startRealtime() {
-      if (isDestroyed) return;
-      const url = window.QB?.SUPA_URL;
-      const anon = window.QB?.SUPA_KEY;
-      if (!url || !anon) {
-        flipToPoll();
-        return;
-      }
-      let subscribedFired = false;
-      const subscribedTimeout = setTimeout(() => {
-        if (!subscribedFired) flipToPoll();
-      }, SUBSCRIBED_TIMEOUT_MS);
-
-      try {
-        const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-        if (isDestroyed) { clearTimeout(subscribedTimeout); return; }
-        const { createClient } = mod;
-        supabaseClient = createClient(url, anon, {
-          auth: { persistSession: false, autoRefreshToken: false },
-          realtime: { params: { eventsPerSecond: 10 } },
-        });
-        // Set the user's JWT so Realtime enforces RLS against auth.uid()
-        await supabaseClient.realtime.setAuth(token);
-        const filter = `user_id=eq.${userId}`;
-        realtimeChannel = supabaseClient
-          .channel(`notifications-${userId}`)
-          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter }, handleInsert)
-          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'notifications', filter }, handleUpdate)
-          .subscribe((status) => {
-            if (isDestroyed) return;
-            if (status === 'SUBSCRIBED') {
-              subscribedFired = true;
-              clearTimeout(subscribedTimeout);
-              realtimeState = 'realtime';
-              if (pollHandle) { clearInterval(pollHandle); pollHandle = null; }
-              root.setAttribute('data-realtime', 'true');
-            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-              subscribedFired = true;
-              clearTimeout(subscribedTimeout);
-              flipToPoll();
-            }
-          });
-      } catch (e) {
-        clearTimeout(subscribedTimeout);
-        console.warn('[bell] Realtime unavailable, falling back to poll:', e?.message);
-        flipToPoll();
-      }
-    }
-
-    function handleInsert(payload) {
-      if (isDestroyed) return;
-      const row = payload?.new;
-      if (!row || row.user_id !== userId) return;
+    function handleInsert(row) {
+      if (isDestroyed || !row) return;
       // Prepend to rows, dedupe by id, cap to DROPDOWN_LIMIT
       const existing = lastRows.filter(r => r.id !== row.id);
       lastRows = [row, ...existing].slice(0, DROPDOWN_LIMIT);
@@ -560,11 +493,8 @@
       renderDropdown(lastRows);
     }
 
-    function handleUpdate(payload) {
-      if (isDestroyed) return;
-      const oldRow = payload?.old;
-      const newRow = payload?.new;
-      if (!newRow || newRow.user_id !== userId) return;
+    function handleUpdate(newRow, oldRow) {
+      if (isDestroyed || !newRow) return;
       const wasRead = oldRow?.read_at != null;
       const isRead = newRow.read_at != null;
       // Defensive · only adjust on read_at transitions
@@ -576,14 +506,40 @@
       renderDropdown(lastRows);
     }
 
+    function startRealtime() {
+      const mgr = window.QBRealtimeManager;
+      if (!mgr) {
+        // Manager script missing · degrade to poll-only.
+        realtimeState = 'poll';
+        root.setAttribute('data-realtime', 'false');
+        if (pollHandle === null) pollHandle = setInterval(poll, POLL_MS);
+        return;
+      }
+      mgr.start({ authToken: token });
+      unsubscribeNotification = mgr.onNotification(({ event, row, oldRow }) => {
+        if (event === 'INSERT') handleInsert(row);
+        else if (event === 'UPDATE') handleUpdate(row, oldRow);
+      });
+      unsubscribeState = mgr.onState(s => {
+        if (isDestroyed) return;
+        realtimeState = s;
+        if (s === 'realtime') {
+          root.setAttribute('data-realtime', 'true');
+          if (pollHandle) { clearInterval(pollHandle); pollHandle = null; }
+        } else if (s === 'poll') {
+          root.setAttribute('data-realtime', 'false');
+          if (pollHandle === null) pollHandle = setInterval(poll, POLL_MS);
+        }
+      });
+    }
+
     function destroy() {
       isDestroyed = true;
       if (pollHandle) { clearInterval(pollHandle); pollHandle = null; }
-      if (realtimeChannel && supabaseClient) {
-        try { supabaseClient.removeChannel(realtimeChannel); } catch {}
-        realtimeChannel = null;
-        supabaseClient = null;
-      }
+      // Unsubscribe from the shared manager · do NOT stop the manager
+      // itself (other consumers like the Phase view may still need it).
+      if (unsubscribeNotification) { try { unsubscribeNotification(); } catch {} unsubscribeNotification = null; }
+      if (unsubscribeState) { try { unsubscribeState(); } catch {} unsubscribeState = null; }
       document.removeEventListener('click', onDocClick);
       document.removeEventListener('keydown', onKeydown);
       document.removeEventListener('visibilitychange', onVisibility);
