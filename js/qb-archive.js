@@ -461,8 +461,217 @@ export function renderArchiveEmpty(container, opts = {}) {
   return article;
 }
 
+/* ─── Tree-view formatters (step 11) ────────────────────────── */
+// Format the lock_at ISO timestamp as "Locked 2026-05-15 · N agents".
+// Falls back to "Locked recently" when lock_at is null (rare; means the
+// lock dispatch row couldn't be located but the chain has artifacts).
+function chainHeaderLabel(chain) {
+  const ts = chain?.lock_at ? new Date(chain.lock_at) : null;
+  const dateStr = ts && !Number.isNaN(ts.getTime())
+    ? `${ts.getFullYear()}-${String(ts.getMonth() + 1).padStart(2, '0')}-${String(ts.getDate()).padStart(2, '0')}`
+    : null;
+  const lockPart = dateStr ? `Locked ${dateStr}` : 'Locked recently';
+  const agentsPart = `${chain.agents_count || 0} agent${chain.agents_count === 1 ? '' : 's'}`;
+  return `${lockPart} · ${agentsPart}`;
+}
+
+// Recursive · render a chain artifact node + any parent_artifact_id-linked
+// children indented underneath. Uses createArtifactRow for consistency
+// with the flat list; children get a left-indent class.
+function buildChainArtifactNode(node, agentSlug, depth = 0) {
+  const row = {
+    id: node.id,
+    title: typeof node.title === 'string' && node.title ? node.title : humanizeAgentSlug(agentSlug),
+    agent_slug: agentSlug,
+    phase: '01',
+    status: node.status,
+    version: node.version,
+    created_at: node.delivered_at,
+    locked: !!node.locked,
+  };
+  const { href, onClick } = rowHrefAndHandler(row);
+  const rowNode = createArtifactRow({
+    id: row.id,
+    title: row.title,
+    phase: row.phase,
+    agentSlug: row.agent_slug,
+    generatedAt: row.created_at,
+    status: row.status,
+    locked: row.locked,
+    href,
+    onClick,
+  });
+  if (row.status === 'queued' || row.status === 'generating') {
+    rowNode.classList.add('is-pending');
+    rowNode.setAttribute('aria-disabled', 'true');
+  }
+  if (depth > 0) {
+    rowNode.classList.add('qb-archive-chain-child');
+    rowNode.style.marginLeft = `${depth * 24}px`;
+  }
+  const wrap = el('div', { class: 'qb-archive-chain-node-wrap' }, [rowNode]);
+  for (const child of (node.children || [])) {
+    wrap.appendChild(buildChainArtifactNode(child, agentSlug, depth + 1));
+  }
+  return wrap;
+}
+
+function buildChainCard(chain) {
+  const headerLabel = chainHeaderLabel(chain);
+  const header = el('header', { class: 'qb-archive-chain__header' }, [
+    el('span', { class: 'qb-tag is-soft' }, [
+      el('span', { class: 'qb-tag_content' }, 'Chain'),
+    ]),
+    el('h2', { class: 'qb-archive-chain__title' }, headerLabel),
+  ]);
+  const body = el('div', { class: 'qb-archive-chain__body' });
+  for (const node of (chain.nodes || [])) {
+    for (const art of (node.artifacts || [])) {
+      body.appendChild(buildChainArtifactNode(art, node.agent_slug, 0));
+    }
+  }
+  return el('article', { class: 'qb-archive-chain qb-card' }, [header, body]);
+}
+
+function buildEarlierWorkSection(legacy) {
+  if (!Array.isArray(legacy) || legacy.length === 0) return null;
+  const list = el('div', { class: 'qb-archive-list' });
+  for (const item of legacy) {
+    const row = {
+      id: item.id,
+      title: typeof item.title === 'string' && item.title ? item.title : humanizeAgentSlug(item.artifact_type),
+      agent_slug: item.artifact_type,
+      phase: null,
+      status: item.status,
+      version: item.version,
+      created_at: item.created_at,
+      locked: !!item.locked,
+    };
+    const { href, onClick } = rowHrefAndHandler(row);
+    const node = createArtifactRow({
+      id: row.id,
+      title: row.title,
+      phase: row.phase,
+      agentSlug: row.agent_slug,
+      generatedAt: row.created_at,
+      status: row.status,
+      locked: row.locked,
+      href,
+      onClick,
+    });
+    if (row.status === 'queued' || row.status === 'generating') {
+      node.classList.add('is-pending');
+      node.setAttribute('aria-disabled', 'true');
+    }
+    list.appendChild(node);
+  }
+  return el('section', { class: 'qb-archive-legacy' }, [
+    el('h3', { class: 'qb-archive-legacy__title' }, 'Earlier work'),
+    el('p',  { class: 'qb-archive-legacy__subhead' },
+      'Artifacts from before chain history started tracking.'),
+    list,
+  ]);
+}
+
+/* ─── Public: renderArchiveTree (step 11) ─────────────────────── */
+// Renders the chain-grouped tree shape returned by /api/artifacts?mode=chains.
+// Replaces buildList for the tree-only render per Nizzar adj #2.
+//
+// opts: { tier, foundationLockedAt, session }
+//   - session is used for the optional Realtime hook + refetch
+export function renderArchiveTree(container, response, opts = {}) {
+  if (!(container instanceof HTMLElement)) {
+    throw new Error('renderArchiveTree: container must be an HTMLElement');
+  }
+  const session = opts.session || null;
+  let live = response || { chains: [], legacy: [] };
+  let refetchInFlight = false;
+
+  function totalArtifactCount(resp) {
+    const chainTotal = (resp.chains || []).reduce((acc, ch) => {
+      let n = 0;
+      for (const node of (ch.nodes || [])) {
+        for (const a of (node.artifacts || [])) {
+          n += 1;
+          const stack = [...(a.children || [])];
+          while (stack.length) { n += 1; const c = stack.shift(); stack.push(...(c.children || [])); }
+        }
+      }
+      return acc + n;
+    }, 0);
+    return chainTotal + (resp.legacy || []).length;
+  }
+  function lockedArtifactCount(resp) {
+    let n = 0;
+    for (const ch of (resp.chains || [])) {
+      for (const node of (ch.nodes || [])) {
+        for (const a of (node.artifacts || [])) {
+          if (a.locked) n += 1;
+          const stack = [...(a.children || [])];
+          while (stack.length) { const c = stack.shift(); if (c.locked) n += 1; stack.push(...(c.children || [])); }
+        }
+      }
+    }
+    for (const l of (resp.legacy || [])) if (l.locked) n += 1;
+    return n;
+  }
+
+  function render() {
+    clear(container);
+    const totalCount = totalArtifactCount(live);
+    const lockedCount = lockedArtifactCount(live);
+    const article = el('article', { class: 'qb-archive' }, [
+      buildHeader({ totalCount, lockedCount }),
+    ]);
+    for (const chain of (live.chains || [])) {
+      article.appendChild(buildChainCard(chain));
+    }
+    const earlierWork = buildEarlierWorkSection(live.legacy || []);
+    if (earlierWork) article.appendChild(earlierWork);
+    container.appendChild(article);
+  }
+
+  async function refetchAndRepaint() {
+    if (!session?.token || refetchInFlight) return;
+    refetchInFlight = true;
+    try {
+      const r = await fetch('/api/artifacts?mode=chains', {
+        headers: { Authorization: `Bearer ${session.token}` },
+      });
+      if (!r.ok) return;
+      const fresh = await r.json().catch(() => null);
+      if (!fresh || !fresh.ok) return;
+      live = fresh;
+      render();
+    } catch {
+      // Silent · next event or poll re-tries
+    } finally {
+      refetchInFlight = false;
+    }
+  }
+
+  // Step 11 §3.3 · Realtime subscription via shared qb-realtime-manager.
+  // Inherits the step 9C canonical pattern: on chain_ready / dispatch_failed
+  // notification, refetch + repaint. Poll-fallback at 30s when state=poll.
+  const mgr = (typeof window !== 'undefined') ? window.QBRealtimeManager : null;
+  let pollHandle = null;
+  if (mgr && session?.token) {
+    mgr.start({ authToken: session.token });
+    mgr.onNotification(() => refetchAndRepaint());
+    mgr.onState(s => {
+      if (s === 'realtime') {
+        if (pollHandle) { clearInterval(pollHandle); pollHandle = null; }
+      } else if (s === 'poll') {
+        if (pollHandle === null) pollHandle = setInterval(refetchAndRepaint, 30_000);
+      }
+    });
+  }
+
+  render();
+}
+
 const ArchiveRenderer = {
-  renderArchive, renderArchiveLoading, renderArchiveError, renderArchiveEmpty,
+  renderArchive, renderArchiveTree, renderArchiveLoading, renderArchiveError, renderArchiveEmpty,
   humanizeAgentSlug,
 };
 export default ArchiveRenderer;
