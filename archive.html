@@ -47,7 +47,7 @@
 <script src="/js/qb-notification-bell.js" defer></script>
 <script type="module">
 import {
-  renderArchive, renderArchiveLoading, renderArchiveError, renderArchiveEmpty,
+  renderArchiveTree, renderArchiveLoading, renderArchiveError, renderArchiveEmpty,
 } from '/js/qb-archive.js';
 
 const root = document.getElementById('archive-root');
@@ -66,13 +66,13 @@ async function load() {
   }
   const session = window.QB.getSession();
 
-  // Need foundation_locked_at for empty-state branching. Fetch both in
-  // parallel: /api/qbp is cheap and gives the lock state authoritatively.
+  // Step 11 · fetch chain-shaped artifacts + qbp in parallel. The
+  // /api/artifacts?mode=chains response is { ok, chains, legacy }.
   let artifactsRes, qbpRes;
   try {
     [artifactsRes, qbpRes] = await Promise.all([
-      fetch('/api/artifacts?limit=200', { headers: { Authorization: `Bearer ${session.token}` } }),
-      fetch('/api/qbp',                  { headers: { Authorization: `Bearer ${session.token}` } }),
+      fetch('/api/artifacts?mode=chains', { headers: { Authorization: `Bearer ${session.token}` } }),
+      fetch('/api/qbp',                   { headers: { Authorization: `Bearer ${session.token}` } }),
     ]);
   } catch (e) {
     renderArchiveError(root, e);
@@ -92,18 +92,19 @@ async function load() {
     return;
   }
 
-  const list = Array.isArray(artifactsData.artifacts) ? artifactsData.artifacts : [];
+  const chains = Array.isArray(artifactsData.chains) ? artifactsData.chains : [];
+  const legacy = Array.isArray(artifactsData.legacy) ? artifactsData.legacy : [];
   const foundationLockedAt = qbpData?.foundation_locked_at || null;
   // Server-authoritative tier from /api/qbp. Never read session.tier.
   const tier = String(qbpData?.tier || 'free').toLowerCase();
 
-  if (list.length === 0) {
+  if (chains.length === 0 && legacy.length === 0) {
     renderArchiveEmpty(root, { foundationLockedAt });
     mountBell(session);
     return;
   }
 
-  renderArchive(root, list, { tier, foundationLockedAt });
+  renderArchiveTree(root, { chains, legacy }, { tier, foundationLockedAt, session });
   mountBell(session);
 }
 
