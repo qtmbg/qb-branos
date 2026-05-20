@@ -1,4 +1,10 @@
-# Chapter 2 · Step 11 spec outline
+# Chapter 2 · Step 11 spec outline · SUPERSEDED
+
+> **Status: superseded by `step-11-spec.md` after Nizzar adjudication.** Five defaults accepted, one extension on call #1 (extend `/api/artifacts` rather than new endpoint), one refinement on call #6 ("Earlier work" copy + flat visible rows + backfill migration logged as chapter-3 candidate). See `step-11-spec.md` for the canonical step 11 specification.
+>
+> Retained below as historical record of the pre-adjudication framing.
+
+---
 
 Status: draft outline. Awaiting Nizzar adjudication on the open calls in §5 below. Full spec follows on the same branch once the outline lands.
 
