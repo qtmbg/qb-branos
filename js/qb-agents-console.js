@@ -382,6 +382,13 @@ function runHistoryRow(run, agentsBySlug, thresholds, opts) {
 
 /* ─── Replay modal ───────────────────────────────────────── */
 async function openReplayModal(runId, session) {
+  // Step 10B · capture the focus-source element BEFORE the async fetch so
+  // we can restore focus to the triggering row on close. Keyboard
+  // activation (Enter / Space) reliably leaves the row as activeElement;
+  // mouse clicks may not focus the row, in which case restore is a no-op
+  // (focus returns to body, which is the pre-modal state anyway).
+  const focusSource = document.activeElement;
+
   // Fetch the run detail.
   let res, data;
   try {
@@ -400,9 +407,24 @@ async function openReplayModal(runId, session) {
 
   const backdrop = el('div', { class: 'replay-backdrop' });
   const modal = el('div', { class: 'qb-card replay-modal', role: 'dialog', 'aria-modal': 'true' });
+
+  // Step 10B · single close path. All three triggers (× button, backdrop
+  // click, Escape) route through closeModal() so focus restore + listener
+  // cleanup happen exactly once regardless of how the modal closes.
+  function closeModal() {
+    backdrop.remove();
+    document.removeEventListener('keydown', onEsc);
+    if (focusSource && typeof focusSource.focus === 'function' && document.contains(focusSource)) {
+      try { focusSource.focus(); } catch {}
+    }
+  }
+  function onEsc(e) {
+    if (e.key === 'Escape') closeModal();
+  }
+
   const closeBtn = el('button', {
     class: 'replay-modal_close', type: 'button', 'aria-label': 'Close replay panel',
-    on: { click: () => backdrop.remove() },
+    on: { click: closeModal },
   }, '×');
 
   const header = el('div', { class: 'replay-modal_header' }, [
@@ -474,15 +496,16 @@ async function openReplayModal(runId, session) {
   if (errorBlock) modal.appendChild(errorBlock);
 
   backdrop.appendChild(modal);
-  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) backdrop.remove(); });
-  document.addEventListener('keydown', function onEsc(e) {
-    if (e.key === 'Escape') {
-      backdrop.remove();
-      document.removeEventListener('keydown', onEsc);
-    }
-  });
+  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
+  document.addEventListener('keydown', onEsc);
 
   document.body.appendChild(backdrop);
+
+  // Step 10B · focus the close button on open so keyboard users get
+  // a clear signal that the modal is interactive. Tab continues from
+  // there into the modal content; Shift+Tab cycles back to closeBtn.
+  // (Full focus trap deferred to step 15 WCAG audit.)
+  closeBtn.focus();
 }
 
 /* ─── view switching ─────────────────────────────────────── */
