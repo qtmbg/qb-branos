@@ -1,4 +1,10 @@
-# Chapter 2 · Step 10 spec outline
+# Chapter 2 · Step 10 spec outline · SUPERSEDED
+
+> **Status: superseded by `step-10-spec.md` after Nizzar adjudication.** All six open calls accepted as defaults; no overrides. The full spec elaborates the conformance-audit + small-fix shape and bakes four new closure-capture patterns (conformance-audit-pattern, single-canonical-surface discipline, bell-only Realtime indicator, framework defect-rate continuation). See `step-10-spec.md` for the canonical step 10 specification.
+>
+> Retained below as historical record of the pre-adjudication framing.
+
+---
 
 Status: draft outline. Awaiting Nizzar adjudication on the open calls in §5 below. Full spec follows on the same branch once the outline lands.
 
