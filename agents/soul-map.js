@@ -328,6 +328,3 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
   };
 }
 
-// Backward-compat re-export for api/agents/dispatch.js. Removed in step 14
-// when dispatch.js is deprecated.
-export { run as runSoulMapSynthesizer };

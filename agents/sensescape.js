@@ -355,5 +355,3 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
   };
 }
 
-// Backward-compat re-export for api/agents/dispatch.js. Dropped in step 14.
-export { run as runSensescapeSynthesizer };
