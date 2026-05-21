@@ -346,4 +346,3 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
   };
 }
 
-export { run as runWarTableSynthesizer };
