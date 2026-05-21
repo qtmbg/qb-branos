@@ -36,6 +36,34 @@ A real-Stripe seam check covering:
 
 ---
 
+### PL-002 · Supabase Pro upgrade at launch
+
+**Status:** OPEN
+**Surfaced in:** chapter-2 security audit (this chapter close)
+**Owner:** operator/Cod
+**Why it's pre-launch:** the project runs on Supabase Free through chapter-2 verification. Free tier is appropriate while there are zero customers and no production traffic, but several go-live capabilities are gated behind Pro. The upgrade is the single line item that flips all of them on at once.
+
+**What clears this item:**
+
+Upgrade the Supabase project from Free to Pro before general-availability launch. The upgrade is a billing change, not a code change. After upgrade, confirm the following toggles and capabilities are enabled in the Supabase dashboard:
+
+1. **Leaked-password protection** (Auth · Password protection · "Check passwords against HaveIBeenPwned"). Currently surfaces as an advisor WARN on Free. Accepted as known WARN until launch.
+2. **Point-in-time recovery (PITR)**. Free tier provides daily backups only. PITR is required for incident-response posture at go-live.
+3. **Higher project limits** (database size, egress, edge function invocations, etc.) appropriate for production traffic projections.
+
+**Possible execution paths:**
+- Standard upgrade via Supabase dashboard. Billing cuts over immediately. No downtime.
+
+**Verification artifact required for CLOSED:**
+- Screenshot or dashboard URL confirming project tier is Pro.
+- Screenshot of Auth password-protection toggle in the ON state.
+- Screenshot of PITR enabled with retention window configured.
+
+**Known accepted WARNs covered by this item:**
+- Supabase advisor: "Leaked password protection is currently disabled." Tracked here, not separately. Re-check advisor status after upgrade confirms it clears.
+
+---
+
 ## Closed items
 
 (none yet)
