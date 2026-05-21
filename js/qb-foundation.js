@@ -217,18 +217,18 @@ function buildBanner(text, modifier = '') {
 const UPGRADE_BANNER_COPY = {
   starter: {
     eyebrow: 'Starter is live.',
-    headline: 'Your foundation is unlocked.',
+    headline: 'Your tools are unlocked.',
     body: 'All 20 agents and unlimited runs are open. The Visual DNA and War Table exercises just unlocked · finish them to lock your foundation and trigger the full Phase 01 synthesis.',
   },
   pro: {
     eyebrow: 'Pro is live.',
     headline: 'Everything is open.',
-    body: 'Phase 02 brand creation and the Predictive Panel arrive with their chapters. Your foundation is fully unlocked today · Visual DNA and War Table are waiting, and your work compounds when Phase 02 ships.',
+    body: 'Your full foundation and all agents are open today. Visual DNA and War Table are waiting · finish them to trigger your Phase 01 synthesis. Predictive Panel and Phase 02 brand creation come online as they ship, and everything you build now compounds into them.',
   },
   agency: {
     eyebrow: 'Agency is live.',
     headline: 'Client mode is on.',
-    body: 'Multi-brand workspaces and white-label exports are yours. Run this brand\'s foundation first · Visual DNA and War Table are waiting · then create your first client workspace from the Atelier.',
+    body: 'Multi-brand workspaces and white-label exports are yours. Run this brand\'s foundation first · Visual DNA and War Table are waiting · then create your first client workspace.',
   },
 };
 // Default fallback · if tier is unrecognized (atelier or unknown future
