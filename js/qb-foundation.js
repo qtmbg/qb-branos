@@ -207,6 +207,57 @@ function buildBanner(text, modifier = '') {
   ]);
 }
 
+/* ─── Step 12 · upgrade-success banner ──────────────────────── */
+// Tier-aware celebratory banner for the post-Stripe-checkout moment.
+// Eyebrow + Fraunces headline + body + dismiss button. Gold accent on
+// qb-card shell per spec §2.4 (adj #4 default). Bodies follow Nizzar's
+// rule (adj #2 override): (1) confirm decision was right, (2) name what
+// is now open, (3) point at the single next action on the foundation
+// page today.
+const UPGRADE_BANNER_COPY = {
+  starter: {
+    eyebrow: 'Starter is live.',
+    headline: 'Your tools are unlocked.',
+    body: 'All 20 agents and unlimited runs are open. The Visual DNA and War Table exercises just unlocked · finish them to lock your foundation and trigger the full Phase 01 synthesis.',
+  },
+  pro: {
+    eyebrow: 'Pro is live.',
+    headline: 'Everything is open.',
+    body: 'Your full foundation and all agents are open today. Visual DNA and War Table are waiting · finish them to trigger your Phase 01 synthesis. Predictive Panel and Phase 02 brand creation come online as they ship, and everything you build now compounds into them.',
+  },
+  agency: {
+    eyebrow: 'Agency is live.',
+    headline: 'Client mode is on.',
+    body: 'Multi-brand workspaces and white-label exports are yours. Run this brand\'s foundation first · Visual DNA and War Table are waiting · then create your first client workspace.',
+  },
+};
+// Default fallback · if tier is unrecognized (atelier or unknown future
+// tier), use the Starter copy. Atelier tier is documented in PAID_TIERS
+// but has no chapter-2-specific copy yet.
+const UPGRADE_BANNER_DEFAULT = UPGRADE_BANNER_COPY.starter;
+
+function buildUpgradeSuccessBanner({ tier, onDismiss }) {
+  const copy = UPGRADE_BANNER_COPY[String(tier || 'starter').toLowerCase()] || UPGRADE_BANNER_DEFAULT;
+  const closeBtn = el('button', {
+    type: 'button',
+    class: 'qb-foundation-upgrade-success__close',
+    'aria-label': 'Dismiss upgrade confirmation',
+    on: { click: () => { if (typeof onDismiss === 'function') onDismiss(); } },
+  }, '×');
+  return el('section', {
+    class: 'qb-foundation-upgrade-success qb-card',
+    role: 'status',
+    'aria-live': 'polite',
+  }, [
+    closeBtn,
+    el('span', { class: 'qb-tag is-gold' }, [
+      el('span', { class: 'qb-tag_content' }, copy.eyebrow),
+    ]),
+    el('h2', { class: 'qb-foundation-upgrade-success__headline' }, copy.headline),
+    el('p',  { class: 'qb-foundation-upgrade-success__body' }, copy.body),
+  ]);
+}
+
 /* ─── Phase roadmap ──────────────────────────────────────── */
 function buildPhaseRoadmap(state) {
   const phase01State =
@@ -494,9 +545,22 @@ export function renderFoundation(container, state, opts = {}) {
   else if (state.bucket === 'lock-ready')  body = renderLockReady(state, opts);
   else if (state.bucket === 'locked')      body = renderLocked(state, opts);
 
-  const banner = opts.banner
-    ? buildBanner(opts.banner.text, opts.banner.modifier || '')
-    : null;
+  let banner = null;
+  if (opts.banner) {
+    if (opts.banner.variant === 'upgrade-success') {
+      // Step 12 · post-Stripe-checkout celebratory banner. Tier-aware
+      // copy from UPGRADE_BANNER_COPY. Dismiss callback wired by the
+      // foundation.html script block (clears bannerSpec + re-renders).
+      banner = buildUpgradeSuccessBanner({
+        tier: opts.banner.tier || state.tier,
+        onDismiss: opts.banner.onDismiss,
+      });
+    } else {
+      // Legacy simple banner (used post-lock for "your foundation is locked"
+      // and other status messages).
+      banner = buildBanner(opts.banner.text, opts.banner.modifier || '');
+    }
+  }
 
   const article = el('article', { class: 'qb-foundation', dataset: { bucket: state.bucket, tier: state.tier } }, [
     buildNav({ tier: state.tier, activeKey: 'foundation' }),

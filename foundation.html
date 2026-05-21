@@ -81,6 +81,29 @@ function redirectToAuth() {
 
 let stopPolling = null;
 let bannerText  = null;
+// Step 12 · upgrade-success banner state. Set on initial load if the
+// URL carries ?upgrade=success (Stripe checkout redirect). Cleared on
+// dismiss (which also strips the URL parameter via history.replaceState).
+let upgradeSuccessTier = null;
+function detectUpgradeSuccessParam() {
+  try {
+    const sp = new URLSearchParams(location.search);
+    if (sp.get('upgrade') === 'success') {
+      // Tier is filled in after the qbp fetch in rerender(); flag here.
+      upgradeSuccessTier = 'pending-tier-resolution';
+      // Strip the parameter from the visible URL immediately so reload
+      // doesn't re-show the banner. The flag in upgradeSuccessTier is
+      // the in-memory one-shot guarantee.
+      const cleanUrl = location.pathname + (location.hash || '');
+      history.replaceState(null, '', cleanUrl);
+    }
+  } catch { /* malformed URL · no banner */ }
+}
+function dismissUpgradeSuccessBanner(session) {
+  upgradeSuccessTier = null;
+  // Re-render so the banner falls out of the DOM.
+  rerender(session).catch(() => {});
+}
 
 async function fetchAll(token) {
   const [qbpRes, artRes] = await Promise.all([
@@ -160,12 +183,27 @@ async function rerender(session) {
     tier,
   });
 
+  // Step 12 · upgrade-success banner takes precedence over the lock-
+  // success bannerText (they're mutually exclusive in practice · upgrade
+  // happens before lock). Tier resolved from the qbp fetch this turn.
+  let bannerSpec = null;
+  if (upgradeSuccessTier) {
+    bannerSpec = {
+      variant: 'upgrade-success',
+      tier,
+      onDismiss: () => dismissUpgradeSuccessBanner(session),
+    };
+  } else if (bannerText) {
+    bannerSpec = { text: bannerText, modifier: 'is-success' };
+  }
   renderFoundation(root, state, {
     onLockClick:     () => triggerLock(session),
     onUpgradeClick:  () => triggerUpgrade(session),
-    banner: bannerText ? { text: bannerText, modifier: 'is-success' } : null,
+    banner: bannerSpec,
   });
-  // Clear the success banner after it has been shown once.
+  // Clear the legacy success banner after it has been shown once. The
+  // upgrade-success banner persists until the user dismisses it (per
+  // adj #3 default · let the user sit in the moment).
   if (bannerText) setTimeout(() => { bannerText = null; }, 100);
 
   if (state.bucket === 'locked' && state.inFlight) {
@@ -196,6 +234,10 @@ async function load() {
     redirectToAuth();
     return;
   }
+  // Step 12 · detect ?upgrade=success BEFORE the first render so the
+  // initial paint already shows the banner. Param is stripped from the
+  // URL inside detectUpgradeSuccessParam (history.replaceState).
+  detectUpgradeSuccessParam();
   const session = window.QB.getSession();
   await rerender(session);
   mountBell(session);
