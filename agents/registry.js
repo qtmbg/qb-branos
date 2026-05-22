@@ -32,6 +32,10 @@ import { META as warTableMeta, run as warTableRun } from './war-table.js';
 // filter (step 8C, api/agents/console.js) is the user-facing guard
 // against UI leak if the env var is set in prod.
 import { META as chainTestMeta, run as chainTestRun } from './chain-test-agent.js';
+// File-test agent · eager static ESM import under the same discipline.
+// Loaded only when FILE_TEST_AGENT === '1'. Same race-prevention reason
+// as chain-test-agent: static import resolves before AGENTS freezes.
+import { META as fileTestMeta, run as fileTestRun } from './file-test-agent.js';
 
 assertAgentMetaOrThrow(soulMapMeta, 'agents/soul-map.js');
 assertAgentMetaOrThrow(sensescapeMeta, 'agents/sensescape.js');
@@ -71,10 +75,31 @@ if (CHAIN_TEST_ENABLED) {
   try {
     assertAgentMetaOrThrow(chainTestMeta, 'agents/chain-test-agent.js');
     chainTestEntry = { META: chainTestMeta, run: chainTestRun };
-    console.log('agent registry loaded · 4 prod agents + 1 test agent (CHAIN_TEST_AGENT=1)');
   } catch (e) {
     console.error('[agents/registry] chain-test-agent validation failed:', e?.message);
   }
+}
+
+// ─── File test agent · feature-flagged · step 3E ─────────────────────────
+// Same discipline as chain-test-agent above. FILE_TEST_AGENT === '1'
+// strict equality. Production has no such env var · synthetic agent
+// never appears in the prod registry.
+const FILE_TEST_ENABLED = process.env.FILE_TEST_AGENT === '1';
+let fileTestEntry = null;
+
+if (FILE_TEST_ENABLED) {
+  try {
+    assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
+    fileTestEntry = { META: fileTestMeta, run: fileTestRun };
+  } catch (e) {
+    console.error('[agents/registry] file-test-agent validation failed:', e?.message);
+  }
+}
+
+// One log line · names which test agents are loaded.
+const _testAgents = [chainTestEntry, fileTestEntry].filter(Boolean).map(e => e.META.slug);
+if (_testAgents.length > 0) {
+  console.log(`agent registry loaded · 4 prod agents + ${_testAgents.length} test agent(s) (${_testAgents.join(', ')})`);
 } else {
   console.log('agent registry loaded · 4 prod agents');
 }
@@ -85,6 +110,7 @@ export const AGENTS = Object.freeze({
   [visualDnaMeta.slug]: { META: visualDnaMeta, run: visualDnaRun },
   [warTableMeta.slug]: { META: warTableMeta, run: warTableRun },
   ...(chainTestEntry ? { [chainTestEntry.META.slug]: chainTestEntry } : {}),
+  ...(fileTestEntry ? { [fileTestEntry.META.slug]: fileTestEntry } : {}),
 });
 
 export function getAgent(slug) {
