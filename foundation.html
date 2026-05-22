@@ -51,12 +51,14 @@
 </head>
 <body>
 <main id="foundation-root" aria-live="polite"></main>
+<div id="qb-upload-slot" aria-live="polite"></div>
 <div id="qb-toast" class="qb-toast" aria-live="polite"></div>
 <div id="qb-bell-slot"></div>
 
 <script src="/qb-cloud.js"></script>
 <script src="/js/qb-realtime-manager.js" defer></script>
 <script src="/js/qb-notification-bell.js" defer></script>
+<script src="/js/qb-file-upload.js" defer></script>
 <script type="module">
 import {
   computeFoundationState,
@@ -241,6 +243,7 @@ async function load() {
   const session = window.QB.getSession();
   await rerender(session);
   mountBell(session);
+  mountUpload(session);
 }
 
 function mountBell(session) {
@@ -249,6 +252,18 @@ function mountBell(session) {
   if (!window.QBNotificationBell || !session || !session.token) return;
   window.QBNotificationBell.mount(slot, { authToken: session.token });
   slot.dataset.bellMounted = 'true';
+}
+
+// Step 3B · Asset Layer upload card. Mounts below the foundation render.
+// The userId comes from the QB session helper · qb-cloud.js owns the JWT
+// decode. The card is self-contained: client-side supabase-js handles
+// uploads + lists + deletes against the user-uploads bucket (migration 019).
+function mountUpload(session) {
+  const slot = document.getElementById('qb-upload-slot');
+  if (!slot || slot.dataset.qbFileMounted === 'true') return;
+  if (!window.QBFileUpload || !session || !session.token) return;
+  if (!session.userId) return;
+  window.QBFileUpload.mount(slot, { authToken: session.token, userId: session.userId });
 }
 
 document.addEventListener('DOMContentLoaded', load);
