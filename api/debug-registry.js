@@ -17,7 +17,7 @@
 
 export const config = { runtime: 'edge' };
 
-import { AGENTS } from '../../agents/registry.js';
+import { AGENTS } from '../agents/registry.js';
 
 function inspect(name) {
   const value = process.env[name];
