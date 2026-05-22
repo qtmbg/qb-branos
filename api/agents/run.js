@@ -505,7 +505,14 @@ export default async function handler(req) {
     ? await loadDependencies({ supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY,
                                 userId: user_id, depSlugs })
     : {};
-  const files = []; // Chapter 2 always empty per §3.2
+  // Chapter 3 step 3D · runtime_args.files plumbing per Call 3 default.
+  // The dispatcher (api/agents/rerun.js · or future endpoints) is
+  // responsible for signing URLs and embedding them in runtime_args.files
+  // before calling this endpoint. We trust the upstream auth (the JWT or
+  // HMAC verified at this endpoint already gates dispatch). The validateInputs
+  // call below asserts required-by-meta files are present by `type`; the
+  // file_refs write at agent_runs captures the frozen inputs for replay.
+  const files = Array.isArray(runtime_args?.files) ? runtime_args.files : [];
 
   const inputCheck = validateInputs({ meta, qbp, dependencies, files });
 

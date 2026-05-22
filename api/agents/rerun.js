@@ -33,6 +33,7 @@
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
 import { AGENTS } from '../../agents/registry.js';
 import { waitUntil } from '@vercel/functions';
+import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES } from '../files/_lib/file-config.js';
 
 export const config = { runtime: 'edge' };
 
@@ -67,7 +68,7 @@ export default async function handler(req) {
   try { body = await req.json(); }
   catch { return json(400, { error: 'invalid_body' }, corsH); }
 
-  const { artifact_id, qbp_source, feedback } = body || {};
+  const { artifact_id, qbp_source, feedback, files: bodyFiles } = body || {};
   if (!artifact_id || !UUID_RE.test(artifact_id)) {
     return json(400, { error: 'invalid_artifact_id' }, corsH);
   }
@@ -77,6 +78,31 @@ export default async function handler(req) {
   // construction time. No loop counter at framework layer per
   // adjudication #2.
   const resolvedFeedback = typeof feedback === 'string' && feedback.trim() ? feedback.trim() : null;
+
+  // Chapter 3 step 3D · files plumbing. Body accepts files: [{path, type}].
+  // Each path is validated against the user_id ownership before signing.
+  // Signed URLs come from /api/files/sign-url (the user JWT path · the
+  // sign-url endpoint runs /auth/v1/user round-trip independently).
+  const resolvedFiles = Array.isArray(bodyFiles) ? bodyFiles : [];
+  for (const f of resolvedFiles) {
+    if (!f || typeof f !== 'object') {
+      return json(400, { error: 'invalid_files', detail: 'each file must be an object with path + type' }, corsH);
+    }
+    const parsed = parseUserUploadPath(f.path);
+    if (!parsed) {
+      return json(400, { error: 'invalid_files', detail: 'invalid path' }, corsH);
+    }
+    if (parsed.userId !== userId) {
+      return json(401, { error: 'unauthorized', detail: 'file does not belong to caller' }, corsH);
+    }
+    if (typeof f.type !== 'string' || !f.type) {
+      return json(400, { error: 'invalid_files', detail: 'each file must declare a type matching the agent contract' }, corsH);
+    }
+    const mime = mimeFromExt(f.path);
+    if (!mime || !ALLOWED_MIME_TYPES.has(mime)) {
+      return json(400, { error: 'invalid_files', detail: 'file mime not allowed' }, corsH);
+    }
+  }
 
   // ─── 3. Load source artifact ──────────────────────────────────────────
   const srcRes = await fetch(
@@ -193,15 +219,54 @@ export default async function handler(req) {
   // authMode='user'. force_error is gated to authMode='service' and stays
   // un-honored here (the rerun path never triggers synthetic failures).
   const base = new URL(req.url).origin;
+
+  // Chapter 3 step 3D · sign each file's read URL before dispatch. The
+  // sign-url endpoint verifies the user's JWT independently via
+  // /auth/v1/user and asserts path-matches-user. We forward the same
+  // JWT here.
+  const signedFiles = [];
+  for (const f of resolvedFiles) {
+    const signRes = await fetch(`${base}/api/files/sign-url`, {
+      method: 'POST',
+      headers: {
+        Authorization: authHeader,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ path: f.path }),
+    });
+    if (!signRes.ok) {
+      const detail = await signRes.text().catch(() => '');
+      return json(signRes.status === 404 ? 404 : 500, {
+        error: 'sign_failed',
+        path: f.path,
+        detail: detail.slice(0, 200),
+      }, corsH);
+    }
+    const signed = await signRes.json().catch(() => ({}));
+    if (!signed?.signed_url) {
+      return json(500, { error: 'sign_no_url', path: f.path }, corsH);
+    }
+    const parsed = parseUserUploadPath(f.path);
+    signedFiles.push({
+      type: f.type,
+      file_id: fileIdFromSegment(parsed.fileSegment),
+      path: `user-uploads/${parsed.objectName}`,
+      signed_url: signed.signed_url,
+      mime: mimeFromExt(f.path),
+    });
+  }
+
+  const runtimeArgs = { qbp_source: resolvedSource };
+  if (resolvedFeedback) runtimeArgs.feedback = resolvedFeedback;
+  if (signedFiles.length > 0) runtimeArgs.files = signedFiles;
+
   const runBody = JSON.stringify({
     user_id: userId,
     agent_slug: slug,
     dispatch_id: dispatchId,
     artifact_id: newArt.id,
     trigger: 'regenerate',
-    runtime_args: resolvedFeedback
-      ? { qbp_source: resolvedSource, feedback: resolvedFeedback }
-      : { qbp_source: resolvedSource },
+    runtime_args: runtimeArgs,
     source_artifact_id: source.id,
   });
 
