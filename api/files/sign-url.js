@@ -114,10 +114,19 @@ export default async function handler(req) {
 
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
-  const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const INTER_EDGE_SECRET = process.env.INTER_EDGE_SECRET;
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SERVICE_KEY) {
+  // The Storage /sign endpoint requires the legacy JWT-format service_role
+  // key (it runs the bearer through a JWS parser). The sb_secret_* format
+  // works for /auth/v1/admin and /rest/v1/* but fails on /storage/v1/sign
+  // with 400 'Invalid Compact JWS'. SUPABASE_STORAGE_SIGN_KEY is the
+  // dedicated env var holding the JWT-format key for this single use.
+  // Other Edge functions stay on SUPABASE_SERVICE_ROLE_KEY (whichever
+  // format Supabase steers toward over time).
+  // Surfaced + adjudicated in chapter-3 step 3 chat 2026-05-22.
+  const STORAGE_SIGN_KEY = process.env.SUPABASE_STORAGE_SIGN_KEY;
+
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !STORAGE_SIGN_KEY) {
     return json(503, { ok: false, error: 'config_missing' }, corsH);
   }
 
@@ -186,7 +195,7 @@ export default async function handler(req) {
     {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${SERVICE_KEY}`,
+        Authorization: `Bearer ${STORAGE_SIGN_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ expiresIn: ttl }),
