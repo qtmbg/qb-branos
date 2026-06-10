@@ -28,7 +28,11 @@ export const META = {
     // The harness sends one file with type='sample'. The contract declares
     // the slot optional so /api/agents/run.js validateInputs passes when
     // the harness intentionally omits files (negative-path test variants).
-    files: [{ type: 'sample', optional: true }],
+    // source is contract-required (CANONICAL_FILE_SOURCES); its absence
+    // was the latent violation that crashed registry module load in
+    // production on 2026-06-10 once #170 made META validation
+    // unconditional (revert #171, re-land here).
+    files: [{ type: 'sample', source: 'user-upload', optional: true }],
     runtime_args: { qbp_source: 'optional' },
   },
   triggers: ['manual'],
