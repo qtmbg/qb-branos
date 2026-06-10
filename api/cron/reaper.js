@@ -5,6 +5,7 @@
 //   authorization: Bearer <CRON_SECRET>
 //
 //   → 200 { ok, rows_examined, rows_retried, rows_flipped,
+//           race_recoveries, race_partials_notified,
 //           ghost_dispatches_detected, errors }
 //   → 401 { error: 'unauthorized_cron_trigger', reason }
 //
@@ -141,12 +142,22 @@ async function incrementDispatchRetry({ supaUrl, serviceKey, dispatchId, nextRet
   }
 }
 
+// Conditional terminal flip. The status=eq.producing filter makes the
+// UPDATE a compare-and-set: only a row still in 'producing' flips to
+// 'failed_permanently'. Without it, a terminal state written by the run
+// handler's settleDispatch between the reaper's children-read and this
+// PATCH gets silently overwritten · a dispatch that actually delivered
+// would be re-labelled failed_permanently and the user would get a
+// dispatch_failed notification for a success.
+//
+// Returns the number of rows flipped (0 = lost the race · caller
+// re-reads the row's current status to classify the race).
 async function flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId }) {
   const r = await fetch(
-    `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`,
+    `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}&status=eq.producing`,
     {
       method: 'PATCH',
-      headers: { ...svcHeaders(serviceKey), Prefer: 'return=minimal' },
+      headers: { ...svcHeaders(serviceKey), Prefer: 'return=representation' },
       body: JSON.stringify({ status: 'failed_permanently' }),
     }
   );
@@ -154,6 +165,30 @@ async function flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId
     const t = await r.text().catch(() => '');
     throw new Error(`dispatch_terminal_flip_failed: ${r.status} ${t.slice(0, 200)}`);
   }
+  // A 2xx with an unparseable body must NOT read as "zero rows": the row
+  // may in fact have flipped, and returning 0 would skip the
+  // notification for a dispatch that is now failed_permanently and will
+  // never be re-examined (the sweep reads only status=producing). Throw
+  // into the caller's terminal-flip error handling instead.
+  const rows = await r.json().catch(() => null);
+  if (!Array.isArray(rows)) {
+    throw new Error('dispatch_terminal_flip_parse_failed: 2xx with unparseable body');
+  }
+  return rows.length;
+}
+
+// Single-row status read used to classify a lost terminal-flip race.
+async function fetchDispatchStatus({ supaUrl, serviceKey, dispatchId }) {
+  const r = await fetch(
+    `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}&select=status`,
+    { headers: svcHeaders(serviceKey) }
+  );
+  if (!r.ok) {
+    const t = await r.text().catch(() => '');
+    throw new Error(`dispatch_status_read_failed: ${r.status} ${t.slice(0, 200)}`);
+  }
+  const rows = await r.json().catch(() => []);
+  return rows?.[0]?.status ?? null;
 }
 
 // Reset a child artifact so the re-fire of /api/agents/run can pick it
@@ -306,10 +341,29 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
     const anyOutstanding = (children || []).some(a => a.status !== 'delivered');
     if (!anyOutstanding) return;
 
-    // Terminal flip + one dispatch_failed notification.
+    // Terminal flip + one dispatch_failed notification. The flip is a
+    // conditional UPDATE (status=eq.producing); zero rows back means a
+    // terminal state landed between the children-read above and this
+    // write. Re-read to classify the race:
+    //   completed          → genuine recovery · no notification.
+    //   failed_permanently → another tick already flipped + notified.
+    //   partial            → a child failure settled concurrently. This
+    //     path is the system's only dispatch_failed emitter and the
+    //     sweep never re-reads non-producing rows, so skipping here
+    //     would silence a genuine failure forever. Fall through and
+    //     notify (without counting a flip · the row stays 'partial').
     try {
-      await flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId: dispatch.id });
-      summary.rows_flipped += 1;
+      const flipped = await flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId: dispatch.id });
+      if (flipped === 0) {
+        const current = await fetchDispatchStatus({ supaUrl, serviceKey, dispatchId: dispatch.id });
+        if (current !== 'partial') {
+          summary.race_recoveries += 1;
+          return;
+        }
+        summary.race_partials_notified += 1;
+      } else {
+        summary.rows_flipped += 1;
+      }
     } catch (e) {
       summary.errors.push({ dispatch_id: dispatch.id, stage: 'terminal-flip', detail: e?.message });
       return;
@@ -430,6 +484,8 @@ export default async function handler(req) {
     rows_examined: 0,
     rows_retried: 0,
     rows_flipped: 0,
+    race_recoveries: 0,
+    race_partials_notified: 0,
     ghost_dispatches_detected: 0,
     errors: [],
   };
