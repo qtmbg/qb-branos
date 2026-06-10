@@ -1,6 +1,23 @@
 # scripts/
 
-Tooling for QB BrandOS image asset pipelines.
+Tooling for QB BrandOS image asset pipelines, plus the registry merge gate.
+
+## registry-smoke.mjs
+
+The executable half of the standing registry merge gate (see
+`docs/patterns/registry-merge-gate.md`). Required before ANY merge that
+touches `agents/`, the registry, or the dispatch path:
+
+```
+node scripts/registry-smoke.mjs
+```
+
+Sets all test-agent flags, imports the registry (module-load META
+validation included), asserts every agent resolves, every test META
+passes the contract standalone, and every slug appears in the
+artifact-schema allowlist. Paste the output verbatim into the PR body.
+Exit 0 = gate passes. After deploy, probe `/api/agents/run` and
+`/api/agents/console` unauthenticated and confirm 401, not 500.
 
 ## import-images.mjs
 

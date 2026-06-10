@@ -232,15 +232,116 @@ async function pollUntilDelivered(artifactId, budgetMs) {
   return last;
 }
 
-async function deleteFile(path) {
-  await fetch(`${SUPABASE_URL}/storage/v1/object/user-uploads/${path}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${SERVICE_KEY}` },
-  }).catch(() => {});
-}
+// ─── Self-teardown · zero debris, pass or fail ───────────────────────────
+// The harness deletes every row and object it created, then verifies
+// absence. Failures are recorded loudly in the output JSON instead of
+// being swallowed (the pre-2026-06-10 teardown used .catch(() => {}),
+// which left the question of leftover debris unanswerable from the
+// run output).
 
-async function deleteUser(userId) {
-  await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, { method: 'DELETE', headers: svc }).catch(() => {});
+async function teardownRun({ user, uploaded, dispatch, artifact }) {
+  const steps = [];
+  const step = async (label, fn) => {
+    try {
+      const detail = await fn();
+      steps.push({ label, ok: true, ...(detail || {}) });
+    } catch (e) {
+      steps.push({ label, ok: false, error: String(e?.message || e).slice(0, 200) });
+    }
+  };
+
+  // Child rows first, then the artifact/dispatch pair, then storage,
+  // then the auth user (profiles cascade from auth admin delete).
+  if (dispatch?.id) {
+    await step('delete agent_runs by dispatch_id', async () => {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/agent_runs?dispatch_id=eq.${dispatch.id}`, { method: 'DELETE', headers: svc });
+      if (!r.ok && r.status !== 404) throw new Error(`status ${r.status}`);
+      return { status: r.status };
+    });
+  }
+  if (artifact?.id) {
+    await step('delete artifacts row', async () => {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/artifacts?id=eq.${artifact.id}`, { method: 'DELETE', headers: svc });
+      if (!r.ok && r.status !== 404) throw new Error(`status ${r.status}`);
+      return { status: r.status };
+    });
+  }
+  if (dispatch?.id) {
+    await step('delete dispatch_jobs row', async () => {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/dispatch_jobs?id=eq.${dispatch.id}`, { method: 'DELETE', headers: svc });
+      if (!r.ok && r.status !== 404) throw new Error(`status ${r.status}`);
+      return { status: r.status };
+    });
+  }
+  if (uploaded?.path) {
+    await step('delete storage object', async () => {
+      // Storage REST requires BOTH apikey and Authorization headers.
+      // Bearer-only returns 400 "Invalid Compact JWS" · the silent-leak
+      // shape that produced 73-byte orphan PNGs in user-uploads.
+      const r = await fetch(`${SUPABASE_URL}/storage/v1/object/user-uploads/${uploaded.path}`, {
+        method: 'DELETE',
+        headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
+      });
+      if (!r.ok) {
+        const body = await r.text().catch(() => '');
+        if (!/not.?found/i.test(body)) throw new Error(`status ${r.status} ${body.slice(0, 120)}`);
+      }
+      return { status: r.status };
+    });
+  }
+  if (user?.id) {
+    await step('delete auth user (cascades profile)', async () => {
+      const r = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, { method: 'DELETE', headers: svc });
+      if (!r.ok && r.status !== 404) throw new Error(`status ${r.status}`);
+      return { status: r.status };
+    });
+  }
+
+  // Verify absence of everything this run created.
+  const leftovers = [];
+  const expectEmpty = async (label, url) => {
+    try {
+      const r = await fetch(url, { headers: svc });
+      const rows = r.ok ? await r.json() : [];
+      if (Array.isArray(rows) && rows.length > 0) leftovers.push({ label, count: rows.length });
+    } catch { /* verification read failed · do not mask the teardown result */ }
+  };
+  if (artifact?.id) await expectEmpty('artifacts', `${SUPABASE_URL}/rest/v1/artifacts?id=eq.${artifact.id}&select=id`);
+  if (dispatch?.id) {
+    await expectEmpty('dispatch_jobs', `${SUPABASE_URL}/rest/v1/dispatch_jobs?id=eq.${dispatch.id}&select=id`);
+    await expectEmpty('agent_runs', `${SUPABASE_URL}/rest/v1/agent_runs?dispatch_id=eq.${dispatch.id}&select=id`);
+  }
+  if (uploaded?.path && user?.id) {
+    await step('verify storage object gone (list by prefix)', async () => {
+      // The list endpoint returns real data either way · no ambiguous
+      // 400-means-maybe-gone reads.
+      const r = await fetch(`${SUPABASE_URL}/storage/v1/object/list/user-uploads`, {
+        method: 'POST',
+        headers: svc,
+        body: JSON.stringify({ prefix: user.id, limit: 100 }),
+      });
+      if (!r.ok) throw new Error(`list failed: ${r.status}`);
+      const objects = await r.json();
+      if (Array.isArray(objects) && objects.length > 0) {
+        leftovers.push({ label: 'storage objects under user prefix', count: objects.length });
+        return { remaining: objects.map(o => o.name) };
+      }
+      return { remaining: [] };
+    });
+  }
+  if (user?.id) {
+    await step('verify auth user gone', async () => {
+      const r = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, { headers: svc });
+      if (r.ok) { leftovers.push({ label: 'auth user', count: 1 }); return { status: r.status, leftover: true }; }
+      return { status: r.status };
+    });
+  }
+
+  return {
+    steps,
+    leftovers,
+    debris_free: leftovers.length === 0 && steps.every(s => s.ok),
+  };
 }
 
 function extractFileTestJson(content) {
@@ -342,8 +443,8 @@ async function main() {
     failureReason = e?.message || String(e);
     log.push(`ERROR: ${failureReason}`);
   } finally {
-    if (uploaded?.path) await deleteFile(uploaded.path);
-    if (user?.id) await deleteUser(user.id);
+    var teardown = await teardownRun({ user, uploaded, dispatch, artifact });
+    log.push(`[teardown] debris_free=${teardown.debris_free}${teardown.leftovers.length ? ` leftovers=${JSON.stringify(teardown.leftovers)}` : ''}`);
   }
 
   const out = {
@@ -359,6 +460,7 @@ async function main() {
     signed_url_obtained: !!signed?.signed_url,
     dispatch_response_status: dispatchResp?.status || null,
     final_artifact_status: finalArtifact?.status || null,
+    teardown: typeof teardown !== 'undefined' ? teardown : null,
     log,
   };
   fs.writeFileSync('tests/chapter-03/file-upload-pipeline.last-run.json', JSON.stringify(out, null, 2));
