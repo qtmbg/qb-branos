@@ -58,6 +58,15 @@ When the user issues a hold instruction such as "branch only", "do not merge", "
 5. The gate releases only when the user types "approved, merge" or equivalent explicit release language. Inferred approval from context does not count.
 6. Apologizing for a breach after the fact does not retroactively authorize the merge. If a breach occurs, the response is: report, stop, wait.
 
+### Registry merge gate (standing, all chapters)
+
+Any merge touching `agents/`, the registry, or the dispatch path requires both halves, in order:
+
+1. Pre-merge: run `node scripts/registry-smoke.mjs` locally (it sets all test flags itself) and record its output verbatim in the PR body. A "verified" claim without this output is invalid.
+2. Post-deploy: probe `POST /api/agents/run` and `GET /api/agents/console` unauthenticated and confirm handler-level 401. Any 500 FUNCTION_INVOCATION_FAILED means revert immediately, then surface.
+
+Origin and full rationale: `docs/patterns/registry-merge-gate.md` (the 2026-06-10 cold-start outage, PRs #170 → #171 → #172 → #173). The load-time META validation stays unconditional; this gate moves detonation from production to a local terminal.
+
 ### Code
 
 - Vanilla HTML, CSS, and JavaScript only. No frameworks, no JSX in raw HTML, no build step required.
