@@ -13,17 +13,6 @@ export const CANONICAL_PHASES   = ['00', '01', '02', '03', '04', '05'];
 export const CANONICAL_TIERS    = ['free', 'starter', 'pro', 'agency', 'atelier'];
 export const CANONICAL_FILE_SOURCES = ['user-upload', 'agent-output'];
 
-// Chapter 3 step 4 · the agent-readable image set (Claude vision).
-// Deliberately narrower than the bucket's ALLOWED_MIME_TYPES:
-//   - SVG excluded per the 3Z §9 forward risk (and vision does not
-//     accept it).
-//   - PDF read waits for the chapter-4 document agents.
-// The size cap is the Anthropic vision per-image input limit (5 MB),
-// tighter than the 25 MB bucket cap. Enforced loudly at the dispatch
-// entry (api/agents/rerun.js) before any agent fires.
-export const VISION_READABLE_MIME = new Set(['image/png', 'image/jpeg', 'image/webp']);
-export const VISION_MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
-
 // Per §3.5 (amended in step 3 phase B): each agent may declare which
 // Anthropic model serves its run(). Matches ALLOWED_MODELS in
 // api/claude.js. Agents that omit `model` resolve to DEFAULT_MODEL at

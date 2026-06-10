@@ -49,14 +49,7 @@ export const META = {
       required: REQUIRED_FIELDS.has(field),
     })),
     artifact_dependencies: [],
-    // Chapter 3 step 4 · the first real-agent file slot. A founder may
-    // attach one uploaded reference image; the agent reads it through
-    // Claude vision (signed URL → image content block). Optional: a
-    // file-absent run is byte-identical to the pre-step-4 behavior.
-    // Readable set + size cap live in agents/contract.js
-    // (VISION_READABLE_MIME · VISION_MAX_FILE_SIZE_BYTES), enforced at
-    // the dispatch entry before the agent fires.
-    files: [{ type: 'reference-image', source: 'user-upload', optional: true }],
+    files: [],
     runtime_args: { feedback: 'optional', qbp_source: 'optional' },
   },
   triggers: ['lock', 'manual', 'regenerate'],
@@ -162,7 +155,7 @@ function defensiveParseJson(text) {
   return { ok: false, reason: 'parse-failed', raw };
 }
 
-async function callClaude({ apiKey, system, userContent }) {
+async function callClaude({ apiKey, system, userText }) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), CLAUDE_TIMEOUT_MS);
   let res;
@@ -178,10 +171,7 @@ async function callClaude({ apiKey, system, userContent }) {
         model: MODEL,
         max_tokens: MAX_TOKENS,
         system,
-        // userContent is the plain userText string on file-absent runs
-        // (the exact pre-step-4 request shape) or a content-block array
-        // (image + text) when a reference image is attached.
-        messages: [{ role: 'user', content: userContent }],
+        messages: [{ role: 'user', content: userText }],
       }),
       signal: controller.signal,
     });
@@ -276,29 +266,9 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
 
   const userText = `User's Phase 01 visual signals:\n\n${userBlocks}\n\nReturn only the JSON object described in your instructions.`;
 
-  // Chapter 3 step 4 · reference-image read (Claude vision).
-  // The dispatch entry already enforced vision MIME + the 5 MB cap; the
-  // checks here are defensive only. File-absent runs take the string
-  // branch, which is byte-identical to the pre-step-4 request.
-  const referenceImage = (Array.isArray(files) ? files : []).find(f =>
-    f && f.type === 'reference-image'
-    && typeof f.signed_url === 'string' && f.signed_url
-    && ['image/png', 'image/jpeg', 'image/webp'].includes(f.mime)
-  ) || null;
-
-  const userContent = referenceImage
-    ? [
-        { type: 'image', source: { type: 'url', url: referenceImage.signed_url } },
-        {
-          type: 'text',
-          text: `${userText}\n\nA reference image the founder uploaded is attached. Read its palette and typographic mood and ground your palette and type recommendations in it where the QBP signals allow. Where the image and the QBP disagree, the QBP wins.`,
-        },
-      ]
-    : userText;
-
   let claudeRes;
   for (let attempt = 0; attempt < 2; attempt++) {
-    claudeRes = await callClaude({ apiKey: anthropicKey, system: SYSTEM_PROMPT, userContent });
+    claudeRes = await callClaude({ apiKey: anthropicKey, system: SYSTEM_PROMPT, userText });
     if (claudeRes.ok) break;
     if (!claudeRes.retryable) break;
     await new Promise(r => setTimeout(r, 600));
