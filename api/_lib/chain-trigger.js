@@ -19,7 +19,7 @@ import {
   holdOpenForChildren,
   rollbackDispatchJob,
 } from './dispatch-pattern.js';
-import { AGENTS, listAgentSlugs, getAgent } from '../../agents/registry.js';
+import { AGENTS, listAgentSlugs } from '../../agents/registry.js';
 
 const CHAIN_DEPTH_CAP = 8;
 
@@ -145,9 +145,7 @@ export async function triggerChainIfReady({
   const allSlugs = listAgentSlugs();
   const candidates = allSlugs.filter(slug => {
     if (slug === upstreamSlug) return false;
-    // getAgent resolves real agents + currently-flagged test agents
-    // at request time per chapter-3 step-3E flag-runtime-fix.
-    const agent = getAgent(slug);
+    const agent = AGENTS[slug];
     const deps = agent?.META?.inputs?.artifact_dependencies || [];
     return Array.isArray(deps) && deps.includes(upstreamSlug)
       && Array.isArray(agent?.META?.triggers) && agent.META.triggers.includes('chain');
@@ -161,7 +159,7 @@ export async function triggerChainIfReady({
   // 4. For each candidate · check deps satisfaction + tier-gate + depth-cap
   const childrenToFire = [];
   for (const downstreamSlug of candidates) {
-    const agent = getAgent(downstreamSlug);
+    const agent = AGENTS[downstreamSlug];
     const deps = agent?.META?.inputs?.artifact_dependencies || [];
     const required = agent?.META?.tier_required || 'starter';
 

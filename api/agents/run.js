@@ -34,7 +34,7 @@
 
 export const config = { runtime: 'edge' };
 
-import { AGENTS, LATENCY_BUDGET_WARNINGS, getAgent } from '../../agents/registry.js';
+import { AGENTS, LATENCY_BUDGET_WARNINGS } from '../../agents/registry.js';
 import { DEFAULT_RETRY_BUDGET, DEFAULT_MODEL } from '../../agents/contract.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
 import { sendEmail, renderTemplate, EMAIL_TEMPLATES, getAgentEmailVars } from '../_lib/email.js';
@@ -470,10 +470,7 @@ export default async function handler(req) {
   }
 
   // ─── 2. Resolve agent ──────────────────────────────────────────────────
-  // getAgent reads test-agent env flags at REQUEST time per the chapter-3
-  // step-3E flag-runtime-fix (Vercel Edge build-time vs runtime env-access
-  // split). Real agents resolve from the frozen AGENTS map.
-  const agent = getAgent(agent_slug);
+  const agent = AGENTS[agent_slug];
   if (!agent) {
     return json(400, { ok: false, error: 'unknown_agent', stage: 'registry',
                         detail: `slug=${agent_slug}` }, corsH);

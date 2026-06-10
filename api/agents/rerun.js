@@ -31,7 +31,7 @@
 // the artifact-creation step; the runtime owns the lifecycle thereafter.
 
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
-import { AGENTS, getAgent } from '../../agents/registry.js';
+import { AGENTS } from '../../agents/registry.js';
 import { waitUntil } from '@vercel/functions';
 import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES } from '../files/_lib/file-config.js';
 
@@ -121,10 +121,8 @@ export default async function handler(req) {
   }
 
   // ─── 4. Resolve agent META ────────────────────────────────────────────
-  // getAgent reads test-agent env flags at REQUEST time per chapter-3
-  // step-3E flag-runtime-fix.
   const slug = source.artifact_type;
-  const agent = getAgent(slug);
+  const agent = AGENTS[slug];
   if (!agent) return json(400, { error: 'unknown_agent', agent_slug: slug }, corsH);
 
   // ─── 4.5 §5.3 conformance · qbp_source='original' requires lock snapshot ─
