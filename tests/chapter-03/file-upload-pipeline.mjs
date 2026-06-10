@@ -34,29 +34,29 @@ const env = Object.fromEntries(
 
 const SUPABASE_URL = env.SUPABASE_URL;
 const SERVICE_KEY  = env.SUPABASE_SERVICE_ROLE_KEY;
-const INTER_EDGE_SECRET = env.INTER_EDGE_SECRET;
+const ANON_KEY     = env.SUPABASE_ANON_KEY;
 const BASE = process.env.BASE_URL || 'https://quantumbranding.ai';
 const POLL_INTERVAL_MS = 3_000;
 const POLL_BUDGET_MS = 60_000;
 
-if (!SUPABASE_URL || !SERVICE_KEY || !INTER_EDGE_SECRET) {
-  console.error('Missing env: SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY + INTER_EDGE_SECRET');
+if (!SUPABASE_URL || !SERVICE_KEY || !ANON_KEY) {
+  console.error('Missing env: SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY + SUPABASE_ANON_KEY');
   process.exit(2);
 }
+
+// Auth path: user JWT (the primary user-facing path). The /api/files/sign-url
+// and /api/agents/run endpoints both verify JWT via /auth/v1/user round-trip.
+// The harness creates a test user, signs in to get an access_token, and
+// uses that JWT for both endpoints. Service role is used only for setup
+// (creating dispatch_jobs + artifact rows · which are normally inserted
+// by api/agents/rerun.js, bypassed here so the harness tests run.js
+// directly with file plumbing in isolation).
 
 const svc = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, 'content-type': 'application/json' };
 
 function uuid() { return crypto.randomUUID(); }
 
-async function signInterEdge(rawBody) {
-  const ts = String(Date.now());
-  const hmac = crypto.createHmac('sha256', INTER_EDGE_SECRET);
-  hmac.update(`${ts}.${rawBody}`);
-  return {
-    'X-Inter-Edge-Signature': hmac.digest('hex'),
-    'X-Inter-Edge-Timestamp': ts,
-  };
-}
+const TEST_PASSWORD = 'qbinv-3e-' + uuid();
 
 async function createUser(tag) {
   const ts = Date.now();
@@ -64,7 +64,7 @@ async function createUser(tag) {
   const r = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
     method: 'POST', headers: svc,
     body: JSON.stringify({
-      email, email_confirm: true, password: 'qbinv-3e-' + uuid(),
+      email, email_confirm: true, password: TEST_PASSWORD,
       user_metadata: { signup_source: 'c3-s3e-file-upload-pipeline' },
     }),
   });
@@ -74,6 +74,21 @@ async function createUser(tag) {
   }
   const d = await r.json();
   return { id: d.id, email };
+}
+
+async function signIn(email) {
+  const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: { apikey: ANON_KEY, 'content-type': 'application/json' },
+    body: JSON.stringify({ email, password: TEST_PASSWORD }),
+  });
+  if (!r.ok) {
+    const body = await r.text().catch(() => '');
+    throw new Error(`signIn failed: ${r.status} ${body.slice(0, 200)}`);
+  }
+  const d = await r.json();
+  if (!d.access_token) throw new Error('signIn: no access_token in response');
+  return d.access_token;
 }
 
 async function ensureProfile(userId, email) {
@@ -88,8 +103,10 @@ async function ensureProfile(userId, email) {
   }
 }
 
-async function uploadFile(userId) {
-  // 1x1 PNG bytes (smallest possible valid PNG). Embed as binary upload.
+async function uploadFile(token, userId) {
+  // Upload using the user's JWT (matches the production UI flow via
+  // supabase-js · RLS enforces user_id ownership on the INSERT).
+  // 1x1 PNG bytes (smallest possible valid PNG).
   const onePixelPng = Buffer.from(
     '89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cf' +
     'c0c0c0c000000005000100a5f645400000000049454e44ae426082',
@@ -101,7 +118,8 @@ async function uploadFile(userId) {
   const r = await fetch(`${SUPABASE_URL}/storage/v1/object/user-uploads/${path}`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${SERVICE_KEY}`,
+      Authorization: `Bearer ${token}`,
+      apikey: ANON_KEY,
       'Content-Type': 'image/png',
       'x-upsert': 'false',
     },
@@ -114,12 +132,14 @@ async function uploadFile(userId) {
   return { file_id: fileId, path, fullPath: `user-uploads/${path}` };
 }
 
-async function signUrl(userId, path) {
-  const body = JSON.stringify({ path, user_id: userId });
-  const sigHeaders = await signInterEdge(body);
+async function signUrl(token, path) {
+  const body = JSON.stringify({ path });
   const r = await fetch(`${BASE}/api/files/sign-url`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...sigHeaders },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
     body,
   });
   if (!r.ok) {
@@ -173,7 +193,7 @@ async function insertArtifact(userId, dispatchId, agentSlug) {
   return rows[0];
 }
 
-async function dispatchAgent({ userId, agentSlug, dispatchId, artifactId, runtimeArgs }) {
+async function dispatchAgent({ token, userId, agentSlug, dispatchId, artifactId, runtimeArgs }) {
   const body = JSON.stringify({
     user_id: userId,
     agent_slug: agentSlug,
@@ -182,10 +202,12 @@ async function dispatchAgent({ userId, agentSlug, dispatchId, artifactId, runtim
     trigger: 'manual',
     runtime_args: runtimeArgs,
   });
-  const sigHeaders = await signInterEdge(body);
   const r = await fetch(`${BASE}/api/agents/run`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...sigHeaders },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
     body,
   });
   const respText = await r.text().catch(() => '');
@@ -238,28 +260,32 @@ async function main() {
   let dispatchResp = null;
 
   try {
-    log.push('[1/8] Create user + profile');
+    log.push('[1/9] Create user + profile');
     user = await createUser('g1');
     await ensureProfile(user.id, user.email);
     log.push(`  user_id=${user.id}`);
 
-    log.push('[2/8] Upload synthetic 1x1 PNG via service role');
-    uploaded = await uploadFile(user.id);
+    log.push('[2/9] Sign in test user (JWT auth path)');
+    const token = await signIn(user.email);
+    log.push(`  JWT obtained (len=${token.length})`);
+
+    log.push('[3/9] Upload synthetic 1x1 PNG via user JWT (RLS-enforced)');
+    uploaded = await uploadFile(token, user.id);
     log.push(`  path=${uploaded.fullPath} file_id=${uploaded.file_id}`);
 
-    log.push('[3/8] Sign URL via /api/files/sign-url (HMAC)');
-    signed = await signUrl(user.id, uploaded.fullPath);
+    log.push('[4/9] Sign URL via /api/files/sign-url (user JWT)');
+    signed = await signUrl(token, uploaded.fullPath);
     log.push(`  signed_url present: ${!!signed.signed_url} ttl=${signed.ttl_seconds}s`);
 
-    log.push('[4/8] Insert dispatch_jobs row');
+    log.push('[5/9] Insert dispatch_jobs row');
     dispatch = await insertDispatch(user.id, 'file_test_agent');
     log.push(`  dispatch_id=${dispatch.id}`);
 
-    log.push('[5/8] Insert artifact row (status=queued)');
+    log.push('[6/9] Insert artifact row (status=queued)');
     artifact = await insertArtifact(user.id, dispatch.id, 'file_test_agent');
     log.push(`  artifact_id=${artifact.id}`);
 
-    log.push('[6/8] POST /api/agents/run with runtime_args.files (HMAC)');
+    log.push('[7/9] POST /api/agents/run with runtime_args.files (user JWT)');
     const runtimeArgs = {
       qbp_source: 'current',
       files: [{
@@ -271,6 +297,7 @@ async function main() {
       }],
     };
     dispatchResp = await dispatchAgent({
+      token,
       userId: user.id,
       agentSlug: 'file_test_agent',
       dispatchId: dispatch.id,
@@ -282,11 +309,11 @@ async function main() {
       throw new Error(`dispatch failed: ${dispatchResp.status} ${dispatchResp.body.slice(0, 300)}`);
     }
 
-    log.push('[7/8] Poll artifact for delivered state');
+    log.push('[8/9] Poll artifact for delivered state');
     finalArtifact = await pollUntilDelivered(artifact.id, POLL_BUDGET_MS);
     log.push(`  final status: ${finalArtifact?.status || 'unknown'}`);
 
-    log.push('[8/8] Verify echoed file metadata in artifact content');
+    log.push('[9/9] Verify echoed file metadata in artifact content');
     if (!finalArtifact || finalArtifact.status !== 'delivered') {
       throw new Error(`artifact did not reach delivered: ${finalArtifact?.status}`);
     }
