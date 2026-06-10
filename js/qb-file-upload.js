@@ -37,6 +37,14 @@
   ]);
   const ACCEPT_ATTR = '.png,.jpg,.jpeg,.svg,.webp,.pdf,image/png,image/jpeg,image/svg+xml,image/webp,application/pdf';
 
+  // Chapter 3 step 4 · the attach-to-Visual-DNA affordance. Mirrors the
+  // server-side vision discipline (agents/contract.js): PNG, JPEG, and
+  // WebP only, 5 MB cap. SVG and PDF upload fine but are not readable by
+  // the agent, so their rows carry no attach button.
+  const VISION_MIME = new Set(['image/png', 'image/jpeg', 'image/webp']);
+  const VISION_CAP_BYTES = 5 * 1024 * 1024;
+  const VISION_AGENT_TYPE = 'visual_dna_synthesizer';
+
   let supabaseClient = null;
   let authToken = null;
   let userId = null;
@@ -45,6 +53,7 @@
   let dropZoneEl = null;
   let fileInputEl = null;
   let errorEl = null;
+  let statusEl = null;
   let stylesInjected = false;
 
   function uuid() {
@@ -195,6 +204,33 @@
         opacity: 0.4;
         cursor: not-allowed;
       }
+      .qb-file-row_attach {
+        background: var(--ink);
+        color: var(--cream);
+        border: 1px solid var(--ink);
+        border-radius: var(--radius-pill);
+        padding: 0.3em 0.8em;
+        font-family: var(--font-mono);
+        font-size: var(--step--2);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+      .qb-file-row_attach:hover {
+        background: transparent;
+        color: var(--ink);
+      }
+      .qb-file-row_attach[disabled] {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .qb-file-status {
+        font-family: var(--font-body);
+        font-size: var(--step--1);
+        color: var(--ink);
+        margin-top: var(--space-s);
+      }
+      .qb-file-status:empty { display: none; }
       .qb-file-empty {
         font-family: var(--font-body);
         font-size: var(--step--1);
@@ -253,7 +289,7 @@
 
     const meta = document.createElement('p');
     meta.className = 'qb-file-card_meta';
-    meta.textContent = `Upload logo references, brand documents, and other source files. ${FILE_SIZE_LIMIT_LABEL} per file. PNG, JPEG, SVG, WebP, PDF.`;
+    meta.textContent = `Upload logo references, brand documents, and other source files. ${FILE_SIZE_LIMIT_LABEL} per file. PNG, JPEG, SVG, WebP, PDF. Attach a PNG, JPEG, or WebP up to 5 MB and Visual DNA reads it on its next run.`;
     card.appendChild(meta);
 
     const drop = document.createElement('label');
@@ -288,7 +324,65 @@
     errorEl = err;
     card.appendChild(err);
 
+    const status = document.createElement('div');
+    status.className = 'qb-file-status';
+    status.setAttribute('aria-live', 'polite');
+    statusEl = status;
+    card.appendChild(status);
+
     return card;
+  }
+
+  function showStatus(msg) {
+    if (!statusEl) return;
+    statusEl.textContent = msg || '';
+  }
+
+  // Chapter 3 step 4 · rerun Visual DNA with an attached reference image.
+  // Flow: find the latest delivered Visual DNA artifact (RLS scopes the
+  // read to the signed-in user), then POST /api/agents/rerun with the
+  // file path + the reference-image contract type. The server validates
+  // ownership, MIME, and the 5 MB vision cap again before any dispatch.
+  async function attachToVisualDna(objName, btn) {
+    showError('');
+    showStatus('');
+    btn.disabled = true;
+    try {
+      const supa = await loadSupabase();
+      const { data: rows, error: qErr } = await supa
+        .from('artifacts')
+        .select('id,version')
+        .eq('artifact_type', VISION_AGENT_TYPE)
+        .eq('status', 'delivered')
+        .order('version', { ascending: false })
+        .limit(1);
+      if (qErr) throw new Error(qErr.message || 'artifact lookup failed');
+      const sourceArtifact = rows?.[0];
+      if (!sourceArtifact?.id) {
+        showError('Run Visual DNA first. Attaching needs a delivered Visual DNA artifact to rerun against.');
+        btn.disabled = false;
+        return;
+      }
+      const res = await fetch('/api/agents/rerun', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          artifact_id: sourceArtifact.id,
+          files: [{ path: `${userId}/${objName}`, type: 'reference-image' }],
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.detail || body?.error || `rerun failed (${res.status})`);
+      }
+      showStatus('Visual DNA is rereading with your image. The new version lands in your Console.');
+    } catch (e) {
+      showError(`Attach failed: ${e?.message || e}`);
+    }
+    btn.disabled = false;
   }
 
   function clientGuard(file) {
@@ -394,6 +488,20 @@
       });
 
       li.appendChild(main);
+
+      // Attach affordance only on agent-readable rows: vision MIME within
+      // the 5 MB cap. SVG and PDF rows carry no button by design.
+      const rowMime = obj.metadata?.mimetype || '';
+      const rowSize = obj.metadata?.size || 0;
+      if (VISION_MIME.has(rowMime) && rowSize > 0 && rowSize <= VISION_CAP_BYTES) {
+        const attach = document.createElement('button');
+        attach.type = 'button';
+        attach.className = 'qb-file-row_attach';
+        attach.textContent = 'Attach to Visual DNA';
+        attach.addEventListener('click', () => attachToVisualDna(obj.name, attach));
+        li.appendChild(attach);
+      }
+
       li.appendChild(del);
       listEl.appendChild(li);
     }
@@ -451,6 +559,7 @@
       dropZoneEl = null;
       fileInputEl = null;
       errorEl = null;
+      statusEl = null;
       authToken = null;
       userId = null;
       supabaseClient = null;
