@@ -40,6 +40,10 @@ import { deflateSync } from 'node:zlib';
 
 const ENV_PATH = '/tmp/.env.qb-branos.live-backup';
 const BASE = process.env.QB_BASE || 'https://quantumbranding.ai';
+// Optional Cookie header for protected preview deployments (the Vercel
+// share-link JWT). Empty for production.
+const BASE_COOKIE = process.env.QB_COOKIE || '';
+const baseCookie = BASE_COOKIE ? { Cookie: BASE_COOKIE } : {};
 const AGENT = 'visual_dna_synthesizer';
 const FILE_PRESENT_RUNS = 5;
 const FILE_ABSENT_RUNS = 2;
@@ -188,7 +192,7 @@ async function uploadObject(token, path, bytes, contentType) {
 async function signUrl(token, path) {
   const r = await fetch(`${BASE}/api/files/sign-url`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...baseCookie },
     body: JSON.stringify({ path }),
   });
   if (!r.ok) throw new Error(`signUrl failed: ${r.status} ${(await r.text().catch(() => '')).slice(0, 200)}`);
@@ -227,7 +231,7 @@ async function dispatchRun({ token, userId, dispatchId, artifactId, files }) {
   const t0 = Date.now();
   const r = await fetch(`${BASE}/api/agents/run`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...baseCookie },
     body: JSON.stringify({
       user_id: userId, agent_slug: AGENT, dispatch_id: dispatchId,
       artifact_id: artifactId, trigger: 'manual', runtime_args,
@@ -438,7 +442,7 @@ async function main() {
     {
       const r = await fetch(`${BASE}/api/agents/rerun`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...baseCookie },
         body: JSON.stringify({ artifact_id: artifactIds[0], files: [{ path: pngPath, type: 'reference-image' }] }),
       });
       const body = await r.json().catch(() => ({}));
@@ -463,13 +467,13 @@ async function main() {
     {
       const svgRes = await fetch(`${BASE}/api/agents/rerun`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...baseCookie },
         body: JSON.stringify({ artifact_id: artifactIds[0], files: [{ path: svgPath, type: 'reference-image' }] }),
       });
       const svgBody = await svgRes.json().catch(() => ({}));
       const bigRes = await fetch(`${BASE}/api/agents/rerun`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...baseCookie },
         body: JSON.stringify({ artifact_id: artifactIds[0], files: [{ path: bigPath, type: 'reference-image' }] }),
       });
       const bigBody = await bigRes.json().catch(() => ({}));
