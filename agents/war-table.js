@@ -20,7 +20,7 @@
 // level, not the artifact level. Flagged in the verification report.
 
 const MAX_TOKENS = 2400;
-const CLAUDE_TIMEOUT_MS = 24000;
+const CLAUDE_TIMEOUT_MS = 60000; // step 5 · Node runtime envelope (was the Edge-era value; see agents/contract.js budgets)
 const DEFAULT_BRAND_NAME = 'Your Brand';
 
 export const WAR_TABLE_FIELDS = [
@@ -68,8 +68,8 @@ export const META = {
   triggers: ['lock', 'manual', 'regenerate'],
   error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
   // model field omitted · resolves to the canonical default below.
-  // Per §5.2.1 (amended in step 4 amendment): latency × (retry_budget + 1)
-  // must fit inside the 22 000 ms Edge budget. War Table's observed 17 s
+  // Per §5.2.1, step-5 values: latency × (retry_budget + 1) must fit
+  // inside the 60 000 ms Node budget. War Table's observed 17 s
   // worst case × 2 = 34 s would exceed the budget at retry_budget: 1.
   // Schema-invalid recovery is deferred to the reaper layer (§5.5).
   retry_budget: 0,

@@ -39,14 +39,18 @@ export const DEFAULT_MODEL = 'claude-sonnet-4-6';
 export const DEFAULT_RETRY_BUDGET = 1;
 export const MAX_RETRY_BUDGET = 5;
 
-// Per §5.2.1 latency-budget pre-check. Edge function wall-clock ceiling is
-// 25 000 ms; we reserve 3 000 ms for fetch handshake + shutdown so the
-// effective per-dispatch budget is 22 000 ms. An agent's worst-case wall
-// time is observed_latency × (retry_budget + 1). Exceeding the threshold
-// triggers a warning at registry load (also fired through §5.8.2 operator
-// channel when wired).
-export const LATENCY_BUDGET_WARNING_MS = 22_000;
-export const EDGE_FUNCTION_CEILING_MS = 25_000;
+// Per §5.2.1 latency-budget pre-check, re-derived for the chapter-3
+// step-5 Node serverless runtime. The function wall-clock ceiling is
+// maxDuration 300 000 ms (api/agents/run.js); we reserve 10 000 ms for
+// the DB orchestration around the agent call so the hard registration
+// ceiling is 290 000 ms. The warning threshold tracks the per-agent
+// in-call timeout (CLAUDE_TIMEOUT_MS, 60 000 ms across the fleet since
+// step 5): an agent whose worst case · observed_latency ×
+// (retry_budget + 1) · exceeds it will start timing out in practice and
+// the operator hears about it at registry load. Pre-step-5 values were
+// 22 000 / 25 000 against the Edge envelope.
+export const LATENCY_BUDGET_WARNING_MS = 60_000;
+export const FUNCTION_CEILING_MS = 290_000;
 
 // Hand-maintained per-agent observed latency, sourced from each agent's
 // verification report. Step 5+ replaces this with a live query on the
@@ -303,18 +307,18 @@ export function assertAgentMetaOrThrow(meta, originLabel) {
   }
 
   // §5.2.1 two-layer enforcement: hard-fail registration when
-  // (retry_budget + 1) × observed_latency exceeds EDGE_FUNCTION_CEILING_MS.
+  // (retry_budget + 1) × observed_latency exceeds FUNCTION_CEILING_MS.
   // The warning threshold (LATENCY_BUDGET_WARNING_MS) is non-fatal and
   // routed through the operator notification channel by the registry; the
   // ceiling check throws here because at that point the agent cannot fit
-  // inside a single Edge invocation regardless of operator awareness.
+  // inside a single function invocation regardless of operator awareness.
   const check = checkLatencyBudget(meta);
-  if (typeof check.worstCaseMs === 'number' && check.worstCaseMs > EDGE_FUNCTION_CEILING_MS) {
+  if (typeof check.worstCaseMs === 'number' && check.worstCaseMs > FUNCTION_CEILING_MS) {
     throw new Error(
       `Agent registration rejected in ${originLabel || meta?.slug || '<unknown>'}: ` +
-      `worst-case wall ${check.worstCaseMs}ms exceeds Edge ceiling ${EDGE_FUNCTION_CEILING_MS}ms ` +
+      `worst-case wall ${check.worstCaseMs}ms exceeds function ceiling ${FUNCTION_CEILING_MS}ms ` +
       `at retry_budget=${meta?.retry_budget ?? DEFAULT_RETRY_BUDGET}. ` +
-      `Drop retry_budget to 0 + tighten the prompt, OR defer to the streaming runtime (§5.2.1).`
+      `Drop retry_budget to 0 + tighten the prompt, OR split the agent (§5.2.1).`
     );
   }
 }
@@ -345,6 +349,6 @@ export function checkLatencyBudget(meta) {
     budgetMs: LATENCY_BUDGET_WARNING_MS,
     message: withinBudget
       ? `${slug} · worst case ${worstCaseMs}ms within ${LATENCY_BUDGET_WARNING_MS}ms budget`
-      : `${slug} · worst case ${worstCaseMs}ms exceeds ${LATENCY_BUDGET_WARNING_MS}ms budget at retry_budget=${retryBudget} · drop retry_budget to 0 + tighten prompt, OR defer to streaming runtime`,
+      : `${slug} · worst case ${worstCaseMs}ms exceeds ${LATENCY_BUDGET_WARNING_MS}ms budget at retry_budget=${retryBudget} · drop retry_budget to 0 + tighten prompt, OR raise the in-call timeout within the function ceiling`,
   };
 }

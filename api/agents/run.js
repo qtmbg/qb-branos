@@ -32,7 +32,13 @@
 //     notification channel immediately; user sees generic "Temporarily
 //     unavailable" copy.
 
-export const config = { runtime: 'edge' };
+// Chapter 3 step 5 · envelope migration. The agent runtime moved from the
+// Edge runtime (hard ~25 s envelope, the visual_dna timeout cliff) to the
+// Node serverless runtime with a raised maxDuration. Same Web-standard
+// handler signature (Request → Response); fetch, crypto.subtle, and
+// TextEncoder are Node globals. Env reads stay inside the handler and the
+// registry's request-time pattern is unchanged (invariants E1-E7).
+export const config = { runtime: 'nodejs', maxDuration: 300 };
 
 import { AGENTS, LATENCY_BUDGET_WARNINGS, getAgent } from '../../agents/registry.js';
 import { DEFAULT_RETRY_BUDGET, DEFAULT_MODEL } from '../../agents/contract.js';
@@ -725,24 +731,27 @@ export default async function handler(req) {
   // the parent's 202 response is not blocked. DB-enforced idempotency
   // via the unique partial index on dispatch_jobs (chain_id, agent_slug)
   // where kind='chain' (migration 016).
+  const chainBaseUrl = new URL(req.url).origin;
+  const chainPromise = triggerChainIfReady({
+    supaUrl: SUPABASE_URL,
+    serviceKey: SERVICE_KEY,
+    baseUrl: chainBaseUrl,
+    userId: user_id,
+    upstreamSlug: agent_slug,
+    parentDispatchId: dispatch_id,
+    interEdgeSecret: INTER_EDGE_SECRET,
+    resendKey: RESEND_API_KEY,
+  }).catch(e => {
+    console.error('[run] chain-trigger threw', e?.message);
+  });
   try {
-    const chainBaseUrl = new URL(req.url).origin;
-    waitUntil(
-      triggerChainIfReady({
-        supaUrl: SUPABASE_URL,
-        serviceKey: SERVICE_KEY,
-        baseUrl: chainBaseUrl,
-        userId: user_id,
-        upstreamSlug: agent_slug,
-        parentDispatchId: dispatch_id,
-        interEdgeSecret: INTER_EDGE_SECRET,
-        resendKey: RESEND_API_KEY,
-      }).catch(e => {
-        console.error('[run] chain-trigger threw', e?.message);
-      })
-    );
+    waitUntil(chainPromise);
   } catch (e) {
-    console.error('[run] chain-trigger setup threw', e?.message);
+    // Step 5 migration fallback: if waitUntil is unavailable on this
+    // runtime configuration, await inline rather than dropping the chain
+    // (the rerun.js precedent). The Node maxDuration budget absorbs it.
+    console.error('[run] chain-trigger waitUntil unavailable, awaiting inline', e?.message);
+    await chainPromise;
   }
 
   // ─── 12. Return ──────────────────────────────────────────────────────
