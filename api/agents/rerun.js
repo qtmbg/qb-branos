@@ -32,30 +32,12 @@
 
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
 import { AGENTS, getAgent } from '../../agents/registry.js';
-import { VISION_READABLE_MIME, VISION_MAX_FILE_SIZE_BYTES } from '../../agents/contract.js';
 import { waitUntil } from '@vercel/functions';
-import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES, BUCKET } from '../files/_lib/file-config.js';
+import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES } from '../files/_lib/file-config.js';
 
 export const config = { runtime: 'edge' };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-// Chapter 3 step 4 · read the stored object's size from the storage list
-// API (the object info endpoint's response shape varies across storage-api
-// versions; the list endpoint is the one this repo already relies on).
-// Returns the byte size, or null when the object is not found.
-async function fetchObjectSize({ env, parsed }) {
-  const r = await fetch(`${env.SUPABASE_URL}/storage/v1/object/list/${BUCKET}`, {
-    method: 'POST',
-    headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY),
-    body: JSON.stringify({ prefix: parsed.userId, search: parsed.fileSegment, limit: 10 }),
-  });
-  if (!r.ok) return null;
-  const rows = await r.json().catch(() => []);
-  const hit = Array.isArray(rows) ? rows.find(o => o?.name === parsed.fileSegment) : null;
-  const size = hit?.metadata?.size;
-  return typeof size === 'number' ? size : null;
-}
 
 export default async function handler(req) {
   const origin = req.headers.get('origin') || '';
@@ -119,33 +101,6 @@ export default async function handler(req) {
     const mime = mimeFromExt(f.path);
     if (!mime || !ALLOWED_MIME_TYPES.has(mime)) {
       return json(400, { error: 'invalid_files', detail: 'file mime not allowed' }, corsH);
-    }
-
-    // Chapter 3 step 4 · vision discipline for reference-image entries.
-    // The agent reads these through Claude vision, so the readable set is
-    // narrower than the bucket allowlist (no SVG per the 3Z §9 forward
-    // risk, no PDF until the chapter-4 document agents) and the per-image
-    // size cap is the Anthropic vision input limit (5 MB), tighter than
-    // the 25 MB bucket cap. Rejected here, loudly, before any dispatch
-    // row is written and before any agent fires.
-    if (f.type === 'reference-image') {
-      if (!VISION_READABLE_MIME.has(mime)) {
-        return json(400, {
-          error: 'invalid_files',
-          detail: `reference-image must be one of ${[...VISION_READABLE_MIME].join(', ')} · got ${mime}`,
-        }, corsH);
-      }
-      const parsedRef = parseUserUploadPath(f.path);
-      const size = await fetchObjectSize({ env, parsed: parsedRef });
-      if (size == null) {
-        return json(404, { error: 'invalid_files', detail: 'reference-image not found in storage' }, corsH);
-      }
-      if (size > VISION_MAX_FILE_SIZE_BYTES) {
-        return json(400, {
-          error: 'invalid_files',
-          detail: `reference-image exceeds the ${Math.floor(VISION_MAX_FILE_SIZE_BYTES / 1048576)} MB vision cap (got ${size} bytes)`,
-        }, corsH);
-      }
     }
   }
 
