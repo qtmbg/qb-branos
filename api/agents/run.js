@@ -162,7 +162,13 @@ async function resolveQbpSource({ supaUrl, serviceKey, userId, runtime_args, sou
     `${supaUrl}/rest/v1/profiles?select=qbp&id=eq.${encodeURIComponent(userId)}`,
     { headers: svcHeaders(serviceKey) }
   );
-  if (!profRes.ok) return { qbp: {}, mode: 'current' };
+  if (!profRes.ok) {
+    // Degrading to an empty QBP silently turns a transient read failure
+    // into a user-facing qbp_field_missing. Keep the fallback, log the
+    // cause. Loud per silent-fail cleanup.
+    console.error('[agents/run] qbp profile read failed', userId, profRes.status);
+    return { qbp: {}, mode: 'current' };
+  }
   const profiles = await profRes.json().catch(() => []);
   const qbp = profiles?.[0]?.qbp || {};
   return { qbp, mode: 'current' };
@@ -217,7 +223,14 @@ async function loadDependencies({ supaUrl, serviceKey, userId, depSlugs }) {
       `&select=id,content,version&order=version.desc&limit=1`,
       { headers: svcHeaders(serviceKey) }
     );
-    if (!r.ok) { out[slug] = { delivered: false }; continue; }
+    if (!r.ok) {
+      // A failed read silently classifies the dependency as undelivered,
+      // surfacing user-fixable missing_dependency for what is actually a
+      // transient infra failure. Keep the fallback, log the cause.
+      console.error('[agents/run] dependency read failed', slug, r.status);
+      out[slug] = { delivered: false };
+      continue;
+    }
     const rows = await r.json().catch(() => []);
     if (rows?.length > 0) {
       out[slug] = { delivered: true, ...rows[0] };
@@ -246,7 +259,7 @@ async function openAgentRun({ supaUrl, serviceKey, payload }) {
 
 async function closeAgentRun({ supaUrl, serviceKey, runId, patch }) {
   if (!runId) return;
-  await fetch(
+  const r = await fetch(
     `${supaUrl}/rest/v1/agent_runs?id=eq.${encodeURIComponent(runId)}`,
     {
       method: 'PATCH',
@@ -254,10 +267,17 @@ async function closeAgentRun({ supaUrl, serviceKey, runId, patch }) {
       body: JSON.stringify(patch),
     }
   );
+  if (!r.ok) {
+    // A run that never closes reads as 'started' forever; the reaper's
+    // classifier then treats the artifact as orphaned (mode b) and
+    // spuriously retries delivered work. Loud per silent-fail cleanup.
+    const t = await r.text().catch(() => '');
+    console.error('[agents/run] agent_runs close failed', runId, r.status, t.slice(0, 300));
+  }
 }
 
 async function patchArtifact({ supaUrl, serviceKey, artifactId, patch }) {
-  await fetch(
+  const r = await fetch(
     `${supaUrl}/rest/v1/artifacts?id=eq.${encodeURIComponent(artifactId)}`,
     {
       method: 'PATCH',
@@ -265,6 +285,13 @@ async function patchArtifact({ supaUrl, serviceKey, artifactId, patch }) {
       body: JSON.stringify(patch),
     }
   );
+  if (!r.ok) {
+    // This is the user-visible status transition (generating →
+    // delivered/failed). A swallowed failure strands the artifact in
+    // its prior state with no trace. Loud per silent-fail cleanup.
+    const t = await r.text().catch(() => '');
+    console.error('[agents/run] artifact patch failed', artifactId, patch?.status, r.status, t.slice(0, 300));
+  }
 }
 
 async function propagateDispatchAgentVersion({ supaUrl, serviceKey, dispatchId, agentVersion }) {
@@ -278,11 +305,14 @@ async function propagateDispatchAgentVersion({ supaUrl, serviceKey, dispatchId, 
     `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}&select=agent_version`,
     { headers: svcHeaders(serviceKey) }
   );
-  if (!cur.ok) return;
+  if (!cur.ok) {
+    console.error('[agents/run] agent_version read failed', dispatchId, cur.status);
+    return;
+  }
   const rows = await cur.json().catch(() => []);
   const existing = rows?.[0]?.agent_version;
   if (existing != null && existing >= agentVersion) return;
-  await fetch(
+  const w = await fetch(
     `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`,
     {
       method: 'PATCH',
@@ -290,6 +320,9 @@ async function propagateDispatchAgentVersion({ supaUrl, serviceKey, dispatchId, 
       body: JSON.stringify({ agent_version: agentVersion }),
     }
   );
+  if (!w.ok) {
+    console.error('[agents/run] agent_version propagate failed', dispatchId, w.status);
+  }
 }
 
 async function settleDispatch({ supaUrl, serviceKey, dispatchId, terminalOk }) {
@@ -301,7 +334,13 @@ async function settleDispatch({ supaUrl, serviceKey, dispatchId, terminalOk }) {
     `&select=agents_count,agents_settled,status`,
     { headers: svcHeaders(serviceKey) }
   );
-  if (!djRes.ok) return;
+  if (!djRes.ok) {
+    // An aborted settle leaves the dispatch in 'producing'; the reaper
+    // later terminal-flips it and the user gets dispatch_failed for
+    // delivered work. Loud per silent-fail cleanup.
+    console.error('[agents/run] settle read failed', dispatchId, djRes.status);
+    return;
+  }
   const dj = (await djRes.json().catch(() => []))?.[0];
   if (!dj) return;
 
@@ -315,6 +354,9 @@ async function settleDispatch({ supaUrl, serviceKey, dispatchId, terminalOk }) {
       `${supaUrl}/rest/v1/artifacts?dispatch_id=eq.${encodeURIComponent(dispatchId)}&select=status`,
       { headers: svcHeaders(serviceKey) }
     );
+    if (!childRes.ok) {
+      console.error('[agents/run] settle children read failed', dispatchId, childRes.status);
+    }
     const children = childRes.ok ? (await childRes.json().catch(() => [])) : [];
     const anyFailed = children.some(c => c.status === 'failed');
     const allDelivered = children.length > 0 && children.every(c => c.status === 'delivered');
@@ -322,7 +364,7 @@ async function settleDispatch({ supaUrl, serviceKey, dispatchId, terminalOk }) {
     patch.completed_at = new Date().toISOString();
   }
 
-  await fetch(
+  const w = await fetch(
     `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`,
     {
       method: 'PATCH',
@@ -330,6 +372,10 @@ async function settleDispatch({ supaUrl, serviceKey, dispatchId, terminalOk }) {
       body: JSON.stringify(patch),
     }
   );
+  if (!w.ok) {
+    const t = await w.text().catch(() => '');
+    console.error('[agents/run] settle write failed', dispatchId, w.status, t.slice(0, 300));
+  }
 }
 
 // ─── 8. Schema-validate-and-retry loop ─────────────────────────────────────
@@ -411,7 +457,7 @@ async function fireRegistryLatencyWarnings() {
       stage: 'registry-load',
       env_hint: `retry_budget=${w.retryBudget}, observed_avg_latency_ms=${w.observedLatencyMs}`,
       context: w.message,
-    }).catch(() => {});
+    }).catch(e => console.error('[agents/run] latency-warning notify failed', e?.message));
   }
 }
 
@@ -492,7 +538,7 @@ export default async function handler(req) {
       stage: 'env',
       env_hint: 'ANTHROPIC_API_KEY',
       context: `dispatch_id=${dispatch_id || '<none>'}`,
-    }).catch(() => {});
+    }).catch(e => console.error('[agents/run] config-missing notify failed', e?.message));
     return json(503, { ok: false, error: 'config_missing', stage: 'env' }, corsH);
   }
 
@@ -666,7 +712,7 @@ export default async function handler(req) {
     sendReadyEmailBestEffort({
       supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, userId: user_id,
       agentSlug: agent_slug, artifactId: artifact_id,
-    }).catch(() => {});
+    }).catch(e => console.error('[agents/run] artifact-ready email failed', artifact_id, e?.message));
   }
 
   // ─── 11. Settle dispatch ──────────────────────────────────────────────
