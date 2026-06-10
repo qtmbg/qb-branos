@@ -469,7 +469,12 @@ async function fireRegistryLatencyWarnings() {
 
 // ─── Main handler ──────────────────────────────────────────────────────────
 
-export default async function handler(req) {
+// Step 5 · Web-standard handler on the Node runtime. The Node runtime
+// invokes a bare default export (req, res)-style; HTTP-method exports are
+// the documented Web-handler form (functions-api-reference, framework
+// other). The handler body is unchanged from the Edge era; POST and
+// OPTIONS bind to it below.
+async function handler(req) {
   const origin = req.headers.get('origin') || '';
   const corsH = cors(origin);
 
@@ -766,6 +771,9 @@ export default async function handler(req) {
     duration_ms,
   }, corsH);
 }
+
+export const POST = handler;
+export const OPTIONS = handler;
 
 async function sendReadyEmailBestEffort({ supaUrl, serviceKey, userId, agentSlug, artifactId }) {
   const profRes = await fetch(

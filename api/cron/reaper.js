@@ -461,7 +461,9 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
 
 // ─── Handler ──────────────────────────────────────────────────────────
 
-export default async function handler(req) {
+// Step 5 · Web-standard handler on the Node runtime (method exports;
+// see api/agents/run.js note). Vercel cron invokes GET.
+async function handler(req) {
   if (req.method !== 'GET' && req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -534,3 +536,6 @@ export default async function handler(req) {
 
   return json(200, { ok: true, ...summary });
 }
+
+export const GET = handler;
+export const POST = handler;
