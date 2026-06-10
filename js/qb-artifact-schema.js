@@ -15,7 +15,14 @@ export const KNOWN_AGENT_SLUGS = [
   // CHAIN_TEST_AGENT=1 (per chapter-02/step-8-spec §2.2). Listed here so
   // its delivered artifact passes header.agent validation; never user-
   // visible in prod (Console filters phase '00').
-  "chain_test_agent"
+  "chain_test_agent",
+  // Phase '00' sentinel · synthetic test agent loaded only when
+  // FILE_TEST_AGENT=1 (chapter-3 step 3E). Same precedent as
+  // chain_test_agent above. Its omission here was the second half of the
+  // 2026-06-10 incomplete-registration incident: run.js
+  // schema-validate rejected the synthetic artifact
+  // (schema_validation_failed, retry_budget 0 → artifact failed).
+  "file_test_agent"
 ];
 
 export const ILLUSTRATION_INVENTORY = [
