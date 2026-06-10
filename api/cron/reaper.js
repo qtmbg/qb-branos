@@ -5,7 +5,7 @@
 //   authorization: Bearer <CRON_SECRET>
 //
 //   → 200 { ok, rows_examined, rows_retried, rows_flipped,
-//           ghost_dispatches_detected, errors }
+//           race_recoveries, ghost_dispatches_detected, errors }
 //   → 401 { error: 'unauthorized_cron_trigger', reason }
 //
 // The reaper is the retry safety net for the agent framework. Every
@@ -141,12 +141,22 @@ async function incrementDispatchRetry({ supaUrl, serviceKey, dispatchId, nextRet
   }
 }
 
+// Conditional terminal flip. The status=eq.producing filter makes the
+// UPDATE a compare-and-set: only a row still in 'producing' flips to
+// 'failed_permanently'. Without it, a terminal state written by the run
+// handler's settleDispatch between the reaper's children-read and this
+// PATCH gets silently overwritten · a dispatch that actually delivered
+// would be re-labelled failed_permanently and the user would get a
+// dispatch_failed notification for a success.
+//
+// Returns the number of rows flipped (0 = lost the race · caller must
+// treat the dispatch as settled elsewhere and skip the notification).
 async function flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId }) {
   const r = await fetch(
-    `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`,
+    `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}&status=eq.producing`,
     {
       method: 'PATCH',
-      headers: { ...svcHeaders(serviceKey), Prefer: 'return=minimal' },
+      headers: { ...svcHeaders(serviceKey), Prefer: 'return=representation' },
       body: JSON.stringify({ status: 'failed_permanently' }),
     }
   );
@@ -154,6 +164,8 @@ async function flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId
     const t = await r.text().catch(() => '');
     throw new Error(`dispatch_terminal_flip_failed: ${r.status} ${t.slice(0, 200)}`);
   }
+  const rows = await r.json().catch(() => []);
+  return Array.isArray(rows) ? rows.length : 0;
 }
 
 // Reset a child artifact so the re-fire of /api/agents/run can pick it
@@ -306,9 +318,17 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
     const anyOutstanding = (children || []).some(a => a.status !== 'delivered');
     if (!anyOutstanding) return;
 
-    // Terminal flip + one dispatch_failed notification.
+    // Terminal flip + one dispatch_failed notification. The flip is a
+    // conditional UPDATE (status=eq.producing); zero rows back means a
+    // terminal state landed between the children-read above and this
+    // write · the dispatch settled elsewhere, so the reaper must NOT
+    // notify failure for it.
     try {
-      await flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId: dispatch.id });
+      const flipped = await flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId: dispatch.id });
+      if (flipped === 0) {
+        summary.race_recoveries += 1;
+        return;
+      }
       summary.rows_flipped += 1;
     } catch (e) {
       summary.errors.push({ dispatch_id: dispatch.id, stage: 'terminal-flip', detail: e?.message });
@@ -430,6 +450,7 @@ export default async function handler(req) {
     rows_examined: 0,
     rows_retried: 0,
     rows_flipped: 0,
+    race_recoveries: 0,
     ghost_dispatches_detected: 0,
     errors: [],
   };
