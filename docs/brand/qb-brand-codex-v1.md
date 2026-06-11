@@ -195,7 +195,7 @@ Brand Profile. Free, forever. Signal Scan, Archetype Compass, Brand Soul Map, Se
 
 Starter. $97 monthly. $80 monthly billed annually. Everything in Brand Profile, plus all twenty agents, unlimited runs, fourteen-day money-back.
 
-Pro. $297 monthly. $247 monthly billed annually. Everything in Starter, plus Predictive Panel (five runs per month), Quarterly Brand Review, one strategy call per quarter, priority support.
+Pro. $247 monthly. $205 monthly billed annually. Everything in Starter, plus Predictive Panel (five runs per month), Quarterly Brand Review, one strategy call per quarter, priority support.
 
 Agency. $997 monthly. $830 monthly billed annually. Up to eight client portals, white-label per client, multi-tenant Brand Profiles, unlimited runs across clients.
 
