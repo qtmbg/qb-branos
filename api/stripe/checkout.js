@@ -1,6 +1,7 @@
 // QB BrandOS — POST /api/stripe/checkout
-// Creates a Stripe Checkout Session for the Starter tier. Pro and Agency
-// price IDs are wired but currently return 501 (Chapter 10 turns them on).
+// Creates a Stripe Checkout Session for any of the three tiers (monthly).
+// Yearly price IDs exist in Stripe but are not sellable here until the
+// annual checkout path is ruled; posting one returns unknown_price_id.
 //
 // The Checkout Session sets `client_reference_id` to the user id so the
 // webhook (api/stripe-webhook.js) can map back without an email lookup.
@@ -11,13 +12,14 @@ import { cors, json, resolveUser, readProfile, requireEnv } from '../_lib/auth.j
 export const config = { runtime: 'edge' };
 
 const TIER_BY_PRICE = {
-  [process.env.STRIPE_STARTER_PRICE_ID || 'price_1TGZtpEHEAcWrG55WWEgeFAv']: 'starter',
-  [process.env.STRIPE_PRO_PRICE_ID     || 'price_1TGZtsEHEAcWrG55IaXsFRd9']: 'pro',
-  [process.env.STRIPE_AGENCY_PRICE_ID  || 'price_1TGZtvEHEAcWrG55Ti8Db9mX']: 'agency',
+  [process.env.STRIPE_STARTER_PRICE_ID || 'price_1Th8JkEHEAcWrG55Abr1OZXe']: 'starter',
+  [process.env.STRIPE_PRO_PRICE_ID     || 'price_1Th8MKEHEAcWrG55hxpLVfCZ']: 'pro',
+  [process.env.STRIPE_AGENCY_PRICE_ID  || 'price_1Th8OWEHEAcWrG55FNZKvxXY']: 'agency',
 };
 
-// Only this tier is wired in Chapter 1. Pro and Agency return 501.
-const ENABLED_TIERS = new Set(['starter']);
+// All three tiers sellable as of the USD pricing swap run (operator ruling,
+// 2026-06-11). The earlier Chapter 10 deferral for Pro and Agency is closed.
+const ENABLED_TIERS = new Set(['starter', 'pro', 'agency']);
 
 const DEFAULT_SUCCESS = 'https://app.quantumbranding.ai/foundation?upgrade=success';
 const DEFAULT_CANCEL  = 'https://app.quantumbranding.ai/paywall?cancelled=1';
@@ -100,5 +102,12 @@ export default async function handler(req) {
     return json(502, { error: 'stripe_returned_no_url' }, corsH);
   }
 
-  return json(200, { checkout_url: session.url, session_id: session.id }, corsH);
+  // amount_total and currency ride along so callers and verification
+  // harnesses can inspect the configured charge without a Stripe read key.
+  return json(200, {
+    checkout_url: session.url,
+    session_id: session.id,
+    amount_total: session.amount_total ?? null,
+    currency: session.currency || null,
+  }, corsH);
 }

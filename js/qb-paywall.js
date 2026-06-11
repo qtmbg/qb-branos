@@ -17,7 +17,7 @@
 
 import { createTierBadge } from '/js/qb-components.js';
 
-const STARTER_PRICE_ID = 'price_1TGZtpEHEAcWrG55WWEgeFAv';
+const STARTER_PRICE_ID = 'price_1Th8JkEHEAcWrG55Abr1OZXe';
 
 const PAID_TIERS = new Set(['starter','pro','agency','atelier']);
 

@@ -9,6 +9,11 @@
 // On each event, the matching public.profiles row is updated by email
 // (lookup the Stripe customer to get the email, then PATCH the row).
 //
+// FOREIGN-EVENT GATE: this Stripe account is shared with non-QB products,
+// so events for foreign prices arrive routinely. Any event whose price is
+// not in the six-ID QB set (QB_PRICE_IDS) is a strict no-op: one log line,
+// zero rows written, 200 returned so Stripe stops retrying.
+//
 // Required env vars (set in Vercel Project Settings):
 //   STRIPE_WEBHOOK_SECRET       — from Stripe Dashboard → Developers → Webhooks
 //   STRIPE_SECRET_KEY           — restricted key with read access to customers + subscriptions
@@ -24,14 +29,54 @@
 
 export const config = { runtime: 'edge' };
 
-// Price ID → tier mapping. Live IDs are the defaults. Env overrides let
-// preview/staging environments wire test-mode price IDs without rebuilding.
-// Same shape as api/stripe/checkout.js so both endpoints honor the same env.
+// Price ID → tier mapping. The canonical USD price set, six IDs. Monthly IDs
+// are env-overridable so preview/staging can wire test-mode prices without
+// rebuilding (same env names as api/stripe/checkout.js). Yearly IDs map to
+// the same tiers for entitlement; the checkout endpoint sells monthly only
+// until the annual path is ruled.
 const TIER_BY_PRICE = {
-  [process.env.STRIPE_STARTER_PRICE_ID || 'price_1TGZtpEHEAcWrG55WWEgeFAv']: 'starter',
-  [process.env.STRIPE_PRO_PRICE_ID     || 'price_1TGZtsEHEAcWrG55IaXsFRd9']: 'pro',
-  [process.env.STRIPE_AGENCY_PRICE_ID  || 'price_1TGZtvEHEAcWrG55Ti8Db9mX']: 'agency',
+  [process.env.STRIPE_STARTER_PRICE_ID || 'price_1Th8JkEHEAcWrG55Abr1OZXe']: 'starter',
+  'price_1Th8LVEHEAcWrG552aPNKRpD': 'starter', // yearly
+  [process.env.STRIPE_PRO_PRICE_ID     || 'price_1Th8MKEHEAcWrG55hxpLVfCZ']: 'pro',
+  'price_1Th8N8EHEAcWrG55fk6a9vzt': 'pro',     // yearly
+  [process.env.STRIPE_AGENCY_PRICE_ID  || 'price_1Th8OWEHEAcWrG55FNZKvxXY']: 'agency',
+  'price_1Th8QBEHEAcWrG55dNLosLZm': 'agency',  // yearly
 };
+
+// The full QB price set. Any event carrying a price outside this set belongs
+// to one of the other products on this shared Stripe account.
+const QB_PRICE_IDS = new Set(Object.keys(TIER_BY_PRICE));
+
+/**
+ * Resolve the price ID carried by a Stripe event and test it against the QB
+ * price set. The account is shared with non-QB products, so foreign events
+ * arrive routinely. Anything outside QB_PRICE_IDS is dropped by the caller:
+ * one log line, zero rows written, 200 back to Stripe.
+ */
+async function resolveQbPrice(event, stripeKey) {
+  const obj = event?.data?.object || {};
+  switch (event.type) {
+    case 'checkout.session.completed': {
+      // QB sells subscriptions only. One-time payment sessions belong to
+      // the other products on this account.
+      if (obj.mode !== 'subscription') return { qb: false, reason: 'non_subscription_mode' };
+      if (!obj.subscription) return { qb: false, reason: 'no_subscription_on_session' };
+      const sub = await fetchStripe(`/subscriptions/${obj.subscription}`, stripeKey);
+      const priceId = sub?.items?.data?.[0]?.price?.id || null;
+      return { qb: QB_PRICE_IDS.has(priceId), priceId, sub };
+    }
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated':
+    case 'customer.subscription.deleted': {
+      const priceId = obj?.items?.data?.[0]?.price?.id || null;
+      return { qb: QB_PRICE_IDS.has(priceId), priceId };
+    }
+    default:
+      // Event types this handler never processes carry no QB entitlement
+      // change. Acknowledge without writing a stripe_events row.
+      return { qb: false, reason: 'unhandled_event_type' };
+  }
+}
 
 // Stripe signature header: t=<unix>,v1=<hex>. Tolerance 5 min replay window.
 async function verifyStripeSignature(rawBody, sigHeader, secret) {
@@ -234,6 +279,28 @@ export default async function handler(req) {
     });
   }
 
+  // ── Foreign-event gate ────────────────────────────────────────────────
+  // Strict no-op for any event whose price is not in the six-ID QB set.
+  // Runs before the idempotency claim so foreign events write zero rows.
+  let gate;
+  try {
+    gate = await resolveQbPrice(event, STRIPE_SECRET_KEY);
+  } catch (e) {
+    // Transient Stripe error while resolving. 500 so Stripe retries.
+    console.error('[stripe-webhook] gate resolve failed', e?.message || e);
+    return new Response(JSON.stringify({ error: 'Internal error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  if (!gate.qb) {
+    console.log(`[stripe-webhook] ignored foreign event type=${event.type} id=${event.id} price=${gate.priceId || 'none'} reason=${gate.reason || 'price_not_in_qb_set'}`);
+    return new Response(JSON.stringify({ received: true, ignored: 'foreign_price' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   // Idempotency: skip if we have already processed this Stripe event id.
   const fresh = await claimStripeEvent(event, SUPABASE_URL, SUPABASE_SERVICE_KEY);
   if (!fresh) {
@@ -253,12 +320,9 @@ export default async function handler(req) {
         const tierIntent = obj.metadata?.tier_intent || null;
         const customerId = obj.customer;
 
-        let tier = tierIntent;
-        if (!tier && obj.subscription) {
-          const sub = await fetchStripe(`/subscriptions/${obj.subscription}`, STRIPE_SECRET_KEY);
-          const priceId = sub.items?.data?.[0]?.price?.id;
-          tier = TIER_BY_PRICE[priceId];
-        }
+        // The gate already resolved the subscription's price. The price is
+        // the truth; tier_intent metadata is the audit fallback.
+        const tier = TIER_BY_PRICE[gate.priceId] || tierIntent;
 
         const updates = {
           stripe_customer_id: customerId || null,
@@ -294,8 +358,7 @@ export default async function handler(req) {
         // (canceled, past_due, paused) do not change tier yet — the grace
         // period for downgrade is deferred to Chapter 10.
         const customerId = obj.customer;
-        const priceId = obj.items?.data?.[0]?.price?.id;
-        const tier = TIER_BY_PRICE[priceId];
+        const tier = TIER_BY_PRICE[gate.priceId];
 
         const cust = await fetchStripe(`/customers/${customerId}`, STRIPE_SECRET_KEY);
         const email = cust.email;
