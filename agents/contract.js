@@ -52,6 +52,14 @@ export const MAX_RETRY_BUDGET = 5;
 export const LATENCY_BUDGET_WARNING_MS = 60_000;
 export const FUNCTION_CEILING_MS = 290_000;
 
+// Step 5 audit cure · the timeout-bounded worst case of ONE
+// runWithSchemaRetry attempt: each agent's callClaude loop makes up to 2
+// attempts of CLAUDE_TIMEOUT_MS (60 000 ms fleet-wide) plus a 600 ms
+// backoff sleep. Unlike the observed-latency formula below, this bound
+// holds for unknown slugs too, so the registration ceiling cannot be
+// bypassed by an agent missing from the hand-maintained table.
+export const IN_CALL_WORST_MS = 2 * 60_000 + 600;
+
 // Hand-maintained per-agent observed latency, sourced from each agent's
 // verification report. Step 5+ replaces this with a live query on the
 // last 50 agent_runs rows. The constant is a step-4 placeholder per §5.2.1.
@@ -319,6 +327,25 @@ export function assertAgentMetaOrThrow(meta, originLabel) {
       `worst-case wall ${check.worstCaseMs}ms exceeds function ceiling ${FUNCTION_CEILING_MS}ms ` +
       `at retry_budget=${meta?.retry_budget ?? DEFAULT_RETRY_BUDGET}. ` +
       `Drop retry_budget to 0 + tighten the prompt, OR split the agent (§5.2.1).`
+    );
+  }
+
+  // Step 5 audit cure · timeout-bounded ceiling. The observed-latency
+  // formula under-models the true worst case (it averages happy paths and
+  // ignores the in-call 2-attempt loop) and skips slugs absent from the
+  // table entirely. This check is unconditional: (retry_budget + 1)
+  // timeout-bounded attempts must fit inside the function ceiling. At the
+  // step-5 values this admits retry_budget 0 (120.6 s) and 1 (241.2 s)
+  // and rejects 2+ (361.8 s exceeds the 290 s ceiling), which matches
+  // what the runtime can actually survive.
+  const declaredBudget = Number.isInteger(meta?.retry_budget) ? meta.retry_budget : DEFAULT_RETRY_BUDGET;
+  const timeoutBoundedWorstMs = (declaredBudget + 1) * IN_CALL_WORST_MS;
+  if (timeoutBoundedWorstMs > FUNCTION_CEILING_MS) {
+    throw new Error(
+      `Agent registration rejected in ${originLabel || meta?.slug || '<unknown>'}: ` +
+      `timeout-bounded worst case ${timeoutBoundedWorstMs}ms ` +
+      `(${declaredBudget + 1} attempts × ${IN_CALL_WORST_MS}ms) exceeds the ` +
+      `${FUNCTION_CEILING_MS}ms function ceiling. Lower retry_budget.`
     );
   }
 }

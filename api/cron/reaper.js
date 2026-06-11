@@ -67,7 +67,11 @@ export const config = { runtime: 'nodejs', maxDuration: 300 };
 // terminal-flip gate (spec §6.4 trace 4).
 
 const BACKOFF_SECONDS = [60, 120, 300];
-const TERMINAL_FLIP_SECONDS = 300;
+// Step 5 re-derivation: the flip gate must exceed run.js maxDuration
+// (300 s) so a final refire launched at last_retry_at cannot still be
+// legitimately executing when the dispatch is declared dead. 330 s
+// matches RUN_ORPHAN_WINDOW_MS. (Pre-step-5: 300 s against ≤25 s runs.)
+const TERMINAL_FLIP_SECONDS = 330;
 
 // Codes that the reaper retries. Mirrors §5.8 retry-eligible set.
 const RETRYABLE_CODES = new Set([
@@ -306,14 +310,32 @@ async function refireChild({ baseUrl, interEdgeSecret, artifact, latestRun, disp
     ...sigHeaders,
   };
 
+  // Step 5 · fire-and-release. The child run handler owns the lifecycle
+  // and writes delivered or failed server-side; post-migration its
+  // invocation can legitimately run for minutes, and awaiting the
+  // terminal response from inside a one-minute cron would blow the
+  // reaper's own budget (the kill-before-accounting blocker from the
+  // pre-merge audit). We wait only long enough to know the request was
+  // accepted, then abandon the response; aborting the client fetch does
+  // not abort the serverless invocation.
+  const FIRE_ACK_TIMEOUT_MS = 4000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FIRE_ACK_TIMEOUT_MS);
   try {
     const res = await fetch(`${baseUrl}/api/agents/run`, {
       method: 'POST',
       headers,
       body,
+      signal: controller.signal,
     });
+    clearTimeout(timer);
     return { ok: res.ok, status: res.status, artifact_id: artifact.id };
   } catch (e) {
+    clearTimeout(timer);
+    if (e && e.name === 'AbortError') {
+      // Request sent; response abandoned by design. The child runs on.
+      return { ok: true, status: 'fired_async', artifact_id: artifact.id };
+    }
     console.error('[reaper] child refire threw', artifact.artifact_type, e?.message);
     return { ok: false, error: 'fetch_threw', artifact_id: artifact.id };
   }
@@ -441,14 +463,16 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
 
   if (childRefires.length === 0) return;
 
-  // Re-fire all retry-eligible children in parallel.
-  const refires = childRefires.map(({ artifact, latestRun }) =>
-    refireChild({ baseUrl, interEdgeSecret, artifact, latestRun, dispatch })
-  );
-  await Promise.allSettled(refires);
-
-  // Increment retry_count once per cron tick per dispatch, regardless of
-  // how many children we re-fired. Per §6.2 step 5.
+  // Step 5 · CLAIM FIRST. The retry increment moves ahead of the refires.
+  // Post-migration a refired run can take minutes; if the accounting only
+  // landed after the awaited refires, a platform kill mid-await would lose
+  // it: retry_count/last_retry_at never advance, the 3-retry cap is
+  // breached with uncounted Claude calls, and the next tick's backoff gate
+  // reads stale values while this tick is still in flight (the
+  // overlapping-tick double-fire). Claiming first makes the accounting
+  // durable before any child fires; a kill after the claim costs at most
+  // one already-counted refire round. Per §6.2 step 5, still one increment
+  // per cron tick per dispatch.
   try {
     await incrementDispatchRetry({
       supaUrl, serviceKey, dispatchId: dispatch.id, nextRetryCount: retryCount + 1,
@@ -456,7 +480,17 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
     summary.rows_retried += 1;
   } catch (e) {
     summary.errors.push({ dispatch_id: dispatch.id, stage: 'retry-increment', detail: e?.message });
+    // No claim, no fire. Refiring without durable accounting is exactly
+    // the unbounded-retry hole the claim-first ordering closes.
+    return;
   }
+
+  // Re-fire all retry-eligible children in parallel (fire-and-release ·
+  // see refireChild).
+  const refires = childRefires.map(({ artifact, latestRun }) =>
+    refireChild({ baseUrl, interEdgeSecret, artifact, latestRun, dispatch })
+  );
+  await Promise.allSettled(refires);
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────
