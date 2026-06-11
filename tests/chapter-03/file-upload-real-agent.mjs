@@ -6,12 +6,17 @@
  *   agent delivers, and the file-present latency preserves the agent's
  *   pre-step-4 headroom.
  *
- * LATENCY GATE (binding, per step-4 authorization):
- *   visual_dna's observed worst case is 22 900 ms against its in-agent
- *   24 000 ms Claude timeout · 1 100 ms headroom, retry_budget 0.
- *   GATE: p95 of file-present agent duration_ms must be <= 22 900 ms.
- *   RED = HOLD, surface the numbers. No sensescape fallback, no prompt
- *   trimming, no silent degraded path.
+ * LATENCY GATE (redefined for the step-5 Node envelope, binding):
+ *   The runtime is Node serverless with maxDuration 300 000 ms and a
+ *   60 000 ms in-call Claude timeout (retry_budget 0). GATE, two parts:
+ *     1. ZERO timeouts across the file-present runs.
+ *     2. p95 file-present duration_ms <= 35 000 ms.
+ *   Reasoning: post-migration file-absent p95 measured 27 701 ms; the
+ *   vision read costs ~4-5 s. 35 000 ms covers baseline p95 plus the
+ *   vision cost plus jitter while preserving a 25 s (42%) margin
+ *   against the in-call timeout and an 88% margin against maxDuration.
+ *   Above 35 s, something beyond the expected vision cost is wrong.
+ *   RED = HOLD, surface the numbers.
  *
  * What it runs against production (or QB_BASE override, e.g. a preview
  * deployment of the step-4 branch · data path is production Supabase
@@ -47,7 +52,7 @@ const baseCookie = BASE_COOKIE ? { Cookie: BASE_COOKIE } : {};
 const AGENT = 'visual_dna_synthesizer';
 const FILE_PRESENT_RUNS = 5;
 const FILE_ABSENT_RUNS = 2;
-const HEADROOM_GATE_MS = 22_900; // p95 file-present must stay at or under this
+const HEADROOM_GATE_MS = 35_000; // p95 file-present gate · step-5 envelope (see header)
 const VISION_CAP_BYTES = 5 * 1024 * 1024;
 
 // ─── env ──────────────────────────────────────────────────────────────────
@@ -498,7 +503,10 @@ async function main() {
     file_present: { n: fpDur.length, p50_ms: percentile(fpDur, 50), p95_ms: percentile(fpDur, 95), min_ms: fpDur[0] ?? null, max_ms: fpDur[fpDur.length - 1] ?? null },
     file_absent: { n: faDur.length, p50_ms: percentile(faDur, 50), p95_ms: percentile(faDur, 95), min_ms: faDur[0] ?? null, max_ms: faDur[faDur.length - 1] ?? null },
     gate_threshold_ms: HEADROOM_GATE_MS,
-    gate_pass: fpDur.length >= FILE_PRESENT_RUNS && percentile(fpDur, 95) <= HEADROOM_GATE_MS,
+    zero_timeouts: filePresent.every(r => r.delivered),
+    gate_pass: fpDur.length >= FILE_PRESENT_RUNS
+      && filePresent.every(r => r.delivered)
+      && percentile(fpDur, 95) <= HEADROOM_GATE_MS,
   };
 
   const pass = !failureReason
