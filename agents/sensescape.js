@@ -14,7 +14,7 @@
 //   report; flag if a stricter floor is intended.
 
 const MAX_TOKENS = 4000;
-const CLAUDE_TIMEOUT_MS = 22000;
+const CLAUDE_TIMEOUT_MS = 60000; // step 5 · Node runtime envelope (was the Edge-era value; see agents/contract.js budgets)
 const DEFAULT_BRAND_NAME = 'Your Brand';
 
 export const SENSESCAPE_FIELDS = [
@@ -57,8 +57,8 @@ export const META = {
   // faster on similarly-shaped editorial prose. Per-agent model
   // selection is methodology metadata, not implementation detail.
   model: 'claude-haiku-4-5-20251001',
-  // Per §5.2.1 latency-budget pre-check: Sensescape worst case 12.7s × 2
-  // = 25.4s exceeds the 22 000 ms warning AND 25 000 ms Edge ceiling.
+  // Per §5.2.1 latency-budget pre-check, step-5 values: worst case
+  // 12.7s × 2 = 25.4s now sits inside the 60 000 ms Node budget.
   // Ships retry_budget:0 until step 6+ streaming runtime dissolves the
   // per-call wall constraint. Documented in §12 known debt.
   retry_budget: 0,

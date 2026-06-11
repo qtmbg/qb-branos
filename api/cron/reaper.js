@@ -10,11 +10,15 @@
 //   → 401 { error: 'unauthorized_cron_trigger', reason }
 //
 // The reaper is the retry safety net for the agent framework. Every
-// /api/agents/run invocation is single-shot inside its own 25 000 ms Edge
-// budget; transient failures (edge_timeout, model_call_failed,
-// schema_validation_failed) write `failed` immediately. The reaper picks
-// those rows up at the next cron tick and re-fires `/api/agents/run`
-// inside its own fresh Edge invocation.
+// /api/agents/run invocation is single-shot inside its own Node serverless
+// budget (maxDuration 300 s per chapter-3 step 5; the pre-step-5 envelope
+// was the 25 000 ms Edge budget); transient failures (edge_timeout,
+// model_call_failed, schema_validation_failed) write `failed` immediately.
+// The reaper picks those rows up at the next cron tick and re-fires
+// `/api/agents/run` inside its own fresh invocation. The reaper itself
+// runs on the Node runtime since step 5: it awaits refire responses
+// inline, and a refired run may now legitimately exceed the old Edge
+// window.
 //
 // State machine per CHAPTER_02_SPEC §5.5 + step-6 spec §6.2:
 //   1. Read dispatch_jobs where status='producing'.
@@ -29,9 +33,10 @@
 //            retry-eligible set (edge_timeout, model_call_failed,
 //            schema_validation_failed). User-fixable codes are skipped.
 //        (b) artifacts.status='generating' with the latest agent_runs row
-//            in status='started' for more than 25 s.
+//            in status='started' for more than RUN_ORPHAN_WINDOW_MS.
 //        (c) artifacts.status='queued' AND no agent_runs row exists AND
-//            dispatch is older than 25 s. The PR #59 / #68 ghost case.
+//            dispatch is older than RUN_ORPHAN_WINDOW_MS. The PR #59 / #68
+//            ghost case.
 //   5. Re-fire /api/agents/run for each retry-eligible stuck child, signed
 //      with INTER_EDGE_SECRET HMAC per §5.6 (Path 2 in step-6 spec §6.3).
 //   6. Atomically increment dispatch_jobs.retry_count + write last_retry_at.
@@ -50,7 +55,11 @@ import { signInterEdge } from '../_lib/dispatch-pattern.js';
 import { verifyCronTrigger } from '../_lib/inter-edge-auth.js';
 import { emitDispatchFailed } from '../_lib/notifications.js';
 
-export const config = { runtime: 'edge' };
+// Chapter 3 step 5 · the reaper migrates with the runtime it supervises.
+// It awaits each refire response (Promise.allSettled below); post-step-5 a
+// refired run can take longer than the old 25 s Edge window, which would
+// have cut the cron invocation mid-tick. Node maxDuration absorbs it.
+export const config = { runtime: 'nodejs', maxDuration: 300 };
 
 // ─── Backoff schedule ───────────────────────────────────────────────────
 // Per step-6 spec §3 amendment + §6.2 step 2. Indexed by retry_count.
@@ -58,7 +67,11 @@ export const config = { runtime: 'edge' };
 // terminal-flip gate (spec §6.4 trace 4).
 
 const BACKOFF_SECONDS = [60, 120, 300];
-const TERMINAL_FLIP_SECONDS = 300;
+// Step 5 re-derivation: the flip gate must exceed run.js maxDuration
+// (300 s) so a final refire launched at last_retry_at cannot still be
+// legitimately executing when the dispatch is declared dead. 330 s
+// matches RUN_ORPHAN_WINDOW_MS. (Pre-step-5: 300 s against ≤25 s runs.)
+const TERMINAL_FLIP_SECONDS = 330;
 
 // Codes that the reaper retries. Mirrors §5.8 retry-eligible set.
 const RETRYABLE_CODES = new Set([
@@ -75,9 +88,15 @@ const USER_FIXABLE_CODES = new Set([
   'missing_dependency',
 ]);
 
-// Edge timeout ceiling. A run in status='started' past this window is
-// orphaned (the Edge invocation cannot legitimately still be running).
-const EDGE_CEILING_MS = 25_000;
+// Run orphan window. A run in status='started' past this window is
+// orphaned: the invocation cannot legitimately still be running. Step 5
+// re-derivation: the runtime's maxDuration is 300 s, so a legitimate run
+// can still be in flight up to that long; the window is maxDuration plus
+// a 30 s scheduling margin. (Pre-step-5 this was the 25 000 ms Edge
+// ceiling.) Classifying a live run as orphaned re-fires it mid-flight and
+// double-executes the agent, so this constant must always exceed the
+// run.js maxDuration.
+const RUN_ORPHAN_WINDOW_MS = 330_000;
 
 // Cap rows we touch in a single cron tick. The partial index on
 // (status, last_retry_at) where status='producing' keeps the read cheap,
@@ -233,20 +252,21 @@ function classifyChild({ artifact, latestRun, dispatchAgeMs }) {
     return { stuck: true, mode: 'failed-unknown', skip: true, reason: code || 'unknown' };
   }
 
-  // (b) Artifact is generating + most recent run is started for >25 s.
+  // (b) Artifact is generating + most recent run is started past the
+  // orphan window.
   if (artifact.status === 'generating' && latestRun && latestRun.status === 'started') {
     const startedAt = latestRun.started_at ? Date.parse(latestRun.started_at) : NaN;
-    if (Number.isFinite(startedAt) && (Date.now() - startedAt) > EDGE_CEILING_MS) {
+    if (Number.isFinite(startedAt) && (Date.now() - startedAt) > RUN_ORPHAN_WINDOW_MS) {
       return { stuck: true, mode: 'orphaned-started', reason: 'edge_timeout_orphan' };
     }
     return { stuck: false };
   }
 
   // (c) Ghost dispatch · artifact queued + no agent_runs row + dispatch
-  // older than 25 s. The §6.2 step 3 condition for the PR #59 / #68
+  // older than the orphan window. The §6.2 step 3 condition for the PR #59 / #68
   // failure mechanism (parent Edge tore down before the child wrote a
   // started row).
-  if (artifact.status === 'queued' && !latestRun && dispatchAgeMs > EDGE_CEILING_MS) {
+  if (artifact.status === 'queued' && !latestRun && dispatchAgeMs > RUN_ORPHAN_WINDOW_MS) {
     return { stuck: true, mode: 'ghost-dispatch', reason: 'ghost_dispatch' };
   }
 
@@ -255,7 +275,7 @@ function classifyChild({ artifact, latestRun, dispatchAgeMs }) {
 
 // ─── Re-fire one stuck child ───────────────────────────────────────────
 // Signs the HMAC envelope per §5.6 and POSTs /api/agents/run. The child
-// runs a fresh Edge invocation with its own 25 000 ms ceiling. We do
+// runs a fresh Node invocation with its own maxDuration budget. We do
 // NOT await the child's terminal outcome · the run handler owns the
 // lifecycle and writes delivered or failed server-side.
 
@@ -290,14 +310,32 @@ async function refireChild({ baseUrl, interEdgeSecret, artifact, latestRun, disp
     ...sigHeaders,
   };
 
+  // Step 5 · fire-and-release. The child run handler owns the lifecycle
+  // and writes delivered or failed server-side; post-migration its
+  // invocation can legitimately run for minutes, and awaiting the
+  // terminal response from inside a one-minute cron would blow the
+  // reaper's own budget (the kill-before-accounting blocker from the
+  // pre-merge audit). We wait only long enough to know the request was
+  // accepted, then abandon the response; aborting the client fetch does
+  // not abort the serverless invocation.
+  const FIRE_ACK_TIMEOUT_MS = 4000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FIRE_ACK_TIMEOUT_MS);
   try {
     const res = await fetch(`${baseUrl}/api/agents/run`, {
       method: 'POST',
       headers,
       body,
+      signal: controller.signal,
     });
+    clearTimeout(timer);
     return { ok: res.ok, status: res.status, artifact_id: artifact.id };
   } catch (e) {
+    clearTimeout(timer);
+    if (e && e.name === 'AbortError') {
+      // Request sent; response abandoned by design. The child runs on.
+      return { ok: true, status: 'fired_async', artifact_id: artifact.id };
+    }
     console.error('[reaper] child refire threw', artifact.artifact_type, e?.message);
     return { ok: false, error: 'fetch_threw', artifact_id: artifact.id };
   }
@@ -425,14 +463,16 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
 
   if (childRefires.length === 0) return;
 
-  // Re-fire all retry-eligible children in parallel.
-  const refires = childRefires.map(({ artifact, latestRun }) =>
-    refireChild({ baseUrl, interEdgeSecret, artifact, latestRun, dispatch })
-  );
-  await Promise.allSettled(refires);
-
-  // Increment retry_count once per cron tick per dispatch, regardless of
-  // how many children we re-fired. Per §6.2 step 5.
+  // Step 5 · CLAIM FIRST. The retry increment moves ahead of the refires.
+  // Post-migration a refired run can take minutes; if the accounting only
+  // landed after the awaited refires, a platform kill mid-await would lose
+  // it: retry_count/last_retry_at never advance, the 3-retry cap is
+  // breached with uncounted Claude calls, and the next tick's backoff gate
+  // reads stale values while this tick is still in flight (the
+  // overlapping-tick double-fire). Claiming first makes the accounting
+  // durable before any child fires; a kill after the claim costs at most
+  // one already-counted refire round. Per §6.2 step 5, still one increment
+  // per cron tick per dispatch.
   try {
     await incrementDispatchRetry({
       supaUrl, serviceKey, dispatchId: dispatch.id, nextRetryCount: retryCount + 1,
@@ -440,12 +480,24 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
     summary.rows_retried += 1;
   } catch (e) {
     summary.errors.push({ dispatch_id: dispatch.id, stage: 'retry-increment', detail: e?.message });
+    // No claim, no fire. Refiring without durable accounting is exactly
+    // the unbounded-retry hole the claim-first ordering closes.
+    return;
   }
+
+  // Re-fire all retry-eligible children in parallel (fire-and-release ·
+  // see refireChild).
+  const refires = childRefires.map(({ artifact, latestRun }) =>
+    refireChild({ baseUrl, interEdgeSecret, artifact, latestRun, dispatch })
+  );
+  await Promise.allSettled(refires);
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────
 
-export default async function handler(req) {
+// Step 5 · Web-standard handler on the Node runtime (method exports;
+// see api/agents/run.js note). Vercel cron invokes GET.
+async function handler(req) {
   if (req.method !== 'GET' && req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -518,3 +570,6 @@ export default async function handler(req) {
 
   return json(200, { ok: true, ...summary });
 }
+
+export const GET = handler;
+export const POST = handler;

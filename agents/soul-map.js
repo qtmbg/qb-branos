@@ -19,7 +19,7 @@
 // which renders "Not yet captured" placeholders rather than refusing.
 
 const MAX_TOKENS = 4000;
-const CLAUDE_TIMEOUT_MS = 22000;
+const CLAUDE_TIMEOUT_MS = 60000; // step 5 · Node runtime envelope (was the Edge-era value; see agents/contract.js budgets)
 const DEFAULT_BRAND_NAME = 'Your Brand';
 
 const SOUL_MAP_FIELDS = [
@@ -71,8 +71,8 @@ export const META = {
     'model_call_failed',  // Claude returned non-2xx OR returned text we could not parse
   ],
   // model field omitted · resolves to the canonical default below.
-  // Per §5.2.1 (amended in step 4 amendment): latency × (retry_budget + 1)
-  // must fit inside the 22 000 ms Edge budget. Soul Map's observed 15 s
+  // Per §5.2.1, step-5 values: latency × (retry_budget + 1) must fit
+  // inside the 60 000 ms Node budget. Soul Map's observed 15 s
   // worst case × 2 = 30 s would exceed the budget at retry_budget: 1.
   // Schema-invalid recovery is deferred to the reaper layer (§5.5):
   // the runtime writes failed, the reaper re-fires /api/agents/run as a
