@@ -1735,18 +1735,11 @@ function toggleTheme() {
 const CONFIG = {
   STRIPE_PUBLISHABLE_KEY: 'pk_live_51T4LrnEHEAcWrG55GLqBVJyczc4WGgSQEKaZOOLE0lr8lZSlvpeyfxN1YgtXoOtbTHF97qB5C0D2MC48lrOVhVJ005iEJWgbZ',
 
+  // Canonical USD monthly price IDs. Must match api/stripe/checkout.js.
   PRICES: {
-    starter: 'price_1TGZtpEHEAcWrG55WWEgeFAv',
-    pro:     'price_1TGZtsEHEAcWrG55IaXsFRd9',
-    agency:  'price_1TGZtvEHEAcWrG55Ti8Db9mX',
-  },
-
-  // ⚠ VERIFY: Re-copy each link verbatim from Stripe Dashboard → Payment Links.
-  // Do NOT manually edit the URL after copying.
-  PAYMENT_LINKS: {
-    starter: 'https://buy.stripe.com/fZuaEX0js5z02CR7pQ2Ry01',
-    pro:     'https://buy.stripe.com/14AeVdgiq8Lc1yNcKa2Ry02',
-    agency:  'https://buy.stripe.com/7sYeVd2rAf9AfpD11s2Ry03',
+    starter: 'price_1Th8JkEHEAcWrG55Abr1OZXe',
+    pro:     'price_1Th8MKEHEAcWrG55hxpLVfCZ',
+    agency:  'price_1Th8OWEHEAcWrG55FNZKvxXY',
   },
 
   // SUCCESS_URL points back to THIS page so the URL param handler fires correctly
@@ -1782,7 +1775,7 @@ const PLANS = [
   {
     id: 'starter',
     name: 'Starter',
-    price: '€97',
+    price: '$97',
     per: '/month',
     desc: 'Full access to all 20 tools. Unlimited runs. Your complete brand OS.',
     features: ['All 20 agent tools', 'Unlimited runs', 'QBP saved and connected', 'Gemini free tier compatible', 'Email support'],
@@ -1791,7 +1784,7 @@ const PLANS = [
   {
     id: 'pro',
     name: 'Pro',
-    price: '€297',
+    price: '$247',
     per: '/month',
     desc: 'Everything in Starter plus Predictive Panel and quarterly strategy access.',
     features: ['Everything in Starter', '5 Predictive Panel runs/month', 'Priority support', 'Quarterly strategy access', 'Early access to new tools'],
@@ -1800,10 +1793,10 @@ const PLANS = [
   {
     id: 'agency',
     name: 'Agency',
-    price: '€997',
+    price: '$1,497',
     per: '/month',
-    desc: '8 white-label client portals. Unlimited panels. Your brand on every output.',
-    features: ['8 white-label client portals', 'Unlimited Predictive Panel runs', 'Agency brand on all outputs', 'Dedicated support', 'Custom onboarding'],
+    desc: 'Up to 5 client workspaces. Unlimited panels. Your brand on every output.',
+    features: ['Up to 5 client workspaces', 'Unlimited Predictive Panel runs', 'Agency brand on all outputs', 'Dedicated support', 'Custom onboarding'],
     popular: false,
   },
 ];
@@ -2113,40 +2106,40 @@ async function handleAuth(email, password) {
   }
 }
 
-// PAYMENT_LINKS are the primary path - no server required.
-// stripe.redirectToCheckout({ lineItems }) is deprecated; kept as last resort only.
-// Future migration: create a server-side Checkout Session and redirect to session.url.
+// The server-side Checkout Session is the canonical path (api/stripe/checkout.js).
+// It carries client_reference_id so the webhook maps the user without an
+// email lookup. Payment Links retired with the USD price swap.
 async function redirectToStripe(email) {
   if (!selectedPlan) { view = 'plans'; render(); return; }
 
-  view = 'processing'; render();
-
-  // Primary: Stripe Payment Links with email prefill
-  const link = CONFIG.PAYMENT_LINKS[selectedPlan];
-  if (link) {
-    const url = link + (email ? '?prefilled_email=' + encodeURIComponent(email) : '');
-    window.location.href = url;
-    return;
-  }
-
-  // Last resort: legacy Stripe.js (deprecated)
-  if (!isConfigured || !stripe) {
-    errorMsg = 'Payment system unavailable. Please contact support.';
+  const session = getSession();
+  if (!session?.token) {
+    // The checkout endpoint requires an authenticated Supabase session.
+    authMode = 'login';
     prevView = 'plans';
-    view = 'error';
+    view = 'auth';
     render();
     return;
   }
 
+  view = 'processing'; render();
+
   try {
-    const result = await stripe.redirectToCheckout({
-      lineItems: [{ price: CONFIG.PRICES[selectedPlan], quantity: 1 }],
-      mode: 'subscription',
-      successUrl: CONFIG.SUCCESS_URL + '&plan=' + selectedPlan,
-      cancelUrl: CONFIG.CANCEL_URL,
-      customerEmail: email,
+    const res = await fetch('/api/stripe/checkout', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + session.token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        price_id: CONFIG.PRICES[selectedPlan],
+        success_url: CONFIG.SUCCESS_URL + '&plan=' + selectedPlan,
+        cancel_url: CONFIG.CANCEL_URL,
+      }),
     });
-    if (result.error) throw new Error(result.error.message);
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.checkout_url) {
+      window.location.href = data.checkout_url;
+      return;
+    }
+    throw new Error(data?.error || ('HTTP ' + res.status));
   } catch(e) {
     errorMsg = e.message;
     prevView = 'plans';
