@@ -246,7 +246,7 @@ export default async function handler(req) {
   // prompt is signed. Remove the slug from this set on sign-off; that
   // single deletion is the release. logo_direction_agent released
   // 2026-06-11 (prompt signed).
-  const PROMPT_HOLD_SLUGS = new Set([]);
+  const PROMPT_HOLD_SLUGS = new Set(['logo_evaluation_agent']);
   const userVisibleSlugs = listAgentSlugs().filter(slug => {
     const meta = AGENTS[slug]?.META;
     return meta?.phase && meta.phase !== '00' && !PROMPT_HOLD_SLUGS.has(slug);

@@ -121,29 +121,37 @@ export default async function handler(req) {
       return json(400, { error: 'invalid_files', detail: 'file mime not allowed' }, corsH);
     }
 
-    // Chapter 3 step 4 · vision discipline for reference-image entries.
-    // The agent reads these through Claude vision, so the readable set is
+    // Chapter 3 step 4 + chapter 4 step 2 · vision discipline for every
+    // file type an agent reads through Claude vision. The readable set is
     // narrower than the bucket allowlist (no SVG per the 3Z §9 forward
-    // risk, no PDF until the chapter-4 document agents) and the per-image
-    // size cap is the Anthropic vision input limit (5 MB), tighter than
-    // the 25 MB bucket cap. Rejected here, loudly, before any dispatch
-    // row is written and before any agent fires.
-    if (f.type === 'reference-image') {
+    // risk · logged as deferred debt at chapter-4 step 2 · no PDF until
+    // the document agents) and the per-image size cap is the Anthropic
+    // vision input limit (5 MB), tighter than the 25 MB bucket cap.
+    // Rejected here, loudly, before any dispatch row is written and
+    // before any agent fires. The logo-image detail is founder-facing:
+    // it says what to do, not just what went wrong.
+    if (f.type === 'reference-image' || f.type === 'logo-image') {
       if (!VISION_READABLE_MIME.has(mime)) {
+        const fix = f.type === 'logo-image'
+          ? ' · export your logo as PNG and upload that file'
+          : '';
         return json(400, {
           error: 'invalid_files',
-          detail: `reference-image must be one of ${[...VISION_READABLE_MIME].join(', ')} · got ${mime}`,
+          detail: `${f.type} must be one of ${[...VISION_READABLE_MIME].join(', ')} · got ${mime}${fix}`,
         }, corsH);
       }
       const parsedRef = parseUserUploadPath(f.path);
       const size = await fetchObjectSize({ env, parsed: parsedRef });
       if (size == null) {
-        return json(404, { error: 'invalid_files', detail: 'reference-image not found in storage' }, corsH);
+        return json(404, { error: 'invalid_files', detail: `${f.type} not found in storage` }, corsH);
       }
       if (size > VISION_MAX_FILE_SIZE_BYTES) {
+        const fix = f.type === 'logo-image'
+          ? ' · export a smaller PNG and upload that file'
+          : '';
         return json(400, {
           error: 'invalid_files',
-          detail: `reference-image exceeds the ${Math.floor(VISION_MAX_FILE_SIZE_BYTES / 1048576)} MB vision cap (got ${size} bytes)`,
+          detail: `${f.type} exceeds the ${Math.floor(VISION_MAX_FILE_SIZE_BYTES / 1048576)} MB vision cap (got ${size} bytes)${fix}`,
         }, corsH);
       }
     }

@@ -87,6 +87,8 @@ export const AGENT_OBSERVED_LATENCY_MS = {
   war_table_synthesizer:   17_000,
   // chapter-4 step-1 verification · 3 live runs 32 489-35 687 ms.
   logo_direction_agent:    36_000,
+  // chapter-4 step-2 verification · 3 live vision runs 30 946-38 394 ms.
+  logo_evaluation_agent:   39_000,
 };
 
 // Per §5.8.1: qbp_field → human-readable exercise name. Used to fill the
