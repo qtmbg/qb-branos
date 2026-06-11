@@ -35,6 +35,7 @@ import { META as visualDnaMeta, run as visualDnaRun } from './visual-dna.js';
 import { META as warTableMeta, run as warTableRun } from './war-table.js';
 import { META as logoDirectionMeta, run as logoDirectionRun } from './logo-direction.js';
 import { META as logoEvaluationMeta, run as logoEvaluationRun } from './logo-evaluation.js';
+import { META as voiceGuideMeta, run as voiceGuideRun } from './voice-guide.js';
 import { META as chainTestMeta, run as chainTestRun } from './chain-test-agent.js';
 import { META as fileTestMeta, run as fileTestRun } from './file-test-agent.js';
 
@@ -47,6 +48,7 @@ assertAgentMetaOrThrow(visualDnaMeta, 'agents/visual-dna.js');
 assertAgentMetaOrThrow(warTableMeta, 'agents/war-table.js');
 assertAgentMetaOrThrow(logoDirectionMeta, 'agents/logo-direction.js');
 assertAgentMetaOrThrow(logoEvaluationMeta, 'agents/logo-evaluation.js');
+assertAgentMetaOrThrow(voiceGuideMeta, 'agents/voice-guide.js');
 assertAgentMetaOrThrow(chainTestMeta, 'agents/chain-test-agent.js');
 assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 
@@ -55,7 +57,7 @@ assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 // first dispatch (the operator-notify module needs Resend at runtime, not
 // at module-load).
 export const LATENCY_BUDGET_WARNINGS = [];
-for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta]) {
+for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta]) {
   const check = checkLatencyBudget(meta);
   if (!check.withinBudget) {
     LATENCY_BUDGET_WARNINGS.push(check);
@@ -63,7 +65,7 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, lo
   }
 }
 
-console.log('agent registry loaded · 6 prod agents + 2 test agents (flag-gated at request time)');
+console.log('agent registry loaded · 7 prod agents + 2 test agents (flag-gated at request time)');
 
 // ─── Real agents · ALWAYS loaded · frozen at module init ─────────────────
 // These are the production agents. No env gates. The frozen map is the
@@ -81,6 +83,9 @@ export const AGENTS = Object.freeze({
   // Chapter 4 step 2 · Logo Evaluation. Merges behind PROMPT_HOLD_SLUGS
   // (standing policy); Console-invisible until the prompt is signed.
   [logoEvaluationMeta.slug]: { META: logoEvaluationMeta, run: logoEvaluationRun },
+  // Chapter 4 step 3 · Voice Guide. Merges behind PROMPT_HOLD_SLUGS
+  // (standing policy); Console-invisible until the prompt is signed.
+  [voiceGuideMeta.slug]: { META: voiceGuideMeta, run: voiceGuideRun },
 });
 
 // ─── Test agents · flag-gated at REQUEST TIME ─────────────────────────────
