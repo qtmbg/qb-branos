@@ -273,7 +273,7 @@ None of the 11 illustrations have been recoloured to v3.2 tokens yet. Until norm
 |------|---------|-----------------------------------|--------|
 | Brand Profile (Free) | $0 | $0 | Signal Scan + Archetype Compass + Brand Soul Map + Sensescape, Cloud-synced QBP, Codex PDFs |
 | Starter | $97 | $80 | Everything in Brand Profile + all 20 agents, unlimited runs, 14-day money-back |
-| Pro | $297 | $247 | Everything in Starter + Predictive Panel (5 runs/mo) + Quarterly Brand Review + 1 strategy call/quarter + priority support |
+| Pro | $247 | $205 | Everything in Starter + Predictive Panel (5 runs/mo) + Quarterly Brand Review + 1 strategy call/quarter + priority support |
 | Agency | $997 | $830 | Up to 8 client portals + white-label per client + multi-tenant Brand Profiles + unlimited runs |
 | Enterprise | Custom | Custom | Direct contact — Nizzar |
 
