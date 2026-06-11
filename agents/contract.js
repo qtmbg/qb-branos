@@ -85,6 +85,8 @@ export const AGENT_OBSERVED_LATENCY_MS = {
   sensescape_synthesizer:  12_700,
   visual_dna_synthesizer:  22_900,
   war_table_synthesizer:   17_000,
+  // chapter-4 step-1 verification · 3 live runs 32 489-35 687 ms.
+  logo_direction_agent:    36_000,
 };
 
 // Per §5.8.1: qbp_field → human-readable exercise name. Used to fill the

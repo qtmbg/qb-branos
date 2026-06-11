@@ -32,7 +32,7 @@
 
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
 import { AGENTS, getAgent } from '../../agents/registry.js';
-import { VISION_READABLE_MIME, VISION_MAX_FILE_SIZE_BYTES } from '../../agents/contract.js';
+import { VISION_READABLE_MIME, VISION_MAX_FILE_SIZE_BYTES, CANONICAL_TIERS } from '../../agents/contract.js';
 import { waitUntil } from '@vercel/functions';
 import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES, BUCKET } from '../files/_lib/file-config.js';
 
@@ -171,6 +171,30 @@ export default async function handler(req) {
   const slug = source.artifact_type;
   const agent = getAgent(slug);
   if (!agent) return json(400, { error: 'unknown_agent', agent_slug: slug }, corsH);
+
+  // ─── 4.2 Tier gate · chapter-4 ruling 2 ───────────────────────────────
+  // Same gate as /api/agents/run, enforced here BEFORE the dispatch and
+  // artifact rows are created so an unentitled rerun writes nothing.
+  // Fails closed on an unreadable profile.
+  if (agent.META.phase >= '02') {
+    const tierRes = await fetch(
+      `${env.SUPABASE_URL}/rest/v1/profiles?select=tier&id=eq.${encodeURIComponent(userId)}`,
+      { headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
+    );
+    const tierRows = tierRes.ok ? await tierRes.json().catch(() => null) : null;
+    const tier = tierRows?.[0]?.tier;
+    const userRank = CANONICAL_TIERS.indexOf(tier);
+    const requiredRank = CANONICAL_TIERS.indexOf(agent.META.tier_required);
+    if (!tierRes.ok || !Array.isArray(tierRows) || userRank === -1) {
+      console.error('[agents/rerun] tier gate could not verify profile tier', userId, tierRes.status);
+      return json(403, { error: 'tier_unverified',
+                          detail: `profile tier unreadable for paid agent ${slug} · failing closed` }, corsH);
+    }
+    if (userRank < requiredRank) {
+      return json(403, { error: 'tier_insufficient',
+                          detail: `${slug} requires tier ${agent.META.tier_required} or above · profile tier is ${tier}` }, corsH);
+    }
+  }
 
   // ─── 4.5 §5.3 conformance · qbp_source='original' requires lock snapshot ─
   // Refused at this endpoint (not in /api/agents/run) so the runtime never
