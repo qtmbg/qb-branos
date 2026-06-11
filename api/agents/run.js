@@ -41,7 +41,7 @@
 export const config = { runtime: 'nodejs', maxDuration: 300 };
 
 import { AGENTS, LATENCY_BUDGET_WARNINGS, getAgent } from '../../agents/registry.js';
-import { DEFAULT_RETRY_BUDGET, DEFAULT_MODEL } from '../../agents/contract.js';
+import { DEFAULT_RETRY_BUDGET, DEFAULT_MODEL, CANONICAL_TIERS } from '../../agents/contract.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
 import { sendEmail, renderTemplate, EMAIL_TEMPLATES, getAgentEmailVars } from '../_lib/email.js';
 import { sendOperatorNotification } from '../_lib/operator-notify.js';
@@ -536,6 +536,32 @@ async function handler(req) {
                         detail: `slug=${agent_slug}` }, corsH);
   }
   const meta = agent.META;
+
+  // ─── 2.5 Tier gate · chapter-4 ruling 2 ────────────────────────────────
+  // Paid agents (phase >= '02') require Starter or above. Enforced before
+  // any row is written, so an unentitled dispatch leaves no artifact or
+  // run debris and nothing for the reaper to chew on. Fails closed: an
+  // unreadable profile rejects with its own named detail. Phase 01
+  // dispatch behavior is byte-identical (the gate body never runs).
+  if (meta.phase >= '02') {
+    const tierRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/profiles?select=tier&id=eq.${encodeURIComponent(user_id)}`,
+      { headers: svcHeaders(SERVICE_KEY) }
+    );
+    const tierRows = tierRes.ok ? await tierRes.json().catch(() => null) : null;
+    const tier = tierRows?.[0]?.tier;
+    const userRank = CANONICAL_TIERS.indexOf(tier);
+    const requiredRank = CANONICAL_TIERS.indexOf(meta.tier_required);
+    if (!tierRes.ok || !Array.isArray(tierRows) || userRank === -1) {
+      console.error('[agents/run] tier gate could not verify profile tier', user_id, tierRes.status);
+      return json(403, { ok: false, error: 'tier_unverified', stage: 'tier-gate',
+                          detail: `profile tier unreadable for paid agent ${agent_slug} · failing closed` }, corsH);
+    }
+    if (userRank < requiredRank) {
+      return json(403, { ok: false, error: 'tier_insufficient', stage: 'tier-gate',
+                          detail: `${agent_slug} requires tier ${meta.tier_required} or above · profile tier is ${tier}` }, corsH);
+    }
+  }
 
   // Fire the registry's collected latency warnings (one-time per boot).
   fireRegistryLatencyWarnings();

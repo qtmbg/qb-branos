@@ -33,6 +33,7 @@ import { META as soulMapMeta, run as soulMapRun } from './soul-map.js';
 import { META as sensescapeMeta, run as sensescapeRun } from './sensescape.js';
 import { META as visualDnaMeta, run as visualDnaRun } from './visual-dna.js';
 import { META as warTableMeta, run as warTableRun } from './war-table.js';
+import { META as logoDirectionMeta, run as logoDirectionRun } from './logo-direction.js';
 import { META as chainTestMeta, run as chainTestRun } from './chain-test-agent.js';
 import { META as fileTestMeta, run as fileTestRun } from './file-test-agent.js';
 
@@ -43,6 +44,7 @@ assertAgentMetaOrThrow(soulMapMeta, 'agents/soul-map.js');
 assertAgentMetaOrThrow(sensescapeMeta, 'agents/sensescape.js');
 assertAgentMetaOrThrow(visualDnaMeta, 'agents/visual-dna.js');
 assertAgentMetaOrThrow(warTableMeta, 'agents/war-table.js');
+assertAgentMetaOrThrow(logoDirectionMeta, 'agents/logo-direction.js');
 assertAgentMetaOrThrow(chainTestMeta, 'agents/chain-test-agent.js');
 assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 
@@ -51,7 +53,7 @@ assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 // first dispatch (the operator-notify module needs Resend at runtime, not
 // at module-load).
 export const LATENCY_BUDGET_WARNINGS = [];
-for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta]) {
+for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta]) {
   const check = checkLatencyBudget(meta);
   if (!check.withinBudget) {
     LATENCY_BUDGET_WARNINGS.push(check);
@@ -59,7 +61,7 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta]) {
   }
 }
 
-console.log('agent registry loaded · 4 prod agents + 2 test agents (flag-gated at request time)');
+console.log('agent registry loaded · 5 prod agents + 2 test agents (flag-gated at request time)');
 
 // ─── Real agents · ALWAYS loaded · frozen at module init ─────────────────
 // These are the production agents. No env gates. The frozen map is the
@@ -70,6 +72,10 @@ export const AGENTS = Object.freeze({
   [sensescapeMeta.slug]: { META: sensescapeMeta, run: sensescapeRun },
   [visualDnaMeta.slug]: { META: visualDnaMeta, run: visualDnaRun },
   [warTableMeta.slug]: { META: warTableMeta, run: warTableRun },
+  // Chapter 4 step 1 · the first Phase 02 agent. Registered for dispatch
+  // and harness verification; Console-invisible until the operator signs
+  // the prompt (PROMPT_HOLD_SLUGS in api/agents/console.js).
+  [logoDirectionMeta.slug]: { META: logoDirectionMeta, run: logoDirectionRun },
 });
 
 // ─── Test agents · flag-gated at REQUEST TIME ─────────────────────────────

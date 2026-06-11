@@ -239,9 +239,15 @@ export default async function handler(req) {
   // (step 8B) lands at phase '00' when CHAIN_TEST_AGENT=1 is set; this
   // filter keeps it invisible to real users even when the env var leaks
   // into prod for verification windows.
+  //
+  // PROMPT_HOLD_SLUGS · chapter-4 step 1. Agents whose prompt awaits
+  // operator sign-off: registered and dispatchable for harness
+  // verification, invisible here until the prompt is signed. Remove the
+  // slug from this set on sign-off; that single deletion is the release.
+  const PROMPT_HOLD_SLUGS = new Set(['logo_direction_agent']);
   const userVisibleSlugs = listAgentSlugs().filter(slug => {
     const meta = AGENTS[slug]?.META;
-    return meta?.phase && meta.phase !== '00';
+    return meta?.phase && meta.phase !== '00' && !PROMPT_HOLD_SLUGS.has(slug);
   });
   const agentsPayload = userVisibleSlugs.map(slug => {
     const agent = AGENTS[slug];
