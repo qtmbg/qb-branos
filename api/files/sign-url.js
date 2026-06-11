@@ -213,12 +213,19 @@ export default async function handler(req) {
 
   const signData = await signRes.json().catch(() => ({}));
   // Supabase returns { signedURL: "/object/sign/{bucket}/{path}?token=..." }
-  // The full URL is SUPABASE_URL + signedURL.
+  // relative to the STORAGE API base, so the fetchable URL is
+  // SUPABASE_URL + /storage/v1 + signedURL. The original composition
+  // omitted the /storage/v1 prefix and produced a 404 URL · latent since
+  // step 3C because no consumer dereferenced the signed URL (agents only
+  // echoed metadata) until the step-4 vision read fetched it for real.
+  // Proven against production 2026-06-11: as-composed 404, prefixed 200.
   const relative = signData.signedURL || signData.signedUrl || '';
   if (!relative) {
     return json(500, { ok: false, error: 'sign_no_url' }, corsH);
   }
-  const signed_url = `${SUPABASE_URL}${relative}`;
+  const signed_url = relative.startsWith('/storage/v1')
+    ? `${SUPABASE_URL}${relative}`
+    : `${SUPABASE_URL}/storage/v1${relative}`;
   const expires_at = new Date(Date.now() + ttl * 1000).toISOString();
 
   return json(200, {
