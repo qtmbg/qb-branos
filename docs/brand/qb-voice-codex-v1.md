@@ -426,7 +426,7 @@ The four doors (per Master Instruction v4) hit the product at different stages w
 
 **Sample tone:**
 
-"Up to eight client portals. White-label per client. Multi-tenant Brand Profiles. The agency runs each client through the QB methodology under your branding. Your logo, your colors, the QB system underneath."
+"Up to five client workspaces. White-label per client. Multi-tenant Brand Profiles. The agency runs each client through the QB methodology under your branding. Your logo, your colors, the QB system underneath."
 
 ---
 

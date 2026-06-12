@@ -197,7 +197,7 @@ Starter. $97 monthly. $80 monthly billed annually. Everything in Brand Profile, 
 
 Pro. $247 monthly. $205 monthly billed annually. Everything in Starter, plus Predictive Panel (five runs per month), Quarterly Brand Review, one strategy call per quarter, priority support.
 
-Agency. $997 monthly. $830 monthly billed annually. Up to eight client portals, white-label per client, multi-tenant Brand Profiles, unlimited runs across clients.
+Agency. $1,497 monthly. $1,242 monthly billed annually. Up to five client workspaces, white-label per client, multi-tenant Brand Profiles, unlimited runs across clients.
 
 Enterprise. Custom. Direct contact with the founder.
 

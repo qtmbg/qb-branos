@@ -64,7 +64,7 @@ Ledger, defect count, exit-condition evidence, chapter 5 outline (Phase 03 conte
 
 1. Step-4 call 1 (founder dispatch entry) · new gating-adjacent endpoint.
 2. Prompt sign-offs: Logo Evaluation (#188), Voice Guide (#189).
-3. Agency price disagreement ($997/$830 copy vs $1,497 canonical) + dollar/euro split + checkout-coupled trio (payment.html, terms.html, index.html JSON-LD) · all surfaced at #187, all unruled.
+3. Agency price disagreement ($997/$830 copy vs $1,497 canonical) + dollar/euro split + checkout-coupled trio (payment.html, terms.html, index.html JSON-LD) · all surfaced at #187, all unruled. RESOLVED 2026-06-12: USD pricing swap (#191), annual checkout (#193), brand-doc reconciliation (this sweep).
 4. FILE_TEST_AGENT still in Production env (chapter-3 exit condition 7, operator-only).
 5. SVG support · deferred debt re-logged at step 2 (the founder-facing rejection now instructs PNG export; native SVG read remains out of scope).
 
