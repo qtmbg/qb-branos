@@ -1,12 +1,15 @@
-// QB BrandOS — Chapter 4 · Pricing swap Phase 4 verification (short of payment)
+// QB BrandOS — Chapter 4 · Pricing swap verification (short of payment)
 //
 // Against production, post-deploy:
 //   1. Unauthenticated 401 probes: /api/agents/run, /api/agents/console,
 //      /api/stripe/checkout (registry merge gate post-deploy half rides along).
-//   2. One real checkout session per tier through the live entry path
-//      (POST /api/stripe/checkout), asserting currency=usd and the exact
+//   2. One real checkout session per tier and interval (3 monthly + 3 yearly)
+//      through the live entry path (POST /api/stripe/checkout) in the request
+//      shape payment.html sends, asserting currency=usd and the exact
 //      canonical amount.
-//   3. Each session expired via the Stripe API immediately after inspection.
+//   3. One session in the request shape js/qb-paywall.js sends (bare price_id,
+//      default success/cancel URLs) — the foundation upgrade path.
+//   4. Every session expired via the Stripe API immediately after inspection.
 //
 // Proves configuration, not settlement. PL-001 with a live card stays the launch gate.
 // Run: node tests/chapter-04/checkout-session-verification.mjs
@@ -26,9 +29,12 @@ const SU = env.SUPABASE_URL, SK = env.SUPABASE_SERVICE_ROLE_KEY, AK = env.SUPABA
 const svc = { apikey: SK, Authorization: `Bearer ${SK}`, 'Content-Type': 'application/json', Accept: 'application/json' };
 
 const TIERS = [
-  { tier: 'starter', price_id: 'price_1Th8JkEHEAcWrG55Abr1OZXe', amount: 9700 },
-  { tier: 'pro',     price_id: 'price_1Th8MKEHEAcWrG55hxpLVfCZ', amount: 24700 },
-  { tier: 'agency',  price_id: 'price_1Th8OWEHEAcWrG55FNZKvxXY', amount: 149700 },
+  { tier: 'starter', billing: 'monthly', price_id: 'price_1Th8JkEHEAcWrG55Abr1OZXe', amount: 9700 },
+  { tier: 'pro',     billing: 'monthly', price_id: 'price_1Th8MKEHEAcWrG55hxpLVfCZ', amount: 24700 },
+  { tier: 'agency',  billing: 'monthly', price_id: 'price_1Th8OWEHEAcWrG55FNZKvxXY', amount: 149700 },
+  { tier: 'starter', billing: 'yearly',  price_id: 'price_1Th8LVEHEAcWrG552aPNKRpD', amount: 96000 },
+  { tier: 'pro',     billing: 'yearly',  price_id: 'price_1Th8N8EHEAcWrG55fk6a9vzt', amount: 246000 },
+  { tier: 'agency',  billing: 'yearly',  price_id: 'price_1Th8QBEHEAcWrG55dNLosLZm', amount: 1490400 },
 ];
 
 const out = { harness: 'checkout-session-verification', started_at: new Date().toISOString(), base_url: BASE, probes: [], sessions: [] };
@@ -59,19 +65,19 @@ if (!u?.id) { console.log('FAIL  createUser', JSON.stringify(u).slice(0, 200)); 
 const tok = (await (await fetch(`${SU}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: AK, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })).json()).access_token;
 if (!tok) { console.log('FAIL  signin'); process.exit(1); }
 
-// ── 3 · one session per tier through the live entry path, then expire ──────
-for (const t of TIERS) {
+// ── 3 · sessions through the live entry paths, then expire ─────────────────
+async function verifySession(label, body, amount) {
   const r = await fetch(`${BASE}/api/stripe/checkout`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${tok}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ price_id: t.price_id }),
+    body: JSON.stringify(body),
   });
   const j = await r.json().catch(() => ({}));
-  const rec = { tier: t.tier, price_id: t.price_id, status: r.status, session_id: j.session_id || null, amount_total: j.amount_total ?? null, currency: j.currency || null };
+  const rec = { label, price_id: body.price_id, status: r.status, session_id: j.session_id || null, amount_total: j.amount_total ?? null, currency: j.currency || null };
 
-  check(`${t.tier} · session created via live entry path`, r.status === 200 && !!j.session_id, `status=${r.status} session=${j.session_id || 'none'}`);
-  check(`${t.tier} · currency=usd`, j.currency === 'usd', `currency=${j.currency}`);
-  check(`${t.tier} · amount_total=${t.amount}`, j.amount_total === t.amount, `amount_total=${j.amount_total} ($${(j.amount_total ?? 0) / 100})`);
+  check(`${label} · session created via live entry path`, r.status === 200 && !!j.session_id, `status=${r.status} session=${j.session_id || 'none'}`);
+  check(`${label} · currency=usd`, j.currency === 'usd', `currency=${j.currency}`);
+  check(`${label} · amount_total=${amount}`, j.amount_total === amount, `amount_total=${j.amount_total} ($${(j.amount_total ?? 0) / 100})`);
 
   if (j.session_id) {
     const ex = await fetch(`https://api.stripe.com/v1/checkout/sessions/${j.session_id}/expire`, {
@@ -80,10 +86,25 @@ for (const t of TIERS) {
     const exj = await ex.json().catch(() => ({}));
     rec.expired = exj?.status === 'expired';
     rec.expire_http = ex.status;
-    check(`${t.tier} · session expired`, exj?.status === 'expired', `http=${ex.status} session_status=${exj?.status || exj?.error?.message?.slice(0, 80)}`);
+    check(`${label} · session expired`, exj?.status === 'expired', `http=${ex.status} session_status=${exj?.status || exj?.error?.message?.slice(0, 80)}`);
   }
   out.sessions.push(rec);
 }
+
+// 3a · per tier and interval, in the request shape payment.html sends
+for (const t of TIERS) {
+  await verifySession(`${t.tier} ${t.billing}`, {
+    price_id: t.price_id,
+    success_url: `${BASE}/payment.html?payment=success&plan=${t.tier}`,
+    cancel_url: `${BASE}/payment.html`,
+  }, t.amount);
+}
+
+// 3b · foundation upgrade path, in the request shape js/qb-paywall.js sends:
+// bare price_id, server-default success/cancel URLs.
+await verifySession('founder-path starter (qb-paywall shape)', {
+  price_id: 'price_1Th8JkEHEAcWrG55Abr1OZXe',
+}, 9700);
 
 // ── 4 · cleanup ─────────────────────────────────────────────────────────────
 await fetch(`${SU}/auth/v1/admin/users/${u.id}`, { method: 'DELETE', headers: svc });

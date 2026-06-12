@@ -1,20 +1,25 @@
 // QB BrandOS — POST /api/stripe/checkout
-// Creates a Stripe Checkout Session for any of the three tiers (monthly).
-// Yearly price IDs exist in Stripe but are not sellable here until the
-// annual checkout path is ruled; posting one returns unknown_price_id.
+// Creates a Stripe Checkout Session for any of the three tiers, monthly or
+// yearly. The full six-ID canonical USD price set is sellable as of the
+// annual checkout ruling (operator, 2026-06-12). The webhook recognizes
+// the same six IDs.
 //
 // The Checkout Session sets `client_reference_id` to the user id so the
 // webhook (api/stripe-webhook.js) can map back without an email lookup.
-// `metadata.tier_intent` records the target tier for audit.
+// `metadata.tier_intent` records the target tier for audit; the interval
+// is auditable from the price ID on the session itself.
 
 import { cors, json, resolveUser, readProfile, requireEnv } from '../_lib/auth.js';
 
 export const config = { runtime: 'edge' };
 
 const TIER_BY_PRICE = {
-  [process.env.STRIPE_STARTER_PRICE_ID || 'price_1Th8JkEHEAcWrG55Abr1OZXe']: 'starter',
-  [process.env.STRIPE_PRO_PRICE_ID     || 'price_1Th8MKEHEAcWrG55hxpLVfCZ']: 'pro',
-  [process.env.STRIPE_AGENCY_PRICE_ID  || 'price_1Th8OWEHEAcWrG55FNZKvxXY']: 'agency',
+  [process.env.STRIPE_STARTER_PRICE_ID        || 'price_1Th8JkEHEAcWrG55Abr1OZXe']: 'starter',
+  [process.env.STRIPE_STARTER_ANNUAL_PRICE_ID || 'price_1Th8LVEHEAcWrG552aPNKRpD']: 'starter',
+  [process.env.STRIPE_PRO_PRICE_ID            || 'price_1Th8MKEHEAcWrG55hxpLVfCZ']: 'pro',
+  [process.env.STRIPE_PRO_ANNUAL_PRICE_ID     || 'price_1Th8N8EHEAcWrG55fk6a9vzt']: 'pro',
+  [process.env.STRIPE_AGENCY_PRICE_ID         || 'price_1Th8OWEHEAcWrG55FNZKvxXY']: 'agency',
+  [process.env.STRIPE_AGENCY_ANNUAL_PRICE_ID  || 'price_1Th8QBEHEAcWrG55dNLosLZm']: 'agency',
 };
 
 // All three tiers sellable as of the USD pricing swap run (operator ruling,

@@ -3037,6 +3037,12 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
           if (el.textContent.indexOf('forever') !== -1) return;
           el.textContent = mode === 'annual' ? '/ month, billed yearly' : '/ month';
         });
+        // Carry the interval into the payment page so checkout sells
+        // the price the card displays.
+        document.querySelectorAll('.price-card a[href*="payment.html?plan="]').forEach(function (a) {
+          var base = a.getAttribute('href').split('&billing=')[0];
+          a.setAttribute('href', mode === 'annual' ? base + '&billing=annual' : base);
+        });
       });
     });
   })();

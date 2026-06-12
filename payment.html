@@ -1448,6 +1448,44 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   color: var(--ink);
 }
 
+/* Billing toggle — same shape as the ecosystem pricing toggle,
+   expressed in this page's local tokens. */
+.billing-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  width: fit-content;
+  margin: 0 auto 2rem;
+  background: var(--cream-card);
+  border: 2px solid var(--ink);
+  border-radius: 9999px;
+}
+.bt-opt {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0.55em 1.2em;
+  border-radius: 9999px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-75);
+  transition: background 0.4s cubic-bezier(0.19,1,0.22,1),
+              color 0.4s cubic-bezier(0.19,1,0.22,1);
+}
+.bt-opt.active { background: var(--ink); color: var(--cream); }
+.bt-save {
+  margin-left: 0.4em;
+  padding: 0.2em 0.6em;
+  border-radius: 9999px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+}
+
 /* Plan card — sits on the .glass-card base from earlier sweeps,
    adds inner spacing and the plan-specific structure. */
 .plan-card {
@@ -1735,11 +1773,18 @@ function toggleTheme() {
 const CONFIG = {
   STRIPE_PUBLISHABLE_KEY: 'pk_live_51T4LrnEHEAcWrG55GLqBVJyczc4WGgSQEKaZOOLE0lr8lZSlvpeyfxN1YgtXoOtbTHF97qB5C0D2MC48lrOVhVJ005iEJWgbZ',
 
-  // Canonical USD monthly price IDs. Must match api/stripe/checkout.js.
+  // Canonical USD price IDs, both intervals. Must match api/stripe/checkout.js.
   PRICES: {
-    starter: 'price_1Th8JkEHEAcWrG55Abr1OZXe',
-    pro:     'price_1Th8MKEHEAcWrG55hxpLVfCZ',
-    agency:  'price_1Th8OWEHEAcWrG55FNZKvxXY',
+    monthly: {
+      starter: 'price_1Th8JkEHEAcWrG55Abr1OZXe',
+      pro:     'price_1Th8MKEHEAcWrG55hxpLVfCZ',
+      agency:  'price_1Th8OWEHEAcWrG55FNZKvxXY',
+    },
+    annual: {
+      starter: 'price_1Th8LVEHEAcWrG552aPNKRpD',
+      pro:     'price_1Th8N8EHEAcWrG55fk6a9vzt',
+      agency:  'price_1Th8QBEHEAcWrG55dNLosLZm',
+    },
   },
 
   // SUCCESS_URL points back to THIS page so the URL param handler fires correctly
@@ -1771,12 +1816,15 @@ try {
   console.warn('Stripe.js init failed:', e.message);
 }
 
+// Annual display numbers are the yearly Stripe charge divided by 12:
+// $960/yr → $80, $2,460/yr → $205, $14,904/yr → $1,242. Save 17%.
 const PLANS = [
   {
     id: 'starter',
     name: 'Starter',
     price: '$97',
-    per: '/month',
+    annualPrice: '$80',
+    annualTotal: '$960',
     desc: 'Full access to all 20 tools. Unlimited runs. Your complete brand OS.',
     features: ['All 20 agent tools', 'Unlimited runs', 'QBP saved and connected', 'Gemini free tier compatible', 'Email support'],
     popular: false,
@@ -1785,7 +1833,8 @@ const PLANS = [
     id: 'pro',
     name: 'Pro',
     price: '$247',
-    per: '/month',
+    annualPrice: '$205',
+    annualTotal: '$2,460',
     desc: 'Everything in Starter plus Predictive Panel and quarterly strategy access.',
     features: ['Everything in Starter', '5 Predictive Panel runs/month', 'Priority support', 'Quarterly strategy access', 'Early access to new tools'],
     popular: true,
@@ -1794,15 +1843,20 @@ const PLANS = [
     id: 'agency',
     name: 'Agency',
     price: '$1,497',
-    per: '/month',
+    annualPrice: '$1,242',
+    annualTotal: '$14,904',
     desc: 'Up to 5 client workspaces. Unlimited panels. Your brand on every output.',
     features: ['Up to 5 client workspaces', 'Unlimited Predictive Panel runs', 'Agency brand on all outputs', 'Dedicated support', 'Custom onboarding'],
     popular: false,
   },
 ];
 
+function planPrice(plan)  { return billing === 'annual' ? plan.annualPrice : plan.price; }
+function planPer(plan)    { return billing === 'annual' ? '/month, billed ' + plan.annualTotal + ' yearly' : '/month'; }
+
 // view: 'plans' | 'auth' | 'confirm-email' | 'processing' | 'success' | 'error'
 let view         = 'plans';
+let billing      = 'monthly'; // 'monthly' | 'annual'
 let selectedPlan = null;
 let errorMsg     = '';
 let authMode     = 'signup';
@@ -1846,13 +1900,20 @@ function renderPlans() {
     html += '<div class="warn-msg">⚠ Payment gate not configured. Add your Stripe keys to payment.html CONFIG object.</div>';
   }
 
+  html += `
+    <div class="billing-toggle" role="tablist" aria-label="Billing period">
+      <button type="button" class="bt-opt ${billing === 'monthly' ? 'active' : ''}" role="tab" aria-selected="${billing === 'monthly'}" onclick="setBilling('monthly')">Monthly</button>
+      <button type="button" class="bt-opt ${billing === 'annual' ? 'active' : ''}" role="tab" aria-selected="${billing === 'annual'}" onclick="setBilling('annual')">Annual <span class="bt-save">save 17%</span></button>
+    </div>
+  `;
+
   PLANS.forEach(plan => {
     html += `
       <div
         class="glass-card plan-card ${plan.popular ? 'is-popular' : ''}"
         role="button"
         tabindex="0"
-        aria-label="Select ${plan.name} plan at ${plan.price} per month"
+        aria-label="Select ${plan.name} plan at ${planPrice(plan)} per month${billing === 'annual' ? ', billed yearly' : ''}"
         onclick="selectPlan('${plan.id}')"
         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPlan('${plan.id}')}"
       >
@@ -1863,8 +1924,8 @@ function renderPlans() {
               ${plan.popular ? '<span class="plan-badge">Most Popular</span>' : ''}
             </div>
             <div class="plan-price-row">
-              <span class="plan-price">${plan.price}</span>
-              <span class="plan-per">${plan.per}</span>
+              <span class="plan-price">${planPrice(plan)}</span>
+              <span class="plan-per">${planPer(plan)}</span>
             </div>
           </div>
           <div class="plan-arrow" aria-hidden="true">→</div>
@@ -1907,7 +1968,7 @@ function renderAuth() {
   `;
 
   if (plan) {
-    html += `<div class="auth-badge">${plan.name} · ${plan.price}/month</div>`;
+    html += `<div class="auth-badge">${plan.name} · ${planPrice(plan)}${planPer(plan)}</div>`;
   }
 
   html += `
@@ -2010,6 +2071,11 @@ window.switchToLogin = function() {
 window.toggleAuthMode = function() {
   authMode = authMode === 'signup' ? 'login' : 'signup';
   errorMsg = '';
+  render();
+};
+
+window.setBilling = function(mode) {
+  billing = mode === 'annual' ? 'annual' : 'monthly';
   render();
 };
 
@@ -2129,7 +2195,7 @@ async function redirectToStripe(email) {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + session.token, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        price_id: CONFIG.PRICES[selectedPlan],
+        price_id: CONFIG.PRICES[billing][selectedPlan],
         success_url: CONFIG.SUCCESS_URL + '&plan=' + selectedPlan,
         cancel_url: CONFIG.CANCEL_URL,
       }),
@@ -2170,10 +2236,12 @@ if (urlParams.get('payment') === 'success') {
   }
   view = 'success';
 } else {
-  // Pricing page CTAs deep-link with ?plan=starter|pro|agency.
-  // Pre-select that plan so the user lands directly on the auth (email) step.
+  // Pricing page CTAs deep-link with ?plan=starter|pro|agency and an
+  // optional &billing=annual carried over from the pricing toggle.
+  // Pre-select so the user lands directly on the auth (email) step.
   const incomingPlan = urlParams.get('plan');
   const PLAN_IDS = ['starter', 'pro', 'agency'];
+  if (urlParams.get('billing') === 'annual') billing = 'annual';
   if (incomingPlan && PLAN_IDS.indexOf(incomingPlan) !== -1) {
     selectedPlan = incomingPlan;
     view = 'auth';
