@@ -112,7 +112,7 @@ Cure: #191 replaced the EUR Payment Links with the canonical USD six-ID price se
 3. **CAL three-round cap** · advisory at the surface layer (chapter-2 adjudication; no framework loop counter). A determined founder can rerun past three rounds via the API. Accepted at current scale.
 4. **Archive chain-node phase tag** · qb-archive.js hardcodes phase '01' on chain-tree nodes, which would mislabel a Phase 02 artifact rendered via the chain tree. The three Phase 02 agents never chain (triggers are manual/regenerate), so it does not surface today. Fix-forward if it ever does.
 5. **Reading surface live render** · asserted by source coverage, not exercised by a live browser this run. A WCAG audit and a live render check remain chapter-deferred.
-6. **FILE_TEST_AGENT in production env** · chapter-3 carryover, operator-only. Not touched this chapter.
+6. **FILE_TEST_AGENT** · removed from the production environment and verified absent (operator-confirmed, Comet-audited). No longer a carried item; recorded here for the ledger.
 
 ---
 
