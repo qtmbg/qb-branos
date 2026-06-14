@@ -26,6 +26,28 @@ const PHASE_LABELS = {
   '05': 'Intelligence',
 };
 
+// Tier ladder · mirrors CANONICAL_TIERS in agents/contract.js. The client
+// pre-gates a paid agent's card so a free founder sees an upgrade
+// affordance instead of a Run button; the server tier gate
+// (api/agents/dispatch.js) is the real wall and fails closed regardless.
+const TIER_LADDER = ['free', 'starter', 'pro', 'agency', 'atelier'];
+function tierAllows(userTier, requiredTier) {
+  if (!requiredTier) return true;
+  const u = TIER_LADDER.indexOf(String(userTier || 'free').toLowerCase());
+  const r = TIER_LADDER.indexOf(String(requiredTier).toLowerCase());
+  if (u === -1 || r === -1) return false; // unknown tier · fail closed in the UI
+  return u >= r;
+}
+
+// Agents that require a logo image attached before a first run. Mirrors
+// each agent's META.inputs.files[optional:false] of type 'logo-image'.
+const LOGO_FILE_AGENTS = new Set(['logo_evaluation_agent']);
+
+// Surface-layer Content Approval Loop cap (chapter-2 adjudication: no loop
+// counter at the framework layer; the cap renders at the surface and is
+// advisory · the API permits more). Founder-facing refinement rounds.
+const CAL_MAX_ROUNDS = 3;
+
 // §5.8.1 canonical user-action copy. The Console renders these for
 // user-fixable error codes only · transient + operator codes render
 // the generic copy below.
@@ -37,6 +59,43 @@ const USER_ACTION_COPY = {
   missing_inputs: (agent) =>
     `${agent} needs a file you haven't uploaded yet. Add the required file, then re-run.`,
 };
+
+// Founder-facing copy for the dispatch entry's 4xx codes (POST
+// /api/agents/dispatch). Maps the named server error to a plain next step.
+// missing_dependency on the dispatch path is a first-run precondition (the
+// founder has not finished Phase 01), so the copy routes them back rather
+// than promising an automatic run.
+function dispatchErrorCopy(agent, body) {
+  const name = agent.display_name;
+  switch (body?.error) {
+    case 'tier_insufficient':
+    case 'tier_unverified':
+      return `${name} is part of a paid plan. Upgrade to run it.`;
+    case 'missing_dependency': {
+      const slug = body.missing_slug ? prettyDep(body.missing_slug) : 'your foundation';
+      return `${name} needs ${slug} first. Finish that Phase 01 exercise, then run this.`;
+    }
+    case 'missing_inputs':
+      return LOGO_FILE_AGENTS.has(agent.slug)
+        ? `${name} needs a logo image. Attach one, then run.`
+        : `${name} needs a file you haven't attached yet.`;
+    case 'dispatch_in_flight':
+      return `${name} is already running. Watch this card for the result.`;
+    default:
+      return `Could not start ${name}: ${body?.detail || body?.error || 'unknown error'}`;
+  }
+}
+
+// soul_map_synthesizer -> "your Soul Map", etc. Plain founder language for
+// the dependency the first run is missing.
+const DEP_PRETTY = {
+  soul_map_synthesizer: 'your Soul Map',
+  visual_dna_synthesizer: 'your Visual DNA',
+  war_table_synthesizer: 'your War Table',
+};
+function prettyDep(slug) {
+  return DEP_PRETTY[slug] || slug.replace(/_/g, ' ').replace(/ synthesizer$/, '');
+}
 
 const TRANSIENT_COPY = 'Run failed. The system is retrying automatically.';
 const PERMANENTLY_FAILED_COPY = 'Run failed after multiple attempts. Try a manual rerun.';
@@ -222,9 +281,157 @@ function rerunCtas(agent, opts) {
   return wrap;
 }
 
+/* ─── first-run CTA (chapter-4 step-4 founder dispatch entry) ─ */
+// Rendered when an agent has no delivered artifact and nothing in flight:
+// the founder's first press. POSTs to /api/agents/dispatch via opts.onDispatch.
+// For agents that require a logo image (logo_evaluation_agent), a file input
+// gates the Run button until a vision-readable image is attached. Client
+// checks are advisory; the dispatch endpoint re-validates MIME + 5 MB + owner.
+function firstRunCta(agent, opts) {
+  const needsFile = LOGO_FILE_AGENTS.has(agent.slug);
+  const wrap = el('div', { class: 'agent-first-run' });
+  let attached = null;
+
+  const runBtn = el('button', {
+    class: 'qb-button is-primary is-sm',
+    type: 'button',
+    disabled: needsFile,
+    title: needsFile
+      ? 'Attach a logo image, then run the first evaluation.'
+      : 'Run this agent for the first time against your live QBP.',
+    on: { click: () => opts.onDispatch({ agent, file: attached }) },
+  }, [el('span', { class: 'qb-button_content' }, needsFile ? 'Run evaluation' : 'Run')]);
+
+  if (needsFile) {
+    const note = el('div', { class: 'agent-first-run_note' });
+    const input = el('input', {
+      type: 'file',
+      accept: 'image/png,image/jpeg,image/webp',
+      class: 'agent-first-run_file',
+      'aria-label': `Attach a logo image for ${agent.display_name}`,
+      on: {
+        change: (e) => {
+          const f = e.target.files && e.target.files[0];
+          const check = f ? validateLogoFile(f) : { ok: false, msg: '' };
+          if (f && !check.ok) {
+            attached = null;
+            runBtn.disabled = true;
+            note.textContent = check.msg;
+            note.dataset.err = '1';
+            e.target.value = '';
+            return;
+          }
+          attached = f || null;
+          runBtn.disabled = !attached;
+          note.textContent = attached ? `Attached ${attached.name}` : '';
+          delete note.dataset.err;
+        },
+      },
+    });
+    wrap.appendChild(el('label', { class: 'agent-first-run_file-label' }, [
+      'Attach a logo image (PNG, JPEG or WebP, up to 5 MB)', input,
+    ]));
+    wrap.appendChild(note);
+  }
+
+  wrap.appendChild(runBtn);
+  return wrap;
+}
+
+// Advisory client-side logo-file check, mirroring the dispatch endpoint's
+// vision discipline (VISION_READABLE_MIME + 5 MB). SVG gets the same
+// PNG-export instruction the server returns, before the upload.
+const VISION_CLIENT_MIME = new Set(['image/png', 'image/jpeg', 'image/webp']);
+const VISION_CLIENT_CAP_BYTES = 5 * 1024 * 1024;
+function validateLogoFile(file) {
+  if (file.type === 'image/svg+xml' || /\.svg$/i.test(file.name)) {
+    return { ok: false, msg: 'SVG cannot be read. Export your logo as PNG and attach that file.' };
+  }
+  if (!VISION_CLIENT_MIME.has(file.type)) {
+    return { ok: false, msg: 'Use a PNG, JPEG or WebP image.' };
+  }
+  if (file.size > VISION_CLIENT_CAP_BYTES) {
+    return { ok: false, msg: 'That image is over 5 MB. Export a smaller PNG and attach that.' };
+  }
+  return { ok: true, msg: '' };
+}
+
+/* ─── Content Approval Loop · feedback box on delivered artifacts ─ */
+// chapter-4 step-4 call 5. Renders under the rerun CTAs on a delivered
+// artifact: a feedback textarea wired to the rerun path's runtime_args.feedback
+// (the server pipe is ready in /api/agents/rerun + /api/agents/dispatch).
+// The three-round cap is a surface-layer advisory (round count tracked in
+// the renderConsole session); a determined founder can still rerun.
+function calFeedbackBox(agent, opts) {
+  const round = opts.revisionRound || 0;
+  const wrap = el('details', { class: 'agent-cal' });
+  wrap.appendChild(el('summary', { class: 'agent-cal_summary' }, 'Refine with feedback'));
+
+  if (round >= CAL_MAX_ROUNDS) {
+    wrap.appendChild(el('p', { class: 'agent-cal_note' },
+      `You have used your ${CAL_MAX_ROUNDS} refinement rounds for this artifact. Rerun starts a fresh take.`));
+    return wrap;
+  }
+
+  const ta = el('textarea', {
+    class: 'agent-cal_input qb-field',
+    rows: '3',
+    placeholder: 'What should change? Be specific. The agent applies this concretely.',
+    'aria-label': `Revision feedback for ${agent.display_name}`,
+  });
+  const send = el('button', {
+    class: 'qb-button is-primary is-sm',
+    type: 'button',
+    title: 'Rerun this agent with your feedback applied.',
+    on: {
+      click: () => {
+        const fb = ta.value.trim();
+        if (!fb) { ta.focus(); return; }
+        opts.onRefine({ agent, feedback: fb });
+      },
+    },
+  }, [el('span', { class: 'qb-button_content' },
+    round > 0 ? `Refine · round ${round + 1} of ${CAL_MAX_ROUNDS}` : 'Refine')]);
+
+  wrap.appendChild(ta);
+  wrap.appendChild(el('div', { class: 'agent-cal_actions' }, [send]));
+  return wrap;
+}
+
+/* ─── tier-locked agent card (free founder, paid agent) ──────── */
+// A paid agent the founder's tier cannot run yet. Shows the agent and an
+// upgrade affordance instead of a Run button. The server tier gate is the
+// real wall; this is the founder-facing pre-empt.
+function tierLockedAgentRow(agent, userTier) {
+  const row = el('div', { class: 'agent-row agent-row_phase agent-row_tier-locked' });
+  row.appendChild(el('div', { class: 'agent-row_header' }, [
+    el('span', { class: 'agent-locked-glyph', 'aria-hidden': 'true' }, '◐'),
+    el('div', { class: 'agent-row_name' }, [
+      el('div', { class: 'agent-row_name-title' }, agent.display_name),
+      el('div', { class: 'agent-row_name-meta' },
+        `Requires ${String(agent.tier_required || 'starter').replace(/^\w/, c => c.toUpperCase())} tier`),
+    ]),
+  ]));
+  row.appendChild(el('p', { class: 'agent-row_description' }, agent.description));
+  row.appendChild(el('div', { class: 'agent-row_ctas' }, [
+    el('a', {
+      class: 'qb-button is-primary is-sm',
+      href: '/payment.html',
+    }, [el('span', { class: 'qb-button_content' }, 'Upgrade to run')]),
+  ]));
+  return row;
+}
+
 /* ─── Phase view · Phase 01 row ──────────────────────────── */
 function phaseAgentRow(agent, opts) {
   const row = el('div', { class: 'agent-row agent-row_phase' });
+
+  const inflight = Boolean(agent.inflight_dispatch_id);
+  const hasDelivered = Boolean(agent.latest_artifact && agent.latest_artifact.status === 'delivered');
+  // inflight is the authoritative producing signal · override the pill so a
+  // queued-while-prior-delivered dispatch reads "Producing", not "Delivered".
+  const pillStatus = inflight ? 'generating'
+    : (agent.latest_run?.status || agent.latest_artifact?.status || 'queued');
 
   const header = el('div', { class: 'agent-row_header' }, [
     healthDot(agent.health?.dot || 'neutral'),
@@ -233,7 +440,7 @@ function phaseAgentRow(agent, opts) {
       el('div', { class: 'agent-row_name-meta' },
         `${agent.model.startsWith('claude-haiku') ? 'Haiku' : 'Sonnet'} · retry_budget ${agent.retry_budget}`),
     ]),
-    statusPill(agent.latest_run?.status || agent.latest_artifact?.status || 'queued'),
+    statusPill(pillStatus),
   ]);
 
   const description = el('p', { class: 'agent-row_description' }, agent.description);
@@ -257,30 +464,48 @@ function phaseAgentRow(agent, opts) {
       ])
     : null;
 
-  // Failure copy (user-fixable or generic) below the meta line.
-  const errStatus = agent.permanently_failed_dispatch_id ? 'failed_permanently'
+  // Failure copy (user-fixable or generic) below the meta line. An inflight
+  // dispatch supersedes a stale failure (the founder already pressed run again).
+  const errStatus = inflight ? null
+    : agent.permanently_failed_dispatch_id ? 'failed_permanently'
     : (agent.latest_artifact?.status === 'failed' || agent.latest_run?.status === 'failed') ? 'failed'
     : null;
   if (errStatus) {
-    const copy = userActionCopy(agent, agent.latest_run?.error_payload) || genericFailedCopy(errStatus);
+    // A failed first-run manual dispatch settles to dispatch_jobs.status
+    // 'partial' (single-agent), which the reaper never retries, so the
+    // generic "the system is retrying automatically" copy would lie. For a
+    // first run with no delivered artifact, point at the Run button instead.
+    // User-fixable copy (qbp/dependency/inputs) still wins where it applies.
+    let copy = userActionCopy(agent, agent.latest_run?.error_payload);
+    if (!copy) {
+      copy = (!hasDelivered && opts.onDispatch)
+        ? 'Run did not finish. Press Run to try again.'
+        : genericFailedCopy(errStatus);
+    }
     row.dataset.failed = '1';
     row.appendChild(header);
     row.appendChild(description);
     row.appendChild(meta);
     if (rollingBadges) row.appendChild(rollingBadges);
     row.appendChild(el('div', { class: 'agent-row_failure-copy' }, copy));
-    // Manual retry CTA for permanent failure per §5.5.
-    if (errStatus === 'failed_permanently') {
-      row.appendChild(el('div', { class: 'agent-row_ctas' }, [
-        el('button', {
-          class: 'qb-button is-primary is-sm',
-          type: 'button',
-          on: { click: () => opts.onRerun({ agent, source: 'current' }) },
-        }, [el('span', { class: 'qb-button_content' }, 'Retry manually')]),
-      ]));
-    } else {
-      const ctas = rerunCtas(agent, opts);
-      if (ctas) row.appendChild(el('div', { class: 'agent-row_ctas' }, [ctas]));
+    // Recovery CTA. A failed run with a prior delivered artifact reruns from
+    // it; a failed FIRST run (no delivered artifact) re-dispatches through the
+    // founder entry, reusing the file-attach affordance where required.
+    if (hasDelivered) {
+      if (errStatus === 'failed_permanently') {
+        row.appendChild(el('div', { class: 'agent-row_ctas' }, [
+          el('button', {
+            class: 'qb-button is-primary is-sm',
+            type: 'button',
+            on: { click: () => opts.onRerun({ agent, source: 'current' }) },
+          }, [el('span', { class: 'qb-button_content' }, 'Retry manually')]),
+        ]));
+      } else {
+        const ctas = rerunCtas(agent, opts);
+        if (ctas) row.appendChild(el('div', { class: 'agent-row_ctas' }, [ctas]));
+      }
+    } else if (opts.onDispatch) {
+      row.appendChild(el('div', { class: 'agent-row_ctas' }, [firstRunCta(agent, opts)]));
     }
     return row;
   }
@@ -289,8 +514,25 @@ function phaseAgentRow(agent, opts) {
   row.appendChild(description);
   row.appendChild(meta);
   if (rollingBadges) row.appendChild(rollingBadges);
-  const ctas = rerunCtas(agent, opts);
-  if (ctas) row.appendChild(el('div', { class: 'agent-row_ctas' }, [ctas]));
+
+  if (inflight) {
+    // Producing state · a disabled affordance so the optimistic flip
+    // survives a repaint and the founder sees work in progress.
+    row.appendChild(el('div', { class: 'agent-row_ctas' }, [
+      el('button', { class: 'qb-button is-secondary is-sm', type: 'button', disabled: true },
+        [el('span', { class: 'qb-button_content' }, 'Producing…')]),
+    ]));
+    return row;
+  }
+
+  if (hasDelivered) {
+    const ctas = rerunCtas(agent, opts);
+    if (ctas) row.appendChild(el('div', { class: 'agent-row_ctas' }, [ctas]));
+    if (opts.onRefine) row.appendChild(calFeedbackBox(agent, opts));
+  } else if (opts.onDispatch) {
+    // First-run entry · the founder's first press for this agent.
+    row.appendChild(el('div', { class: 'agent-row_ctas' }, [firstRunCta(agent, opts)]));
+  }
   return row;
 }
 
@@ -568,6 +810,10 @@ export function renderConsole(container, payload, opts) {
   const thresholds = payload.thresholds || {
     retry_gold: 0.1, retry_rose: 0.5, latency_gold_ms: 20_000, latency_rose_ms: 23_000,
   };
+  // Surface-layer Content Approval Loop round count, keyed by agent slug.
+  // Advisory only (chapter-2 adjudication); persists across in-session
+  // refetches, resets on full reload.
+  const revisionRounds = {};
 
   const shell = el('div', { class: 'console-shell' });
 
@@ -616,25 +862,52 @@ export function renderConsole(container, payload, opts) {
       return;
     }
 
-    // Phase 01 section · live agents.
-    viewMount.appendChild(el('section', { class: 'phase-section phase-section_active' }, [
-      el('div', { class: 'phase-section_header' }, [
-        el('span', { class: 'qb-tag is-teal' }, [
-          el('span', { class: 'qb-tag_content' }, 'Phase 01'),
+    // Live agents grouped by phase. Phase 01 (Discovery) and, since
+    // chapter-4 step 4, Phase 02 (Brand Creation) render as live sections.
+    // Each card decides its own affordance: first-run, producing, rerun +
+    // refine, or (for a paid agent above the founder's tier) an upgrade row.
+    const agents = livePayload.agents || [];
+    const byPhase = {};
+    for (const a of agents) {
+      const p = a.phase || '01';
+      (byPhase[p] = byPhase[p] || []).push(a);
+    }
+    for (const phase of Object.keys(byPhase).sort()) {
+      const tagClass = phase === '01' ? 'is-teal' : 'is-gold';
+      viewMount.appendChild(el('section', { class: 'phase-section phase-section_active' }, [
+        el('div', { class: 'phase-section_header' }, [
+          el('span', { class: `qb-tag ${tagClass}` }, [
+            el('span', { class: 'qb-tag_content' }, `Phase ${phase}`),
+          ]),
+          el('h2', { class: 'phase-section_title' }, PHASE_LABELS[phase] || `Phase ${phase}`),
         ]),
-        el('h2', { class: 'phase-section_title' }, PHASE_LABELS['01']),
-      ]),
-      el('div', { class: 'phase-section_agents' }, (livePayload.agents || []).map(a =>
-        phaseAgentRow(a, {
-          onRerun: ({ agent, source }) => triggerRerun(agent, source),
-        })
-      )),
-    ]));
+        el('div', { class: 'phase-section_agents' }, byPhase[phase].map(renderAgentCard)),
+      ]));
+    }
 
-    // Locked phase cards · Phase 02-05. Tier-aware copy per step 9 §3.2.
+    // Locked phase cards · Phase 03-05 (Phase 02 retired at step 4, now live).
+    // Tier-aware copy per step 9 §3.2.
     for (const card of (livePayload.locked_phase_cards || [])) {
       viewMount.appendChild(lockedPhaseCard(card, tier));
     }
+  }
+
+  // Per-agent card dispatcher · tier pre-empt then the full live card.
+  // The pre-empt mirrors the server tier gate exactly: it fires only for
+  // phase >= '02' (api/agents/run.js + dispatch.js gate that range). Phase
+  // 01 agents are never gated at dispatch, so they render normally for every
+  // tier even where their META declares a higher tier_required.
+  function renderAgentCard(agent) {
+    const tierGated = String(agent.phase || '01') >= '02';
+    if (tierGated && !tierAllows(tier, agent.tier_required)) {
+      return tierLockedAgentRow(agent, tier);
+    }
+    return phaseAgentRow(agent, {
+      onRerun:    ({ agent, source }) => triggerRerun(agent, source),
+      onDispatch: ({ agent, file }) => triggerDispatch(agent, file),
+      onRefine:   ({ agent, feedback }) => triggerRefine(agent, feedback),
+      revisionRound: revisionRounds[agent.slug] || 0,
+    });
   }
 
   function paintRunHistoryView() {
@@ -695,6 +968,100 @@ export function renderConsole(container, payload, opts) {
     } catch (e) {
       alert(`Rerun failed: ${e?.message || e}`);
     }
+  }
+
+  // chapter-4 step-4 · founder first-run dispatch. POSTs to
+  // /api/agents/dispatch (the contract-conformant first-run entry). For
+  // logo_evaluation_agent the attached image is uploaded to the user's
+  // storage first, then passed as files:[{path,type:'logo-image'}]. On 202
+  // the card flips optimistically to producing and the existing realtime /
+  // poll refetch reconciles with server truth (no hard reload).
+  async function triggerDispatch(agent, file) {
+    if (!session?.token) { alert('Sign in to run your agents.'); return; }
+
+    let files;
+    if (LOGO_FILE_AGENTS.has(agent.slug)) {
+      if (!file) { alert(`${agent.display_name} needs a logo image. Attach one, then run.`); return; }
+      const check = validateLogoFile(file);
+      if (!check.ok) { alert(check.msg); return; }
+      let objPath;
+      try {
+        objPath = await uploadLogoImage(file);
+      } catch (e) {
+        alert(`Could not upload your logo: ${e?.message || e}`);
+        return;
+      }
+      files = [{ path: objPath, type: 'logo-image' }];
+    }
+
+    let res, body;
+    try {
+      res = await fetch('/api/agents/dispatch', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.token}`, 'content-type': 'application/json' },
+        body: JSON.stringify(files ? { agent_slug: agent.slug, files } : { agent_slug: agent.slug }),
+      });
+      body = await res.json().catch(() => ({}));
+    } catch (e) {
+      alert(`Could not start ${agent.display_name}: ${e?.message || e}`);
+      return;
+    }
+
+    if (res.status === 202) {
+      // Optimistic flip · the agent is a live reference in livePayload.agents.
+      agent.inflight_dispatch_id = body.dispatch_id || 'pending';
+      paintView();
+      refetchAndRepaint();
+      return;
+    }
+    // 4xx → founder-facing copy mapped from the named dispatch error.
+    alert(dispatchErrorCopy(agent, body));
+  }
+
+  // chapter-4 step-4 · Content Approval Loop. Sends founder feedback through
+  // the rerun path (runtime_args.feedback), bumps the surface-layer round
+  // count, and reconciles via refetch. The cap is advisory (the API allows
+  // more); the surface stops offering the box at CAL_MAX_ROUNDS.
+  async function triggerRefine(agent, feedback) {
+    if (!session?.token) { alert('Sign in to refine.'); return; }
+    if (!agent.latest_artifact?.id) { alert('No delivered artifact to refine yet.'); return; }
+    let res, body;
+    try {
+      res = await fetch('/api/agents/rerun', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.token}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ artifact_id: agent.latest_artifact.id, qbp_source: 'current', feedback }),
+      });
+      body = await res.json().catch(() => ({}));
+    } catch (e) {
+      alert(`Could not send your feedback: ${e?.message || e}`);
+      return;
+    }
+    if (!res.ok) { alert(dispatchErrorCopy(agent, body)); return; }
+    revisionRounds[agent.slug] = (revisionRounds[agent.slug] || 0) + 1;
+    agent.inflight_dispatch_id = body.dispatch_id || 'pending';
+    paintView();
+    refetchAndRepaint();
+  }
+
+  // Direct storage upload for a single logo image, mirroring the harness +
+  // qb-file-upload path: POST the bytes to the user's namespace in the
+  // user-uploads bucket under the JWT. Returns the bucket-relative object
+  // path ({userId}/{uuid}.{ext}) the dispatch endpoint signs server-side.
+  async function uploadLogoImage(file) {
+    const QB = window.QB || {};
+    const supaUrl = QB.SUPA_URL, anon = QB.SUPA_KEY;
+    const userId = session.userId || session.user?.id;
+    if (!supaUrl || !anon || !userId) throw new Error('storage not configured');
+    const ext = ({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp' })[file.type] || 'png';
+    const objPath = `${userId}/${crypto.randomUUID()}.${ext}`;
+    const r = await fetch(`${supaUrl}/storage/v1/object/user-uploads/${objPath}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${session.token}`, apikey: anon, 'Content-Type': file.type },
+      body: file,
+    });
+    if (!r.ok) throw new Error(`upload ${r.status}`);
+    return objPath;
   }
 
   // Step 9C · Realtime subscription via the shared QBRealtimeManager.
@@ -783,6 +1150,21 @@ export function renderConsole(container, payload, opts) {
       .agent-row_ctas { margin-top: 0.8em; }
       .agent-rerun-ctas { display: flex; gap: 0.6em; flex-wrap: wrap; }
       @media (max-width: 480px) { .agent-rerun-ctas { flex-direction: column; align-items: stretch; } }
+
+      .agent-first-run { display: flex; flex-direction: column; gap: 0.5em; align-items: flex-start; }
+      .agent-first-run_file-label { display: flex; flex-direction: column; gap: 0.3em; font-size: 0.82em; color: rgba(45, 21, 33, 0.7); }
+      .agent-first-run_file { font: inherit; font-size: 0.85em; }
+      .agent-first-run_note { font-size: 0.78em; color: rgba(45, 21, 33, 0.6); }
+      .agent-first-run_note[data-err] { color: var(--rose-deep, #B8704D); }
+
+      .agent-row_tier-locked { opacity: 0.85; }
+      .agent-row_tier-locked .agent-row_header { gap: 0.5em; }
+
+      .agent-cal { margin-top: 0.7em; border-top: 1px dashed rgba(45, 21, 33, 0.14); padding-top: 0.6em; }
+      .agent-cal_summary { cursor: pointer; font-size: 0.85em; color: rgba(45, 21, 33, 0.72); }
+      .agent-cal_input { width: 100%; margin-top: 0.5em; font: inherit; font-size: 0.9em; padding: 0.5em 0.6em; border: 1.5px solid rgba(45, 21, 33, 0.25); border-radius: 0.4em; background: var(--cream, #FBF7F0); resize: vertical; }
+      .agent-cal_actions { margin-top: 0.5em; }
+      .agent-cal_note { font-size: 0.82em; color: rgba(45, 21, 33, 0.6); margin: 0.5em 0 0; }
 
       .agent-badge { display: inline-block; font-family: var(--font-mono, 'JetBrains Mono', monospace); font-size: 0.7em; padding: 0.2em 0.5em; border-radius: 0.3em; background: rgba(45, 21, 33, 0.06); }
       .agent-badge_muted { color: rgba(45, 21, 33, 0.5); }

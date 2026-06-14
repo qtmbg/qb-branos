@@ -16,12 +16,12 @@
  *   5. Teardown debris-free (rows, users, storage objects).
  *
  * Usage: node tests/chapter-04/logo-evaluation-agent.mjs
- * Env: /tmp/.env.qb-branos.live-backup
+ * Env: .env.qb-branos.live (repo root, gitignored · vercel env pull) or QB_ENV_FILE
  */
 
 import fs from 'node:fs';
 
-const ENV_PATH = '/tmp/.env.qb-branos.live-backup';
+const ENV_PATH = process.env.QB_ENV_FILE || '.env.qb-branos.live';
 const BASE = process.env.QB_BASE || 'https://quantumbranding.ai';
 const AGENT = 'logo_evaluation_agent';
 const LOGO_FIXTURE = 'img/brand/mark-app-icon-1024.png'; // a real logo PNG, in-repo

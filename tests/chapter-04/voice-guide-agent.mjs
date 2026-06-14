@@ -14,12 +14,12 @@
  * trigger 'manual'. Self-teardown per the step-3E pattern.
  *
  * Usage: node tests/chapter-04/voice-guide-agent.mjs
- * Env: /tmp/.env.qb-branos.live-backup
+ * Env: .env.qb-branos.live (repo root, gitignored · vercel env pull) or QB_ENV_FILE
  */
 
 import fs from 'node:fs';
 
-const ENV_PATH = '/tmp/.env.qb-branos.live-backup';
+const ENV_PATH = process.env.QB_ENV_FILE || '.env.qb-branos.live';
 const BASE = process.env.QB_BASE || 'https://quantumbranding.ai';
 const AGENT = 'voice_guide_agent';
 const HAPPY_RUNS = 3;

@@ -20,17 +20,12 @@ import { DEFAULT_MODEL } from '../../agents/contract.js';
 
 export const config = { runtime: 'edge' };
 
-// §6.3 · Phase 02-05 locked-card metadata. Shipped in Chapter 4 (Phase 02),
-// Chapter 5 (Phase 03), etc. The Console renders these as locked rows.
+// §6.3 · Phase 03-05 locked-card metadata. Phase 02 (Brand Creation)
+// retired from this list at chapter-4 step 4: its three agents are now
+// live (released from PROMPT_HOLD_SLUGS) and ship in the agents[] payload,
+// so they render as live cards in the Phase 02 section instead of a locked
+// row. The Console renders the entries below as locked rows.
 const LOCKED_PHASE_CARDS = [
-  {
-    phase: '02', label: 'Brand Creation',
-    agents: [
-      { slug: 'logo_direction',  display_name: 'Logo Direction' },
-      { slug: 'logo_evaluation', display_name: 'Logo Evaluation' },
-      { slug: 'voice_guide',     display_name: 'Voice Guide' },
-    ],
-  },
   {
     phase: '03', label: 'Content Creation',
     agents: [
@@ -245,8 +240,10 @@ export default async function handler(req) {
   // dispatchable for harness verification, invisible here until the
   // prompt is signed. Remove the slug from this set on sign-off; that
   // single deletion is the release. logo_direction_agent released
-  // 2026-06-11 (prompt signed).
-  const PROMPT_HOLD_SLUGS = new Set(['logo_evaluation_agent', 'voice_guide_agent']);
+  // 2026-06-11 (prompt signed). logo_evaluation_agent + voice_guide_agent
+  // released 2026-06-14 (both prompts signed two sessions prior). The set
+  // is now empty; the mechanism stays in place for the next held prompt.
+  const PROMPT_HOLD_SLUGS = new Set([]);
   const userVisibleSlugs = listAgentSlugs().filter(slug => {
     const meta = AGENTS[slug]?.META;
     return meta?.phase && meta.phase !== '00' && !PROMPT_HOLD_SLUGS.has(slug);
