@@ -471,7 +471,17 @@ function phaseAgentRow(agent, opts) {
     : (agent.latest_artifact?.status === 'failed' || agent.latest_run?.status === 'failed') ? 'failed'
     : null;
   if (errStatus) {
-    const copy = userActionCopy(agent, agent.latest_run?.error_payload) || genericFailedCopy(errStatus);
+    // A failed first-run manual dispatch settles to dispatch_jobs.status
+    // 'partial' (single-agent), which the reaper never retries, so the
+    // generic "the system is retrying automatically" copy would lie. For a
+    // first run with no delivered artifact, point at the Run button instead.
+    // User-fixable copy (qbp/dependency/inputs) still wins where it applies.
+    let copy = userActionCopy(agent, agent.latest_run?.error_payload);
+    if (!copy) {
+      copy = (!hasDelivered && opts.onDispatch)
+        ? 'Run did not finish. Press Run to try again.'
+        : genericFailedCopy(errStatus);
+    }
     row.dataset.failed = '1';
     row.appendChild(header);
     row.appendChild(description);

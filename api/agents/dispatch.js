@@ -70,6 +70,44 @@ async function fetchObjectSize({ env, parsed }) {
   return typeof size === 'number' ? size : null;
 }
 
+// Verifiable row rollback (step-4 adversarial-review finding). A fire-and-
+// forget DELETE that transient-fails would strand a 'producing' dispatch
+// with zero children, which the reaper can never reap (it bails on a
+// zero-child dispatch and the terminal-flip sees nothing outstanding), or a
+// 'queued' artifact. So we DELETE and, only if that fails, flip the row to a
+// terminal, console-invisible, reaper-invisible state instead of leaving it
+// stranded. 'partial' for the dispatch is read by neither the Console
+// (producing | failed_permanently) nor the reaper (producing); a 'failed'
+// artifact is excluded from the delivered-only Console read.
+async function rollbackDispatch(env, dispatchId) {
+  if (!dispatchId) return;
+  const del = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`,
+    { method: 'DELETE', headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
+  ).catch(() => null);
+  if (del && del.ok) return;
+  console.error('[agents/dispatch] dispatch rollback DELETE failed · flipping terminal', dispatchId, del?.status);
+  await fetch(
+    `${env.SUPABASE_URL}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`,
+    { method: 'PATCH', headers: { ...svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY), Prefer: 'return=minimal' },
+      body: JSON.stringify({ status: 'partial', agents_settled: 0, completed_at: new Date().toISOString() }) }
+  ).catch(() => {});
+}
+async function rollbackArtifact(env, artifactId) {
+  if (!artifactId) return;
+  const del = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/artifacts?id=eq.${encodeURIComponent(artifactId)}`,
+    { method: 'DELETE', headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
+  ).catch(() => null);
+  if (del && del.ok) return;
+  console.error('[agents/dispatch] artifact rollback DELETE failed · flipping failed', artifactId, del?.status);
+  await fetch(
+    `${env.SUPABASE_URL}/rest/v1/artifacts?id=eq.${encodeURIComponent(artifactId)}`,
+    { method: 'PATCH', headers: { ...svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY), Prefer: 'return=minimal' },
+      body: JSON.stringify({ status: 'failed', updated_at: new Date().toISOString() }) }
+  ).catch(() => {});
+}
+
 export default async function handler(req) {
   const origin = req.headers.get('origin') || '';
   const corsH = cors(origin);
@@ -295,7 +333,17 @@ export default async function handler(req) {
     `&select=version&order=version.desc&limit=1`,
     { headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
   );
-  const verRows = verRes.ok ? (await verRes.json().catch(() => [])) : [];
+  // Fail closed on a version-read failure (step-4 review finding). Falling
+  // back to version 1 here would collide with a delivered v1 on the unique
+  // index and surface a misleading 'dispatch_in_flight' on settled work.
+  // Roll back the dispatch row created above, then ask the founder to retry.
+  if (!verRes.ok) {
+    console.error('[agents/dispatch] version read failed', slug, verRes.status);
+    await rollbackDispatch(env, dispatchId);
+    return json(503, { error: 'version_unverified',
+                        detail: `could not read the current version for ${slug} · try again` }, corsH);
+  }
+  const verRows = await verRes.json().catch(() => []);
   const nextVersion = (verRows?.[0]?.version || 0) + 1;
 
   const artRes = await fetch(
@@ -318,9 +366,10 @@ export default async function handler(req) {
   );
   if (!artRes.ok) {
     const t = await artRes.text().catch(() => '');
-    // Roll back the dispatch row so the race-loser leaves no debris.
-    await fetch(`${env.SUPABASE_URL}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`,
-      { method: 'DELETE', headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }).catch(() => {});
+    // Roll back the dispatch row so the race-loser leaves no debris. Verifiable
+    // (DELETE, else flip terminal) so a transient DELETE failure cannot strand
+    // a zero-child 'producing' dispatch the reaper can never reap.
+    await rollbackDispatch(env, dispatchId);
     const isUniqueViolation = artRes.status === 409 || /23505|duplicate key/i.test(t);
     if (isUniqueViolation) {
       return json(409, { error: 'dispatch_in_flight', agent_slug: slug,
@@ -342,12 +391,10 @@ export default async function handler(req) {
     });
     if (!signRes.ok) {
       const detail = await signRes.text().catch(() => '');
-      // Clean up the rows so a sign failure does not strand a queued
-      // artifact the reaper would chew on.
-      await fetch(`${env.SUPABASE_URL}/rest/v1/artifacts?id=eq.${encodeURIComponent(newArt.id)}`,
-        { method: 'DELETE', headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }).catch(() => {});
-      await fetch(`${env.SUPABASE_URL}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}`,
-        { method: 'DELETE', headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }).catch(() => {});
+      // Verifiable cleanup so a sign failure strands neither a 'queued'
+      // artifact nor a 'producing' dispatch (DELETE, else flip terminal).
+      await rollbackArtifact(env, newArt.id);
+      await rollbackDispatch(env, dispatchId);
       return json(signRes.status === 404 ? 404 : 500, {
         error: 'sign_failed', path: f.path, detail: detail.slice(0, 200),
       }, corsH);
