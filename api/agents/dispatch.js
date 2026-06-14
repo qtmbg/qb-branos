@@ -380,6 +380,45 @@ export default async function handler(req) {
   const newArt = (await artRes.json().catch(() => []))?.[0];
   if (!newArt?.id) return json(500, { error: 'artifact_insert_returned_no_id' }, corsH);
 
+  // ─── 9b. Race resolution · single-in-flight, the cross-version case ─────
+  // The (user, type, version) unique index only collides when two concurrent
+  // requests compute the SAME next version. When one request's version-read
+  // happens to see the other's just-committed row, it computes a HIGHER
+  // version and its insert does NOT collide, so a second in-flight dispatch
+  // would slip through (caught empirically by the founder-dispatch harness'
+  // simultaneous-race case). Close it without a migration: after our own
+  // insert, re-read non-terminal artifacts for (user, agent). If any exists at
+  // a LOWER version than ours, that request won the race, so we roll our rows
+  // back and report dispatch_in_flight. The lowest version in a concurrent set
+  // sees nothing below it and proceeds, so exactly one survives. A higher
+  // version necessarily read after the lower one committed, so it WILL see the
+  // lower row here. Terminal prior rows (delivered/failed) are excluded, so a
+  // legitimate sequential re-run is never blocked. This also closes the gap
+  // where the step-7 pre-check read failed and fell through.
+  const raceRes = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/artifacts` +
+    `?user_id=eq.${encodeURIComponent(userId)}` +
+    `&artifact_type=eq.${encodeURIComponent(slug)}` +
+    `&status=in.(queued,generating)&select=id,version&order=version.asc`,
+    { headers: svcHeaders(env.SUPABASE_SERVICE_ROLE_KEY) }
+  );
+  if (raceRes.ok) {
+    const rows = await raceRes.json().catch(() => []);
+    const lower = Array.isArray(rows)
+      ? rows.find(a => a.id !== newArt.id && Number(a.version) < Number(newArt.version))
+      : null;
+    if (lower) {
+      await rollbackArtifact(env, newArt.id);
+      await rollbackDispatch(env, dispatchId);
+      return json(409, { error: 'dispatch_in_flight', agent_slug: slug,
+                          detail: `${meta.display_name} is already producing for you · wait for it to finish before running it again` }, corsH);
+    }
+  } else {
+    console.error('[agents/dispatch] race-resolution read failed', slug, raceRes.status);
+    // Non-fatal: the same-version unique index still holds; the cross-version
+    // window reverts to the pre-fix exposure only on this rare read failure.
+  }
+
   // ─── 10. Sign files, then fire /api/agents/run via waitUntil ──────────
   const base = new URL(req.url).origin;
   const signedFiles = [];
