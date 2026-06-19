@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Mark for Steadfield · Logo Direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..650;1,9..144,400..600&family=Inter:wght@400..650&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* surface */
+    --cream:#FBF5E6; --cream-card:#F2EBD3; --cream-warm:#ECDDB8;
+    --cream-edge:#DBD4C0; --white:#FFFEF8;
+    /* ink */
+    --ink:#2D1521; --ink-75:rgba(45,21,33,.75); --ink-50:rgba(45,21,33,.5);
+    --ink-33:rgba(45,21,33,.33); --ink-12:rgba(45,21,33,.12);
+    /* accents */
+    --gold:#E0B069; --gold-deep:#B58840;
+    --rose:#CA6180; --rose-deep:#8E3F58;
+    --teal:#9ED3DC; --teal-deep:#5BA8B5;
+    --phase:#B5C8E5;
+    /* type */
+    --serif:'Fraunces',Georgia,serif;
+    --body:'Inter',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    /* fluid scale */
+    --s--1:clamp(.78rem,.74rem + .2vw,.86rem);
+    --s-0:clamp(1.02rem,.98rem + .2vw,1.12rem);
+    --s-1:clamp(1.2rem,1.1rem + .5vw,1.4rem);
+    --s-2:clamp(1.5rem,1.3rem + 1vw,1.95rem);
+    --s-3:clamp(2.1rem,1.7rem + 2vw,3.2rem);
+    --s-4:clamp(2.6rem,2rem + 3vw,4.6rem);
+    /* space */
+    --sp-xs:.5rem; --sp-s:.875rem; --sp-m:1.5rem; --sp-l:2.5rem;
+    --sp-xl:clamp(3rem,2rem + 5vw,5.5rem); --sp-2xl:clamp(4rem,3rem + 6vw,7rem);
+    /* geometry */
+    --r-card:28px; --r-box:14px; --r-pill:9999px;
+    --shadow:0 9px 0 var(--ink);
+    --shadow-lg:0 14px 0 var(--ink);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--cream); color:var(--ink);
+    font-family:var(--body); font-size:var(--s-0); line-height:1.65;
+    font-weight:450; letter-spacing:-.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:clamp(1.25rem,4vw,3rem) clamp(1.25rem,5vw,2.5rem) var(--sp-2xl);}
+
+  /* masthead */
+  .tag{
+    display:inline-block; font-family:var(--mono); font-size:var(--s--1);
+    font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-75); background:var(--cream-warm);
+    padding:.42em .9em; border-radius:var(--r-pill);
+  }
+  .masthead{padding:var(--sp-l) 0 var(--sp-m);}
+  h1{
+    font-family:var(--serif); font-optical-sizing:auto;
+    font-weight:560; font-size:var(--s-4); line-height:1.02;
+    letter-spacing:-.02em; margin:.55em 0 .5em;
+    font-variation-settings:'SOFT' 40;
+  }
+  .meta{
+    font-family:var(--mono); font-size:var(--s--1); font-weight:500;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--ink-50);
+  }
+  .rule{height:2px; background:var(--ink-12); border:0; margin:var(--sp-m) 0 0;}
+
+  /* standfirst */
+  .standfirst{
+    font-family:var(--serif); font-weight:380; font-style:italic;
+    font-size:var(--s-1); line-height:1.5; color:var(--ink-75);
+    margin:var(--sp-l) 0 var(--sp-m); max-width:46ch;
+    font-variation-settings:'SOFT' 50;
+  }
+
+  /* sections */
+  section{margin-top:var(--sp-xl);}
+  .eyebrow{
+    font-family:var(--mono); font-size:var(--s--1); font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--gold-deep);
+    display:block; margin-bottom:.7em;
+  }
+  h2{
+    font-family:var(--serif); font-weight:520; font-size:var(--s-2);
+    line-height:1.1; letter-spacing:-.015em; margin-bottom:.7em;
+    font-variation-settings:'SOFT' 35;
+  }
+  section p{max-width:62ch; margin-bottom:1em; color:var(--ink-75);}
+  section p:last-child{margin-bottom:0;}
+  section p strong{color:var(--ink); font-weight:550;}
+
+  /* three directions */
+  .directions{display:flex; flex-direction:column; gap:var(--sp-m); margin-top:var(--sp-l);}
+  .dir{
+    background:var(--white); border:2px solid var(--ink);
+    border-radius:var(--r-card); box-shadow:var(--shadow);
+    padding:clamp(1.4rem,4vw,2.2rem);
+  }
+  .dir-head{display:flex; align-items:baseline; gap:.7em; margin-bottom:.6em;}
+  .dir-num{
+    font-family:var(--serif); font-weight:600; font-size:var(--s-3);
+    line-height:.9; letter-spacing:-.03em;
+  }
+  .dir-name{font-family:var(--serif); font-weight:540; font-size:var(--s-2); line-height:1.05; letter-spacing:-.01em;}
+  .dir:nth-child(1) .dir-num{color:var(--gold-deep);}
+  .dir:nth-child(2) .dir-num{color:var(--teal-deep);}
+  .dir:nth-child(3) .dir-num{color:var(--rose-deep);}
+  .dir-concept{color:var(--ink-75); margin-bottom:1.3em; max-width:60ch;}
+  .qual-label{
+    font-family:var(--mono); font-size:var(--s--1); font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--ink-50);
+    margin-bottom:.6em;
+  }
+  .quals{list-style:none; display:flex; flex-direction:column;}
+  .quals li{
+    font-size:var(--s--1); line-height:1.5; color:var(--ink-75);
+    padding:.7em 0 .7em 1.5em; position:relative;
+    border-top:1px solid var(--ink-12);
+  }
+  .quals li::before{
+    content:""; position:absolute; left:0; top:1.25em;
+    width:.55em; height:.55em; border-radius:2px;
+  }
+  .dir:nth-child(1) .quals li::before{background:var(--gold);}
+  .dir:nth-child(2) .quals li::before{background:var(--teal-deep);}
+  .dir:nth-child(3) .quals li::before{background:var(--rose);}
+
+  /* always / never */
+  .principles{
+    display:grid; gap:var(--sp-m); margin-top:var(--sp-l);
+  }
+  @media(min-width:620px){.principles{grid-template-columns:1fr 1fr;}}
+  .pcard{
+    background:var(--cream-card); border:2px solid var(--ink);
+    border-radius:var(--r-card); box-shadow:var(--shadow);
+    padding:clamp(1.3rem,3.5vw,1.9rem);
+  }
+  .pcard h3{
+    font-family:var(--mono); font-size:var(--s--1); font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; margin-bottom:1em;
+  }
+  .pcard.always h3{color:var(--teal-deep);}
+  .pcard.never h3{color:var(--rose-deep);}
+  .pcard ul{list-style:none; display:flex; flex-direction:column; gap:.85em;}
+  .pcard li{
+    font-size:var(--s--1); line-height:1.5; color:var(--ink-75);
+    padding-left:1.6em; position:relative;
+  }
+  .pcard li::before{
+    position:absolute; left:0; top:0; font-family:var(--mono);
+    font-weight:600; font-size:.95em;
+  }
+  .always li::before{content:"+"; color:var(--teal-deep);}
+  .never li::before{content:"\2014"; color:var(--rose-deep);}
+
+  /* qbp tags */
+  .qbp{margin-top:var(--sp-xl);}
+  .qbp .eyebrow{color:var(--ink-50);}
+  .chips{display:flex; flex-wrap:wrap; gap:.5em;}
+  .chip{
+    font-family:var(--mono); font-size:.72rem; font-weight:500;
+    letter-spacing:.03em; color:var(--ink-50); background:var(--cream-warm);
+    padding:.4em .7em; border-radius:6px;
+  }
+
+  /* actions */
+  .actions{display:flex; flex-wrap:wrap; gap:.7em; margin-top:var(--sp-l);
+    padding-top:var(--sp-l); border-top:2px solid var(--ink-12);}
+  .btn{
+    font-family:var(--mono); font-size:var(--s--1); font-weight:600;
+    letter-spacing:.04em; text-transform:uppercase; cursor:pointer;
+    border:2px solid var(--ink); border-radius:var(--r-pill);
+    padding:.7em 1.4em; background:var(--cream); color:var(--ink);
+    transition:transform .15s cubic-bezier(.19,1,.22,1), box-shadow .15s cubic-bezier(.19,1,.22,1);
+  }
+  .btn.primary{background:var(--gold); box-shadow:0 4px 0 var(--ink);}
+  .btn.primary:active{transform:translateY(4px); box-shadow:0 0 0 var(--ink);}
+  @media(hover:hover){.btn:hover{transform:translateY(-2px);}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="masthead">
+    <span class="tag">Phase 02 · Logo Direction</span>
+    <h1>A Mark for Steadfield</h1>
+    <p class="meta">Logo Direction Agent · 14 June 2026 · v1</p>
+    <hr class="rule">
+  </header>
+
+  <p class="standfirst">A mark that looks like it has always existed. Not a brand announcing itself, but a name that has been earning its place for decades.</p>
+
+  <section>
+    <span class="eyebrow">Opening</span>
+    <h2>What the foundation asks for</h2>
+    <p>Steadfield needs a mark that reads as established, not introduced. The work is not to invent an identity. It is to give shape to one the brand has already earned.</p>
+    <p>The foundation gives a clear instruction: <strong>field guide, not deck</strong>. The logo carries information quietly. It does not perform.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Reading the foundation</span>
+    <h2>Three things stand out</h2>
+    <p>First, the Sage archetype asks for authority that is given, not claimed. Second, the paradox, ancient patience and modern tools, is genuinely productive tension, not a copywriting flourish.</p>
+    <p>Third, the Visual DNA is already decisive: field green as anchor, parchment as carrier, ochre as the single warm signal, soil ink for type. The type note, a serif display with quiet humanist body, points toward a wordmark that earns its weight through proportion, not decoration.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Briefing your designer</span>
+    <h2>How to hand this off</h2>
+    <p>Hand the designer all three directions as distinct briefs, not as a ranked list. Ask for two to three rough sketches per direction, at wordmark size and at favicon size, in one color only first. Reserve color application for a second round.</p>
+    <p>Refuse sketches that introduce new typefaces outside the serif display and humanist body pairing already established. Test each one with a single question: does it look like it belongs in a well-set field guide, or does it look like it launched last quarter. Only the former passes.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">The work</span>
+    <h2>Three directions</h2>
+    <div class="directions">
+
+      <article class="dir">
+        <div class="dir-head"><span class="dir-num">01</span><span class="dir-name">The Field Edition</span></div>
+        <p class="dir-concept">Takes the Sage archetype literally. The wordmark is set in a confident serif display, unhurried in its spacing, the kind of letterform you find on a botanical press plate or a land survey. It reads like a named thing, a place or a publication, not a product. The ochre accent appears in a single deliberate moment, a ruled line or a period, as punctuation rather than decoration.</p>
+        <p class="qual-label">Qualities</p>
+        <ul class="quals">
+          <li>Tight-tracked serif wordmark, generous leading if stacked</li>
+          <li>Single ochre rule or stop mark as the only accent</li>
+          <li>Parchment ground implied by the weight of the letters, not filled</li>
+          <li>No symbol, the name carries everything</li>
+          <li>Ink quality in the strokes, slight optical variation, not digital-smooth</li>
+        </ul>
+      </article>
+
+      <article class="dir">
+        <div class="dir-head"><span class="dir-num">02</span><span class="dir-name">Measured Growth</span></div>
+        <p class="dir-concept">Takes the archetype laterally, away from the editorial and into the agricultural. The mark borrows the visual language of a field cross-section or a growth index, a simple geometric form that reads as accumulation over time, rings or intervals, drawn in soil ink on parchment. The wordmark sits below it in a quieter weight, secondary to the symbol for once. This is the direction that resolves toward the Creator, building something visible.</p>
+        <p class="qual-label">Qualities</p>
+        <ul class="quals">
+          <li>Abstract symbol suggesting strata, rings, or measured intervals</li>
+          <li>Symbol in soil ink, mark in field green</li>
+          <li>Wordmark set small and lowercase beneath, humanist serif</li>
+          <li>Generous negative space inside and around the symbol</li>
+          <li>Scales to a single-color stamp without losing legibility</li>
+        </ul>
+      </article>
+
+      <article class="dir">
+        <div class="dir-head"><span class="dir-num">03</span><span class="dir-name">Patient Tension</span></div>
+        <p class="dir-concept">Lives in the paradox directly: ancient patience, modern tools. The wordmark is the same confident serif, but the construction is interrupted, one letter optically corrected or one stroke drawn with the precision of a technical instrument rather than a calligrapher's hand. It reads as old material handled by a careful modern mind. The tension lives in the letterform itself, not in color or ornament.</p>
+        <p class="qual-label">Qualities</p>
+        <ul class="quals">
+          <li>Primarily serif wordmark with one deliberate geometric intervention</li>
+          <li>Intervention in ochre, everything else in soil ink</li>
+          <li>No symbol, the wordmark is the whole argument</li>
+          <li>Stroke contrast that references both classical type and drafting tools</li>
+          <li>Works at small scale without the intervention becoming noise</li>
+        </ul>
+      </article>
+
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">The guardrails</span>
+    <h2>Always and never</h2>
+    <div class="principles">
+      <div class="pcard always">
+        <h3>Always</h3>
+        <ul>
+          <li>Use the established palette: field green, parchment, ochre, soil ink</li>
+          <li>Give the wordmark room to breathe</li>
+          <li>Favor weight and proportion over ornament</li>
+          <li>Let the serif carry authority without help from effects</li>
+          <li>Test every sketch against the phrase: does it look unhurried</li>
+        </ul>
+      </div>
+      <div class="pcard never">
+        <h3>Never</h3>
+        <ul>
+          <li>Use neon purple in any form, including adjacent violet</li>
+          <li>Add gradients, shadows, or dimensional effects</li>
+          <li>Set the wordmark in a condensed display-only face that reads aggressive</li>
+          <li>Crowd the mark with a tagline at lockup stage</li>
+          <li>Let any direction read as a tech product or productivity tool</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="qbp">
+    <span class="eyebrow">QBP fields referenced</span>
+    <div class="chips">
+      <span class="chip">brandName</span><span class="chip">brandEssence</span>
+      <span class="chip">archetypePrimary</span><span class="chip">archetypeSecondary</span>
+      <span class="chip">archetypeVisualImplications</span><span class="chip">colorTerritory</span>
+      <span class="chip">forbiddenColor</span><span class="chip">visualTerritoryNote</span>
+      <span class="chip">typographyNote</span><span class="chip">antiVoice</span>
+      <span class="chip">antiBrand</span><span class="chip">paradox</span><span class="chip">alwaysNever</span>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button class="btn primary">Download PDF</button>
+    <button class="btn">Copy link</button>
+    <button class="btn">Print</button>
+    <button class="btn">Share</button>
+  </div>
+
+</main>
+</body>
+</html>

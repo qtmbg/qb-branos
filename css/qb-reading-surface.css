@@ -1,0 +1,229 @@
+/* QB BrandOS — Artifact reading surface · designed component set
+   Spec: docs/design/reading-surface-reference.html (the authoritative
+   visual reference; this CSS adapts it onto the canonical :root tokens in
+   qb-tokens.css, whose hex values are identical to the reference's).
+
+   Everything is scoped under .qb-rs so it shares no surface with the rest
+   of the app and touches no shared stylesheet. Mobile-first. Every card
+   carries the hard-offset shadow at component scale. No block renders
+   parallel columns of wrapping prose: descriptor groups are full-width
+   stacked cards (one per group); always/never is a two-up that stacks
+   below 620px.
+*/
+
+.qb-rs {
+  /* Scoped derived token · the 0.12 ink hairline the reference uses
+     (--ink-12) is the one opacity the canonical set skips (it jumps
+     0.25 -> 0.33). Defined here, not in the global :root. */
+  --rs-hair: rgba(45, 21, 33, 0.12);
+
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 3rem) clamp(1.25rem, 5vw, 2.5rem) var(--space-2xl);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  font-weight: 450;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.qb-rs *, .qb-rs *::before, .qb-rs *::after { box-sizing: border-box; }
+
+/* ── Masthead ─────────────────────────────────────────────── */
+.qb-rs-tag {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-75); background: var(--cream-warm);
+  padding: 0.42em 0.9em; border-radius: var(--radius-pill);
+}
+.qb-rs-masthead { padding: var(--space-l) 0 var(--space-s); }
+.qb-rs-title {
+  font-family: var(--font-display); font-optical-sizing: auto;
+  font-weight: 600; font-size: var(--step-5); line-height: 1.02;
+  letter-spacing: -0.02em; margin: 0.5em 0 0.45em;
+  font-variation-settings: 'SOFT' 40;
+}
+.qb-rs-meta {
+  font-family: var(--font-mono); font-size: var(--step--1); font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-50);
+}
+.qb-rs-rule { height: 2px; background: var(--rs-hair); border: 0; margin: var(--space-s) 0 0; }
+
+/* ── Standfirst ───────────────────────────────────────────── */
+.qb-rs-standfirst {
+  font-family: var(--font-display); font-weight: 400; font-style: italic;
+  font-size: var(--step-1); line-height: 1.5; color: var(--ink-75);
+  margin: var(--space-l) 0 var(--space-s); max-width: 46ch;
+  font-variation-settings: 'SOFT' 50;
+}
+
+/* ── Section (prose + data-block wrapper) ─────────────────── */
+.qb-rs-section { margin-top: var(--space-xl); }
+.qb-rs-eyebrow {
+  font-family: var(--font-mono); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-deep);
+  display: block; margin-bottom: 0.7em;
+}
+.qb-rs-h2 {
+  font-family: var(--font-display); font-weight: 550; font-size: var(--step-2);
+  line-height: 1.1; letter-spacing: -0.015em; margin-bottom: 0.6em;
+  font-variation-settings: 'SOFT' 35;
+}
+.qb-rs-prose { max-width: 62ch; }
+.qb-rs-prose p { margin-bottom: 1em; color: var(--ink-75); }
+.qb-rs-prose p:last-child { margin-bottom: 0; }
+.qb-rs-prose strong { color: var(--ink); font-weight: 600; }
+.qb-rs-prose em { font-style: italic; }
+.qb-rs-pull-quote {
+  font-family: var(--font-display); font-style: italic; font-size: var(--step-1);
+  line-height: 1.4; color: var(--ink); border-left: 3px solid var(--gold);
+  padding-left: var(--space-s); margin: var(--space-s) 0 0; max-width: 54ch;
+  font-variation-settings: 'SOFT' 50;
+}
+.qb-rs-illus {
+  margin-top: var(--space-s); border: 2px solid var(--ink);
+  border-radius: var(--radius-card); overflow: hidden;
+  box-shadow: var(--shadow-hard); background: var(--cream-card);
+}
+.qb-rs-illus img { width: 100%; height: auto; display: block; }
+
+/* ── Card family · directions / descriptors / priorities ──── */
+/* Full-width, stacked, one card per group. Never side-by-side columns. */
+.qb-rs-cards { display: flex; flex-direction: column; gap: var(--space-s); margin-top: var(--space-m); }
+.qb-rs-card {
+  background: var(--white); border: 2px solid var(--ink);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-hard);
+  padding: var(--space-m);
+}
+.qb-rs-card-head { display: flex; align-items: baseline; gap: 0.7em; margin-bottom: 0.6em; }
+.qb-rs-card-num {
+  font-family: var(--font-display); font-weight: 600; font-size: var(--step-4);
+  line-height: 0.9; letter-spacing: -0.03em; color: var(--gold-deep);
+}
+.qb-rs-card-name {
+  font-family: var(--font-display); font-weight: 540; font-size: var(--step-2);
+  line-height: 1.05; letter-spacing: -0.01em;
+}
+.qb-rs-card-concept { color: var(--ink-75); margin-bottom: 1.2em; max-width: 60ch; }
+/* Three-way accent rotation, per the reference. */
+.qb-rs-card[data-accent="1"] .qb-rs-card-num { color: var(--teal-deep); }
+.qb-rs-card[data-accent="2"] .qb-rs-card-num { color: var(--rose-deep); }
+
+/* Spec-lines · hairline top rule + accent square marker. No bullet dots. */
+.qb-rs-spec-label {
+  font-family: var(--font-mono); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-50);
+  margin-bottom: 0.4em;
+}
+.qb-rs-specs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.qb-rs-specs li {
+  font-size: var(--step--1); line-height: 1.5; color: var(--ink-75);
+  padding: 0.7em 0 0.7em 1.5em; position: relative;
+  border-top: 1px solid var(--rs-hair);
+}
+.qb-rs-specs li::before {
+  content: ""; position: absolute; left: 0; top: 1.25em;
+  width: 0.55em; height: 0.55em; border-radius: 2px; background: var(--gold);
+}
+.qb-rs-card[data-accent="1"] .qb-rs-specs li::before { background: var(--teal-deep); }
+.qb-rs-card[data-accent="2"] .qb-rs-specs li::before { background: var(--rose); }
+
+/* ── Principles two-up · always / never ───────────────────── */
+.qb-rs-principles { display: grid; gap: var(--space-s); margin-top: var(--space-m); }
+@media (min-width: 620px) { .qb-rs-principles { grid-template-columns: 1fr 1fr; } }
+.qb-rs-pcard {
+  background: var(--cream-card); border: 2px solid var(--ink);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-hard);
+  padding: var(--space-s-m);
+}
+.qb-rs-pcard h3 {
+  font-family: var(--font-mono); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase; margin: 0 0 1em;
+}
+.qb-rs-pcard.is-always h3 { color: var(--teal-deep); }
+.qb-rs-pcard.is-never h3 { color: var(--rose-deep); }
+.qb-rs-pcard ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.85em; }
+.qb-rs-pcard li {
+  font-size: var(--step--1); line-height: 1.5; color: var(--ink-75);
+  padding-left: 1.6em; position: relative;
+}
+.qb-rs-pcard li::before {
+  position: absolute; left: 0; top: 0;
+  font-family: var(--font-mono); font-weight: 600; font-size: 0.95em;
+}
+.qb-rs-pcard.is-always li::before { content: "+"; color: var(--teal-deep); }
+.qb-rs-pcard.is-never li::before { content: "\2014"; color: var(--rose-deep); }
+
+/* ── Palette · visual swatch tiles (stack on mobile, not prose cols) ─ */
+.qb-rs-palette { display: grid; gap: var(--space-s); grid-template-columns: 1fr; margin-top: var(--space-m); }
+@media (min-width: 620px) { .qb-rs-palette { grid-template-columns: 1fr 1fr; } }
+.qb-rs-swatch {
+  background: var(--white); border: 2px solid var(--ink);
+  border-radius: var(--radius-raised); box-shadow: var(--shadow-hard);
+  overflow: hidden;
+}
+.qb-rs-swatch-chip { height: 84px; border-bottom: 2px solid var(--ink); }
+.qb-rs-swatch-body { padding: var(--space-xs) var(--space-s) var(--space-s); }
+.qb-rs-swatch-label { font-family: var(--font-display); font-weight: 540; font-size: var(--step-1); line-height: 1.1; }
+.qb-rs-swatch-hex { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-50); letter-spacing: 0.06em; margin: 0.2em 0 0.5em; }
+.qb-rs-swatch-rationale { font-size: var(--step--1); line-height: 1.5; color: var(--ink-75); }
+
+/* ── Type pairing · two panels, stack below 620px ─────────── */
+.qb-rs-pairing { display: grid; gap: var(--space-s); grid-template-columns: 1fr; margin-top: var(--space-m); }
+@media (min-width: 620px) { .qb-rs-pairing { grid-template-columns: 1fr 1fr; } }
+.qb-rs-panel {
+  background: var(--white); border: 2px solid var(--ink);
+  border-radius: var(--radius-raised); box-shadow: var(--shadow-hard);
+  padding: var(--space-s-m);
+}
+.qb-rs-panel-role { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-50); display: block; margin-bottom: 0.5em; }
+.qb-rs-panel-sample { font-family: var(--font-display); font-weight: 560; font-size: var(--step-3); line-height: 1.05; }
+.qb-rs-panel-weight { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-50); margin: 0.3em 0 0.6em; }
+.qb-rs-panel-rationale { font-size: var(--step--1); line-height: 1.5; color: var(--ink-75); }
+
+/* ── Positioning map · SVG chart in a card ────────────────── */
+.qb-rs-map {
+  background: var(--white); border: 2px solid var(--ink);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-hard);
+  padding: var(--space-m); margin-top: var(--space-m);
+}
+.qb-rs-map svg { width: 100%; max-width: 480px; height: auto; margin: 0 auto; display: block; }
+.qb-rs-map .qb-rs-map-bg { fill: var(--cream-card); }
+.qb-rs-map .qb-rs-map-axis { stroke: var(--rs-hair); stroke-width: 0.5; }
+.qb-rs-map .qb-rs-map-dot { fill: var(--ink-50); }
+.qb-rs-map .is-self .qb-rs-map-dot { fill: var(--gold-deep); }
+.qb-rs-map .qb-rs-map-label { font-family: var(--font-mono); font-size: 3.4px; fill: var(--ink-75); }
+.qb-rs-map-axis-label { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-50); text-transform: uppercase; letter-spacing: 0.08em; }
+.qb-rs-map-axis-row { display: flex; justify-content: space-between; margin-top: var(--space-xs); }
+
+/* ── Chips · QBP fields ───────────────────────────────────── */
+.qb-rs-qbp { margin-top: var(--space-xl); }
+.qb-rs-qbp .qb-rs-eyebrow { color: var(--ink-50); }
+.qb-rs-chips { display: flex; flex-wrap: wrap; gap: 0.5em; }
+.qb-rs-chip {
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.03em; color: var(--ink-50); background: var(--cream-warm);
+  padding: 0.4em 0.7em; border-radius: var(--radius-box);
+}
+
+/* ── Actions · pill buttons, gold primary with press offset ─ */
+.qb-rs-actions {
+  display: flex; flex-wrap: wrap; gap: 0.7em; margin-top: var(--space-l);
+  padding-top: var(--space-l); border-top: 2px solid var(--rs-hair);
+}
+.qb-rs-btn {
+  font-family: var(--font-mono); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer;
+  border: 2px solid var(--ink); border-radius: var(--radius-pill);
+  padding: 0.7em 1.4em; background: var(--cream); color: var(--ink);
+  transition: transform 0.15s var(--ease-qb), box-shadow 0.15s var(--ease-qb);
+}
+.qb-rs-btn.is-primary { background: var(--gold); box-shadow: 0 4px 0 var(--ink); }
+.qb-rs-btn.is-primary:active { transform: translateY(4px); box-shadow: 0 0 0 var(--ink); }
+@media (hover: hover) { .qb-rs-btn:hover { transform: translateY(-2px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .qb-rs-btn { transition: none; }
+}
