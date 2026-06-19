@@ -145,14 +145,14 @@ async function main() {
         let ok = false, err = null;
         try {
           await page.goto(url, { waitUntil: 'networkidle', timeout: 60_000 });
-          await page.waitForSelector('.qb-artifact-header__title', { timeout: 45_000 });
+          await page.waitForSelector('.qb-rs-title', { timeout: 45_000 });
           await page.evaluate(() => document.fonts && document.fonts.ready).catch(()=>{});
           await sleep(700); // settle reveal animations
           ok = true;
         } catch (e) { err = String(e?.message || e).slice(0, 160); }
         const file = `${OUT_DIR}/${agent.replace('_agent','')}-${label}.png`;
         await page.screenshot({ path: file, fullPage: true }).catch(e => { err = (err||'') + ' shot:' + e.message; });
-        const title = await page.evaluate(() => document.querySelector('.qb-artifact-header__title')?.textContent || null).catch(()=>null);
+        const title = await page.evaluate(() => document.querySelector('.qb-rs-title')?.textContent || null).catch(()=>null);
         out.shots.push({ agent, width: w, file, rendered: ok, title, err });
         console.error(`[shot] ${file} rendered=${ok} title=${JSON.stringify(title)} ${err?('err='+err):''}`);
         await ctx.close();
