@@ -124,6 +124,7 @@ async function handleSignOut(session) {
   const user = { email: session.email || '(unknown)', id: session.userId };
 
   renderAccount(root, user, profile, {
+    session,
     onSignOut: () => handleSignOut(session),
   });
 })();

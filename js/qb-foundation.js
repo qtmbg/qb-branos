@@ -285,7 +285,7 @@ function buildPhaseRoadmap(state) {
       state: 'locked',
       lockReason: 'Coming in a future chapter',
       ctaLabel: 'Coming soon',
-      ctaHref: '#',
+      ctaDisabled: true,
     });
   });
 
