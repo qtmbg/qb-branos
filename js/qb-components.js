@@ -97,7 +97,7 @@ function createPillButton({ label, href, onClick, variant = 'primary', size, exp
 /* =====================================================
    createPhaseCard
    ===================================================== */
-export function createPhaseCard({ phase, name, state, count, total, lockReason, ctaLabel, ctaHref, onCta } = {}) {
+export function createPhaseCard({ phase, name, state, count, total, lockReason, ctaLabel, ctaHref, onCta, ctaDisabled } = {}) {
   if (!state) throw new Error('createPhaseCard: state is required');
   if (!PHASE_KEYS.has(String(phase))) throw new Error(`createPhaseCard: invalid phase ${phase}`);
 
@@ -124,6 +124,7 @@ export function createPhaseCard({ phase, name, state, count, total, lockReason, 
       onClick: onCta,
       variant: state === 'available' ? 'primary' : (state === 'locked' ? 'secondary' : 'primary'),
       size: 'sm',
+      disabled: !!ctaDisabled,
     }),
   ]);
 

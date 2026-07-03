@@ -87,6 +87,44 @@ function renderField({ label, value, hint, control }) {
   ]);
 }
 
+/* ─── Billing portal control ────────────────────────── */
+/* Wires the paid founder's plan row to the Stripe Customer Portal via
+   POST /api/billing-portal (existing endpoint · returns { url }). The
+   button disables while the session is created; any failure surfaces a
+   plain note instead of a dead end. */
+function buildPortalControl(opts) {
+  const note = el('div', { class: 'qb-account-portal__note', 'aria-live': 'polite' });
+  const btn = pill({
+    label: 'Manage subscription',
+    variant: 'secondary',
+    onClick: async () => {
+      const token = opts.session?.token;
+      if (!token) {
+        note.textContent = 'Sign in again to manage billing.';
+        return;
+      }
+      const content = btn.querySelector('.qb-button_content');
+      btn.classList.add('is-disabled');
+      if (content) content.textContent = 'Opening the portal…';
+      try {
+        const r = await fetch('/api/billing-portal', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ return_url: window.location.href }),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok && d.url) { window.location.href = d.url; return; }
+        throw new Error(d.error || `portal_${r.status}`);
+      } catch (_) {
+        btn.classList.remove('is-disabled');
+        if (content) content.textContent = 'Manage subscription';
+        note.textContent = 'The billing portal is unavailable right now. Email me@qtmbg.com and we’ll sort it.';
+      }
+    },
+  });
+  return el('div', { class: 'qb-account-portal' }, [btn, note]);
+}
+
 /* ─── Main render ───────────────────────────────────── */
 export function renderAccount(container, user, profile, opts = {}) {
   if (!container) throw new Error('renderAccount: container is required');
@@ -105,12 +143,7 @@ export function renderAccount(container, user, profile, opts = {}) {
   ]);
 
   const planControl = isPaid
-    ? el('a', {
-        class: 'qb-account-link is-disabled',
-        href: '#',
-        'aria-disabled': 'true',
-        on: { click: (e) => e.preventDefault() },
-      }, 'Manage subscription. Coming in a future chapter.')
+    ? buildPortalControl(opts)
     : pill({
         label: 'Upgrade to Starter',
         variant: 'primary',
