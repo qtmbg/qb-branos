@@ -3359,9 +3359,8 @@ function buildBrandedHTML(out) {
   var sharedList = out.sharedKeyTakeaways.map(function(t) { return "<li>" + esc(t) + "</li>"; }).join("");
 
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>The Profiles</title>' +
-    '<!-- QB fonts unblocked -->
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"></noscript>' +
+    '<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">' +
+    '<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"></noscript>' +
     '<style>' +
     '* { margin: 0; padding: 0; box-sizing: border-box; }' +
     'body { font-family: Inter, sans-serif; color: #fff; background: #000; -webkit-font-smoothing: antialiased; }' +
