@@ -1529,9 +1529,9 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     <div class="logo-text">QB BrandOS</div>
     <div class="header-actions">
       <!-- FIX M-03: Guard history.back() - avoids blank page when opened directly -->
-      <button class="btn-ghost" onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'index.html'" aria-label="Go back">← Back</button>
-      <button class="btn-ghost" onclick="downloadDocPPTX()" id="dl-pptx-btn" aria-label="Download brand document as PPTX">↓ Download PPTX</button>
-      <button class="btn-ghost" onclick="downloadDocMarketingDeck()" id="dl-marketing-btn" aria-label="Download brand document as marketing-style PPTX">↓ Marketing deck</button>
+      <button class="qb-button is-secondary is-sm" onclick="window.history.length > 1 ? window.history.back() : window.location.href = 'index.html'" aria-label="Go back"><span class="qb-button_content">← Back</span></button>
+      <button class="qb-button is-secondary is-sm" onclick="downloadDocPPTX()" id="dl-pptx-btn" aria-label="Download brand document as PPTX"><span class="qb-button_content">↓ Download PPTX</span></button>
+      <button class="qb-button is-secondary is-sm" onclick="downloadDocMarketingDeck()" id="dl-marketing-btn" aria-label="Download brand document as marketing-style PPTX"><span class="qb-button_content">↓ Marketing deck</span></button>
       <button class="btn-ghost" onclick="sendDocByEmail()" id="dl-email-btn" aria-label="Send brand document to my inbox">✉ Send to inbox</button>
       <button class="btn-primary" onclick="downloadDoc()" id="dl-btn" aria-label="Download brand document as PDF">↓ Download PDF</button>
     </div>
@@ -1680,8 +1680,8 @@ function emptySection(toolName, file) {
   const safeFile = escHtml(file);
   return '<div class="empty-section">' +
     '<div class="empty-section-text">Complete <span style="color:var(--text-1)">' + safeName + '</span> to populate this section</div>' +
-    '<button onclick="openTool(\'' + safeFile + '\')" class="btn-primary">' +
-    'Open ' + safeName + ' \u2192</button></div>';
+    '<button onclick="openTool(\'' + safeFile + '\')" class="qb-button is-primary is-sm">' +
+    '<span class="qb-button_content">Open ' + safeName + ' \u2192</span></button></div>';
 }
 // "Tool was completed but synthesis output isn't in QBP yet" \u2014 happens when a
 // user hit the gate's "Maybe later" before synthesis ran, or when an old
@@ -1692,8 +1692,8 @@ function pendingSynthesisSection(toolName, file) {
   const safeFile = escHtml(file);
   return '<div class="empty-section">' +
     '<div class="empty-section-text"><span style="color:var(--text-1)">' + safeName + '</span> is recorded as complete, but the synthesis output isn\'t in your profile yet. Re-run to generate it.</div>' +
-    '<button onclick="openTool(\'' + safeFile + '\')" class="btn-primary">' +
-    'Re-run ' + safeName + ' \u2192</button></div>';
+    '<button onclick="openTool(\'' + safeFile + '\')" class="qb-button is-primary is-sm">' +
+    '<span class="qb-button_content">Re-run ' + safeName + ' \u2192</span></button></div>';
 }
 // Cloud-truth completion check. Falls through to false if QB module isn't
 // loaded so existing pages without qb-cloud.js continue to work.
