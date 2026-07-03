@@ -208,6 +208,52 @@
   padding: 0.4em 0.7em; border-radius: var(--radius-box);
 }
 
+/* ── Content pack (chapter 5 · posts, issues, scripts, pieces) ─ */
+.qb-rs-pack-chips { display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin: -0.2em 0 0.9em; }
+.qb-rs-pack-kicker {
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-deep);
+  background: var(--cream-warm); padding: 0.35em 0.7em; border-radius: var(--radius-pill);
+}
+.qb-rs-pack-body { margin-bottom: 0.4em; }
+.qb-rs-pack-body p { font-size: var(--step--1); }
+.qb-rs-pack-extras { margin-top: 0.9em; display: flex; flex-direction: column; gap: 0.8em; }
+.qb-rs-pack-extra { border-top: 1px solid var(--rs-hair); padding-top: 0.8em; }
+.qb-rs-pack-extra-body p { font-size: var(--step--1); }
+.qb-rs-pack-tags { margin-top: 0.9em; }
+
+/* ── Numbered procedure (chapter 5 · production briefs, setup) ─ */
+.qb-rs-proc { margin-top: var(--space-m); }
+.qb-rs-proc-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.qb-rs-proc-step {
+  display: flex; gap: 1em; align-items: baseline;
+  padding: 0.9em 0; border-top: 1px solid var(--rs-hair);
+}
+.qb-rs-proc-step:first-child { border-top: 0; padding-top: 0.2em; }
+.qb-rs-proc-num {
+  font-family: var(--font-display); font-weight: 600; font-size: var(--step-2);
+  line-height: 0.9; letter-spacing: -0.02em; color: var(--gold-deep); flex-shrink: 0;
+}
+.qb-rs-proc-step:nth-child(3n+2) .qb-rs-proc-num { color: var(--teal-deep); }
+.qb-rs-proc-step:nth-child(3n) .qb-rs-proc-num { color: var(--rose-deep); }
+.qb-rs-proc-action { font-weight: 550; color: var(--ink); margin: 0 0 0.15em; }
+.qb-rs-proc-detail { font-size: var(--step--1); line-height: 1.55; color: var(--ink-75); margin: 0; max-width: 58ch; }
+
+/* ── Spec grid (chapter 5 · settings, cadence, KPI readouts) ─ */
+.qb-rs-grid { display: grid; gap: var(--space-s); grid-template-columns: 1fr; margin-top: var(--space-m); }
+@media (min-width: 620px) { .qb-rs-grid { grid-template-columns: 1fr 1fr; } }
+.qb-rs-grid-tile {
+  background: var(--cream-card); border: 2px solid var(--ink);
+  border-radius: var(--radius-raised); box-shadow: var(--shadow-hard);
+  padding: var(--space-s);
+}
+.qb-rs-grid-label {
+  font-family: var(--font-mono); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-50);
+  display: block; margin-bottom: 0.4em;
+}
+.qb-rs-grid-value { font-size: var(--step-0); line-height: 1.5; color: var(--ink); margin: 0; }
+
 /* ── Actions · pill buttons, gold primary with press offset ─ */
 .qb-rs-actions {
   display: flex; flex-wrap: wrap; gap: 0.7em; margin-top: var(--space-l);
