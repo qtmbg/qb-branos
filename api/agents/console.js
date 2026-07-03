@@ -25,25 +25,37 @@ export const config = { runtime: 'edge' };
 // live (released from PROMPT_HOLD_SLUGS) and ship in the agents[] payload,
 // so they render as live cards in the Phase 02 section instead of a locked
 // row. The Console renders the entries below as locked rows.
+// Chapter 5 · the placeholder slugs (content_strategist, campaign_planner,
+// execution_planner) are retired for the CANONICAL agent set from the
+// QB_THINKING_MACHINE phase table. Slugs here match the registry slugs the
+// agents ship under, so each phase's card retires cleanly as its agents go
+// live (the Phase 02 precedent). A card also drops automatically for any
+// agent already present in the live agents[] payload (dedupe below), so a
+// partially-shipped phase never shows an agent twice.
 const LOCKED_PHASE_CARDS = [
   {
     phase: '03', label: 'Content Creation',
     agents: [
-      { slug: 'content_strategist', display_name: 'Content Strategist' },
-      { slug: 'campaign_planner',   display_name: 'Campaign Planner' },
+      { slug: 'instagram_seed_agent',          display_name: 'Instagram Seed' },
+      { slug: 'linkedin_strategy_agent',       display_name: 'LinkedIn Strategy' },
+      { slug: 'youtube_strategy_agent',        display_name: 'YouTube Strategy' },
+      { slug: 'newsletter_architecture_agent', display_name: 'Newsletter Architecture' },
+      { slug: 'content_bridge_agent',          display_name: 'Content Bridge' },
     ],
   },
   {
     phase: '04', label: 'Execution',
     agents: [
-      { slug: 'execution_planner', display_name: 'Execution Planner' },
+      { slug: 'content_repurposing_agent', display_name: 'Content Repurposing Engine' },
+      { slug: 'content_scheduler_agent',   display_name: 'Content Scheduler' },
     ],
   },
   {
     phase: '05', label: 'Intelligence',
     agents: [
-      { slug: 'predictive_panel',      display_name: 'Predictive Panel' },
-      { slug: 'quarterly_review_agent', display_name: 'Quarterly Brand Review' },
+      { slug: 'brand_performance_agent', display_name: 'Brand Performance Dashboard' },
+      { slug: 'quarterly_review_agent',  display_name: 'Quarterly Brand Review' },
+      { slug: 'predictive_panel_agent',  display_name: 'Predictive Panel' },
     ],
   },
 ];
@@ -362,7 +374,12 @@ export default async function handler(req) {
       latency_rose_ms: LATENCY_THRESHOLD_ROSE_MS,
     },
     agents: agentsPayload,
-    locked_phase_cards: LOCKED_PHASE_CARDS,
+    // Per-agent dedupe: a released agent leaves its phase's locked card;
+    // an empty card drops. A held or unshipped agent stays listed, so a
+    // partially shipped phase shows live cards + the locked remainder.
+    locked_phase_cards: LOCKED_PHASE_CARDS
+      .map(card => ({ ...card, agents: card.agents.filter(a => !userVisibleSlugs.includes(a.slug)) }))
+      .filter(card => card.agents.length > 0),
     recent_runs: recentRuns,
   }, corsH);
 }

@@ -335,6 +335,72 @@ function buildPositioningMap(block) {
   return card;
 }
 
+/* content_pack · ordered compound records with long-form bodies (posts,
+   newsletter issues, video scripts, repurposed pieces, scheduled slots).
+   One full-width stacked card per item, per the reference treatment:
+   accent index numeral rotation, kicker chip, Fraunces title, mono meta
+   chips, prose body at the reading measure, spec-lines, tag chips, and
+   nested extras. Never columns of wrapping text. */
+function buildContentPack(block) {
+  const items = Array.isArray(block.content?.items) ? block.content.items : [];
+  return el('div', { class: 'qb-rs-cards' }, items.map((it, i) => {
+    const card = el('article', { class: 'qb-rs-card', dataset: { accent: String(i % 3) } });
+    card.appendChild(el('div', { class: 'qb-rs-card-head' }, [
+      el('span', { class: 'qb-rs-card-num' }, zeroPad(i + 1)),
+      el('span', { class: 'qb-rs-card-name' }, it.title || `Piece ${i + 1}`),
+    ]));
+    if (it.kicker || (it.meta && it.meta.length)) {
+      card.appendChild(el('div', { class: 'qb-rs-pack-chips' }, [
+        it.kicker ? el('span', { class: 'qb-rs-pack-kicker' }, it.kicker) : null,
+        ...(Array.isArray(it.meta) ? it.meta : []).map(m => el('span', { class: 'qb-rs-chip' }, m)),
+      ]));
+    }
+    card.appendChild(Object.assign(renderProse(it.body || ''), { className: 'qb-rs-prose qb-rs-pack-body' }));
+    if (Array.isArray(it.specs) && it.specs.length) {
+      card.appendChild(specLines(it.specs));
+    }
+    if (Array.isArray(it.extras) && it.extras.length) {
+      card.appendChild(el('div', { class: 'qb-rs-pack-extras' }, it.extras.map(ex =>
+        el('div', { class: 'qb-rs-pack-extra' }, [
+          el('p', { class: 'qb-rs-spec-label' }, ex.label || ''),
+          Object.assign(renderProse(ex.body || ''), { className: 'qb-rs-prose qb-rs-pack-extra-body' }),
+        ])
+      )));
+    }
+    if (Array.isArray(it.tags) && it.tags.length) {
+      card.appendChild(el('div', { class: 'qb-rs-chips qb-rs-pack-tags' },
+        it.tags.map(t => el('span', { class: 'qb-rs-chip' }, t))));
+    }
+    return card;
+  }));
+}
+
+/* numbered_procedure · do-this-then-that. One card, ordered rows with the
+   accent step numeral, action lead, detail after. Spec-line rhythm. */
+function buildNumberedProcedure(block) {
+  const steps = Array.isArray(block.content?.steps) ? block.content.steps : [];
+  return el('div', { class: 'qb-rs-card qb-rs-proc' }, [
+    el('ol', { class: 'qb-rs-proc-steps' }, steps.map((st, i) =>
+      el('li', { class: 'qb-rs-proc-step' }, [
+        el('span', { class: 'qb-rs-proc-num' }, zeroPad(i + 1)),
+        el('div', { class: 'qb-rs-proc-body' }, [
+          el('p', { class: 'qb-rs-proc-action' }, st.action || ''),
+          st.detail ? el('p', { class: 'qb-rs-proc-detail' }, st.detail) : null,
+        ]),
+      ]))),
+  ]);
+}
+
+/* spec_grid · label/value tiles, two-up above 620px, stacked below. */
+function buildSpecGrid(block) {
+  const specs = Array.isArray(block.content?.specs) ? block.content.specs : [];
+  return el('div', { class: 'qb-rs-grid' }, specs.map(s =>
+    el('div', { class: 'qb-rs-grid-tile' }, [
+      el('span', { class: 'qb-rs-grid-label' }, s.label || ''),
+      el('p', { class: 'qb-rs-grid-value' }, s.value || ''),
+    ])));
+}
+
 const DATA_BLOCK_BUILDERS = {
   palette: buildPalette,
   type_pairing: buildTypePairing,
@@ -342,6 +408,9 @@ const DATA_BLOCK_BUILDERS = {
   always_never: buildAlwaysNever,
   priority_list: buildPriorityList,
   descriptor_list: buildDescriptorList,
+  content_pack: buildContentPack,
+  numbered_procedure: buildNumberedProcedure,
+  spec_grid: buildSpecGrid,
 };
 
 /* Each data block sits in its own section: the block title is the Fraunces

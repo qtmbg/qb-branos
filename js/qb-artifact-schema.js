@@ -53,7 +53,20 @@ export const DATA_BLOCK_TYPES = [
   "positioning_map",
   "always_never",
   "priority_list",
-  "descriptor_list"
+  "descriptor_list",
+  // Chapter 5 · the content-pack block family. Three deliberately generic
+  // types carry every Phase 03-05 deliverable so the reading surface stays
+  // one designed system instead of a bespoke renderer per agent:
+  //   content_pack      · ordered compound records with long-form bodies
+  //                       (posts, newsletter issues, video scripts + reels,
+  //                       repurposed pieces, scheduled slots)
+  //   numbered_procedure· ordered do-this-then-that steps (production
+  //                       briefs, setup sequences)
+  //   spec_grid         · label/value pairs (platform settings, cadence,
+  //                       KPI readouts)
+  "content_pack",
+  "numbered_procedure",
+  "spec_grid"
 ];
 
 const AGENT_SLUG_RE = /^[a-z0-9_]+$/;
@@ -386,13 +399,124 @@ function validateDescriptorList(content, path, errors) {
   });
 }
 
+function validateContentPack(content, path, errors) {
+  if (!isPlainObject(content)) {
+    err(errors, path, "content_pack content must be an object");
+    return;
+  }
+  checkUnknownKeys(content, ["items"], path, errors);
+  const items = content.items;
+  const ip = `${path}.items`;
+  if (!Array.isArray(items)) {
+    err(errors, ip, "items must be an array");
+    return;
+  }
+  if (items.length < 1 || items.length > 20) {
+    err(errors, ip, "items must have 1..20 items");
+  }
+  items.forEach((it, i) => {
+    const p = `${ip}[${i}]`;
+    if (!isPlainObject(it)) {
+      err(errors, p, "item must be an object");
+      return;
+    }
+    checkUnknownKeys(it, ["kicker", "title", "meta", "body", "specs", "tags", "extras"], p, errors);
+    if (it.kicker !== undefined) {
+      if (!isString(it.kicker) || it.kicker.length < 1 || it.kicker.length > 60) err(errors, `${p}.kicker`, "kicker must be a string 1..60");
+    }
+    if (!isString(it.title) || it.title.length < 1 || it.title.length > 200) err(errors, `${p}.title`, "title is required string 1..200");
+    if (it.meta !== undefined) {
+      if (!Array.isArray(it.meta) || it.meta.length > 6) err(errors, `${p}.meta`, "meta must be an array of <=6");
+      else it.meta.forEach((s, j) => { if (!isString(s) || s.length < 1 || s.length > 40) err(errors, `${p}.meta[${j}]`, "must be a string 1..40"); });
+    }
+    if (!isString(it.body) || it.body.length < 1 || it.body.length > 6000) err(errors, `${p}.body`, "body is required string 1..6000");
+    if (it.specs !== undefined) {
+      if (!Array.isArray(it.specs) || it.specs.length > 10) err(errors, `${p}.specs`, "specs must be an array of <=10");
+      else it.specs.forEach((s, j) => { if (!isString(s) || s.length < 1 || s.length > 300) err(errors, `${p}.specs[${j}]`, "must be a string 1..300"); });
+    }
+    if (it.tags !== undefined) {
+      if (!Array.isArray(it.tags) || it.tags.length > 15) err(errors, `${p}.tags`, "tags must be an array of <=15");
+      else it.tags.forEach((s, j) => { if (!isString(s) || s.length < 1 || s.length > 40) err(errors, `${p}.tags[${j}]`, "must be a string 1..40"); });
+    }
+    if (it.extras !== undefined) {
+      if (!Array.isArray(it.extras) || it.extras.length > 6) { err(errors, `${p}.extras`, "extras must be an array of <=6"); return; }
+      it.extras.forEach((ex, j) => {
+        const ep = `${p}.extras[${j}]`;
+        if (!isPlainObject(ex)) { err(errors, ep, "extra must be an object"); return; }
+        checkUnknownKeys(ex, ["label", "body"], ep, errors);
+        if (!isString(ex.label) || ex.label.length < 1 || ex.label.length > 80) err(errors, `${ep}.label`, "label is required string 1..80");
+        if (!isString(ex.body) || ex.body.length < 1 || ex.body.length > 2000) err(errors, `${ep}.body`, "body is required string 1..2000");
+      });
+    }
+  });
+}
+
+function validateNumberedProcedure(content, path, errors) {
+  if (!isPlainObject(content)) {
+    err(errors, path, "numbered_procedure content must be an object");
+    return;
+  }
+  checkUnknownKeys(content, ["steps"], path, errors);
+  const steps = content.steps;
+  const sp = `${path}.steps`;
+  if (!Array.isArray(steps)) {
+    err(errors, sp, "steps must be an array");
+    return;
+  }
+  if (steps.length < 1 || steps.length > 15) {
+    err(errors, sp, "steps must have 1..15 items");
+  }
+  steps.forEach((st, i) => {
+    const p = `${sp}[${i}]`;
+    if (!isPlainObject(st)) {
+      err(errors, p, "step must be an object");
+      return;
+    }
+    checkUnknownKeys(st, ["action", "detail"], p, errors);
+    if (!isString(st.action) || st.action.length < 1 || st.action.length > 200) err(errors, `${p}.action`, "action is required string 1..200");
+    if (st.detail !== undefined) {
+      if (!isString(st.detail) || st.detail.length < 1 || st.detail.length > 600) err(errors, `${p}.detail`, "detail must be a string 1..600");
+    }
+  });
+}
+
+function validateSpecGrid(content, path, errors) {
+  if (!isPlainObject(content)) {
+    err(errors, path, "spec_grid content must be an object");
+    return;
+  }
+  checkUnknownKeys(content, ["specs"], path, errors);
+  const specs = content.specs;
+  const sp = `${path}.specs`;
+  if (!Array.isArray(specs)) {
+    err(errors, sp, "specs must be an array");
+    return;
+  }
+  if (specs.length < 1 || specs.length > 12) {
+    err(errors, sp, "specs must have 1..12 items");
+  }
+  specs.forEach((s, i) => {
+    const p = `${sp}[${i}]`;
+    if (!isPlainObject(s)) {
+      err(errors, p, "spec must be an object");
+      return;
+    }
+    checkUnknownKeys(s, ["label", "value"], p, errors);
+    if (!isString(s.label) || s.label.length < 1 || s.label.length > 60) err(errors, `${p}.label`, "label is required string 1..60");
+    if (!isString(s.value) || s.value.length < 1 || s.value.length > 300) err(errors, `${p}.value`, "value is required string 1..300");
+  });
+}
+
 const TYPE_VALIDATORS = {
   palette: validatePalette,
   type_pairing: validateTypePairing,
   positioning_map: validatePositioningMap,
   always_never: validateAlwaysNever,
   priority_list: validatePriorityList,
-  descriptor_list: validateDescriptorList
+  descriptor_list: validateDescriptorList,
+  content_pack: validateContentPack,
+  numbered_procedure: validateNumberedProcedure,
+  spec_grid: validateSpecGrid
 };
 
 function validateDataBlock(block, path, errors) {
