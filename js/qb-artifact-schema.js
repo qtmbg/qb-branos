@@ -19,6 +19,9 @@ export const KNOWN_AGENT_SLUGS = [
   "logo_evaluation_agent",
   // Chapter 4 step 3 · Voice Guide, three surfaces land together.
   "voice_guide_agent",
+  // Chapter 5 step 1 · Newsletter Architecture, the first Phase 03 agent.
+  // Three surfaces land together per the standing registry merge gate.
+  "newsletter_architecture_agent",
   // Phase '00' sentinel · synthetic test agent loaded only when
   // CHAIN_TEST_AGENT=1 (per chapter-02/step-8-spec §2.2). Listed here so
   // its delivered artifact passes header.agent validation; never user-
