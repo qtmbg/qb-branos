@@ -255,7 +255,7 @@ export default async function handler(req) {
   // 2026-06-11 (prompt signed). logo_evaluation_agent + voice_guide_agent
   // released 2026-06-14 (both prompts signed two sessions prior). The set
   // is now empty; the mechanism stays in place for the next held prompt.
-  const PROMPT_HOLD_SLUGS = new Set(['newsletter_architecture_agent', 'linkedin_strategy_agent', 'instagram_seed_agent']);
+  const PROMPT_HOLD_SLUGS = new Set(['newsletter_architecture_agent', 'linkedin_strategy_agent', 'instagram_seed_agent', 'youtube_strategy_agent', 'content_bridge_agent']);
   const userVisibleSlugs = listAgentSlugs().filter(slug => {
     const meta = AGENTS[slug]?.META;
     return meta?.phase && meta.phase !== '00' && !PROMPT_HOLD_SLUGS.has(slug);

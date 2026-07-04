@@ -39,6 +39,8 @@ import { META as voiceGuideMeta, run as voiceGuideRun } from './voice-guide.js';
 import { META as newsletterArchMeta, run as newsletterArchRun } from './newsletter-architecture.js';
 import { META as linkedinStrategyMeta, run as linkedinStrategyRun } from './linkedin-strategy.js';
 import { META as instagramSeedMeta, run as instagramSeedRun } from './instagram-seed.js';
+import { META as youtubeStrategyMeta, run as youtubeStrategyRun } from './youtube-strategy.js';
+import { META as contentBridgeMeta, run as contentBridgeRun } from './content-bridge.js';
 import { META as chainTestMeta, run as chainTestRun } from './chain-test-agent.js';
 import { META as fileTestMeta, run as fileTestRun } from './file-test-agent.js';
 
@@ -55,6 +57,8 @@ assertAgentMetaOrThrow(voiceGuideMeta, 'agents/voice-guide.js');
 assertAgentMetaOrThrow(newsletterArchMeta, 'agents/newsletter-architecture.js');
 assertAgentMetaOrThrow(linkedinStrategyMeta, 'agents/linkedin-strategy.js');
 assertAgentMetaOrThrow(instagramSeedMeta, 'agents/instagram-seed.js');
+assertAgentMetaOrThrow(youtubeStrategyMeta, 'agents/youtube-strategy.js');
+assertAgentMetaOrThrow(contentBridgeMeta, 'agents/content-bridge.js');
 assertAgentMetaOrThrow(chainTestMeta, 'agents/chain-test-agent.js');
 assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 
@@ -63,7 +67,7 @@ assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 // first dispatch (the operator-notify module needs Resend at runtime, not
 // at module-load).
 export const LATENCY_BUDGET_WARNINGS = [];
-for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta, newsletterArchMeta, linkedinStrategyMeta, instagramSeedMeta]) {
+for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta, newsletterArchMeta, linkedinStrategyMeta, instagramSeedMeta, youtubeStrategyMeta, contentBridgeMeta]) {
   const check = checkLatencyBudget(meta);
   if (!check.withinBudget) {
     LATENCY_BUDGET_WARNINGS.push(check);
@@ -71,7 +75,7 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, lo
   }
 }
 
-console.log('agent registry loaded · 10 prod agents + 2 test agents (flag-gated at request time)');
+console.log('agent registry loaded · 12 prod agents + 2 test agents (flag-gated at request time)');
 
 // ─── Real agents · ALWAYS loaded · frozen at module init ─────────────────
 // These are the production agents. No env gates. The frozen map is the
@@ -100,6 +104,10 @@ export const AGENTS = Object.freeze({
   // PROMPT_HOLD_SLUGS (standing policy); Console-invisible until signed.
   [linkedinStrategyMeta.slug]: { META: linkedinStrategyMeta, run: linkedinStrategyRun },
   [instagramSeedMeta.slug]: { META: instagramSeedMeta, run: instagramSeedRun },
+  // Chapter 5 steps 4-5 · YouTube Strategy + Content Bridge (the Phase 03
+  // fan-in). Merge behind PROMPT_HOLD_SLUGS; Console-invisible until signed.
+  [youtubeStrategyMeta.slug]: { META: youtubeStrategyMeta, run: youtubeStrategyRun },
+  [contentBridgeMeta.slug]: { META: contentBridgeMeta, run: contentBridgeRun },
 });
 
 // ─── Test agents · flag-gated at REQUEST TIME ─────────────────────────────
