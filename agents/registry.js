@@ -43,6 +43,9 @@ import { META as youtubeStrategyMeta, run as youtubeStrategyRun } from './youtub
 import { META as contentBridgeMeta, run as contentBridgeRun } from './content-bridge.js';
 import { META as contentRepurposingMeta, run as contentRepurposingRun } from './content-repurposing.js';
 import { META as contentSchedulerMeta, run as contentSchedulerRun } from './content-scheduler.js';
+import { META as brandPerformanceMeta, run as brandPerformanceRun } from './brand-performance.js';
+import { META as quarterlyReviewMeta, run as quarterlyReviewRun } from './quarterly-review.js';
+import { META as predictivePanelMeta, run as predictivePanelRun } from './predictive-panel.js';
 import { META as chainTestMeta, run as chainTestRun } from './chain-test-agent.js';
 import { META as fileTestMeta, run as fileTestRun } from './file-test-agent.js';
 
@@ -63,6 +66,9 @@ assertAgentMetaOrThrow(youtubeStrategyMeta, 'agents/youtube-strategy.js');
 assertAgentMetaOrThrow(contentBridgeMeta, 'agents/content-bridge.js');
 assertAgentMetaOrThrow(contentRepurposingMeta, 'agents/content-repurposing.js');
 assertAgentMetaOrThrow(contentSchedulerMeta, 'agents/content-scheduler.js');
+assertAgentMetaOrThrow(brandPerformanceMeta, 'agents/brand-performance.js');
+assertAgentMetaOrThrow(quarterlyReviewMeta, 'agents/quarterly-review.js');
+assertAgentMetaOrThrow(predictivePanelMeta, 'agents/predictive-panel.js');
 assertAgentMetaOrThrow(chainTestMeta, 'agents/chain-test-agent.js');
 assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 
@@ -71,7 +77,7 @@ assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 // first dispatch (the operator-notify module needs Resend at runtime, not
 // at module-load).
 export const LATENCY_BUDGET_WARNINGS = [];
-for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta, newsletterArchMeta, linkedinStrategyMeta, instagramSeedMeta, youtubeStrategyMeta, contentBridgeMeta, contentRepurposingMeta, contentSchedulerMeta]) {
+for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta, newsletterArchMeta, linkedinStrategyMeta, instagramSeedMeta, youtubeStrategyMeta, contentBridgeMeta, contentRepurposingMeta, contentSchedulerMeta, brandPerformanceMeta, quarterlyReviewMeta, predictivePanelMeta]) {
   const check = checkLatencyBudget(meta);
   if (!check.withinBudget) {
     LATENCY_BUDGET_WARNINGS.push(check);
@@ -79,7 +85,7 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, lo
   }
 }
 
-console.log('agent registry loaded · 14 prod agents + 2 test agents (flag-gated at request time)');
+console.log('agent registry loaded · 17 prod agents + 2 test agents (flag-gated at request time)');
 
 // ─── Real agents · ALWAYS loaded · frozen at module init ─────────────────
 // These are the production agents. No env gates. The frozen map is the
@@ -116,6 +122,11 @@ export const AGENTS = Object.freeze({
   // complete). Merge behind PROMPT_HOLD_SLUGS; Console-invisible until signed.
   [contentRepurposingMeta.slug]: { META: contentRepurposingMeta, run: contentRepurposingRun },
   [contentSchedulerMeta.slug]: { META: contentSchedulerMeta, run: contentSchedulerRun },
+  // Chapter 7 steps 1-3 · the Phase 05 intelligence agents (pro tier).
+  // Merge behind PROMPT_HOLD_SLUGS; Console-invisible until signed.
+  [brandPerformanceMeta.slug]: { META: brandPerformanceMeta, run: brandPerformanceRun },
+  [quarterlyReviewMeta.slug]: { META: quarterlyReviewMeta, run: quarterlyReviewRun },
+  [predictivePanelMeta.slug]: { META: predictivePanelMeta, run: predictivePanelRun },
 });
 
 // ─── Test agents · flag-gated at REQUEST TIME ─────────────────────────────

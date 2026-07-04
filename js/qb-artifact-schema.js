@@ -32,6 +32,11 @@ export const KNOWN_AGENT_SLUGS = [
   // per the standing gate.
   "content_repurposing_agent",
   "content_scheduler_agent",
+  // Chapter 7 steps 1-3 · Phase 05 complete · three surfaces land together
+  // per the standing gate.
+  "brand_performance_agent",
+  "quarterly_review_agent",
+  "predictive_panel_agent",
   // Phase '00' sentinel · synthetic test agent loaded only when
   // CHAIN_TEST_AGENT=1 (per chapter-02/step-8-spec §2.2). Listed here so
   // its delivered artifact passes header.agent validation; never user-
