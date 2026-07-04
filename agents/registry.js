@@ -37,6 +37,8 @@ import { META as logoDirectionMeta, run as logoDirectionRun } from './logo-direc
 import { META as logoEvaluationMeta, run as logoEvaluationRun } from './logo-evaluation.js';
 import { META as voiceGuideMeta, run as voiceGuideRun } from './voice-guide.js';
 import { META as newsletterArchMeta, run as newsletterArchRun } from './newsletter-architecture.js';
+import { META as linkedinStrategyMeta, run as linkedinStrategyRun } from './linkedin-strategy.js';
+import { META as instagramSeedMeta, run as instagramSeedRun } from './instagram-seed.js';
 import { META as chainTestMeta, run as chainTestRun } from './chain-test-agent.js';
 import { META as fileTestMeta, run as fileTestRun } from './file-test-agent.js';
 
@@ -51,6 +53,8 @@ assertAgentMetaOrThrow(logoDirectionMeta, 'agents/logo-direction.js');
 assertAgentMetaOrThrow(logoEvaluationMeta, 'agents/logo-evaluation.js');
 assertAgentMetaOrThrow(voiceGuideMeta, 'agents/voice-guide.js');
 assertAgentMetaOrThrow(newsletterArchMeta, 'agents/newsletter-architecture.js');
+assertAgentMetaOrThrow(linkedinStrategyMeta, 'agents/linkedin-strategy.js');
+assertAgentMetaOrThrow(instagramSeedMeta, 'agents/instagram-seed.js');
 assertAgentMetaOrThrow(chainTestMeta, 'agents/chain-test-agent.js');
 assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 
@@ -59,7 +63,7 @@ assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 // first dispatch (the operator-notify module needs Resend at runtime, not
 // at module-load).
 export const LATENCY_BUDGET_WARNINGS = [];
-for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta, newsletterArchMeta]) {
+for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta, newsletterArchMeta, linkedinStrategyMeta, instagramSeedMeta]) {
   const check = checkLatencyBudget(meta);
   if (!check.withinBudget) {
     LATENCY_BUDGET_WARNINGS.push(check);
@@ -67,7 +71,7 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, lo
   }
 }
 
-console.log('agent registry loaded · 8 prod agents + 2 test agents (flag-gated at request time)');
+console.log('agent registry loaded · 10 prod agents + 2 test agents (flag-gated at request time)');
 
 // ─── Real agents · ALWAYS loaded · frozen at module init ─────────────────
 // These are the production agents. No env gates. The frozen map is the
@@ -92,6 +96,10 @@ export const AGENTS = Object.freeze({
   // and harness verification; Console-invisible until the operator signs
   // the prompt (PROMPT_HOLD_SLUGS in api/agents/console.js).
   [newsletterArchMeta.slug]: { META: newsletterArchMeta, run: newsletterArchRun },
+  // Chapter 5 steps 2-3 · LinkedIn Strategy + Instagram Seed. Merge behind
+  // PROMPT_HOLD_SLUGS (standing policy); Console-invisible until signed.
+  [linkedinStrategyMeta.slug]: { META: linkedinStrategyMeta, run: linkedinStrategyRun },
+  [instagramSeedMeta.slug]: { META: instagramSeedMeta, run: instagramSeedRun },
 });
 
 // ─── Test agents · flag-gated at REQUEST TIME ─────────────────────────────
