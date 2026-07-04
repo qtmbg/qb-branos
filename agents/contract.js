@@ -91,6 +91,44 @@ export const AGENT_OBSERVED_LATENCY_MS = {
   logo_evaluation_agent:   39_000,
   // chapter-4 step-3 verification · 3 live runs 34 155-38 639 ms.
   voice_guide_agent:       39_000,
+  // Chapters 5-7 · measured 2026-07-04 (chapter-7 close): one dedicated
+  // live run per agent (agent_runs.duration_ms, the run handler's own
+  // wall clock), corroborated by the chapter-5/6/7 production harness
+  // walls (62.5 s newsletter solo, 114 s linkedin+instagram concurrent,
+  // 84 s youtube+bridge, 57 s repurposing+scheduler, 82 s the
+  // intelligence trio). Heavy-class agents budget against their own
+  // 120 000 ms in-call timeout via AGENT_IN_CALL_TIMEOUT_MS below.
+  newsletter_architecture_agent: 47_000,
+  // linkedin runs closest to its envelope (105 286 ms observed vs the
+  // 120 000 ms in-call timeout) · first candidate for prompt tightening
+  // or a token-budget cut if it drifts.
+  linkedin_strategy_agent:       106_000,
+  instagram_seed_agent:          83_000,
+  youtube_strategy_agent:        86_000,
+  content_bridge_agent:          32_000,
+  content_repurposing_agent:     44_000,
+  content_scheduler_agent:       53_000,
+  brand_performance_agent:       43_000,
+  quarterly_review_agent:        77_000,
+  predictive_panel_agent:        54_000,
+};
+
+// Chapter-7 close · per-agent in-call timeout divergence. The fleet
+// default is 60 000 ms (LATENCY_BUDGET_WARNING_MS); heavy-class agents
+// declare a single 120 000 ms attempt instead. checkLatencyBudget()
+// warns against the agent's OWN envelope, so a heavy agent measuring
+// 85 s does not fire a spurious 60 s warning, and a standard agent
+// creeping past 60 s still does. Hand-maintained beside the observed
+// table above; keep both in step when an agent changes class.
+export const AGENT_IN_CALL_TIMEOUT_MS = {
+  newsletter_architecture_agent: 120_000,
+  linkedin_strategy_agent:       120_000,
+  instagram_seed_agent:          120_000,
+  youtube_strategy_agent:        120_000,
+  content_repurposing_agent:     120_000,
+  brand_performance_agent:       120_000,
+  quarterly_review_agent:        120_000,
+  predictive_panel_agent:        120_000,
 };
 
 // Per §5.8.1: qbp_field → human-readable exercise name. Used to fill the
@@ -377,22 +415,26 @@ export function checkLatencyBudget(meta) {
   const slug = meta?.slug;
   const retryBudget = Number.isInteger(meta?.retry_budget) ? meta.retry_budget : DEFAULT_RETRY_BUDGET;
   const observed = AGENT_OBSERVED_LATENCY_MS[slug];
+  // The budget is the agent's own in-call timeout: the fleet-wide 60 s
+  // default, or the heavy-class 120 s envelope when the agent declares
+  // one in AGENT_IN_CALL_TIMEOUT_MS (chapter-7 close).
+  const budgetMs = AGENT_IN_CALL_TIMEOUT_MS[slug] ?? LATENCY_BUDGET_WARNING_MS;
   if (typeof observed !== 'number') {
     return {
       withinBudget: true,
       worstCaseMs: null,
-      budgetMs: LATENCY_BUDGET_WARNING_MS,
+      budgetMs,
       message: `no AGENT_OBSERVED_LATENCY_MS entry for ${slug || '<unknown>'} · pre-check skipped`,
     };
   }
   const worstCaseMs = observed * (retryBudget + 1);
-  const withinBudget = worstCaseMs <= LATENCY_BUDGET_WARNING_MS;
+  const withinBudget = worstCaseMs <= budgetMs;
   return {
     withinBudget,
     worstCaseMs,
-    budgetMs: LATENCY_BUDGET_WARNING_MS,
+    budgetMs,
     message: withinBudget
-      ? `${slug} · worst case ${worstCaseMs}ms within ${LATENCY_BUDGET_WARNING_MS}ms budget`
-      : `${slug} · worst case ${worstCaseMs}ms exceeds ${LATENCY_BUDGET_WARNING_MS}ms budget at retry_budget=${retryBudget} · drop retry_budget to 0 + tighten prompt, OR raise the in-call timeout within the function ceiling`,
+      ? `${slug} · worst case ${worstCaseMs}ms within ${budgetMs}ms budget`
+      : `${slug} · worst case ${worstCaseMs}ms exceeds ${budgetMs}ms budget at retry_budget=${retryBudget} · drop retry_budget to 0 + tighten prompt, OR raise the in-call timeout within the function ceiling`,
   };
 }
