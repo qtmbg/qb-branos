@@ -137,7 +137,7 @@ export default async function handler(req) {
   try { body = await req.json(); }
   catch { return json(400, { error: 'invalid_body' }, corsH); }
 
-  const { agent_slug, qbp_source, feedback, files: bodyFiles } = body || {};
+  const { agent_slug, qbp_source, feedback, files: bodyFiles, source_content, target_platform } = body || {};
   if (typeof agent_slug !== 'string' || !agent_slug) {
     return json(400, { error: 'invalid_agent_slug' }, corsH);
   }
@@ -453,6 +453,16 @@ export default async function handler(req) {
   }
 
   const runtimeArgs = { qbp_source: resolvedSource };
+  // Chapter 5 · whitelisted founder inputs for the content agents. Bounded
+  // strings only; the agent modules re-validate on their side. Content
+  // Bridge and Repurposing read source_content (the pasted piece), Bridge
+  // reads target_platform (checked against its operator inventory).
+  if (typeof source_content === 'string' && source_content.trim()) {
+    runtimeArgs.source_content = source_content.trim().slice(0, 8000);
+  }
+  if (typeof target_platform === 'string' && target_platform.trim()) {
+    runtimeArgs.target_platform = target_platform.trim().slice(0, 60);
+  }
   if (resolvedFeedback) runtimeArgs.feedback = resolvedFeedback;
   if (signedFiles.length > 0) runtimeArgs.files = signedFiles;
 

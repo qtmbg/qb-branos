@@ -25,6 +25,9 @@ export const KNOWN_AGENT_SLUGS = [
   // Chapter 5 steps 2-3 · three surfaces land together per the standing gate.
   "linkedin_strategy_agent",
   "instagram_seed_agent",
+  // Chapter 5 steps 4-5 · three surfaces land together per the standing gate.
+  "youtube_strategy_agent",
+  "content_bridge_agent",
   // Phase '00' sentinel · synthetic test agent loaded only when
   // CHAIN_TEST_AGENT=1 (per chapter-02/step-8-spec §2.2). Listed here so
   // its delivered artifact passes header.agent validation; never user-
