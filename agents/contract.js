@@ -122,6 +122,10 @@ export const AGENT_OBSERVED_LATENCY_MS = {
 // table above; keep both in step when an agent changes class.
 export const AGENT_IN_CALL_TIMEOUT_MS = {
   newsletter_architecture_agent: 120_000,
+  // Promoted from standard at chapter-7 close: measured 52 s against the
+  // 60 s envelope, then failed in the whole-system E2E with real
+  // dependency artifacts. See agents/content-scheduler.js header.
+  content_scheduler_agent:       120_000,
   linkedin_strategy_agent:       120_000,
   instagram_seed_agent:          120_000,
   youtube_strategy_agent:        120_000,

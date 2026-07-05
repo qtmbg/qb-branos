@@ -13,10 +13,15 @@
 //   - founder-initiated only: triggers ['manual', 'regenerate'].
 //   - PROMPT HELD (PROMPT_HOLD_SLUGS) until the operator signs.
 //
-// Latency class: STANDARD (4000 max tokens, the logo-direction call shape).
+// Latency class: HEAVY. Promoted from standard at chapter-7 close: the
+// 2026-07-04 measurement ran 52 069 ms against the 60 000 ms standard
+// envelope (the tightest margin in the fleet), and the whole-system E2E
+// then failed this agent in phase 04 with real, larger dependency
+// artifacts in the prompt. Single attempt at a 120 000 ms in-call
+// timeout, no inner retry (the reaper owns retries).
 
 const MAX_TOKENS = 4000;
-const CLAUDE_TIMEOUT_MS = 60000; // step-5 Node runtime envelope (see agents/contract.js budgets)
+const CLAUDE_TIMEOUT_MS = 120000; // heavy class · single attempt (see header)
 const DEFAULT_BRAND_NAME = 'Your Brand';
 
 export const CONTENT_SCHEDULER_FIELDS = [
@@ -156,6 +161,7 @@ function defensiveParseJson(text) {
   return { ok: false, reason: 'parse-failed', raw };
 }
 
+// HEAVY-CLASS CALL · one attempt, no inner retry (see header comment).
 async function callClaude({ apiKey, system, userContent }) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), CLAUDE_TIMEOUT_MS);
@@ -179,17 +185,14 @@ async function callClaude({ apiKey, system, userContent }) {
   } catch (e) {
     clearTimeout(timer);
     if (e && e.name === 'AbortError') {
-      return { ok: false, retryable: false, timeout: true, status: 0, body: '' };
+      return { ok: false, timeout: true, status: 0, body: '' };
     }
-    return { ok: false, retryable: true, status: 0, body: (e && e.message) || '' };
+    return { ok: false, status: 0, body: (e && e.message) || '' };
   }
   clearTimeout(timer);
 
-  if (res.status === 429 || res.status >= 500) {
-    return { ok: false, retryable: true, status: res.status, body: await res.text().catch(() => '') };
-  }
   if (!res.ok) {
-    return { ok: false, retryable: false, status: res.status, body: await res.text().catch(() => '') };
+    return { ok: false, status: res.status, body: await res.text().catch(() => '') };
   }
   const data = await res.json();
   const text = data?.content?.[0]?.text || '';
@@ -326,13 +329,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
 
   userText += '\n\nReturn only the JSON object described in your instructions.';
 
-  let claudeRes;
-  for (let attempt = 0; attempt < 2; attempt++) {
-    claudeRes = await callClaude({ apiKey: anthropicKey, system: SYSTEM_PROMPT, userContent: userText });
-    if (claudeRes.ok) break;
-    if (!claudeRes.retryable) break;
-    await new Promise(r => setTimeout(r, 600));
-  }
+  const claudeRes = await callClaude({ apiKey: anthropicKey, system: SYSTEM_PROMPT, userContent: userText });
 
   if (!claudeRes.ok) {
     if (claudeRes.timeout) {
