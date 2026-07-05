@@ -162,6 +162,7 @@ const HEALTH_LABEL = {
 function healthDot(state = 'neutral') {
   return el('span', {
     class: 'agent-health-dot',
+    role: 'img',
     title: HEALTH_LABEL[state] || HEALTH_LABEL.neutral,
     style: {
       display: 'inline-block',
