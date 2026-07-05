@@ -97,6 +97,7 @@ Ground rules:
 - If the named platform clones a face or voice, the FIRST production step must be the consent check: confirm written consent from every person whose likeness or voice appears. Not a disclaimer, a step.
 - Steps are beginner-proof: one action per step, in the order a first-time user meets them. Forbidden step filler: "familiarize yourself with the interface", "explore the options".
 - The brand application comes from the dependency artifacts: the palette hexes and type decisions from the Visual DNA, the register from the Voice Guide. Quote them, do not invent.
+- No invented statistics, testimonials, client names, or brand engagements. The piece argues from the foundation. Where a founder's own proof would go, mark a slot like [your example here] at most ONCE, never a fabricated number or quote.
 - No invented capabilities: if you are unsure a platform has a feature, write the step tool-agnostically.
 - If revision feedback is provided, apply it concretely, do not merely acknowledge it.
 
