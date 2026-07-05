@@ -34,6 +34,16 @@ Each prompt lives as `SYSTEM_PROMPT` in its module, under the marker line `The p
 3. The edit touches the dispatch path, so the standing registry merge gate applies: run `node scripts/registry-smoke.mjs`, record the output verbatim in the PR body, and probe `/api/agents/run` + `/api/agents/console` unauthenticated for handler-level 401 after deploy.
 4. Decide the legacy page disposition. Each released agent has a standalone HTML tool at the repo root (`newsletter-architecture-agent.html`, `linkedin-strategy-agent.html`, `instagram-seed-agent.html`, `youtube-strategy-agent.html`, `content-bridge.html`, `content-repurposing-engine.html`, `content-scheduler.html`, `brand-performance-dashboard.html`, `quarterly-brand-review-agent.html`, `predictive-panel..html`). Release does not touch them; they keep serving until you retire them to `/_archive` (the journey-guide precedent), redirect them, or keep them deliberately. The three Phase 02 pages (`logo-direction-agent.html`, `logo-evaluation-agent.html`, `voice-guide-agent.html`) sit in the same undecided state since their 2026-06 release, so one sweep can settle all thirteen.
 
+## Automated review · 2026-07-05
+
+Before this surface reached you, all ten prompts ran through an automated pass of the five checks above: one reviewer per prompt doing a mechanical scan (em dash character, exclamation points, the banned-word list) plus the four judgment checks, and an adversarial verifier on every flag. Result:
+
+- **Nine of ten came back READY**, every check PASS or N/A. Voice mechanics were clean on a mechanical scan across all ten: zero em dashes, banned words appear only inside each prompt's own ban list, no exclamation points in generated-copy guidance.
+- **Content Bridge was the one exception.** It was the only content-drafter missing the explicit ban on fabricated statistics, testimonials, client names, and engagements that its four siblings carry, and its no-source draft path was a live route where an invented number could reach a founder's first post. Fixed in **#216** (one bullet matching the sibling wording and their `[your example here]` marked-slot mechanism). The prompt stayed held through the fix.
+- The Predictive Panel's probabilities were confirmed framed as simulation outputs, never observed data. Content Bridge names platforms only from its `OPERATOR_PLATFORMS` constant. Every paste-reading agent states a concrete no-paste fallback.
+
+The automated pass is a floor, not your signature. It cannot judge whether a prompt produces work you would put your name on. Read each prompt at its source and sign when the voice is yours.
+
 ## Sign here
 
 - Signed by: ____________________
