@@ -1230,7 +1230,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   .persona-shell {
     display:grid; gap:var(--space-l-xl);
     grid-template-columns:1fr;
-    align-items:start;
+    align-items:stretch;
     justify-items:center;
     margin-top:var(--space-l);
   }
@@ -1331,20 +1331,20 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     z-index:5;
   }
 
-  /* Detail card matches the stage to the pixel: same aspect 1/1, same
-     border, same offset shadow. The pair reads as one balanced statement. */
+  /* Detail card pairs with the stage: same border, same offset shadow.
+     Cream surface so it pops on the dark section instead of dissolving
+     into it. Height follows content; the grid stretches it to the stage
+     row so the pair still reads balanced, and nothing ever clips. */
   .persona-detail {
-    aspect-ratio:1/1;
     width:100%;
-    background:var(--ink);
-    color:var(--cream);
+    background:var(--cream);
+    color:var(--ink);
     padding:var(--space-m);
     box-shadow:
       14px 14px 0 var(--rose),
       28px 28px 0 var(--gold);
     display:flex; flex-direction:column; gap:var(--space-s);
     justify-content:center;
-    overflow:hidden;
   }
   @media (min-width:640px) { .persona-detail { padding:var(--space-l); } }
   @media (hover:hover) {
@@ -1353,11 +1353,14 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   .persona-detail h3 {
     font-family:'Fraunces',serif;
     font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 70,"WONK" 0;
-    font-size:var(--step-4); line-height:1; color:var(--cream);
+    font-size:var(--step-3); line-height:1.05; color:var(--ink);
   }
-  .persona-detail h3 em { font-style:italic; color:var(--gold); }
-  .persona-detail p { font-family:'Inter',sans-serif; font-weight:500; font-size:var(--step-0); line-height:1.5; color:rgba(251,245,230,0.84); margin-top:var(--space-s); }
-  .persona-detail .qb-button { margin-top:var(--space-m); }
+  .persona-detail h3 em {
+    font-style:italic;
+    font-variation-settings:"wght" 600,"opsz" 96,"SOFT" 100,"WONK" 1;
+  }
+  .persona-detail p { font-family:'Inter',sans-serif; font-weight:500; font-size:var(--step-0); line-height:1.5; color:var(--ink-75); margin-top:var(--space-s); }
+  .persona-detail .qb-button { margin-top:var(--space-m); align-self:start; }
   .lb-period::before { content:""; display:block; }
 
   /* =====================================================
@@ -2124,10 +2127,11 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     </a>
     <nav class="nav-links">
       <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
-      <a href="#how" class="qb-type-nav">How it works</a>
+      <a href="#how" class="qb-type-nav">How</a>
       <a href="tools.html" class="qb-type-nav">Tools</a>
-      <a href="#what" class="qb-type-nav">What you get</a>
+      <a href="#what" class="qb-type-nav">What</a>
       <a href="#pricing" class="qb-type-nav">Pricing</a>
+      <a href="/blog" class="qb-type-nav">Blog</a>
       <a href="#about" class="qb-type-nav">About</a>
     </nav>
     <div class="nav-actions">
@@ -2147,10 +2151,11 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   </div>
   <nav class="mobile-menu_list">
     <a href="ecosystem.html">Ecosystem</a>
-    <a href="#how">How it works</a>
+    <a href="#how">How</a>
     <a href="tools.html">Tools</a>
-    <a href="#what">What you get</a>
+    <a href="#what">What</a>
     <a href="#pricing">Pricing</a>
+    <a href="/blog">Blog</a>
     <a href="#about">About</a>
     <a href="#scanner">Free scan</a>
   </nav>
@@ -2498,7 +2503,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
         <button class="persona-tag active" data-p="0">Starting from zero</button>
         <button class="persona-tag" data-p="1">Something feels off</button>
         <button class="persona-tag" data-p="2">Scaling fast</button>
-        <button class="persona-tag" data-p="3">Agency / agency</button>
+        <button class="persona-tag" data-p="3">I build for clients</button>
       </div>
 
       <div class="persona-shell">
@@ -2523,7 +2528,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
         <div class="persona-detail" id="personaDetail">
           <h3 id="pTitle">I have an idea.<span class="lb-period"></span><em>No brand yet.</em></h3>
           <p id="pText">You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.</p>
-          <a id="pLink" href="signal-scan.html?door=blank" class="qb-button is-primary on-dark"><span class="qb-button_content" id="pCta">Start from zero</span></a>
+          <a id="pLink" href="signal-scan.html?door=blank" class="qb-button is-primary"><span class="qb-button_content" id="pCta">Start from zero</span></a>
         </div>
       </div>
     </div>
@@ -2887,9 +2892,10 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     </div>
     <div class="footer_col">
       <div class="footer_col-title">Product</div>
-      <a href="#how">How it works</a>
+      <a href="#how">How</a>
       <a href="#what">The 20 tools</a>
       <a href="#pricing">Pricing</a>
+      <a href="/blog">Blog</a>
       <a href="#scanner">Free Signal Scan</a>
     </div>
     <div class="footer_col">
@@ -2990,7 +2996,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
       { t: 'I have an idea.<span class="lb-period"></span><em>No brand yet.</em>', d: 'You start at the beginning. The system walks you through identity, sensory mapping, visual language, and strategy. You emerge with a complete, live brand. No prior assets needed.', h: 'signal-scan.html?door=blank', cta: 'Start from zero', tag: '01 · The Blank Slate' },
       { t: 'I have a brand.<span class="lb-period"></span><em>Something feels off.</em>', d: 'The tools audit what you have and tell you what to keep, fix, or rebuild. Logo evaluation, voice analysis, performance review. Precise verdict, clear path forward.', h: 'signal-scan.html?door=doubt', cta: 'Audit your brand', tag: '02 · The Doubter' },
       { t: 'Competition is <em>coming fast.</em>', d: 'Skip to strategy and intelligence. The War Table pressure-tests your next move. The Predictive Panel simulates market response before you spend.', h: 'signal-scan.html?door=scale', cta: 'Enter strategic mode', tag: '03 · The Player' },
-      { t: 'I build brands <em>for clients.</em>', d: 'Up to 5 client workspaces. Your brand on every output. White-label delivery. Run clients through the same journey with your logo on the result.', h: 'https://calendly.com/qtmbg/strategy-call-lab', cta: 'Book a call', tag: '04 · The Multi-Brand' }
+      { t: 'I build brands <em>for clients.</em>', d: 'Up to 5 client workspaces. Your brand on every output. White-label delivery. Run clients through the same sequence with your logo on the result.', h: 'https://calendly.com/qtmbg/strategy-call-lab', cta: 'Book a call', tag: '04 · The Multi-Brand' }
     ];
     var pT = document.getElementById('pTitle');
     var pX = document.getElementById('pText');
