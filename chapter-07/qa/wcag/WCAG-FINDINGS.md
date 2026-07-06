@@ -62,4 +62,15 @@ Links sitting inside a text block, distinguished from surrounding text by color 
 
 Two of four serious rules are cleared in code here. The remaining two are single, well-scoped changes to the locked `:root` block and the shared banner, quantified above, ready for one operator CSS pass. When that pass lands and the audit re-runs clean, the chapter-4 WCAG deferral closes fully.
 
-*WCAG findings · QB BrandOS · 2026-07-05*
+## Remediation applied · 2026-07-06 go-live pass
+
+Executed under the operator's go-live directive (PRs #218, #220, plus the legal-page link fix):
+
+- **`--ink-50` alpha 0.50 to 0.62** across 35 files. Composites to ~#7B6A6C on cream, ratio ~4.6:1, clears AA. Hue unchanged. This was the dominant muted-text cluster.
+- **`link-in-text-block` cleared entirely**: persistent underline on the privacy/terms banner link and the 404 footer link. The rule no longer fires anywhere.
+- **privacy/terms page-local `--gold-deep` #A8862E to #8A6410** for body links (was 3.15:1, now clears 4.5:1; hue kept; those links also carry underlines).
+- Re-audit 2026-07-06 (74 views): serious rules down from four to one. `color-contrast` down from 585 nodes on 67 views to 338 nodes on 34 views.
+
+**Still open, deliberately**: the remaining ~338 nodes are the gold-as-text family (`#B58840` eyebrows and tags on cream and cream-warm) plus ink-on-rose fills at 4.45:1. Globally darkening `--gold` or `--gold-deep` breaks ink-on-gold fills (drops below 4.5:1 the other way) and changes the brand's signature eyebrow treatment sitewide. This is a per-use design pass on the eyebrow/tag/rose-fill components, an operator brand decision, not a token swap.
+
+*WCAG findings · QB BrandOS · 2026-07-05 · remediation record 2026-07-06*
