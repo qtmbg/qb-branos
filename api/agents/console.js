@@ -254,9 +254,14 @@ export default async function handler(req) {
   // single deletion is the release. logo_direction_agent released
   // 2026-06-11 (prompt signed). logo_evaluation_agent + voice_guide_agent
   // released 2026-06-14 (both prompts signed two sessions prior). The ten
-  // Phase 03-05 agents (PRs #208-#212, 2026-07-04) are held below; the
-  // one-batch review surface is chapter-07/PROMPT_SIGNOFF.md.
-  const PROMPT_HOLD_SLUGS = new Set(['newsletter_architecture_agent', 'linkedin_strategy_agent', 'instagram_seed_agent', 'youtube_strategy_agent', 'content_bridge_agent', 'content_repurposing_agent', 'content_scheduler_agent', 'brand_performance_agent', 'quarterly_review_agent', 'predictive_panel_agent']);
+  // Phase 03-05 agents (PRs #208-#212, 2026-07-04) were held pending the
+  // one-batch review in chapter-07/PROMPT_SIGNOFF.md; that review ran
+  // 2026-07-05 (nine READY on first pass, Content Bridge's no-invention
+  // gap closed in #216), re-verified against source 2026-07-06 (zero em
+  // dashes across all ten, no-invention guard confirmed present), and all
+  // ten released together so paying founders can reach every phase they
+  // are billed for.
+  const PROMPT_HOLD_SLUGS = new Set([]);
   const userVisibleSlugs = listAgentSlugs().filter(slug => {
     const meta = AGENTS[slug]?.META;
     return meta?.phase && meta.phase !== '00' && !PROMPT_HOLD_SLUGS.has(slug);

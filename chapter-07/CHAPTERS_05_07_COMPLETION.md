@@ -66,9 +66,10 @@ The first attempt (2026-07-04) failed exactly one agent: the Scheduler at phase 
 
 ## What remains for the operator
 
-1. **Sign the prompts.** All ten prompts are held in `PROMPT_HOLD_SLUGS` and Console-invisible. The one-batch review surface is `chapter-07/PROMPT_SIGNOFF.md`; release is a one-line edit per batch under the standing gate.
-2. **Apply migration 021.** `supabase/migrations/021_reconcile_018_artifacts_uniqueness.sql` reconciles the never-applied migration 018 (empirically re-confirmed absent 2026-07-04: duplicate artifact versions insert cleanly). Needs the Supabase SQL editor or an MCP-connected session; this session had no SQL access. After applying, a duplicate-insert probe must fail on the second insert.
+1. **Sign the prompts.** DONE 2026-07-06. All ten released under the operator's go-live directive after a source re-verification; record in `chapter-07/PROMPT_SIGNOFF.md`, shipped under the registry merge gate (smoke output in the release PR body, post-deploy 401 probes recorded).
+2. **Apply migration 021.** STILL OPEN, operator-blocked. `supabase/migrations/021_reconcile_018_artifacts_uniqueness.sql` reconciles the never-applied migration 018 (empirically re-confirmed absent 2026-07-04: duplicate artifact versions insert cleanly). Needs the Supabase SQL editor or an MCP-connected session; neither the 2026-07-05 nor the 2026-07-06 session had SQL access (service-role REST cannot run DDL). After applying, a duplicate-insert probe must fail on the second insert.
 3. **Third-party wiring stays flagged.** Content Bridge's platform inventory carries the legacy `OPERATOR_PLATFORMS` list verbatim for review; the Scheduler's Buffer integration and the Bridge's vendor APIs both need operator accounts and were deliberately not wired.
-4. **The WCAG audit stays chapter-deferred.** Chapter 4 carried "a WCAG audit and a live render check" as one deferral. The whole-system E2E cured the live render half (34 reading-surface proofs); the accessibility audit remains open and carries forward.
+4. **The WCAG audit stays chapter-deferred.** LARGELY CURED. The 2026-07-05 audit ran (74 views, four serious rule types; two fixed in #217). The 2026-07-06 go-live pass applied the quantified remediation: `--ink-50` contrast nudge across 35 files (clears the dominant ~190-node cluster) and the link-in-text-block underlines (#218). Remaining open: gold/rose/forest used as text on cream (~80 nodes); darkening `--gold-deep` globally would break ink-on-gold fills, so it needs a per-use sweep. Logged in `chapter-07/qa/wcag/WCAG-FINDINGS.md`.
+5. **Legacy-page disposition.** DECIDED 2026-07-06: option 1, keep the thirteen standalone pages serving deliberately as the anonymous tryout funnel while the Console serves paying founders. Rationale and revisit conditions in `chapter-07/qa/LEGACY-PAGE-DISPOSITION.md`.
 
-*Chapters 5-7 · QB BrandOS · July 2026*
+*Chapters 5-7 · QB BrandOS · July 2026 · updated 2026-07-06 (go-live pass)*
