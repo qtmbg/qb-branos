@@ -24,8 +24,22 @@
 <style>
   :root {
     --cream:#FBF5E6; --cream-card:#F4EBD3; --cream-rose:#F2E0DA; --cream-edge:#E5DCC5;
-    --ink:#2D1521; --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.5); --ink-25:rgba(45,21,33,0.25);
+    --ink:#2D1521; --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.62); --ink-25:rgba(45,21,33,0.25);
     --gold:#E5C975; --gold-deep:#A8862E; --rose-deep:#B5455A;
+
+    /* auto: canonical chassis parity backfill, 2026-07-06 audit */
+    --white:#FFFEF8; --rose:#CA6180; --teal:#9ED3DC;
+    --f-display:'Fraunces','Times New Roman',serif;
+    --f-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    --f-mono:'JetBrains Mono',ui-monospace,monospace;
+    --ease-qb:cubic-bezier(0.19,1,0.22,1);
+    --step--2:clamp(0.7813rem,0.7546rem + 0.1254vw,0.88rem);
+    --step-0:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+    --space-xs:clamp(0.875rem,0.8244rem + 0.2381vw,1.0625rem);
+    --space-s:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+    --space-m:clamp(1.6875rem,1.5863rem + 0.4762vw,2.0625rem);
+    --space-m-l:clamp(1.6875rem,1.4008rem + 1.3492vw,2.75rem);
+    --space-l:clamp(2.25rem,2.1151rem + 0.6349vw,2.75rem);
   }
   *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
   html { font-size:17px; scroll-behavior:smooth; }
@@ -44,6 +58,88 @@
   .nav-actions { display:inline-flex; gap:0.5rem; }
   .nav-actions a { padding:8px 16px; border:2px solid var(--ink); border-radius:9999px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.85rem; text-decoration:none; color:var(--ink); background:var(--cream-card); box-shadow:0 3px var(--ink); }
   .nav-actions a.is-primary { background:var(--gold); }
+
+  /* === CHASSIS HARMONIZATION (one shell across all 27 pages, ecosystem.html SOT) === */
+  html { overflow-x: clip !important; }
+  body { overflow-x: clip !important; overflow-y: visible !important; }
+  .qb-loading-bar { z-index: 100 !important; }
+  .banner { z-index: 95 !important; }
+  .nav-wrap { z-index: 90 !important; }
+  .banner {
+    background: var(--ink) !important; color: var(--cream) !important; text-align: center !important;
+    padding: 0.7em var(--space-m-l, 1.5rem) !important;
+    font-family: var(--f-body), 'Inter', sans-serif !important;
+    font-size: var(--step--2, 0.78rem) !important; font-weight: 500 !important;
+    letter-spacing: 0.04em !important; border: 0 !important;
+  }
+  .banner a { color: var(--gold) !important; text-decoration: underline !important; text-underline-offset: 3px !important; font-weight: 600 !important; margin-left: 0.5em !important; }
+  .nav-wrap {
+    padding: var(--space-s, 0.875rem) var(--space-m-l, 1.5rem) !important;
+    position: sticky !important; top: 0 !important; background: var(--cream) !important;
+  }
+  .nav-wrap > .nav, .nav-wrap > header.nav {
+    max-width: 1320px !important; margin-inline: auto !important;
+    display: flex !important; align-items: center !important; justify-content: space-between !important;
+    gap: var(--space-m, 1rem) !important; background: var(--cream) !important;
+    border: 2px solid var(--ink) !important; border-radius: 9999px !important;
+    padding: 0.6rem 0.6rem 0.6rem 1.4rem !important; box-shadow: 0 6px var(--ink) !important;
+    width: auto !important; height: auto !important; min-height: 0 !important; position: static !important;
+  }
+  .nav-wrap .nav-brand {
+    display: inline-flex !important; align-items: center !important; gap: 0.6rem !important;
+    font-family: var(--f-display), 'Fraunces', serif !important;
+    font-variation-settings: "wght" 600, "opsz" 36, "SOFT" 70, "WONK" 0 !important;
+    font-size: var(--step-0, 1.125rem) !important; color: var(--ink) !important;
+    text-decoration: none !important; line-height: 1 !important;
+  }
+  .nav-wrap .nav-brand_dot {
+    width: 0.65em !important; height: 0.65em !important; border-radius: 50% !important;
+    background: var(--rose) !important; display: inline-block !important;
+    box-shadow: 0 0 0 3px rgba(202,97,128,0.18) !important;
+  }
+  .nav-wrap .nav-links { display: none !important; align-items: center !important; gap: var(--space-s, 0.875rem) !important; }
+  @media (min-width: 1000px) { .nav-wrap .nav-links { display: inline-flex !important; } }
+  .nav-wrap .nav-links a {
+    font-family: var(--f-body), 'Inter', sans-serif !important; font-weight: 600 !important;
+    font-size: var(--step--2, 0.78rem) !important; line-height: 1.5em !important; letter-spacing: 0.1em !important;
+    text-transform: uppercase !important; color: var(--ink) !important; text-decoration: none !important;
+    padding: 0 !important; border-radius: 0 !important; transition: color 0.3s var(--ease-qb) !important;
+  }
+  .nav-wrap .nav-links a:hover { color: var(--ink-75) !important; }
+  .nav-wrap .nav-actions { display: inline-flex !important; align-items: center !important; gap: 0.5rem !important; }
+  .nav-wrap .nav-actions a { all: revert; }
+  .nav-wrap .hamburger {
+    display: inline-flex !important; flex-direction: column !important; align-items: center !important;
+    justify-content: center !important; gap: 4px !important; width: 44px !important; height: 44px !important;
+    border: 2px solid var(--ink) !important; border-radius: 9999px !important; background: var(--cream) !important;
+    cursor: pointer !important; padding: 0 !important;
+  }
+  @media (min-width: 1000px) { .nav-wrap .hamburger { display: none !important; } }
+  .nav-wrap .hamburger span { display: block !important; width: 18px !important; height: 2px !important; background: var(--ink) !important; border-radius: 2px !important; }
+  .mobile-menu { position: fixed !important; inset: 0 !important; z-index: 110 !important; background: var(--cream) !important; padding: var(--space-l, 2rem) var(--space-m-l, 1.5rem) !important; display: none; flex-direction: column !important; }
+  .mobile-menu[data-open="true"] { display: flex !important; }
+  .mobile-menu_head { display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--space-l,2rem); }
+  .mobile-menu_close { background:none; border:0; font-size:1.75rem; line-height:1; cursor:pointer; color:var(--ink); }
+  .mobile-menu_list { display:flex; flex-direction:column; gap:var(--space-m,1rem); }
+  .mobile-menu_list a { font-family:var(--f-body); font-weight:600; font-size:var(--step-0); color:var(--ink); text-decoration:none; }
+  .mobile-menu_foot { margin-top:auto; padding-top:var(--space-l,2rem); }
+  /* === END CHASSIS HARMONIZATION === */
+
+  /* qb-button — canonical two-layer pill */
+  .qb-button { position:relative; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:0; padding:0; font-size:1.875rem; cursor:pointer; isolation:isolate; text-decoration:none; color:inherit; }
+  .qb-button::before { content:''; position:absolute; inset:0; border-radius:9999px; background:var(--ink); transform:translateY(0.17em) scale(0.99); transition:transform 0.4s var(--ease-qb); z-index:-1; }
+  .qb-button_content { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:0.5em; border:2px solid var(--ink); border-radius:9999px; background:var(--white); color:var(--ink); padding:1.1em 1.5em; font-family:var(--f-body); font-weight:700; font-size:0.5em; line-height:1.5em; letter-spacing:0.02em; transform:translateY(-0.17em); transition:transform 0.4s var(--ease-qb),filter 0.4s var(--ease-qb),background 0.4s var(--ease-qb),color 0.4s var(--ease-qb); white-space:nowrap; }
+  @media (hover:hover) {
+    .qb-button:hover .qb-button_content { transform:translateY(-0.45em) scale(1.02); filter:brightness(1.08); }
+    .qb-button:hover::before { transform:translateY(0.05em) scale(0.99); }
+  }
+  .qb-button:active .qb-button_content { transform:translateY(0.32em) scale(0.96); filter:brightness(0.92); transition-duration:0.15s; }
+  .qb-button:active::before { transform:translateY(0.42em) scale(0.99); transition-duration:0.15s; }
+  .qb-button.is-primary .qb-button_content { background:var(--gold); color:var(--ink); }
+  .qb-button.is-sm .qb-button_content { padding:0.8em 1.4em; font-size:0.4em; }
+  .qb-button.is-sm::before { transform:translateY(0.1em) scale(0.99); }
+  .qb-button.is-expand { width:100%; }
+  .qb-button.is-expand .qb-button_content { width:100%; }
 
   main { padding:clamp(2rem,4vw,3rem) clamp(20px,4vw,48px) clamp(3rem,6vw,5rem); }
   .legal-doc { max-width:780px; margin:0 auto; }
@@ -125,17 +221,54 @@
 </div>
 
 <div class="nav-wrap">
-  <nav class="nav">
+  <header class="nav">
     <a href="/" class="nav-brand">
       <span class="nav-brand_dot" aria-hidden="true"></span>
       Quantum Branding
     </a>
+    <nav class="nav-links">
+      <a href="/ecosystem.html">Ecosystem</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/ecosystem.html#pricing">Pricing</a>
+      <a href="/ecosystem.html#about">About</a>
+    </nav>
     <div class="nav-actions">
-      <a href="https://app.quantumbranding.ai">Sign in</a>
-      <a href="/signal-scan.html" class="is-primary">Start free</a>
+      <a href="https://app.quantumbranding.ai" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
+      <a href="/signal-scan.html" class="qb-button is-primary is-sm"><span class="qb-button_content">Start free</span></a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" type="button">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-  </nav>
+  </header>
 </div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu_head">
+    <span class="nav-brand"><span class="nav-brand_dot"></span>Quantum Branding</span>
+    <button class="mobile-menu_close" id="mobileMenuClose" aria-label="Close menu" type="button">&times;</button>
+  </div>
+  <nav class="mobile-menu_list">
+    <a href="/ecosystem.html">Ecosystem</a>
+    <a href="/tools.html">Tools</a>
+    <a href="/ecosystem.html#pricing">Pricing</a>
+    <a href="/ecosystem.html#about">About</a>
+  </nav>
+  <div class="mobile-menu_foot">
+    <a href="/signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+  </div>
+</div>
+<script>
+  (function () {
+    var ham = document.getElementById('hamburger');
+    var mm = document.getElementById('mobileMenu');
+    var mc = document.getElementById('mobileMenuClose');
+    if (!ham || !mm || !mc) return;
+    function closeMM() { mm.dataset.open = 'false'; document.body.style.overflow = ''; }
+    ham.addEventListener('click', function () { mm.dataset.open = 'true'; document.body.style.overflow = 'hidden'; });
+    mc.addEventListener('click', closeMM);
+    Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
+  })();
+</script>
 
 <main>
   <article class="legal-doc">
@@ -176,7 +309,7 @@
     <p>Signal Scan and the six Phase 01 tools (Archetype Compass, Brand Soul Map, Sensescape, Visual DNA, War Table, The Profiles) are free to use as long as we offer them. Free tier has no payment obligation and you can stop using the service at any time.</p>
 
     <h3>Paid tiers</h3>
-    <p>Starter ($97/month), Pro ($247/month), Agency ($1,497/month) are subscription plans that unlock the Phase 02 to Phase 05 agent tools. Pricing displayed on <a href="/payment.html">/payment</a> at the moment you subscribe is the price you pay until you cancel.</p>
+    <p>Starter ($97/month), Pro ($247/month), Agency ($1,497/month) are subscription plans that open the Phase 02 to Phase 05 agent tools. Pricing displayed on <a href="/payment.html">/payment</a> at the moment you subscribe is the price you pay until you cancel.</p>
     <p>All payments are processed by Stripe. We never see or store your card details. By subscribing you also accept <a href="https://stripe.com/legal/ssa" target="_blank" rel="noopener">Stripe's Services Agreement</a>.</p>
 
     <h3>Renewals and cancellation</h3>
@@ -200,9 +333,9 @@
     </ul>
 
     <h2 id="content">5. Your content and intellectual property</h2>
-    <p>Anything you type into a tool — your brand name, your QBP, your answers to questions — belongs to you. You retain all rights. We don't claim ownership of your Brand Profile or the outputs generated for you.</p>
+    <p>Anything you type into a tool belongs to you. Your brand name, your QBP, your answers to questions, all of it. You retain all rights. We don't claim ownership of your Brand Profile or the outputs generated for you.</p>
     <p>You grant us a non-exclusive, royalty-free, worldwide license to process your inputs and outputs for the sole purpose of operating the service for you (storing your QBP, calling AI models, generating documents, sending emails on your behalf).</p>
-    <p>The QB BrandOS platform itself — the tools, the methodology, the design system, the brand voice, the agents — is the intellectual property of Quantum Branding and is not transferred to you by your use of the service.</p>
+    <p>The QB BrandOS platform itself, the tools, the methodology, the design system, the brand voice, and the agents, is the intellectual property of Quantum Branding and is not transferred to you by your use of the service.</p>
 
     <h2 id="ai">6. AI-generated outputs</h2>
     <p>Several tools call third-party AI models (Anthropic Claude). The output of these models is generated probabilistically based on your inputs. We do our best to produce useful, on-brand results, but we don't and can't guarantee that any specific output will be accurate, complete, suitable for a particular purpose, or free of unintended similarity to the work of others.</p>
@@ -214,11 +347,11 @@
     <p>We may add, modify, or remove tools, agents, or features at any time. If a removal materially reduces the value of a paid plan, we will (at our discretion) offer a partial refund, a downgrade to a lower plan, or compensation for the unused portion of your billing cycle.</p>
 
     <h2 id="warranty">8. No warranty</h2>
-    <p>The service is provided "as is" and "as available," without warranty of any kind — express or implied — including merchantability, fitness for a particular purpose, or non-infringement. Your use of the outputs is at your own risk.</p>
+    <p>The service is provided "as is" and "as available," without warranty of any kind, express or implied, including merchantability, fitness for a particular purpose, or non-infringement. Your use of the outputs is at your own risk.</p>
 
     <h2 id="liability">9. Limitation of liability</h2>
     <p>To the maximum extent permitted by law, our total liability to you for any claim arising from your use of QB BrandOS is capped at the greater of (a) $100 or (b) the total amount you paid us in the 12 months before the event giving rise to the claim.</p>
-    <p>We are not liable for indirect, incidental, special, consequential, exemplary, or punitive damages — including lost profits, lost revenue, lost data, business interruption, or reputational harm — even if we were advised of the possibility.</p>
+    <p>We are not liable for indirect, incidental, special, consequential, exemplary, or punitive damages, including lost profits, lost revenue, lost data, business interruption, or reputational harm, even if we were advised of the possibility.</p>
     <p>Nothing in these terms excludes liability that cannot be excluded under applicable law (for example, for fraud, gross negligence, or death/personal injury caused by negligence).</p>
 
     <h2 id="termination">10. Termination</h2>

@@ -23,8 +23,22 @@
 <style>
   :root {
     --cream:#FBF5E6; --cream-card:#F4EBD3; --cream-rose:#F2E0DA; --cream-edge:#E5DCC5;
-    --ink:#2D1521; --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.5); --ink-25:rgba(45,21,33,0.25);
+    --ink:#2D1521; --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.62); --ink-25:rgba(45,21,33,0.25);
     --gold:#E5C975; --gold-deep:#A8862E; --rose-deep:#B5455A;
+
+    /* auto: canonical chassis parity backfill, 2026-07-06 audit */
+    --white:#FFFEF8; --rose:#CA6180; --teal:#9ED3DC;
+    --f-display:'Fraunces','Times New Roman',serif;
+    --f-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    --f-mono:'JetBrains Mono',ui-monospace,monospace;
+    --ease-qb:cubic-bezier(0.19,1,0.22,1);
+    --step--2:clamp(0.7813rem,0.7546rem + 0.1254vw,0.88rem);
+    --step-0:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+    --space-xs:clamp(0.875rem,0.8244rem + 0.2381vw,1.0625rem);
+    --space-s:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+    --space-m:clamp(1.6875rem,1.5863rem + 0.4762vw,2.0625rem);
+    --space-m-l:clamp(1.6875rem,1.4008rem + 1.3492vw,2.75rem);
+    --space-l:clamp(2.25rem,2.1151rem + 0.6349vw,2.75rem);
   }
   *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
   html { font-size:17px; scroll-behavior:smooth; }
@@ -42,6 +56,88 @@
   .nav-actions { display:inline-flex; gap:0.5rem; }
   .nav-actions a { padding:8px 16px; border:2px solid var(--ink); border-radius:9999px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.85rem; text-decoration:none; color:var(--ink); background:var(--cream-card); box-shadow:0 3px var(--ink); }
   .nav-actions a.is-primary { background:var(--gold); }
+
+  /* === CHASSIS HARMONIZATION (one shell across all 27 pages, ecosystem.html SOT) === */
+  html { overflow-x: clip !important; }
+  body { overflow-x: clip !important; overflow-y: visible !important; }
+  .qb-loading-bar { z-index: 100 !important; }
+  .banner { z-index: 95 !important; }
+  .nav-wrap { z-index: 90 !important; }
+  .banner {
+    background: var(--ink) !important; color: var(--cream) !important; text-align: center !important;
+    padding: 0.7em var(--space-m-l, 1.5rem) !important;
+    font-family: var(--f-body), 'Inter', sans-serif !important;
+    font-size: var(--step--2, 0.78rem) !important; font-weight: 500 !important;
+    letter-spacing: 0.04em !important; border: 0 !important;
+  }
+  .banner a { color: var(--gold) !important; text-decoration: underline !important; text-underline-offset: 3px !important; font-weight: 600 !important; margin-left: 0.5em !important; }
+  .nav-wrap {
+    padding: var(--space-s, 0.875rem) var(--space-m-l, 1.5rem) !important;
+    position: sticky !important; top: 0 !important; background: var(--cream) !important;
+  }
+  .nav-wrap > .nav, .nav-wrap > header.nav {
+    max-width: 1320px !important; margin-inline: auto !important;
+    display: flex !important; align-items: center !important; justify-content: space-between !important;
+    gap: var(--space-m, 1rem) !important; background: var(--cream) !important;
+    border: 2px solid var(--ink) !important; border-radius: 9999px !important;
+    padding: 0.6rem 0.6rem 0.6rem 1.4rem !important; box-shadow: 0 6px var(--ink) !important;
+    width: auto !important; height: auto !important; min-height: 0 !important; position: static !important;
+  }
+  .nav-wrap .nav-brand {
+    display: inline-flex !important; align-items: center !important; gap: 0.6rem !important;
+    font-family: var(--f-display), 'Fraunces', serif !important;
+    font-variation-settings: "wght" 600, "opsz" 36, "SOFT" 70, "WONK" 0 !important;
+    font-size: var(--step-0, 1.125rem) !important; color: var(--ink) !important;
+    text-decoration: none !important; line-height: 1 !important;
+  }
+  .nav-wrap .nav-brand_dot {
+    width: 0.65em !important; height: 0.65em !important; border-radius: 50% !important;
+    background: var(--rose) !important; display: inline-block !important;
+    box-shadow: 0 0 0 3px rgba(202,97,128,0.18) !important;
+  }
+  .nav-wrap .nav-links { display: none !important; align-items: center !important; gap: var(--space-s, 0.875rem) !important; }
+  @media (min-width: 1000px) { .nav-wrap .nav-links { display: inline-flex !important; } }
+  .nav-wrap .nav-links a {
+    font-family: var(--f-body), 'Inter', sans-serif !important; font-weight: 600 !important;
+    font-size: var(--step--2, 0.78rem) !important; line-height: 1.5em !important; letter-spacing: 0.1em !important;
+    text-transform: uppercase !important; color: var(--ink) !important; text-decoration: none !important;
+    padding: 0 !important; border-radius: 0 !important; transition: color 0.3s var(--ease-qb) !important;
+  }
+  .nav-wrap .nav-links a:hover { color: var(--ink-75) !important; }
+  .nav-wrap .nav-actions { display: inline-flex !important; align-items: center !important; gap: 0.5rem !important; }
+  .nav-wrap .nav-actions a { all: revert; }
+  .nav-wrap .hamburger {
+    display: inline-flex !important; flex-direction: column !important; align-items: center !important;
+    justify-content: center !important; gap: 4px !important; width: 44px !important; height: 44px !important;
+    border: 2px solid var(--ink) !important; border-radius: 9999px !important; background: var(--cream) !important;
+    cursor: pointer !important; padding: 0 !important;
+  }
+  @media (min-width: 1000px) { .nav-wrap .hamburger { display: none !important; } }
+  .nav-wrap .hamburger span { display: block !important; width: 18px !important; height: 2px !important; background: var(--ink) !important; border-radius: 2px !important; }
+  .mobile-menu { position: fixed !important; inset: 0 !important; z-index: 110 !important; background: var(--cream) !important; padding: var(--space-l, 2rem) var(--space-m-l, 1.5rem) !important; display: none; flex-direction: column !important; }
+  .mobile-menu[data-open="true"] { display: flex !important; }
+  .mobile-menu_head { display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--space-l,2rem); }
+  .mobile-menu_close { background:none; border:0; font-size:1.75rem; line-height:1; cursor:pointer; color:var(--ink); }
+  .mobile-menu_list { display:flex; flex-direction:column; gap:var(--space-m,1rem); }
+  .mobile-menu_list a { font-family:var(--f-body); font-weight:600; font-size:var(--step-0); color:var(--ink); text-decoration:none; }
+  .mobile-menu_foot { margin-top:auto; padding-top:var(--space-l,2rem); }
+  /* === END CHASSIS HARMONIZATION === */
+
+  /* qb-button — canonical two-layer pill */
+  .qb-button { position:relative; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:0; padding:0; font-size:1.875rem; cursor:pointer; isolation:isolate; text-decoration:none; color:inherit; }
+  .qb-button::before { content:''; position:absolute; inset:0; border-radius:9999px; background:var(--ink); transform:translateY(0.17em) scale(0.99); transition:transform 0.4s var(--ease-qb); z-index:-1; }
+  .qb-button_content { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:0.5em; border:2px solid var(--ink); border-radius:9999px; background:var(--white); color:var(--ink); padding:1.1em 1.5em; font-family:var(--f-body); font-weight:700; font-size:0.5em; line-height:1.5em; letter-spacing:0.02em; transform:translateY(-0.17em); transition:transform 0.4s var(--ease-qb),filter 0.4s var(--ease-qb),background 0.4s var(--ease-qb),color 0.4s var(--ease-qb); white-space:nowrap; }
+  @media (hover:hover) {
+    .qb-button:hover .qb-button_content { transform:translateY(-0.45em) scale(1.02); filter:brightness(1.08); }
+    .qb-button:hover::before { transform:translateY(0.05em) scale(0.99); }
+  }
+  .qb-button:active .qb-button_content { transform:translateY(0.32em) scale(0.96); filter:brightness(0.92); transition-duration:0.15s; }
+  .qb-button:active::before { transform:translateY(0.42em) scale(0.99); transition-duration:0.15s; }
+  .qb-button.is-primary .qb-button_content { background:var(--gold); color:var(--ink); }
+  .qb-button.is-sm .qb-button_content { padding:0.8em 1.4em; font-size:0.4em; }
+  .qb-button.is-sm::before { transform:translateY(0.1em) scale(0.99); }
+  .qb-button.is-expand { width:100%; }
+  .qb-button.is-expand .qb-button_content { width:100%; }
 
   main { padding:clamp(2rem,4vw,3rem) clamp(20px,4vw,48px) clamp(3rem,6vw,5rem); }
   .legal-doc { max-width:780px; margin:0 auto; }
@@ -136,17 +232,54 @@
 </div>
 
 <div class="nav-wrap">
-  <nav class="nav">
+  <header class="nav">
     <a href="/" class="nav-brand">
       <span class="nav-brand_dot" aria-hidden="true"></span>
       Quantum Branding
     </a>
+    <nav class="nav-links">
+      <a href="/ecosystem.html">Ecosystem</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/ecosystem.html#pricing">Pricing</a>
+      <a href="/ecosystem.html#about">About</a>
+    </nav>
     <div class="nav-actions">
-      <a href="https://app.quantumbranding.ai">Sign in</a>
-      <a href="/signal-scan.html" class="is-primary">Start free</a>
+      <a href="https://app.quantumbranding.ai" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
+      <a href="/signal-scan.html" class="qb-button is-primary is-sm"><span class="qb-button_content">Start free</span></a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" type="button">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-  </nav>
+  </header>
 </div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu_head">
+    <span class="nav-brand"><span class="nav-brand_dot"></span>Quantum Branding</span>
+    <button class="mobile-menu_close" id="mobileMenuClose" aria-label="Close menu" type="button">&times;</button>
+  </div>
+  <nav class="mobile-menu_list">
+    <a href="/ecosystem.html">Ecosystem</a>
+    <a href="/tools.html">Tools</a>
+    <a href="/ecosystem.html#pricing">Pricing</a>
+    <a href="/ecosystem.html#about">About</a>
+  </nav>
+  <div class="mobile-menu_foot">
+    <a href="/signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+  </div>
+</div>
+<script>
+  (function () {
+    var ham = document.getElementById('hamburger');
+    var mm = document.getElementById('mobileMenu');
+    var mc = document.getElementById('mobileMenuClose');
+    if (!ham || !mm || !mc) return;
+    function closeMM() { mm.dataset.open = 'false'; document.body.style.overflow = ''; }
+    ham.addEventListener('click', function () { mm.dataset.open = 'true'; document.body.style.overflow = 'hidden'; });
+    mc.addEventListener('click', closeMM);
+    Array.prototype.forEach.call(mm.querySelectorAll('a'), function (a) { a.addEventListener('click', closeMM); });
+  })();
+</script>
 
 <main>
   <article class="legal-doc">
@@ -193,7 +326,7 @@
         </tr>
         <tr>
           <td>Brand Profile (QBP)</td>
-          <td>Your brand name, archetype, manifesto, personas, voice notes, sensory profile, visual direction — everything you type into a Phase 01 tool</td>
+          <td>Your brand name, archetype, manifesto, personas, voice notes, sensory profile, visual direction. Everything you type into a Phase 01 tool</td>
           <td>You enter it; stored in <code>profiles.qbp</code></td>
         </tr>
         <tr>
@@ -233,10 +366,10 @@
 
     <h2 id="why">4. Why we collect it (lawful basis)</h2>
     <ul>
-      <li><strong>Performance of a contract (GDPR Art. 6(1)(b))</strong> — Account, QBP, usage, payment data: needed to deliver the service you signed up for.</li>
-      <li><strong>Legitimate interest (Art. 6(1)(f))</strong> — Email engagement and technical logs: needed to keep the service running, debug issues, and prevent abuse. We've balanced this against your privacy interests and judged the impact minimal.</li>
-      <li><strong>Consent (Art. 6(1)(a))</strong> — Marketing emails (newsletter, drip campaigns). You can withdraw consent at any time by unsubscribing in the email footer or emailing us.</li>
-      <li><strong>Legal obligation (Art. 6(1)(c))</strong> — Records we have to keep for tax, accounting, or in response to a lawful request.</li>
+      <li><strong>Performance of a contract (GDPR Art. 6(1)(b)).</strong> Account, QBP, usage, payment data: needed to deliver the service you signed up for.</li>
+      <li><strong>Legitimate interest (Art. 6(1)(f)).</strong> Email engagement and technical logs: needed to keep the service running, debug issues, and prevent abuse. We've balanced this against your privacy interests and judged the impact minimal.</li>
+      <li><strong>Consent (Art. 6(1)(a)).</strong> Marketing emails (newsletter, drip campaigns). You can withdraw consent at any time by unsubscribing in the email footer or emailing us.</li>
+      <li><strong>Legal obligation (Art. 6(1)(c)).</strong> Records we have to keep for tax, accounting, or in response to a lawful request.</li>
     </ul>
 
     <h2 id="processors">5. Third parties we share data with</h2>
@@ -275,7 +408,7 @@
       </tbody>
     </table>
 
-    <p>We don't share your personal data with anyone for marketing or profiling. We don't sell data. If a processor is subpoenaed or asked by a government to disclose data, that's between them and the requesting authority — we'll be told to the extent legally possible.</p>
+    <p>We don't share your personal data with anyone for marketing or profiling. We don't sell data. If a processor is subpoenaed or asked by a government to disclose data, that's between them and the requesting authority. We'll be told to the extent legally possible.</p>
     <p>For transfers to processors outside the EU/EEA, we rely on Standard Contractual Clauses (SCCs) and the processor's own compliance commitments.</p>
 
     <h2 id="location">6. Where data is stored</h2>
@@ -297,25 +430,25 @@
     <h2 id="rights">8. Your rights</h2>
     <p>Under GDPR (and equivalent rights elsewhere), you have:</p>
     <ul>
-      <li><strong>Right of access</strong> — Ask for a copy of all personal data we hold about you</li>
-      <li><strong>Right to rectification</strong> — Correct any data that's wrong</li>
-      <li><strong>Right to erasure ("right to be forgotten")</strong> — Delete your data, subject to legal retention obligations</li>
-      <li><strong>Right to restrict processing</strong> — Pause our use of your data while a dispute is resolved</li>
-      <li><strong>Right to data portability</strong> — Get a copy of your data in a machine-readable format (we export your QBP as JSON on request)</li>
-      <li><strong>Right to object</strong> — Stop processing based on legitimate interest or for marketing</li>
-      <li><strong>Right to withdraw consent</strong> — Cancel any consent you previously gave (e.g. marketing emails)</li>
-      <li><strong>Right not to be subject to automated decision-making</strong> — We don't make decisions about you based solely on algorithms; humans can review any output</li>
+      <li><strong>Right of access.</strong> Ask for a copy of all personal data we hold about you</li>
+      <li><strong>Right to rectification.</strong> Correct any data that's wrong</li>
+      <li><strong>Right to erasure ("right to be forgotten").</strong> Delete your data, subject to legal retention obligations</li>
+      <li><strong>Right to restrict processing.</strong> Pause our use of your data while a dispute is resolved</li>
+      <li><strong>Right to data portability.</strong> Get a copy of your data in a machine-readable format (we export your QBP as JSON on request)</li>
+      <li><strong>Right to object.</strong> Stop processing based on legitimate interest or for marketing</li>
+      <li><strong>Right to withdraw consent.</strong> Cancel any consent you previously gave (e.g. marketing emails)</li>
+      <li><strong>Right not to be subject to automated decision-making.</strong> We don't make decisions about you based solely on algorithms; humans can review any output</li>
     </ul>
     <p>Exercise any of these by emailing <a href="mailto:me@qtmbg.com">me@qtmbg.com</a>. We'll respond within 30 days. There's no charge unless the request is clearly excessive.</p>
 
     <h2 id="cookies">9. Cookies and localStorage</h2>
     <p>QB BrandOS does not use third-party tracking cookies. We use the browser's <code>localStorage</code> to store:</p>
     <ul>
-      <li><code>qb_session</code> — your Supabase auth token (only after sign-in)</li>
-      <li><code>qb_qbp</code> — your in-progress Brand Profile so you don't lose work between sessions</li>
-      <li><code>qb_completions</code> — which Phase 01 tools you've finished</li>
-      <li><code>qb_user_tier</code>, <code>qb_sub_status</code> — your subscription tier, refreshed from the server on each load</li>
-      <li><code>qb_first_name</code>, <code>qb_apikey</code> — convenience caches you set explicitly</li>
+      <li><code>qb_session</code>, your Supabase auth token (only after sign-in)</li>
+      <li><code>qb_qbp</code>, your in-progress Brand Profile so you don't lose work between sessions</li>
+      <li><code>qb_completions</code>, which Phase 01 tools you've finished</li>
+      <li><code>qb_user_tier</code>, <code>qb_sub_status</code>, your subscription tier, refreshed from the server on each load</li>
+      <li><code>qb_first_name</code>, <code>qb_apikey</code>, convenience caches you set explicitly</li>
     </ul>
     <p>These are functional, not tracking. They never leave your browser unless they're sent to the server as part of an API call. Clearing your browser data clears them all.</p>
     <p>Stripe and Supabase may set their own cookies on their own domains (Stripe Checkout, the Supabase Auth callback). Those are governed by Stripe's and Supabase's privacy policies.</p>

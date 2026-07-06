@@ -60,7 +60,7 @@
   --ink-mute:rgba(45,21,33,0.50) !important;
   --ink-faint:rgba(45,21,33,0.33) !important;
   --ink-75:rgba(45,21,33,0.75) !important;
-  --ink-50:rgba(45,21,33,0.50) !important;
+  --ink-50:rgba(45,21,33,0.62) !important;
   --ink-33:rgba(45,21,33,0.33) !important;
   --ink-25:rgba(45,21,33,0.25) !important;
   --text-1:#2D1521 !important;
@@ -1244,10 +1244,22 @@ button { cursor: pointer; font-family: var(--font-sans); border: none; outline: 
 [data-theme="light"] .post-row.open { box-shadow: 0 12px 40px -12px rgba(100,80,50,0.15); }
 /* === v3.4 OVERRIDE BLOCK (cream/ink/Fraunces ecosystem unification) === */
 :root {
+  /* auto: missing design-token backfill, 2026-07-06 audit */
+  --step--2:clamp(0.7813rem,0.7546rem + 0.1254vw,0.88rem);
+  --step--1:clamp(0.9375rem,0.8937rem + 0.2063vw,1.1rem);
+  --step-0:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+  --step-1:clamp(1.35rem,1.2505rem + 0.4683vw,1.7188rem);
+  --space-xs:clamp(0.875rem,0.8244rem + 0.2381vw,1.0625rem);
+  --space-s:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+  --space-m:clamp(1.6875rem,1.5863rem + 0.4762vw,2.0625rem);
+  --space-m-l:clamp(1.6875rem,1.4008rem + 1.3492vw,2.75rem);
+  --space-l:clamp(2.25rem,2.1151rem + 0.6349vw,2.75rem);
+  --space-xl:clamp(3.375rem,3.1726rem + 0.9524vw,4.125rem);
+
   --cream:#FBF5E6 !important; --cream-card:#F2EBD3; --cream-warm:#ECDDB8; --cream-edge:#DBD4C0;
   --cream-rose:#F4D9DD; --white:#FFFEF8;
   --ink:#2D1521 !important;
-  --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.50);
+  --ink-75:rgba(45,21,33,0.75); --ink-50:rgba(45,21,33,0.62);
   --ink-33:rgba(45,21,33,0.33); --ink-25:rgba(45,21,33,0.25);
   --gold:#E0B069; --gold-deep:#B58840; --rose:#CA6180; --rose-deep:#8E3F58;
   --teal:#9ED3DC; --teal-deep:#5BA8B5; --aubergine:#4A2B3A;
