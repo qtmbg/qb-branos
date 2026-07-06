@@ -20,7 +20,19 @@
 <link rel="stylesheet" href="/css/qb-reading-surface.css">
 
 <style>
-  :root { /* fallback if qb-tokens didn't load */ }
+  :root {
+  /* auto: missing design-token backfill, 2026-07-06 audit */
+  --step--2:clamp(0.7813rem,0.7546rem + 0.1254vw,0.88rem);
+  --step--1:clamp(0.9375rem,0.8937rem + 0.2063vw,1.1rem);
+  --step-0:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+  --step-1:clamp(1.35rem,1.2505rem + 0.4683vw,1.7188rem);
+  --space-xs:clamp(0.875rem,0.8244rem + 0.2381vw,1.0625rem);
+  --space-s:clamp(1.125rem,1.0575rem + 0.3175vw,1.375rem);
+  --space-m:clamp(1.6875rem,1.5863rem + 0.4762vw,2.0625rem);
+  --space-m-l:clamp(1.6875rem,1.4008rem + 1.3492vw,2.75rem);
+  --space-l:clamp(2.25rem,2.1151rem + 0.6349vw,2.75rem);
+  --space-xl:clamp(3.375rem,3.1726rem + 0.9524vw,4.125rem);
+ /* fallback if qb-tokens didn't load */ }
   html, body {
     margin: 0;
     background: var(--cream, #FBF5E6);
