@@ -50,4 +50,14 @@ Archiving any page without rewiring these links produces dead links. `tests/site
 
 **Do not retire until the ten held prompts are released** (Task 1). While the framework agents are Console-invisible, the standalone tools are the only way a user reaches those capabilities, so they are load-bearing revenue surface today. Once the prompts are signed and the Console renders the agents live, run one sweep: redirect the thirteen URLs to their Console phases (option 2), rewire the five referring pages, handle the `predictive-panel` double-dot pair explicitly, and confirm with `node tests/site-audit/audit.mjs` (expect zero dead links, all pages at SOT navCount). Sequencing this after release means the product never has a moment where a capability is reachable from neither the Console nor a standalone tool.
 
-*Legacy-page disposition · QB BrandOS · 2026-07-05*
+## Decision · 2026-07-06 · option 1, keep serving deliberately
+
+Taken during the go-live audit pass, under the operator's directive to decide and ship. The ten prompts released the same day, so the sequencing precondition above is met, but option 1 wins for launch:
+
+1. The thirteen pages are the anonymous funnel. `tools.html` (the public directory), `ecosystem.html`, and `war-table.html` all link into them, and the pages work without an account via `?apikey=`. Redirecting them to the auth-gated Console would turn every one of those public links into a sign-in wall for a visitor who has not yet converted. Right before launch, that is a worse consumer journey, not a better one.
+2. Zero-risk beats purity at launch. The redirect sweep touches `vercel.json`, five referring pages, the double-dot pair, and the audit route expectations at once. Nothing about it is urgent once the Console is live for paying founders while the standalone pages stay the free preview surface.
+3. The two-surface state is now deliberate, not undecided: Console for founders inside the product, standalone tools as the public tryout layer. Drift risk is accepted and logged.
+
+Revisit as a post-launch sweep if the operator wants one canonical surface per capability (HANDOFF definition of done item 3 stays open by this decision, marked deliberate).
+
+*Legacy-page disposition · QB BrandOS · updated 2026-07-06*

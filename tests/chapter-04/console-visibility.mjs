@@ -1,10 +1,11 @@
 /* Chapter 4 · Step 4 · Console-visibility verification (released-state)
  *
- * Confirms the PROMPT_HOLD_SLUGS release took effect in production: a
- * Starter identity's GET /api/agents/console payload now carries the three
- * Phase 02 agents in agents[] (logo_direction_agent, logo_evaluation_agent,
- * voice_guide_agent), and Phase 02 is no longer a locked_phase_cards entry
- * (retired in favor of the live cards). Phase 03 stays locked.
+ * Confirms the PROMPT_HOLD_SLUGS release took effect in production. Updated
+ * 2026-07-06: PROMPT_HOLD_SLUGS is now empty (all seventeen agents released,
+ * see chapter-07/PROMPT_SIGNOFF.md and its 2026-07-06 re-verification). A
+ * Starter identity's GET /api/agents/console payload carries every Phase
+ * 02-05 agent live in agents[], and no phase remains as a locked_phase_cards
+ * entry.
  *
  * Usage: node tests/chapter-04/console-visibility.mjs
  * Env: .env.qb-branos.live (repo root, gitignored) or QB_ENV_FILE.
@@ -51,11 +52,16 @@ async function main() {
     out.http = r.status;
     out.agent_slugs = slugs;
     out.locked_phases = lockedPhases;
-    out.logo_direction_visible = slugs.includes('logo_direction_agent');
-    out.logo_evaluation_visible = slugs.includes('logo_evaluation_agent');
-    out.voice_guide_visible = slugs.includes('voice_guide_agent');
-    out.phase02_locked_card_retired = !lockedPhases.includes('02');
-    out.phase03_still_locked = lockedPhases.includes('03');
+    const RELEASED_SLUGS = [
+      'logo_direction_agent', 'logo_evaluation_agent', 'voice_guide_agent',
+      'newsletter_architecture_agent', 'linkedin_strategy_agent', 'instagram_seed_agent',
+      'youtube_strategy_agent', 'content_bridge_agent', 'content_repurposing_agent',
+      'content_scheduler_agent', 'brand_performance_agent', 'quarterly_review_agent',
+      'predictive_panel_agent',
+    ];
+    out.all_released_visible = RELEASED_SLUGS.every(s => slugs.includes(s));
+    out.missing_released_slugs = RELEASED_SLUGS.filter(s => !slugs.includes(s));
+    out.no_locked_phases_remain = lockedPhases.length === 0;
     console.error(`[console] http=${r.status} agents=${JSON.stringify(slugs)} locked=${JSON.stringify(lockedPhases)}`);
   } catch (e) {
     out.failure_reason = String(e?.message || e);
@@ -63,8 +69,7 @@ async function main() {
     if (user) out.teardown_ok = await teardown(user);
   }
   out.pass = !out.failure_reason && out.http === 200
-    && out.logo_direction_visible && out.logo_evaluation_visible && out.voice_guide_visible
-    && out.phase02_locked_card_retired && out.phase03_still_locked && out.teardown_ok;
+    && out.all_released_visible && out.no_locked_phases_remain && out.teardown_ok;
   out.completed_at = new Date().toISOString();
   fs.writeFileSync('tests/chapter-04/console-visibility.last-run.json', JSON.stringify(out, null, 2));
   console.log(JSON.stringify(out, null, 2));
