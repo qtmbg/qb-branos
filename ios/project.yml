@@ -1,0 +1,77 @@
+name: QBBrandOS
+options:
+  bundleIdPrefix: ai.quantumbranding
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  xcodeVersion: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+targets:
+  QBBrandOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: QBBrandOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.quantumbranding.qbbrandos
+        PRODUCT_NAME: QBBrandOS
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: NO
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SWIFT_EMIT_LOC_STRINGS: YES
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.business
+    info:
+      path: QBBrandOS/Info.plist
+      properties:
+        CFBundleDisplayName: QB BrandOS
+        CFBundleName: QBBrandOS
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+          UIImageName: LaunchMark
+          UIImageRespectsSafeAreaInsets: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIRequiresFullScreen: true
+        ITSAppUsesNonExemptEncryption: false
+        UIAppFonts:
+          - Fraunces-VF.ttf
+          - Fraunces-Italic-VF.ttf
+          - Inter-VF.ttf
+          - Inter-Italic-VF.ttf
+          - JetBrainsMono-VF.ttf
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: false
+        UIUserInterfaceStyle: Light
+  QBBrandOSUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: QBBrandOSUITests
+    dependencies:
+      - target: QBBrandOS
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: ai.quantumbranding.qbbrandos.uitests
+schemes:
+  QBBrandOS:
+    build:
+      targets:
+        QBBrandOS: all
+        QBBrandOSUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - QBBrandOSUITests
