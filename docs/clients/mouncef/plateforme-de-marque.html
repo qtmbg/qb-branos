@@ -1,0 +1,3140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plateforme de marque · Agence de référencement pour médecins spécialistes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+<style>
+:root{
+  /* Surface · Design System v3.4 */
+  --cream:#FBF5E6; --cream-card:#F2EBD3; --cream-warm:#ECDDB8; --cream-edge:#DBD4C0;
+  --cream-rose:#F4D9DD; --white:#FFFEF8;
+  /* Ink */
+  --ink:#2D1521; --ink-75:rgba(45,21,33,0.75); --ink-62:rgba(45,21,33,0.62);
+  --ink-50:rgba(45,21,33,0.50); --ink-25:rgba(45,21,33,0.25); --ink-12:rgba(45,21,33,0.12);
+  /* Brand triad */
+  --gold:#E0B069; --rose:#CA6180; --teal:#9ED3DC;
+  --rose-deep:#8E3F58; --teal-deep:#5BA8B5; --gold-deep:#B58840; --aubergine:#4A2B3A;
+  /* Phases */
+  --phase-acquisition:#C5E5E9; --phase-discovery:#9CC4A2; --phase-creation:#B5C8E5;
+  --phase-content:#FCB7C7; --phase-execution:#E89380; --phase-intelligence:#B080A0;
+  /* Illustration palette */
+  --illus-forest:#5B7E6A; --illus-peach:#E89380; --illus-coral:#DC6B52;
+  --illus-mustard:#D4B85A; --illus-rust:#B8704D; --illus-lavender:#B8A0C7;
+  --illus-pink-soft:#F4C4D0;
+
+  /* Palette proposée pour la marque cliente (présentée en pages 23) */
+  --c-encre:#14252C; --c-papier:#F5F1E8; --c-blouse:#FFFFFF;
+  --c-sauge:#7C9A8E; --c-sauge-fonce:#3F5A50;
+  --c-argile:#B5563C; --c-argile-fonce:#8E3F26; --c-ardoise:#5C6A6F;
+
+  /* Fonts */
+  --f-display:'Fraunces','Times New Roman',serif;
+  --f-body:'Inter','Helvetica Neue',sans-serif;
+  --f-mono:'JetBrains Mono','Courier New',monospace;
+
+  /* Print type scale (points, deliberately fixed for print determinism) */
+  --t-cover:42pt; --t-h1:23pt; --t-h2:13.5pt; --t-h3:10pt;
+  --t-lead:11pt; --t-body:9.5pt; --t-small:8.4pt; --t-micro:7.1pt; --t-eyebrow:7.4pt;
+  --t-quote:12pt; --t-big:18pt;
+
+  /* Print space scale (mm) */
+  --s-3xs:1.2mm; --s-2xs:2.1mm; --s-xs:3.3mm; --s-s:5mm; --s-m:7.5mm; --s-l:10mm; --s-xl:14mm;
+
+  /* Page geometry */
+  --page-w:210mm; --page-h:297mm; --page-pad-x:17mm; --page-pad-y:15mm;
+  --radius-card:3mm; --shadow-hard:3px 3px 0 var(--ink);
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{background:#4A2B3A;}
+body{
+  font-family:var(--f-body); color:var(--ink); background:#4A2B3A;
+  -webkit-font-smoothing:antialiased; padding:12mm 0;
+}
+.page{
+  position:relative; width:var(--page-w); min-height:var(--page-h);
+  margin:0 auto 8mm; background:var(--cream);
+  padding:var(--page-pad-y) var(--page-pad-x) 19mm;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.page--ink{background:var(--ink); color:var(--cream);}
+.page--card{background:var(--cream-card);}
+/* Dense variant: pages whose content runs 2 to 3 percent long. Same system, one notch tighter. */
+.page--dense{--t-body:9.1pt; --t-small:8.05pt; --t-h2:13pt; --s-xs:2.9mm; --s-s:4.3mm;}
+.page--dense p{line-height:1.44;}
+.page--dense li{line-height:1.38;}
+
+/* Running elements */
+.rf{
+  position:absolute; left:var(--page-pad-x); right:var(--page-pad-x); bottom:11mm;
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:var(--f-mono); font-size:var(--t-micro); letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-50);
+  border-top:0.4mm solid var(--ink-12); padding-top:2.5mm;
+}
+.page--ink .rf{color:rgba(251,245,230,.55); border-top-color:rgba(251,245,230,.20);}
+.rf b{font-weight:400;}
+
+/* Eyebrow + headline rhythm */
+.eyebrow{
+  font-family:var(--f-mono); font-size:var(--t-eyebrow); font-weight:500;
+  letter-spacing:.20em; text-transform:uppercase; color:var(--ink-62);
+  display:flex; align-items:center; gap:3mm; margin-bottom:var(--s-xs);
+}
+.eyebrow::before{
+  content:""; width:5mm; height:1.6mm; background:var(--gold); border-radius:1mm; flex:none;
+}
+.page--ink .eyebrow{color:rgba(251,245,230,.62);}
+h1{
+  font-family:var(--f-display); font-size:var(--t-h1); line-height:.98;
+  letter-spacing:-.02em; font-variation-settings:"wght" 740,"opsz" 144,"SOFT" 70,"WONK" 0;
+  margin-bottom:var(--s-xs);
+}
+h1 em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 640,"opsz" 144,"SOFT" 60,"WONK" 1;}
+.page--ink h1 em{color:var(--gold);}
+h2{
+  font-family:var(--f-display); font-size:var(--t-h2); line-height:1.1;
+  letter-spacing:-.012em; font-variation-settings:"wght" 700,"opsz" 72,"SOFT" 80;
+  margin-bottom:var(--s-3xs); margin-top:var(--s-xs);
+}
+h3{
+  font-family:var(--f-mono); font-size:var(--t-h3); font-weight:600;
+  letter-spacing:.04em; margin-bottom:var(--s-3xs); margin-top:var(--s-xs);
+}
+p{font-size:var(--t-body); line-height:1.48; margin-bottom:var(--s-2xs); max-width:none;}
+.lead{font-size:var(--t-lead); line-height:1.5; color:var(--ink-75); margin-bottom:var(--s-s);}
+.page--ink .lead{color:rgba(251,245,230,.78);}
+.small{font-size:var(--t-small); line-height:1.42;}
+.micro{font-family:var(--f-mono); font-size:var(--t-micro); letter-spacing:.06em; color:var(--ink-62);}
+.muted{color:var(--ink-62);}
+strong{font-weight:650;}
+em.i{font-style:italic;}
+.wordmark{font-family:var(--f-display); font-style:italic; font-variation-settings:"wght" 600,"SOFT" 60; text-transform:lowercase;}
+
+.rule{height:0.4mm; background:var(--ink-12); margin:var(--s-s) 0;}
+.rule--gold{height:1.2mm; width:14mm; background:var(--gold); border-radius:1mm; margin:var(--s-xs) 0;}
+
+/* Grids */
+.g2{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-s);}
+.g3{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-xs);}
+.g4{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-2xs);}
+.g5{display:grid; grid-template-columns:repeat(5,1fr); gap:var(--s-2xs);}
+.g-2-1{display:grid; grid-template-columns:1.6fr 1fr; gap:var(--s-s);}
+
+/* Cards */
+.card{
+  background:var(--cream-card); border:0.5mm solid var(--ink);
+  border-radius:var(--radius-card); padding:var(--s-2xs) var(--s-xs) var(--s-xs);
+  box-shadow:var(--shadow-hard);
+}
+.card--flat{box-shadow:none;}
+.card--white{background:var(--white);}
+.card--warm{background:var(--cream-warm);}
+.card--rose{background:var(--cream-rose);}
+.card--ink{background:var(--ink); color:var(--cream); border-color:var(--ink);}
+.card--ink .micro,.card--ink .muted{color:rgba(251,245,230,.66);}
+.card h3{margin-top:0;}
+.card p:last-child{margin-bottom:0;}
+.card--tight{padding:var(--s-xs);}
+
+.tag{
+  display:inline-flex; align-items:center; gap:2mm; font-family:var(--f-mono);
+  font-size:var(--t-micro); letter-spacing:.14em; text-transform:uppercase;
+  border:0.4mm solid var(--ink-25); border-radius:10mm; padding:1mm 3mm; color:var(--ink-75);
+}
+.tag .dot{width:2.2mm; height:2.2mm; border-radius:50%; background:var(--gold); flex:none;}
+
+/* Lists */
+ul,ol{margin:0 0 var(--s-2xs) 0; padding-left:5mm;}
+li{font-size:var(--t-body); line-height:1.42; margin-bottom:1.4mm;}
+ul.clean{list-style:none; padding-left:0;}
+ul.clean li{display:flex; gap:2.5mm; align-items:baseline;}
+ul.clean li::before{content:"·"; font-weight:700; color:var(--gold-deep); flex:none;}
+ul.check li::before{content:"OUI"; font-family:var(--f-mono); font-size:6.4pt; letter-spacing:.08em; color:var(--illus-forest); flex:none; width:8mm;}
+ul.cross li::before{content:"NON"; font-family:var(--f-mono); font-size:6.4pt; letter-spacing:.08em; color:var(--rose-deep); flex:none; width:8mm;}
+ul.num{list-style:none; padding-left:0; counter-reset:n;}
+ul.num li{counter-increment:n; display:flex; gap:2.4mm;}
+ul.num li::before{
+  content:counter(n,decimal-leading-zero); font-family:var(--f-mono); font-size:var(--t-micro);
+  color:var(--gold-deep); flex:none; padding-top:.3mm;
+}
+
+/* Tables */
+table{width:100%; border-collapse:collapse; font-size:var(--t-small);}
+th{
+  font-family:var(--f-mono); font-size:var(--t-micro); font-weight:500; letter-spacing:.12em;
+  text-transform:uppercase; text-align:left; color:var(--ink-62);
+  padding:0 2mm 1.8mm 0; vertical-align:bottom;
+}
+thead th{border-bottom:0.5mm solid var(--ink);}
+tbody th{border-bottom:0.35mm solid var(--ink-12); vertical-align:top; padding:1.5mm 2mm 1.5mm 0;}
+tbody tr:last-child th{border-bottom:none;}
+td{
+  padding:1.5mm 2mm 1.5mm 0; border-bottom:0.35mm solid var(--ink-12);
+  vertical-align:top; line-height:1.42;
+}
+tr:last-child td{border-bottom:none;}
+td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wght" 700,"opsz" 48,"SOFT" 80; line-height:1.05; letter-spacing:-.01em;}
+.t-compact td,.t-compact th{padding-right:1.5mm;}
+
+/* Attribute columns (exercice 05) */
+.attr{list-style:none; padding:0;}
+.attr li{font-size:7.6pt; line-height:1.36; color:var(--ink-62); margin:0;}
+.attr li.on{color:var(--ink); font-weight:700;}
+.colhead{
+  font-family:var(--f-mono); font-size:var(--t-micro); letter-spacing:.14em; text-transform:uppercase;
+  padding-bottom:1.5mm; margin-bottom:2.5mm; border-bottom:0.5mm solid var(--ink);
+}
+.flow{display:flex; align-items:center; gap:2mm; font-family:var(--f-mono); font-size:var(--t-micro);}
+
+/* Swatches */
+.sw{border:0.5mm solid var(--ink); border-radius:2mm; overflow:hidden;}
+.sw .chip{height:17mm;}
+.sw .meta{padding:2mm 2.5mm 2.5mm; background:var(--white);}
+.sw .meta .n{font-family:var(--f-display); font-size:10pt; font-variation-settings:"wght" 700,"opsz" 48; display:block; line-height:1.1;}
+.sw .meta .h{font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.08em; color:var(--ink-62);}
+.sw .meta .u{font-size:7.2pt; line-height:1.35; color:var(--ink-75); display:block; margin-top:1mm;}
+
+/* Quote block */
+.quote{
+  font-family:var(--f-display); font-size:var(--t-quote); line-height:1.28;
+  font-variation-settings:"wght" 500,"opsz" 72,"SOFT" 60; font-style:italic;
+  border-left:1.2mm solid var(--gold); padding-left:var(--s-xs); margin:var(--s-xs) 0;
+}
+.quote cite{display:block; font-family:var(--f-mono); font-style:normal; font-size:var(--t-micro);
+  letter-spacing:.12em; text-transform:uppercase; color:var(--ink-50); margin-top:2.5mm;}
+
+/* Cover */
+.cover{justify-content:space-between; background:var(--cream);}
+.cover-top{display:flex; justify-content:space-between; align-items:flex-start;}
+.cover-lockup{height:11mm;}
+.cover-h1{
+  font-family:var(--f-display); font-size:var(--t-cover); line-height:.94; letter-spacing:-.028em;
+  font-variation-settings:"wght" 760,"opsz" 144,"SOFT" 65,"WONK" 0;
+}
+.cover-h1 em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 620,"opsz" 144,"SOFT" 55,"WONK" 1;}
+.cover-meta{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-xs); border-top:0.5mm solid var(--ink); padding-top:var(--s-xs);}
+.cover-meta .k{font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-50); display:block; margin-bottom:1.5mm;}
+.cover-meta .v{font-size:8.4pt; line-height:1.35;}
+.cover-arcs{position:absolute; right:-40mm; top:52mm; width:150mm; height:150mm; border:1mm solid var(--ink-12); border-radius:50%;}
+.cover-arcs2{position:absolute; right:-14mm; top:96mm; width:88mm; height:88mm; border:1mm solid rgba(224,176,105,.55); border-radius:50%;}
+
+/* Manifesto */
+.manifesto{max-width:146mm;}
+.manifesto p{
+  font-family:var(--f-display); font-size:14.5pt; line-height:1.32;
+  font-variation-settings:"wght" 460,"opsz" 96,"SOFT" 60; margin-bottom:var(--s-s);
+}
+.manifesto p.hi{font-style:italic; color:var(--gold);}
+
+/* Big statement */
+.statement{
+  font-family:var(--f-display); font-size:var(--t-big); line-height:1.16; letter-spacing:-.015em;
+  font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 75;
+}
+.statement em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 620,"WONK" 1;}
+
+.lb{display:block;}
+.spacer{flex:1 1 auto; min-height:var(--s-2xs);}
+.nowrap{white-space:nowrap;}
+
+@page{size:A4; margin:0;}
+@media print{
+  html,body{background:none;}
+  body{padding:0;}
+  /* Slightly under A4 height: absorbs sub-pixel rounding so one .page = one sheet. */
+  .page{margin:0; box-shadow:none; height:296mm; min-height:0; overflow:hidden;
+        break-after:page; page-break-after:always; break-inside:avoid;}
+  .page:last-child{break-after:auto; page-break-after:auto;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ 01 · COUVERTURE ══════════ -->
+<section class="page cover">
+  <div class="cover-arcs"></div>
+  <div class="cover-arcs2"></div>
+  <div class="cover-top">
+    <img class="cover-lockup" src="../../../img/brand/lockup-h-ink.svg" alt="quantum branding">
+    <span class="tag"><span class="dot"></span>Phase 01 · Discovery</span>
+  </div>
+  <div class="spacer"></div>
+  <div>
+    <div class="eyebrow">Plateforme de marque · v1.0</div>
+    <h1 class="cover-h1">Une agence de référencement<br>pour les médecins<br><em>spécialistes.</em></h1>
+    <div class="rule--gold" style="margin-top:8mm"></div>
+    <p class="lead" style="max-width:120mm; margin-top:6mm">
+      Le travail d'identité, conduit selon la méthode <span class="wordmark">quantum branding</span>,
+      à partir des cinq exercices menés avec Mouncef. Ce document est la vérité interne de la marque,
+      avant toute exécution.
+    </p>
+  </div>
+  <div class="spacer"></div>
+  <div class="cover-meta">
+    <div><span class="k">Préparé pour</span><span class="v">Mouncef<br>Fondateur</span></div>
+    <div><span class="k">Méthode</span><span class="v"><span class="wordmark">quantum branding</span><br>QB BrandOS</span></div>
+    <div><span class="k">Date</span><span class="v">4 septembre 2026</span></div>
+    <div><span class="k">Statut</span><span class="v">Socle validé<br>Nom à trancher</span></div>
+  </div>
+</section>
+
+<!-- ══════════ 02 · COMMENT LIRE ══════════ -->
+<section class="page">
+  <div class="eyebrow">Avant de commencer</div>
+  <h1>Comment lire ce document, et <em>ce que nous avons supposé.</em></h1>
+  <p class="lead">Trois choses à savoir avant la première page de fond.</p>
+
+  <div class="g2">
+    <div>
+      <h2>Ce que ce document est</h2>
+      <p>La plateforme de marque. Le socle qui ne bouge plus. Il contient la raison d'être, les croyances,
+        la promesse, le positionnement, les cinq valeurs, la voix, la direction visuelle, dix pistes de nom
+        et le cadre de service.</p>
+      <p>Tout ce qui sera produit ensuite, un logo, un site, une page de spécialité, un email, une réponse
+        à un avis, se juge contre ce document. Pas contre le goût du moment.</p>
+      <h2>Ce que ce document n'est pas</h2>
+      <p>Ce n'est pas une charte graphique. Le logo n'est pas dessiné ici. Trois pistes de marque sont
+        briefées, la Phase 02 les exécute.</p>
+      <p>Ce n'est pas un plan média. Aucun budget, aucun calendrier de publication.</p>
+      <p>Ce n'est pas une étude de marché. Aucun chiffre de marché n'est avancé. Quand une donnée manque,
+        nous l'écrivons.</p>
+    </div>
+    <div class="card card--warm">
+      <h3>Ce que nous avons supposé</h3>
+      <p class="small">Quatre hypothèses ont été nécessaires pour avancer. Chacune est corrigeable en une
+        phrase de votre part, et nous reprenons le document.</p>
+      <ul class="num small" style="margin-top:4mm">
+        <li><strong>Référencement au sens double.</strong> Rendre le praticien trouvable sur les surfaces de
+          recherche, et le rendre légitime au point de devenir la référence de sa spécialité sur son
+          territoire. Les deux sens portent la marque.</li>
+        <li><strong>Le client payant est le médecin spécialiste. Le bénéficiaire final est le patient.</strong>
+          C'est votre propre recadrage, en exercice 01. Il structure tout le document.</li>
+        <li><strong>Marché francophone en priorité.</strong> Le document est écrit en français. La question
+          du bilinguisme reste ouverte en page 26.</li>
+        <li><strong>Aucune spécialité n'est encore choisie.</strong> La marque est construite pour tenir sur
+          une spécialité comme sur plusieurs. Le choix de la première reste une décision de fondateur.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <p class="small muted">Une règle de lecture. Chaque affirmation de ce document est traçable jusqu'à une
+    phrase que vous avez prononcée dans les exercices, ou jusqu'à un mot que vous avez retenu en gras.
+    Les verbatims qui fondent les décisions sont réunis en annexe.</p>
+
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="g4">
+    <div class="card card--flat card--tight"><span class="micro">Si vous ne lisez que quatre pages</span>
+      <p class="small" style="margin-top:2mm"><strong>Page 16.</strong> La raison d'être et ce qu'elle interdit.</p></div>
+    <div class="card card--flat card--tight"><span class="micro">La deuxième</span>
+      <p class="small" style="margin-top:2mm"><strong>Page 18.</strong> L'essence, la promesse, le positionnement.</p></div>
+    <div class="card card--flat card--tight"><span class="micro">La troisième</span>
+      <p class="small" style="margin-top:2mm"><strong>Page 22.</strong> Toujours et jamais. Dix-huit lignes opposables.</p></div>
+    <div class="card card--flat card--tight"><span class="micro">La quatrième</span>
+      <p class="small" style="margin-top:2mm"><strong>Page 41.</strong> La fiche de profil, prête à saisir.</p></div>
+  </div>
+  <div class="rf"><b>Avant de commencer</b><span>page 02 / 43</span></div>
+</section>
+
+<!-- ══════════ 03 · SOMMAIRE ══════════ -->
+<section class="page">
+  <div class="eyebrow">Sommaire</div>
+  <h1>Ce que contient <em>ce document.</em></h1>
+  <div class="g2" style="margin-top:6mm">
+    <div>
+      <h3>I · La méthode et le matériau</h3>
+      <table class="t-compact">
+        <tr><td>La méthode <span class="wordmark">quantum branding</span></td><td class="micro">04</td></tr>
+        <tr><td>Le matériau, cinq exercices</td><td class="micro">05</td></tr>
+        <tr><td>Exercice 01 · Les marques miroirs</td><td class="micro">06 · 07</td></tr>
+        <tr><td>Exercice 02 · Les marques repoussoirs</td><td class="micro">08 · 09</td></tr>
+        <tr><td>Exercice 03 · La personnification</td><td class="micro">10 · 11</td></tr>
+        <tr><td>Exercice 04 · L'ADN d'archétype</td><td class="micro">12</td></tr>
+        <tr><td>Exercice 05 · Les attributs</td><td class="micro">13</td></tr>
+        <tr><td>La convergence</td><td class="micro">14</td></tr>
+      </table>
+      <h3 style="margin-top:7mm">II · La plateforme</h3>
+      <table class="t-compact">
+        <tr><td>Manifeste</td><td class="micro">15</td></tr>
+        <tr><td>Raison d'être, mission, vision</td><td class="micro">16</td></tr>
+        <tr><td>Le socle de croyances</td><td class="micro">17</td></tr>
+        <tr><td>Essence, promesse, positionnement</td><td class="micro">18</td></tr>
+        <tr><td>Les cinq valeurs en comportements</td><td class="micro">19 · 20</td></tr>
+        <tr><td>L'anti-marque</td><td class="micro">21</td></tr>
+        <tr><td>Toujours, jamais</td><td class="micro">22</td></tr>
+        <tr><td>Les quatre portes</td><td class="micro">23</td></tr>
+        <tr><td>Le patient, arbitre final</td><td class="micro">24</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>III · L'expression</h3>
+      <table class="t-compact">
+        <tr><td>Voix · les quatre ancrages</td><td class="micro">25</td></tr>
+        <tr><td>Voix · mécanique et lexique</td><td class="micro">26</td></tr>
+        <tr><td>Voix · avant et après</td><td class="micro">27</td></tr>
+        <tr><td>Visuel · les cinq principes</td><td class="micro">28</td></tr>
+        <tr><td>Visuel · la palette</td><td class="micro">29</td></tr>
+        <tr><td>Visuel · typographie et mise en page</td><td class="micro">30</td></tr>
+        <tr><td>Visuel · trois pistes de marque</td><td class="micro">31</td></tr>
+        <tr><td>Visuel · l'image et les interdits</td><td class="micro">32</td></tr>
+      </table>
+      <h3 style="margin-top:7mm">IV · Le nom</h3>
+      <table class="t-compact">
+        <tr><td>Les critères</td><td class="micro">33</td></tr>
+        <tr><td>Les dix pistes</td><td class="micro">34 · 35</td></tr>
+        <tr><td>Sélection et recommandation</td><td class="micro">36</td></tr>
+      </table>
+      <h3 style="margin-top:7mm">V · La mise en service</h3>
+      <table class="t-compact">
+        <tr><td>L'offre comme expression de marque</td><td class="micro">37</td></tr>
+        <tr><td>La signature et le cadre déontologique</td><td class="micro">38</td></tr>
+        <tr><td>La mesure</td><td class="micro">39</td></tr>
+        <tr><td>Feuille de route, 90 jours</td><td class="micro">40</td></tr>
+        <tr><td>La fiche QBP</td><td class="micro">41</td></tr>
+        <tr><td>Annexe · les verbatims</td><td class="micro">42</td></tr>
+        <tr><td>Les cinq décisions qui restent</td><td class="micro">43</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="rf"><b>Sommaire</b><span>page 03 / 43</span></div>
+</section>
+
+<!-- ══════════ 04 · LA MÉTHODE ══════════ -->
+<section class="page">
+  <div class="eyebrow">I · La méthode</div>
+  <h1>L'identité avant les tactiques. <em>Toujours.</em></h1>
+  <p class="lead">La méthode <span class="wordmark">quantum branding</span> part d'une conviction simple.
+    La plupart des marques échouent non parce que le travail était mauvais, mais parce que l'identité
+    était absente. On a produit avant de savoir qui parlait.</p>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Six phases, un ordre</h2>
+      <table>
+        <thead><tr><th style="width:12mm">Phase</th><th>Nom</th><th>Ce qu'elle produit</th></tr></thead>
+        <tbody>
+          <tr><td class="micro">00</td><td><strong>Acquisition</strong></td><td>Le premier diagnostic. Le signal.</td></tr>
+          <tr><td class="micro">01</td><td><strong>Discovery</strong></td><td>L'identité. Ce document.</td></tr>
+          <tr><td class="micro">02</td><td><strong>Création</strong></td><td>Le nom exécuté, la marque, la voix.</td></tr>
+          <tr><td class="micro">03</td><td><strong>Contenu</strong></td><td>Les surfaces éditoriales.</td></tr>
+          <tr><td class="micro">04</td><td><strong>Exécution</strong></td><td>La production et le rythme.</td></tr>
+          <tr><td class="micro">05</td><td><strong>Intelligence</strong></td><td>La mesure et la correction.</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin-top:3mm">Chaque phase lit la précédente. Rien ne se ressaisit.
+        Le profil de marque est la colonne qui relie tout, de la première question au dernier rapport.</p>
+
+      <h2>Où nous en sommes</h2>
+      <p>Les exercices ont été menés hors des outils, en entretien direct. Ce document fait ce que fait
+        la Phase 01 dans le système. Il transforme des heures de parole en un socle opérable, et il écrit
+        le brief de la Phase 02.</p>
+      <p>Une conséquence pratique. La page 41 restitue la fiche de profil, prête à saisir. À partir de là,
+        chaque outil en aval travaille sur la même vérité.</p>
+    </div>
+    <div class="card card--ink">
+      <h3 style="color:var(--gold)">Les huit convictions de la méthode</h3>
+      <ul class="clean small" style="margin-top:3mm">
+        <li>L'identité avant les tactiques.</li>
+        <li>La cohérence avant l'échelle.</li>
+        <li>La perception avant la promotion.</li>
+        <li>La structure avant l'expression.</li>
+        <li>La transformation avant l'apparence.</li>
+        <li>La vérité émotionnelle avant la performance.</li>
+        <li>La logique d'écosystème avant les productions isolées.</li>
+        <li>La profondeur utile avant la sophistication vide.</li>
+      </ul>
+      <div class="rule" style="background:rgba(251,245,230,.2)"></div>
+      <p class="small">Ces huit lignes ne sont pas des slogans. Ce sont des arbitrages. Quand deux options
+        se valent, celle qui respecte l'ordre gagne.</p>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <h2 style="margin-top:0">Les quatre instruments de diagnostic, et ce qui en a tenu lieu ici</h2>
+  <table class="t-compact">
+    <thead><tr><th style="width:38mm">Instrument</th><th style="width:32%">Ce qu'il surface</th><th>Ce qui a joué ce rôle dans nos entretiens</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Brand Soul Map</strong></td><td class="small">L'identité, les convictions, le paradoxe.</td>
+        <td class="small">La personnification, exercice 03, et l'ADN d'archétype, exercice 04.</td></tr>
+      <tr><td><strong>Sensescape</strong></td><td class="small">Le monde sensoriel de la marque.</td>
+        <td class="small">Partiellement couvert. Le laboratoire, la blouse, l'absence de microbes.
+          À compléter en Phase 02.</td></tr>
+      <tr><td><strong>Visual DNA</strong></td><td class="small">Le langage visuel et ses interdits.</td>
+        <td class="small">La colonne look and feel, exercice 05, et le rejet des photos mensongères,
+          exercice 02.</td></tr>
+      <tr><td><strong>War Table</strong></td><td class="small">La hiérarchie stratégique, ce qui passe devant.</td>
+        <td class="small">Le double filtrage des attributs, et les cinq mots élus.</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">Un manque est donc identifié, et il est nommé. Le profil sensoriel de la page 41
+    reste le point le plus léger de ce document. C'est le premier sujet à reprendre en Phase 02.</p>
+  <div class="rf"><b>I · La méthode</b><span>page 04 / 43</span></div>
+</section>
+
+<!-- ══════════ 05 · LE MATÉRIAU ══════════ -->
+<section class="page page--dense">
+  <div class="eyebrow">I · Le matériau</div>
+  <h1>Cinq exercices. <em>Un seul faisceau.</em></h1>
+  <p class="lead">Aucun exercice ne suffit seul. Chacun mesure une chose et ne peut pas en mesurer une autre.
+    La valeur naît du croisement.</p>
+
+  <table>
+    <thead><tr><th style="width:8mm"></th><th style="width:44mm">Exercice</th><th>Ce qu'il mesure</th><th>Ce qu'il ne peut pas dire</th></tr></thead>
+    <tbody>
+      <tr><td class="micro">01</td><td class="nm">Marques miroirs<br><span class="micro">Reddit · Johnson &amp; Johnson</span></td>
+        <td>L'aspiration. Ce que la marque veut que l'on ressente devant elle.</td>
+        <td>Ce dont la marque est capable aujourd'hui. Une aspiration n'est pas un actif.</td></tr>
+      <tr><td class="micro">02</td><td class="nm">Marques repoussoirs<br><span class="micro">eBay · Pizza Hut</span></td>
+        <td>Le refus. La frontière que la marque n'accepte pas de franchir.</td>
+        <td>Le positionnement. On ne se définit pas contre, on se définit par.</td></tr>
+      <tr><td class="micro">03</td><td class="nm">Personnification<br><span class="micro">Huit duos, huit choix</span></td>
+        <td>Le tempérament. La manière d'entrer dans une pièce, de parler, de tenir.</td>
+        <td>La stratégie. Un tempérament n'est pas une offre.</td></tr>
+      <tr><td class="micro">04</td><td class="nm">ADN d'archétype<br><span class="micro">Sage · Magicien · Explorateur</span></td>
+        <td>Le rôle narratif. La place que la marque occupe dans l'histoire du client.</td>
+        <td>La différence. Des milliers de marques partagent le même archétype.</td></tr>
+      <tr><td class="micro">05</td><td class="nm">Attributs<br><span class="micro">Cinq colonnes, cinq mots élus</span></td>
+        <td>La hiérarchie. Ce qui passe devant quand tout ne peut pas passer.</td>
+        <td>Le comportement. Un adjectif seul n'oblige à rien. Il faut l'instrumenter.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rule"></div>
+  <div class="g2">
+    <div class="card card--flat">
+      <h3>La règle de convergence</h3>
+      <p class="small">Un trait ne devient une valeur de marque que s'il apparaît dans <strong>au moins deux
+        exercices sur cinq</strong>. Un trait qui n'apparaît qu'une fois est une préférence personnelle,
+        pas une propriété de marque. Il est noté, il n'est pas retenu.</p>
+      <p class="small">Exception unique. Les cinq mots élus de l'exercice 05 ont été choisis délibérément,
+        après double filtrage. Ils entrent au socle de plein droit.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Un moment décisif</h3>
+      <p class="small">En exercice 01, une contradiction a été soulevée. Une marque hyper-niche peut-elle
+        se dire ouverte et accessible à tous.</p>
+      <p class="small">Votre réponse a réglé la question et déplacé le centre du projet. Devant la maladie,
+        personne n'a d'avance. Le cœur de la médecine est le patient. Donc l'ouverture ne se joue pas au
+        niveau du client, elle se joue au niveau de l'accès à l'information.</p>
+      <p class="small"><strong>Le client est ultra-niche. La mission est universelle.</strong> Les deux tiennent
+        ensemble. C'est le pivot de ce document.</p>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="g-2-1">
+    <div>
+      <h2 style="margin-top:0">Ce que le corpus ne couvre pas</h2>
+      <p class="small">Cinq manques, énoncés pour qu'aucune décision ne s'appuie sur une donnée qui
+        n'existe pas.</p>
+      <ul class="clean small">
+        <li>Aucune donnée de marché. Ni taille, ni prix pratiqués, ni taux d'équipement des cabinets.</li>
+        <li>Aucun audit de concurrence nominatif. Les six familles de la page 41 sont des catégories.</li>
+        <li>Aucune recherche auprès de patients. Le moment décrit en page 24 est une hypothèse de
+          travail, cohérente mais non mesurée.</li>
+        <li>Aucun entretien de praticien. Les quatre portes de la page 23 sont des portraits construits,
+          à valider en cinq entretiens.</li>
+        <li>Aucune vérification juridique. Ni sur les noms, ni sur le cadre déontologique.</li>
+      </ul>
+    </div>
+    <div class="card card--flat card--white">
+      <h3>Pourquoi cela ne bloque pas</h3>
+      <p class="small">L'identité ne se déduit pas du marché. Elle se déduit de ce que le fondateur est,
+        de ce qu'il refuse, et de ce qu'il veut réparer.</p>
+      <p class="small">Les cinq exercices couvrent ces trois choses. Le socle peut donc être fixé
+        aujourd'hui, et l'exécution attendre les vérifications.</p>
+    </div>
+  </div>
+  <div class="rf"><b>I · Le matériau</b><span>page 05 / 43</span></div>
+</section>
+
+<!-- ══════════ 06 · REDDIT ══════════ -->
+<section class="page">
+  <div class="eyebrow">Exercice 01 · Marque miroir 1 / 2</div>
+  <h1>Reddit. <em>L'égalité d'accès</em> à l'information.</h1>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Ce qui a été dit</h2>
+      <p class="small">Fait pour tout le monde. Aucun critère d'ethnicité ni d'âge. Ouvert, accessible,
+        disponible. Là seulement pour apporter des réponses. Une résonance, une connaissance commune.
+        L'encyclopédie moderne, évolutive, qui se remet en question. Elle montre un chemin tout en se
+        remettant en cause. Rassurant. On est content d'y être. Si la réponse n'est pas là aujourd'hui,
+        elle y sera la prochaine fois.</p>
+      <div class="quote">Il n'y a pas de mauvaises questions, jamais. Il n'y a que des belles réponses.
+        <cite>Mouncef · exercice 01</cite></div>
+      <h2>Le pivot</h2>
+      <p class="small">La contradiction posée était réelle. Une agence dédiée aux médecins spécialistes est
+        l'inverse d'une marque ouverte à tous. Votre réponse n'a pas cherché le compromis, elle a changé
+        de plan.</p>
+      <p class="small">La maladie met tout le monde au même niveau, riche ou pauvre. Face à ce problème,
+        la solution doit parler à tout le monde de la même manière. Le client final, c'est le patient.
+        Le cœur de la médecine, c'est le patient. Tout le monde est sur le même pied d'égalité d'accès
+        à l'information.</p>
+      <p class="small">Conséquence directe. La marque ne vend pas de la visibilité à un médecin. Elle
+        corrige une inégalité d'accès, et le médecin en est le vecteur. Ce déplacement rend l'offre
+        acceptable pour un praticien exigeant, et défendable devant un ordre professionnel.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3>Retenu</h3>
+        <ul class="check small">
+          <li>L'égalité d'accès à l'information devient la raison d'être.</li>
+          <li>Le savoir commun, révisable, jamais figé.</li>
+          <li>Aucune question n'est mauvaise. Règle d'accueil.</li>
+          <li>La réponse comme service, pas comme argument de vente.</li>
+          <li>La constance du retour. On revient parce qu'on a trouvé.</li>
+        </ul>
+      </div>
+      <div class="card card--flat card--rose" style="margin-top:5mm">
+        <h3>Écarté</h3>
+        <ul class="cross small">
+          <li>L'absence de filtre. Personne ne valide rien.</li>
+          <li>L'anonymat de la source.</li>
+          <li>Le désordre comme mode d'organisation.</li>
+        </ul>
+        <p class="small" style="margin-top:3mm"><strong>Nuance capitale.</strong> Ce qui séduit chez Reddit,
+          l'accès, est exactement ce qui répugne chez eBay quand il n'est pas filtré. Nous gardons l'accès.
+          Nous refusons l'absence de tri. En santé, une réponse non validée n'est pas une réponse, c'est
+          un risque.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="card card--ink">
+    <span class="micro" style="color:var(--gold)">La question issue de cet exercice</span>
+    <p class="statement" style="font-size:16pt; color:var(--cream); margin-top:2mm">Est-ce que cela rend
+      l'information plus accessible au patient, ou seulement <em>plus visible pour le cabinet.</em></p>
+    <p class="small" style="margin-top:3mm">Cette question se pose à chaque arbitrage, du titre d'une page
+      au choix d'une prestation. Elle est la forme opérationnelle de la raison d'être, et elle tranche vite.
+      Beaucoup d'actions du métier passent le second test et échouent au premier. Elles sont écartées.</p>
+  </div>
+  <div class="rf"><b>Exercice 01</b><span>page 06 / 43</span></div>
+</section>
+
+<!-- ══════════ 07 · JOHNSON & JOHNSON ══════════ -->
+<section class="page">
+  <div class="eyebrow">Exercice 01 · Marque miroir 2 / 2</div>
+  <h1>Johnson &amp; Johnson. <em>La preuve</em> avant la promesse.</h1>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Ce qui a été dit</h2>
+      <p class="small">Une qualité scientifique prouvée, testée, validée. Des tests, des échecs, pour arriver
+        à une formule qui est là pour ton bien-être. Pas d'aspect pécuniaire perçu derrière. Plus l'entreprise
+        grossit, plus cela va dans le produit. Un facteur laboratoire, hygiénique. Pas de microbes dans ce que
+        la marque transmet comme message. Un côté blouse blanche. Simple et rassurant, sans prétention.
+        Une promesse de consistance dans la durée, un effort de clarté et de transparence, une ouverture
+        au retour. Le tout se résume en trois mots. We care.</p>
+      <div class="quote">Je ne sais même pas ce qu'ils font comme produit.
+        <cite>Mouncef · exercice 01</cite></div>
+      <p class="small">Cette phrase est la plus utile de l'exercice. Une marque peut être parfaitement
+        mémorisée pour sa <strong>tenue</strong> alors que son catalogue reste flou. La conséquence pour nous
+        est nette. La marque ne s'ouvre jamais par une liste de prestations. Elle s'ouvre par une posture,
+        et la liste vient après, pour ceux qui la demandent.</p>
+      <p class="small muted">Note de méthode. Cet exercice mesure une perception, pas un audit d'entreprise.
+        Nous retenons la posture décrite, telle qu'elle a été ressentie, sans nous prononcer sur l'histoire
+        du groupe.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3>Retenu</h3>
+        <ul class="check small">
+          <li>La preuve avant la promesse. Protocole, tests, échecs documentés.</li>
+          <li>La propreté du message. Rien de douteux ne circule.</li>
+          <li>L'humilité. Pas de prétention, pas de démonstration de force.</li>
+          <li>La consistance dans la durée, préférée au coup d'éclat.</li>
+          <li>L'ouverture au retour. Dites-nous ce qui manque.</li>
+          <li>La posture d'abord, le catalogue ensuite.</li>
+        </ul>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:5mm">
+        <h3>La traduction opérationnelle</h3>
+        <p class="small">Trois obligations naissent de cette page.</p>
+        <ul class="num small">
+          <li>Toute affirmation publiée porte une date et une source. Sans quoi elle ne sort pas.</li>
+          <li>Les échecs sont publiés. Un test qui n'a pas fonctionné se raconte. C'est ce qui rend
+            crédible ce qui fonctionne.</li>
+          <li>Le prix est clair et écrit. La discrétion sur l'argent ne s'obtient pas en le cachant,
+            elle s'obtient en le posant une fois, sans négociation opaque.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="g2">
+    <div class="card card--flat card--rose">
+      <h3 style="color:var(--rose-deep)">Le risque de cette référence</h3>
+      <p class="small">Johnson et Johnson est un groupe mondial. Emprunter sa posture sans sa taille
+        produit deux dérives faciles. Le ton institutionnel, qui endort. Et la froideur de laboratoire,
+        qui contredit le mot accueillant retenu en exercice 05.</p>
+      <p class="small">La correction est déjà dans le corpus. Reddit apporte la chaleur et l'égalité,
+        Diana apporte la proximité. La rigueur vient de cette page, la température vient des autres.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Ce que nous ne retenons pas</h3>
+      <p class="small">Ni l'échelle, ni la communication de groupe, ni le vocabulaire de la responsabilité
+        d'entreprise. Une agence de quelques personnes qui parle comme une multinationale perd
+        immédiatement la confiance d'un praticien.</p>
+      <p class="small">Nous retenons une chose et une seule. <strong>La preuve avant la promesse,
+        et la propreté du message.</strong></p>
+    </div>
+  </div>
+  <div class="rf"><b>Exercice 01</b><span>page 07 / 43</span></div>
+</section>
+
+<!-- ══════════ 08 · EBAY ══════════ -->
+<section class="page">
+  <div class="eyebrow">Exercice 02 · Marque repoussoir 1 / 2</div>
+  <h1>eBay. <em>Le volume</em> contre la sélection.</h1>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Ce qui a été dit</h2>
+      <p class="small">Le tout et le n'importe quoi. Une place où il y a de l'arnaque. Aucun filtre. Le pire
+        comme le meilleur. Personne n'est là pour valider quoi que ce soit. On achète sans confiance, à un
+        vendeur qu'on ne connaît pas. La foire aux surprises. Un bric-à-brac, une cave poussiéreuse où l'on
+        déblaie, et où l'on se salit les doigts. On finit avec quelque chose dont on aurait pu se passer.
+        Ni optimisation en qualité, ni en produit, ni en réflexion, ni en usage, ni en valeur, ni en intention.
+        Plus il y a de produits, mieux c'est, donc la qualité n'y est pas.</p>
+      <div class="quote">La qualité, elle vient de la sélection, du raffinement, du choix, du design.
+        <cite>Mouncef · exercice 02</cite></div>
+      <p class="small">Cette phrase est une définition de service, pas une opinion sur un site de vente.
+        Elle fixe quatre exigences internes. Sélectionner. Raffiner. Choisir. Dessiner. Aucune des quatre
+        ne survit au volume.</p>
+      <h2>Ce que ce refus coûte</h2>
+      <p class="small">Refuser un mandat sur deux, pour une agence qui démarre, se paie comptant.
+        C'est la seule position de ce document qui se mesure en euros non encaissés.</p>
+      <p class="small">C'est aussi la raison pour laquelle elle rend les autres croyables. Une agence qui
+        n'a jamais rien refusé n'a pas de critères, elle a un carnet de commandes. Le registre des refus,
+        page 20, est la preuve que le filtre existe.</p>
+    </div>
+    <div class="card card--flat card--white">
+      <h3>Les inversions</h3>
+      <table class="t-compact" style="margin-top:2mm">
+        <thead><tr><th>Ce qui répugne</th><th>Ce que nous en faisons</th></tr></thead>
+        <tbody>
+          <tr><td>Aucun filtre</td><td><strong>Un mandat sur deux est refusé si le dossier ne tient pas.</strong></td></tr>
+          <tr><td>Vendeur anonyme</td><td><strong>Un nom, un visage, un interlocuteur unique.</strong></td></tr>
+          <tr><td>Le volume comme stratégie</td><td><strong>Un nombre de cabinets plafonné, publié.</strong></td></tr>
+          <tr><td>La foire aux surprises</td><td><strong>Le livrable est décrit avant d'être vendu.</strong></td></tr>
+          <tr><td>On se salit les doigts</td><td><strong>La propreté du geste, jusque dans la facture.</strong></td></tr>
+          <tr><td>Aucune intention</td><td><strong>Chaque production répond à une question réelle de patient.</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="margin-top:3mm">Le plafonnement du nombre de clients n'est pas une figure de
+        style commerciale. C'est la seule preuve vérifiable qu'une agence a choisi la sélection contre le
+        volume. Elle se publie, donc elle s'oppose.</p>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <h2 style="margin-top:0">La sélection, en pratique</h2>
+  <p class="small">Refuser eBay comme modèle n'a de sens que si le filtre existe et s'écrit. Cinq critères
+    d'entrée, cumulatifs. Les cinq, ou pas de mandat.</p>
+  <div class="g5" style="margin-top:3mm">
+    <div class="card card--flat card--tight card--white"><span class="micro">01</span>
+      <p class="small" style="margin-top:1.5mm">L'expertise est établie et vérifiable à la source.
+        Titres, qualifications, exercice réel.</p></div>
+    <div class="card card--flat card--tight card--white"><span class="micro">02</span>
+      <p class="small" style="margin-top:1.5mm">Le praticien accepte de relire et de signer.
+        Sans signature, pas de production.</p></div>
+    <div class="card card--flat card--tight card--white"><span class="micro">03</span>
+      <p class="small" style="margin-top:1.5mm">Nous comprenons la spécialité, ou nous prenons le temps
+        de l'apprendre avant de facturer.</p></div>
+    <div class="card card--flat card--tight card--white"><span class="micro">04</span>
+      <p class="small" style="margin-top:1.5mm">Le territoire est libre. Aucun confrère déjà accompagné
+        sur la même spécialité.</p></div>
+    <div class="card card--flat card--tight card--white"><span class="micro">05</span>
+      <p class="small" style="margin-top:1.5mm">Le praticien accepte les dix refus de la page 21,
+        par écrit, au contrat.</p></div>
+  </div>
+  <div class="rf"><b>Exercice 02</b><span>page 08 / 43</span></div>
+</section>
+
+<!-- ══════════ 09 · PIZZA HUT + ANTI-VALEURS ══════════ -->
+<section class="page">
+  <div class="eyebrow">Exercice 02 · Marque repoussoir 2 / 2</div>
+  <h1>Pizza Hut. <em>La promesse</em> que l'expérience trahit.</h1>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Ce qui a été dit</h2>
+      <p class="small">Gras, huileux, mauvais pour la santé. Une appropriation culturelle. On ne sait pas
+        ce que c'est comme produit, et c'est tout sauf sa promesse. On ne sait pas quels aliments sont
+        dedans. La formule est attrayante, les photos sont mensongères. Grossiers, rapides. Ils se cachent
+        derrière un logo pour te filer des choses dont tu n'as aucune idée. Un marketing qui empoisonne,
+        au point de te faire croire à un besoin que ton corps n'a jamais réclamé. Rapide et mauvais.</p>
+      <div class="quote">Au final t'aurais mieux fait de ne pas y être allé à la base.
+        <cite>Mouncef · exercice 02</cite></div>
+      <h2>Le dénominateur commun</h2>
+      <p class="small">Les deux marques rejetées partagent un seul défaut, et ce défaut est le même.
+        <strong>L'écart entre la promesse et l'expérience.</strong> eBay promet un marché et livre une cave.
+        Pizza Hut promet une photo et livre autre chose.</p>
+      <p class="small">C'est notre ennemi, nommé. Pas un concurrent, pas un secteur. Un écart.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--rose">
+        <h3>Les inversions</h3>
+        <ul class="clean small">
+          <li>La photo montre ce qui est livré. Aucune mise en scène de résultat.</li>
+          <li>La composition est publique. Notre méthode s'écrit, se lit, se conteste.</li>
+          <li>Aucun besoin fabriqué. Si un cabinet n'a pas besoin de nous, nous le disons.</li>
+          <li>Jamais rapide au détriment du soin. Le calendrier suit la relecture, pas l'inverse.</li>
+          <li>Personne ne se cache derrière un logo. Le praticien signe, nous contresignons.</li>
+        </ul>
+      </div>
+      <div class="card card--ink" style="margin-top:5mm">
+        <h3 style="color:var(--gold)">Ce que cela vise, dans notre métier</h3>
+        <p class="small">Transposé au référencement médical, l'anti-marque a un visage précis et connu
+          des praticiens.</p>
+        <ul class="clean small">
+          <li>La position garantie en première page.</li>
+          <li>Les avis achetés ou provoqués.</li>
+          <li>Le contenu médical écrit par quelqu'un qui n'a jamais vu un patient.</li>
+          <li>Le vocabulaire de peur. Vous perdez des patients chaque jour.</li>
+          <li>Le rapport de trente pages que personne ne lit.</li>
+        </ul>
+        <p class="small">Cette liste est notre carte d'identité en négatif. Elle sera lue par des médecins
+          qui l'ont déjà subie. C'est notre meilleure preuve d'appartenance.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Exercice 02</b><span>page 09 / 43</span></div>
+</section>
+
+<!-- ══════════ 10 · PERSONNIFICATION ══════════ -->
+<section class="page">
+  <div class="eyebrow">Exercice 03 · La personnification</div>
+  <h1>Huit duos. <em>Huit choix.</em></h1>
+  <p class="lead">La marque comme personne. Ce qui compte n'est pas le nom choisi, c'est le motif qui
+    revient d'un choix à l'autre.</p>
+
+  <table class="t-compact">
+    <thead><tr><th style="width:34mm">Duo</th><th style="width:26mm">Choix</th><th>Ce qui a été retenu, dans vos mots</th><th style="width:44mm">Traduction pour la marque</th></tr></thead>
+    <tbody>
+      <tr><td class="micro">Gandhi ou Malcolm X</td><td class="nm">Malcolm X</td>
+        <td class="small">Vient d'en bas. Se fraie un chemin. Des convictions. À contre-courant. Sans jamais courber le dos. Une démarche assurée qui rallie. Un temps d'avance. Le style comme manifestation de la force d'esprit.</td>
+        <td class="small"><strong>L'assurance frontale.</strong> On affirme, on ne demande pas la permission.</td></tr>
+      <tr><td class="micro">Musk ou Zuckerberg</td><td class="nm">Zuckerberg</td>
+        <td class="small">Aucune prétention. Simple à la base. Né d'une passion, pas d'un calcul. Jamais la question de combien il allait gagner. C'était cool dès le départ. L'outil a dépassé l'objectif.</td>
+        <td class="small"><strong>L'intention pure.</strong> Le projet précède le modèle économique.</td></tr>
+      <tr><td class="micro">Elizabeth ou Diana</td><td class="nm">Diana</td>
+        <td class="small">Douceur, curiosité, charme, élégance. Un rayonnement sans avoir eu besoin de faire beaucoup. De l'empathie et de la proximité. Sa fragilité montrée. Fidèle à elle-même, sans cocher les cases de la haute société.</td>
+        <td class="small"><strong>La proximité.</strong> Le même niveau, jamais au-dessus.</td></tr>
+      <tr><td class="micro">Jackie Kennedy ou Marilyn</td><td class="nm">Marilyn Monroe</td>
+        <td class="small">Le charme, l'élégance, une beauté impossible à décrire. Un côté aimanté. Très indépendante, forte, courageuse. Tout fait pour atteindre un rêve fixé. Une dimension onirique.</td>
+        <td class="small"><strong>Le magnétisme.</strong> Une part de rêve, tenue par du courage.</td></tr>
+      <tr><td class="micro">Thatcher ou Bhutto</td><td class="nm">Benazir Bhutto</td>
+        <td class="small">Réussir à partir de rien, malgré l'adversité. C'est ton cerveau qui brille avant tout.</td>
+        <td class="small"><strong>L'intelligence comme actif.</strong> Le mérite contre la position.</td></tr>
+      <tr><td class="micro">Picasso ou Frida Kahlo</td><td class="nm">Frida Kahlo</td>
+        <td class="small">Sensible. Une vie difficile. Connectée à sa nature profonde, exprimée toute sa carrière. Bizarre en assumant sa bizarrerie. Indifférente au regard des autres. Faire son chemin.</td>
+        <td class="small"><strong>La singularité assumée.</strong> La niche comme nature, pas comme tactique.</td></tr>
+      <tr><td class="micro">Jordan ou Mohamed Ali</td><td class="nm">Mohamed Ali</td>
+        <td class="small">La finesse des mots, la justesse du phrasé, le tempo. Tout ce qu'il dit était de l'or. Un engagement au-delà du sport. La puissance de l'esprit qui donne la force au corps. Un homme de lettres dans un sport de brute. Une échelle de ce qui est possible pour tout le monde.</td>
+        <td class="small"><strong>La parole exacte.</strong> L'arme principale de la marque.</td></tr>
+      <tr><td class="micro">Madonna ou Michael Jackson</td><td class="nm">Michael Jackson</td>
+        <td class="small">Une voix d'ange, une personnalité à part. Il était là pour les autres, il n'a servi que les autres. Un message unificateur, jamais clivant. Le bien commun. Le cercle, tout le monde main dans la main. Il appartenait à tout le monde.</td>
+        <td class="small"><strong>Le service qui s'efface.</strong> Le nom du praticien passe devant le nôtre.</td></tr>
+    </tbody>
+  </table>
+  <div class="rf"><b>Exercice 03</b><span>page 10 / 43</span></div>
+</section>
+
+<!-- ══════════ 11 · TEMPÉRAMENT ══════════ -->
+<section class="page">
+  <div class="eyebrow">Exercice 03 · Lecture</div>
+  <h1>Le tempérament composite, <em>et sa tension.</em></h1>
+
+  <div class="g2">
+    <div>
+      <h2>Le portrait qui se dégage</h2>
+      <p>Quelqu'un qui vient d'en bas et qui n'a pas honte de le dire. Dont l'arme est la langue, pas la
+        force. Dont l'intelligence est le seul capital de départ. Frontal sur ses convictions, jamais sur
+        les personnes. Proche, chaleureux, capable de montrer une fragilité. Fidèle à sa propre étrangeté,
+        indifférent au regard du milieu. Porteur d'une part de rêve. Et, au bout du compte, entièrement
+        tourné vers le service des autres.</p>
+      <p>Cinq des huit choix vont vers des figures de service ou de sensibilité. Trois vers des figures
+        de conviction et de combat. La marque n'est donc pas un guerrier. C'est un serviteur qui ne plie
+        pas.</p>
+
+      <h2>La tension à tenir</h2>
+      <p>Il y a une contradiction apparente entre Malcolm X et Michael Jackson. L'un divise pour faire
+        avancer, l'autre unifie et ne clive jamais. Les deux ont été choisis. La règle qui les réconcilie
+        est simple et devient une règle de conduite.</p>
+      <div class="card card--warm" style="margin-top:4mm">
+        <p class="statement" style="font-size:15pt">La conviction s'exerce sur <em>la méthode.</em>
+          Jamais sur la personne du client, jamais sur un confrère.</p>
+      </div>
+      <p class="small" style="margin-top:4mm">Autrement dit. Intransigeance totale sur le protocole, sur la
+        relecture, sur le refus des pratiques douteuses. Douceur totale dans le contact, dans la pédagogie,
+        dans la manière de dire non.</p>
+    </div>
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">Le paradoxe de marque</h3>
+        <p class="statement" style="font-size:16pt; color:var(--cream)">Une parole qui <em>ne plie pas.</em>
+          Une main qui <em>ne lâche pas.</em></p>
+        <p class="small" style="margin-top:4mm">Le paradoxe est la propriété la plus difficile à copier.
+          Une agence peut imiter une palette en une semaine. Elle ne peut pas imiter une tension qu'elle
+          n'a pas vécue.</p>
+      </div>
+      <div class="card card--flat card--white" style="margin-top:5mm">
+        <h3>Trois obligations qui en découlent</h3>
+        <ul class="num small">
+          <li><strong>Le refus du registre pécuniaire.</strong> Zuckerberg a été choisi contre Musk parce
+            qu'il n'a pas commencé par l'argent. La marque ne communique jamais par le gain. Elle publie
+            ses prix une fois, clairement, et parle du travail.</li>
+          <li><strong>La fragilité autorisée.</strong> Diana, Frida et Michael Jackson ont été retenus pour
+            ce qu'ils montraient de fêlé. La marque peut dire je ne sais pas, et nous nous sommes trompés.
+            Cette autorisation est rare dans le conseil. Elle sera notre signature.</li>
+          <li><strong>Le tempo.</strong> Ali a été choisi pour le phrasé et le rythme. Nos textes se lisent
+            à voix haute avant d'être publiés. Une phrase qu'on ne peut pas dire n'est pas écrite.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <h2 style="margin-top:0">Le tempérament en situation</h2>
+  <table class="t-compact">
+    <thead><tr><th style="width:46mm">La situation</th><th style="width:34%">Ce que fait une agence ordinaire</th><th>Ce que fait cette marque</th></tr></thead>
+    <tbody>
+      <tr><td class="small">Un praticien demande une garantie de résultat avant de signer.</td>
+        <td class="small muted">Elle promet une fourchette, en se couvrant par une clause.</td>
+        <td class="small">Elle refuse la garantie, explique pourquoi aucune n'est tenable, et montre à la
+          place la méthode et le registre des refus. Frontal sur le fond, doux sur la forme.</td></tr>
+      <tr><td class="small">Un confrère critique publiquement un contenu publié.</td>
+        <td class="small muted">Elle répond, ou fait répondre, et défend le contenu.</td>
+        <td class="small">Elle vérifie d'abord. Si la critique est fondée, le contenu est corrigé et la
+          correction est datée. Aucune passe d'armes, jamais. Le message ne clive pas.</td></tr>
+      <tr><td class="small">Nous nous sommes trompés sur une recommandation, et le praticien ne l'a pas vu.</td>
+        <td class="small muted">Elle laisse passer et corrige discrètement.</td>
+        <td class="small">Elle le dit, dans le bloc numéro deux du rapport mensuel. La fragilité montrée
+          est autorisée, et c'est ce qui rend le reste croyable.</td></tr>
+    </tbody>
+  </table>
+  <div class="rf"><b>Exercice 03</b><span>page 11 / 43</span></div>
+</section>
+
+<!-- ══════════ 12 · ARCHÉTYPES ══════════ -->
+<section class="page">
+  <div class="eyebrow">Exercice 04 · L'ADN</div>
+  <h1>Le Sage, d'abord. <em>Puis le Magicien.</em> Enfin l'Explorateur.</h1>
+  <p class="lead">Trois archétypes ont été retenus, et l'un a été désigné comme aligné avec qui vous êtes.
+    L'ordre compte plus que la liste.</p>
+
+  <div class="g3">
+    <div class="card card--white">
+      <div class="tag" style="margin-bottom:3mm"><span class="dot"></span>55 %</div>
+      <h2 style="margin-top:0">Le Sage</h2>
+      <p class="micro">TED Talks · Ideas worth spreading</p>
+      <p class="small" style="margin-top:3mm">Priorise la sagesse, la vérité, le partage du savoir.
+        Se positionne en mentor de confiance. <strong>Aligné avec qui je suis.</strong></p>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small"><strong>Comment il se manifeste.</strong> La méthode est publiée. Le praticien
+        apprend en travaillant avec nous. Chaque contenu enseigne quelque chose de vérifiable.</p>
+      <p class="small"><strong>Sa dérive.</strong> Le professeur. Le Sage devient insupportable dès qu'il
+        explique à un médecin son propre métier. Interdiction absolue.</p>
+    </div>
+    <div class="card card--white">
+      <div class="tag" style="margin-bottom:3mm"><span class="dot" style="background:var(--rose)"></span>30 %</div>
+      <h2 style="margin-top:0">Le Magicien</h2>
+      <p class="micro">Disney · Where dreams come true</p>
+      <p class="small" style="margin-top:3mm">Crée des expériences transformatives, presque mystiques.
+        Promet l'émerveillement.</p>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small"><strong>Comment il se manifeste.</strong> La transformation d'un praticien invisible
+        en référence de sa spécialité. L'avant et l'après, montrés sobrement. La part onirique retenue de
+        Marilyn vit ici.</p>
+      <p class="small"><strong>Sa dérive.</strong> Le miracle. Le Magicien devient une arnaque dès qu'il
+        promet un résultat de position. La magie porte sur la clarté obtenue, jamais sur le classement.</p>
+    </div>
+    <div class="card card--white">
+      <div class="tag" style="margin-bottom:3mm"><span class="dot" style="background:var(--illus-forest)"></span>15 %</div>
+      <h2 style="margin-top:0">L'Explorateur</h2>
+      <p class="micro">Patagonia · We're in business to save our home planet</p>
+      <p class="small" style="margin-top:3mm">Aventure, découverte, soif d'inconnu. Prospère sur
+        l'authenticité et le franchissement de limites.</p>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small"><strong>Comment il se manifeste.</strong> Le choix de la niche extrême, là où
+        personne ne va. Et la posture de mission, chez Patagonia comme chez nous. Une entreprise existe
+        pour réparer quelque chose.</p>
+      <p class="small"><strong>Sa dérive.</strong> L'expérimentation. On n'essaie pas des choses sur la
+        réputation d'un médecin. L'exploration se fait sur nos propres surfaces d'abord.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Ce que le trio dit du métier</h2>
+      <p>Reddit, TED, Johnson &amp; Johnson. Les trois références positives de ce travail sont des marques
+        de <strong>savoir</strong>. Aucune n'est une marque de performance, de croissance ou de technologie.
+        Sur un marché où toutes les agences parlent de résultats, cette marque parlera de connaissance.</p>
+      <p>C'est une position de conquête, pas de repli. Dans une décision de santé, la connaissance est ce
+        qui rassure. La performance est ce qui inquiète.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>La formule d'ADN</h3>
+      <p class="statement" style="font-size:14pt">Un Sage qui a vu <em>l'invisible devenir</em> évident,
+        et qui ne travaille que là où personne ne va.</p>
+    </div>
+  </div>
+  <div class="rf"><b>Exercice 04</b><span>page 12 / 43</span></div>
+</section>
+
+<!-- ══════════ 13 · ATTRIBUTS ══════════ -->
+<section class="page">
+  <div class="eyebrow">Exercice 05 · Les attributs</div>
+  <h1>Cinq colonnes. Cinq mots retenus. <em>Un mot élu.</em></h1>
+  <p class="lead" style="margin-bottom:5mm">Le corpus complet, tel qu'il a été produit. En gras, les cinq
+    retenus par colonne. En bas, le mot élu.</p>
+
+  <div class="g5" style="align-items:start">
+    <div>
+      <div class="colhead">Culture</div>
+      <p class="micro" style="min-height:11mm">Comment votre entourage décrirait la culture de la marque.</p>
+      <ul class="attr" style="font-size:6.6pt">
+        <li>Environmental</li><li>Activist</li><li>Social Justice</li><li>Diverse</li>
+        <li class="on">Accepting</li><li>Innovative</li><li>Energetic</li><li class="on">Supportive</li>
+        <li>Empowering</li><li>Rebels</li><li class="on">Truth seekers</li><li>Seekers</li><li>Powerful</li>
+        <li>Invested</li><li>Dedicated</li><li>Elevating souls</li><li>Fortunate</li><li>Sustainable</li>
+        <li>Visionary</li><li class="on">Respectful</li><li>Educational</li><li>Fertile</li><li>Grounded</li>
+        <li>Focused</li><li>Current</li><li>Different</li><li>Unique approach</li><li>Entrepreneurial</li>
+        <li>Well organized</li><li>Holistic</li><li>Honest</li><li>Family oriented</li><li>Present</li>
+        <li class="on">Spiritual</li><li>Exceptional</li><li>Efficient</li><li>Compliant</li>
+      </ul>
+    </div>
+    <div>
+      <div class="colhead">Client</div>
+      <p class="micro" style="min-height:11mm">Comment vous décririez votre client idéal.</p>
+      <ul class="attr" style="font-size:6.6pt">
+        <li>Eccentric</li><li class="on">Demanding</li><li>Passionate</li><li>Erratic</li><li>Impulsive</li>
+        <li>Creative</li><li>Innovative</li><li>Revolutionary</li><li class="on">Intelligent</li><li>Caring</li>
+        <li>Inspired</li><li>Mindful</li><li class="on">Present</li><li>Influential</li><li>Evangelical</li>
+        <li class="on">Aspirational</li><li>Idealistic</li><li>Spiritual</li><li>Successful</li><li>Fortunate</li>
+        <li>Compassionate</li><li>Enlightened</li><li>Privileged</li><li>Inspirational</li><li>Wealthy</li>
+        <li>Inheritors</li><li>Entrepreneurs</li><li>Grateful</li><li>Searching</li><li>Seeker</li>
+        <li>Change agents</li><li class="on">Not complacent</li><li>Entrepreneurial</li>
+      </ul>
+    </div>
+    <div>
+      <div class="colhead">Voix</div>
+      <p class="micro" style="min-height:11mm">Comment vous sonnez aux oreilles des autres.</p>
+      <ul class="attr" style="font-size:6.6pt">
+        <li class="on">Thoughtful</li><li>Exuberant</li><li>Social</li><li>Smart</li><li>Leaders</li>
+        <li>Creative</li><li>Iconoclastic</li><li>Unique</li><li>Spiritual</li><li>Spirited</li>
+        <li>Environmental</li><li>Energetic</li><li class="on">Motivated</li><li>Conscientious</li><li>Driven</li>
+        <li>Compassionate</li><li>Detailed</li><li>Plucky</li><li>Activist</li><li>Authentic</li>
+        <li>Self-aware</li><li>Collaborative</li><li>Healthy</li><li>Empowered</li><li class="on">Confidence</li>
+        <li>Calm</li><li class="on">Focused</li><li class="on">Humanistic</li><li>Funny</li><li>Courageous</li>
+        <li>Impactful</li><li>Purpose driven</li><li>Curious</li><li>Helpful</li><li>Conscious</li><li>Methodical</li>
+      </ul>
+    </div>
+    <div>
+      <div class="colhead">Look &amp; feel</div>
+      <p class="micro" style="min-height:11mm">À quoi la marque ressemble, et ce qu'elle fait ressentir.</p>
+      <ul class="attr" style="font-size:6.6pt">
+        <li>Sleek</li><li>Innovative</li><li>Classic</li><li>Trendy</li><li>Elegant</li>
+        <li class="on">Playful</li><li>Modern</li><li>Timeless</li><li>Edgy</li><li>Sophisticated</li>
+        <li>Minimalistic</li><li>Quirky</li><li>Dynamic</li><li>Luxurious</li><li>Global</li>
+        <li class="on">Reliable</li><li>Artistic</li><li class="on">Refined</li><li>Futuristic</li><li>Industrial</li>
+        <li>Distinctive</li><li class="on">Inviting</li><li>Sustainable</li><li>Warm</li><li>Professional</li>
+        <li>Adventurous</li><li>Time-honored</li><li>Authentic</li><li>Vibrant</li><li>Bold</li>
+        <li class="on">Wholesome</li><li>Nostalgic</li><li>Progressive</li><li>Chic</li><li>Urban</li><li>Whimsical</li>
+      </ul>
+    </div>
+    <div>
+      <div class="colhead">Valeur</div>
+      <p class="micro" style="min-height:11mm">Ce que le client retire du passage par la marque.</p>
+      <ul class="attr" style="font-size:6.6pt">
+        <li>Security</li><li>Integrity</li><li>Longevity</li><li>Purpose</li><li>Fulfillment</li>
+        <li>Satisfaction</li><li>Comfort</li><li>Insight</li><li class="on">Knowledge</li><li>Empowerment</li>
+        <li>Validation</li><li>Personable</li><li>Related</li><li>Connected</li><li>Nurtured</li>
+        <li class="on">Protected</li><li>Warm</li><li>In control</li><li>Achieve status</li><li>Honesty</li>
+        <li class="on">Clarification</li><li>Performance</li><li>Time</li><li>Options</li><li>Solve problems</li>
+        <li>Reality</li><li>Social impact</li><li>Leadership</li><li>Learning</li><li class="on">Listening</li>
+        <li class="on">Educated</li><li>Assurance</li><li>Education</li><li>Compliant</li><li>Fulfilled</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="g5">
+    <div class="card card--tight card--white"><span class="micro">Élu · culture</span>
+      <div class="statement" style="font-size:15pt; margin-top:1.5mm">Respectful</div>
+      <p class="small" style="margin-top:2mm">Le respect. Du cadre, du patient, du confrère, du temps.</p></div>
+    <div class="card card--tight card--white"><span class="micro">Élu · client</span>
+      <div class="statement" style="font-size:15pt; margin-top:1.5mm">Demanding</div>
+      <p class="small" style="margin-top:2mm">L'exigence. Le client ne pardonne pas l'approximation.</p></div>
+    <div class="card card--tight card--white"><span class="micro">Élu · voix</span>
+      <div class="statement" style="font-size:15pt; margin-top:1.5mm">Confidence</div>
+      <p class="small" style="margin-top:2mm">L'assurance. Ni doute affiché, ni surenchère.</p></div>
+    <div class="card card--tight card--white"><span class="micro">Élu · look/feel</span>
+      <div class="statement" style="font-size:15pt; margin-top:1.5mm">Inviting</div>
+      <p class="small" style="margin-top:2mm">L'accueil. On entre sans se sentir jugé.</p></div>
+    <div class="card card--tight card--white"><span class="micro">Élu · valeur</span>
+      <div class="statement" style="font-size:15pt; margin-top:1.5mm">Listening</div>
+      <p class="small" style="margin-top:2mm">L'écoute. Ce que le client emporte en partant.</p></div>
+  </div>
+  <div class="rf"><b>Exercice 05</b><span>page 13 / 43</span></div>
+</section>
+
+<!-- ══════════ 14 · CONVERGENCE ══════════ -->
+<section class="page">
+  <div class="eyebrow">I · La convergence</div>
+  <h1>Ce que <em>les cinq exercices</em> disent ensemble.</h1>
+  <p class="lead">Neuf traits franchissent la règle des deux exercices. Cinq mots ont été élus. Les deux
+    listes se recouvrent presque parfaitement, ce qui est le meilleur signe possible sur un travail
+    d'identité.</p>
+
+  <table class="t-compact">
+    <thead><tr><th style="width:40mm">Trait</th><th style="width:11mm">Ex 01</th><th style="width:11mm">Ex 02</th><th style="width:11mm">Ex 03</th><th style="width:11mm">Ex 04</th><th style="width:11mm">Ex 05</th><th>Statut</th></tr></thead>
+    <tbody>
+      <tr><td class="nm">Écoute</td><td>Reddit</td><td></td><td>Diana</td><td></td><td><strong>Élu</strong></td><td class="small"><strong>Valeur socle.</strong> La question du patient est le point de départ de toute production.</td></tr>
+      <tr><td class="nm">Respect</td><td>J&amp;J</td><td>eBay</td><td>Ali · Diana</td><td>Sage</td><td><strong>Élu</strong></td><td class="small"><strong>Valeur socle.</strong> Le trait le plus dense du corpus. Présent partout.</td></tr>
+      <tr><td class="nm">Assurance</td><td></td><td></td><td>Malcolm X · Bhutto</td><td>Sage</td><td><strong>Élu</strong></td><td class="small"><strong>Valeur socle.</strong> Régime de voix, pas de posture de force.</td></tr>
+      <tr><td class="nm">Accueil</td><td>Reddit</td><td>eBay</td><td>Diana · MJ</td><td>Disney</td><td><strong>Élu</strong></td><td class="small"><strong>Valeur socle.</strong> L'accueil est la traduction sensible de l'égalité d'accès.</td></tr>
+      <tr><td class="nm">Exigence</td><td>J&amp;J</td><td>eBay · Pizza Hut</td><td>Ali</td><td></td><td><strong>Élu</strong></td><td class="small"><strong>Valeur socle.</strong> Portée par le client, donc imposée à l'agence.</td></tr>
+      <tr><td class="nm">Preuve</td><td>J&amp;J</td><td>Pizza Hut</td><td>Bhutto</td><td>TED</td><td></td><td class="small"><strong>Retenu.</strong> Devient une croyance et un standard de production, pas une valeur affichée.</td></tr>
+      <tr><td class="nm">Sélection</td><td></td><td>eBay</td><td>Frida</td><td>Patagonia</td><td></td><td class="small"><strong>Retenu.</strong> Devient une règle d'entreprise. Nombre de clients plafonné.</td></tr>
+      <tr><td class="nm">Service effacé</td><td>J&amp;J</td><td></td><td>MJ · Zuckerberg</td><td></td><td></td><td class="small"><strong>Retenu.</strong> Devient une règle de signature. Le praticien passe devant.</td></tr>
+      <tr><td class="nm">Singularité</td><td></td><td></td><td>Frida · Malcolm X</td><td>Patagonia</td><td></td><td class="small"><strong>Retenu.</strong> Justifie la niche extrême comme nature, pas comme calcul.</td></tr>
+      <tr><td class="nm">Rêve</td><td></td><td></td><td>Marilyn</td><td>Disney</td><td></td><td class="small"><strong>Sous surveillance.</strong> Autorisé sur la transformation. Interdit sur le résultat.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rule"></div>
+  <h2>Les cinq mots élus, remis dans l'ordre du service</h2>
+  <p class="small">Lus dans l'ordre alphabétique, ce sont cinq adjectifs. Lus dans l'ordre du travail réel,
+    ce sont les cinq temps d'une relation. C'est ainsi qu'ils doivent être mémorisés.</p>
+  <div class="g5" style="margin-top:4mm">
+    <div class="card card--tight card--warm"><span class="micro">01 · d'abord</span><div class="statement" style="font-size:14pt">Écoute</div><p class="small">On écoute le praticien, puis les questions de ses patients.</p></div>
+    <div class="card card--tight card--warm"><span class="micro">02 · ensuite</span><div class="statement" style="font-size:14pt">Accueil</div><p class="small">On rend le savoir abordable, sans le diminuer.</p></div>
+    <div class="card card--tight card--warm"><span class="micro">03 · toujours</span><div class="statement" style="font-size:14pt">Respect</div><p class="small">Du cadre déontologique, du patient, du confrère.</p></div>
+    <div class="card card--tight card--warm"><span class="micro">04 · en parlant</span><div class="statement" style="font-size:14pt">Assurance</div><p class="small">On affirme la méthode. On ne promet pas de position.</p></div>
+    <div class="card card--tight card--warm"><span class="micro">05 · au bout</span><div class="statement" style="font-size:14pt">Exigence</div><p class="small">Rien ne sort qui ne tienne devant un pair.</p></div>
+  </div>
+  <div class="rf"><b>I · La convergence</b><span>page 14 / 43</span></div>
+</section>
+
+<!-- ══════════ 15 · MANIFESTE ══════════ -->
+<section class="page page--ink">
+  <div class="eyebrow">II · La plateforme</div>
+  <h1 style="color:var(--cream)">Manifeste</h1>
+  <div class="rule--gold" style="margin:6mm 0 8mm"></div>
+  <div class="manifesto">
+    <p>Il y a un moment que personne ne choisit.</p>
+    <p>Quelqu'un tape trois mots dans une barre de recherche. Il a un compte rendu dans la main,
+      un mot qu'il ne comprend pas, et la nuit devant lui.</p>
+    <p class="hi">Devant la maladie, personne n'a d'avance.</p>
+    <p>Ni le riche, ni le pauvre, ni le savant. La seule inégalité qui reste à cet instant précis,
+      c'est l'accès à l'information.</p>
+    <p>C'est sur cette inégalité que nous travaillons.</p>
+    <p>Nous ne fabriquons pas de réputation. Nous rendons lisible celle qui existe déjà.
+      Nous n'inventons pas d'expertise. Nous refusons de la laisser invisible.</p>
+    <p>Le patient cherche. Le spécialiste sait. Entre les deux, il n'y a qu'un défaut de traduction.</p>
+    <p class="hi">Traduire sans trahir. C'est tout notre métier.</p>
+    <p>Nous ne promettons pas une place dans un classement. Nous promettons une méthode, une trace,
+      et une signature. La vôtre. Rien ne sort sans votre nom dessus. Rien ne sort qui ne soit vrai.</p>
+    <p>Nous travaillons pour peu de cabinets, parce que la qualité vient de la sélection.
+      Nous disons non souvent, et nous le disons doucement.</p>
+    <p class="hi">Une parole qui ne plie pas. Une main qui ne lâche pas.</p>
+  </div>
+  <div class="spacer"></div>
+  <p class="micro" style="color:rgba(251,245,230,.5)">Ce texte n'est pas une publicité. C'est le texte de
+    référence interne. Il se relit avant chaque décision difficile. Des extraits peuvent devenir publics,
+    jamais l'ensemble.</p>
+  <div class="rf"><b>II · Manifeste</b><span>page 15 / 43</span></div>
+</section>
+
+<!-- ══════════ 16 · RAISON D'ÊTRE ══════════ -->
+<section class="page">
+  <div class="eyebrow">II · La plateforme</div>
+  <h1>Raison d'être, mission, <em>vision.</em></h1>
+  <p class="lead">Trois phrases distinctes. La raison d'être ne change jamais. La mission décrit le travail.
+    La vision décrit l'état du monde si le travail réussit.</p>
+
+  <div class="card card--ink">
+    <span class="micro" style="color:var(--gold)">Raison d'être</span>
+    <p class="statement" style="color:var(--cream); font-size:21pt; margin-top:3mm">Que le bon patient
+      trouve <em>le bon spécialiste.</em></p>
+    <p class="small" style="margin-top:4mm; color:rgba(251,245,230,.8)">Elle ne parle ni de visibilité, ni
+      de croissance, ni de cabinet. Elle vient directement de votre recadrage en exercice 01. Elle est la
+      seule phrase du document qu'un médecin peut citer sans se sentir vendeur, et qu'un patient peut
+      entendre sans se sentir cible.</p>
+  </div>
+
+  <div class="g2" style="margin-top:6mm">
+    <div class="card card--white">
+      <span class="micro">Mission</span>
+      <p class="statement" style="font-size:15pt; margin-top:2mm">Rendre <em>lisible et trouvable</em>
+        l'expertise réelle d'un médecin spécialiste, sans jamais la surjouer.</p>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small">Trois mots portent la charge. <strong>Réelle</strong> exclut la fabrication.
+        <strong>Lisible</strong> engage un travail de langue, pas seulement de technique.
+        <strong>Trouvable</strong> nomme le métier, le référencement, sans en faire la finalité.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Vision</span>
+      <p class="statement" style="font-size:15pt; margin-top:2mm">Qu'une recherche de spécialiste ne se
+        règle plus <em>au hasard.</em></p>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small">Aujourd'hui, une part de ces recherches se conclut par un choix mal informé.
+        Un patient tombe sur ce qui remonte, pas sur ce qui correspond. La vision décrit un monde où la
+        remontée et la correspondance se rejoignent. Nous n'y arriverons pas seuls, et ce n'est pas grave.
+        Une vision se partage.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <h2>Ce que la raison d'être interdit, dès aujourd'hui</h2>
+  <p class="small">Une raison d'être qui n'interdit rien ne sert à rien. Celle-ci coupe quatre chemins,
+    y compris des chemins rentables.</p>
+  <ul class="num small">
+    <li><strong>Travailler pour un praticien dont l'expertise n'est pas établie.</strong> Rendre trouvable
+      quelqu'un qui n'a pas la compétence annoncée, c'est envoyer le mauvais patient au mauvais endroit.
+      C'est l'inverse exact de la raison d'être. Ce mandat se refuse.</li>
+    <li><strong>Capter des recherches qui ne relèvent pas de la spécialité du cabinet.</strong> Attirer large
+      pour remplir un agenda produit des consultations inutiles. Le patient perd du temps et le praticien
+      perd sa réputation.</li>
+    <li><strong>Mesurer le succès en volume de patients.</strong> Le bon indicateur est l'adéquation, pas le
+      remplissage. La page 39 en tire les conséquences.</li>
+    <li><strong>Parler au patient comme à un consommateur.</strong> Jamais de vocabulaire de conversion pour
+      désigner une personne malade.</li>
+  </ul>
+  <div class="rf"><b>II · La plateforme</b><span>page 16 / 43</span></div>
+</section>
+
+<!-- ══════════ 17 · CROYANCES ══════════ -->
+<section class="page">
+  <div class="eyebrow">II · La plateforme</div>
+  <h1>Le socle de croyances. <em>Huit arbitrages.</em></h1>
+  <p class="lead">Ce ne sont pas des slogans, ce sont des ordres de priorité. Chaque ligne se lit ainsi.
+    Quand les deux termes s'opposent, le premier gagne, même si le second est plus vendeur.</p>
+
+  <div class="g2">
+    <div>
+      <ul class="num" style="font-size:var(--t-body)">
+        <li><span class="lb"><strong>L'expertise précède la visibilité.</strong><br><span class="small muted">On ne rend pas
+          visible ce qui n'existe pas. Le travail commence par constater la compétence.</span></span></li>
+        <li><span class="lb"><strong>La preuve précède la promesse.</strong><br><span class="small muted">Rien n'est affirmé
+          sans source, sans date, sans signature. Héritage direct de Johnson &amp; Johnson.</span></span></li>
+        <li><span class="lb"><strong>L'écoute précède la stratégie.</strong><br><span class="small muted">Aucune
+          recommandation avant l'entretien long. La stratégie est une conséquence, pas une entrée.</span></span></li>
+        <li><span class="lb"><strong>Le patient précède le mot-clé.</strong><br><span class="small muted">Une requête est une
+          personne qui a peur. On part de la question, jamais du volume de recherche.</span></span></li>
+      </ul>
+    </div>
+    <div>
+      <ul class="num" style="font-size:var(--t-body); counter-reset:n 4">
+        <li><span class="lb"><strong>La sélection précède le volume.</strong><br><span class="small muted">Peu de
+          cabinets, peu de contenus, beaucoup de soin. Héritage direct du rejet d'eBay.</span></span></li>
+        <li><span class="lb"><strong>Le cadre précède la performance.</strong><br><span class="small muted">La déontologie
+          n'est pas une contrainte à contourner, c'est le terrain de jeu. Ce qui la franchit ne se
+          négocie pas.</span></span></li>
+        <li><span class="lb"><strong>La consistance précède la campagne.</strong><br><span class="small muted">Trois ans de
+          régularité battent trois mois d'intensité. Une réputation médicale se construit par
+          sédimentation.</span></span></li>
+        <li><span class="lb"><strong>La clarté précède le style.</strong><br><span class="small muted">Beau vient après
+          compris. Un texte élégant qu'un patient inquiet ne comprend pas est un texte raté.</span></span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Comment s'en servir</h2>
+      <p>Ces huit lignes servent à trancher, pas à décorer. Trois usages concrets.</p>
+      <p><strong>En réunion client.</strong> Quand un praticien demande une action qui inverse un ordre,
+        la réponse est déjà écrite. Exemple. Une demande de production de vingt articles par mois inverse
+        la ligne 05. On explique, on propose l'équivalent tenable, on documente le refus.</p>
+      <p><strong>En recrutement.</strong> Un candidat lit les huit lignes avant l'entretien. On lui demande
+        laquelle le gêne. La réponse dit tout.</p>
+      <p><strong>En production.</strong> Chaque livrable passe la ligne 02 et la ligne 08. Sans source et
+        sans clarté, il ne part pas.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Le test des huit lignes</h3>
+      <p class="small">Une croyance est vraie si elle coûte quelque chose. Passez chaque ligne à ce test.</p>
+      <p class="small"><strong>Combien nous coûte cette ligne, en euros, cette année.</strong></p>
+      <p class="small">Si la réponse est zéro, la ligne est décorative et doit être réécrite ou supprimée.
+        Les lignes 05 et 06 coûtent le plus. C'est la preuve qu'elles sont réelles.</p>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="card card--flat card--rose">
+    <h3 style="color:var(--rose-deep)">Les huit lignes, en négatif</h3>
+    <p class="small">Chacune des huit phrases ci-dessous est défendue quelque part dans ce métier,
+      souvent avec talent. C'est précisément pour cela que les huit lignes du haut de page doivent être
+      écrites, datées et opposables.</p>
+    <div class="g2" style="margin-top:3mm; gap:var(--s-s)">
+      <ul class="clean small">
+        <li>La visibilité crée l'expertise.</li>
+        <li>La promesse suffit, la preuve viendra après.</li>
+        <li>On sait déjà ce dont le praticien a besoin.</li>
+        <li>Le mot-clé commande, le patient suivra.</li>
+      </ul>
+      <ul class="clean small">
+        <li>Plus de clients, plus de solidité.</li>
+        <li>La règle se contourne quand elle gêne.</li>
+        <li>La campagne fait la marque.</li>
+        <li>Le style porte le fond.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rf"><b>II · La plateforme</b><span>page 17 / 43</span></div>
+</section>
+
+<!-- ══════════ 18 · ESSENCE, PROMESSE, POSITIONNEMENT ══════════ -->
+<section class="page">
+  <div class="eyebrow">II · La plateforme</div>
+  <h1>Essence, promesse, <em>positionnement.</em></h1>
+
+  <div class="g2">
+    <div class="card card--white">
+      <span class="micro">L'essence · trois mots, usage interne</span>
+      <p class="statement" style="font-size:24pt; margin-top:3mm">Traduire<br>sans <em>trahir.</em></p>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small">L'essence n'est pas une signature publicitaire. C'est le noyau que toute la marque
+        doit pouvoir répéter. Elle tient les deux archétypes dominants ensemble. Le Sage traduit.
+        L'exigence interdit de trahir.</p>
+      <p class="small">Elle vaut aussi comme critère de recrutement, de production et de refus.
+        Un contenu qui simplifie au point de fausser trahit. Un contenu exact que personne ne comprend
+        ne traduit pas. Les deux échouent.</p>
+    </div>
+    <div>
+      <div class="card card--warm">
+        <span class="micro">La promesse · usage externe</span>
+        <p class="statement" style="font-size:16pt; margin-top:2mm">Nous ne vous inventons pas une
+          réputation. <em>Nous rendons visible celle que vous avez déjà.</em></p>
+        <div class="rule" style="margin:4mm 0"></div>
+        <p class="small">Cette promesse est tenable, vérifiable, et elle disqualifie la concurrence sans
+          la nommer. Elle parle directement à la porte 02, le praticien respecté de ses pairs et absent
+          en ligne, qui est le cœur du marché.</p>
+      </div>
+      <div class="card card--flat" style="margin-top:5mm">
+        <h3>Variantes autorisées</h3>
+        <ul class="clean small">
+          <li>Ce qui est montré est ce qui est vrai.</li>
+          <li>Votre nom sur chaque ligne. Y compris quand cela nous ralentit.</li>
+          <li>Une méthode, une trace, une signature.</li>
+        </ul>
+        <p class="small muted">Trois formulations, un seul fond. Aucune autre variante ne se crée sans
+          repasser par cette page.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <h2>Le positionnement, en une phrase de travail</h2>
+  <div class="card card--ink" style="margin-top:3mm">
+    <p style="font-size:11.5pt; line-height:1.55; color:var(--cream)">
+      Pour <strong style="color:var(--gold)">les médecins spécialistes exigeants</strong>,
+      qui <strong style="color:var(--gold)">savent mais restent introuvables</strong>,
+      nous sommes <strong style="color:var(--gold)">la seule agence de référencement qui ne travaille que
+      pour eux</strong>.
+      Nous <strong style="color:var(--gold)">rendons leur expertise lisible et trouvable par le patient
+      qui la cherche vraiment</strong>,
+      parce que <strong style="color:var(--gold)">devant la maladie, l'accès à l'information devrait être
+      égal pour tous</strong>.
+      Contrairement aux <strong style="color:var(--gold)">agences généralistes qui vendent du volume et
+      des promesses de classement</strong>,
+      nous <strong style="color:var(--gold)">plafonnons le nombre de cabinets, publions notre méthode, et
+      ne signons rien à votre place</strong>.
+    </p>
+  </div>
+
+  <div class="g3" style="margin-top:6mm">
+    <div class="card card--flat card--tight">
+      <h3>La phrase de fondateur</h3>
+      <p class="small">Pour un dîner, un confrère, un ascenseur. Vingt secondes.</p>
+      <p class="small"><em class="i">Je travaille pour des médecins spécialistes. Ils sont excellents et
+        personne ne les trouve. Je rends leur savoir lisible pour le patient qui en a besoin. Je ne prends
+        pas beaucoup de cabinets, et je ne publie rien qu'ils n'aient pas signé.</em></p>
+    </div>
+    <div class="card card--flat card--tight">
+      <h3>La catégorie</h3>
+      <p class="small">Agence de référencement, spécialisée sur une seule population de praticiens.</p>
+      <p class="small">Pas une agence de communication médicale. Pas un studio web. Pas une plateforme de
+        prise de rendez-vous. Pas un annuaire. La catégorie est étroite, et c'est l'actif.</p>
+    </div>
+    <div class="card card--flat card--tight">
+      <h3>La preuve d'appartenance</h3>
+      <p class="small">Ce qui rend la niche crédible n'est pas de la revendiquer, c'est de refuser
+        publiquement tout le reste.</p>
+      <p class="small">Un dentiste, un vétérinaire, une clinique esthétique généraliste. Refusés,
+        et le refus est visible sur le site.</p>
+    </div>
+  </div>
+  <div class="rf"><b>II · La plateforme</b><span>page 18 / 43</span></div>
+</section>
+
+<!-- ══════════ 19 · VALEURS I ══════════ -->
+<section class="page">
+  <div class="eyebrow">II · Les valeurs · 1 / 2</div>
+  <h1>Cinq valeurs, <em>instrumentées.</em></h1>
+  <p class="lead">Un adjectif n'oblige à rien. Chaque valeur élue est donc traduite en quatre lignes.
+    Ce qu'elle oblige, ce qui se voit, la preuve matérielle, et ce qu'elle interdit. Sans les quatre,
+    la valeur n'existe pas.</p>
+
+  <div class="card card--white" style="margin-bottom:6mm">
+    <div style="display:flex; justify-content:space-between; align-items:baseline">
+      <h2 style="margin-top:0; font-size:19pt">01 · Écoute</h2>
+      <span class="tag"><span class="dot"></span>Listening · valeur élue, colonne valeur</span>
+    </div>
+    <p class="small">Ce que le client emporte en partant. Pas un conseil, une attention. Reddit et Diana
+      convergent ici. Il n'y a pas de mauvaise question, et celui qui écoute se met au même niveau.</p>
+    <table class="t-compact" style="margin-top:3mm">
+      <tr><th style="width:26mm">Oblige</th><td>Un entretien long avec le praticien avant toute
+        recommandation. Enregistré, transcrit, restitué. La collecte des questions réellement posées en
+        consultation, au secrétariat, dans les avis et dans les recherches.</td></tr>
+      <tr><th>Observable</th><td>Le premier livrable n'est pas une proposition commerciale, c'est une
+        restitution de ce que nous avons entendu. Le praticien s'y reconnaît, ou nous avons mal écouté.</td></tr>
+      <tr><th>Preuve</th><td>Le document d'entrée, remis avant tout devis. Il contient les mots du praticien,
+        cités.</td></tr>
+      <tr><th>Interdit</th><td>Le questionnaire à cases envoyé par email comme unique porte d'entrée.
+        La proposition rédigée avant l'entretien. Le rendez-vous de trente minutes où l'agence parle vingt-cinq.</td></tr>
+    </table>
+  </div>
+
+  <div class="card card--white">
+    <div style="display:flex; justify-content:space-between; align-items:baseline">
+      <h2 style="margin-top:0; font-size:19pt">02 · Accueil</h2>
+      <span class="tag"><span class="dot"></span>Inviting · valeur élue, colonne look &amp; feel</span>
+    </div>
+    <p class="small">On entre sans se sentir jugé, ni petit. C'est la traduction sensible de l'égalité
+      d'accès. Le mot élu en look and feel est un mot de comportement, pas un mot de décoration.
+      Il engage donc autant les textes que les couleurs.</p>
+    <table class="t-compact" style="margin-top:3mm">
+      <tr><th style="width:26mm">Oblige</th><td>Tout texte destiné au patient est compris par une personne
+        inquiète, fatiguée, éventuellement âgée. Le jargon est traduit une fois, puis utilisé.
+        Les surfaces respectent l'accessibilité, corps de texte confortable, contrastes tenus,
+        navigation au clavier, fonctionnement sur téléphone d'entrée de gamme.</td></tr>
+      <tr><th>Observable</th><td>L'information utile est atteignable sans formulaire. Le numéro de téléphone
+        n'est jamais caché. Aucune fenêtre ne s'ouvre par-dessus un texte que quelqu'un est en train de lire.</td></tr>
+      <tr><th>Preuve</th><td>Le test de la salle d'attente. Avant publication, trois personnes hors du
+        métier lisent la page et reformulent. Si la reformulation est fausse, la page est réécrite.</td></tr>
+      <tr><th>Interdit</th><td>Le mur de formulaire. Le compte à rebours. Le chat automatique qui interpelle.
+        Le ton administratif. Et la fausse chaleur, qui est pire que la froideur.</td></tr>
+    </table>
+  </div>
+  <div class="rf"><b>II · Les valeurs</b><span>page 19 / 43</span></div>
+</section>
+
+<!-- ══════════ 20 · VALEURS II ══════════ -->
+<section class="page">
+  <div class="eyebrow">II · Les valeurs · 2 / 2</div>
+  <h1>Respect, assurance, <em>exigence.</em></h1>
+
+  <div class="card card--white" style="margin-bottom:5mm">
+    <div style="display:flex; justify-content:space-between; align-items:baseline">
+      <h2 style="margin-top:0; font-size:18pt">03 · Respect</h2>
+      <span class="tag"><span class="dot"></span>Respectful · valeur élue, colonne culture</span>
+    </div>
+    <p class="small">Le trait le plus dense du corpus. Il apparaît dans quatre exercices sur cinq.
+      Respect du cadre, du patient, du confrère, et du temps de chacun.</p>
+    <table class="t-compact" style="margin-top:2mm">
+      <tr><th style="width:26mm">Oblige</th><td>Le cadre déontologique du pays d'exercice est vérifié avant
+        toute production, et non après. Le patient n'est jamais identifiable. Aucune donnée de santé ne
+        transite par nos outils. Le temps du praticien est traité comme la ressource rare qu'il est,
+        réunions courtes, ordre du jour envoyé, décisions écrites.</td></tr>
+      <tr><th>Observable</th><td>Aucun confrère n'est nommé, ni comparé, ni visé. Aucun avis n'est sollicité
+        contre une contrepartie. Aucun cas clinique ne sort sans accord écrit et sans anonymisation.</td></tr>
+      <tr><th>Preuve</th><td>Le registre des refus. Chaque demande déclinée est datée, motivée, conservée.
+        C'est le document le plus convaincant que cette agence possédera.</td></tr>
+      <tr><th>Interdit</th><td>Le référencement par comparaison. La captation de recherche portant sur le nom
+        d'un autre praticien. La publication d'un avant-après identifiable.</td></tr>
+    </table>
+  </div>
+
+  <div class="g2">
+    <div class="card card--flat card--warm">
+      <h2 style="margin-top:0; font-size:18pt">04 · Assurance</h2>
+      <span class="micro">Confidence · colonne voix</span>
+      <p class="small" style="margin-top:2mm">Malcolm X et Bhutto convergent. L'assurance vient de la
+        méthode et de l'intelligence, pas du volume de voix.</p>
+      <table class="t-compact" style="margin-top:2mm">
+        <tr><th style="width:22mm">Oblige</th><td>Affirmer la méthode au présent de l'indicatif.
+          Dire non sans s'excuser. Publier les prix.</td></tr>
+        <tr><th>Observable</th><td>Aucun conditionnel de complaisance. Aucun superlatif.
+          Aucune remise de fin de mois.</td></tr>
+        <tr><th>Preuve</th><td>Une page publique intitulée ce que nous ne promettons pas.</td></tr>
+        <tr><th>Interdit</th><td>La garantie de position. Le classement acheté. Le langage de peur.</td></tr>
+      </table>
+    </div>
+    <div class="card card--flat card--warm">
+      <h2 style="margin-top:0; font-size:18pt">05 · Exigence</h2>
+      <span class="micro">Demanding · colonne client</span>
+      <p class="small" style="margin-top:2mm">Le mot élu décrit le client. Il devient donc un standard
+        imposé à l'agence. Un client exigeant ne pardonne pas l'approximation.</p>
+      <table class="t-compact" style="margin-top:2mm">
+        <tr><th style="width:22mm">Oblige</th><td>Relecture médicale par le praticien, systématique.
+          Trois tours de correction au maximum, puis arbitrage.</td></tr>
+        <tr><th>Observable</th><td>Chaque contenu porte une date, une source, une signature et un numéro
+          de version.</td></tr>
+        <tr><th>Preuve</th><td>Le journal de version, consultable par le client à tout moment.</td></tr>
+        <tr><th>Interdit</th><td>Publier sans signature. Sous-traiter la rédaction médicale sans le dire.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <p class="small"><strong>La hiérarchie en cas de conflit.</strong> Les cinq valeurs ne pèsent pas pareil
+    en situation de tension. L'ordre d'arbitrage est le suivant, et il est définitif.
+    <strong>Respect, puis Exigence, puis Écoute, puis Accueil, puis Assurance.</strong>
+    Traduction. Si tenir le cadre déontologique abîme l'accueil, le cadre gagne. Si la qualité impose de
+    retarder une publication attendue, la qualité gagne. Si l'assurance de notre discours entre en conflit
+    avec l'écoute du praticien, l'écoute gagne.</p>
+  <div class="rf"><b>II · Les valeurs</b><span>page 20 / 43</span></div>
+</section>
+
+<!-- ══════════ 21 · ANTI-MARQUE ══════════ -->
+<section class="page">
+  <div class="eyebrow">II · L'anti-marque</div>
+  <h1>L'agence-usine. <em>Ce que nous ne serons pas.</em></h1>
+  <p class="lead">L'anti-marque n'est pas un concurrent, c'est un portrait. Il se construit uniquement à
+    partir de l'exercice 02. Il sert à trancher vite, et à recruter juste.</p>
+
+  <div class="g-2-1">
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">Le portrait</h3>
+        <p class="small">Elle prend tous les clients, dans tous les secteurs. Personne ne valide rien.
+          Le commercial qui signe n'est pas celui qui produit, et celui qui produit ne rencontre jamais
+          le praticien. Le contenu médical est écrit vite, par quelqu'un qui n'a jamais vu un patient.
+          La proposition est belle, l'exécution est autre chose. Le rapport mensuel fait trente pages
+          pour ne rien dire. Et quand les résultats ne viennent pas, le vocabulaire de la peur revient.</p>
+        <p class="small" style="margin-top:3mm">Elle n'est pas malhonnête par nature. Elle est
+          <strong style="color:var(--gold)">organisée pour le volume</strong>, et le volume produit
+          mécaniquement tout ce qui précède.</p>
+      </div>
+      <h2>Les dix pratiques refusées</h2>
+      <ul class="cross small">
+        <li>Garantir une position dans les résultats de recherche.</li>
+        <li>Acheter, provoquer ou filtrer des avis de patients.</li>
+        <li>Faire écrire un contenu médical par un rédacteur non supervisé par le praticien.</li>
+        <li>Publier au nom du praticien sans sa signature.</li>
+        <li>Capter des recherches portant sur le nom d'un confrère.</li>
+        <li>Utiliser la peur comme argument de vente.</li>
+        <li>Présenter un cas patient identifiable.</li>
+        <li>Facturer une prestation dont le contenu n'a pas été décrit avant la signature.</li>
+        <li>Prendre un mandat au-delà du plafond de cabinets, quel que soit le montant.</li>
+        <li>Accepter un mandat sur une spécialité que nous ne comprenons pas encore.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card card--flat card--rose">
+        <h3>La phrase qui tranche</h3>
+        <p class="statement" style="font-size:14pt">Si un client nous demande l'une de ces dix choses,
+          <em>nous ne prenons pas le mandat.</em></p>
+        <p class="small" style="margin-top:3mm">Sans exception, sans discussion sur le montant, sans version
+          allégée. Le refus est expliqué en une page, poliment, et cette page est réutilisable.</p>
+      </div>
+      <div class="card card--flat" style="margin-top:5mm">
+        <h3>Pourquoi c'est un actif commercial</h3>
+        <p class="small">Les praticiens que nous visons ont, pour beaucoup, déjà travaillé avec une
+          agence-usine. Ils reconnaîtront le portrait ligne par ligne.</p>
+        <p class="small">Publier cette liste fait deux choses en même temps. Elle prouve que nous connaissons
+          leur expérience réelle, et elle sélectionne les clients à notre place.</p>
+        <p class="small"><strong>Une liste d'interdits est le seul argument commercial qu'un concurrent
+          orienté volume ne peut pas copier.</strong> Il ne peut pas la tenir.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="g-2-1">
+    <div class="card card--flat card--white">
+      <h3>Comment refuser, en trois phrases</h3>
+      <p class="small">Le refus est un acte de marque, donc il s'écrit une fois et se réutilise.
+        Trois phrases, dans cet ordre, et rien de plus.</p>
+      <p class="small"><strong>Un.</strong> Merci de votre confiance, et je ne vais pas prendre ce mandat.</p>
+      <p class="small"><strong>Deux.</strong> Voici pourquoi, en une phrase, sans détour et sans reproche.</p>
+      <p class="small"><strong>Trois.</strong> Voici ce que vous pouvez faire à la place, même sans nous.
+        Et si la situation change, ma porte reste ouverte.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Pourquoi la troisième phrase compte</h3>
+      <p class="small">Un refus qui se termine par un conseil utile transforme un client perdu en confrère
+        qui parle de vous. Sur un marché où l'adressage entre praticiens est le premier canal, c'est la
+        phrase la plus rentable du document.</p>
+      <p class="small">Elle vient de l'ancrage 04. Le service ne s'arrête pas là où la facture s'arrête.</p>
+    </div>
+  </div>
+  <div class="rf"><b>II · L'anti-marque</b><span>page 21 / 43</span></div>
+</section>
+
+<!-- ══════════ 22 · TOUJOURS / JAMAIS ══════════ -->
+<section class="page">
+  <div class="eyebrow">II · Toujours, jamais</div>
+  <h1>Dix-huit lignes qui <em>tiennent seules.</em></h1>
+  <p class="lead">Le format le plus utile de la plateforme. Il se lit en une minute, se met sur un mur,
+    et s'utilise par quelqu'un qui n'a pas lu le reste du document.</p>
+
+  <div class="g2">
+    <div class="card card--white">
+      <h3 style="color:var(--illus-forest)">Toujours</h3>
+      <ul class="check small" style="margin-top:3mm">
+        <li>Écouter avant de proposer.</li>
+        <li>Partir d'une question réellement posée par un patient.</li>
+        <li>Faire signer le praticien avant publication.</li>
+        <li>Dater et sourcer toute affirmation médicale.</li>
+        <li>Traduire le jargon une fois, puis l'utiliser.</li>
+        <li>Publier nos prix, notre méthode et nos limites.</li>
+        <li>Dire non doucement, et par écrit.</li>
+        <li>Mettre le nom du praticien devant le nôtre.</li>
+        <li>Raconter ce qui n'a pas fonctionné.</li>
+      </ul>
+    </div>
+    <div class="card card--white">
+      <h3 style="color:var(--rose-deep)">Jamais</h3>
+      <ul class="cross small" style="margin-top:3mm">
+        <li>Promettre une position, un délai de résultat, un nombre de patients.</li>
+        <li>Appeler un patient un prospect, un lead ou une conversion.</li>
+        <li>Nommer, comparer ou viser un confrère.</li>
+        <li>Toucher une donnée de santé.</li>
+        <li>Solliciter un avis contre une contrepartie.</li>
+        <li>Utiliser la peur, l'urgence ou la rareté fabriquée.</li>
+        <li>Publier un cas identifiable.</li>
+        <li>Dépasser le plafond de cabinets.</li>
+        <li>Employer un point d'exclamation dans un texte de marque.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Une remarque sur la dernière ligne</h2>
+      <p class="small">Elle paraît anecdotique. Elle ne l'est pas. Le point d'exclamation est le signe le
+        plus court d'une marque qui a besoin de convaincre. Une marque assurée pose la phrase et s'arrête.
+        C'est la même logique qui bannit le superlatif et la majuscule d'insistance.</p>
+      <p class="small">Deux autres signes trahissent un texte écrit sans soin, et sont exclus de toutes nos
+        surfaces. Le tiret cadratin, devenu la marque des textes produits en série. Et la triade décorative,
+        ces trois adjectifs alignés qui n'ajoutent rien au deuxième.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Le test de la ligne unique</h3>
+      <p class="small">Avant d'ajouter une ligne à cette page, une question. <strong>Est-ce qu'un
+        collaborateur pourrait la violer par erreur, de bonne foi.</strong></p>
+      <p class="small">Si non, la ligne est inutile. Personne n'a besoin qu'on lui interdise de mentir.
+        Les dix-huit lignes ci-dessus sont toutes des erreurs plausibles, commises tous les jours,
+        dans ce métier, par des gens bien intentionnés.</p>
+    </div>
+  </div>
+  <div class="rf"><b>II · Toujours, jamais</b><span>page 22 / 43</span></div>
+</section>
+
+<!-- ══════════ 23 · LES QUATRE PORTES ══════════ -->
+<section class="page page--dense">
+  <div class="eyebrow">II · Les personas</div>
+  <h1>Quatre portes. <em>Une seule contrainte de conception.</em></h1>
+  <p class="lead">Un praticien n'arrive jamais en disant j'ai besoin de référencement. Il arrive avec une
+    situation. Quatre situations couvrent le marché. Chacune est une personne, pas un segment.</p>
+
+  <div class="g2">
+    <div class="card card--white">
+      <span class="micro">Porte 01 · persona primaire</span>
+      <h2 style="margin-top:1mm">Le cabinet neuf</h2>
+      <p class="small">Installation récente ou changement de ville. Zéro actif numérique, un agenda
+        vide, des échéances.</p>
+      <table class="t-compact">
+        <tr><th style="width:24mm">Il dit</th><td>Je viens de m'installer, personne ne me connaît ici.</td></tr>
+        <tr><th>Il craint</th><td>Payer pour de l'invisible. Paraître commercial devant ses pairs.</td></tr>
+        <tr><th>Il achète</th><td>De la sécurité et un ordre de marche.</td></tr>
+        <tr><th>Première preuve</th><td>La carte de ce que les patients de sa spécialité cherchent sur
+          son territoire, et où ils atterrissent.</td></tr>
+      </table>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Porte 02 · cœur de valeur</span>
+      <h2 style="margin-top:1mm">Le respecté invisible</h2>
+      <p class="small">Reconnu par ses confrères, adressé de bouche à oreille, introuvable en ligne.
+        Souvent le meilleur praticien du lot.</p>
+      <table class="t-compact">
+        <tr><th style="width:24mm">Il dit</th><td>Mes confrères m'envoient des patients, ça suffit.</td></tr>
+        <tr><th>Il craint</th><td>Que l'exposition abîme vingt ans de réputation.</td></tr>
+        <tr><th>Il achète</th><td>Que ce qui se dit de lui existe enfin quelque part.</td></tr>
+        <tr><th>Première preuve</th><td>La promesse de la page 18, mot pour mot.</td></tr>
+      </table>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Porte 03</span>
+      <h2 style="margin-top:1mm">L'exposé</h2>
+      <p class="small">Un avis injuste, une homonymie gênante, une fiche qu'il ne contrôle pas.
+        Il arrive tendu.</p>
+      <table class="t-compact">
+        <tr><th style="width:24mm">Il dit</th><td>Tapez mon nom, vous allez voir ce qui sort.</td></tr>
+        <tr><th>Il craint</th><td>L'impuissance, et d'aggraver en réagissant.</td></tr>
+        <tr><th>Il achète</th><td>La reprise de contrôle de ses propres surfaces.</td></tr>
+        <tr><th>Première preuve</th><td>L'inventaire de ce qui est détenu, subi, et réellement
+          corrigeable. Y compris ce qui ne l'est pas.</td></tr>
+      </table>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Porte 04</span>
+      <h2 style="margin-top:1mm">Le collectif</h2>
+      <p class="small">Un centre, une clinique, un groupe. Plusieurs praticiens, une marque commune,
+        des intérêts divergents.</p>
+      <table class="t-compact">
+        <tr><th style="width:24mm">Il dit</th><td>Le centre doit exister sans écraser les praticiens.</td></tr>
+        <tr><th>Il craint</th><td>Les tensions internes, qu'un seul prenne la lumière.</td></tr>
+        <tr><th>Il achète</th><td>Une architecture. Qui parle au nom de qui, et sur quelle surface.</td></tr>
+        <tr><th>Première preuve</th><td>Un schéma de marque à deux niveaux, avec les règles de
+          préséance écrites.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Le principe du persona le plus faible</h2>
+      <p class="small">Le service se conçoit pour la porte 01, celle qui arrive sans rien. Si le parcours
+        fonctionne pour elle, il fonctionne pour les trois autres, qui entrent plus loin dans le même
+        système. L'inverse n'est jamais vrai. C'est une contrainte de conception, pas une préférence
+        commerciale. La porte 02 reste le cœur de valeur, sans être la contrainte.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Ce qui est commun aux quatre</h3>
+      <p class="small">Tous sont exigeants, intelligents, non complaisants. Les mots retenus en colonne
+        client. Aucun n'achètera une marque qui le prend pour un débutant, aucun ne pardonnera une faute
+        de vocabulaire médical.</p>
+      <p class="small"><strong>Conséquence.</strong> Le glossaire de la spécialité se constitue avant le
+        premier mandat. Une erreur de terme coûte le mandat.</p>
+    </div>
+  </div>
+  <div class="rf"><b>II · Les personas</b><span>page 23 / 43</span></div>
+</section>
+
+<!-- ══════════ 24 · LE PATIENT ══════════ -->
+<section class="page">
+  <div class="eyebrow">II · Le bénéficiaire</div>
+  <h1>Le patient ne paie rien. <em>Il arbitre tout.</em></h1>
+  <p class="lead">C'est la conséquence la plus exigeante de votre recadrage. Le patient n'est pas le client.
+    Il est la raison d'être. Toute décision qui sert le cabinet en desservant le patient est refusée, même
+    si elle est efficace.</p>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Le moment</h2>
+      <p>Ce n'est pas un parcours d'achat. C'est un moment de peur, souvent le soir, souvent seul.
+        Un compte rendu, un mot inconnu, trois mots tapés dans une barre de recherche. Parfois c'est un
+        proche qui cherche pour quelqu'un qui n'en a plus la force.</p>
+      <p>Quatre choses sont réellement recherchées à cet instant, dans cet ordre.
+        <strong>Comprendre ce qui arrive.</strong> <strong>Savoir qui sait traiter ça.</strong>
+        <strong>Savoir si cette personne est légitime.</strong> <strong>Savoir quand et comment
+        la voir.</strong></p>
+      <p>Une agence orientée volume travaille la quatrième. Nous travaillons les quatre, dans l'ordre.
+        C'est pour cela que les contenus partent de questions, et non de mots-clés.</p>
+
+      <h2>Les surfaces où le patient décide</h2>
+      <p class="small">Le référencement ne se joue plus sur une seule surface. Nous traitons cinq lieux de
+        décision, et nous les traitons tous comme du référencement.</p>
+      <ul class="clean small">
+        <li>Les moteurs de recherche, sur les questions de la spécialité.</li>
+        <li>Les cartes et les fiches d'établissement, où se joue la proximité.</li>
+        <li>Les annuaires et plateformes de rendez-vous, détenus par des tiers.</li>
+        <li>Les réponses des assistants conversationnels, qui citent des sources et en omettent d'autres.
+          Nous traitons cette surface comme une surface de référencement à part entière, avec les mêmes
+          exigences de sourçage.</li>
+        <li>La parole des confrères, hors ligne, qui reste la première source d'adressage en spécialité.</li>
+      </ul>
+      <p class="small muted">La part respective de ces cinq surfaces n'est pas connue pour votre marché.
+        Elle se mesure au premier mandat. Aucun chiffre n'est avancé ici.</p>
+    </div>
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">La règle d'arbitrage</h3>
+        <p class="statement" style="font-size:14pt; color:var(--cream)">Si un choix sert le cabinet et
+          <em>dessert le patient</em>, il est refusé.</p>
+        <p class="small" style="margin-top:3mm">Trois cas réels de ce métier, tranchés d'avance.</p>
+        <ul class="clean small">
+          <li>Un titre de page plus attractif que juste. Refusé.</li>
+          <li>Un contenu qui ne dit pas clairement quand il faut consulter en urgence, parce que cela
+            enverrait le patient ailleurs. Refusé.</li>
+          <li>Une page optimisée sur une pathologie que le praticien ne traite pas ou plus. Refusée.</li>
+        </ul>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:5mm">
+        <h3>Ce que le patient ne doit jamais devenir</h3>
+        <p class="small">Ni un prospect, ni un lead, ni une conversion, ni un panier, ni une cible.
+          Cette interdiction de vocabulaire s'applique à l'interne, y compris dans nos tableaux de bord
+          et nos noms de fichiers.</p>
+        <p class="small">On finit par penser dans les mots qu'on utilise. C'est la raison de la règle.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>II · Le bénéficiaire</b><span>page 24 / 43</span></div>
+</section>
+
+<!-- ══════════ 25 · VOIX · ANCRAGES ══════════ -->
+<section class="page">
+  <div class="eyebrow">III · La voix</div>
+  <h1>Quatre ancrages. <em>Tirés des figures choisies.</em></h1>
+  <p class="lead">La voix n'est pas un ton, c'est une contrainte. Ces quatre ancrages viennent directement
+    de l'exercice 03. Ils se testent sur n'importe quelle phrase, en dix secondes.</p>
+
+  <div class="g2">
+    <div class="card card--white">
+      <span class="micro">Ancrage 01 · Mohamed Ali</span>
+      <h2 style="margin-top:1mm">La parole exacte</h2>
+      <p class="small">La finesse des mots, la justesse du phrasé, le tempo. Tout ce qu'il dit était de l'or.
+        Un homme de lettres dans un sport de brute.</p>
+      <p class="small"><strong>Ce que cela impose.</strong> Une phrase de plus n'ajoute pas de crédibilité,
+        elle en retire. Chaque texte se lit à voix haute avant publication. Ce qu'on ne peut pas dire ne
+        s'écrit pas. Le mot juste passe avant le mot fort.</p>
+      <p class="small"><strong>Le test.</strong> Retirez un mot sur cinq. Si le sens tient, le texte était
+        gras.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Ancrage 02 · Malcolm X</span>
+      <h2 style="margin-top:1mm">L'assurance qui ne surenchérit pas</h2>
+      <p class="small">Des convictions, à contre-courant, sans jamais courber le dos. Une démarche assurée
+        qui finit par rallier.</p>
+      <p class="small"><strong>Ce que cela impose.</strong> Le présent de l'indicatif. Nous faisons,
+        nous refusons, nous plafonnons. Pas de nous pourrions, pas de nous nous efforçons de.
+        L'assurance porte sur la méthode et sur les refus, jamais sur les résultats promis.</p>
+      <p class="small"><strong>Le test.</strong> Cherchez les conditionnels. Chacun est soit une lâcheté,
+        soit une information manquante.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Ancrage 03 · Diana</span>
+      <h2 style="margin-top:1mm">La proximité sans condescendance</h2>
+      <p class="small">De l'empathie et de la proximité. Je suis comme vous. Une fragilité montrée,
+        et aucune case de la haute société à cocher.</p>
+      <p class="small"><strong>Ce que cela impose.</strong> On explique le mécanisme du référencement,
+        jamais la médecine. On tutoie personne et on n'infantilise personne. On peut écrire je ne sais pas,
+        et nous nous sommes trompés. C'est ce qui distingue un conseil d'un fournisseur.</p>
+      <p class="small"><strong>Le test.</strong> Un praticien de vingt-cinq ans d'expérience lirait-il cette
+        phrase sans se sentir pris de haut.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Ancrage 04 · Michael Jackson</span>
+      <h2 style="margin-top:1mm">Le service qui s'efface</h2>
+      <p class="small">Il était là pour les autres. Un message unificateur, jamais clivant. Il appartenait
+        à tout le monde.</p>
+      <p class="small"><strong>Ce que cela impose.</strong> Le nom du praticien passe avant le nôtre,
+        partout. Aucune étude de cas ne se raconte comme notre victoire. Le mot je disparaît des surfaces
+        publiques, sauf dans la parole du fondateur, clairement signée.</p>
+      <p class="small"><strong>Le test.</strong> Comptez les nous et les vous. Le second doit dominer.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Le registre en une ligne</h2>
+      <p class="statement" style="font-size:16pt">Un confrère qui aurait choisi les mots <em>plutôt que
+        la médecine.</em> Calme, précis, sûr de sa méthode, incapable d'exagérer.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Ce que la voix n'est jamais</h3>
+      <p class="small">Ni consultant, ni startup, ni institutionnel, ni copain. Quatre registres qui
+        échouent tous devant un médecin spécialiste, pour quatre raisons différentes. Le consultant
+        jargonne. La startup exagère. L'institutionnel endort. Le copain manque de tenue.</p>
+    </div>
+  </div>
+  <div class="rf"><b>III · La voix</b><span>page 25 / 43</span></div>
+</section>
+
+<!-- ══════════ 26 · VOIX · MÉCANIQUE ══════════ -->
+<section class="page">
+  <div class="eyebrow">III · La voix</div>
+  <h1>Mécanique et <em>lexique.</em></h1>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Les douze règles de mécanique</h2>
+      <ul class="num small">
+        <li>Vouvoiement systématique. Docteur, jamais le prénom, sauf invitation explicite.</li>
+        <li>Phrases courtes. Une idée par phrase. Le fragment est autorisé quand il porte.</li>
+        <li>Aucun superlatif. Ni meilleur, ni leader, ni numéro un, ni unique en son genre.</li>
+        <li>Aucun chiffre sans source et sans date. En cas de doute, le chiffre est retiré.</li>
+        <li>Aucune promesse de position, de délai de résultat, ou de nombre de patients.</li>
+        <li>Aucun vocabulaire de peur, d'urgence ou de rareté.</li>
+        <li>Le jargon technique est traduit à sa première occurrence, puis employé normalement.</li>
+        <li>Aucun anglicisme quand le français existe. Référencement, pas SEO, en surface publique.</li>
+        <li>Le patient n'est jamais désigné par un mot de commerce.</li>
+        <li>Aucun point d'exclamation. Aucune majuscule d'insistance. Aucun gras d'emphase dans une phrase
+          de vente.</li>
+        <li>Aucun tiret cadratin. Un point, une virgule, ou deux phrases.</li>
+        <li>La signature est toujours nominative. Un texte de marque n'est pas anonyme.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3 style="color:var(--illus-forest)">Le lexique retenu</h3>
+        <p class="small">Méthode. Trace. Preuve. Signature. Écoute. Lisible. Trouvable. Cadre. Spécialité.
+          Territoire. Question. Patient. Confrère. Délai. Protocole. Relecture. Version. Refus. Plafond.
+          Réputation. Adéquation.</p>
+      </div>
+      <div class="card card--flat card--rose" style="margin-top:5mm">
+        <h3 style="color:var(--rose-deep)">Le lexique proscrit</h3>
+        <p class="small">Booster. Exploser. Cartonner. Propulser. Garanti. Numéro un. Leader. Révolutionner.
+          Disrupter. Tunnel. Funnel. Prospect. Lead. Cible. Conversion. Stratégie 360. Clé en main.
+          Pack. Offre choc. Dernier cri. Incontournable. Écosystème digital. Solution globale.</p>
+        <p class="small muted">Deux mots méritent une note. <strong>Sur-mesure</strong> est exact mais usé,
+          il ne s'emploie que suivi de la preuve. <strong>Digital</strong> est toléré comme adjectif de
+          surface, jamais comme substantif.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div class="card card--warm">
+      <h3>La question de la langue, à trancher</h3>
+      <p class="small">Le document est écrit en français. Trois configurations sont possibles selon le
+        marché visé, et le choix a des conséquences immédiates sur le nom et sur la production.</p>
+      <table class="t-compact" style="margin-top:2mm">
+        <tr><th style="width:26mm">France seule</th><td>Français unique. Anglais réservé aux références
+          scientifiques citées.</td></tr>
+        <tr><th>Maghreb</th><td>Français pour les surfaces destinées aux praticiens. Français et arabe pour
+          les surfaces destinées aux patients, l'arabe n'étant pas une traduction mais une écriture propre.
+          Cela double le coût éditorial. C'est un choix de raison d'être, pas de budget.</td></tr>
+        <tr><th>Les deux</th><td>Deux territoires, un seul socle de marque, deux systèmes de production.
+          Ne pas lancer les deux la même année.</td></tr>
+      </table>
+      <p class="small"><strong>Recommandation.</strong> Choisir un seul marché pour les douze premiers mois.
+        La niche est déjà étroite, l'étaler géographiquement annule l'avantage.</p>
+    </div>
+    <div class="card card--flat">
+      <h3>Le test de voix, en trois questions</h3>
+      <ul class="num small">
+        <li>Un médecin pourrait-il lire cette phrase à voix haute devant un confrère sans gêne.</li>
+        <li>Un patient inquiet la comprendrait-il du premier coup.</li>
+        <li>Une agence orientée volume pourrait-elle écrire exactement la même phrase.</li>
+      </ul>
+      <p class="small">Les deux premières doivent être oui. La troisième doit être non. Si la troisième est
+        oui, le texte est générique, quelle que soit sa qualité.</p>
+    </div>
+  </div>
+  <div class="rf"><b>III · La voix</b><span>page 26 / 43</span></div>
+</section>
+
+<!-- ══════════ 27 · VOIX · AVANT / APRÈS ══════════ -->
+<section class="page">
+  <div class="eyebrow">III · La voix</div>
+  <h1>Quatre réécritures. <em>La voix en situation.</em></h1>
+  <p class="lead">Une plateforme de voix qui n'est pas démontrée n'est pas appliquée. Voici les quatre
+    surfaces où la marque se gagne ou se perd, réécrites.</p>
+
+  <table>
+    <thead><tr><th style="width:26mm">Surface</th><th style="width:50%">Ce que le marché écrit</th><th>Ce que nous écrivons</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="nm">L'accroche du site</td>
+        <td class="small muted">Boostez votre visibilité. Nous propulsons les médecins en première page
+          grâce à des stratégies digitales 360 sur-mesure et une expertise reconnue.</td>
+        <td class="small"><strong>Vos patients cherchent des réponses. Nous rendons les vôtres trouvables.</strong>
+          Nous ne travaillons que pour des médecins spécialistes, et jamais pour plus de douze cabinets à
+          la fois.</td>
+      </tr>
+      <tr>
+        <td class="nm">Le premier contact</td>
+        <td class="small muted">Bonjour Docteur, j'ai analysé votre présence en ligne et détecté vingt-sept
+          erreurs critiques qui vous font perdre des patients chaque jour. Puis-je vous appeler quinze
+          minutes cette semaine.</td>
+        <td class="small">Docteur, j'ai lu vos pages et votre fiche. <strong>Trois questions que vos
+          patients posent au téléphone n'ont aucune réponse en ligne.</strong> Je vous les ai listées
+          ci-dessous. Si le sujet vous intéresse, je vous rappelle quand vous voulez. Sinon, gardez la
+          liste, elle est utile telle quelle.</td>
+      </tr>
+      <tr>
+        <td class="nm">Le rapport mensuel</td>
+        <td class="small muted">Plus 312 pour cent d'impressions, position moyenne 8,4, taux de clic 2,1
+          pour cent, 14 200 impressions, 9 mots-clés en progression.</td>
+        <td class="small">Ce mois-ci, des patients ont cherché une question précise et ont lu votre réponse.
+          Un certain nombre a pris rendez-vous. <strong>La question qui monte est celle-ci, et nous n'avons
+          pas encore de page dessus.</strong> Je vous propose de l'écrire ensemble à cette date.
+          <span class="micro">Forme du rapport. Les valeurs réelles remplacent les mentions génériques.</span></td>
+      </tr>
+      <tr>
+        <td class="nm">La réponse à un avis difficile</td>
+        <td class="small muted">Nous sommes désolés que votre expérience n'ait pas été à la hauteur.
+          N'hésitez pas à nous contacter en privé afin que nous puissions résoudre ce problème rapidement.</td>
+        <td class="small">Merci d'avoir pris le temps d'écrire. <strong>Le délai d'attente que vous décrivez
+          est réel</strong>, il vient d'une réorganisation du secrétariat, et voici ce qui change à partir
+          de cette date. Pour ce qui concerne votre dossier, je ne peux pas en parler ici. Appelez le
+          secrétariat et demandez-moi.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="rule"></div>
+  <div class="g3">
+    <div class="card card--flat card--tight">
+      <h3>Ce que les quatre ont en commun</h3>
+      <p class="small">La colonne de gauche parle de l'agence. La colonne de droite parle du patient et du
+        praticien. Aucune des quatre réécritures n'est plus longue que l'original.</p>
+    </div>
+    <div class="card card--flat card--tight">
+      <h3>Le détail qui compte</h3>
+      <p class="small">Dans le premier contact, la liste est offerte même en cas de refus. C'est l'ancrage
+        04 en action, et c'est vérifiable. Une agence orientée volume ne peut pas se le permettre à
+        l'échelle.</p>
+    </div>
+    <div class="card card--flat card--tight">
+      <h3>Le détail déontologique</h3>
+      <p class="small">Dans la réponse à l'avis, l'agence reconnaît un fait de service et refuse de parler
+        du dossier. Cette distinction protège le praticien. Elle doit être enseignée à toute personne qui
+        rédige une réponse.</p>
+    </div>
+  </div>
+  <div class="rf"><b>III · La voix</b><span>page 27 / 43</span></div>
+</section>
+
+<!-- ══════════ 28 · VISUEL · PRINCIPES ══════════ -->
+<section class="page page--dense">
+  <div class="eyebrow">III · Le langage visuel</div>
+  <h1>La propreté du laboratoire, <em>la chaleur du papier.</em></h1>
+  <p class="lead">La direction visuelle sort de deux phrases de l'exercice 01 et d'un mot élu.
+    Pas de microbes dans le message, un côté blouse blanche, et accueillant. Toute la tension utile est là.</p>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Les cinq principes</h2>
+      <ul class="num">
+        <li><span class="lb"><strong>Le propre et le chaud, ensemble.</strong><br><span class="small muted">Un fond de papier
+          tiède, des surfaces blanches nettes pour les informations vérifiables, et rien qui traîne.
+          La propreté vient du vide, pas du blanc clinique. Un système entièrement blanc lirait comme un
+          laboratoire sans personne dedans.</span></span></li>
+        <li><span class="lb"><strong>La preuve est visible.</strong><br><span class="small muted">Dates, sources, versions et
+          signatures sont des éléments graphiques de premier plan, pas des mentions en bas de page.
+          Le petit texte technique est traité comme une étiquette de laboratoire.</span></span></li>
+        <li><span class="lb"><strong>Le praticien est le sujet, la marque est le cadre.</strong><br><span class="small muted">
+          La marque encadre, numérote, légende, sans se mettre au centre. Un cadre bien dessiné qui
+          contient le nom d'un autre, voilà notre signature.</span></span></li>
+        <li><span class="lb"><strong>Rien de plus que nécessaire, mais rien de froid.</strong><br><span class="small muted">
+          Un seul accent chaud par page. Aucune ombre floue, aucun dégradé, aucun effet de verre.</span></span></li>
+        <li><span class="lb"><strong>Le patient n'est jamais montré en position de faiblesse.</strong><br><span class="small muted">
+          Ni allongé, ni inquiet, ni exposé. Règle déontologique avant d'être esthétique.</span></span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">Les cinq mots de look and feel</h3>
+        <p class="small">Retenus en exercice 05, dans l'ordre où ils ont été produits.</p>
+        <table class="t-compact" style="margin-top:2mm">
+          <tr><th style="width:22mm; color:rgba(251,245,230,.6); border-bottom-color:rgba(251,245,230,.25)">Playful</th>
+            <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)">Un détail léger par surface, jamais deux.
+              Une numérotation amusante, une légende manuscrite. Pas de couleur criarde.</td></tr>
+          <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:rgba(251,245,230,.25)">Reliable</th>
+            <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)">La grille ne bouge pas. Les mêmes composants,
+              toujours au même endroit. La fiabilité se voit dans la répétition.</td></tr>
+          <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:rgba(251,245,230,.25)">Refined</th>
+            <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)">Le raffinement passe par la typographie et
+              par l'espace, jamais par l'ornement.</td></tr>
+          <tr><th style="color:var(--gold); border-bottom-color:rgba(251,245,230,.25)">Inviting</th>
+            <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)"><strong>Le mot élu.</strong> Corps de texte
+              généreux, lignes courtes, contrastes tenus. On entre, on lit, on n'est pas arrêté.</td></tr>
+          <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:transparent">Wholesome</th>
+            <td style="color:var(--cream); border-bottom-color:transparent">Rien de sombre, rien de tape-à-l'œil.
+              Une honnêteté visuelle. Ce qui est montré existe.</td></tr>
+        </table>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:5mm">
+        <h3>Le test des cinq questions</h3>
+        <p class="small">Avant de valider une maquette.</p>
+        <ul class="clean small">
+          <li>Un patient de soixante-quinze ans lit-il le corps de texte sans effort.</li>
+          <li>La preuve est-elle visible sans chercher.</li>
+          <li>Le nom du praticien est-il plus grand que le nôtre.</li>
+          <li>Y a-t-il un seul accent chaud, et un seul.</li>
+          <li>Est-ce que cela ressemble à une agence de communication. Si oui, recommencer.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>III · Le langage visuel</b><span>page 28 / 43</span></div>
+</section>
+
+<!-- ══════════ 29 · VISUEL · PALETTE ══════════ -->
+<section class="page">
+  <div class="eyebrow">III · Le langage visuel</div>
+  <h1>La palette. <em>Six couleurs, six rôles.</em></h1>
+  <p class="lead">Une couleur sans rôle devient une décoration, puis une incohérence. Chaque valeur ci-dessous
+    a un usage unique et exclusif. Aucune autre couleur n'entre dans le système.</p>
+
+  <div class="g3" style="gap:5mm">
+    <div class="sw"><div class="chip" style="background:var(--c-encre)"></div>
+      <div class="meta"><span class="n">Encre</span><span class="h">#14252C</span>
+        <span class="u">Le texte, les traits, la marque. Un noir bleuté qui vient du bleu clinique
+          sans en avoir la froideur. Ne s'emploie jamais en grand aplat sur une surface patient.</span></div></div>
+    <div class="sw"><div class="chip" style="background:var(--c-papier)"></div>
+      <div class="meta"><span class="n">Papier</span><span class="h">#F5F1E8</span>
+        <span class="u">La surface par défaut. Tiède, mate, non blanche. C'est elle qui porte le mot
+          accueillant. Elle occupe environ quatre-vingts pour cent de chaque page.</span></div></div>
+    <div class="sw"><div class="chip" style="background:var(--c-blouse); border-bottom:0.4mm solid var(--ink-25)"></div>
+      <div class="meta"><span class="n">Blouse</span><span class="h">#FFFFFF</span>
+        <span class="u">Le blanc réservé. Uniquement pour les blocs de preuve. Une fiche, une source,
+          une donnée vérifiable. Le blanc devient ainsi un signal, pas un fond.</span></div></div>
+    <div class="sw"><div class="chip" style="background:var(--c-sauge)"></div>
+      <div class="meta"><span class="n">Sauge</span><span class="h">#7C9A8E</span>
+        <span class="u">Le soin et le calme. Fonds de section, filets, états stables. Décoration seulement.
+          Jamais du texte, son contraste ne le permet pas.</span></div></div>
+    <div class="sw"><div class="chip" style="background:var(--c-argile)"></div>
+      <div class="meta"><span class="n">Argile</span><span class="h">#B5563C</span>
+        <span class="u">L'accent chaud, unique. Un seul par page. Boutons, appels à l'action, chiffre
+          important. La chaleur humaine du système vient d'ici.</span></div></div>
+    <div class="sw"><div class="chip" style="background:var(--c-ardoise)"></div>
+      <div class="meta"><span class="n">Ardoise</span><span class="h">#5C6A6F</span>
+        <span class="u">Le texte secondaire, les légendes, les métadonnées. Remplace le gris neutre,
+          qui n'existe pas dans ce système.</span></div></div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Le contrôle de lisibilité</h2>
+      <p class="small">L'accueil est un mot élu. Il se vérifie, il ne se ressent pas. Les rapports mesurés
+        ci-dessous sont calculés selon la méthode de référence en accessibilité. Seuils. Quatre virgule
+        cinq pour un corps de texte, trois pour un grand titre ou un élément non textuel.</p>
+      <table class="t-compact">
+        <thead><tr><th>Paire</th><th style="width:16mm">Rapport</th><th>Usage autorisé</th></tr></thead>
+        <tbody>
+          <tr><td>Encre sur Papier</td><td><strong>14,00</strong></td><td>Tout. Corps de texte par défaut.</td></tr>
+          <tr><td>Encre sur Blouse</td><td><strong>15,78</strong></td><td>Tout. Blocs de preuve.</td></tr>
+          <tr><td>Sauge foncée <span class="micro">#3F5A50</span> sur Papier</td><td><strong>6,68</strong></td><td>Corps de texte, titres.</td></tr>
+          <tr><td>Argile foncée <span class="micro">#8E3F26</span> sur Papier</td><td><strong>6,45</strong></td><td>Corps de texte, liens.</td></tr>
+          <tr><td>Ardoise sur Papier</td><td><strong>4,97</strong></td><td>Texte secondaire. Jamais sous quinze pixels.</td></tr>
+          <tr><td>Argile sur Papier</td><td><strong>4,27</strong></td><td>Grands titres et éléments non textuels seulement.</td></tr>
+          <tr><td>Sauge sur Papier</td><td><strong>2,71</strong></td><td>Décoration seulement. Aucun texte.</td></tr>
+          <tr><td>Sauge sur Encre</td><td><strong>5,16</strong></td><td>Texte sur fond sombre.</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted">Les deux variantes foncées existent uniquement pour le texte. Elles ne sont pas
+        des couleurs de marque, ce sont des outils de lisibilité.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Pourquoi pas de bleu médical</h3>
+      <p class="small">Le bleu saturé est le réflexe du secteur. Il dit hôpital, assurance, logiciel de
+        gestion. Il ne dit ni le savoir, ni l'accueil, et il ne différencie rien.</p>
+      <p class="small">L'encre retenue conserve la trace du bleu, à l'état de sous-ton, dans une valeur
+        assez sombre pour se lire comme de l'encre. La confiance vient de la tenue, pas de la teinte.</p>
+      <h3 style="margin-top:5mm">Les proportions</h3>
+      <p class="small">Papier 80. Encre 12. Blouse 4. Sauge 3. Argile 1. Ces proportions sont
+        volontairement déséquilibrées. Un accent qui occupe plus d'un pour cent d'une page cesse d'être
+        un accent.</p>
+    </div>
+  </div>
+  <div class="rf"><b>III · Le langage visuel</b><span>page 29 / 43</span></div>
+</section>
+
+<!-- ══════════ 30 · VISUEL · TYPOGRAPHIE ══════════ -->
+<section class="page">
+  <div class="eyebrow">III · Le langage visuel</div>
+  <h1>Trois familles. <em>Un rôle chacune.</em></h1>
+
+  <div class="g3">
+    <div class="card card--white">
+      <span class="micro">Titres et affirmations</span>
+      <h2 style="margin-top:1mm; font-size:22pt">Newsreader</h2>
+      <p class="small">Une serif éditoriale contemporaine, à licence libre. Elle a la tenue d'une revue
+        scientifique et la chaleur d'un texte lu le soir. Son italique est utilisable comme accent
+        d'insistance, ce qui évite le gras.</p>
+      <p class="small"><strong>Pourquoi elle.</strong> Le Sage domine l'ADN. Une serif est la traduction
+        typographique la plus courte de l'autorité du savoir. Une sans serif dirait technologie, ce qui
+        n'est pas la promesse.</p>
+      <p class="small muted">Alternatives équivalentes si la licence pose problème. Source Serif 4,
+        Instrument Serif, Spectral.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Textes et interfaces</span>
+      <h2 style="margin-top:1mm; font-size:22pt">Inter</h2>
+      <p class="small">La référence des textes d'écran. Dessinée pour être lue en petit corps, sur des
+        écrans médiocres, par des yeux fatigués. C'est exactement notre cas d'usage.</p>
+      <p class="small"><strong>Règles de corps.</strong> Seize pixels au minimum pour tout texte destiné à
+        un patient. Dix-huit sur les pages de contenu médical. Longueur de ligne entre soixante et
+        soixante-quinze caractères. Interlignage à un virgule six.</p>
+      <p class="small muted">Alternatives. Public Sans, Söhne si le budget le permet.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Étiquettes et données</span>
+      <h2 style="margin-top:1mm; font-size:20pt">IBM Plex Mono</h2>
+      <p class="small">Le monospace porte tout ce qui prouve. Dates, sources, versions, références,
+        numéros de page, en-têtes de tableaux. Il évoque l'étiquette de laboratoire, ce qui est exactement
+        l'image retenue de Johnson &amp; Johnson.</p>
+      <p class="small"><strong>Règle.</strong> Chiffres tabulaires obligatoires dans tout rapport. Une
+        colonne de chiffres qui ne s'aligne pas détruit la crédibilité d'un tableau plus vite qu'une
+        erreur de calcul.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>La hiérarchie</h2>
+      <table class="t-compact">
+        <thead><tr><th>Niveau</th><th style="width:34mm">Famille</th><th>Traitement</th></tr></thead>
+        <tbody>
+          <tr><td>Étiquette de section</td><td>Plex Mono</td><td>Majuscules, interlettrage large, corps réduit, couleur Ardoise.</td></tr>
+          <tr><td>Titre</td><td>Newsreader</td><td>Bas de casse, interlettrage négatif léger, une phrase mise en italique Argile foncée.</td></tr>
+          <tr><td>Chapeau</td><td>Inter</td><td>Corps supérieur au texte courant, couleur Ardoise, quatre lignes au maximum.</td></tr>
+          <tr><td>Texte courant</td><td>Inter</td><td>Encre. Aucun texte justifié.</td></tr>
+          <tr><td>Preuve</td><td>Plex Mono</td><td>Sur fond Blouse, encadré d'un filet Encre fin.</td></tr>
+        </tbody>
+      </table>
+      <p class="small">Le rythme est toujours le même. Une étiquette, un titre, un chapeau, puis le contenu.
+        Cette séquence se répète sur chaque section de chaque surface. La fiabilité visuelle vient de
+        cette répétition, pas de la variété.</p>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Deux règles qui protègent l'accueil</h3>
+      <p class="small"><strong>Aucun texte justifié.</strong> Le drapeau à droite est plus facile à lire,
+        surtout sur mobile et pour un lecteur âgé.</p>
+      <p class="small"><strong>Aucun texte en majuscules au-delà de trois mots.</strong> Les majuscules
+        ralentissent la lecture. Elles sont réservées aux étiquettes.</p>
+      <h3 style="margin-top:5mm">La mise en page</h3>
+      <p class="small">Une colonne principale, une colonne de marge pour les preuves et les légendes.
+        Cette structure vient du document scientifique, elle est lisible, et elle donne à la marque un
+        air de publication plutôt que de brochure.</p>
+    </div>
+  </div>
+  <div class="rf"><b>III · Le langage visuel</b><span>page 30 / 43</span></div>
+</section>
+
+<!-- ══════════ 31 · VISUEL · PISTES DE MARQUE ══════════ -->
+<section class="page">
+  <div class="eyebrow">III · Le langage visuel</div>
+  <h1>Trois pistes de marque. <em>Briefs, pas dessins.</em></h1>
+  <p class="lead">Le logo ne se décide pas dans une plateforme de marque. Trois directions sont briefées ici,
+    avec ce qu'elles résolvent et ce qu'elles risquent. La Phase 02 les exécute, les confronte et n'en
+    garde qu'une.</p>
+
+  <div class="g3">
+    <div class="card card--white">
+      <span class="micro">Piste 01</span>
+      <h2 style="margin-top:1mm">Le repère</h2>
+      <p class="small"><strong>L'idée.</strong> Un point et son cercle. Le signe universel de la position
+        exacte sur une carte, réduit à sa forme minimale, dessiné à la main plutôt que généré.</p>
+      <p class="small"><strong>Ce qu'elle résout.</strong> Elle dit trouvable et territoire en un seul
+        signe. Elle fonctionne à seize pixels comme sur une plaque de cabinet.</p>
+      <p class="small"><strong>Le risque.</strong> Le repère cartographique est très employé. Sans un
+        parti pris fort de dessin, la marque devient une icône de navigation.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Piste 02 · recommandée</span>
+      <h2 style="margin-top:1mm">Le tracé</h2>
+      <p class="small"><strong>L'idée.</strong> Une seule ligne continue qui se lit de deux manières.
+        Comme le tracé d'une auscultation, et comme une signature manuscrite. Elle commence bas, monte,
+        et se termine par un point net.</p>
+      <p class="small"><strong>Ce qu'elle résout.</strong> Elle porte l'écoute et la signature, les deux
+        pièces centrales de cette marque, dans un seul geste. Elle est difficile à copier parce qu'elle
+        est dessinée, pas construite.</p>
+      <p class="small"><strong>Le risque.</strong> La ligne cardiaque est un cliché du secteur. La piste ne
+        tient que si le tracé ne ressemble pas à un électrocardiogramme. C'est une contrainte à écrire
+        dans le brief, en toutes lettres.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Piste 03</span>
+      <h2 style="margin-top:1mm">Le sceau</h2>
+      <p class="small"><strong>L'idée.</strong> Une marque de validation. Un cachet sobre, presque
+        administratif, qui affirme que quelqu'un a vérifié et signé.</p>
+      <p class="small"><strong>Ce qu'elle résout.</strong> Elle répond directement au rejet d'eBay,
+        personne n'est là pour valider quoi que ce soit. Elle s'apposera naturellement en bas d'un contenu
+        signé, ce qui en fait un actif de production et pas seulement un logo.</p>
+      <p class="small"><strong>Le risque.</strong> Le sceau frôle le registre de la certification.
+        Il ne doit jamais laisser croire à un agrément officiel. Vérification juridique obligatoire.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Ce que le brief de Phase 02 doit contenir</h2>
+      <ul class="num small">
+        <li>Le nom retenu, définitif, avec sa graphie exacte.</li>
+        <li>Les cinq valeurs élues et le paradoxe de la page 11.</li>
+        <li>La palette et les proportions de la page 29.</li>
+        <li>Les trois pistes ci-dessus, avec leurs risques, sans hiérarchie imposée au dessinateur.</li>
+        <li>Les contraintes de reproduction. Lisible à seize pixels, en une seule couleur, gravé sur une
+          plaque, et brodé sur une blouse. La dernière contrainte élimine la moitié des idées, tôt.</li>
+        <li>Les interdits de la page 32.</li>
+      </ul>
+      <p class="small">Un logotype seul, sans symbole, reste une option légitime. Pour une marque dont
+        l'essence est la parole exacte, une graphie très travaillée peut suffire, et elle vieillit mieux.</p>
+    </div>
+    <div class="card card--ink">
+      <h3 style="color:var(--gold)">La règle de la plaque</h3>
+      <p class="small">Un test unique décide. Le praticien accepterait-il ce signe à côté de son nom,
+        sur la plaque de son cabinet, devant ses confrères.</p>
+      <p class="statement" style="font-size:14pt; color:var(--cream); margin-top:3mm">Si la réponse hésite,
+        <em>la piste est morte.</em></p>
+      <p class="small" style="margin-top:3mm">Ce test est plus dur que tous les critères esthétiques
+        réunis, et il est le seul qui compte sur ce marché.</p>
+    </div>
+  </div>
+  <div class="rf"><b>III · Le langage visuel</b><span>page 31 / 43</span></div>
+</section>
+
+<!-- ══════════ 32 · VISUEL · IMAGE ET INTERDITS ══════════ -->
+<section class="page">
+  <div class="eyebrow">III · Le langage visuel</div>
+  <h1>L'image. <em>Ce que l'on montre, et ce que l'on ne montre pas.</em></h1>
+
+  <div class="g2">
+    <div>
+      <h2>La direction photographique</h2>
+      <p class="small">Une seule règle gouverne tout. <strong>Ce sont de vraies personnes, dans de vrais
+        lieux.</strong> Aucune banque d'images. C'est une contrainte coûteuse, et c'est précisément ce qui
+        rend le résultat incopiable par une agence orientée volume.</p>
+      <ul class="check small">
+        <li>Le praticien dans son cabinet réel, à sa place de travail.</li>
+        <li>Lumière naturelle, latérale, jamais de flash frontal.</li>
+        <li>Les mains au travail, les instruments réels, les documents.</li>
+        <li>Le regard vers l'interlocuteur ou vers le travail. Pas vers l'objectif, sauf pour le portrait
+          principal.</li>
+        <li>Le lieu montré tel qu'il est. Un couloir un peu usé est plus crédible qu'un décor neuf.</li>
+        <li>Un portrait par praticien, tenu à jour, cadré identiquement pour tous. Le même cadre pour
+          tous est une déclaration d'égalité.</li>
+      </ul>
+      <h2>Le patient à l'image</h2>
+      <p class="small">Par défaut, il n'y est pas. S'il y est, trois conditions cumulatives.
+        Accord écrit. Non identifiable. Jamais en position de vulnérabilité, donc debout ou assis,
+        habillé, dans un moment ordinaire. Le patient allongé est proscrit sans exception.</p>
+      <p class="small">Une alternative existe et se préfère. Montrer <strong>la place vide du patient</strong>,
+        le fauteuil, la salle d'attente, le bureau vu de sa chaise. On raconte l'accueil sans exposer
+        personne.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--rose">
+        <h3 style="color:var(--rose-deep)">Les quatorze interdits visuels</h3>
+        <ul class="cross small">
+          <li>Le bleu médical saturé, en aplat ou en dégradé.</li>
+          <li>La croix, le caducée, le serpent, le stéthoscope en icône.</li>
+          <li>La double hélice d'ADN, sous toutes ses formes.</li>
+          <li>Le tracé d'électrocardiogramme comme motif.</li>
+          <li>Les images de banque, y compris retouchées.</li>
+          <li>Le médecin aux bras croisés devant un mur blanc.</li>
+          <li>Les mains qui se tiennent en gros plan.</li>
+          <li>Le patient allongé, ou vu depuis le plafond.</li>
+          <li>L'avant-après, dans toutes les spécialités, sans exception écrite.</li>
+          <li>Les dégradés, les ombres floues, les effets de verre.</li>
+          <li>Les badges de classement, les étoiles, les compteurs d'avis.</li>
+          <li>Les captures de courbes qui montent, sorties de tout contexte.</li>
+          <li>Les silhouettes d'illustration sans visage, censées représenter des patients.</li>
+          <li>Toute image générée qui prétend représenter une personne réelle ou un lieu réel.</li>
+        </ul>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:5mm">
+        <h3>L'illustration, si elle est nécessaire</h3>
+        <p class="small">Un seul registre est autorisé. Le <strong>schéma</strong>. Trait fin à l'encre,
+          un seul accent Argile, légende en monospace. Un schéma explique un mécanisme, une orientation
+          dans un parcours de soin, un délai. Il n'enjolive rien.</p>
+        <p class="small">Aucune illustration de personnages. Aucun style décoratif. Le schéma appartient
+          au registre du savoir, l'illustration décorative appartient à celui de la brochure.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>III · Le langage visuel</b><span>page 32 / 43</span></div>
+</section>
+
+<!-- ══════════ 33 · NOM · CRITÈRES ══════════ -->
+<section class="page page--dense">
+  <div class="eyebrow">IV · Le nom</div>
+  <h1>Dix critères. <em>Avant la première proposition.</em></h1>
+  <p class="lead">Un nom ne se choisit pas au goût. Il se choisit contre une grille, écrite avant de voir
+    les candidats. Voici la grille, et elle vient entièrement des pages précédentes.</p>
+
+  <div class="g2">
+    <div>
+      <ul class="num small">
+        <li><strong>Dictable au téléphone, sans épeler.</strong> Un secrétariat le prononcera cinquante fois
+          par jour. Ce critère en élimine beaucoup.</li>
+        <li><strong>Prononçable par un patient de tout âge et par un praticien devant ses confrères.</strong></li>
+        <li><strong>Court.</strong> Deux ou trois syllabes. Quatre seulement si le sens le justifie.</li>
+        <li><strong>Aucune promesse dans le nom.</strong> Ni premier, ni top, ni plus, ni pro. La page 20
+          l'interdit, le nom ne peut pas y contrevenir.</li>
+        <li><strong>Aucun cliché de secteur.</strong> Ni med, ni santé, ni care, ni clinic, ni doc.
+          Ces briques ne disent rien de la marque.</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="num small" style="counter-reset:n 5">
+        <li><strong>Aucun suffixe d'agence.</strong> Ni digital, ni media, ni studio, ni lab,
+          ni consulting, ni group. Le nom se tient seul.</li>
+        <li><strong>Protégeable.</strong> Un mot qui décrit le service est faible juridiquement. Plus le nom
+          est distinctif, plus il est défendable, et plus il coûte cher à copier.</li>
+        <li><strong>Disponible.</strong> Domaine, registre des marques dans les classes utiles, noms d'usage
+          professionnels, absence d'homonymie avec un praticien ou un établissement.</li>
+        <li><strong>Extensible.</strong> Il doit tenir si l'agence passe d'une spécialité à cinq, et d'un
+          pays à deux. Un nom qui contient une spécialité est un plafond.</li>
+        <li><strong>Il doit porter la double lecture du référencement.</strong> Être trouvé, et devenir la
+          référence. Les deux sens ensemble, c'est la marque.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div class="card card--warm">
+      <h3>Le test de la plaque, appliqué au nom</h3>
+      <p class="small">Le même test qu'en page 31, formulé pour le nom. <strong>Le praticien accepterait-il
+        de dire à un confrère qu'il travaille avec cette agence.</strong></p>
+      <p class="small">Ce test élimine tous les noms qui sonnent commercial, technologique ou familier.
+        Il favorise les noms qui empruntent au registre du savoir, parce que c'est le registre dans lequel
+        ce client se sent chez lui.</p>
+      <p class="small">C'est ce qui explique la présence de plusieurs noms d'origine grecque ou latine
+        dans la liste qui suit. Pas un effet de style, la langue commune de la médecine.</p>
+    </div>
+    <div class="card card--flat card--white">
+      <h3>Une précaution nécessaire</h3>
+      <p class="small"><strong>Aucune recherche d'antériorité n'a été conduite à ce stade.</strong>
+        Les dix pistes qui suivent sont des pistes de sens, pas des noms validés juridiquement.
+        Avant tout dépôt, la vérification est obligatoire. Son coût est faible comparé à celui d'un
+        changement de nom après lancement.</p>
+      <h3 style="margin-top:4mm">Les six vérifications avant dépôt</h3>
+      <ul class="clean small">
+        <li>Antériorité auprès de l'office compétent, classes 35 et 42 en priorité.</li>
+        <li>Domaine en point com, plus l'extension du marché retenu.</li>
+        <li>Noms d'usage sur les réseaux professionnels.</li>
+        <li>Absence d'homonymie avec un praticien ou un établissement.</li>
+        <li>Test de dictée téléphonique auprès de cinq secrétariats.</li>
+        <li>Test de prononciation auprès de cinq praticiens.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rf"><b>IV · Le nom</b><span>page 33 / 43</span></div>
+</section>
+
+<!-- ══════════ 34 · NOM · PISTES 1 À 5 ══════════ -->
+<section class="page">
+  <div class="eyebrow">IV · Le nom · pistes 01 à 05</div>
+  <h1>Dix pistes. <em>Aucune n'est neutre.</em></h1>
+
+  <table>
+    <thead><tr><th style="width:28mm">Nom</th><th style="width:31%">Origine et sens</th><th style="width:31%">Ce qu'il installe</th><th>Point de vigilance</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="nm">Anamnèse<br><span class="micro">a·na·mnèse</span></td>
+        <td class="small">Du grec anamnēsis, la remontée du souvenir. En médecine, l'entretien par lequel
+          le praticien recueille l'histoire du patient avant tout examen. Le moment où l'on écoute.</td>
+        <td class="small">La valeur élue, écoute, dite dans la langue du client. Une appartenance totale au
+          monde médical. Une méthode plutôt qu'une prestation. Très distinctif, donc protégeable et
+          mémorable.</td>
+        <td class="small">Quatre syllabes. Terme clinique inconnu de la plupart des patients.
+          À tester à la dictée téléphonique.</td>
+      </tr>
+      <tr>
+        <td class="nm">Référent</td>
+        <td class="small">Celui vers qui l'on renvoie. En santé, le médecin référent est une figure
+          identifiée du parcours de soin.</td>
+        <td class="small">La double lecture, immédiatement. Le référencement et la référence, dans un seul
+          mot que le client emploie déjà tous les jours.</td>
+        <td class="small">Faible distinctivité juridique, car proche de la description du service.
+          Protection difficile. Risque de confusion avec le vocabulaire officiel du parcours de soin.</td>
+      </tr>
+      <tr>
+        <td class="nm">Repère</td>
+        <td class="small">Le point qui permet de s'orienter. Le point de repère, en topographie comme en
+          langage courant.</td>
+        <td class="small">Trouvable et fiable, sans jargon. Chaleureux, français, court, facile à dire.
+          Il place le praticien comme le point fixe du territoire.</td>
+        <td class="small">Mot courant, donc plus difficile à protéger seul. Homonymie à l'oral avec repaire,
+          qui a une connotation opposée.</td>
+      </tr>
+      <tr>
+        <td class="nm">Primum</td>
+        <td class="small">Le premier mot de la formule primum non nocere, d'abord ne pas nuire.
+          Le principe fondateur de l'éthique médicale.</td>
+        <td class="small">L'éthique avant la performance, ce qui est exactement la croyance 06.
+          Un nom qui, pour un médecin, contient une promesse de prudence. Court, sonore, latin.</td>
+        <td class="small">Risque de lecture comme premier, donc comme promesse de classement.
+          Le sens exact suppose que le praticien connaisse la formule, ce qui est probable mais pas
+          certain.</td>
+      </tr>
+      <tr>
+        <td class="nm">Consilium</td>
+        <td class="small">En latin, la délibération, le conseil. En médecine, le consilium réunit plusieurs
+          praticiens autour d'un cas difficile.</td>
+        <td class="small">Le Sage, la collégialité, la décision réfléchie. Il dit conseil sans dire
+          consultant.</td>
+        <td class="small">Sonne également cabinet d'avocats. Quatre syllabes. Moins chaleureux que le mot
+          accueillant ne l'exige.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="g-2-1">
+    <div>
+      <h2 style="margin-top:0">D'où viennent ces pistes</h2>
+      <p class="small">Quatre gisements ont été explorés, et un seul a produit les meilleures pistes.
+        Le tableau ci-dessus et celui de la page suivante en gardent la trace.</p>
+      <ul class="clean small">
+        <li><strong>Le geste médical.</strong> Anamnèse, pouls, consilium, primum. Le gisement le plus
+          riche, parce qu'il installe l'appartenance sans décrire le service.</li>
+        <li><strong>L'orientation.</strong> Repère, boussole, indice. Immédiat, chaleureux, peu défendable.</li>
+        <li><strong>La langue savante.</strong> Nota bene, primum, consilium. Le registre du Sage,
+          à surveiller pour la froideur.</li>
+        <li><strong>La trace.</strong> Sillage, indice. Élégant, mais opaque sur le métier.</li>
+      </ul>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Comment lire la colonne vigilance</h3>
+      <p class="small">Aucun nom n'est parfait, et un nom sans défaut est en général un nom sans caractère.
+        La colonne de droite ne sert pas à éliminer, elle sert à savoir ce qu'il faudra compenser par
+        le dessin, par la signature ou par le discours.</p>
+    </div>
+  </div>
+  <div class="rf"><b>IV · Le nom</b><span>page 34 / 43</span></div>
+</section>
+
+<!-- ══════════ 35 · NOM · PISTES 6 À 10 ══════════ -->
+<section class="page">
+  <div class="eyebrow">IV · Le nom · pistes 06 à 10</div>
+  <h1>Les cinq suivantes, <em>et leurs limites.</em></h1>
+
+  <table>
+    <thead><tr><th style="width:28mm">Nom</th><th style="width:31%">Origine et sens</th><th style="width:31%">Ce qu'il installe</th><th>Point de vigilance</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="nm">Pouls</td>
+        <td class="small">Le battement perçu sous le doigt. Prendre le pouls, c'est le geste d'écoute le plus
+          ancien de la médecine.</td>
+        <td class="small">Une seule syllabe, française, sensorielle. L'écoute et le rythme, la mesure prise
+          avec la main plutôt qu'avec un tableau de bord.</td>
+        <td class="small">Fragile à la dictée, le s final est muet. Consonances gênantes à l'oral.
+          Peu extensible en dehors du français.</td>
+      </tr>
+      <tr>
+        <td class="nm">Sillage</td>
+        <td class="small">La trace laissée derrière un corps en mouvement. Employé pour parler de ce qui
+          reste d'une présence.</td>
+        <td class="small">La réputation comme trace persistante, construite par sédimentation. Élégant,
+          adulte, mémorable. Bonne distinctivité.</td>
+        <td class="small">Poétique, donc opaque sur le métier. Fortement associé à la parfumerie.
+          Ne porte pas la lecture trouvable.</td>
+      </tr>
+      <tr>
+        <td class="nm">Boussole</td>
+        <td class="small">L'instrument d'orientation. L'archétype de l'Explorateur, retenu en troisième
+          position de l'ADN.</td>
+        <td class="small">L'orientation du patient perdu, et l'idée de guide. Chaleureux, immédiat,
+          compris par tous les âges.</td>
+        <td class="small">Très employé dans le conseil et l'édition. Générique, donc peu distinctif.
+          Le guide met l'agence au centre, ce que l'ancrage 04 refuse.</td>
+      </tr>
+      <tr>
+        <td class="nm">Nota Bene<br><span class="micro">ou Nota</span></td>
+        <td class="small">Notez bien. L'annotation savante, la marque de ce qui mérite attention dans un
+          texte.</td>
+        <td class="small">Le Sage et la précision. Le geste de l'annotation, qui est littéralement notre
+          métier appliqué au savoir d'un praticien.</td>
+        <td class="small">Locution très connue du grand public francophone, avec des usages culturels
+          établis et notoires. Risque élevé de confusion et de conflit. À vérifier avant toute autre
+          considération.</td>
+      </tr>
+      <tr>
+        <td class="nm">Indice</td>
+        <td class="small">Le signe qui met sur la voie. Et, dans le vocabulaire technique du référencement,
+          l'index, ce qui est indexé donc trouvable.</td>
+        <td class="small">La double lecture, une fois de plus. Le signe clinique et l'indexation.
+          Court, français, sobre.</td>
+        <td class="small">Polysémie encombrante, indice boursier, indice de prix. Froid au regard du mot
+          accueillant. Faible charge émotionnelle.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="rule"></div>
+  <div class="g3">
+    <div class="card card--flat card--tight">
+      <h3>Ce que la liste révèle</h3>
+      <p class="small">Les meilleures pistes viennent toutes du vocabulaire du geste médical, anamnèse,
+        pouls, primum, consilium. Les plus faibles viennent du vocabulaire du conseil, boussole, repère,
+        sillage. La marque a plus à gagner en empruntant à la médecine qu'en empruntant au conseil.</p>
+    </div>
+    <div class="card card--flat card--tight">
+      <h3>Deux familles écartées</h3>
+      <p class="small">Les noms composés du type nom plus suffixe, écartés au critère 06. Et les noms
+        inventés sans racine, du type Medivo ou Sanora, écartés au critère 07 pour une autre raison.
+        Ils sont protégeables mais vides, et ce client ne se reconnaît pas dans le vide.</p>
+    </div>
+    <div class="card card--flat card--tight">
+      <h3>Le nom du fondateur</h3>
+      <p class="small">Une onzième voie existe et n'a pas été listée, faute d'information. Une marque
+        patronymique. Elle installe la responsabilité personnelle, ce qui est cohérent avec le
+        registre de la signature. Elle plafonne en revanche la revente et la délégation.
+        À trancher si vous le souhaitez.</p>
+    </div>
+  </div>
+  <div class="rf"><b>IV · Le nom</b><span>page 35 / 43</span></div>
+</section>
+
+<!-- ══════════ 36 · NOM · RECOMMANDATION ══════════ -->
+<section class="page">
+  <div class="eyebrow">IV · Le nom</div>
+  <h1>Trois finalistes. <em>Une recommandation.</em></h1>
+
+  <table class="t-compact">
+    <thead><tr><th style="width:26mm">Critère</th><th style="width:24mm">Anamnèse</th><th style="width:24mm">Repère</th><th style="width:24mm">Primum</th><th>Commentaire</th></tr></thead>
+    <tbody>
+      <tr><td>Dictable</td><td>Moyen</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td class="small">Testable en une journée.</td></tr>
+      <tr><td>Prononçable par tous</td><td>Moyen</td><td><strong>Fort</strong></td><td>Moyen</td><td class="small">Repère passe à tout âge.</td></tr>
+      <tr><td>Court</td><td>Faible</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td class="small">Quatre syllabes contre deux.</td></tr>
+      <tr><td>Sans promesse</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td>Moyen</td><td class="small">Primum peut se lire premier.</td></tr>
+      <tr><td>Sans cliché</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td class="small">Aucun cliché de secteur.</td></tr>
+      <tr><td>Protégeable</td><td><strong>Fort</strong></td><td>Faible</td><td>Moyen</td><td class="small">Repère est un mot courant.</td></tr>
+      <tr><td>Extensible</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td class="small">Les trois tiennent.</td></tr>
+      <tr><td>Double lecture</td><td>Moyen</td><td><strong>Fort</strong></td><td>Faible</td><td class="small">Repère porte les deux sens.</td></tr>
+      <tr><td>Appartenance au monde médical</td><td><strong>Fort</strong></td><td>Faible</td><td><strong>Fort</strong></td><td class="small">Le critère qui départage.</td></tr>
+      <tr><td>Porte une valeur élue</td><td><strong>Écoute</strong></td><td>Aucune</td><td><strong>Respect</strong></td><td class="small">Anamnèse seul nomme une valeur élue.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="g-2-1" style="margin-top:5mm">
+    <div class="card card--ink">
+      <span class="micro" style="color:var(--gold)">Recommandation</span>
+      <p class="statement" style="font-size:26pt; color:var(--cream); margin:2mm 0 4mm">Anamnèse</p>
+      <p class="small">Quatre raisons, dans l'ordre de poids.</p>
+      <ul class="num small">
+        <li>L'écoute n'est pas revendiquée, elle est inscrite dans le nom. Aucune autre piste ne
+          nomme une valeur élue.</li>
+        <li>Il dit la niche sans la décrire. Un praticien entend ce mot chaque semaine, une entreprise
+          hors santé ne le porterait jamais. Le nom trie à notre place.</li>
+        <li>Il est distinctif, donc défendable, donc capitalisable. Un nom courant se dilue.</li>
+        <li>Il dit une méthode et un ordre. On écoute d'abord, on conclut après.</li>
+      </ul>
+      <p class="small" style="margin-top:3mm"><strong style="color:var(--gold)">La faiblesse, traitée.</strong>
+        Le mot est inconnu des patients, sans incidence. La marque de l'agence n'apparaît pas sur les
+        surfaces destinées aux patients, l'ancrage 04 l'interdit déjà. Le nom est jugé par les praticiens
+        seuls.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--warm">
+        <h3>Signatures possibles</h3>
+        <p class="small"><strong>Anamnèse.</strong> On écoute d'abord.</p>
+        <p class="small"><strong>Anamnèse.</strong> L'expertise rendue trouvable.</p>
+        <p class="small"><strong>Anamnèse.</strong> Le bon patient, le bon spécialiste.</p>
+        <p class="small muted">La troisième est la raison d'être elle-même. La plus forte, la plus
+          exigeante à tenir.</p>
+      </div>
+      <div class="card card--flat" style="margin-top:4mm">
+        <h3>Si Anamnèse est écarté</h3>
+        <p class="small"><strong>Repère</strong> est le choix de la simplicité. Plus chaleureux, moins
+          défendable. À renforcer par un dessin très caractéristique.</p>
+        <p class="small"><strong>Primum</strong> est le choix de l'éthique affichée. Excellent auprès des
+          praticiens, à condition d'écrire que le nom ne signifie pas premier.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:4mm 0 3mm"></div>
+  <div class="g3">
+    <div class="card card--flat card--tight">
+      <h3>Le test terrain, cinq jours</h3>
+      <p class="small">Jour 1, dictée à cinq secrétariats. Jour 2, prononciation par cinq praticiens.
+        Jour 3, antériorité. Jour 4, domaines. Jour 5, décision.</p>
+    </div>
+    <div class="card card--flat card--tight">
+      <h3>La graphie, si Anamnèse est retenu</h3>
+      <p class="small">Bas de casse, accent grave, toujours. Jamais en capitales. L'accent porte la
+        moitié du caractère du mot.</p>
+    </div>
+    <div class="card card--flat card--tight">
+      <h3>Ce que le nom ne dit pas</h3>
+      <p class="small">Ni le référencement, ni la médecine, ni le territoire. Le nom porte la méthode,
+        la signature porte le métier.</p>
+    </div>
+  </div>
+  <div class="rf"><b>IV · Le nom</b><span>page 36 / 43</span></div>
+</section>
+
+<!-- ══════════ 37 · L'OFFRE ══════════ -->
+<section class="page">
+  <div class="eyebrow">V · La mise en service</div>
+  <h1>L'offre est <em>une expression de marque.</em></h1>
+  <p class="lead">Une plateforme de marque qui ne descend pas dans l'offre reste décorative. Quatre lignes
+    de service, nommées dans la voix de la marque, et chacune prouve une valeur élue. Si une ligne ne prouve
+    rien, elle sort du catalogue.</p>
+
+  <div class="g2">
+    <div class="card card--white">
+      <div style="display:flex; justify-content:space-between; align-items:baseline">
+        <h2 style="margin-top:0">Le Recueil</h2><span class="micro">prouve l'écoute</span>
+      </div>
+      <p class="small">L'entrée obligatoire. Deux à trois semaines. Un entretien long avec le praticien.
+        La collecte des questions réellement posées, au téléphone, en consultation, dans les avis, dans les
+        recherches. L'inventaire de ce qui est détenu et de ce qui est subi.</p>
+      <p class="small"><strong>Livrable.</strong> Un document lisible en vingt minutes, qui cite le
+        praticien, et qui dit aussi ce que nous ne pourrons pas corriger.</p>
+      <p class="small"><strong>Ce que nous n'y faisons pas.</strong> Aucune recommandation chiffrée,
+        aucun devis de production. Le Recueil se vend et se facture seul. Il peut se conclure par
+        nous ne sommes pas utiles ici.</p>
+    </div>
+    <div class="card card--white">
+      <div style="display:flex; justify-content:space-between; align-items:baseline">
+        <h2 style="margin-top:0">Le Socle</h2><span class="micro">prouve l'accueil</span>
+      </div>
+      <p class="small">Les surfaces que le praticien détient réellement. Le site, les pages de spécialité,
+        la fiche d'établissement, les données structurées, la cartographie, la prise de rendez-vous,
+        l'accessibilité.</p>
+      <p class="small"><strong>Livrable.</strong> Des surfaces qui passent le test de la salle d'attente
+        et les seuils de lisibilité de la page 29.</p>
+      <p class="small"><strong>Ce que nous n'y faisons pas.</strong> Aucun site refait pour être refait.
+        Si l'existant tient, on le corrige et on le dit. C'est le refus du besoin fabriqué,
+        hérité de l'exercice 02.</p>
+    </div>
+    <div class="card card--white">
+      <div style="display:flex; justify-content:space-between; align-items:baseline">
+        <h2 style="margin-top:0">La Preuve</h2><span class="micro">prouve le respect et l'exigence</span>
+      </div>
+      <p class="small">Le contenu, récurrent, à cadence tenable. Chaque pièce part d'une question réelle,
+        est écrite avec le praticien, relue par lui, signée par lui, datée et sourcée.</p>
+      <p class="small"><strong>Livrable.</strong> Peu de pièces, très tenues. Deux par mois valent mieux que
+        dix. C'est la croyance 05, appliquée au produit.</p>
+      <p class="small"><strong>Ce que nous n'y faisons pas.</strong> Aucune rédaction médicale sans le
+        praticien. Aucune production sous un nom d'emprunt. Aucune publication sans signature, même en cas
+        de retard.</p>
+    </div>
+    <div class="card card--white">
+      <div style="display:flex; justify-content:space-between; align-items:baseline">
+        <h2 style="margin-top:0">La Vigie</h2><span class="micro">prouve l'assurance</span>
+      </div>
+      <p class="small">Le suivi. Un rapport mensuel qui se lit en trois minutes. La surveillance de ce qui
+        se dit, la réponse encadrée aux avis, la revue trimestrielle avec décisions écrites.</p>
+      <p class="small"><strong>Livrable.</strong> Une page par mois. Ce qui a bougé, ce qui n'a pas marché,
+        ce qu'on propose ensuite, et une question à trancher.</p>
+      <p class="small"><strong>Ce que nous n'y faisons pas.</strong> Aucun tableau de bord de vanité.
+        Aucun indicateur qui ne serve pas une décision. La page 39 le détaille.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g3">
+    <div class="card card--flat card--tight card--warm">
+      <h3>Le plafond</h3>
+      <p class="small">Un nombre maximum de cabinets accompagnés, décidé par vous, publié sur le site,
+        et tenu. C'est la seule preuve vérifiable de la sélection contre le volume.</p>
+    </div>
+    <div class="card card--flat card--tight card--warm">
+      <h3>Le prix</h3>
+      <p class="small">Publié. Une seule fois, clairement, sans grille négociable. Le refus du registre
+        pécuniaire ne consiste pas à cacher l'argent, il consiste à ne plus avoir à en parler.</p>
+    </div>
+    <div class="card card--flat card--tight card--warm">
+      <h3>L'exclusivité territoriale</h3>
+      <p class="small">Un seul cabinet par spécialité et par territoire. Sans cette règle, deux clients
+        se disputent la même recherche et la marque se contredit elle-même. À écrire au contrat.</p>
+    </div>
+  </div>
+  <div class="rf"><b>V · La mise en service</b><span>page 37 / 43</span></div>
+</section>
+
+<!-- ══════════ 38 · SIGNATURE ET CADRE ══════════ -->
+<section class="page">
+  <div class="eyebrow">V · La mise en service</div>
+  <h1>La boucle de signature, <em>et le cadre.</em></h1>
+
+  <div class="g-2-1">
+    <div>
+      <h2>La boucle de signature</h2>
+      <p class="small">C'est le mécanisme central de production, et le plus vendeur, parce qu'aucune agence
+        orientée volume ne peut le tenir. Quatre étapes, trois tours au maximum.</p>
+      <table class="t-compact">
+        <thead><tr><th style="width:8mm"></th><th style="width:30mm">Étape</th><th>Ce qui se passe</th></tr></thead>
+        <tbody>
+          <tr><td class="micro">01</td><td><strong>La question</strong></td><td>Une question réellement posée
+            par un patient est retenue et écrite telle qu'elle a été posée, dans ses mots.</td></tr>
+          <tr><td class="micro">02</td><td><strong>La rédaction</strong></td><td>Nous écrivons la structure et
+            la langue. Le praticien fournit et corrige le fond médical. Jamais l'inverse.</td></tr>
+          <tr><td class="micro">03</td><td><strong>Les tours</strong></td><td>Trois tours de correction au
+            maximum. Au-delà, le sujet est mal cadré. On le reprend au début plutôt que de l'user.</td></tr>
+          <tr><td class="micro">04</td><td><strong>La signature</strong></td><td>Le praticien signe.
+            Sans signature, rien ne se publie. La date, la version et la source sont visibles sur la
+            page publiée.</td></tr>
+        </tbody>
+      </table>
+      <p class="small"><strong>Le droit de veto est total et permanent.</strong> Le praticien peut retirer
+        un contenu à tout moment, sans motif. Cette clause figure au contrat. Elle coûte peu et elle
+        change entièrement la nature de la relation.</p>
+
+      <h2>Le cadre déontologique</h2>
+      <p class="small">La communication des médecins est encadrée, et les règles diffèrent selon le pays
+        d'exercice. La position de la marque est simple et se tient partout. <strong>Nous restons du côté
+        de l'information du public, jamais du côté de la sollicitation de clientèle.</strong></p>
+      <p class="small muted">Ce document ne donne pas de conseil juridique. Le cadre exact du marché retenu
+        doit être validé par un conseil compétent en droit de la santé avant le premier mandat.
+        C'est la vérification numéro cinq de la page 43.</p>
+    </div>
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">Les huit règles que nous nous imposons</h3>
+        <p class="small">Indépendamment du pays, et même quand la loi locale serait plus permissive.</p>
+        <ul class="clean small">
+          <li>Aucune promesse de résultat, de guérison, de délai ou de position.</li>
+          <li>Aucune comparaison, explicite ou implicite, avec un confrère.</li>
+          <li>Aucun témoignage de patient utilisé comme argument.</li>
+          <li>Aucune sollicitation d'avis contre contrepartie.</li>
+          <li>Aucun avant-après, dans aucune spécialité, sans validation juridique écrite.</li>
+          <li>Aucune donnée de santé dans nos outils. Jamais, sous aucune forme.</li>
+          <li>Aucun contenu médical publié sans signature du praticien.</li>
+          <li>Toute mention de titre, de diplôme ou de qualification est vérifiée à la source.</li>
+        </ul>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:5mm">
+        <h3>Pourquoi c'est un avantage</h3>
+        <p class="small">Le cadre déontologique est vécu par la plupart des agences comme un obstacle.
+          Il est en réalité la barrière à l'entrée la plus solide de ce marché.</p>
+        <p class="small">Une agence généraliste ne connaît pas ces règles et ne peut pas les apprendre
+          vite. Une agence qui les maîtrise devient irremplaçable auprès d'un praticien qui a plus à
+          perdre qu'à gagner.</p>
+        <p class="small"><strong>La contrainte est le produit.</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>V · La mise en service</b><span>page 38 / 43</span></div>
+</section>
+
+<!-- ══════════ 39 · LA MESURE ══════════ -->
+<section class="page">
+  <div class="eyebrow">V · La mesure</div>
+  <h1>Mesurer l'adéquation, <em>pas le remplissage.</em></h1>
+  <p class="lead">La page 16 interdit de mesurer le succès en volume de patients. Il faut donc d'autres
+    indicateurs, et ils doivent tenir sur une seule page mensuelle.</p>
+
+  <div class="g2">
+    <div>
+      <h3 style="color:var(--illus-forest)">Les huit indicateurs retenus</h3>
+      <ul class="num small">
+        <li><strong>Part des questions de la spécialité couvertes</strong> par une réponse signée du
+          praticien, sur le territoire visé.</li>
+        <li><strong>Nombre de rendez-vous pris depuis une surface détenue</strong>, par opposition aux
+          surfaces louées à un tiers.</li>
+        <li><strong>Adéquation des consultations</strong>, appréciée par le praticien lui-même.
+          Le patient qui arrive relève-t-il de sa spécialité. C'est l'indicateur le plus important
+          et le seul qui mesure la raison d'être.</li>
+        <li><strong>Délai de première réponse</strong> à une demande entrante.</li>
+        <li><strong>Part des contenus signés</strong> sur le total publié. La cible est cent pour cent,
+          et tout écart déclenche une revue.</li>
+        <li><strong>Présence dans les réponses des assistants conversationnels</strong> sur les questions
+          de la spécialité, avec citation de la source.</li>
+        <li><strong>Avis obtenus sans aucune sollicitation ni incitation.</strong> Le volume importe peu,
+          l'origine importe.</li>
+        <li><strong>Nombre de mandats refusés</strong>, et motifs. Un indicateur de marque, pas de
+          performance. S'il tombe à zéro, la sélection a cessé.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card card--flat card--rose">
+        <h3 style="color:var(--rose-deep)">Les quatre indicateurs jamais présentés seuls</h3>
+        <ul class="cross small">
+          <li>La position moyenne. Une moyenne de positions ne veut rien dire et sert surtout à masquer.</li>
+          <li>Les impressions. Elles mesurent l'exposition, pas l'utilité.</li>
+          <li>Le nombre de mots publiés. C'est un indicateur d'usine.</li>
+          <li>Les variations en pourcentage sans la valeur absolue. Plus trois cents pour cent de deux,
+            cela fait huit.</li>
+        </ul>
+        <p class="small muted">Ces quatre chiffres peuvent exister en annexe technique. Ils n'ouvrent
+          jamais un rapport et ne servent jamais de preuve.</p>
+      </div>
+      <div class="card card--white" style="margin-top:5mm">
+        <h3>La forme du rapport mensuel</h3>
+        <p class="small">Une page. Quatre blocs. Trois minutes de lecture.</p>
+        <ul class="num small">
+          <li><strong>Ce qui a bougé.</strong> Deux phrases, chiffres absolus.</li>
+          <li><strong>Ce qui n'a pas marché.</strong> Obligatoire. Un rapport sans cette section est
+            renvoyé à son auteur.</li>
+          <li><strong>Ce que nous proposons ensuite.</strong> Une seule proposition, pas trois.</li>
+          <li><strong>La question à trancher.</strong> Une décision demandée au praticien, avec sa date
+            limite.</li>
+        </ul>
+        <p class="small">Le bloc numéro deux est la traduction directe de Johnson &amp; Johnson.
+          Des tests, des échecs, pour arriver à une formule. On raconte les échecs, ils rendent le
+          reste croyable.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>V · La mesure</b><span>page 39 / 43</span></div>
+</section>
+
+<!-- ══════════ 40 · FEUILLE DE ROUTE ══════════ -->
+<section class="page">
+  <div class="eyebrow">V · Feuille de route</div>
+  <h1>Quatre-vingt-dix jours. <em>Trois portes.</em></h1>
+  <p class="lead">Chaque période se ferme sur une porte. Si la porte ne s'ouvre pas, on ne passe pas à la
+    suivante. C'est la seule manière de ne pas construire sur du sable.</p>
+
+  <div class="g3">
+    <div class="card card--white">
+      <span class="micro">Jours 1 à 30</span>
+      <h2 style="margin-top:1mm">Fixer le socle</h2>
+      <ul class="clean small">
+        <li>Valider ce document, ligne par ligne, ou le corriger.</li>
+        <li>Trancher le nom. Les six vérifications de la page 33.</li>
+        <li>Déposer la marque dans les classes utiles. Réserver les domaines.</li>
+        <li>Choisir le marché et la langue. Une seule des trois configurations de la page 26.</li>
+        <li>Choisir la première spécialité, et écrire son glossaire.</li>
+        <li>Faire valider le cadre déontologique par un conseil compétent.</li>
+      </ul>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small"><strong>La porte.</strong> Un nom protégé, un marché, une spécialité, un cadre validé.
+        Sans les quatre, on ne dessine rien.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Jours 31 à 60</span>
+      <h2 style="margin-top:1mm">Rendre visible</h2>
+      <ul class="clean small">
+        <li>Brief de Phase 02 avec la page 31. Exécution des trois pistes, choix d'une.</li>
+        <li>Identité appliquée. Palette, typographie, composants, tests de lisibilité.</li>
+        <li>Le site de l'agence. Court. La méthode, les refus, le plafond, le prix, un contact.</li>
+        <li>La page ce que nous ne promettons pas. Publiée, pas cachée.</li>
+        <li>Trois contenus de démonstration, écrits sur notre propre surface. On s'entraîne sur nous,
+          jamais sur un praticien.</li>
+      </ul>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small"><strong>La porte.</strong> Un praticien qui n'a jamais parlé avec vous comprend
+        l'offre, le refus et le prix en trois minutes de lecture.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Jours 61 à 90</span>
+      <h2 style="margin-top:1mm">Prouver</h2>
+      <ul class="clean small">
+        <li>Trois Recueils vendus et livrés. Facturés, même modestement. Un diagnostic offert ne vaut rien
+          aux yeux d'un praticien exigeant.</li>
+        <li>Au plus deux mandats complets engagés. Le plafond commence maintenant, pas plus tard.</li>
+        <li>La boucle de signature éprouvée sur des contenus réels.</li>
+        <li>Le premier rapport mensuel, au format d'une page.</li>
+        <li>Le registre des refus ouvert, avec sa première entrée.</li>
+      </ul>
+      <div class="rule" style="margin:4mm 0"></div>
+      <p class="small"><strong>La porte.</strong> Un praticien accepte d'expliquer votre méthode à un
+        confrère. C'est le seul signal de traction qui compte sur ce marché.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div class="card card--flat card--warm">
+      <h3>Les trois pièges de cette période</h3>
+      <p class="small"><strong>Prendre le premier client qui paie.</strong> Un mandat hors niche au premier
+        trimestre détruit la niche pour trois ans. Le refus initial est le plus coûteux et le plus rentable.</p>
+      <p class="small"><strong>Attendre la marque pour parler.</strong> Le socle de ce document permet de
+        parler dès aujourd'hui. Le logo ne conditionne aucune conversation.</p>
+      <p class="small"><strong>Confondre lancement et rythme.</strong> Une agence de référencement se juge
+        sur trois ans. La croyance 07 s'applique d'abord à nous.</p>
+    </div>
+    <div class="card card--flat card--white">
+      <h3>Ce qui n'est pas dans ces quatre-vingt-dix jours</h3>
+      <p class="small">Aucune campagne payante. Aucun réseau social. Aucun événement. Aucun recrutement.</p>
+      <p class="small">Ce n'est pas un oubli. Sur ce marché, la crédibilité précède l'audience.
+        La première année se joue en entretiens directs, en confrères qui parlent entre eux,
+        et en contenus signés qui restent.</p>
+    </div>
+  </div>
+  <div class="rf"><b>V · Feuille de route</b><span>page 40 / 43</span></div>
+</section>
+
+<!-- ══════════ 41 · FICHE QBP ══════════ -->
+<section class="page">
+  <div class="eyebrow">V · La fiche de profil</div>
+  <h1>Le profil de marque, <em>prêt à saisir.</em></h1>
+  <p class="lead">La synthèse opérable de tout le document. C'est cette fiche qui alimente les phases 02 à 05,
+    et c'est elle qu'il faut avoir sous les yeux à chaque décision.</p>
+
+  <table class="t-compact">
+    <tbody>
+      <tr><th style="width:44mm">Nom de marque</th><td><strong>Anamnèse</strong> <span class="micro">recommandé, page 36. Repère et Primum en réserve.</span></td></tr>
+      <tr><th>Essence</th><td><strong>Traduire sans trahir.</strong></td></tr>
+      <tr><th>L'étincelle</th><td>Le moment de l'entretien où le prisme a changé. Ne plus regarder le
+        marché par le médecin, la plateforme ou le produit, mais par le patient. Devant la maladie,
+        personne n'a d'avance.</td></tr>
+      <tr><th>Raison d'être</th><td>Que le bon patient trouve le bon spécialiste.</td></tr>
+      <tr><th>Promesse</th><td>Nous ne vous inventons pas une réputation. Nous rendons visible celle que
+        vous avez déjà.</td></tr>
+      <tr><th>Archétypes</th><td>Sage 55, Magicien 30, Explorateur 15. Références retenues, TED Talks,
+        Disney, Patagonia.</td></tr>
+      <tr><th>Paradoxe</th><td>Une parole qui ne plie pas. Une main qui ne lâche pas. Intransigeance sur la
+        méthode, douceur dans le contact.</td></tr>
+      <tr><th>Anti-marque</th><td>L'agence-usine. Volume, aucun filtre, contenu médical non supervisé,
+        promesse de position, vocabulaire de peur. Dix pratiques refusées, page 21.</td></tr>
+      <tr><th>Valeurs élues</th><td>Écoute, Accueil, Respect, Assurance, Exigence. Ordre d'arbitrage en cas
+        de conflit, Respect, Exigence, Écoute, Accueil, Assurance.</td></tr>
+      <tr><th>Toujours et jamais</th><td>Dix-huit lignes, page 22. Les neuf interdits sont opposables au
+        contrat.</td></tr>
+      <tr><th>Persona primaire</th><td>Le cabinet neuf, porte 01, contrainte de conception.
+        Cœur de valeur, le respecté invisible, porte 02.</td></tr>
+      <tr><th>Bénéficiaire final</th><td>Le patient. Ne paie rien, arbitre tout.</td></tr>
+      <tr><th>Profil sensoriel</th><td>Le calme d'une salle d'attente bien tenue. La lumière latérale de fin
+        de journée. Le papier mat plutôt que l'écran brillant. Une odeur de propre, pas de désinfectant.
+        Le silence, puis une voix posée.</td></tr>
+      <tr><th>Direction chromatique</th><td>Encre #14252C, Papier #F5F1E8, Blouse #FFFFFF, Sauge #7C9A8E,
+        Argile #B5563C, Ardoise #5C6A6F. Proportions 80, 12, 4, 3, 1. Aucun bleu médical saturé.</td></tr>
+      <tr><th>Direction typographique</th><td>Newsreader pour les titres, Inter pour les textes,
+        IBM Plex Mono pour les preuves. Corps minimum seize pixels. Aucun texte justifié.</td></tr>
+      <tr><th>ADN visuel</th><td>La propreté du laboratoire, la chaleur du papier. La preuve visible.
+        Le praticien au centre, la marque en cadre. Un seul accent chaud. Photographie réelle uniquement.
+        Schéma comme seule illustration.</td></tr>
+      <tr><th>Paysage concurrentiel</th><td>Six familles identifiées. Agences généralistes locales.
+        Agences spécialisées santé. Plateformes de rendez-vous qui captent le référencement à leur profit.
+        Annuaires. Prestataires web du secteur médical. Et l'auto-gestion par le secrétariat, qui est le
+        concurrent réel le plus fréquent.
+        <span class="micro">Noms, offres et prix à documenter au premier mandat. Aucun n'est avancé ici.</span></td></tr>
+      <tr><th>Priorités stratégiques</th><td>01 Trancher et protéger le nom. 02 Choisir un marché et une
+        spécialité d'entrée. 03 Construire les preuves avant les clients, méthode publiée, page des refus,
+        registre. 04 Trois Recueils facturés et deux mandats au maximum. 05 Faire valider le cadre
+        déontologique.</td></tr>
+      <tr><th>Ce qui reste ouvert</th><td>Le nom définitif. Le marché et la langue. La première spécialité.
+        Le plafond de cabinets. Le niveau de prix.</td></tr>
+    </tbody>
+  </table>
+  <div class="rf"><b>V · La fiche de profil</b><span>page 41 / 43</span></div>
+</section>
+
+<!-- ══════════ 42 · ANNEXE VERBATIMS ══════════ -->
+<section class="page">
+  <div class="eyebrow">Annexe</div>
+  <h1>Les verbatims <em>qui fondent chaque décision.</em></h1>
+  <p class="lead">Toute affirmation de ce document remonte à l'une de ces phrases. Elles sont reproduites
+    telles qu'elles ont été dites, en français, sans lissage.</p>
+
+  <div class="g2">
+    <div>
+      <h3>Exercice 01 · Reddit</h3>
+      <p class="small">« Il n'y a pas de mauvaises questions, jamais. Il n'y a que des belles réponses. »</p>
+      <p class="small">« La maladie, ça touche tout le monde, et la maladie, elle met tout le monde à
+        égalité. »</p>
+      <p class="small">« Le cœur de la médecine, c'est le patient. Donc c'est pour le patient. Tout le monde
+        est sur le même pied d'égalité de l'accès à l'information. »</p>
+      <p class="small">« À chaque fois que tu tombes dessus, t'es content d'y être. »</p>
+
+      <h3 style="margin-top:5mm">Exercice 01 · Johnson &amp; Johnson</h3>
+      <p class="small">« Une qualité scientifique, prouvée, testée, validée avec des tests, des échecs pour
+        arriver à une formule qui est là pour ton bien-être. »</p>
+      <p class="small">« Tu sens qu'il n'y a pas de microbes dans ce que cette marque transmet comme
+        message. »</p>
+      <p class="small">« On vous promet d'être consistant dans la durée et de faire un effort de clarté,
+        de transparence. »</p>
+      <p class="small">« Moi je ne sais même pas ce qu'ils font comme produit. »</p>
+
+      <h3 style="margin-top:5mm">Exercice 02 · eBay</h3>
+      <p class="small">« Personne n'est là pour valider quoi que ce soit. »</p>
+      <p class="small">« Il n'y a ni optimisation en qualité, ni en produit, ni en réflexion, ni en usage,
+        ni en valeur, ni en intention. »</p>
+      <p class="small">« La qualité, elle vient de la sélection, du raffinement, du choix, du design. »</p>
+
+      <h3 style="margin-top:5mm">Exercice 02 · Pizza Hut</h3>
+      <p class="small">« C'est tout sauf sa promesse. La formule est attrayante mais les photos sont
+        mensongères. »</p>
+      <p class="small">« Ils se cachent derrière un logo et une enseigne pour te filer des choses dont tu
+        n'as aucune idée. »</p>
+      <p class="small">« À aucun moment, ton corps n'a réclamé un truc comme ça. »</p>
+    </div>
+    <div>
+      <h3>Exercice 03 · La personnification</h3>
+      <p class="small"><strong>Malcolm X.</strong> « Il s'est frayé un chemin en se battant, en ayant des
+        convictions, en allant à contre-courant, sans jamais courber le dos. Sa démarche est tellement
+        assurée que je me rallie à son parcours. »</p>
+      <p class="small"><strong>Zuckerberg.</strong> « Il n'avait pas du tout en visu un aspect pécuniaire en
+        le créant. Il ne s'est jamais posé la question de combien il allait gagner avec ça. »</p>
+      <p class="small"><strong>Diana.</strong> « Il y avait de l'empathie, de la proximité. Elle disait aux
+        gens, je suis comme vous. Sa fragilité aussi, elle montrait sa part fragile. »</p>
+      <p class="small"><strong>Marilyn Monroe.</strong> « Très indépendante, très forte, très courageuse,
+        qui a tout fait pour atteindre un rêve qu'elle s'était fixé. »</p>
+      <p class="small"><strong>Benazir Bhutto.</strong> « Tu peux réussir à partir de rien et malgré
+        l'adversité, c'est ton cerveau qui brille avant tout. »</p>
+      <p class="small"><strong>Frida Kahlo.</strong> « Très connectée à sa sensibilité et à sa nature
+        profonde. Bizarre, mais en assumant sa bizarrerie. Elle voulait juste faire son chemin. »</p>
+      <p class="small"><strong>Mohamed Ali.</strong> « La finesse des mots, la justesse dans le phrasé,
+        le tempo. Tout ce qu'il dit, c'était de l'or. Un homme de lettres qui faisait un sport de brute. »</p>
+      <p class="small"><strong>Michael Jackson.</strong> « Il était là pour les autres. Il a servi que les
+        autres. Un message unificateur mondial, jamais clivant. »</p>
+
+      <h3 style="margin-top:5mm">Exercice 04 · L'ADN</h3>
+      <p class="small"><strong>Le Sage. TED Talks.</strong> Priorise la sagesse, la vérité et le partage du
+        savoir. Se positionne en mentor de confiance. <strong>« Aligné avec qui je suis. »</strong></p>
+      <p class="small"><strong>Le Magicien. Disney.</strong> Crée des expériences transformatives,
+        presque mystiques.</p>
+      <p class="small"><strong>L'Explorateur. Patagonia.</strong> Aventure, découverte, authenticité,
+        franchissement de limites.</p>
+
+      <div class="card card--flat card--warm" style="margin-top:5mm">
+        <h3>Une remarque du fondateur, conservée</h3>
+        <p class="small">« Tu ne crées pas tes valeurs en contradiction avec l'autre. Tu crées tes valeurs
+          en valorisant ce que tu es. »</p>
+        <p class="small">Cette phrase a été dite pendant l'exercice, comme un recadrage de méthode.
+          Elle explique pourquoi l'anti-marque de la page 21 ne sert qu'à trancher en interne, et pourquoi
+          aucune surface publique ne se construit contre un concurrent.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Annexe</b><span>page 42 / 43</span></div>
+</section>
+
+<!-- ══════════ 43 · CLÔTURE ══════════ -->
+<section class="page page--ink">
+  <div class="eyebrow">Clôture</div>
+  <h1 style="color:var(--cream)">Cinq décisions. <em>Puis on construit.</em></h1>
+  <p class="lead">Le socle est posé. Il ne bougera plus, sauf sur votre correction. Cinq décisions restent,
+    et aucune ne nous appartient.</p>
+
+  <div class="g2">
+    <div>
+      <ul class="num" style="font-size:var(--t-body)">
+        <li><span class="lb"><strong style="color:var(--gold)">Le nom.</strong><br><span class="small">Anamnèse est recommandé.
+          Repère et Primum sont en réserve. Les six vérifications de la page 33 sont à lancer le jour de
+          la décision, pas après.</span></span></li>
+        <li><span class="lb"><strong style="color:var(--gold)">Le marché et la langue.</strong><br><span class="small">France,
+          Maghreb, ou les deux. Un seul pour les douze premiers mois. Ce choix commande la production
+          éditoriale et le cadre juridique.</span></span></li>
+        <li><span class="lb"><strong style="color:var(--gold)">La première spécialité.</strong><br><span class="small">Elle
+          détermine le glossaire, les questions de départ et les premiers entretiens. Le critère est simple.
+          Celle où vous avez déjà un praticien qui vous fait confiance.</span></span></li>
+        <li><span class="lb"><strong style="color:var(--gold)">Le plafond de cabinets.</strong><br><span class="small">Un
+          nombre, publié, tenu. C'est la promesse la plus difficile de ce document et la plus
+          différenciante.</span></span></li>
+        <li><span class="lb"><strong style="color:var(--gold)">La validation déontologique.</strong><br><span class="small">Un
+          conseil compétent en droit de la santé, sur le marché retenu, avant le premier mandat.
+          Rien ne se lance sans cette page signée.</span></span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="card card--tight" style="background:rgba(251,245,230,.07); border-color:rgba(251,245,230,.3); box-shadow:none">
+        <h3 style="color:var(--gold)">Ce que nous faisons ensuite</h3>
+        <p class="small" style="color:var(--cream)">Dès que le nom est tranché, la Phase 02 s'ouvre avec le
+          brief de la page 31. Marque, logotype, application, voix appliquée aux surfaces.
+          Puis la Phase 03 sur le contenu, avec la boucle de signature comme mécanisme central.</p>
+        <p class="small" style="color:var(--cream)">La fiche de la page 41 est le point d'entrée.
+          Elle se saisit une fois. Tout ce qui suit la lit.</p>
+      </div>
+      <div class="spacer" style="min-height:8mm"></div>
+      <p class="statement" style="color:var(--cream); font-size:17pt">Le patient cherche.
+        Le spécialiste sait. Entre les deux, il n'y a qu'un <em>défaut de traduction.</em></p>
+      <div class="rule--gold" style="margin-top:6mm"></div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="rule" style="background:rgba(251,245,230,.22)"></div>
+  <div class="eyebrow">Le document en cinq lignes</div>
+  <table class="t-compact" style="margin-bottom:6mm">
+    <tbody>
+      <tr><th style="width:34mm; color:rgba(251,245,230,.6); border-bottom-color:rgba(251,245,230,.15)">Raison d'être</th>
+        <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)">Que le bon patient trouve le bon spécialiste.</td></tr>
+      <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:rgba(251,245,230,.15)">Essence</th>
+        <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)">Traduire sans trahir.</td></tr>
+      <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:rgba(251,245,230,.15)">Promesse</th>
+        <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)">Nous ne vous inventons pas une réputation. Nous rendons visible celle que vous avez déjà.</td></tr>
+      <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:rgba(251,245,230,.15)">Valeurs</th>
+        <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)">Écoute, accueil, respect, assurance, exigence. Dans cet ordre de travail.</td></tr>
+      <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:transparent">Anti-marque</th>
+        <td style="color:var(--cream); border-bottom-color:transparent">L'agence-usine. Le volume, l'absence de filtre, la promesse que l'expérience trahit.</td></tr>
+    </tbody>
+  </table>
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:0.4mm solid rgba(251,245,230,.25); padding-top:5mm">
+    <div>
+      <p class="micro" style="color:rgba(251,245,230,.6)">Plateforme de marque · v1.0 · 4 septembre 2026</p>
+      <p class="micro" style="color:rgba(251,245,230,.6)">Méthode <span class="wordmark">quantum branding</span> · Phase 01 Discovery · Préparé pour Mouncef</p>
+    </div>
+    <img src="../../../img/brand/lockup-h-gold.svg" alt="quantum branding" style="height:9mm">
+  </div>
+  <div class="rf"><b>Clôture</b><span>page 43 / 43</span></div>
+</section>
+
+</body>
+</html>
