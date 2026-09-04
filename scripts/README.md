@@ -126,3 +126,40 @@ slug-mapping JSON, but not yet needed.)
 `visual-dna.html` reads this at session start. If the manifest is missing
 or returns 404, it silently falls back to the demo Unsplash set so the
 tool keeps working.
+
+---
+
+## test-client.mjs
+
+Provisions a signed-in test client so the whole product can be walked end to
+end without an inbox and without a live Stripe charge.
+
+```bash
+node scripts/test-client.mjs login --tier agency          # ensure account, print sign-in URL
+node scripts/test-client.mjs login --tier agency --reset  # same, but clear prior work first
+node scripts/test-client.mjs status                       # tier, lock state, artifact list
+node scripts/test-client.mjs reset                        # wipe the work, keep the account
+node scripts/test-client.mjs delete                       # remove the account and its rows
+```
+
+Flags: `--email` (default `qb-testclient@quantumbranding.ai`), `--tier`
+(`free` · `starter` · `pro` · `agency` · `atelier`, default `agency`),
+`--name`, `--base` (default `https://quantumbranding.ai`), `--yes`.
+
+Env comes from `.env.qb-branos.live` (gitignored, `vercel env pull`) or
+`QB_ENV_FILE`. It needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
+
+Three mechanics worth knowing:
+
+- The sign-in URL comes from `/auth/v1/admin/generate_link`, the same admin
+  call `api/send-magic-link.js` makes. Supabase mints the link but sends no
+  mail, so the address does not need a real mailbox. Point `--email` at a real
+  inbox when the run needs to exercise result emails or drip.
+- `tier` and `subscription_status` are written straight onto `profiles`, which
+  is what every gate reads: `TIER_RANK` in `api/_lib/chain-trigger.js` server
+  side, `QB.hasAccess()` in `qb-cloud.js` client side. `agency` outranks every
+  agent in the registry, whose ceiling is `tier_required: 'pro'`.
+- `--base` must be on the Supabase Auth redirect allowlist. Production origins
+  are already there; a preview deployment needs its origin added first.
+
+Each link is single use and expires in 60 minutes. Re-run `login` for another.
