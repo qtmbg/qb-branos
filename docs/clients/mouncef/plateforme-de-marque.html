@@ -242,6 +242,13 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
 .spacer{flex:1 1 auto; min-height:var(--s-2xs);}
 .nowrap{white-space:nowrap;}
 
+.verdict{display:inline-block; font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.1em; text-transform:uppercase; padding:.8mm 2mm; border-radius:1mm;}
+.v-win{background:#DCE7DF; color:var(--illus-forest);}
+.v-risk{background:var(--cream-rose); color:var(--rose-deep);}
+.v-neu{background:var(--cream-warm); color:var(--gold-deep);}
+.stack{border-left:1mm solid var(--ink-12); padding-left:var(--s-xs); display:flex; flex-direction:column; gap:2mm;}
+.stack .row{display:flex; gap:2.5mm; align-items:baseline;}
+.stack .row .t{font-family:var(--f-mono); font-size:var(--t-micro); color:var(--gold-deep); flex:none; width:6mm;}
 @page{size:A4; margin:0;}
 @media print{
   html,body{background:none;}
@@ -265,79 +272,87 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
   </div>
   <div class="spacer"></div>
   <div>
-    <div class="eyebrow">Plateforme de marque · v1.0</div>
-    <h1 class="cover-h1">Une agence de référencement<br>pour les médecins<br><em>spécialistes.</em></h1>
+    <div class="eyebrow">lisadoc · plateforme de marque · v2.0</div>
+    <h1 class="cover-h1">L'éditeur des<br>médecins<br><em>spécialistes.</em></h1>
     <div class="rule--gold" style="margin-top:8mm"></div>
     <p class="lead" style="max-width:120mm; margin-top:6mm">
       Le travail d'identité, conduit selon la méthode <span class="wordmark">quantum branding</span>,
-      à partir des cinq exercices menés avec Mouncef. Ce document est la vérité interne de la marque,
-      avant toute exécution.
+      à partir des cinq exercices menés avec Mouncef. Version 2, réconciliée avec le cadrage de l'offre
+      du 2 septembre et avec l'audit concurrentiel du 5 septembre.
     </p>
   </div>
   <div class="spacer"></div>
   <div class="cover-meta">
     <div><span class="k">Préparé pour</span><span class="v">Mouncef<br>Fondateur</span></div>
     <div><span class="k">Méthode</span><span class="v"><span class="wordmark">quantum branding</span><br>QB BrandOS</span></div>
-    <div><span class="k">Date</span><span class="v">4 septembre 2026</span></div>
-    <div><span class="k">Statut</span><span class="v">Socle validé<br>Nom à trancher</span></div>
+    <div><span class="k">Date</span><span class="v">5 septembre 2026</span></div>
+    <div><span class="k">Statut</span><span class="v">Socle validé<br>Nom arrêté</span></div>
   </div>
 </section>
 
 <!-- ══════════ 02 · COMMENT LIRE ══════════ -->
-<section class="page">
+<section class="page page--dense">
   <div class="eyebrow">Avant de commencer</div>
-  <h1>Comment lire ce document, et <em>ce que nous avons supposé.</em></h1>
-  <p class="lead">Trois choses à savoir avant la première page de fond.</p>
+  <h1>Comment lire ce document, et <em>ce que le cadrage a tranché.</em></h1>
+  <p class="lead">Cette version 2 remplace la précédente. Elle intègre deux documents arrivés depuis&nbsp;:
+    le cadrage de l'offre du 2 septembre, et l'audit du concurrent le plus avancé du marché.</p>
 
   <div class="g2">
     <div>
       <h2>Ce que ce document est</h2>
-      <p>La plateforme de marque. Le socle qui ne bouge plus. Il contient la raison d'être, les croyances,
-        la promesse, le positionnement, les cinq valeurs, la voix, la direction visuelle, dix pistes de nom
-        et le cadre de service.</p>
-      <p>Tout ce qui sera produit ensuite, un logo, un site, une page de spécialité, un email, une réponse
-        à un avis, se juge contre ce document. Pas contre le goût du moment.</p>
-      <h2>Ce que ce document n'est pas</h2>
-      <p>Ce n'est pas une charte graphique. Le logo n'est pas dessiné ici. Trois pistes de marque sont
-        briefées, la Phase 02 les exécute.</p>
-      <p>Ce n'est pas un plan média. Aucun budget, aucun calendrier de publication.</p>
-      <p>Ce n'est pas une étude de marché. Aucun chiffre de marché n'est avancé. Quand une donnée manque,
-        nous l'écrivons.</p>
+      <p>La plateforme de marque. Le socle qui ne bouge plus. Raison d'être, croyances, promesse,
+        positionnement, cinq valeurs, voix, direction visuelle, cadre de service.</p>
+      <p>Le cadrage de l'offre décrit <strong>ce que lisadoc vend</strong>. Ce document décrit
+        <strong>qui vend</strong>. Quand les deux se contredisent, c'est ici que se règle l'arbitrage,
+        et là-bas que se règle le détail commercial.</p>
+      <h2>Les trois documents</h2>
+      <table class="t-compact">
+        <tr><th style="width:32mm">Plateforme de marque</th><td class="small">L'identité. Ce document. Voix, valeurs, refus, direction visuelle.</td></tr>
+        <tr><th>Cadrage de l'offre</th><td class="small">Formules, prix, production, cadre déontologique, discours commercial.</td></tr>
+        <tr><th>Anatomie d'un site qui gagne</th><td class="small">Audit concurrentiel et blueprint du template livré.</td></tr>
+      </table>
     </div>
     <div class="card card--warm">
-      <h3>Ce que nous avons supposé</h3>
-      <p class="small">Quatre hypothèses ont été nécessaires pour avancer. Chacune est corrigeable en une
-        phrase de votre part, et nous reprenons le document.</p>
-      <ul class="num small" style="margin-top:4mm">
-        <li><strong>Référencement au sens double.</strong> Rendre le praticien trouvable sur les surfaces de
-          recherche, et le rendre légitime au point de devenir la référence de sa spécialité sur son
-          territoire. Les deux sens portent la marque.</li>
-        <li><strong>Le client payant est le médecin spécialiste. Le bénéficiaire final est le patient.</strong>
-          C'est votre propre recadrage, en exercice 01. Il structure tout le document.</li>
-        <li><strong>Marché francophone en priorité.</strong> Le document est écrit en français. La question
-          du bilinguisme reste ouverte en page 26.</li>
-        <li><strong>Aucune spécialité n'est encore choisie.</strong> La marque est construite pour tenir sur
-          une spécialité comme sur plusieurs. Le choix de la première reste une décision de fondateur.</li>
+      <h3>Les quatre hypothèses de la v1, désormais tranchées</h3>
+      <ul class="num small" style="margin-top:3mm">
+        <li><strong>Le nom.</strong> La v1 proposait dix pistes et recommandait Anamnèse.
+          <strong>Le nom est lisadoc</strong>, il préexistait à ce travail. Les pages 33 à 36 ont été
+          refaites en conséquence.</li>
+        <li><strong>Le métier.</strong> La v1 disait agence de référencement.
+          <strong>lisadoc crée et héberge les sites</strong>, le référencement en est la conséquence.
+          Le mot juste est celui du cadrage&nbsp;: <strong>éditeur</strong>.</li>
+        <li><strong>Le marché.</strong> France, médecins spécialistes libéraux, onze disciplines.
+          <strong>Les généralistes sont hors périmètre</strong>, agenda saturé, aucun besoin
+          d'attraction.</li>
+        <li><strong>Le bénéficiaire.</strong> Confirmé, et c'est la pierre angulaire.
+          Le client paie, le patient arbitre.</li>
       </ul>
     </div>
   </div>
 
   <div class="rule"></div>
-  <p class="small muted">Une règle de lecture. Chaque affirmation de ce document est traçable jusqu'à une
-    phrase que vous avez prononcée dans les exercices, ou jusqu'à un mot que vous avez retenu en gras.
-    Les verbatims qui fondent les décisions sont réunis en annexe.</p>
-
-  <div class="rule" style="margin:5mm 0 4mm"></div>
-  <div class="g4">
-    <div class="card card--flat card--tight"><span class="micro">Si vous ne lisez que quatre pages</span>
-      <p class="small" style="margin-top:2mm"><strong>Page 16.</strong> La raison d'être et ce qu'elle interdit.</p></div>
-    <div class="card card--flat card--tight"><span class="micro">La deuxième</span>
-      <p class="small" style="margin-top:2mm"><strong>Page 18.</strong> L'essence, la promesse, le positionnement.</p></div>
-    <div class="card card--flat card--tight"><span class="micro">La troisième</span>
-      <p class="small" style="margin-top:2mm"><strong>Page 22.</strong> Toujours et jamais. Dix-huit lignes opposables.</p></div>
-    <div class="card card--flat card--tight"><span class="micro">La quatrième</span>
-      <p class="small" style="margin-top:2mm"><strong>Page 41.</strong> La fiche de profil, prête à saisir.</p></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Ce qui a changé d'avis dans cette version</h2>
+      <p class="small">Deux positions de la v1 sont corrigées, parce que le cadrage les avait déjà
+        examinées et écartées avec de meilleures raisons.</p>
+      <ul class="clean small">
+        <li><strong>L'exclusivité territoriale est abandonnée.</strong> Trop contraignante pour un
+          argument commercial, et un plafond de l'ordre du millier de places ferme la porte après trois
+          ou quatre ans. Ce qui reste, page 37&nbsp;: la capacité de production annoncée.</li>
+        <li><strong>Le plafond de cabinets change de nature.</strong> Ce n'est plus une rareté vendue,
+          c'est un fait d'artisan&nbsp;: nous produisons un nombre de sites par mois, le prochain
+          créneau est à telle date. À condition que le chiffre soit vrai.</li>
+      </ul>
+    </div>
+    <div class="card card--flat card--white">
+      <h3>Une règle de lecture</h3>
+      <p class="small">Chaque affirmation reste traçable jusqu'à une phrase prononcée dans les exercices,
+        ou jusqu'à un mot retenu en gras. Les verbatims sont en annexe, page 42.</p>
+      <p class="small">Ce qui vient de l'audit est signalé comme tel, et daté.</p>
+    </div>
   </div>
+
   <div class="rf"><b>Avant de commencer</b><span>page 02 / 43</span></div>
 </section>
 
@@ -385,9 +400,10 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
       </table>
       <h3 style="margin-top:7mm">IV · Le nom</h3>
       <table class="t-compact">
-        <tr><td>Les critères</td><td class="micro">33</td></tr>
-        <tr><td>Les dix pistes</td><td class="micro">34 · 35</td></tr>
-        <tr><td>Sélection et recommandation</td><td class="micro">36</td></tr>
+        <tr><td>Les critères, et lisadoc</td><td class="micro">33</td></tr>
+        <tr><td>lisadoc au banc d'essai</td><td class="micro">34</td></tr>
+        <tr><td>La position concurrentielle</td><td class="micro">35</td></tr>
+        <tr><td>Ce qu'il reste à nommer</td><td class="micro">36</td></tr>
       </table>
       <h3 style="margin-top:7mm">V · La mise en service</h3>
       <table class="t-compact">
@@ -1291,7 +1307,7 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
 </section>
 
 <!-- ══════════ 18 · ESSENCE, PROMESSE, POSITIONNEMENT ══════════ -->
-<section class="page">
+<section class="page page--dense">
   <div class="eyebrow">II · La plateforme</div>
   <h1>Essence, promesse, <em>positionnement.</em></h1>
 
@@ -1301,11 +1317,11 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
       <p class="statement" style="font-size:24pt; margin-top:3mm">Traduire<br>sans <em>trahir.</em></p>
       <div class="rule" style="margin:4mm 0"></div>
       <p class="small">L'essence n'est pas une signature publicitaire. C'est le noyau que toute la marque
-        doit pouvoir répéter. Elle tient les deux archétypes dominants ensemble. Le Sage traduit.
-        L'exigence interdit de trahir.</p>
-      <p class="small">Elle vaut aussi comme critère de recrutement, de production et de refus.
-        Un contenu qui simplifie au point de fausser trahit. Un contenu exact que personne ne comprend
-        ne traduit pas. Les deux échouent.</p>
+        doit pouvoir répéter. Un contenu qui simplifie au point de fausser trahit. Un contenu exact que
+        personne ne comprend ne traduit pas. Les deux échouent.</p>
+      <p class="small"><strong>Elle dit la même chose que le mot du cadrage.</strong> Un éditeur rend
+        publique l'expertise d'un auteur sans la déformer. L'auteur écrit, ici il parle.
+        <strong>Le nom sur l'ouvrage reste celui de l'auteur.</strong></p>
     </div>
     <div>
       <div class="card card--warm">
@@ -1313,62 +1329,59 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
         <p class="statement" style="font-size:16pt; margin-top:2mm">Nous ne vous inventons pas une
           réputation. <em>Nous rendons visible celle que vous avez déjà.</em></p>
         <div class="rule" style="margin:4mm 0"></div>
-        <p class="small">Cette promesse est tenable, vérifiable, et elle disqualifie la concurrence sans
-          la nommer. Elle parle directement à la porte 02, le praticien respecté de ses pairs et absent
-          en ligne, qui est le cœur du marché.</p>
+        <p class="small">Tenable, vérifiable, et elle disqualifie la concurrence sans la nommer.
+          Elle parle à la porte 02, le praticien respecté de ses pairs et absent en ligne.</p>
       </div>
-      <div class="card card--flat" style="margin-top:5mm">
-        <h3>Variantes autorisées</h3>
+      <div class="card card--flat" style="margin-top:4mm">
+        <h3>Les trois phrases du cadrage</h3>
         <ul class="clean small">
-          <li>Ce qui est montré est ce qui est vrai.</li>
-          <li>Votre nom sur chaque ligne. Y compris quand cela nous ralentit.</li>
-          <li>Une méthode, une trace, une signature.</li>
+          <li><strong>La ligne de marque.</strong> On ne cherche plus un médecin comme avant.</li>
+          <li><strong>Le mouvement en trois temps.</strong> Nous observons ce que les gens cherchent,
+            vous seul savez quoi leur répondre, nous nous occupons de tout le reste.</li>
+          <li><strong>La promesse de durée.</strong> Le dernier site que vous ferez.</li>
         </ul>
-        <p class="small muted">Trois formulations, un seul fond. Aucune autre variante ne se crée sans
-          repasser par cette page.</p>
+        <p class="small muted">Aucune autre variante ne se crée sans repasser par cette page.</p>
       </div>
     </div>
   </div>
 
-  <div class="rule"></div>
-  <h2>Le positionnement, en une phrase de travail</h2>
-  <div class="card card--ink" style="margin-top:3mm">
+  <div class="rule" style="margin:4mm 0 3mm"></div>
+  <h2 style="margin-top:0">Le positionnement, en une phrase de travail</h2>
+  <div class="card card--ink" style="margin-top:2mm">
     <p style="font-size:11.5pt; line-height:1.55; color:var(--cream)">
-      Pour <strong style="color:var(--gold)">les médecins spécialistes exigeants</strong>,
+      Pour <strong style="color:var(--gold)">les médecins spécialistes libéraux exigeants</strong>,
       qui <strong style="color:var(--gold)">savent mais restent introuvables</strong>,
-      nous sommes <strong style="color:var(--gold)">la seule agence de référencement qui ne travaille que
-      pour eux</strong>.
-      Nous <strong style="color:var(--gold)">rendons leur expertise lisible et trouvable par le patient
-      qui la cherche vraiment</strong>,
-      parce que <strong style="color:var(--gold)">devant la maladie, l'accès à l'information devrait être
-      égal pour tous</strong>.
-      Contrairement aux <strong style="color:var(--gold)">agences généralistes qui vendent du volume et
-      des promesses de classement</strong>,
-      nous <strong style="color:var(--gold)">plafonnons le nombre de cabinets, publions notre méthode, et
-      ne signons rien à votre place</strong>.
+      lisadoc est <strong style="color:var(--gold)">l'éditeur qui crée et tient leur site</strong>.
+      Nous <strong style="color:var(--gold)">rendons publique, dans le seul cadre que la déontologie
+      autorise, l'expertise qu'ils expliquent déjà vingt fois par semaine en consultation</strong>,
+      parce que <strong style="color:var(--gold)">devant la maladie, l'accès à l'information devrait
+      être égal pour tous</strong>.
+      Contrairement aux <strong style="color:var(--gold)">agences qui vendent un site tous les cinq ans
+      et gardent les clés</strong>,
+      nous <strong style="color:var(--gold)">écrivons à partir de leurs mots, publions nos prix,
+      et remettons le domaine et les accès à leur nom</strong>.
     </p>
   </div>
 
-  <div class="g3" style="margin-top:6mm">
+  <div class="g3" style="margin-top:4mm">
     <div class="card card--flat card--tight">
       <h3>La phrase de fondateur</h3>
-      <p class="small">Pour un dîner, un confrère, un ascenseur. Vingt secondes.</p>
-      <p class="small"><em class="i">Je travaille pour des médecins spécialistes. Ils sont excellents et
-        personne ne les trouve. Je rends leur savoir lisible pour le patient qui en a besoin. Je ne prends
-        pas beaucoup de cabinets, et je ne publie rien qu'ils n'aient pas signé.</em></p>
+      <p class="small"><em class="i">Je fais les sites des médecins spécialistes. Vous me racontez votre
+        pratique une fois, quarante-cinq minutes. J'écris et je publie à partir de ça, et je réponds de
+        la conformité avec l'Ordre.</em></p>
     </div>
     <div class="card card--flat card--tight">
       <h3>La catégorie</h3>
-      <p class="small">Agence de référencement, spécialisée sur une seule population de praticiens.</p>
-      <p class="small">Pas une agence de communication médicale. Pas un studio web. Pas une plateforme de
-        prise de rendez-vous. Pas un annuaire. La catégorie est étroite, et c'est l'actif.</p>
+      <p class="small">Éditeur de médecins spécialistes.</p>
+      <p class="small">Ni agence web, ni agence de publicité, ni plateforme, ni annuaire.
+        Et <strong>jamais un apporteur de patients</strong>&nbsp;: on vend un site, jamais un flux.
+        La ligne rouge du compérage passe ici.</p>
     </div>
     <div class="card card--flat card--tight">
       <h3>La preuve d'appartenance</h3>
       <p class="small">Ce qui rend la niche crédible n'est pas de la revendiquer, c'est de refuser
-        publiquement tout le reste.</p>
-      <p class="small">Un dentiste, un vétérinaire, une clinique esthétique généraliste. Refusés,
-        et le refus est visible sur le site.</p>
+        publiquement tout le reste. Généralistes, dentistes, vétérinaires. Refusés, et le refus est
+        visible sur le site.</p>
     </div>
   </div>
   <div class="rf"><b>II · La plateforme</b><span>page 18 / 43</span></div>
@@ -1523,7 +1536,7 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
         <li>Utiliser la peur comme argument de vente.</li>
         <li>Présenter un cas patient identifiable.</li>
         <li>Facturer une prestation dont le contenu n'a pas été décrit avant la signature.</li>
-        <li>Prendre un mandat au-delà du plafond de cabinets, quel que soit le montant.</li>
+        <li>Vendre un créneau de production qui n'existe pas, quel que soit le montant.</li>
         <li>Accepter un mandat sur une spécialité que nous ne comprenons pas encore.</li>
       </ul>
     </div>
@@ -1600,7 +1613,7 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
         <li>Solliciter un avis contre une contrepartie.</li>
         <li>Utiliser la peur, l'urgence ou la rareté fabriquée.</li>
         <li>Publier un cas identifiable.</li>
-        <li>Dépasser le plafond de cabinets.</li>
+        <li>Annoncer une capacité de production qui n'est pas mesurée.</li>
         <li>Employer un point d'exclamation dans un texte de marque.</li>
       </ul>
     </div>
@@ -1630,11 +1643,11 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
 </section>
 
 <!-- ══════════ 23 · LES QUATRE PORTES ══════════ -->
-<section class="page page--dense">
+<section class="page page--dense" style="--s-s:3.8mm; --s-xs:2.6mm">
   <div class="eyebrow">II · Les personas</div>
   <h1>Quatre portes. <em>Une seule contrainte de conception.</em></h1>
-  <p class="lead">Un praticien n'arrive jamais en disant j'ai besoin de référencement. Il arrive avec une
-    situation. Quatre situations couvrent le marché. Chacune est une personne, pas un segment.</p>
+  <p class="lead">Un praticien n'arrive jamais en disant j'ai besoin d'un site. Il arrive avec une
+    situation. Quatre situations couvrent le marché, et chacune est une personne.</p>
 
   <div class="g2">
     <div class="card card--white">
@@ -1696,16 +1709,17 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
       <h2>Le principe du persona le plus faible</h2>
       <p class="small">Le service se conçoit pour la porte 01, celle qui arrive sans rien. Si le parcours
         fonctionne pour elle, il fonctionne pour les trois autres, qui entrent plus loin dans le même
-        système. L'inverse n'est jamais vrai. C'est une contrainte de conception, pas une préférence
-        commerciale. La porte 02 reste le cœur de valeur, sans être la contrainte.</p>
+        système. L'inverse n'est jamais vrai. La porte 02 reste le cœur de valeur, sans être la
+        contrainte.</p>
     </div>
     <div class="card card--flat card--warm">
       <h3>Ce qui est commun aux quatre</h3>
-      <p class="small">Tous sont exigeants, intelligents, non complaisants. Les mots retenus en colonne
-        client. Aucun n'achètera une marque qui le prend pour un débutant, aucun ne pardonnera une faute
-        de vocabulaire médical.</p>
-      <p class="small"><strong>Conséquence.</strong> Le glossaire de la spécialité se constitue avant le
-        premier mandat. Une erreur de terme coûte le mandat.</p>
+      <p class="small">Tous sont exigeants, intelligents, non complaisants. Aucun n'achètera une marque
+        qui le prend pour un débutant, aucun ne pardonnera une faute de vocabulaire médical.</p>
+      <p class="small"><strong>Et tous sont spécialistes libéraux.</strong> Le généraliste est hors
+        périmètre&nbsp;: agenda saturé, aucun besoin d'attraction. Porte fermée volontairement.
+        <strong>Conséquence&nbsp;:</strong> le glossaire se constitue avant le premier mandat, et une
+        erreur de terme coûte le mandat.</p>
     </div>
   </div>
   <div class="rf"><b>II · Les personas</b><span>page 23 / 43</span></div>
@@ -2338,35 +2352,31 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
 <!-- ══════════ 33 · NOM · CRITÈRES ══════════ -->
 <section class="page page--dense">
   <div class="eyebrow">IV · Le nom</div>
-  <h1>Dix critères. <em>Avant la première proposition.</em></h1>
-  <p class="lead">Un nom ne se choisit pas au goût. Il se choisit contre une grille, écrite avant de voir
-    les candidats. Voici la grille, et elle vient entièrement des pages précédentes.</p>
+  <h1>Le nom existe. <em>La grille sert quand même.</em></h1>
+  <p class="lead">La version 1 de ce document proposait dix pistes et recommandait Anamnèse.
+    Le nom est lisadoc, et il préexistait à ce travail. La grille de critères n'est pas perdue pour
+    autant&nbsp;: elle sert à savoir ce que le nom porte, ce qu'il ne porte pas, et donc ce qu'il faudra
+    compenser ailleurs.</p>
 
   <div class="g2">
     <div>
       <ul class="num small">
-        <li><strong>Dictable au téléphone, sans épeler.</strong> Un secrétariat le prononcera cinquante fois
-          par jour. Ce critère en élimine beaucoup.</li>
+        <li><strong>Dictable au téléphone, sans épeler.</strong> Un secrétariat le prononcera cinquante
+          fois par jour.</li>
         <li><strong>Prononçable par un patient de tout âge et par un praticien devant ses confrères.</strong></li>
-        <li><strong>Court.</strong> Deux ou trois syllabes. Quatre seulement si le sens le justifie.</li>
-        <li><strong>Aucune promesse dans le nom.</strong> Ni premier, ni top, ni plus, ni pro. La page 20
-          l'interdit, le nom ne peut pas y contrevenir.</li>
-        <li><strong>Aucun cliché de secteur.</strong> Ni med, ni santé, ni care, ni clinic, ni doc.
-          Ces briques ne disent rien de la marque.</li>
+        <li><strong>Court.</strong> Deux ou trois syllabes.</li>
+        <li><strong>Aucune promesse dans le nom.</strong> Ni premier, ni top, ni plus, ni pro.</li>
+        <li><strong>Aucun cliché de secteur.</strong> Ni med, ni santé, ni care, ni clinic, ni doc.</li>
       </ul>
     </div>
     <div>
       <ul class="num small" style="counter-reset:n 5">
-        <li><strong>Aucun suffixe d'agence.</strong> Ni digital, ni media, ni studio, ni lab,
-          ni consulting, ni group. Le nom se tient seul.</li>
-        <li><strong>Protégeable.</strong> Un mot qui décrit le service est faible juridiquement. Plus le nom
-          est distinctif, plus il est défendable, et plus il coûte cher à copier.</li>
-        <li><strong>Disponible.</strong> Domaine, registre des marques dans les classes utiles, noms d'usage
-          professionnels, absence d'homonymie avec un praticien ou un établissement.</li>
-        <li><strong>Extensible.</strong> Il doit tenir si l'agence passe d'une spécialité à cinq, et d'un
-          pays à deux. Un nom qui contient une spécialité est un plafond.</li>
-        <li><strong>Il doit porter la double lecture du référencement.</strong> Être trouvé, et devenir la
-          référence. Les deux sens ensemble, c'est la marque.</li>
+        <li><strong>Aucun suffixe d'agence.</strong> Ni digital, ni media, ni studio, ni lab.</li>
+        <li><strong>Protégeable.</strong> Un mot qui décrit le service est faible juridiquement.</li>
+        <li><strong>Disponible.</strong> Domaine, registre des marques, noms d'usage, absence
+          d'homonymie.</li>
+        <li><strong>Extensible.</strong> Il doit tenir de une à onze spécialités, et d'un pays à deux.</li>
+        <li><strong>Il doit dire le métier</strong>, ou au moins ne pas le contredire.</li>
       </ul>
     </div>
   </div>
@@ -2375,28 +2385,23 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
   <div class="g-2-1">
     <div class="card card--warm">
       <h3>Le test de la plaque, appliqué au nom</h3>
-      <p class="small">Le même test qu'en page 31, formulé pour le nom. <strong>Le praticien accepterait-il
-        de dire à un confrère qu'il travaille avec cette agence.</strong></p>
-      <p class="small">Ce test élimine tous les noms qui sonnent commercial, technologique ou familier.
-        Il favorise les noms qui empruntent au registre du savoir, parce que c'est le registre dans lequel
-        ce client se sent chez lui.</p>
-      <p class="small">C'est ce qui explique la présence de plusieurs noms d'origine grecque ou latine
-        dans la liste qui suit. Pas un effet de style, la langue commune de la médecine.</p>
+      <p class="small"><strong>Le praticien accepterait-il de dire à un confrère qu'il travaille avec
+        cette agence.</strong> Ce test élimine tous les noms qui sonnent commercial, technologique ou
+        familier, et favorise ceux qui empruntent au registre du savoir, parce que c'est le registre dans
+        lequel ce client se sent chez lui.</p>
+      <p class="small">C'est le seul test qui compte sur ce marché, et lisadoc le passe. Un chirurgien
+        peut dire le nom sans se sentir diminué. C'est le point le plus important de cette page.</p>
     </div>
     <div class="card card--flat card--white">
-      <h3>Une précaution nécessaire</h3>
-      <p class="small"><strong>Aucune recherche d'antériorité n'a été conduite à ce stade.</strong>
-        Les dix pistes qui suivent sont des pistes de sens, pas des noms validés juridiquement.
-        Avant tout dépôt, la vérification est obligatoire. Son coût est faible comparé à celui d'un
-        changement de nom après lancement.</p>
-      <h3 style="margin-top:4mm">Les six vérifications avant dépôt</h3>
+      <h3>Une précaution qui tient toujours</h3>
+      <p class="small"><strong>Aucune recherche d'antériorité n'a été conduite.</strong>
+        Elle reste à faire, sur lisadoc comme sur les noms de l'écosystème, page 36.</p>
       <ul class="clean small">
-        <li>Antériorité auprès de l'office compétent, classes 35 et 42 en priorité.</li>
-        <li>Domaine en point com, plus l'extension du marché retenu.</li>
-        <li>Noms d'usage sur les réseaux professionnels.</li>
-        <li>Absence d'homonymie avec un praticien ou un établissement.</li>
-        <li>Test de dictée téléphonique auprès de cinq secrétariats.</li>
-        <li>Test de prononciation auprès de cinq praticiens.</li>
+        <li>Antériorité, classes 35 et 42 en priorité.</li>
+        <li>Domaine en point com et en point fr.</li>
+        <li>Noms d'usage professionnels.</li>
+        <li>Proximité avec les marques existantes en <em class="i">doc</em>, nombreuses dans la santé
+          française.</li>
       </ul>
     </div>
   </div>
@@ -2405,81 +2410,87 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
 
 <!-- ══════════ 34 · NOM · PISTES 1 À 5 ══════════ -->
 <section class="page">
-  <div class="eyebrow">IV · Le nom · pistes 01 à 05</div>
-  <h1>Dix pistes. <em>Aucune n'est neutre.</em></h1>
+  <div class="eyebrow">IV · Le nom</div>
+  <h1>lisadoc <em>au banc d'essai.</em></h1>
 
-  <table>
-    <thead><tr><th style="width:28mm">Nom</th><th style="width:31%">Origine et sens</th><th style="width:31%">Ce qu'il installe</th><th>Point de vigilance</th></tr></thead>
-    <tbody>
-      <tr>
-        <td class="nm">Anamnèse<br><span class="micro">a·na·mnèse</span></td>
-        <td class="small">Du grec anamnēsis, la remontée du souvenir. En médecine, l'entretien par lequel
-          le praticien recueille l'histoire du patient avant tout examen. Le moment où l'on écoute.</td>
-        <td class="small">La valeur élue, écoute, dite dans la langue du client. Une appartenance totale au
-          monde médical. Une méthode plutôt qu'une prestation. Très distinctif, donc protégeable et
-          mémorable.</td>
-        <td class="small">Quatre syllabes. Terme clinique inconnu de la plupart des patients.
-          À tester à la dictée téléphonique.</td>
-      </tr>
-      <tr>
-        <td class="nm">Référent</td>
-        <td class="small">Celui vers qui l'on renvoie. En santé, le médecin référent est une figure
-          identifiée du parcours de soin.</td>
-        <td class="small">La double lecture, immédiatement. Le référencement et la référence, dans un seul
-          mot que le client emploie déjà tous les jours.</td>
-        <td class="small">Faible distinctivité juridique, car proche de la description du service.
-          Protection difficile. Risque de confusion avec le vocabulaire officiel du parcours de soin.</td>
-      </tr>
-      <tr>
-        <td class="nm">Repère</td>
-        <td class="small">Le point qui permet de s'orienter. Le point de repère, en topographie comme en
-          langage courant.</td>
-        <td class="small">Trouvable et fiable, sans jargon. Chaleureux, français, court, facile à dire.
-          Il place le praticien comme le point fixe du territoire.</td>
-        <td class="small">Mot courant, donc plus difficile à protéger seul. Homonymie à l'oral avec repaire,
-          qui a une connotation opposée.</td>
-      </tr>
-      <tr>
-        <td class="nm">Primum</td>
-        <td class="small">Le premier mot de la formule primum non nocere, d'abord ne pas nuire.
-          Le principe fondateur de l'éthique médicale.</td>
-        <td class="small">L'éthique avant la performance, ce qui est exactement la croyance 06.
-          Un nom qui, pour un médecin, contient une promesse de prudence. Court, sonore, latin.</td>
-        <td class="small">Risque de lecture comme premier, donc comme promesse de classement.
-          Le sens exact suppose que le praticien connaisse la formule, ce qui est probable mais pas
-          certain.</td>
-      </tr>
-      <tr>
-        <td class="nm">Consilium</td>
-        <td class="small">En latin, la délibération, le conseil. En médecine, le consilium réunit plusieurs
-          praticiens autour d'un cas difficile.</td>
-        <td class="small">Le Sage, la collégialité, la décision réfléchie. Il dit conseil sans dire
-          consultant.</td>
-        <td class="small">Sonne également cabinet d'avocats. Quatre syllabes. Moins chaleureux que le mot
-          accueillant ne l'exige.</td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="rule" style="margin:5mm 0 4mm"></div>
   <div class="g-2-1">
     <div>
-      <h2 style="margin-top:0">D'où viennent ces pistes</h2>
-      <p class="small">Quatre gisements ont été explorés, et un seul a produit les meilleures pistes.
-        Le tableau ci-dessus et celui de la page suivante en gardent la trace.</p>
-      <ul class="clean small">
-        <li><strong>Le geste médical.</strong> Anamnèse, pouls, consilium, primum. Le gisement le plus
-          riche, parce qu'il installe l'appartenance sans décrire le service.</li>
-        <li><strong>L'orientation.</strong> Repère, boussole, indice. Immédiat, chaleureux, peu défendable.</li>
-        <li><strong>La langue savante.</strong> Nota bene, primum, consilium. Le registre du Sage,
-          à surveiller pour la froideur.</li>
-        <li><strong>La trace.</strong> Sillage, indice. Élégant, mais opaque sur le métier.</li>
-      </ul>
+      <table class="t-compact">
+        <thead><tr><th style="width:44mm">Critère</th><th style="width:20mm">Note</th><th>Lecture</th></tr></thead>
+        <tbody>
+          <tr><td>Dictable</td><td><span class="verdict v-neu">moyen</span></td><td class="small">Trois syllabes faciles, mais l'orthographe se demande. En un mot, tout attaché, sans majuscule interne.</td></tr>
+          <tr><td>Prononçable par tous</td><td><span class="verdict v-win">fort</span></td><td class="small">Aucun obstacle, à aucun âge, dans aucune région.</td></tr>
+          <tr><td>Court</td><td><span class="verdict v-win">fort</span></td><td class="small">Trois syllabes.</td></tr>
+          <tr><td>Sans promesse</td><td><span class="verdict v-win">fort</span></td><td class="small">Rien à tenir, donc rien à trahir.</td></tr>
+          <tr><td>Sans cliché de secteur</td><td><span class="verdict v-risk">faible</span></td><td class="small">La brique <em class="i">doc</em> est très employée en santé française. C'est le point faible réel du nom.</td></tr>
+          <tr><td>Sans suffixe d'agence</td><td><span class="verdict v-win">fort</span></td><td class="small">Le nom se tient seul.</td></tr>
+          <tr><td>Protégeable</td><td><span class="verdict v-neu">moyen</span></td><td class="small">Le composé est distinctif, la brique <em class="i">doc</em> ne l'est pas. À vérifier sérieusement.</td></tr>
+          <tr><td>Extensible</td><td><span class="verdict v-win">fort</span></td><td class="small">Tient sur onze spécialités et se décline déjà.</td></tr>
+          <tr><td>Dit le métier</td><td><span class="verdict v-neu">moyen</span></td><td class="small">Il dit le médecin. Il ne dit ni le site, ni l'édition, ni le référencement. À porter par la signature.</td></tr>
+        </tbody>
+      </table>
+      <p class="small"><strong>Verdict.</strong> Un bon nom, chaleureux, humain, facile, qui passe le
+        test de la plaque. Deux faiblesses à compenser&nbsp;: la banalité de la brique
+        <em class="i">doc</em>, et le fait qu'il ne dit pas le métier. Les deux se compensent par la
+        signature, pas par le nom.</p>
+    </div>
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">Le cadeau caché du nom</h3>
+        <p class="statement" style="font-size:20pt; color:var(--cream); margin-top:2mm"><em>lis</em>adoc</p>
+        <p class="small" style="margin-top:3mm">Les trois premières lettres forment l'impératif du verbe
+          lire. Pour une marque dont le métier est d'éditer et dont l'essence est de traduire sans trahir,
+          c'est une coïncidence qu'il faut cesser de traiter comme une coïncidence.</p>
+        <p class="small"><strong>Trois usages immédiats.</strong> Un logotype qui accentue discrètement
+          les trois premières lettres. Une signature qui joue sur la lecture plutôt que sur la visibilité.
+          Et une manière d'expliquer le nom en une phrase, ce qui est exactement ce qu'un praticien
+          demandera.</p>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>Ce qu'il faut décider</h3>
+        <p class="small"><strong>La graphie.</strong> Un seul mot, tout en bas de casse, sans majuscule
+          interne, partout et sans exception. Y compris en début de phrase. C'est une décision qui se
+          prend une fois et ne se rediscute plus.</p>
+        <p class="small"><strong>L'origine.</strong> Si le nom a une origine personnelle ou familiale,
+          elle doit être racontée, une fois, dans la voix du fondateur. Une marque qui explique son nom
+          se retient deux fois mieux. Si l'origine n'existe pas, ne pas en inventer&nbsp;: la lecture
+          par le verbe lire suffit.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <h2 style="margin-top:0">La graphie, en pratique</h2>
+  <div class="g-2-1">
+    <div class="g2">
+      <div class="card card--flat card--tight card--white">
+        <h3 style="color:var(--illus-forest)">Juste</h3>
+        <ul class="check small" style="margin-top:2mm">
+          <li>lisadoc</li>
+          <li>lisadoc.fr</li>
+          <li>lisadoc est l'éditeur des médecins spécialistes.</li>
+          <li>Mouncef · lisadoc</li>
+          <li>Chez lisadoc, rien ne se publie sans signature.</li>
+        </ul>
+      </div>
+      <div class="card card--flat card--tight card--rose">
+        <h3 style="color:var(--rose-deep)">Faux</h3>
+        <ul class="cross small" style="margin-top:2mm">
+          <li>Lisadoc, LisaDoc, LISADOC</li>
+          <li>Lisa Doc, lisa-doc, Lisa'Doc</li>
+          <li>lisadoc<sup>®</sup> dans un texte courant</li>
+          <li>L'agence lisadoc</li>
+          <li>Le nom en capitales dans un titre</li>
+        </ul>
+      </div>
     </div>
     <div class="card card--flat card--warm">
-      <h3>Comment lire la colonne vigilance</h3>
-      <p class="small">Aucun nom n'est parfait, et un nom sans défaut est en général un nom sans caractère.
-        La colonne de droite ne sert pas à éliminer, elle sert à savoir ce qu'il faudra compenser par
-        le dessin, par la signature ou par le discours.</p>
+      <h3>Les deux cas qui posent question</h3>
+      <p class="small"><strong>En début de phrase.</strong> Le nom reste en bas de casse. C'est la règle
+        de la marque, et elle se tient sans exception. Si la minuscule initiale gêne un correspondant,
+        c'est la phrase qu'on réécrit, pas le nom.</p>
+      <p class="small"><strong>Dans un document juridique.</strong> La raison sociale s'écrit comme
+        elle est déposée. Le nom de marque reste en bas de casse partout ailleurs. Les deux coexistent
+        sans conflit, à condition de savoir lequel on emploie.</p>
     </div>
   </div>
   <div class="rf"><b>IV · Le nom</b><span>page 34 / 43</span></div>
@@ -2487,159 +2498,127 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
 
 <!-- ══════════ 35 · NOM · PISTES 6 À 10 ══════════ -->
 <section class="page">
-  <div class="eyebrow">IV · Le nom · pistes 06 à 10</div>
-  <h1>Les cinq suivantes, <em>et leurs limites.</em></h1>
+  <div class="eyebrow">IV · La position</div>
+  <h1>Un concurrent occupe déjà <em>notre angle.</em></h1>
+  <p class="lead">Relevé du 5 septembre 2026. Une agence française, spécialisée sur la chirurgie et la
+    médecine esthétique, tient le terrain déontologique avec un dispositif complet. L'audit détaillé est
+    dans le document Anatomie d'un site qui gagne. Voici ce que la marque doit en retenir.</p>
 
-  <table>
-    <thead><tr><th style="width:28mm">Nom</th><th style="width:31%">Origine et sens</th><th style="width:31%">Ce qu'il installe</th><th>Point de vigilance</th></tr></thead>
-    <tbody>
-      <tr>
-        <td class="nm">Pouls</td>
-        <td class="small">Le battement perçu sous le doigt. Prendre le pouls, c'est le geste d'écoute le plus
-          ancien de la médecine.</td>
-        <td class="small">Une seule syllabe, française, sensorielle. L'écoute et le rythme, la mesure prise
-          avec la main plutôt qu'avec un tableau de bord.</td>
-        <td class="small">Fragile à la dictée, le s final est muet. Consonances gênantes à l'oral.
-          Peu extensible en dehors du français.</td>
-      </tr>
-      <tr>
-        <td class="nm">Sillage</td>
-        <td class="small">La trace laissée derrière un corps en mouvement. Employé pour parler de ce qui
-          reste d'une présence.</td>
-        <td class="small">La réputation comme trace persistante, construite par sédimentation. Élégant,
-          adulte, mémorable. Bonne distinctivité.</td>
-        <td class="small">Poétique, donc opaque sur le métier. Fortement associé à la parfumerie.
-          Ne porte pas la lecture trouvable.</td>
-      </tr>
-      <tr>
-        <td class="nm">Boussole</td>
-        <td class="small">L'instrument d'orientation. L'archétype de l'Explorateur, retenu en troisième
-          position de l'ADN.</td>
-        <td class="small">L'orientation du patient perdu, et l'idée de guide. Chaleureux, immédiat,
-          compris par tous les âges.</td>
-        <td class="small">Très employé dans le conseil et l'édition. Générique, donc peu distinctif.
-          Le guide met l'agence au centre, ce que l'ancrage 04 refuse.</td>
-      </tr>
-      <tr>
-        <td class="nm">Nota Bene<br><span class="micro">ou Nota</span></td>
-        <td class="small">Notez bien. L'annotation savante, la marque de ce qui mérite attention dans un
-          texte.</td>
-        <td class="small">Le Sage et la précision. Le geste de l'annotation, qui est littéralement notre
-          métier appliqué au savoir d'un praticien.</td>
-        <td class="small">Locution très connue du grand public francophone, avec des usages culturels
-          établis et notoires. Risque élevé de confusion et de conflit. À vérifier avant toute autre
-          considération.</td>
-      </tr>
-      <tr>
-        <td class="nm">Indice</td>
-        <td class="small">Le signe qui met sur la voie. Et, dans le vocabulaire technique du référencement,
-          l'index, ce qui est indexé donc trouvable.</td>
-        <td class="small">La double lecture, une fois de plus. Le signe clinique et l'indexation.
-          Court, français, sobre.</td>
-        <td class="small">Polysémie encombrante, indice boursier, indice de prix. Froid au regard du mot
-          accueillant. Faible charge émotionnelle.</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="rule"></div>
-  <div class="g3">
-    <div class="card card--flat card--tight">
-      <h3>Ce que la liste révèle</h3>
-      <p class="small">Les meilleures pistes viennent toutes du vocabulaire du geste médical, anamnèse,
-        pouls, primum, consilium. Les plus faibles viennent du vocabulaire du conseil, boussole, repère,
-        sillage. La marque a plus à gagner en empruntant à la médecine qu'en empruntant au conseil.</p>
+  <div class="g-2-1">
+    <div>
+      <h2>Ce qu'il a construit</h2>
+      <ul class="clean small">
+        <li>99 pages, 206 298 mots publiés, dont 79 articles.</li>
+        <li>Un test de conformité gratuit, cinq minutes, résultat immédiat, en premier bouton de sa page
+          d'accueil.</li>
+        <li>Une certification déontologique auto-décernée, un badge affiché chez le praticien, un registre
+          public. Le badge disparaît si l'abonnement s'arrête.</li>
+        <li>L'équation que nous pensions avoir pour nous, déjà publiée&nbsp;: la conformité déontologique
+          et l'optimisation pour les IA produisent le même résultat.</li>
+        <li>Une fourchette de prix de 5 000 à 12 000 euros, déclarée dans son balisage, jamais affichée
+          en clair.</li>
+      </ul>
+      <h2>Ce qu'il n'a pas</h2>
+      <ul class="clean small">
+        <li><strong>Des clients.</strong> Son registre de certification compte un seul site actif, et
+          c'est sa propre démonstration, signée par une praticienne fictive.</li>
+        <li><strong>Une deuxième spécialité.</strong> Tout son dispositif est calibré pour l'esthétique.</li>
+        <li><strong>La voix du praticien.</strong> Aucun entretien n'est mentionné nulle part.
+          Le contenu est écrit sur le médecin, à partir de sources documentaires.</li>
+      </ul>
     </div>
-    <div class="card card--flat card--tight">
-      <h3>Deux familles écartées</h3>
-      <p class="small">Les noms composés du type nom plus suffixe, écartés au critère 06. Et les noms
-        inventés sans racine, du type Medivo ou Sanora, écartés au critère 07 pour une autre raison.
-        Ils sont protégeables mais vides, et ce client ne se reconnaît pas dans le vide.</p>
-    </div>
-    <div class="card card--flat card--tight">
-      <h3>Le nom du fondateur</h3>
-      <p class="small">Une onzième voie existe et n'a pas été listée, faute d'information. Une marque
-        patronymique. Elle installe la responsabilité personnelle, ce qui est cohérent avec le
-        registre de la signature. Elle plafonne en revanche la revente et la délégation.
-        À trancher si vous le souhaitez.</p>
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">Les trois conséquences pour la marque</h3>
+        <p class="small"><strong style="color:var(--gold)">01. La conformité n'est plus une révélation.</strong>
+          Elle reste notre terrain, elle cesse d'être notre surprise. L'ouverture d'appel ne peut plus
+          reposer sur elle seule.</p>
+        <p class="small"><strong style="color:var(--gold)">02. L'anti-marque s'élargit.</strong>
+          À l'agence-usine de la page 21 s'ajoute une figure nouvelle&nbsp;: le certificateur
+          autoproclamé, qui délivre à un médecin un label inventé par son propre prestataire.
+          Nous ne certifions pas. Nous datons, nous sourçons, nous faisons signer.</p>
+        <p class="small"><strong style="color:var(--gold)">03. Le registre de la peur est pris.</strong>
+          Son message dominant est l'exposition et l'infraction. Le nôtre reste l'accès et l'écoute.
+          Ce choix coûtera des conversions et fabriquera une réputation.</p>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>Ce qui ne se copie pas</h3>
+        <p class="statement" style="font-size:14pt">Ils écrivent <em>sur</em> le praticien.
+          Nous écrivons <em>à partir</em> du praticien.</p>
+        <p class="small" style="margin-top:3mm">Quarante-cinq minutes d'entretien enregistré produisent
+          des phrases qu'aucune documentation ne contient. C'est le seul avantage de ce marché qui ne
+          s'achète pas, ne se rattrape pas, et ne se copie pas.</p>
+      </div>
     </div>
   </div>
-  <div class="rf"><b>IV · Le nom</b><span>page 35 / 43</span></div>
+
+  <div class="rule"></div>
+  <p class="small"><strong>Une règle de conduite.</strong> Aucun de ces constats ne devient un argument
+    nommant le concurrent. La croyance 06 et le respect du confrère valent aussi dans notre propre métier.
+    Ces informations servent à choisir notre terrain, jamais à ouvrir un procès.</p>
+  <div class="rf"><b>IV · La position</b><span>page 35 / 43</span></div>
 </section>
 
 <!-- ══════════ 36 · NOM · RECOMMANDATION ══════════ -->
-<section class="page">
+<section class="page page--dense">
   <div class="eyebrow">IV · Le nom</div>
-  <h1>Trois finalistes. <em>Une recommandation.</em></h1>
+  <h1>Ce qu'il reste <em>à nommer.</em></h1>
+  <p class="lead">Cinq objets de l'écosystème n'ont pas encore de nom, et chacun en mérite un&nbsp;:
+    un objet nommé se vend, se raconte et se réclame. Le vivier de la version 1 sert ici.</p>
 
   <table class="t-compact">
-    <thead><tr><th style="width:26mm">Critère</th><th style="width:24mm">Anamnèse</th><th style="width:24mm">Repère</th><th style="width:24mm">Primum</th><th>Commentaire</th></tr></thead>
+    <thead><tr><th style="width:38mm">L'objet</th><th style="width:26mm">Nom proposé</th><th style="width:30%">Pourquoi celui-là</th><th>Réserve</th></tr></thead>
     <tbody>
-      <tr><td>Dictable</td><td>Moyen</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td class="small">Testable en une journée.</td></tr>
-      <tr><td>Prononçable par tous</td><td>Moyen</td><td><strong>Fort</strong></td><td>Moyen</td><td class="small">Repère passe à tout âge.</td></tr>
-      <tr><td>Court</td><td>Faible</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td class="small">Quatre syllabes contre deux.</td></tr>
-      <tr><td>Sans promesse</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td>Moyen</td><td class="small">Primum peut se lire premier.</td></tr>
-      <tr><td>Sans cliché</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td class="small">Aucun cliché de secteur.</td></tr>
-      <tr><td>Protégeable</td><td><strong>Fort</strong></td><td>Faible</td><td>Moyen</td><td class="small">Repère est un mot courant.</td></tr>
-      <tr><td>Extensible</td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td><strong>Fort</strong></td><td class="small">Les trois tiennent.</td></tr>
-      <tr><td>Double lecture</td><td>Moyen</td><td><strong>Fort</strong></td><td>Faible</td><td class="small">Repère porte les deux sens.</td></tr>
-      <tr><td>Appartenance au monde médical</td><td><strong>Fort</strong></td><td>Faible</td><td><strong>Fort</strong></td><td class="small">Le critère qui départage.</td></tr>
-      <tr><td>Porte une valeur élue</td><td><strong>Écoute</strong></td><td>Aucune</td><td><strong>Respect</strong></td><td class="small">Anamnèse seul nomme une valeur élue.</td></tr>
+      <tr><td><strong>L'entretien de 45 minutes</strong><br><span class="micro">le cœur de la production</span></td>
+        <td class="nm">L'Anamnèse</td>
+        <td class="small">En médecine, l'entretien par lequel le praticien recueille l'histoire du patient avant tout examen. Le moment où l'on écoute. Notre entretien fait cela, à l'envers.</td>
+        <td class="small">Le Recueil, plus simple mais moins signant.</td></tr>
+      <tr><td><strong>L'étude offerte par spécialité</strong><br><span class="micro">l'outil d'entrée</span></td>
+        <td class="nm">Le Repère</td>
+        <td class="small">Il montre où le praticien se situe sur son territoire, et qui apparaît à sa place. Un point de repère, pas un audit.</td>
+        <td class="small">L'État des lieux, descriptif et sans risque.</td></tr>
+      <tr><td><strong>Le rapport mensuel</strong><br><span class="micro">une page, trois minutes</span></td>
+        <td class="nm">Le Pouls</td>
+        <td class="small">Le geste d'écoute le plus ancien de la médecine. Court, mensuel, sans emphase. Le registre juste pour un rapport d'une page.</td>
+        <td class="small">La Vigie, si le suivi d'e-réputation prend plus de place.</td></tr>
+      <tr><td><strong>Le réseau de questions</strong><br><span class="micro">l'effet réseau de la brique Q/R</span></td>
+        <td class="nm">Consilium</td>
+        <td class="small">Le consilium réunit plusieurs praticiens autour d'un cas. Une question posée chez un ophtalmologiste est proposée à tous, chacun répondant dans ses mots. Littéralement un consilium.</td>
+        <td class="small">Sur le site du praticien, la brique reste nommée sobrement&nbsp;: les questions de vos patients.</td></tr>
+      <tr><td><strong>La lettre</strong><br><span class="micro">l'axe d'identité du cadrage</span></td>
+        <td class="nm">Nota</td>
+        <td class="small">Notez bien. L'annotation savante, le registre du Sage.</td>
+        <td class="small"><strong>Vérification prioritaire</strong>&nbsp;: la locution complète est très employée dans le francophone. Sillage en réserve.</td></tr>
     </tbody>
   </table>
 
-  <div class="g-2-1" style="margin-top:5mm">
+  <div class="rule" style="margin:4mm 0 3mm"></div>
+  <div class="g-2-1">
     <div class="card card--ink">
-      <span class="micro" style="color:var(--gold)">Recommandation</span>
-      <p class="statement" style="font-size:26pt; color:var(--cream); margin:2mm 0 4mm">Anamnèse</p>
-      <p class="small">Quatre raisons, dans l'ordre de poids.</p>
-      <ul class="num small">
-        <li>L'écoute n'est pas revendiquée, elle est inscrite dans le nom. Aucune autre piste ne
-          nomme une valeur élue.</li>
-        <li>Il dit la niche sans la décrire. Un praticien entend ce mot chaque semaine, une entreprise
-          hors santé ne le porterait jamais. Le nom trie à notre place.</li>
-        <li>Il est distinctif, donc défendable, donc capitalisable. Un nom courant se dilue.</li>
-        <li>Il dit une méthode et un ordre. On écoute d'abord, on conclut après.</li>
-      </ul>
-      <p class="small" style="margin-top:3mm"><strong style="color:var(--gold)">La faiblesse, traitée.</strong>
-        Le mot est inconnu des patients, sans incidence. La marque de l'agence n'apparaît pas sur les
-        surfaces destinées aux patients, l'ancrage 04 l'interdit déjà. Le nom est jugé par les praticiens
-        seuls.</p>
+      <h3 style="color:var(--gold)">Ce que nous ne nommons pas, volontairement</h3>
+      <p class="small">Le concurrent a nommé sa preuve&nbsp;: badge, certification, registre. Efficace,
+        et c'est une posture d'autorité qu'aucune agence ne tient légitimement face à un ordre.</p>
+      <p class="statement" style="font-size:14pt; color:var(--cream); margin-top:3mm">Notre preuve n'a
+        pas de nom. <em>Elle a une date et une signature.</em></p>
+      <p class="small" style="margin-top:3mm">Contenu vérifié le [date] par le Dr [X]. Rien à certifier,
+        rien à retirer quand le client part.</p>
     </div>
     <div>
       <div class="card card--flat card--warm">
-        <h3>Signatures possibles</h3>
-        <p class="small"><strong>Anamnèse.</strong> On écoute d'abord.</p>
-        <p class="small"><strong>Anamnèse.</strong> L'expertise rendue trouvable.</p>
-        <p class="small"><strong>Anamnèse.</strong> Le bon patient, le bon spécialiste.</p>
-        <p class="small muted">La troisième est la raison d'être elle-même. La plus forte, la plus
-          exigeante à tenir.</p>
+        <h3>La règle de nommage de l'écosystème</h3>
+        <ul class="clean small">
+          <li>Un objet nommé doit être <strong>livrable et facturable</strong>, ou ne pas être nommé.</li>
+          <li>Les noms viennent du <strong>geste médical</strong>, jamais du vocabulaire du marketing.</li>
+          <li>Article défini, majuscule initiale, jamais de sigle.</li>
+          <li>Le nom de l'objet ne prend jamais le pas sur lisadoc.</li>
+        </ul>
       </div>
-      <div class="card card--flat" style="margin-top:4mm">
-        <h3>Si Anamnèse est écarté</h3>
-        <p class="small"><strong>Repère</strong> est le choix de la simplicité. Plus chaleureux, moins
-          défendable. À renforcer par un dessin très caractéristique.</p>
-        <p class="small"><strong>Primum</strong> est le choix de l'éthique affichée. Excellent auprès des
-          praticiens, à condition d'écrire que le nom ne signifie pas premier.</p>
+      <div class="card card--flat card--white" style="margin-top:4mm">
+        <h3>LisaDR, hors de ce document</h3>
+        <p class="small">Une seule remarque de marque&nbsp;: la ligne rouge du compérage vaut aussi pour
+          lui. S'il devient un apporteur de patients, il contredit la catégorie de la page 18 et abîme
+          lisadoc. À arbitrer avant de le construire.</p>
       </div>
-    </div>
-  </div>
-  <div class="rule" style="margin:4mm 0 3mm"></div>
-  <div class="g3">
-    <div class="card card--flat card--tight">
-      <h3>Le test terrain, cinq jours</h3>
-      <p class="small">Jour 1, dictée à cinq secrétariats. Jour 2, prononciation par cinq praticiens.
-        Jour 3, antériorité. Jour 4, domaines. Jour 5, décision.</p>
-    </div>
-    <div class="card card--flat card--tight">
-      <h3>La graphie, si Anamnèse est retenu</h3>
-      <p class="small">Bas de casse, accent grave, toujours. Jamais en capitales. L'accent porte la
-        moitié du caractère du mot.</p>
-    </div>
-    <div class="card card--flat card--tight">
-      <h3>Ce que le nom ne dit pas</h3>
-      <p class="small">Ni le référencement, ni la médecine, ni le territoire. Le nom porte la méthode,
-        la signature porte le métier.</p>
     </div>
   </div>
   <div class="rf"><b>IV · Le nom</b><span>page 36 / 43</span></div>
@@ -2708,9 +2687,10 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
   <div class="rule"></div>
   <div class="g3">
     <div class="card card--flat card--tight card--warm">
-      <h3>Le plafond</h3>
-      <p class="small">Un nombre maximum de cabinets accompagnés, décidé par vous, publié sur le site,
-        et tenu. C'est la seule preuve vérifiable de la sélection contre le volume.</p>
+      <h3>Le filtre</h3>
+      <p class="small">Les cinq critères d'entrée de la page 08, cumulatifs, et le registre des refus.
+        C'est la preuve vérifiable de la sélection contre le volume, et elle ne dépend d'aucun chiffre
+        à tenir.</p>
     </div>
     <div class="card card--flat card--tight card--warm">
       <h3>Le prix</h3>
@@ -2718,9 +2698,11 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
         pécuniaire ne consiste pas à cacher l'argent, il consiste à ne plus avoir à en parler.</p>
     </div>
     <div class="card card--flat card--tight card--warm">
-      <h3>L'exclusivité territoriale</h3>
-      <p class="small">Un seul cabinet par spécialité et par territoire. Sans cette règle, deux clients
-        se disputent la même recherche et la marque se contredit elle-même. À écrire au contrat.</p>
+      <h3>La capacité annoncée</h3>
+      <p class="small">Nous produisons un nombre de sites par mois, le prochain créneau est à telle date.
+        Un fait d'artisan qui a du travail, à condition que le chiffre soit vrai. <strong>L'exclusivité
+        par commune a été examinée et écartée&nbsp;:</strong> les praticiens ne se comparent pas entre eux,
+        et un plafond ferme la porte au bout de trois ans.</p>
     </div>
   </div>
   <div class="rf"><b>V · La mise en service</b><span>page 37 / 43</span></div>
@@ -2916,8 +2898,8 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
         trimestre détruit la niche pour trois ans. Le refus initial est le plus coûteux et le plus rentable.</p>
       <p class="small"><strong>Attendre la marque pour parler.</strong> Le socle de ce document permet de
         parler dès aujourd'hui. Le logo ne conditionne aucune conversation.</p>
-      <p class="small"><strong>Confondre lancement et rythme.</strong> Une agence de référencement se juge
-        sur trois ans. La croyance 07 s'applique d'abord à nous.</p>
+      <p class="small"><strong>Confondre lancement et rythme.</strong> Une réputation de spécialité se
+        construit sur trois ans. La croyance 07 s'applique d'abord à nous.</p>
     </div>
     <div class="card card--flat card--white">
       <h3>Ce qui n'est pas dans ces quatre-vingt-dix jours</h3>
@@ -2931,22 +2913,22 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
 </section>
 
 <!-- ══════════ 41 · FICHE QBP ══════════ -->
-<section class="page">
+<section class="page page--dense">
   <div class="eyebrow">V · La fiche de profil</div>
   <h1>Le profil de marque, <em>prêt à saisir.</em></h1>
-  <p class="lead">La synthèse opérable de tout le document. C'est cette fiche qui alimente les phases 02 à 05,
-    et c'est elle qu'il faut avoir sous les yeux à chaque décision.</p>
+  <p class="lead">La synthèse opérable de tout le document, à avoir sous les yeux à chaque décision.</p>
 
   <table class="t-compact">
     <tbody>
-      <tr><th style="width:44mm">Nom de marque</th><td><strong>Anamnèse</strong> <span class="micro">recommandé, page 36. Repère et Primum en réserve.</span></td></tr>
+      <tr><th style="width:44mm">Nom de marque</th><td><strong>lisadoc</strong> <span class="micro">arrêté. Bas de casse, un seul mot, sans majuscule interne. Banc d'essai page 34.</span></td></tr>
       <tr><th>Essence</th><td><strong>Traduire sans trahir.</strong></td></tr>
-      <tr><th>L'étincelle</th><td>Le moment de l'entretien où le prisme a changé. Ne plus regarder le
-        marché par le médecin, la plateforme ou le produit, mais par le patient. Devant la maladie,
-        personne n'a d'avance.</td></tr>
+      <tr><th>L'étincelle</th><td>Le moment où le prisme a changé. Ne plus regarder le marché par le
+        médecin ni par le produit, mais par le patient. Devant la maladie, personne n'a d'avance.</td></tr>
       <tr><th>Raison d'être</th><td>Que le bon patient trouve le bon spécialiste.</td></tr>
       <tr><th>Promesse</th><td>Nous ne vous inventons pas une réputation. Nous rendons visible celle que
         vous avez déjà.</td></tr>
+      <tr><th>Catégorie</th><td>Éditeur de médecins spécialistes. Ni agence web, ni agence de publicité,
+        ni plateforme, ni annuaire, et jamais un apporteur de patients.</td></tr>
       <tr><th>Archétypes</th><td>Sage 55, Magicien 30, Explorateur 15. Références retenues, TED Talks,
         Disney, Patagonia.</td></tr>
       <tr><th>Paradoxe</th><td>Une parole qui ne plie pas. Une main qui ne lâche pas. Intransigeance sur la
@@ -2955,32 +2937,34 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
         promesse de position, vocabulaire de peur. Dix pratiques refusées, page 21.</td></tr>
       <tr><th>Valeurs élues</th><td>Écoute, Accueil, Respect, Assurance, Exigence. Ordre d'arbitrage en cas
         de conflit, Respect, Exigence, Écoute, Accueil, Assurance.</td></tr>
-      <tr><th>Toujours et jamais</th><td>Dix-huit lignes, page 22. Les neuf interdits sont opposables au
-        contrat.</td></tr>
+      <tr><th>Toujours et jamais</th><td>Dix-huit lignes, page 22, opposables au contrat.</td></tr>
       <tr><th>Persona primaire</th><td>Le cabinet neuf, porte 01, contrainte de conception.
         Cœur de valeur, le respecté invisible, porte 02.</td></tr>
       <tr><th>Bénéficiaire final</th><td>Le patient. Ne paie rien, arbitre tout.</td></tr>
-      <tr><th>Profil sensoriel</th><td>Le calme d'une salle d'attente bien tenue. La lumière latérale de fin
-        de journée. Le papier mat plutôt que l'écran brillant. Une odeur de propre, pas de désinfectant.
-        Le silence, puis une voix posée.</td></tr>
+      <tr><th>Profil sensoriel</th><td>Le calme d'une salle d'attente bien tenue. La lumière latérale de
+        fin de journée. Le papier mat plutôt que l'écran brillant. Le silence, puis une voix posée.</td></tr>
       <tr><th>Direction chromatique</th><td>Encre #14252C, Papier #F5F1E8, Blouse #FFFFFF, Sauge #7C9A8E,
-        Argile #B5563C, Ardoise #5C6A6F. Proportions 80, 12, 4, 3, 1. Aucun bleu médical saturé.</td></tr>
+        Argile #B5563C, Ardoise #5C6A6F. Proportions 80, 12, 4, 3, 1. Aucun bleu médical saturé.
+        <span class="micro">Vaut pour la marque lisadoc. Les sites clients ont leur propre habillage,
+        piloté par trois sentiments choisis en entretien.</span></td></tr>
       <tr><th>Direction typographique</th><td>Newsreader pour les titres, Inter pour les textes,
         IBM Plex Mono pour les preuves. Corps minimum seize pixels. Aucun texte justifié.</td></tr>
       <tr><th>ADN visuel</th><td>La propreté du laboratoire, la chaleur du papier. La preuve visible.
-        Le praticien au centre, la marque en cadre. Un seul accent chaud. Photographie réelle uniquement.
-        Schéma comme seule illustration.</td></tr>
-      <tr><th>Paysage concurrentiel</th><td>Six familles identifiées. Agences généralistes locales.
-        Agences spécialisées santé. Plateformes de rendez-vous qui captent le référencement à leur profit.
-        Annuaires. Prestataires web du secteur médical. Et l'auto-gestion par le secrétariat, qui est le
-        concurrent réel le plus fréquent.
-        <span class="micro">Noms, offres et prix à documenter au premier mandat. Aucun n'est avancé ici.</span></td></tr>
-      <tr><th>Priorités stratégiques</th><td>01 Trancher et protéger le nom. 02 Choisir un marché et une
-        spécialité d'entrée. 03 Construire les preuves avant les clients, méthode publiée, page des refus,
-        registre. 04 Trois Recueils facturés et deux mandats au maximum. 05 Faire valider le cadre
-        déontologique.</td></tr>
-      <tr><th>Ce qui reste ouvert</th><td>Le nom définitif. Le marché et la langue. La première spécialité.
-        Le plafond de cabinets. Le niveau de prix.</td></tr>
+        Le praticien au centre, la marque en cadre. Un seul accent chaud. Photographie réelle uniquement.</td></tr>
+      <tr><th>Paysage concurrentiel</th><td>Six familles. Agences généralistes locales. Plateformes de
+        rendez-vous qui captent le référencement à leur profit. Annuaires. Prestataires web du secteur
+        médical. L'auto-gestion par le secrétariat, concurrent réel le plus fréquent. Et
+        <strong>une agence spécialisée documentée</strong>, sur la seule chirurgie esthétique&nbsp;:
+        99 pages, 206 298 mots, dispositif de certification déontologique, 5 000 à 12 000 euros,
+        aucun client public. Audit du 5 septembre 2026, page 35.</td></tr>
+      <tr><th>Priorités stratégiques</th><td>01 Protéger le nom, classes 35 et 42. 02 Choisir la
+        spécialité d'entrée, en évitant la chirurgie esthétique. 03 Construire le premier site réel,
+        celui d'une praticienne exerçante, qui sert de démonstration. 04 Publier la méthode, les prix et
+        les refus. 05 Trois Repères facturés, deux mandats au maximum. 06 Faire valider le cadre
+        déontologique par un conseil.</td></tr>
+      <tr><th>Ce qui reste ouvert</th><td>La première spécialité. La capacité de production annoncée.
+        Le diagnostic automatique, à outiller ou non. Les noms de l'écosystème, page 36. La palette et le
+        couple typographique du template.</td></tr>
     </tbody>
   </table>
   <div class="rf"><b>V · La fiche de profil</b><span>page 41 / 43</span></div>
@@ -3070,24 +3054,24 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
 <section class="page page--ink">
   <div class="eyebrow">Clôture</div>
   <h1 style="color:var(--cream)">Cinq décisions. <em>Puis on construit.</em></h1>
-  <p class="lead">Le socle est posé. Il ne bougera plus, sauf sur votre correction. Cinq décisions restent,
-    et aucune ne nous appartient.</p>
+  <p class="lead">Le socle est posé, le nom est arrêté, le concurrent est cartographié. Cinq décisions
+    restent, et aucune ne nous appartient.</p>
 
   <div class="g2">
     <div>
       <ul class="num" style="font-size:var(--t-body)">
-        <li><span class="lb"><strong style="color:var(--gold)">Le nom.</strong><br><span class="small">Anamnèse est recommandé.
-          Repère et Primum sont en réserve. Les six vérifications de la page 33 sont à lancer le jour de
-          la décision, pas après.</span></span></li>
-        <li><span class="lb"><strong style="color:var(--gold)">Le marché et la langue.</strong><br><span class="small">France,
-          Maghreb, ou les deux. Un seul pour les douze premiers mois. Ce choix commande la production
-          éditoriale et le cadre juridique.</span></span></li>
-        <li><span class="lb"><strong style="color:var(--gold)">La première spécialité.</strong><br><span class="small">Elle
-          détermine le glossaire, les questions de départ et les premiers entretiens. Le critère est simple.
-          Celle où vous avez déjà un praticien qui vous fait confiance.</span></span></li>
-        <li><span class="lb"><strong style="color:var(--gold)">Le plafond de cabinets.</strong><br><span class="small">Un
-          nombre, publié, tenu. C'est la promesse la plus difficile de ce document et la plus
-          différenciante.</span></span></li>
+        <li><span class="lb"><strong style="color:var(--gold)">La spécialité du lancement.</strong><br><span class="small">
+          Celle où vous avez déjà un praticien qui vous fait confiance. En évitant la chirurgie
+          esthétique, tenue par un acteur outillé et publié.</span></span></li>
+        <li><span class="lb"><strong style="color:var(--gold)">Le premier site réel.</strong><br><span class="small">
+          Il sert de démonstration, de preuve et de matrice pour les templates. Le concurrent n'a qu'une
+          praticienne fictive. C'est notre avantage le plus rapide à prendre.</span></span></li>
+        <li><span class="lb"><strong style="color:var(--gold)">Le diagnostic automatique.</strong><br><span class="small">
+          Outiller ou non un test de conformité instantané. C'est le seul élément du dispositif adverse
+          que je recommande de reprendre, et il demande du développement.</span></span></li>
+        <li><span class="lb"><strong style="color:var(--gold)">La capacité annoncée.</strong><br><span class="small">
+          Combien de sites par mois, mesuré et non décrété. Ce chiffre remplace l'exclusivité
+          territoriale, écartée.</span></span></li>
         <li><span class="lb"><strong style="color:var(--gold)">La validation déontologique.</strong><br><span class="small">Un
           conseil compétent en droit de la santé, sur le marché retenu, avant le premier mandat.
           Rien ne se lance sans cette page signée.</span></span></li>
@@ -3096,9 +3080,10 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
     <div>
       <div class="card card--tight" style="background:rgba(251,245,230,.07); border-color:rgba(251,245,230,.3); box-shadow:none">
         <h3 style="color:var(--gold)">Ce que nous faisons ensuite</h3>
-        <p class="small" style="color:var(--cream)">Dès que le nom est tranché, la Phase 02 s'ouvre avec le
-          brief de la page 31. Marque, logotype, application, voix appliquée aux surfaces.
-          Puis la Phase 03 sur le contenu, avec la boucle de signature comme mécanisme central.</p>
+        <p class="small" style="color:var(--cream)">La Phase 02 s'ouvre avec le brief de la page 31.
+          Logotype, application, voix appliquée aux surfaces, en tenant compte de la lecture du nom par
+          le verbe lire, page 34. Puis la Phase 03 sur le contenu, avec la boucle de signature comme
+          mécanisme central.</p>
         <p class="small" style="color:var(--cream)">La fiche de la page 41 est le point d'entrée.
           Elle se saisit une fois. Tout ce qui suit la lit.</p>
       </div>
@@ -3123,7 +3108,7 @@ td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wgh
       <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:rgba(251,245,230,.15)">Valeurs</th>
         <td style="color:var(--cream); border-bottom-color:rgba(251,245,230,.15)">Écoute, accueil, respect, assurance, exigence. Dans cet ordre de travail.</td></tr>
       <tr><th style="color:rgba(251,245,230,.6); border-bottom-color:transparent">Anti-marque</th>
-        <td style="color:var(--cream); border-bottom-color:transparent">L'agence-usine. Le volume, l'absence de filtre, la promesse que l'expérience trahit.</td></tr>
+        <td style="color:var(--cream); border-bottom-color:transparent">L'agence-usine, et le certificateur autoproclamé. Le volume, l'absence de filtre, la promesse que l'expérience trahit.</td></tr>
     </tbody>
   </table>
   <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:0.4mm solid rgba(251,245,230,.25); padding-top:5mm">
