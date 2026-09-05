@@ -2,8 +2,9 @@ import { chromium } from 'playwright';
 import path from 'node:path';
 
 const dir = path.dirname(new URL(import.meta.url).pathname);
-const src = 'file://' + path.join(dir, 'plateforme-de-marque.html');
-const out = path.join(dir, 'plateforme-de-marque.pdf');
+const name = process.argv[2] || 'plateforme-de-marque';
+const src = 'file://' + path.join(dir, name + '.html');
+const out = path.join(dir, name + '.pdf');
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 900, height: 1200 } });

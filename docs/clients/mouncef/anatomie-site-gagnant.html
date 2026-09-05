@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomie d'un site qui gagne · audit et blueprint template lisadoc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+<style>
+:root{
+  /* Surface · Design System v3.4 */
+  --cream:#FBF5E6; --cream-card:#F2EBD3; --cream-warm:#ECDDB8; --cream-edge:#DBD4C0;
+  --cream-rose:#F4D9DD; --white:#FFFEF8;
+  /* Ink */
+  --ink:#2D1521; --ink-75:rgba(45,21,33,0.75); --ink-62:rgba(45,21,33,0.62);
+  --ink-50:rgba(45,21,33,0.50); --ink-25:rgba(45,21,33,0.25); --ink-12:rgba(45,21,33,0.12);
+  /* Brand triad */
+  --gold:#E0B069; --rose:#CA6180; --teal:#9ED3DC;
+  --rose-deep:#8E3F58; --teal-deep:#5BA8B5; --gold-deep:#B58840; --aubergine:#4A2B3A;
+  /* Phases */
+  --phase-acquisition:#C5E5E9; --phase-discovery:#9CC4A2; --phase-creation:#B5C8E5;
+  --phase-content:#FCB7C7; --phase-execution:#E89380; --phase-intelligence:#B080A0;
+  /* Illustration palette */
+  --illus-forest:#5B7E6A; --illus-peach:#E89380; --illus-coral:#DC6B52;
+  --illus-mustard:#D4B85A; --illus-rust:#B8704D; --illus-lavender:#B8A0C7;
+  --illus-pink-soft:#F4C4D0;
+
+  /* Palette proposée pour la marque cliente (présentée en pages 23) */
+  --c-encre:#14252C; --c-papier:#F5F1E8; --c-blouse:#FFFFFF;
+  --c-sauge:#7C9A8E; --c-sauge-fonce:#3F5A50;
+  --c-argile:#B5563C; --c-argile-fonce:#8E3F26; --c-ardoise:#5C6A6F;
+
+  /* Fonts */
+  --f-display:'Fraunces','Times New Roman',serif;
+  --f-body:'Inter','Helvetica Neue',sans-serif;
+  --f-mono:'JetBrains Mono','Courier New',monospace;
+
+  /* Print type scale (points, deliberately fixed for print determinism) */
+  --t-cover:42pt; --t-h1:23pt; --t-h2:13.5pt; --t-h3:10pt;
+  --t-lead:11pt; --t-body:9.5pt; --t-small:8.4pt; --t-micro:7.1pt; --t-eyebrow:7.4pt;
+  --t-quote:12pt; --t-big:18pt;
+
+  /* Print space scale (mm) */
+  --s-3xs:1.2mm; --s-2xs:2.1mm; --s-xs:3.3mm; --s-s:5mm; --s-m:7.5mm; --s-l:10mm; --s-xl:14mm;
+
+  /* Page geometry */
+  --page-w:210mm; --page-h:297mm; --page-pad-x:17mm; --page-pad-y:15mm;
+  --radius-card:3mm; --shadow-hard:3px 3px 0 var(--ink);
+  /* Audit accents */
+  --win:#5B7E6A; --win-soft:#DCE7DF; --risk:#8E3F58; --risk-soft:#F4D9DD; --neutral:#B58840;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{background:#4A2B3A;}
+body{
+  font-family:var(--f-body); color:var(--ink); background:#4A2B3A;
+  -webkit-font-smoothing:antialiased; padding:12mm 0;
+}
+.page{
+  position:relative; width:var(--page-w); min-height:var(--page-h);
+  margin:0 auto 8mm; background:var(--cream);
+  padding:var(--page-pad-y) var(--page-pad-x) 19mm;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.page--ink{background:var(--ink); color:var(--cream);}
+.page--card{background:var(--cream-card);}
+/* Dense variant: pages whose content runs 2 to 3 percent long. Same system, one notch tighter. */
+.page--dense{--t-body:9.1pt; --t-small:8.05pt; --t-h2:13pt; --s-xs:2.9mm; --s-s:4.3mm;}
+.page--dense p{line-height:1.44;}
+.page--dense li{line-height:1.38;}
+
+/* Running elements */
+.rf{
+  position:absolute; left:var(--page-pad-x); right:var(--page-pad-x); bottom:11mm;
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:var(--f-mono); font-size:var(--t-micro); letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-50);
+  border-top:0.4mm solid var(--ink-12); padding-top:2.5mm;
+}
+.page--ink .rf{color:rgba(251,245,230,.55); border-top-color:rgba(251,245,230,.20);}
+.rf b{font-weight:400;}
+
+/* Eyebrow + headline rhythm */
+.eyebrow{
+  font-family:var(--f-mono); font-size:var(--t-eyebrow); font-weight:500;
+  letter-spacing:.20em; text-transform:uppercase; color:var(--ink-62);
+  display:flex; align-items:center; gap:3mm; margin-bottom:var(--s-xs);
+}
+.eyebrow::before{
+  content:""; width:5mm; height:1.6mm; background:var(--gold); border-radius:1mm; flex:none;
+}
+.page--ink .eyebrow{color:rgba(251,245,230,.62);}
+h1{
+  font-family:var(--f-display); font-size:var(--t-h1); line-height:.98;
+  letter-spacing:-.02em; font-variation-settings:"wght" 740,"opsz" 144,"SOFT" 70,"WONK" 0;
+  margin-bottom:var(--s-xs);
+}
+h1 em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 640,"opsz" 144,"SOFT" 60,"WONK" 1;}
+.page--ink h1 em{color:var(--gold);}
+h2{
+  font-family:var(--f-display); font-size:var(--t-h2); line-height:1.1;
+  letter-spacing:-.012em; font-variation-settings:"wght" 700,"opsz" 72,"SOFT" 80;
+  margin-bottom:var(--s-3xs); margin-top:var(--s-xs);
+}
+h3{
+  font-family:var(--f-mono); font-size:var(--t-h3); font-weight:600;
+  letter-spacing:.04em; margin-bottom:var(--s-3xs); margin-top:var(--s-xs);
+}
+p{font-size:var(--t-body); line-height:1.48; margin-bottom:var(--s-2xs); max-width:none;}
+.lead{font-size:var(--t-lead); line-height:1.5; color:var(--ink-75); margin-bottom:var(--s-s);}
+.page--ink .lead{color:rgba(251,245,230,.78);}
+.small{font-size:var(--t-small); line-height:1.42;}
+.micro{font-family:var(--f-mono); font-size:var(--t-micro); letter-spacing:.06em; color:var(--ink-62);}
+.muted{color:var(--ink-62);}
+strong{font-weight:650;}
+em.i{font-style:italic;}
+.wordmark{font-family:var(--f-display); font-style:italic; font-variation-settings:"wght" 600,"SOFT" 60; text-transform:lowercase;}
+
+.rule{height:0.4mm; background:var(--ink-12); margin:var(--s-s) 0;}
+.rule--gold{height:1.2mm; width:14mm; background:var(--gold); border-radius:1mm; margin:var(--s-xs) 0;}
+
+/* Grids */
+.g2{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-s);}
+.g3{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-xs);}
+.g4{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-2xs);}
+.g5{display:grid; grid-template-columns:repeat(5,1fr); gap:var(--s-2xs);}
+.g-2-1{display:grid; grid-template-columns:1.6fr 1fr; gap:var(--s-s);}
+
+/* Cards */
+.card{
+  background:var(--cream-card); border:0.5mm solid var(--ink);
+  border-radius:var(--radius-card); padding:var(--s-2xs) var(--s-xs) var(--s-xs);
+  box-shadow:var(--shadow-hard);
+}
+.card--flat{box-shadow:none;}
+.card--white{background:var(--white);}
+.card--warm{background:var(--cream-warm);}
+.card--rose{background:var(--cream-rose);}
+.card--ink{background:var(--ink); color:var(--cream); border-color:var(--ink);}
+.card--ink .micro,.card--ink .muted{color:rgba(251,245,230,.66);}
+.card h3{margin-top:0;}
+.card p:last-child{margin-bottom:0;}
+.card--tight{padding:var(--s-xs);}
+
+.tag{
+  display:inline-flex; align-items:center; gap:2mm; font-family:var(--f-mono);
+  font-size:var(--t-micro); letter-spacing:.14em; text-transform:uppercase;
+  border:0.4mm solid var(--ink-25); border-radius:10mm; padding:1mm 3mm; color:var(--ink-75);
+}
+.tag .dot{width:2.2mm; height:2.2mm; border-radius:50%; background:var(--gold); flex:none;}
+
+/* Lists */
+ul,ol{margin:0 0 var(--s-2xs) 0; padding-left:5mm;}
+li{font-size:var(--t-body); line-height:1.42; margin-bottom:1.4mm;}
+ul.clean{list-style:none; padding-left:0;}
+ul.clean li{display:flex; gap:2.5mm; align-items:baseline;}
+ul.clean li::before{content:"·"; font-weight:700; color:var(--gold-deep); flex:none;}
+ul.check li::before{content:"OUI"; font-family:var(--f-mono); font-size:6.4pt; letter-spacing:.08em; color:var(--illus-forest); flex:none; width:8mm;}
+ul.cross li::before{content:"NON"; font-family:var(--f-mono); font-size:6.4pt; letter-spacing:.08em; color:var(--rose-deep); flex:none; width:8mm;}
+ul.num{list-style:none; padding-left:0; counter-reset:n;}
+ul.num li{counter-increment:n; display:flex; gap:2.4mm;}
+ul.num li::before{
+  content:counter(n,decimal-leading-zero); font-family:var(--f-mono); font-size:var(--t-micro);
+  color:var(--gold-deep); flex:none; padding-top:.3mm;
+}
+
+/* Tables */
+table{width:100%; border-collapse:collapse; font-size:var(--t-small);}
+th{
+  font-family:var(--f-mono); font-size:var(--t-micro); font-weight:500; letter-spacing:.12em;
+  text-transform:uppercase; text-align:left; color:var(--ink-62);
+  padding:0 2mm 1.8mm 0; vertical-align:bottom;
+}
+thead th{border-bottom:0.5mm solid var(--ink);}
+tbody th{border-bottom:0.35mm solid var(--ink-12); vertical-align:top; padding:1.5mm 2mm 1.5mm 0;}
+tbody tr:last-child th{border-bottom:none;}
+td{
+  padding:1.5mm 2mm 1.5mm 0; border-bottom:0.35mm solid var(--ink-12);
+  vertical-align:top; line-height:1.42;
+}
+tr:last-child td{border-bottom:none;}
+td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wght" 700,"opsz" 48,"SOFT" 80; line-height:1.05; letter-spacing:-.01em;}
+.t-compact td,.t-compact th{padding-right:1.5mm;}
+
+/* Attribute columns (exercice 05) */
+.attr{list-style:none; padding:0;}
+.attr li{font-size:7.6pt; line-height:1.36; color:var(--ink-62); margin:0;}
+.attr li.on{color:var(--ink); font-weight:700;}
+.colhead{
+  font-family:var(--f-mono); font-size:var(--t-micro); letter-spacing:.14em; text-transform:uppercase;
+  padding-bottom:1.5mm; margin-bottom:2.5mm; border-bottom:0.5mm solid var(--ink);
+}
+.flow{display:flex; align-items:center; gap:2mm; font-family:var(--f-mono); font-size:var(--t-micro);}
+
+/* Swatches */
+.sw{border:0.5mm solid var(--ink); border-radius:2mm; overflow:hidden;}
+.sw .chip{height:17mm;}
+.sw .meta{padding:2mm 2.5mm 2.5mm; background:var(--white);}
+.sw .meta .n{font-family:var(--f-display); font-size:10pt; font-variation-settings:"wght" 700,"opsz" 48; display:block; line-height:1.1;}
+.sw .meta .h{font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.08em; color:var(--ink-62);}
+.sw .meta .u{font-size:7.2pt; line-height:1.35; color:var(--ink-75); display:block; margin-top:1mm;}
+
+/* Quote block */
+.quote{
+  font-family:var(--f-display); font-size:var(--t-quote); line-height:1.28;
+  font-variation-settings:"wght" 500,"opsz" 72,"SOFT" 60; font-style:italic;
+  border-left:1.2mm solid var(--gold); padding-left:var(--s-xs); margin:var(--s-xs) 0;
+}
+.quote cite{display:block; font-family:var(--f-mono); font-style:normal; font-size:var(--t-micro);
+  letter-spacing:.12em; text-transform:uppercase; color:var(--ink-50); margin-top:2.5mm;}
+
+/* Cover */
+.cover{justify-content:space-between; background:var(--cream);}
+.cover-top{display:flex; justify-content:space-between; align-items:flex-start;}
+.cover-lockup{height:11mm;}
+.cover-h1{
+  font-family:var(--f-display); font-size:var(--t-cover); line-height:.94; letter-spacing:-.028em;
+  font-variation-settings:"wght" 760,"opsz" 144,"SOFT" 65,"WONK" 0;
+}
+.cover-h1 em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 620,"opsz" 144,"SOFT" 55,"WONK" 1;}
+.cover-meta{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-xs); border-top:0.5mm solid var(--ink); padding-top:var(--s-xs);}
+.cover-meta .k{font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-50); display:block; margin-bottom:1.5mm;}
+.cover-meta .v{font-size:8.4pt; line-height:1.35;}
+.cover-arcs{position:absolute; right:-40mm; top:52mm; width:150mm; height:150mm; border:1mm solid var(--ink-12); border-radius:50%;}
+.cover-arcs2{position:absolute; right:-14mm; top:96mm; width:88mm; height:88mm; border:1mm solid rgba(224,176,105,.55); border-radius:50%;}
+
+/* Manifesto */
+.manifesto{max-width:146mm;}
+.manifesto p{
+  font-family:var(--f-display); font-size:14.5pt; line-height:1.32;
+  font-variation-settings:"wght" 460,"opsz" 96,"SOFT" 60; margin-bottom:var(--s-s);
+}
+.manifesto p.hi{font-style:italic; color:var(--gold);}
+
+/* Big statement */
+.statement{
+  font-family:var(--f-display); font-size:var(--t-big); line-height:1.16; letter-spacing:-.015em;
+  font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 75;
+}
+.statement em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 620,"WONK" 1;}
+
+.lb{display:block;}
+.spacer{flex:1 1 auto; min-height:var(--s-2xs);}
+.nowrap{white-space:nowrap;}
+
+/* Audit-only components */
+.kpi{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-2xs);}
+.kpi .k{border:0.5mm solid var(--ink); border-radius:var(--radius-card); padding:var(--s-2xs) var(--s-xs); background:var(--white);}
+.kpi .n{font-family:var(--f-display); font-size:19pt; line-height:1; font-variation-settings:"wght" 750,"opsz" 72,"SOFT" 80; display:block;}
+.kpi .l{font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-62); display:block; margin-top:1.5mm; line-height:1.35;}
+.mech{display:flex; gap:var(--s-xs); align-items:baseline;}
+.mech .num{font-family:var(--f-display); font-size:15pt; font-variation-settings:"wght" 750,"opsz" 48; color:var(--gold-deep); flex:none; width:9mm;}
+.stack{border-left:1mm solid var(--ink-12); padding-left:var(--s-xs); display:flex; flex-direction:column; gap:2mm;}
+.stack .row{display:flex; gap:2.5mm; align-items:baseline;}
+.stack .row .t{font-family:var(--f-mono); font-size:var(--t-micro); color:var(--gold-deep); flex:none; width:6mm;}
+.code{font-family:var(--f-mono); font-size:7.2pt; line-height:1.5; background:var(--white); border:0.4mm solid var(--ink-25); border-radius:2mm; padding:var(--s-2xs) var(--s-xs); white-space:pre-wrap; overflow-wrap:anywhere;}
+.tree{font-family:var(--f-mono); font-size:7.4pt; line-height:1.62; white-space:pre;}
+.tree b{font-weight:700;}
+.verdict{display:inline-block; font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.1em; text-transform:uppercase; padding:.8mm 2mm; border-radius:1mm;}
+.v-win{background:var(--win-soft); color:var(--illus-forest);}
+.v-risk{background:var(--risk-soft); color:var(--rose-deep);}
+.v-neu{background:var(--cream-warm); color:var(--gold-deep);}
+@page{size:A4; margin:0;}
+@media print{
+  html,body{background:none;}
+  body{padding:0;}
+  /* Slightly under A4 height: absorbs sub-pixel rounding so one .page = one sheet. */
+  .page{margin:0; box-shadow:none; height:296mm; min-height:0; overflow:hidden;
+        break-after:page; page-break-after:always; break-inside:avoid;}
+  .page:last-child{break-after:auto; page-break-after:auto;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ 01 · COUVERTURE ══════════ -->
+<section class="page cover">
+  <div class="cover-arcs"></div>
+  <div class="cover-arcs2"></div>
+  <div class="cover-top">
+    <img class="cover-lockup" src="../../../img/brand/lockup-h-ink.svg" alt="quantum branding">
+    <span class="tag"><span class="dot"></span>Audit · Blueprint</span>
+  </div>
+  <div class="spacer"></div>
+  <div>
+    <div class="eyebrow">Étude de cas · webesthetique.fr</div>
+    <h1 class="cover-h1">Anatomie d'un site<br>qui <em>gagne.</em></h1>
+    <div class="rule--gold" style="margin-top:8mm"></div>
+    <p class="lead" style="max-width:124mm; margin-top:6mm">
+      Audit intégral du concurrent le plus avancé du marché, de son site de démonstration,
+      et le blueprint du template lisadoc. Ce qu'il faut copier, ce qu'il faut battre,
+      et comment le construire.
+    </p>
+  </div>
+  <div class="spacer"></div>
+  <div class="cover-meta">
+    <div><span class="k">Préparé pour</span><span class="v">Mouncef<br>lisadoc</span></div>
+    <div><span class="k">Méthode</span><span class="v">Crawl intégral<br>127 pages mesurées</span></div>
+    <div><span class="k">Date du relevé</span><span class="v">5 septembre 2026</span></div>
+    <div><span class="k">Statut</span><span class="v">Audit clos<br>Blueprint à valider</span></div>
+  </div>
+</section>
+
+<!-- ══════════ 02 · MÉTHODE ══════════ -->
+<section class="page">
+  <div class="eyebrow">Méthode</div>
+  <h1>Ce qui a été mesuré, <em>et comment.</em></h1>
+  <p class="lead">Aucune affirmation de ce document ne repose sur une impression. Les deux sites ont été
+    aspirés page par page, le 5 septembre 2026, et les chiffres proviennent des pages elles-mêmes.</p>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Le protocole</h2>
+      <ul class="num small">
+        <li><strong>Inventaire.</strong> Lecture du fichier robots et du plan de site.
+          99 adresses côté agence, 28 côté site de démonstration.</li>
+        <li><strong>Aspiration.</strong> Les 127 pages téléchargées et conservées. Titres, descriptions,
+          hiérarchie des titres, nombre de mots, données structurées, liens internes, images.</li>
+        <li><strong>Mesure technique.</strong> Chargement réel en navigateur, poids transféré, nombre de
+          requêtes, cookies déposés, domaines tiers appelés.</li>
+        <li><strong>Lecture.</strong> Les pages commerciales, le programme de certification et une page
+          d'acte lues intégralement, à la main.</li>
+        <li><strong>Rendu.</strong> Captures desktop et mobile de trois pages clés.</li>
+      </ul>
+      <p class="small muted">Un relevé est daté. Un concurrent qui publie deux articles par semaine aura
+        bougé dans trois mois. Les mécanismes, eux, ne bougeront pas.</p>
+
+      <h2>Les deux objets</h2>
+      <p class="small"><strong>webesthetique.fr</strong> est le site de l'agence. Il vend aux praticiens.
+        C'est le modèle de ce que sera <em class="i">lisadoc.fr</em>.</p>
+      <p class="small"><strong>demo.webesthetique.fr</strong> est leur site de démonstration, celui d'une
+        chirurgienne fictive à Bordeaux. C'est le modèle du <strong>template client</strong>. C'est la
+        pièce la plus utile des deux, et de loin.</p>
+    </div>
+    <div class="card card--ink">
+      <h3 style="color:var(--gold)">Qui est ce concurrent</h3>
+      <p class="small">Une agence web française, spécialisée sur une seule famille de praticiens,
+        les chirurgiens plasticiens et médecins esthétiques. Un homme seul, nommé et visible.
+        Le discours est à la première personne du singulier.</p>
+      <div class="rule" style="background:rgba(251,245,230,.2)"></div>
+      <p class="small"><strong style="color:var(--gold)">Fourchette de prix affichée dans son balisage,
+        sur les 98 pages du site&nbsp;: 5 000 à 12 000 euros.</strong> Un projet, pas un abonnement.
+        Le prix varie selon le nombre d'interventions à décrire.</p>
+      <p class="small">Positionnement en une phrase, la sienne. <em class="i">Vous gérez votre cabinet.
+        Je gère votre site. Toujours conforme. Toujours à jour.</em></p>
+      <div class="rule" style="background:rgba(251,245,230,.2)"></div>
+      <p class="small">C'est le concurrent le plus proche de lisadoc qui existe aujourd'hui.
+        Même client, même angle déontologique, même pari sur les IA. Une seule spécialité contre onze.</p>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="g-2-1">
+    <div>
+      <h2 style="margin-top:0">Ce que cet audit ne dit pas</h2>
+      <p class="small">Cinq limites, énoncées pour qu'aucune décision ne s'appuie sur une donnée que
+        nous n'avons pas.</p>
+      <ul class="clean small">
+        <li><strong>Aucun chiffre d'audience.</strong> Nous ne savons pas combien de visiteurs ils
+          reçoivent, ni sur quelles requêtes ils se classent réellement.</li>
+        <li><strong>Aucun chiffre d'affaires.</strong> Le nombre de clients, le taux de transformation et
+          la rentabilité nous sont inconnus.</li>
+        <li><strong>Aucune donnée de conversion.</strong> Nous décrivons un parcours conçu, pas un
+          parcours mesuré.</li>
+        <li><strong>Aucune ancienneté.</strong> Nous ignorons depuis combien de temps le site existe,
+          donc à quelle vitesse ces 206 000 mots ont été produits.</li>
+        <li><strong>Un instantané.</strong> Relevé du 5 septembre 2026. Un site qui publie deux articles
+          par semaine aura changé dans trois mois.</li>
+      </ul>
+    </div>
+    <div class="card card--flat card--warm">
+      <h3>Pourquoi cela ne gêne pas</h3>
+      <p class="small">Aucune de ces inconnues ne change ce que nous cherchons ici&nbsp;: la structure,
+        les mécanismes et les gabarits. Une architecture se lit dans les pages, pas dans les statistiques
+        de son propriétaire.</p>
+      <p class="small">Ce qui suit décrit donc <strong>comment ce site est construit pour gagner</strong>,
+        et non de combien il gagne.</p>
+    </div>
+  </div>
+  <div class="rf"><b>Méthode</b><span>page 02 / 27</span></div>
+</section>
+
+<!-- ══════════ 03 · RÉSUMÉ EXÉCUTIF ══════════ -->
+<section class="page">
+  <div class="eyebrow">Résumé exécutif</div>
+  <h1>Sept mécanismes. <em>Un seul système.</em></h1>
+  <p class="lead">Ce site ne gagne pas parce qu'il est joli. Il gagne parce que sept mécanismes se
+    renforcent l'un l'autre, et qu'aucun n'est copiable isolément.</p>
+
+  <div class="kpi" style="margin-bottom:5mm">
+    <div class="k"><span class="n">206 298</span><span class="l">mots publiés côté agence</span></div>
+    <div class="k"><span class="n">88 / 99</span><span class="l">pages portant un balisage de questions</span></div>
+    <div class="k"><span class="n">155 Ko</span><span class="l">une page d'acte, 8 requêtes</span></div>
+    <div class="k"><span class="n">0</span><span class="l">cookie, 0 domaine tiers</span></div>
+  </div>
+
+  <div class="stack">
+    <div class="row"><span class="t">01</span><p class="small"><strong>La conformité déontologique est
+      transformée en produit.</strong> Test gratuit en cinq minutes, audit, certification, badge affiché
+      chez le praticien, registre public. Un référentiel privé, inventé de toutes pièces, dont ils sont
+      l'autorité.</p></div>
+    <div class="row"><span class="t">02</span><p class="small"><strong>Une équation qui tient en une
+      phrase.</strong> Le code de déontologie impose un contenu factuel, sans promesse ni superlatif.
+      Les IA génératives citent exactement ce type de contenu. La contrainte et l'avantage sont la même
+      chose. C'est l'idée la plus forte du site, et elle est déjà publique.</p></div>
+    <div class="row"><span class="t">03</span><p class="small"><strong>Une autorité topique écrasante.</strong>
+      79 articles, 177 867 mots, médiane de 1 843 mots. Chaque question que se pose un chirurgien
+      esthétique sur son site a sa page. Il est impossible d'arriver sur ce marché par le contenu sans
+      croiser leur nom.</p></div>
+    <div class="row"><span class="t">04</span><p class="small"><strong>Le site patient est siloté par
+      zone du corps, pas par nomenclature médicale.</strong> Visage, seins, corps, médecine esthétique.
+      Quatre pôles, dix-huit actes. Le patient pense en parties de son corps, pas en spécialités.</p></div>
+    <div class="row"><span class="t">05</span><p class="small"><strong>Chaque page d'acte suit le même
+      squelette de neuf sections</strong>, sans exception sur les dix-huit pages. Environ 1 200 mots
+      chacune. C'est industrialisable, vérifiable, et cela transforme la rédaction en remplissage de
+      gabarit.</p></div>
+    <div class="row"><span class="t">06</span><p class="small"><strong>Le balisage est complet et
+      systématique.</strong> Chaque page d'acte se déclare comme un acte médical et comme une page de
+      questions. C'est ce qui la rend extractible par une machine.</p></div>
+    <div class="row"><span class="t">07</span><p class="small"><strong>La sobriété technique est totale.</strong>
+      Site statique, huit requêtes, aucun cookie, aucun tiers. Donc rapide, donc conforme au RGPD sans
+      effort, donc aucun bandeau de consentement à afficher.</p></div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="card card--ink">
+    <h3 style="color:var(--gold)">La conclusion en une ligne</h3>
+    <p class="statement" style="font-size:16pt; color:var(--cream)">Leur apparat est excellent.
+      <em>Leur preuve est vide.</em> Un seul site figure à leur registre de certification,
+      et c'est leur propre démonstration.</p>
+  </div>
+  <div class="rf"><b>Résumé exécutif</b><span>page 03 / 27</span></div>
+</section>
+
+<!-- ══════════ 04 · MÉCANISME 01 ══════════ -->
+<section class="page">
+  <div class="eyebrow">Mécanisme 01</div>
+  <h1>La conformité déontologique, <em>transformée en produit.</em></h1>
+  <p class="lead">C'est le mouvement le plus intelligent du site, et le plus difficile à rattraper.
+    Ils n'ont pas fait de la conformité un argument. Ils en ont fait une chaîne de quatre objets
+    qui se vendent l'un l'autre.</p>
+
+  <div class="g4" style="margin-bottom:5mm">
+    <div class="card card--tight card--white"><span class="micro">01 · l'appât</span>
+      <h3 style="margin-top:1.5mm">Le test</h3>
+      <p class="small">Testez la conformité de votre site. Gratuit, cinq minutes, résultat immédiat.
+        Placé en premier bouton de la page d'accueil, avant même le contact.</p></div>
+    <div class="card card--tight card--white"><span class="micro">02 · la preuve</span>
+      <h3 style="margin-top:1.5mm">L'audit</h3>
+      <p class="small">Une page entière décrit ce que l'audit analyse. Le message est constant.
+        Chaque site audité présentait au moins une violation.</p></div>
+    <div class="card card--tight card--white"><span class="micro">03 · l'abonnement</span>
+      <h3 style="margin-top:1.5mm">La certification</h3>
+      <p class="small">Cinq niveaux de vérification, contrôlés chaque mois. Déontologie, RGPD,
+        contenu à jour, jalons réglementaires. Une veille, donc une récurrence.</p></div>
+    <div class="card card--tight card--white"><span class="micro">04 · le verrou</span>
+      <h3 style="margin-top:1.5mm">Le badge</h3>
+      <p class="small">Un badge affiché dans le pied de page du praticien, plus un registre public
+        des sites certifiés.</p></div>
+  </div>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Le verrou, dans leurs mots</h2>
+      <div class="quote">Si la veille cesse d'être assurée, fin d'abonnement ou départ vers un autre
+        prestataire, le badge disparaît automatiquement du site du praticien et son entrée est retirée
+        de ce registre.<cite>webesthetique.fr · page sites certifiés</cite></div>
+      <p class="small">Il faut mesurer ce que cette phrase fait. Le badge est servi en temps réel depuis
+        leur serveur. Partir, ce n'est pas seulement changer de prestataire, c'est <strong>faire
+        disparaître de son propre site une marque de confiance que les patients ont vue</strong>.
+        C'est le mécanisme de rétention le plus fort que j'aie vu sur ce marché, et il ne coûte presque
+        rien à opérer.</p>
+      <p class="small">La rétention de lisadoc repose aujourd'hui sur la page vivante de questions
+        et réponses. C'est plus noble, plus lent, et moins mécanique. Les deux ne s'excluent pas.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--rose">
+        <h3 style="color:var(--rose-deep)">La faille de ce dispositif</h3>
+        <p class="small">Cette certification n'est adossée à aucune autorité. Elle est auto-décernée,
+          auto-contrôlée, et porte le nom de l'agence. Le registre public compte
+          <strong>un seul site actif, qui est leur propre démonstration.</strong></p>
+        <p class="small">Un praticien attentif verra qu'il devient le certifié numéro deux d'un
+          référentiel inventé par son prestataire. Un confrère malveillant le verra aussi.</p>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>Ce qu'on en retient</h3>
+        <p class="small">Le diagnostic gratuit et instantané est à copier sans hésiter. Le badge de
+          certification, non. lisadoc a mieux à jouer&nbsp;: <strong>la date de vérification affichée
+          sur chaque page</strong>, sans badge, sans registre, sans prétention à certifier.
+          La preuve sans la posture d'autorité.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Mécanisme 01</b><span>page 04 / 27</span></div>
+</section>
+
+<!-- ══════════ 05 · MÉCANISME 02 ══════════ -->
+<section class="page">
+  <div class="eyebrow">Mécanisme 02</div>
+  <h1>L'équation. <em>La contrainte est l'avantage.</em></h1>
+
+  <div class="card card--ink" style="margin-bottom:5mm">
+    <span class="micro" style="color:var(--gold)">Leur formulation, en page d'accueil</span>
+    <p class="statement" style="font-size:15pt; color:var(--cream); margin-top:2mm">Le code de déontologie
+      impose un contenu factuel, sans promesses ni superlatifs. Les IA génératives privilégient exactement
+      ce type de contenu&nbsp;: précis, vérifiable, sans affirmations invérifiables.
+      <em>La conformité déontologique et l'optimisation pour les moteurs IA produisent le même résultat.</em></p>
+  </div>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Pourquoi c'est juste</h2>
+      <p class="small">Un modèle de langage cite ce qu'il peut vérifier et attribuer. Il évite ce qui
+        ressemble à une réclame. Or le code de déontologie interdit précisément la réclame&nbsp;: pas de
+        promesse de résultat, pas de superlatif, pas de témoignage, pas de comparaison. Ce qui reste,
+        une fois ces interdits appliqués, est un texte factuel, daté, structuré, attribué à un praticien
+        identifié et titré.</p>
+      <p class="small">Autrement dit, <strong>le praticien français est contraint par la loi d'écrire
+        exactement le type de contenu que les machines préfèrent citer.</strong> Ses concurrents
+        internationaux, libres de faire de la publicité, écrivent des textes que les machines écartent.</p>
+      <p class="small">C'est un renversement complet du discours habituel. La déontologie cesse d'être
+        le frein qu'il faut contourner et devient l'actif qu'on exploite.</p>
+      <h2>Ce que cela change pour lisadoc</h2>
+      <p class="small">Cette idée est le cœur intellectuel de la vente, et <strong>elle est déjà publiée
+        par un concurrent</strong>. Elle ne peut donc plus servir de révélation, seulement de terrain
+        commun. lisadoc doit la dépasser d'un cran.</p>
+      <p class="small">Le cran suivant existe et personne ne l'occupe. Eux disent&nbsp;: le contenu conforme
+        est citable. Le cran d'après&nbsp;: <strong>le contenu conforme est citable, mais seule une réponse
+        signée par un médecin identifiable est attribuable.</strong> La signature n'est pas une formalité
+        déontologique, c'est le signal d'attribution. C'est exactement la boucle de signature de la
+        plateforme de marque, et c'est une longueur d'avance argumentaire.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3>La chaîne, en cinq maillons</h3>
+        <div class="stack" style="margin-top:2mm">
+          <div class="row"><span class="t">01</span><p class="small">La loi interdit au médecin d'acheter
+            sa visibilité.</p></div>
+          <div class="row"><span class="t">02</span><p class="small">Son seul levier autorisé est ce
+            qu'il publie.</p></div>
+          <div class="row"><span class="t">03</span><p class="small">Ce qu'il publie doit être factuel,
+            sourcé, sans promesse.</p></div>
+          <div class="row"><span class="t">04</span><p class="small">C'est précisément ce qu'une IA
+            accepte de citer.</p></div>
+          <div class="row"><span class="t">05</span><p class="small">Donc la contrainte qui l'enferme est
+            aussi la seule porte ouverte.</p></div>
+        </div>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>La précaution qu'ils ne prennent pas</h3>
+        <p class="small">Ils affirment que 88 pour cent des patients recherchent leur praticien en ligne
+          avant le rendez-vous, sans citer de source sur la page.</p>
+        <p class="small">Le cadrage de lisadoc pose la règle inverse&nbsp;: aucun chiffre sans source et
+          sans date. Tenir cette règle face à un concurrent qui ne la tient pas est un désavantage
+          apparent et un avantage réel, à condition de le dire&nbsp;:
+          <em class="i">je ne vous donnerai que des chiffres que je peux sourcer.</em></p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Mécanisme 02</b><span>page 05 / 27</span></div>
+</section>
+
+<!-- ══════════ 06 · MÉCANISME 03 ══════════ -->
+<section class="page">
+  <div class="eyebrow">Mécanisme 03</div>
+  <h1>L'autorité topique. <em>79 articles, 177 867 mots.</em></h1>
+  <p class="lead">Le blog n'est pas un blog. C'est un maillage de couverture&nbsp;: chaque question qu'un
+    chirurgien esthétique peut taper au sujet de son site a sa page dédiée, optimisée, avec son balisage
+    de questions.</p>
+
+  <div class="kpi" style="margin-bottom:5mm">
+    <div class="k"><span class="n">79</span><span class="l">articles publiés</span></div>
+    <div class="k"><span class="n">1 843</span><span class="l">mots, médiane par article</span></div>
+    <div class="k"><span class="n">23</span><span class="l">articles sur le SEO technique</span></div>
+    <div class="k"><span class="n">17</span><span class="l">articles sur les IA et le GEO</span></div>
+  </div>
+
+  <div class="g-2-1">
+    <div>
+      <h2>Les quatre familles de sujets</h2>
+      <table class="t-compact">
+        <thead><tr><th style="width:34mm">Famille</th><th style="width:14mm">Vol.</th><th>Exemples de titres, tels qu'ils sont publiés</th></tr></thead>
+        <tbody>
+          <tr><td><strong>SEO technique</strong></td><td>23</td><td class="small">maillage interne site chirurgien · balises title meta description médecin · schema org site médecin · vitesse chargement site médical · nombre pages intervention seo</td></tr>
+          <tr><td><strong>Déontologie et droit</strong></td><td>18</td><td class="small">charte cnom site web médecin · mots interdits site chirurgien esthétique · photos avant après cadre légal · sanctions site médecin non conforme · rgpd site médecin obligations</td></tr>
+          <tr><td><strong>IA et citation</strong></td><td>17</td><td class="small">chatgpt cite chirurgiens esthétiques · google ai overview chirurgie esthétique · perplexity gemini recherche médicale · geo vs seo chirurgien esthétique · voice search chirurgie esthétique</td></tr>
+          <tr><td><strong>Décision et conversion</strong></td><td>21</td><td class="small">coût site internet chirurgien esthétique · doctolib site internet chirurgien · pourquoi site ne génère pas rdv · agence web généraliste vs spécialiste · roi site médecin rentabilisation</td></tr>
+        </tbody>
+      </table>
+      <p class="small">La quatrième famille est la plus commerciale et la plus redoutable. Elle occupe
+        les requêtes de comparaison&nbsp;: <em class="i">Doctolib suffit-il</em>, <em class="i">agence
+        généraliste ou spécialiste</em>, <em class="i">combien coûte un site</em>. Un praticien qui
+        commence à se renseigner tombe sur leur réponse à ces questions, écrite par eux, avant de parler
+        à qui que ce soit.</p>
+    </div>
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">Le calcul, sans détour</h3>
+        <p class="small">177 867 mots. À 1 200 mots par heure de rédaction soignée, avec relecture,
+          cela représente de l'ordre de <strong>150 heures de production</strong>, sans compter la
+          recherche de sujets.</p>
+        <p class="small">C'est un investissement, pas un miracle. Et c'est reproductible.
+          Mais c'est du temps qui ne sera pas passé à livrer des sites clients. Le cadrage de lisadoc
+          le note déjà pour la publication&nbsp;: <em class="i">c'est un second métier, en concurrence
+          avec la livraison pour le temps.</em></p>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>La stratégie qui bat celle-ci</h3>
+        <p class="small">Ne pas les affronter sur leur terrain. Ils couvrent <strong>les questions que
+          se pose le chirurgien esthétique sur son site web</strong>. C'est une seule spécialité, et
+          c'est un sujet de prestataire.</p>
+        <p class="small">lisadoc travaille onze spécialités. Sa couverture naturelle est
+          <strong>les questions que se posent les patients de chaque spécialité</strong>, publiées sur
+          les sites des praticiens, pas sur le sien. Le volume total est bien supérieur, il est
+          distribué chez les clients, et il fait leur référencement pendant qu'il fait le nôtre.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Mécanisme 03</b><span>page 06 / 27</span></div>
+</section>
+
+<!-- ══════════ 07 · MÉCANISME 04 ══════════ -->
+<section class="page">
+  <div class="eyebrow">Mécanisme 04 · le site patient</div>
+  <h1>Le silo par <em>zone du corps</em>, pas par nomenclature.</h1>
+  <p class="lead">C'est la décision d'architecture la plus importante du site de démonstration, et elle
+    tient en une phrase. Un patient ne cherche pas une spécialité, il cherche la partie de lui qui le gêne.</p>
+
+  <div class="g-2-1" style="align-items:start">
+    <div class="card card--white">
+      <span class="micro">L'arborescence complète, 28 pages</span>
+      <div class="tree" style="margin-top:3mm">/                          <b>accueil</b>
+/le-docteur/               <b>le praticien</b>
+/premiere-consultation/    <b>le parcours de soin</b>
+/contact/
+
+/visage/                   <b>pôle</b>
+   rhinoplastie
+   rhinoplastie-ultrasonique
+   lifting-cervico-facial
+   blepharoplastie
+   otoplastie
+   genioplastie
+/seins/                    <b>pôle</b>
+   augmentation-mammaire
+   lipofilling-mammaire
+   reduction-mammaire
+   mastopexie
+/corps/                    <b>pôle</b>
+   liposuccion
+   abdominoplastie
+   lifting-des-bras
+   lifting-des-cuisses
+/medecine-esthetique/      <b>pôle</b>
+   injection-acide-hyaluronique
+   injection-toxine-botulique
+   peelings
+   skinbooster
+
+/mentions-legales/
+/politique-de-confidentialite/</div>
+    </div>
+    <div>
+      <h2>Ce que fait cette structure</h2>
+      <p class="small"><strong>Quatre pôles, dix-huit actes, quatre pages de service.</strong>
+        Trois pôles sont des zones du corps. Le quatrième est une famille de gestes non chirurgicaux.
+        Aucun pôle ne porte un nom de discipline médicale.</p>
+      <p class="small"><strong>Chaque acte est à deux clics de l'accueil</strong> et à un clic depuis
+        n'importe quelle page, par le menu déroulant et par le pied de page qui répètent la liste
+        complète. Nous avons compté entre 117 et 140 liens internes par page.</p>
+      <p class="small"><strong>Chaque page d'acte est une page locale.</strong> Le titre affiché porte
+        l'acte et la ville. Dix-huit actes, c'est dix-huit portes d'entrée locales, pas une.</p>
+      <p class="small"><strong>Le pôle capte la requête large</strong>, l'acte capte la requête précise.
+        Le patient qui cherche une chirurgie du nez et celui qui cherche une rhinoplastie ultrasonique
+        atterrissent tous les deux au bon endroit.</p>
+
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>La transposition pour lisadoc</h3>
+        <p class="small">Le pôle change de nature selon la spécialité, mais la règle ne change pas&nbsp;:
+          <strong>le premier niveau porte le mot du patient, jamais celui du médecin.</strong></p>
+        <table class="t-compact" style="margin-top:2mm">
+          <tr><th style="width:30mm">Ophtalmologie</th><td class="small">Vision de loin · Cataracte · Paupières · Rétine</td></tr>
+          <tr><th>Gynécologie</th><td class="small">Suivi et grossesse · Difficultés à concevoir · Ménopause · Chirurgie</td></tr>
+          <tr><th>Orthopédie</th><td class="small">Genou · Hanche · Épaule · Main et poignet · Pied</td></tr>
+          <tr><th>ORL</th><td class="small">Nez et sinus · Oreille et audition · Gorge et voix · Sommeil</td></tr>
+        </table>
+        <p class="small muted">Le découpage se valide avec le praticien pendant l'entretien.
+          C'est la première question de la grille d'actes.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Mécanisme 04</b><span>page 07 / 27</span></div>
+</section>
+
+<!-- ══════════ 08 · MÉCANISME 05 ══════════ -->
+<section class="page">
+  <div class="eyebrow">Mécanisme 05 · la pièce maîtresse</div>
+  <h1>Le squelette d'acte. <em>Neuf sections, dix-huit fois.</em></h1>
+  <p class="lead">Les dix-huit pages d'acte portent exactement les mêmes neuf titres de section, dans le
+    même ordre, pour une moyenne de 1 223 mots. Aucune exception. C'est ce qui rend la production
+    industrialisable et le résultat vérifiable.</p>
+
+  <div class="g-2-1">
+    <div>
+      <table class="t-compact">
+        <thead><tr><th style="width:8mm"></th><th style="width:44mm">Section</th><th>Ce qu'elle fait vraiment</th></tr></thead>
+        <tbody>
+          <tr><td class="micro">01</td><td><strong>Qu'est-ce que [l'acte]&nbsp;?</strong></td>
+            <td class="small">Définition en deux paragraphes. C'est le bloc que les IA extraient en premier. Il contient les synonymes que le patient emploie.</td></tr>
+          <tr><td class="micro">02</td><td><strong>Indications</strong></td>
+            <td class="small">Liste à puces des situations concernées. Le patient s'y reconnaît, ou pas. C'est le tri par auto-diagnostic, sans jamais diagnostiquer.</td></tr>
+          <tr><td class="micro">03</td><td><strong>Déroulement</strong></td>
+            <td class="small">Sous-titré en avant, le jour, après. Chiffré partout&nbsp;: durée, type d'anesthésie, délais d'arrêt des traitements.</td></tr>
+          <tr><td class="micro">04</td><td><strong>Suites opératoires</strong></td>
+            <td class="small">Œdème, arrêt de travail, reprise du sport, délai de résultat. Ce sont les questions qui font appeler le secrétariat.</td></tr>
+          <tr><td class="micro">05</td><td><strong>Résultats</strong></td>
+            <td class="small">Factuel, sans image, sans promesse. La section la plus contrainte, et ils la tiennent.</td></tr>
+          <tr><td class="micro">06</td><td><strong>Risques et complications</strong></td>
+            <td class="small">Liste franche. Obligation d'information loyale, et paradoxalement le bloc qui inspire le plus confiance.</td></tr>
+          <tr><td class="micro">07</td><td><strong>Tarifs et prise en charge</strong></td>
+            <td class="small">Ce qui est remboursé, ce qui ne l'est pas, le devis. Première cause d'avis négatif quand elle manque.</td></tr>
+          <tr><td class="micro">08</td><td><strong>Questions fréquentes</strong></td>
+            <td class="small">Quatre questions, balisées. C'est la surface de citation par les IA et les extraits enrichis.</td></tr>
+          <tr><td class="micro">09</td><td><strong>Prendre rendez-vous</strong></td>
+            <td class="small">Conversion en bas de page, après l'information, jamais avant.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3>Les trois blocs périphériques</h3>
+        <p class="small"><strong>Le panneau latéral collant.</strong> Bouton de rendez-vous, téléphone,
+          puis un encart informations clés&nbsp;: anesthésie, durée, hospitalisation, délai légal.
+          Quatre faits scannables en trois secondes.</p>
+        <p class="small"><strong>L'encart réglementaire, en pied de page d'acte.</strong> Rappel que tout
+          acte comporte des risques, mention du délai de réflexion de quinze jours au titre de l'article
+          L.6322-2, et du devis détaillé. Composant unique, réutilisé partout.</p>
+        <p class="small"><strong>Interventions associées.</strong> Trois liens vers des actes voisins,
+          plus un lien vers la page parcours de soin. Le maillage se fait par le contenu, pas seulement
+          par le menu.</p>
+        <p class="small"><strong>Et la ligne qui compte&nbsp;:</strong> <em class="i">Contenu vérifié&nbsp;:
+          Mars 2026</em>. Une date de vérification affichée sur chaque page.</p>
+      </div>
+      <div class="card card--ink" style="margin-top:4mm">
+        <h3 style="color:var(--gold)">Pourquoi ce squelette gagne</h3>
+        <p class="small">Il suit l'ordre exact des questions d'un patient inquiet&nbsp;: c'est quoi,
+          est-ce pour moi, comment ça se passe, combien de temps je serai arrêté, à quoi je peux
+          m'attendre, qu'est-ce qui peut mal tourner, combien ça coûte, et enfin comment je vous vois.</p>
+        <p class="statement" style="font-size:13pt; color:var(--cream); margin-top:3mm">La conversion
+          arrive en neuvième position, <em>et c'est pour cela qu'elle fonctionne.</em></p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Mécanisme 05</b><span>page 08 / 27</span></div>
+</section>
+
+<!-- ══════════ 09 · MÉCANISME 06 ══════════ -->
+<section class="page">
+  <div class="eyebrow">Mécanisme 06</div>
+  <h1>Le balisage. <em>Écrit pour être extrait.</em></h1>
+  <p class="lead">Une page bien écrite ne suffit pas. Elle doit se déclarer. Sur les deux sites, le
+    balisage est systématique, jamais décoratif, et c'est ce qui autorise une machine à reprendre
+    le contenu en citant la source.</p>
+
+  <div class="g2">
+    <div>
+      <h2>Ce qui est déclaré, où</h2>
+      <table class="t-compact">
+        <thead><tr><th style="width:40mm">Type déclaré</th><th style="width:16mm">Pages</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>Physician</code></td><td>28 / 28</td><td class="small">Le praticien, sur tout le site patient.</td></tr>
+          <tr><td><code>MedicalBusiness</code></td><td>28 / 28</td><td class="small">Le cabinet, l'adresse, les horaires.</td></tr>
+          <tr><td><code>MedicalProcedure</code></td><td>18 / 18</td><td class="small">Sur chaque page d'acte. C'est la déclaration qui compte.</td></tr>
+          <tr><td><code>FAQPage</code></td><td>18 / 18</td><td class="small">Les questions fréquentes, structurées.</td></tr>
+          <tr><td><code>BreadcrumbList</code></td><td>27 / 28</td><td class="small">Le chemin, donc la hiérarchie.</td></tr>
+          <tr><td><code>ProfessionalService</code></td><td>98 / 99</td><td class="small">Côté agence, avec la fourchette de prix.</td></tr>
+          <tr><td><code>FAQPage</code> <span class="micro">(agence)</span></td><td>88 / 99</td><td class="small">Presque chaque page de l'agence porte des questions balisées.</td></tr>
+          <tr><td><code>BlogPosting</code></td><td>79 / 79</td><td class="small">Chaque article, daté et attribué.</td></tr>
+        </tbody>
+      </table>
+      <p class="small">Le fait marquant n'est pas la liste, c'est la <strong>couverture</strong>.
+        88 pages sur 99 côté agence, 18 sur 18 côté patient. Il n'y a pas de page oubliée.
+        C'est le signe d'un gabarit, pas d'un travail à la main.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3>Le squelette à reproduire, par page d'acte</h3>
+        <div class="code">{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "MedicalProcedure",
+      "name": "Rhinoplastie",
+      "procedureType": "https://schema.org/SurgicalProcedure",
+      "bodyLocation": "Nez",
+      "howPerformed": "…",
+      "preparation": "…",
+      "followup": "…",
+      "performer": { "@id": "#physician" } },
+    { "@type": "FAQPage",
+      "mainEntity": [ { "@type": "Question",
+        "name": "…",
+        "acceptedAnswer": { "@type": "Answer",
+          "text": "…" } } ] },
+    { "@type": "Physician", "@id": "#physician",
+      "name": "Dr …", "medicalSpecialty": "…",
+      "address": {…}, "telephone": "…" },
+    { "@type": "BreadcrumbList", "itemListElement": […] }
+  ]
+}</div>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>Ce que lisadoc ajoute</h3>
+        <p class="small">Deux propriétés qu'ils n'exploitent pas et qui portent la signature&nbsp;:
+          <code>author</code> et <code>dateModified</code> pointant sur le praticien identifié, avec son
+          numéro RPPS le cas échéant, et <code>reviewedBy</code> renvoyant à la même personne.</p>
+        <p class="small">Une réponse attribuée à un médecin identifiable et vérifiable n'est pas de même
+          nature qu'un texte anonyme. <strong>C'est le seul terrain où un site de praticien bat
+          structurellement un site d'agence ou un forum.</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Mécanisme 06</b><span>page 09 / 27</span></div>
+</section>
+
+<!-- ══════════ 10 · MÉCANISME 07 ══════════ -->
+<section class="page">
+  <div class="eyebrow">Mécanisme 07</div>
+  <h1>La sobriété technique. <em>Zéro cookie, huit requêtes.</em></h1>
+  <p class="lead">Mesures prises en navigateur réel, le 5 septembre 2026, connexion de bureau.</p>
+
+  <table>
+    <thead><tr><th style="width:52mm">Mesure</th><th>Page d'acte</th><th>Accueil patient</th><th>Accueil agence</th><th style="width:52mm">Lecture</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Poids transféré</strong></td><td>155 Ko</td><td>309 Ko</td><td>197 Ko</td><td class="small">Un site de cabinet médical courant se situe entre 2 et 5 Mo.</td></tr>
+      <tr><td><strong>Requêtes réseau</strong></td><td>8</td><td>14</td><td>9</td><td class="small">Un site sous gestionnaire de contenu avec extensions en fait couramment 60 à 120.</td></tr>
+      <tr><td><strong>Cookies déposés</strong></td><td>0</td><td>0</td><td>0</td><td class="small">Donc aucun bandeau de consentement, donc aucune friction à l'arrivée.</td></tr>
+      <tr><td><strong>Domaines tiers</strong></td><td>0</td><td>0</td><td>1</td><td class="small">Côté patient, rien ne sort du domaine. Côté agence, une mesure d'audience sans cookie.</td></tr>
+      <tr><td><strong>Contenu interactif prêt</strong></td><td>1 141 ms</td><td>1 116 ms</td><td>1 057 ms</td><td class="small">Sur mobile en 4G, l'écart avec un site lourd se compte en secondes.</td></tr>
+      <tr><td><strong>Images</strong></td><td>5</td><td>11</td><td>3</td><td class="small">Format moderne, chargement différé au-delà du premier écran.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Comment ils y arrivent</h2>
+      <p class="small">Un générateur de site statique. Aucune base de données à l'exécution, aucune
+        extension, aucune bibliothèque d'animation. Les polices sont hébergées sur le domaine, en un seul
+        format moderne, trois fichiers. La feuille de style critique est intégrée dans la page.
+        Les images sont converties et dimensionnées à la construction.</p>
+      <p class="small">Le cadrage de lisadoc contient déjà cette ligne&nbsp;: <em class="i">un beau site
+        est un site qu'on trouve facilement et qui se charge rapidement.</em> C'est la même école.
+        L'audit confirme simplement que le concurrent l'applique déjà, et qu'il faut donc faire aussi
+        bien, pas mieux&nbsp;: à ce niveau, il n'y a plus de gain perceptible à gagner.</p>
+    </div>
+    <div class="card card--ink">
+      <h3 style="color:var(--gold)">Le bénéfice caché de zéro cookie</h3>
+      <p class="small">Sans cookie de traçage, il n'y a pas de bandeau de consentement. Sans bandeau,
+        il n'y a pas de refus. Sans refus, <strong>la mesure d'audience porte sur cent pour cent des
+        visiteurs</strong>, et non sur la moitié consentante.</p>
+      <p class="small">Conséquence directe pour lisadoc&nbsp;: le compteur de demandes de rendez-vous
+        promis au praticien devient exact plutôt qu'approximatif. La promesse vérifiable à douze mois
+        repose sur ce détail technique.</p>
+    </div>
+  </div>
+  <div class="rf"><b>Mécanisme 07</b><span>page 10 / 27</span></div>
+</section>
+
+<!-- ══════════ 11 · PARCOURS ══════════ -->
+<section class="page">
+  <div class="eyebrow">Le parcours</div>
+  <h1>De la peur du patient <em>au virement du praticien.</em></h1>
+  <p class="lead">Les deux sites forment une seule machine à deux étages. En bas, le patient trouve son
+    praticien. En haut, le praticien trouve l'agence. Les deux parcours utilisent le même ressort&nbsp;:
+    informer d'abord, demander ensuite.</p>
+
+  <div class="g2">
+    <div class="card card--white">
+      <span class="micro">Étage 1 · le patient, sur le site du praticien</span>
+      <div class="stack" style="margin-top:3mm">
+        <div class="row"><span class="t">01</span><p class="small">Il tape un problème ou un acte, souvent avec une ville. Il atterrit sur la page d'acte, pas sur l'accueil.</p></div>
+        <div class="row"><span class="t">02</span><p class="small">Il lit la définition, se reconnaît dans les indications.</p></div>
+        <div class="row"><span class="t">03</span><p class="small">Il cherche ce qui l'inquiète vraiment&nbsp;: la douleur, l'arrêt de travail, le prix. Les sections 4 et 7 y répondent sans détour.</p></div>
+        <div class="row"><span class="t">04</span><p class="small">Il regarde qui parle. Un clic vers la page du praticien, titres et parcours.</p></div>
+        <div class="row"><span class="t">05</span><p class="small">Il vérifie le déroulé administratif sur la page première consultation, y compris le délai légal.</p></div>
+        <div class="row"><span class="t">06</span><p class="small">Il prend rendez-vous, ou il appelle. Le numéro est visible sur chaque écran.</p></div>
+      </div>
+      <p class="small" style="margin-top:3mm"><strong>Le point remarquable.</strong> Aucune sollicitation
+        avant la sixième étape. Pas de fenêtre surgissante, pas de discussion automatique, pas de
+        formulaire barrant la lecture.</p>
+    </div>
+    <div class="card card--white">
+      <span class="micro">Étage 2 · le praticien, sur le site de l'agence</span>
+      <div class="stack" style="margin-top:3mm">
+        <div class="row"><span class="t">01</span><p class="small">Il cherche une question de prestataire&nbsp;: combien coûte un site, Doctolib suffit-il, ai-je le droit de publier telle photo. Un des 79 articles répond.</p></div>
+        <div class="row"><span class="t">02</span><p class="small">L'article le renvoie vers le test de conformité gratuit. Cinq minutes, résultat immédiat.</p></div>
+        <div class="row"><span class="t">03</span><p class="small">Le test lui apprend qu'il est en infraction, sans le culpabiliser&nbsp;: personne ne lui a jamais expliqué les règles.</p></div>
+        <div class="row"><span class="t">04</span><p class="small">Il regarde le site de démonstration et voit exactement ce qu'il achèterait.</p></div>
+        <div class="row"><span class="t">05</span><p class="small">Il demande un échange de trente minutes. L'engagement en temps est annoncé partout&nbsp;: une visio et quelques validations.</p></div>
+      </div>
+      <p class="small" style="margin-top:3mm"><strong>Le point remarquable.</strong> Le premier appel à
+        l'action de la page d'accueil n'est pas <em class="i">contactez-nous</em>, c'est
+        <em class="i">testez votre conformité</em>. On donne un diagnostic avant de demander un rendez-vous.
+        C'est exactement la logique du document d'étude par spécialité, en version automatique et instantanée.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g3">
+    <div class="card card--flat card--tight card--warm"><h3>Ce qu'ils promettent en temps</h3>
+      <p class="small">Une visio de trente minutes et quelques validations. lisadoc annonce quarante-cinq
+        minutes d'entretien. <strong>Nous sommes plus chers en temps et nous devons l'assumer&nbsp;:</strong>
+        quarante-cinq minutes parce que le contenu vient de sa voix, pas d'un formulaire.</p></div>
+    <div class="card card--flat card--tight card--warm"><h3>Ce qu'ils ne montrent pas</h3>
+      <p class="small">Aucun prix sur le site, sauf dans le balisage technique. Le praticien doit appeler
+        pour savoir. lisadoc affiche ses prix, totaux compris. <strong>C'est un avantage de confiance
+        immédiat</strong>, et il se dit à voix haute.</p></div>
+    <div class="card card--flat card--tight card--warm"><h3>Ce qu'ils font mieux</h3>
+      <p class="small">L'entrée par un outil plutôt que par une conversation. Un praticien peut se
+        diagnostiquer seul, à minuit, sans parler à personne. <strong>C'est le seul élément du dispositif
+        qu'il faut copier tel quel.</strong></p></div>
+  </div>
+  <div class="rf"><b>Le parcours</b><span>page 11 / 27</span></div>
+</section>
+
+<!-- ══════════ 12 · LES FAILLES ══════════ -->
+<section class="page">
+  <div class="eyebrow">Les failles</div>
+  <h1>Six points où <em>ils sont attaquables.</em></h1>
+  <p class="lead">Un audit qui ne trouve que des qualités n'est pas un audit. Voici ce qui est réellement
+    exploitable, par ordre d'importance.</p>
+
+  <table>
+    <thead><tr><th style="width:8mm"></th><th style="width:48mm">La faille</th><th>Le constat, vérifiable</th><th style="width:52mm">Ce que lisadoc en fait</th></tr></thead>
+    <tbody>
+      <tr><td class="micro">01</td><td class="nm">La preuve est vide<br><span class="verdict v-risk">critique</span></td>
+        <td class="small">Le registre public des sites certifiés compte <strong>un seul site actif</strong>, et c'est leur propre démonstration, signée par une praticienne fictive. La page réalisations montre le même site unique.</td>
+        <td class="small">Le premier site de lisadoc sera celui d'une praticienne réelle, exerçante, nommée. <strong>Un site réel bat une démonstration</strong>, même moins belle. Ne jamais attaquer là-dessus en public&nbsp;: le montrer suffit.</td></tr>
+      <tr><td class="micro">02</td><td class="nm">La certification est auto-décernée<br><span class="verdict v-risk">structurel</span></td>
+        <td class="small">Un badge de conformité déontologique délivré par le prestataire lui-même, sans autorité tierce, apposé sur le site d'un médecin soumis à un ordre professionnel.</td>
+        <td class="small">Ne pas imiter. Afficher la date de vérification, citer les textes, et laisser l'Ordre être la seule autorité. <strong>Notre preuve est la traçabilité, pas le label.</strong></td></tr>
+      <tr><td class="micro">03</td><td class="nm">Une seule spécialité<br><span class="verdict v-neu">stratégique</span></td>
+        <td class="small">Tout le dispositif est calibré pour la chirurgie et la médecine esthétique. C'est leur force de frappe et leur plafond.</td>
+        <td class="small">Onze spécialités visées, dont plusieurs sans aucun acteur spécialisé. <strong>La chirurgie esthétique est le seul terrain à éviter au lancement</strong>&nbsp;: il est tenu.</td></tr>
+      <tr><td class="micro">04</td><td class="nm">Des chiffres sans source<br><span class="verdict v-neu">exploitable</span></td>
+        <td class="small">Le chiffre de 88 pour cent de patients qui recherchent en ligne est affiché en page d'accueil sans référence.</td>
+        <td class="small">Tenir la règle du cadrage, aucun chiffre sans source, <strong>et le dire</strong>. C'est une différence de tenue qu'un médecin repère immédiatement.</td></tr>
+      <tr><td class="micro">05</td><td class="nm">Le registre de la peur<br><span class="verdict v-neu">de ton</span></td>
+        <td class="small">Le message dominant est l'exposition&nbsp;: chaque site audité est en infraction, vous vous exposez sans le savoir. C'est efficace, et c'est un levier anxiogène.</td>
+        <td class="small">Le cadrage de lisadoc interdit le vocabulaire de peur. <strong>Tenir cette ligne coûtera des conversions à court terme</strong> et fabriquera une réputation à long terme. C'est un arbitrage à assumer, pas à contourner.</td></tr>
+      <tr><td class="micro">06</td><td class="nm">Des défauts d'exécution<br><span class="verdict v-win">mineur</span></td>
+        <td class="small">La page à propos est <strong>vide</strong>, huit mots, alors qu'elle figure au menu et au plan de site. La page réalisations tient en 289 mots.</td>
+        <td class="small">Rappel utile&nbsp;: un dispositif impressionnant peut cacher des trous béants. Vérifier chaque page de notre propre site avant mise en ligne, y compris les pages secondaires.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card card--flat card--warm" style="margin-top:4mm">
+    <h3>Une remarque de méthode</h3>
+    <p class="small">Aucune de ces six failles ne doit devenir un argument de vente nommant le concurrent.
+      Le cadrage l'interdit et le bon sens aussi&nbsp;: attaquer un confrère du métier devant un médecin
+      qui a l'interdiction d'attaquer les siens produit exactement le mauvais effet.
+      <strong>Ces failles servent à choisir notre terrain, pas à ouvrir un procès.</strong></p>
+  </div>
+  <div class="rf"><b>Les failles</b><span>page 12 / 27</span></div>
+</section>
+
+<!-- ══════════ 13 · FACE À FACE ══════════ -->
+<section class="page">
+  <div class="eyebrow">Face à face</div>
+  <h1>Où lisadoc gagne, <em>où lisadoc perd.</em></h1>
+  <p class="lead">Comparaison honnête, en l'état des deux offres au 5 septembre 2026. Le cadrage de
+    lisadoc est une intention, leur site est une réalité en ligne. C'est le principal écart.</p>
+
+  <table class="t-compact">
+    <thead><tr><th style="width:40mm">Terrain</th><th style="width:31%">WebEsthétique, constaté</th><th style="width:31%">lisadoc, tel que cadré</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Existence en ligne</strong></td><td class="small">99 pages, 206 298 mots, en ligne et indexées.</td><td class="small">Rien de publié à ce jour.</td><td><span class="verdict v-risk">retard</span></td></tr>
+      <tr><td><strong>Preuve client</strong></td><td class="small">Une démonstration fictive. Zéro client public.</td><td class="small">Un premier site réel prévu, praticienne exerçante.</td><td><span class="verdict v-win">avantage</span></td></tr>
+      <tr><td><strong>Périmètre</strong></td><td class="small">Une famille de spécialités, saturée en communication.</td><td class="small">Onze spécialités, dont plusieurs vierges.</td><td><span class="verdict v-win">avantage</span></td></tr>
+      <tr><td><strong>Modèle économique</strong></td><td class="small">Projet de 5 000 à 12 000 euros. Revenu non récurrent.</td><td class="small">Mise en place plus abonnement. Revenu récurrent, promesse du dernier site.</td><td><span class="verdict v-win">avantage</span></td></tr>
+      <tr><td><strong>Transparence des prix</strong></td><td class="small">Aucun prix public, sauf dans le balisage.</td><td class="small">Prix affichés, totaux compris.</td><td><span class="verdict v-win">avantage</span></td></tr>
+      <tr><td><strong>Angle déontologique</strong></td><td class="small">Occupé, outillé, productisé, publié.</td><td class="small">Revendiqué, non encore outillé.</td><td><span class="verdict v-risk">retard</span></td></tr>
+      <tr><td><strong>Diagnostic d'entrée</strong></td><td class="small">Automatique, gratuit, instantané.</td><td class="small">Manuel, par étude de spécialité, plus riche mais plus lent.</td><td><span class="verdict v-neu">à combiner</span></td></tr>
+      <tr><td><strong>Voix du praticien</strong></td><td class="small">Contenu rédigé par l'agence à partir de sources documentaires. Aucun entretien mentionné.</td><td class="small">Entretien enregistré de 45 minutes, contenu issu de ses mots, signature du praticien.</td><td><span class="verdict v-win">avantage décisif</span></td></tr>
+      <tr><td><strong>Contenu vivant</strong></td><td class="small">Contenu figé, revérifié mensuellement.</td><td class="small">Brique de questions et réponses alimentée par les patients.</td><td><span class="verdict v-win">avantage</span></td></tr>
+      <tr><td><strong>Rétention</strong></td><td class="small">Le badge disparaît si l'abonnement s'arrête. Mécanique et immédiate.</td><td class="small">Page vivante et site qui ne vieillit pas. Douce et lente.</td><td><span class="verdict v-risk">plus faible</span></td></tr>
+      <tr><td><strong>Technique</strong></td><td class="small">Statique, 155 Ko, zéro cookie.</td><td class="small">Même exigence inscrite au cadrage.</td><td><span class="verdict v-neu">égalité</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="card card--ink" style="margin-top:4mm">
+    <h3 style="color:var(--gold)">La lecture stratégique</h3>
+    <p class="small">Sur onze terrains, lisadoc gagne six fois, perd trois fois, et égalise deux fois.
+      Les trois retards sont tous des retards <strong>d'exécution</strong>, pas de conception&nbsp;:
+      publier, outiller le diagnostic, durcir la rétention. Aucun ne demande de changer la stratégie.</p>
+    <p class="statement" style="font-size:14pt; color:var(--cream); margin-top:3mm">L'avantage décisif
+      tient en un mot&nbsp;: <em>l'entretien.</em> Ils écrivent sur le praticien.
+      Nous écrivons à partir du praticien.</p>
+  </div>
+  <div class="rf"><b>Face à face</b><span>page 13 / 27</span></div>
+</section>
+
+<!-- ══════════ 14 · BLUEPRINT · PRINCIPE ══════════ -->
+<section class="page">
+  <div class="eyebrow">Le blueprint · 01</div>
+  <h1>Le principe directeur, <em>puis l'arborescence.</em></h1>
+
+  <div class="card card--ink" style="margin-bottom:5mm">
+    <span class="micro" style="color:var(--gold)">La règle qui commande toutes les autres</span>
+    <p class="statement" style="font-size:17pt; color:var(--cream); margin-top:2mm">Une page par question
+      que se pose un patient. <em>Jamais une page par service que vend le cabinet.</em></p>
+    <p class="small" style="margin-top:3mm">Toute l'architecture qui suit découle de cette phrase.
+      Elle décide du découpage, des adresses, des titres, du maillage et du contenu. Quand un arbitrage
+      se présente, c'est elle qui tranche.</p>
+  </div>
+
+  <div class="g-2-1" style="align-items:start">
+    <div class="card card--white">
+      <span class="micro">Arborescence de référence, palier Visibilité, 34 pages</span>
+      <div class="tree" style="margin-top:3mm">/                             <b>accueil</b>
+/le-docteur/                  <b>le praticien</b>
+/le-cabinet/                  <b>lieu, accès, équipe</b>
+/premiere-consultation/       <b>parcours et délais</b>
+/honoraires/                  <b>tarifs, conventionnement</b>
+/contact/                     <b>rdv, plan, horaires</b>
+
+/[pôle-patient-1]/            <b>hub</b>
+   /[pôle-1]/[acte-a]/
+   /[pôle-1]/[acte-b]/
+   /[pôle-1]/[acte-c]/
+/[pôle-patient-2]/            <b>hub</b>
+   /[pôle-2]/[acte-d]/
+   …
+/[pôle-patient-3]/            <b>hub</b>
+/[pôle-patient-4]/            <b>hub</b>
+
+/questions/                   <b>index Q/R, brique</b>
+   /questions/[question]/
+
+/mentions-legales/
+/politique-de-confidentialite/
+/accessibilite/               <b>déclaration</b></div>
+      <p class="small" style="margin-top:3mm">Six pages de socle, quatre pôles, vingt-quatre pages d'acte,
+        l'index de questions, trois pages légales. Le palier Identité retire les pôles et garde dix pages.
+        Le palier Autorité double le nombre d'actes et ouvre les pages de pathologie.</p>
+    </div>
+    <div>
+      <h2>Les quatre écarts assumés</h2>
+      <p class="small"><strong>Une page honoraires autonome.</strong> Chez eux, les tarifs sont une
+        section dans chaque acte. Nous gardons cette section <em class="i">et</em> nous ajoutons une page
+        dédiée. Le cadrage identifie les dépassements comme première cause d'avis négatif&nbsp;: cela
+        mérite une page qu'on peut envoyer avant la consultation.</p>
+      <p class="small"><strong>Une page cabinet.</strong> Accès, parking, transports, étage, ascenseur,
+        accessibilité. Ce sont des questions réellement posées au secrétariat, et personne n'y répond
+        en ligne.</p>
+      <p class="small"><strong>Un index de questions.</strong> La brique Q/R a besoin d'une adresse à
+        elle. Chaque question validée devient une page ou une ancre, donc une porte d'entrée
+        supplémentaire, dans les mots exacts des patients.</p>
+      <p class="small"><strong>Une déclaration d'accessibilité.</strong> Peu de sites médicaux en ont.
+        C'est cohérent avec l'accueil comme valeur, et cela se voit.</p>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>Ce qu'on ne met pas</h3>
+        <p class="small">Pas de blog sur le site du praticien. Un blog vieillit, culpabilise et
+          finit abandonné. Les questions patients remplacent le blog, et elles, elles se remplissent
+          toutes seules.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Le blueprint</b><span>page 14 / 27</span></div>
+</section>
+
+<!-- ══════════ 15 · BLUEPRINT · TYPES DE PAGE ══════════ -->
+<section class="page page--dense">
+  <div class="eyebrow">Le blueprint · 02</div>
+  <h1>Douze types de page. <em>Pas un de plus.</em></h1>
+  <p class="lead">Un type de page est un gabarit&nbsp;: une structure, un budget de mots, un balisage,
+    un objectif. Douze gabarits couvrent tous les sites, toutes spécialités confondues. C'est ce qui
+    rend la production répétable et le prix tenable.</p>
+
+  <table class="t-compact">
+    <thead><tr><th style="width:8mm"></th><th style="width:34mm">Type</th><th style="width:16mm">Mots</th><th style="width:30%">Objectif unique</th><th>Balisage</th></tr></thead>
+    <tbody>
+      <tr><td class="micro">01</td><td><strong>Accueil</strong></td><td>700 à 900</td><td class="small">Orienter en trois secondes vers le bon pôle. Rassurer sur l'identité.</td><td class="small">Physician, MedicalBusiness, WebSite</td></tr>
+      <tr><td class="micro">02</td><td><strong>Praticien</strong></td><td>700 à 1 000</td><td class="small">Établir la légitimité&nbsp;: titres, formations, parcours, orientations.</td><td class="small">Physician, EducationalOccupationalCredential</td></tr>
+      <tr><td class="micro">03</td><td><strong>Cabinet</strong></td><td>400 à 600</td><td class="small">Répondre aux questions pratiques d'accès et d'organisation.</td><td class="small">MedicalBusiness, Place, OpeningHours</td></tr>
+      <tr><td class="micro">04</td><td><strong>Pôle</strong></td><td>500 à 700</td><td class="small">Capter la requête large et distribuer vers les actes.</td><td class="small">MedicalSpecialty, BreadcrumbList</td></tr>
+      <tr><td class="micro">05</td><td><strong>Acte</strong></td><td>1 100 à 1 400</td><td class="small">Répondre entièrement à une intervention. Le cœur du dispositif.</td><td class="small">MedicalProcedure, FAQPage</td></tr>
+      <tr><td class="micro">06</td><td><strong>Pathologie</strong></td><td>900 à 1 200</td><td class="small">Répondre à la requête symptôme, en amont de l'acte. Palier Autorité.</td><td class="small">MedicalCondition, FAQPage</td></tr>
+      <tr><td class="micro">07</td><td><strong>Parcours</strong></td><td>800 à 1 000</td><td class="small">Dérouler consultation, délai légal, intervention, suivi.</td><td class="small">HowTo, BreadcrumbList</td></tr>
+      <tr><td class="micro">08</td><td><strong>Honoraires</strong></td><td>500 à 700</td><td class="small">Dire franchement conventionnement, dépassements, remboursement, devis.</td><td class="small">MedicalBusiness, FAQPage</td></tr>
+      <tr><td class="micro">09</td><td><strong>Question</strong></td><td>200 à 400</td><td class="small">Une question de patient, une réponse signée et datée. Brique Q/R.</td><td class="small">QAPage, Person (author)</td></tr>
+      <tr><td class="micro">10</td><td><strong>Index questions</strong></td><td>300 à 500</td><td class="small">Regrouper et hiérarchiser les questions par pôle.</td><td class="small">CollectionPage, ItemList</td></tr>
+      <tr><td class="micro">11</td><td><strong>Contact</strong></td><td>300 à 500</td><td class="small">Prendre rendez-vous, appeler, venir. Zéro friction.</td><td class="small">ContactPage, MedicalBusiness</td></tr>
+      <tr><td class="micro">12</td><td><strong>Légale</strong></td><td>libre</td><td class="small">Mentions, confidentialité, accessibilité. Obligations.</td><td class="small">WebPage</td></tr>
+    </tbody>
+  </table>
+
+  <div class="g3" style="margin-top:4mm">
+    <div class="card card--flat card--tight"><h3>Pourquoi douze</h3>
+      <p class="small">Chaque type supplémentaire ajoute un gabarit à concevoir, à tester, à maintenir
+        et à expliquer. Douze couvre tout. Au-delà, on fabrique de la dette.</p></div>
+    <div class="card card--flat card--tight"><h3>Le budget de mots</h3>
+      <p class="small">Il n'est pas décoratif. Sous 900 mots, une page d'acte ne répond pas.
+        Au-delà de 1 500, elle n'est plus lue sur un téléphone. La fourchette est un cahier des charges
+        de rédaction.</p></div>
+    <div class="card card--flat card--tight"><h3>Le type 09, spécifique</h3>
+      <p class="small">C'est le seul type qui grandit tout seul après la livraison. Trois ans de
+        questions signées produisent un actif qu'aucune agence ne peut recréer en repartant de zéro.</p></div>
+  </div>
+  <div class="rf"><b>Le blueprint</b><span>page 15 / 27</span></div>
+</section>
+
+<!-- ══════════ 16 · BLUEPRINT · PAGE D'ACTE ══════════ -->
+<section class="page">
+  <div class="eyebrow">Le blueprint · 03</div>
+  <h1>La page d'acte lisadoc. <em>Onze sections.</em></h1>
+  <p class="lead">Le squelette du concurrent en compte neuf. Nous en ajoutons deux, et nous n'en retirons
+    aucune. Les deux ajouts sont précisément ce qu'ils ne peuvent pas produire.</p>
+
+  <div class="g-2-1">
+    <div>
+      <table class="t-compact">
+        <thead><tr><th style="width:8mm"></th><th style="width:42mm">Section</th><th>Ce qu'elle contient, et pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td class="micro">00</td><td><strong>En bref</strong><br><span class="verdict v-win">ajout</span></td>
+            <td class="small">Cinq faits, en haut de page, avant tout le reste. Durée, anesthésie, hospitalisation, arrêt de travail, délai de résultat. <strong>C'est le bloc qu'une IA extrait et cite</strong>, et c'est ce qu'un patient pressé cherche d'abord.</td></tr>
+          <tr><td class="micro">01</td><td><strong>Qu'est-ce que c'est</strong></td><td class="small">Définition en deux paragraphes, avec les synonymes du patient.</td></tr>
+          <tr><td class="micro">02</td><td><strong>Est-ce pour vous</strong></td><td class="small">Les indications, écrites en situations vécues plutôt qu'en critères cliniques.</td></tr>
+          <tr><td class="micro">03</td><td><strong>Le mot du Dr [X]</strong><br><span class="verdict v-win">ajout</span></td>
+            <td class="small">Trois à cinq phrases <strong>tirées de l'entretien, dans ses mots, signées</strong>. Sa manière de poser l'indication, ce qu'il refuse d'opérer, ce qu'il dit toujours en consultation. Personne ne peut copier ce bloc.</td></tr>
+          <tr><td class="micro">04</td><td><strong>Comment ça se passe</strong></td><td class="small">Avant, le jour, après. Chiffré partout.</td></tr>
+          <tr><td class="micro">05</td><td><strong>Les suites</strong></td><td class="small">Douleur, arrêt de travail, sport, conduite, délais réels.</td></tr>
+          <tr><td class="micro">06</td><td><strong>Les résultats</strong></td><td class="small">Factuel, sans image de résultat, sans promesse.</td></tr>
+          <tr><td class="micro">07</td><td><strong>Risques et complications</strong></td><td class="small">Liste franche. Obligation d'information loyale, article R.4127-35.</td></tr>
+          <tr><td class="micro">08</td><td><strong>Tarifs et prise en charge</strong></td><td class="small">Conventionnement, base de remboursement, dépassement, devis, délai légal si applicable.</td></tr>
+          <tr><td class="micro">09</td><td><strong>Questions des patients</strong></td><td class="small">Quatre questions au lancement, puis la brique vivante. Chaque réponse datée et signée.</td></tr>
+          <tr><td class="micro">10</td><td><strong>Prendre rendez-vous</strong></td><td class="small">En bas, après l'information. Jamais avant.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3>Les blocs périphériques</h3>
+        <ul class="clean small">
+          <li><strong>Panneau latéral collant</strong>&nbsp;: rendez-vous, téléphone, puis les cinq faits de la section 00.</li>
+          <li><strong>Encart réglementaire</strong>&nbsp;: risques, devis, délai de réflexion. Composant unique.</li>
+          <li><strong>Sources</strong>&nbsp;: renvois aux sociétés savantes et aux autorités sanitaires. Ils n'en ont pas. <strong>C'est un signal d'attribution majeur.</strong></li>
+          <li><strong>Actes associés</strong>&nbsp;: trois liens, plus le parcours de soin.</li>
+          <li><strong>Vérifié le [date] par [Dr X]</strong>&nbsp;: la ligne qui remplace leur badge.</li>
+        </ul>
+      </div>
+      <div class="card card--ink" style="margin-top:4mm">
+        <h3 style="color:var(--gold)">Pourquoi la section 03 change tout</h3>
+        <p class="small">Deux pages d'acte écrites à partir des mêmes sources documentaires se
+          ressemblent, quel que soit le rédacteur. C'est le plafond de toute agence qui écrit
+          <em class="i">sur</em> un praticien.</p>
+        <p class="small">Une page qui contient trois phrases du praticien lui-même, sur sa manière de
+          poser l'indication, devient unique, non copiable et attribuable. C'est la promesse de la
+          plateforme de marque, rendue visible à l'endroit exact où le patient décide.</p>
+        <p class="statement" style="font-size:13pt; color:var(--cream); margin-top:3mm">Une seule
+          section, et le site cesse d'être <em>un site d'agence.</em></p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Le blueprint</b><span>page 16 / 27</span></div>
+</section>
+
+<!-- ══════════ 17 · BLUEPRINT · URL ET MAILLAGE ══════════ -->
+<section class="page">
+  <div class="eyebrow">Le blueprint · 04</div>
+  <h1>Adresses, titres, <em>maillage.</em></h1>
+
+  <div class="g2">
+    <div>
+      <h2>Le système d'adresses</h2>
+      <div class="code">/[pole]/                      → hub
+/[pole]/[acte]/               → acte
+/pathologies/[pathologie]/    → pathologie
+/questions/[question]/        → question patient
+/le-docteur/ /le-cabinet/ /honoraires/
+/premiere-consultation/ /contact/</div>
+      <ul class="clean small" style="margin-top:3mm">
+        <li>Tout en minuscules, sans accent, séparé par des traits d'union.</li>
+        <li>Deux niveaux au maximum. Jamais de date, jamais d'identifiant.</li>
+        <li>Le mot exact du patient, pas l'intitulé de la nomenclature.</li>
+        <li>Barre oblique finale, cohérente sur tout le site.</li>
+        <li>Le nom de domaine porte l'identité du praticien. <strong>Jamais un mot-clé</strong>, la charte ordinale l'exclut et cela n'apporte rien au classement.</li>
+      </ul>
+      <h2>Les titres</h2>
+      <table class="t-compact">
+        <tr><th style="width:22mm">Balise titre</th><td class="small">[Acte] à [Ville] · Dr [Nom], [spécialité]</td></tr>
+        <tr><th>Titre H1</th><td class="small">Surtitre [ACTE] À [VILLE], puis phrase de bénéfice en clair</td></tr>
+        <tr><th>Description</th><td class="small">Une phrase factuelle, la durée, l'anesthésie, et le cabinet. Aucune promesse.</td></tr>
+      </table>
+      <p class="small">Le surtitre porte la requête, le titre visible porte la langue humaine.
+        Les deux dans le même bloc de titre. C'est leur trouvaille, elle est bonne, on la garde.</p>
+    </div>
+    <div>
+      <h2>Le maillage, en cinq règles</h2>
+      <div class="stack">
+        <div class="row"><span class="t">01</span><p class="small"><strong>Menu complet.</strong>
+          La liste de tous les actes est accessible depuis chaque page, par le menu et par le pied de page.
+          Cent à cent quarante liens internes par page&nbsp;: c'est volontaire, pas accidentel.</p></div>
+        <div class="row"><span class="t">02</span><p class="small"><strong>Fil d'Ariane.</strong>
+          Accueil, pôle, acte. Balisé. Il donne la hiérarchie à la machine et le repère au patient.</p></div>
+        <div class="row"><span class="t">03</span><p class="small"><strong>Trois actes associés</strong>
+          en bas de chaque page d'acte, choisis par proximité de décision et non par ordre alphabétique.</p></div>
+        <div class="row"><span class="t">04</span><p class="small"><strong>Chaque acte renvoie au parcours
+          de soin et aux honoraires.</strong> Ce sont les deux pages qui lèvent les dernières objections.</p></div>
+        <div class="row"><span class="t">05</span><p class="small"><strong>Chaque question renvoie à son
+          acte, et chaque acte à ses questions.</strong> C'est ce qui fait vivre la brique Q/R et la
+          rend utile au référencement.</p></div>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>La règle du deuxième clic</h3>
+        <p class="small">Depuis n'importe quelle page, un patient atteint n'importe quel acte en un clic,
+          et le rendez-vous en un clic. <strong>Si un contenu demande trois clics, il n'existe pas.</strong>
+          C'est le test à faire sur chaque maquette, avant de parler d'esthétique.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <div class="g-2-1">
+    <div>
+      <h2 style="margin-top:0">Les huit erreurs d'adresses les plus fréquentes</h2>
+      <div class="g2">
+        <ul class="cross small">
+          <li>Une date dans l'adresse. Le contenu vieillit à vue d'œil.</li>
+          <li><code>/nos-services/</code> ou <code>/nos-prestations/</code>. Vocabulaire de prestataire.</li>
+          <li>Un identifiant technique ou une extension de fichier.</li>
+          <li>Une page unique listant tous les actes, sans page par acte.</li>
+        </ul>
+        <ul class="cross small">
+          <li>Un mot-clé dans le nom de domaine. Exclu par la charte ordinale, sans effet sur le classement.</li>
+          <li>Un sous-domaine séparé pour le contenu. L'autorité se disperse.</li>
+          <li>Un document PDF là où une page était nécessaire.</li>
+          <li>Un changement d'adresse sans redirection. Tout le travail acquis disparaît.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card card--flat card--white">
+      <h3>La règle de la refonte</h3>
+      <p class="small">Quand nous reprenons un site existant, chaque ancienne adresse reçoit une
+        redirection permanente vers sa correspondance nouvelle. Une seule, jamais en chaîne.</p>
+      <p class="small"><strong>C'est la première cause d'effondrement après une refonte</strong>,
+        et c'est aussi ce qui explique qu'un praticien puisse avoir payé trois sites et se retrouver
+        moins visible qu'avant.</p>
+    </div>
+  </div>
+  <div class="rf"><b>Le blueprint</b><span>page 17 / 27</span></div>
+</section>
+
+<!-- ══════════ 18 · BLUEPRINT · BALISAGE ══════════ -->
+<section class="page">
+  <div class="eyebrow">Le blueprint · 05</div>
+  <h1>Le balisage, <em>type par type.</em></h1>
+  <p class="lead">Un seul bloc de données structurées par page, en graphe, avec des identifiants
+    réutilisables. Le praticien et le cabinet sont déclarés une fois et référencés partout.</p>
+
+  <div class="g-2-1">
+    <div>
+      <table class="t-compact">
+        <thead><tr><th style="width:30mm">Type de page</th><th>Ce qui est déclaré</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Toutes</strong></td><td class="small"><code>WebSite</code> · <code>Physician</code> (identifiant <code>#doc</code>) · <code>MedicalBusiness</code> (identifiant <code>#cab</code>) · <code>BreadcrumbList</code></td></tr>
+          <tr><td><strong>Praticien</strong></td><td class="small">Le nœud <code>#doc</code> enrichi&nbsp;: <code>medicalSpecialty</code>, <code>alumniOf</code>, <code>hasCredential</code>, <code>memberOf</code>, <code>identifier</code> pour le RPPS</td></tr>
+          <tr><td><strong>Cabinet</strong></td><td class="small"><code>#cab</code> enrichi&nbsp;: <code>address</code>, <code>geo</code>, <code>openingHoursSpecification</code>, <code>isAcceptingNewPatients</code>, <code>paymentAccepted</code></td></tr>
+          <tr><td><strong>Pôle</strong></td><td class="small"><code>CollectionPage</code> + <code>ItemList</code> des actes du pôle, dans l'ordre d'affichage</td></tr>
+          <tr><td><strong>Acte</strong></td><td class="small"><code>MedicalProcedure</code> avec <code>bodyLocation</code>, <code>preparation</code>, <code>howPerformed</code>, <code>followup</code>, <code>performer</code> → <code>#doc</code> · plus <code>FAQPage</code></td></tr>
+          <tr><td><strong>Pathologie</strong></td><td class="small"><code>MedicalCondition</code> avec <code>signOrSymptom</code>, <code>possibleTreatment</code> → l'acte correspondant</td></tr>
+          <tr><td><strong>Parcours</strong></td><td class="small"><code>HowTo</code>, une étape par temps du parcours, avec les délais réels</td></tr>
+          <tr><td><strong>Question</strong></td><td class="small"><code>QAPage</code> · <code>author</code> → <code>#doc</code> · <code>dateModified</code> · <code>upvoteCount</code> jamais</td></tr>
+        </tbody>
+      </table>
+      <p class="small"><strong>La règle de probité qui vaut pour tout le balisage&nbsp;:</strong>
+        on ne déclare que ce qui est visible sur la page. Un balisage qui promet ce que le texte ne dit
+        pas est une faute technique, et sur un site médical, une faute tout court.</p>
+      <p class="small"><strong>Ce qu'on ne déclare jamais&nbsp;:</strong> <code>AggregateRating</code>,
+        <code>Review</code>, <code>Offer</code> avec un prix d'acte. Les deux premiers sont des avis de
+        patients, interdits. Le troisième transforme un acte de soin en produit.</p>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3>Le nœud praticien, une fois pour tout le site</h3>
+        <div class="code">{ "@type": "Physician",
+  "@id": "https://…/#doc",
+  "name": "Dr …",
+  "honorificPrefix": "Dr",
+  "medicalSpecialty": "…",
+  "identifier": {
+    "@type": "PropertyValue",
+    "name": "RPPS", "value": "…" },
+  "alumniOf": "…",
+  "hasCredential": [ … ],
+  "worksFor": { "@id": "…/#cab" },
+  "url": "https://…/le-docteur/" }</div>
+        <p class="small" style="margin-top:3mm">Le numéro RPPS est public et vérifiable dans l'annuaire
+          santé. Le déclarer relie le site à une identité contrôlée par l'État. <strong>Aucune agence
+          généraliste ne pense à le faire</strong>, et c'est le signal d'attribution le plus fort
+          disponible.</p>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>La vérification, à chaque livraison</h3>
+        <ul class="clean small">
+          <li>Aucune erreur dans l'outil de test de Google.</li>
+          <li>Un seul bloc de données par page.</li>
+          <li>Chaque identifiant résolu, aucun nœud orphelin.</li>
+          <li>Les dates de modification réelles, jamais automatiques.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Le blueprint</b><span>page 18 / 27</span></div>
+</section>
+
+<!-- ══════════ 19 · BLUEPRINT · COMPOSANTS ══════════ -->
+<section class="page page--dense">
+  <div class="eyebrow">Le blueprint · 06</div>
+  <h1>Vingt composants. <em>Tout le système.</em></h1>
+  <p class="lead">Un site entier se construit avec vingt briques. Les dessiner une fois, bien, puis les
+    réutiliser sur tous les clients&nbsp;: c'est ce qui rend la refonte gratuite tenable et le délai de
+    livraison prévisible.</p>
+
+  <div class="g2">
+    <div>
+      <h3 style="margin-top:0">Structure</h3>
+      <table class="t-compact">
+        <tr><td class="micro">01</td><td><strong>En-tête</strong></td><td class="small">Identité, menu, téléphone, rendez-vous. Collant sur mobile.</td></tr>
+        <tr><td class="micro">02</td><td><strong>Menu des pôles</strong></td><td class="small">Déroulant, liste complète des actes, quatre colonnes.</td></tr>
+        <tr><td class="micro">03</td><td><strong>Fil d'Ariane</strong></td><td class="small">Trois niveaux, balisé.</td></tr>
+        <tr><td class="micro">04</td><td><strong>Pied de page</strong></td><td class="small">Liste complète, coordonnées, horaires, mentions, accessibilité.</td></tr>
+        <tr><td class="micro">05</td><td><strong>Panneau latéral collant</strong></td><td class="small">Rendez-vous, téléphone, faits clés. Se replie en barre basse sur mobile.</td></tr>
+      </table>
+      <h3>Contenu</h3>
+      <table class="t-compact">
+        <tr><td class="micro">06</td><td><strong>Bloc en bref</strong></td><td class="small">Cinq faits, en tête de page d'acte.</td></tr>
+        <tr><td class="micro">07</td><td><strong>Section de texte</strong></td><td class="small">Titre, deux à quatre paragraphes, mesure de ligne contrainte.</td></tr>
+        <tr><td class="micro">08</td><td><strong>Liste d'indications</strong></td><td class="small">Puces courtes, une situation par ligne.</td></tr>
+        <tr><td class="micro">09</td><td><strong>Étapes</strong></td><td class="small">Avant, pendant, après. Numérotées, avec délais.</td></tr>
+        <tr><td class="micro">10</td><td><strong>Citation du praticien</strong></td><td class="small">Verbatim signé, fond distinct, mention entretien du [date].</td></tr>
+        <tr><td class="micro">11</td><td><strong>Tableau tarifs</strong></td><td class="small">Acte, base de remboursement, dépassement, devis.</td></tr>
+        <tr><td class="micro">12</td><td><strong>Accordéon questions</strong></td><td class="small">Ouvert par défaut sur desktop, replié sur mobile. Balisé.</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Confiance</h3>
+      <table class="t-compact">
+        <tr><td class="micro">13</td><td><strong>Encart réglementaire</strong></td><td class="small">Risques, devis, délai de réflexion. Texte figé, réutilisé.</td></tr>
+        <tr><td class="micro">14</td><td><strong>Bloc sources</strong></td><td class="small">Deux à quatre renvois aux autorités et sociétés savantes.</td></tr>
+        <tr><td class="micro">15</td><td><strong>Ligne de vérification</strong></td><td class="small">Contenu vérifié le [date] par le [Dr X].</td></tr>
+        <tr><td class="micro">16</td><td><strong>Carte praticien</strong></td><td class="small">Portrait, titres, RPPS, lien vers la page complète.</td></tr>
+      </table>
+      <h3>Action</h3>
+      <table class="t-compact">
+        <tr><td class="micro">17</td><td><strong>Bloc rendez-vous</strong></td><td class="small">Bouton agenda, téléphone, horaires. Répété en fin de page.</td></tr>
+        <tr><td class="micro">18</td><td><strong>Formulaire question</strong></td><td class="small">Brique Q/R. Avertissement urgence en tête, anonymisation annoncée.</td></tr>
+        <tr><td class="micro">19</td><td><strong>Actes associés</strong></td><td class="small">Trois cartes, choisies par proximité de décision.</td></tr>
+        <tr><td class="micro">20</td><td><strong>Carte et accès</strong></td><td class="small">Plan statique, sans traceur tiers, transports et stationnement.</td></tr>
+      </table>
+      <div class="card card--flat card--rose" style="margin-top:4mm">
+        <h3 style="color:var(--rose-deep)">Ce qui n'existe pas dans le système</h3>
+        <p class="small">Pas de carrousel. Pas de compteur animé. Pas de fenêtre surgissante.
+          Pas de discussion automatique. Pas de galerie avant-après. Pas de bandeau de cookies,
+          puisqu'il n'y a pas de cookie. Pas de note ni d'étoile.</p>
+        <p class="small">Chaque absence est une décision, et chacune se justifie devant le praticien
+          en une phrase. C'est le meilleur moment de la présentation.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:4mm 0 3mm"></div>
+  <p class="small"><strong>Le comportement mobile est spécifié une fois, pas improvisé.</strong>
+    Le panneau latéral collant devient une barre basse à deux actions, appeler et prendre rendez-vous.
+    Le menu des pôles s'ouvre en pleine page. L'accordéon de questions se replie. Le tableau des tarifs
+    passe en liste. Le reste ne change pas&nbsp;: les composants sont dessinés pour le téléphone d'abord,
+    et élargis ensuite.</p>
+  <div class="rf"><b>Le blueprint</b><span>page 19 / 27</span></div>
+</section>
+
+<!-- ══════════ 20 · BLUEPRINT · MODÈLE DE CONTENU ══════════ -->
+<section class="page">
+  <div class="eyebrow">Le blueprint · 07</div>
+  <h1>Le modèle de contenu. <em>Ce qu'on collecte, une fois.</em></h1>
+  <p class="lead">C'est le document le plus important de la production. Si ces champs sont remplis,
+    le site s'écrit presque tout seul, par un humain comme par une machine. S'ils manquent, aucune
+    quantité de talent ne rattrape.</p>
+
+  <div class="g2">
+    <div>
+      <div class="card card--flat card--white">
+        <h3>Fiche praticien · collectée une fois</h3>
+        <div class="code">nom, titre, sexe, RPPS, spécialité
+diplômes[] {intitulé, université, année}
+formations[] {intitulé, organisme, année}
+titres[] {hospitalier, universitaire}
+sociétés_savantes[]
+langues[]
+secteur_conventionnement
+moyens_de_paiement[]
+lieux[] {nom, adresse, horaires, accès,
+         parking, transports, ascenseur}
+photo_portrait, photos_cabinet[]
+trois_sentiments[]   ← direction visuelle
+pourquoi_cette_spécialité  ← verbatim
+ce_que_je_dis_toujours     ← verbatim</div>
+      </div>
+      <p class="small" style="margin-top:3mm">Les trois derniers champs sortent de l'entretien et ne
+        s'obtiennent pas autrement. <strong>Ce sont eux qui font la différence entre un site de lisadoc
+        et un site d'agence.</strong></p>
+    </div>
+    <div>
+      <div class="card card--flat card--white">
+        <h3>Fiche acte · une par acte coché</h3>
+        <div class="code">nom_patient      ← le mot du patient
+nom_médical      ← la nomenclature
+pôle
+synonymes[]
+définition
+indications[]
+contre_indications[]
+anesthésie, durée, hospitalisation
+préparation[]    ← avant
+déroulé[]        ← le jour
+suites[]         ← après
+arrêt_travail, reprise_sport, conduite
+délai_résultat
+risques[]
+prise_en_charge {conventionné, base_rembt,
+                 dépassement, devis, délai_légal}
+questions[] {q, réponse, date, signé_par}
+verbatim_praticien  ← section 03
+sources[]
+actes_associés[]
+vérifié_le</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g3">
+    <div class="card card--flat card--tight card--warm"><h3>D'où vient chaque champ</h3>
+      <p class="small">Environ quatre-vingts pour cent sont pré-remplis par nous avant l'entretien&nbsp;:
+        nomenclature, sources, structure. Le praticien corrige. Les champs verbatim, les délais réels de
+        sa pratique et les contre-indications qu'il retient viennent de sa bouche.</p></div>
+    <div class="card card--flat card--tight card--warm"><h3>Pourquoi ce format</h3>
+      <p class="small">Un fichier structuré par praticien, un par acte. C'est lisible par un humain,
+        exploitable par un générateur, et versionnable. <strong>Le plan de contenu, l'étude de
+        spécialité et le site sont le même objet à trois moments.</strong></p></div>
+    <div class="card card--flat card--tight card--warm"><h3>Le champ qui protège</h3>
+      <p class="small"><code>vérifié_le</code> et <code>signé_par</code> sur chaque contenu.
+        Sans eux, pas de publication. C'est la boucle de signature de la plateforme de marque,
+        inscrite dans la structure des données plutôt que dans une promesse.</p></div>
+  </div>
+  <div class="rf"><b>Le blueprint</b><span>page 20 / 27</span></div>
+</section>
+
+<!-- ══════════ 21 · BLUEPRINT · BUDGETS ══════════ -->
+<section class="page">
+  <div class="eyebrow">Le blueprint · 08</div>
+  <h1>Budgets de performance <em>et d'accessibilité.</em></h1>
+  <p class="lead">Des seuils chiffrés, vérifiés à chaque livraison. Un site qui les dépasse ne part pas.
+    C'est ce qui transforme <em class="i">un beau site est un site rapide</em> en règle opposable.</p>
+
+  <div class="g2">
+    <div>
+      <h2>Performance</h2>
+      <table class="t-compact">
+        <thead><tr><th>Mesure</th><th style="width:24mm">Seuil</th><th>Référence auditée</th></tr></thead>
+        <tbody>
+          <tr><td>Poids transféré, page d'acte</td><td><strong>&lt; 250 Ko</strong></td><td class="small">155 Ko chez eux</td></tr>
+          <tr><td>Requêtes réseau</td><td><strong>&lt; 15</strong></td><td class="small">8 chez eux</td></tr>
+          <tr><td>Domaines tiers</td><td><strong>0</strong></td><td class="small">0 chez eux</td></tr>
+          <tr><td>Cookies</td><td><strong>0</strong></td><td class="small">0 chez eux</td></tr>
+          <tr><td>Contenu interactif, mobile 4G</td><td><strong>&lt; 2 s</strong></td><td class="small">≈ 1,1 s en bureau</td></tr>
+          <tr><td>Polices chargées</td><td><strong>≤ 3 fichiers</strong></td><td class="small">3, hébergées sur le domaine</td></tr>
+          <tr><td>Images au premier écran</td><td><strong>≤ 1</strong></td><td class="small">format moderne, dimensionnée</td></tr>
+        </tbody>
+      </table>
+      <p class="small">Aucun de ces seuils n'exige de prouesse. Ils exigent seulement de ne pas ajouter
+        ce dont on n'a pas besoin. <strong>La performance n'est pas une optimisation, c'est une
+        abstention.</strong></p>
+    </div>
+    <div>
+      <h2>Accessibilité et lisibilité</h2>
+      <table class="t-compact">
+        <thead><tr><th>Mesure</th><th style="width:28mm">Seuil</th></tr></thead>
+        <tbody>
+          <tr><td>Corps de texte, pages patient</td><td><strong>≥ 17 px</strong></td></tr>
+          <tr><td>Contraste, texte courant</td><td><strong>≥ 4,5</strong></td></tr>
+          <tr><td>Contraste, grands titres</td><td><strong>≥ 3</strong></td></tr>
+          <tr><td>Longueur de ligne</td><td><strong>60 à 75 signes</strong></td></tr>
+          <tr><td>Zone tactile minimale</td><td><strong>44 × 44 px</strong></td></tr>
+          <tr><td>Navigation au clavier</td><td><strong>complète, focus visible</strong></td></tr>
+          <tr><td>Texte alternatif</td><td><strong>sur chaque image porteuse de sens</strong></td></tr>
+          <tr><td>Texte justifié</td><td><strong>jamais</strong></td></tr>
+          <tr><td>Contenu dépendant du survol</td><td><strong>aucun</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>Pourquoi dix-sept pixels</h3>
+        <p class="small">L'âge médian d'un patient qui cherche un spécialiste est élevé, et la lecture se
+          fait le soir, sur un téléphone, souvent avec inquiétude. Seize pixels est le minimum courant du
+          métier. Dix-sept est notre plancher, et il se voit.</p>
+        <p class="small"><strong>L'accessibilité n'est pas ici une conformité, c'est l'accueil rendu
+          mesurable.</strong> C'est le mot élu de la plateforme de marque, traduit en pixels.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule" style="margin:5mm 0 4mm"></div>
+  <h2 style="margin-top:0">Les dix contrôles avant mise en ligne</h2>
+  <div class="g2">
+    <ul class="check small">
+      <li>Tous les seuils ci-dessus vérifiés, sur mobile et sur bureau.</li>
+      <li>Balisage sans erreur, un seul bloc par page, aucun nœud orphelin.</li>
+      <li>Chaque page d'acte porte ses onze sections, aucune vide.</li>
+      <li>Chaque affirmation médicale signée par le praticien, et datée.</li>
+      <li>Aucun avis, aucun avant-après, aucun superlatif, aucune comparaison.</li>
+    </ul>
+    <ul class="check small">
+      <li>Honoraires et dépassements écrits en clair sur la page dédiée.</li>
+      <li>Anciennes adresses redirigées une à une, sans chaîne.</li>
+      <li>Fiches externes mises en cohérence&nbsp;: annuaire de l'Ordre, cartographie, agenda, clinique.</li>
+      <li>Mesure des demandes de rendez-vous branchée et testée.</li>
+      <li>Identifiants et domaine remis au praticien, par écrit.</li>
+    </ul>
+  </div>
+  <p class="small muted">Cette liste est la section 10 du fichier de spécification. Elle se passe à chaque
+    livraison, sans exception, et elle se signe.</p>
+  <div class="rf"><b>Le blueprint</b><span>page 21 / 27</span></div>
+</section>
+
+<!-- ══════════ 22 · LES TEMPLATES ══════════ -->
+<section class="page">
+  <div class="eyebrow">Les templates</div>
+  <h1>Six structures. <em>Trois au lancement.</em></h1>
+  <p class="lead">Un template se définit par le <strong>type de pratique</strong>, jamais par une
+    esthétique. Ce qui change d'un template à l'autre, c'est la page pivot, celle qui porte la décision
+    du patient. Tout le reste est identique, et c'est ce qui rend le système tenable.</p>
+
+  <table class="t-compact">
+    <thead><tr><th style="width:8mm"></th><th style="width:38mm">Template</th><th style="width:26%">Pour qui</th><th style="width:24%">La page pivot</th><th>Ce qui change</th></tr></thead>
+    <tbody>
+      <tr><td class="micro">01</td><td class="nm">Interventions<br><span class="verdict v-win">lancement</span></td>
+        <td class="small">Chirurgien plasticien, orthopédiste, viscéral, bariatrique. La décision porte sur un geste.</td>
+        <td class="small">La page d'acte.</td>
+        <td class="small">Pôles par zone du corps. Vingt à cinquante actes. Le parcours de soin et le devis sont centraux.</td></tr>
+      <tr><td class="micro">02</td><td class="nm">Pathologies et suivi<br><span class="verdict v-win">lancement</span></td>
+        <td class="small">Dermatologue, gynécologue, ORL médical, ophtalmologiste médical. La décision porte sur un symptôme.</td>
+        <td class="small">La page de pathologie.</td>
+        <td class="small">Pôles par motif de consultation. La pathologie précède l'acte et y renvoie. Le suivi dans la durée est mis en avant.</td></tr>
+      <tr><td class="micro">03</td><td class="nm">Cabinet de groupe<br><span class="verdict v-win">lancement</span></td>
+        <td class="small">Centre, clinique, association de praticiens. Marque collective et praticiens individuels.</td>
+        <td class="small">La page praticien.</td>
+        <td class="small">Deux niveaux de marque. Chaque acte indique qui le pratique. Règles de préséance écrites au contrat.</td></tr>
+      <tr><td class="micro">04</td><td class="nm">Parcours long</td>
+        <td class="small">PMA, obésité, chirurgie bariatrique, oncologie de suivi. La décision porte sur un chemin de plusieurs mois.</td>
+        <td class="small">La page parcours, étape par étape.</td>
+        <td class="small">Le parcours devient le contenu principal. Chaque étape a sa page, ses délais, ses documents.</td></tr>
+      <tr><td class="micro">05</td><td class="nm">Plateau technique</td>
+        <td class="small">Chirurgie réfractive, implants, imagerie. La technique et l'équipement font la différence.</td>
+        <td class="small">La page technique.</td>
+        <td class="small">Une page par technologie, reliée aux actes qu'elle permet. Les critères d'éligibilité sont détaillés.</td></tr>
+      <tr><td class="micro">06</td><td class="nm">Installation</td>
+        <td class="small">Praticien qui s'installe ou déménage. Porte 01 de la plateforme de marque.</td>
+        <td class="small">La page praticien et le cabinet.</td>
+        <td class="small">Dix pages, palier Identité. Les pôles arrivent au palier suivant, sans refonte.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Ce qui ne change jamais, quel que soit le template</h2>
+      <div class="g2">
+        <ul class="clean small">
+          <li>Les douze types de page.</li>
+          <li>Les vingt composants.</li>
+          <li>Le squelette d'acte en onze sections.</li>
+          <li>Le système d'adresses et le maillage.</li>
+        </ul>
+        <ul class="clean small">
+          <li>Le balisage et ses interdits.</li>
+          <li>Les budgets de performance et d'accessibilité.</li>
+          <li>L'encart réglementaire et la ligne de vérification.</li>
+          <li>La boucle de signature.</li>
+        </ul>
+      </div>
+      <p class="small">C'est ce socle commun qui permet de promettre le dernier site&nbsp;: une refonte
+        devient un changement d'habillage sur la même structure, quelques heures et non un projet.
+        <strong>Six templates, un seul système.</strong></p>
+    </div>
+    <div class="card card--ink">
+      <h3 style="color:var(--gold)">L'habillage, par-dessus</h3>
+      <p class="small">Trois sentiments choisis avec le praticien pendant l'entretien, puis une palette,
+        un accent typographique, un rythme. Le cadrage a raison de refuser le mot sur-mesure&nbsp;:
+        la formule tenable est <strong>une structure éprouvée, un habillage qui vous ressemble</strong>.</p>
+      <p class="small">Un template de structure multiplié par un habillage donne assez de combinaisons
+        pour que deux confrères d'une même ville n'aient jamais le même site, sans jamais sortir du
+        système.</p>
+    </div>
+  </div>
+  <div class="rf"><b>Les templates</b><span>page 22 / 27</span></div>
+</section>
+
+<!-- ══════════ 23 · DIFFÉRENCIATEURS ══════════ -->
+<section class="page">
+  <div class="eyebrow">Ce que nous ajoutons</div>
+  <h1>Sept écarts. <em>Aucun n'est cosmétique.</em></h1>
+  <p class="lead">Ce que le template lisadoc porte et que le meilleur site du marché ne porte pas.
+    Chacun est vérifiable par le praticien, et chacun coûte quelque chose. C'est à cela qu'on reconnaît
+    un vrai différenciateur.</p>
+
+  <div class="stack">
+    <div class="row"><span class="t">01</span><p class="small"><strong>Le mot du praticien sur chaque
+      page d'acte.</strong> Trois à cinq phrases de sa bouche, signées, datées. Coût&nbsp;: quarante-cinq
+      minutes d'entretien et un travail de transcription. Impossible à copier, y compris par une IA qui
+      lirait tout le site.</p></div>
+    <div class="row"><span class="t">02</span><p class="small"><strong>L'attribution vérifiable.</strong>
+      Numéro RPPS déclaré, auteur et date de vérification sur chaque contenu. Le site cesse d'être un
+      texte anonyme et devient une source identifiée, reliée à un registre d'État.</p></div>
+    <div class="row"><span class="t">03</span><p class="small"><strong>Les sources citées.</strong>
+      Deux à quatre renvois par page d'acte vers les autorités sanitaires et les sociétés savantes.
+      Personne ne le fait sur ce marché. C'est ce qui distingue une page d'information d'une page
+      de vente déguisée.</p></div>
+    <div class="row"><span class="t">04</span><p class="small"><strong>La brique de questions vivante.</strong>
+      Le seul contenu du site qui grandit sans nous. Au bout d'un an, une page d'acte porte des dizaines
+      de questions réelles, dans les mots des patients, avec des réponses signées.</p></div>
+    <div class="row"><span class="t">05</span><p class="small"><strong>Le prix affiché, totaux compris.</strong>
+      Eux ne publient rien. Sur un marché où le praticien redoute d'être pris pour une cible, publier
+      le prix est un acte de respect avant d'être un acte commercial.</p></div>
+    <div class="row"><span class="t">06</span><p class="small"><strong>Onze spécialités, une méthode.</strong>
+      Leur dispositif ne sort pas de l'esthétique. Le nôtre est conçu dès le départ pour transposer&nbsp;:
+      le pôle change de nom, le squelette ne change pas.</p></div>
+    <div class="row"><span class="t">07</span><p class="small"><strong>La propriété remise.</strong>
+      Domaine, hébergement, identifiants, contenus, ouverts au nom du praticien et remis. Le badge du
+      concurrent disparaît quand on part. Chez nous, c'est le site qui reste.</p></div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="g2">
+    <div class="card card--flat card--warm">
+      <h3>Le seul écart qui se voit en trois secondes</h3>
+      <p class="small">Les six premiers demandent qu'on lise. Le septième se prouve en une phrase, au
+        téléphone, et il retourne toutes les objections&nbsp;:</p>
+      <p class="statement" style="font-size:13pt">Demandez à votre agence actuelle <em>qui détient le nom
+        de domaine.</em></p>
+      <p class="small muted">Cette phrase est déjà dans le cadrage. L'audit confirme qu'elle vise juste&nbsp;:
+        c'est la question que personne dans ce métier n'aime entendre.</p>
+    </div>
+    <div class="card card--flat card--rose">
+      <h3 style="color:var(--rose-deep)">Ce que nous n'aurons pas avant longtemps</h3>
+      <p class="small">Deux cents pages indexées, un test automatique de conformité, et une antériorité
+        de référencement. Ces trois choses ne s'achètent pas et ne se rattrapent pas en un trimestre.</p>
+      <p class="small"><strong>Conséquence à assumer&nbsp;:</strong> les douze premiers mois ne se
+        gagneront pas sur le référencement de lisadoc, mais en entretiens directs, en congrès, et par
+        les confrères. Le référencement viendra après, porté par les sites clients.</p>
+    </div>
+  </div>
+  <div class="rf"><b>Ce que nous ajoutons</b><span>page 23 / 27</span></div>
+</section>
+
+<!-- ══════════ 24 · LE SCRIPT ══════════ -->
+<section class="page">
+  <div class="eyebrow">Expliquer</div>
+  <h1>Pourquoi ça marche, <em>en trois minutes.</em></h1>
+  <p class="lead">Le praticien n'achètera pas une architecture. Il achètera une explication qu'il peut
+    répéter à son associé. Cinq temps, dans cet ordre, sans notes.</p>
+
+  <div class="g-2-1">
+    <div>
+      <div class="card card--white" style="margin-bottom:4mm">
+        <span class="micro">Temps 1 · le déplacement, pas le défaut · 25 secondes</span>
+        <p class="small" style="margin-top:2mm"><em class="i">On ne cherche plus un médecin comme avant.
+          Aujourd'hui, on tape ce qu'on a, pas le nom de quelqu'un. Votre nom arrive après, quand un
+          confrère vous a recommandé et qu'on vérifie. Ce n'est pas vous qui avez changé, c'est l'usage.</em></p>
+      </div>
+      <div class="card card--white" style="margin-bottom:4mm">
+        <span class="micro">Temps 2 · la rencontre qui n'a pas lieu · 30 secondes</span>
+        <p class="small" style="margin-top:2mm"><em class="i">Ce que les gens cherchent, vous l'expliquez
+          déjà vingt fois par semaine en consultation. Combien de temps ça dure, si c'est douloureux,
+          quand on reprend le travail, ce qui est remboursé. Ces réponses existent, elles sortent de votre
+          bouche tous les jours. Elles ne sont simplement écrites nulle part.</em></p>
+      </div>
+      <div class="card card--white" style="margin-bottom:4mm">
+        <span class="micro">Temps 3 · la contrainte devient l'avantage · 40 secondes</span>
+        <p class="small" style="margin-top:2mm"><em class="i">Vous êtes l'un des rares professionnels à qui
+          la loi interdit d'acheter de la visibilité. Vous n'avez pas le droit à la publicité. Mais vous
+          avez le droit d'informer, c'est même écrit dans votre code. Et il se trouve que l'information
+          factuelle, sans promesse et sans superlatif, c'est exactement ce que Google met en avant et ce
+          que les IA acceptent de citer. Ce qui vous limite est aussi ce qui vous protège&nbsp;:
+          vos concurrents ne peuvent pas acheter la place non plus.</em></p>
+      </div>
+      <div class="card card--white" style="margin-bottom:4mm">
+        <span class="micro">Temps 4 · la structure, montrée · 45 secondes</span>
+        <p class="small" style="margin-top:2mm"><em class="i">Concrètement&nbsp;: une page par
+          intervention que vous pratiquez. Chaque page répond dans l'ordre où la question se pose&nbsp;:
+          ce que c'est, si c'est pour vous, comment ça se passe, les suites, les risques, le prix,
+          puis les questions fréquentes. Et sur chaque page, trois phrases de vous, signées.
+          C'est ça qui fait qu'aucun autre site ne peut ressembler au vôtre.</em></p>
+      </div>
+      <div class="card card--white">
+        <span class="micro">Temps 5 · ce que ça vous coûte en temps · 20 secondes</span>
+        <p class="small" style="margin-top:2mm"><em class="i">De votre côté&nbsp;: un formulaire déjà
+          rempli aux trois quarts que vous corrigez, quarante-cinq minutes d'entretien où vous me racontez
+          votre pratique, et une validation. Ensuite, vous ne vous en occupez plus. Et rien ne se publie
+          sans votre signature.</em></p>
+      </div>
+    </div>
+    <div>
+      <div class="card card--ink">
+        <h3 style="color:var(--gold)">Les trois erreurs à ne pas commettre</h3>
+        <p class="small"><strong style="color:var(--gold)">Ne pas commencer par le référencement.</strong>
+          C'est le mot qui fait décrocher. Le référencement est la conséquence, pas le sujet.</p>
+        <p class="small"><strong style="color:var(--gold)">Ne pas décrire son site actuel.</strong>
+          Même quand il est mauvais. Le cadrage l'interdit et c'est juste&nbsp;: on situe le manque dans
+          la rencontre entre l'offre et la demande, jamais dans le médecin.</p>
+        <p class="small"><strong style="color:var(--gold)">Ne pas faire peur.</strong> Le concurrent
+          ouvre par l'infraction et l'exposition. Cela convertit. Cela fabrique aussi une relation qui
+          commence par une menace. Notre ouverture est un cadeau&nbsp;: l'étude de sa spécialité,
+          offerte, sans engagement.</p>
+      </div>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>Le test du bouche-à-oreille</h3>
+        <p class="small">Le script est réussi si le praticien peut le redire à un confrère en deux
+          phrases, sans nous. La cible est celle du cadrage&nbsp;:</p>
+        <p class="small"><em class="i">Il y a un type qui fait les sites de notre spécialité.
+          Il t'interroge une fois, tu n'as rien à faire, et il connaît la déontologie mieux que nous.</em></p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Expliquer</b><span>page 24 / 27</span></div>
+</section>
+
+<!-- ══════════ 25 · LE PLAN DE BUILD ══════════ -->
+<section class="page">
+  <div class="eyebrow">Construire</div>
+  <h1>Sept étapes, <em>avec une machine.</em></h1>
+  <p class="lead">Ce document a été écrit pour être exécutable. Voici l'ordre dans lequel la structure
+    se construit, ce que chaque étape produit, et ce qui doit rester humain.</p>
+
+  <table class="t-compact">
+    <thead><tr><th style="width:8mm"></th><th style="width:34mm">Étape</th><th style="width:30%">Ce qui entre</th><th style="width:26%">Ce qui sort</th><th>Humain</th></tr></thead>
+    <tbody>
+      <tr><td class="micro">01</td><td><strong>Le socle</strong></td>
+        <td class="small">Le fichier de spécification, page 26.</td>
+        <td class="small">Projet statique, douze gabarits vides, vingt composants, jetons de style.</td>
+        <td class="small">Le choix du générateur. Une fois pour toutes.</td></tr>
+      <tr><td class="micro">02</td><td><strong>La grille d'actes</strong></td>
+        <td class="small">La nomenclature de la spécialité, les volumes de recherche nationaux.</td>
+        <td class="small">La liste complète des actes et pathologies, à cocher sur quatre niveaux.</td>
+        <td class="small">Le tri final. Une nomenclature mal découpée fausse tout le site.</td></tr>
+      <tr><td class="micro">03</td><td><strong>L'entretien</strong></td>
+        <td class="small">Le formulaire pré-rempli, la grille cochée.</td>
+        <td class="small">Enregistrement, transcription, verbatims repérés.</td>
+        <td class="small"><strong>Entièrement humain.</strong> C'est le produit.</td></tr>
+      <tr><td class="micro">04</td><td><strong>Les fiches</strong></td>
+        <td class="small">Transcription, grille, sources documentaires.</td>
+        <td class="small">Une fiche structurée par acte, tous champs remplis.</td>
+        <td class="small">Le contrôle des faits médicaux et le choix des verbatims.</td></tr>
+      <tr><td class="micro">05</td><td><strong>La génération</strong></td>
+        <td class="small">Les fiches, les gabarits.</td>
+        <td class="small">Toutes les pages, le balisage, le maillage, le plan de site.</td>
+        <td class="small">Rien. C'est mécanique, et c'est voulu.</td></tr>
+      <tr><td class="micro">06</td><td><strong>La relecture</strong></td>
+        <td class="small">Le site généré.</td>
+        <td class="small">Un document unique, affirmations médicales surlignées, bon à publier.</td>
+        <td class="small"><strong>Le praticien signe.</strong> Trois tours maximum.</td></tr>
+      <tr><td class="micro">07</td><td><strong>La mise en ligne</strong></td>
+        <td class="small">Le bon à publier.</td>
+        <td class="small">Site en ligne, fiches mises en cohérence, mesure branchée.</td>
+        <td class="small">Le contrôle des seuils de la page 21.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rule"></div>
+  <div class="g-2-1">
+    <div>
+      <h2>Ce qui peut être confié à une machine, et ce qui ne peut pas</h2>
+      <p class="small"><strong>Confiable&nbsp;:</strong> la génération des gabarits, le balisage,
+        le maillage, les variantes d'habillage, la mise en forme des fiches, la première rédaction des
+        sections 01, 02, 04, 05, 06 à partir des sources, la vérification des seuils techniques.</p>
+      <p class="small"><strong>Non confiable&nbsp;:</strong> l'entretien, le choix des verbatims,
+        l'exactitude médicale, les délais réels de la pratique du praticien, les contre-indications
+        qu'il retient, et la décision de publier.</p>
+      <p class="small">La ligne est simple et se dit devant un médecin sans embarras&nbsp;:
+        <strong>une machine met en forme, un praticien engage sa responsabilité.</strong>
+        Le cadrage l'écrit déjà pour la brique de questions, et cela vaut pour tout le site.</p>
+    </div>
+    <div class="card card--ink">
+      <h3 style="color:var(--gold)">L'ordre qui fait gagner du temps</h3>
+      <p class="small">Construire le site de démonstration <strong>avant</strong> le premier client,
+        sur une praticienne réelle qui accepte de servir de cas d'école. C'est le choix du cadrage,
+        et c'est le bon.</p>
+      <p class="small">Le concurrent a fait la même chose avec une praticienne fictive. Le faire avec une
+        praticienne réelle donne le même outil de vente, plus une preuve.</p>
+      <div class="rule" style="background:rgba(251,245,230,.2)"></div>
+      <p class="small">Une fois ce premier site construit, les six templates se dérivent de lui.
+        Le deuxième site coûte le tiers du premier. Le cinquième, le dixième.</p>
+    </div>
+  </div>
+  <div class="rf"><b>Construire</b><span>page 25 / 27</span></div>
+</section>
+
+<!-- ══════════ 26 · LE FICHIER DE SPÉCIFICATION ══════════ -->
+<section class="page">
+  <div class="eyebrow">Construire</div>
+  <h1>Le fichier <em>que la machine lit.</em></h1>
+  <p class="lead">Ce document est fait pour être lu par vous. Son jumeau, <code>BUILD-SPEC.md</code>,
+    est fait pour être donné tel quel à une IA de développement. Il est livré avec ce dossier.</p>
+
+  <div class="g-2-1" style="align-items:start">
+    <div class="card card--white">
+      <span class="micro">Ce que contient BUILD-SPEC.md</span>
+      <div class="code" style="margin-top:3mm">01 · PRINCIPE
+     la règle directrice, les interdits
+
+02 · ARBORESCENCE
+     les 12 types, le système d'adresses
+
+03 · GABARITS
+     par type : sections, ordre,
+     budget de mots, composants appelés
+
+04 · PAGE D'ACTE
+     les 11 sections, in extenso,
+     avec le rôle de chacune
+
+05 · COMPOSANTS
+     les 20 briques, leur contenu,
+     leur comportement mobile
+
+06 · MODÈLE DE DONNÉES
+     fiche praticien, fiche acte,
+     fiche question · format YAML
+
+07 · BALISAGE
+     un gabarit JSON-LD par type,
+     les interdits de balisage
+
+08 · JETONS DE STYLE
+     couleurs, typographie, espacement,
+     les trois sentiments
+
+09 · BUDGETS
+     performance, accessibilité,
+     seuils de refus
+
+10 · CONTRÔLES DE LIVRAISON
+     la liste à passer avant mise en ligne</div>
+    </div>
+    <div>
+      <h2>Comment s'en servir</h2>
+      <p class="small">Trois usages, dans l'ordre où ils se présenteront.</p>
+      <ul class="num small">
+        <li><strong>Construire le socle.</strong> Donner le fichier entier à une IA de développement avec
+          une consigne d'une ligne&nbsp;: construis le projet statique décrit dans cette spécification,
+          sans rien y ajouter. Ce qui sort est un site vide mais complet, gabarits et composants inclus.</li>
+        <li><strong>Générer un site client.</strong> Donner le fichier plus les fiches remplies d'un
+          praticien. Ce qui sort est le site de ce praticien, à relire.</li>
+        <li><strong>Vérifier une livraison.</strong> Donner le fichier plus l'adresse du site.
+          La section 10 sert de liste de contrôle.</li>
+      </ul>
+      <div class="card card--flat card--warm" style="margin-top:4mm">
+        <h3>La règle d'or de ce fichier</h3>
+        <p class="small">Il décrit une structure, jamais un contenu médical. Aucune phrase de page
+          d'acte n'y figure, aucune valeur clinique, aucun délai.</p>
+        <p class="small"><strong>Une machine peut construire le contenant. Le contenu vient de
+          l'entretien et repart signé.</strong> Si un jour cette limite est franchie, l'écart avec une
+          agence ordinaire disparaît, et la promesse de la plateforme de marque avec.</p>
+      </div>
+      <div class="card card--flat" style="margin-top:4mm">
+        <h3>Ce qui reste à écrire dedans</h3>
+        <p class="small">Les sections 01 à 07 et 09 à 10 se déduisent de ce document. La section 08,
+          les jetons de style, attend deux décisions&nbsp;: la palette du template et le couple
+          typographique. Elles se prennent au moment du premier site, avec la praticienne.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><b>Construire</b><span>page 26 / 27</span></div>
+</section>
+
+<!-- ══════════ 27 · CLÔTURE ══════════ -->
+<section class="page page--ink">
+  <div class="eyebrow">Clôture</div>
+  <h1 style="color:var(--cream)">Six décisions, <em>puis on construit.</em></h1>
+  <p class="lead">L'audit est clos. Le blueprint tient. Ce qui reste relève de vous.</p>
+
+  <div class="g2">
+    <div>
+      <ul class="num" style="font-size:var(--t-body)">
+        <li><strong style="color:var(--gold)">La spécialité du lancement.</strong><br><span class="small">
+          Éviter la chirurgie esthétique, tenue par un acteur outillé. Choisir une spécialité de la liste
+          où vous avez déjà un praticien qui vous fait confiance.</span></li>
+        <li><strong style="color:var(--gold)">Le template d'entrée.</strong><br><span class="small">
+          Interventions, pathologies ou groupe. Le choix découle de la spécialité, pas l'inverse.</span></li>
+        <li><strong style="color:var(--gold)">Le diagnostic automatique.</strong><br><span class="small">
+          Copier ou non leur test de conformité en cinq minutes. C'est le seul élément de leur dispositif
+          que je recommande de reprendre, et il demande du développement.</span></li>
+        <li><strong style="color:var(--gold)">Le renforcement de la rétention.</strong><br><span class="small">
+          Leur badge disparaît au départ. Notre équivalent honnête reste à inventer, ou à assumer
+          comme absent.</span></li>
+        <li><strong style="color:var(--gold)">Les jetons de style du template.</strong><br><span class="small">
+          Palette et typographie, à arrêter avec la première praticienne.</span></li>
+        <li><strong style="color:var(--gold)">Le calendrier de publication de lisadoc.fr.</strong><br><span class="small">
+          Ils ont 206 000 mots d'avance. Le rattrapage frontal n'a pas de sens. La question est de savoir
+          combien d'heures par semaine vous acceptez d'y consacrer, et à partir de quand.</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="card card--tight" style="background:rgba(251,245,230,.07); border-color:rgba(251,245,230,.3); box-shadow:none">
+        <h3 style="color:var(--gold)">Ce que dit cet audit, en une phrase</h3>
+        <p class="small" style="color:var(--cream)">Le meilleur site du marché a été construit par
+          quelqu'un qui a compris avant les autres que la déontologie était un actif. Il a bâti un
+          apparat remarquable et n'a pas encore de clients à montrer.</p>
+        <p class="small" style="color:var(--cream)">L'architecture est copiable en quelques semaines.
+          L'entretien avec le praticien ne l'est pas.</p>
+      </div>
+      <div class="spacer" style="min-height:6mm"></div>
+      <p class="statement" style="color:var(--cream); font-size:16pt">Ils écrivent <em>sur</em> le
+        praticien.<br>Nous écrivons <em>à partir</em> du praticien.<br>Toute la différence est là,
+        et elle tient <em>en trois phrases par page.</em></p>
+      <div class="rule--gold" style="margin-top:6mm"></div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:0.4mm solid rgba(251,245,230,.25); padding-top:5mm">
+    <div>
+      <p class="micro" style="color:rgba(251,245,230,.6)">Anatomie d'un site qui gagne · v1.0 · 5 septembre 2026</p>
+      <p class="micro" style="color:rgba(251,245,230,.6)">Relevé du 5 septembre 2026 · 127 pages mesurées · Méthode <span class="wordmark">quantum branding</span></p>
+    </div>
+    <img src="../../../img/brand/lockup-h-gold.svg" alt="quantum branding" style="height:9mm">
+  </div>
+  <div class="rf"><b>Clôture</b><span>page 27 / 27</span></div>
+</section>
+
+</body>
+</html>
