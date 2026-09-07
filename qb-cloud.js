@@ -354,6 +354,21 @@
     // Keep qb_qbp + qb_completions locally so the user doesn't lose work
   }
 
+  // ── Profile confirm (single-flight) ───────────────────────────────────────
+  // pullQBPFromCloud() runs at bootstrap and again from requireAccess().
+  // Share one in-flight promise so a tool load never fires the profile
+  // read twice.
+  let _profilePull = null;
+  function confirmProfile(){
+    if (!_profilePull) {
+      _profilePull = pullQBPFromCloud().then(
+        p => { _profilePull = null; return p; },
+        e => { _profilePull = null; throw e; }
+      );
+    }
+    return _profilePull;
+  }
+
   // ── Feature access (paywall shim — used by Phase 02+ tools) ───────────────
   // Mirrors the existing window.QB_HAS_ACCESS contract used by hub + tools.
   function hasAccess(feature){
@@ -385,20 +400,40 @@
     if (!toolId) return true;
     if (hasAccess(toolId)) return true;
 
+    const here = window.location.pathname + window.location.search;
+
     // Save where the user wanted to go so we can bring them back.
     try {
-      sessionStorage.setItem('qb_return_to', window.location.pathname + window.location.search);
+      sessionStorage.setItem('qb_return_to', here);
       sessionStorage.setItem('qb_blocked_tool', toolId);
       if (toolName) sessionStorage.setItem('qb_blocked_tool_name', toolName);
     } catch(e) {}
 
     if (!isAuthed()) {
-      // Top-of-funnel entry — Signal Scan is the canonical free door.
-      window.location.replace('/signal-scan.html?reason=paywall&tool=' + encodeURIComponent(toolId));
+      // Anonymous. Send them to the one surface that can actually sign
+      // them in, carrying the tool they wanted so they land back on it.
+      // This used to point at /signal-scan.html, which has no sign-in
+      // form and no return_to handling, so the user bounced back to the
+      // first question of the diagnostic forever.
+      window.location.replace(
+        '/login?reason=paywall&return_to=' + encodeURIComponent(here)
+      );
       return false;
     }
-    // Authed but unpaid (or sub lapsed) — straight to the plan picker.
-    window.location.replace('/payment.html?reason=upgrade&tool=' + encodeURIComponent(toolId));
+
+    // Authed, but the local tier says no. Local can lag the server: the
+    // profile pull is async and a cold browser has no qb_user_tier at
+    // all, which bounced paying customers to the plan picker on every
+    // single load. Confirm against the server first, and only redirect
+    // when the server itself says the tier is short. Anything else
+    // (network down, profile unreadable) leaves the user on the page.
+    // /api/agents/run gates the tier server-side and fails closed, so
+    // this client check is UX, never the security boundary.
+    confirmProfile().then(profile => {
+      if (!profile) return;                 // could not confirm · stay put
+      if (hasAccess(toolId)) return;        // paid after all · stay put
+      window.location.replace('/payment.html?reason=upgrade&tool=' + encodeURIComponent(toolId));
+    }).catch(() => { /* stay put */ });
     return false;
   }
 
@@ -433,7 +468,7 @@
 
   // ── Bootstrap on load ─────────────────────────────────────────────────────
   if (isAuthed()) {
-    pullQBPFromCloud();
+    confirmProfile().catch(() => {});
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
@@ -444,7 +479,7 @@
     recordCompletion, getCompletions, nextRecommendedTool, phase01Progress,
     sendMagicLink, logout,
     hasAccess, requireAccess,
-    cloudFetch, refreshAccessToken,
+    cloudFetch, refreshAccessToken, confirmProfile,
     TOOL_NAMES, TOOL_FILES, PHASE_01_TOOLS, PAID_TOOLS
   };
 })();

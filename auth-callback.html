@@ -96,6 +96,12 @@
     });
     if (!userRes.ok) throw new Error('Could not verify session.');
     const user = await userRes.json();
+    // A session without a user id reads as anonymous everywhere else in
+    // the app (QB.isAuthed() requires token AND userId). Writing one and
+    // redirecting anyway produced a silent bounce: the callback claimed
+    // success, the destination rejected it, and the visitor was handed
+    // back to the sign-in wall with no idea why. Fail here instead.
+    if (!user || !user.id) throw new Error('Session verified but returned no user id.');
 
     // Recover any pending signup metadata stashed by qb-cloud.sendMagicLink()
     let pending = {};

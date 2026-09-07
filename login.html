@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>Sign in · QB BrandOS</title>
+<meta name="description" content="Sign in to QB BrandOS with a one-time link. No password.">
+<meta name="theme-color" content="#2D1521">
+<meta name="color-scheme" content="light">
+
+<link rel="icon" href="/img/brand/web/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/brand/web/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/brand/web/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
+
+<link rel="stylesheet" href="/css/qb-tokens.css">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+  img, svg { display: block; max-width: 100%; }
+
+  .login_shell {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-l) var(--space-s);
+    gap: var(--space-m);
+  }
+
+  .login_brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .login_brand-dot {
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: var(--radius-pill);
+    background: var(--rose);
+    border: var(--border-default) solid var(--ink);
+  }
+  .login_wordmark {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: "wght" 600, "opsz" 32, "SOFT" 60;
+    font-size: var(--step--1);
+    letter-spacing: -0.01em;
+  }
+
+  .login_card {
+    width: 100%;
+    max-width: 30rem;
+    background: var(--cream-card);
+    border: var(--border-default) solid var(--ink);
+    border-radius: var(--radius-raised);
+    box-shadow: var(--shadow-hard-mobile);
+    padding: var(--space-m) var(--space-s-m) var(--space-m);
+  }
+  @media (min-width: 640px) {
+    .login_card { box-shadow: var(--shadow-hard-desktop); padding: var(--space-l) var(--space-m); }
+  }
+
+  .login_eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--rose-deep);
+    margin: 0 0 var(--space-xs);
+  }
+  .login_eyebrow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--rose-deep);
+    box-shadow: 0 0 0 3px var(--cream-rose);
+    flex: none;
+  }
+
+  .login_headline {
+    font-family: var(--font-display);
+    font-variation-settings: "wght" 700, "opsz" 144, "SOFT" 60, "WONK" 1;
+    font-size: var(--step-2);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 var(--space-2xs);
+  }
+  .login_body {
+    font-size: var(--step--1);
+    color: var(--ink-75);
+    margin: 0 0 var(--space-s);
+  }
+
+  .login_field { margin-bottom: var(--space-xs); }
+  .login_label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-75);
+    margin-bottom: var(--space-3xs);
+  }
+  .login_label span { color: var(--ink-50); letter-spacing: 0.06em; text-transform: none; }
+  .login_input {
+    width: 100%;
+    background: var(--cream);
+    color: var(--ink);
+    border: var(--border-default) solid var(--ink);
+    border-radius: var(--radius-raised);
+    box-shadow: 0 4px var(--ink);
+    padding: 0.85em 1.05em;
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    outline: none;
+    -webkit-appearance: none;
+    transition: transform var(--duration-pill) var(--ease-pill),
+                box-shadow var(--duration-pill) var(--ease-pill),
+                border-color var(--duration-pill) var(--ease-pill);
+  }
+  .login_input::placeholder { color: var(--ink-50); font-weight: 400; }
+  .login_input:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 6px var(--ink);
+    border-color: var(--rose-deep);
+  }
+
+  .login_submit {
+    width: 100%;
+    margin-top: var(--space-2xs);
+    background: var(--gold);
+    color: var(--ink);
+    border: var(--border-default) solid var(--ink);
+    border-radius: var(--radius-pill);
+    box-shadow: 0 4px var(--ink);
+    padding: 0.9em 1.4em;
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--duration-pill) var(--ease-pill),
+                box-shadow var(--duration-pill) var(--ease-pill),
+                filter var(--duration-pill) var(--ease-pill);
+  }
+  .login_submit:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 7px var(--ink); filter: brightness(1.06); }
+  .login_submit:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px var(--ink); }
+  .login_submit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .login_error {
+    margin-top: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: 500;
+    color: var(--rose-deep);
+  }
+  .login_fine {
+    margin: var(--space-s) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+    color: var(--ink-50);
+  }
+
+  .login_ghost {
+    display: inline-block;
+    margin-top: var(--space-xs);
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-body);
+    font-size: var(--step--2);
+    color: var(--ink-50);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .login_ghost:hover { color: var(--ink); }
+
+  .login_aside {
+    width: 100%;
+    max-width: 30rem;
+    text-align: center;
+    font-size: var(--step--2);
+    color: var(--ink-75);
+    line-height: 1.7;
+  }
+  .login_aside a { color: var(--rose-deep); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--gold); }
+  .login_aside a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+  .login_spinner {
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--ink-25);
+    border-top-color: var(--gold-deep);
+    border-radius: var(--radius-circle);
+    animation: loginSpin 0.7s linear infinite;
+    margin-bottom: var(--space-xs);
+  }
+  @keyframes loginSpin { to { transform: rotate(360deg); } }
+
+  [hidden] { display: none !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .login_input, .login_submit { transition: none; }
+    .login_submit:hover:not(:disabled), .login_input:focus-visible { transform: none; }
+    .login_spinner { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="login_shell">
+
+  <a class="login_brand" href="/">
+    <span class="login_brand-dot" aria-hidden="true"></span>
+    <span class="login_wordmark">quantum branding</span>
+  </a>
+
+  <section class="login_card" aria-live="polite">
+
+    <!-- Boot state. Replaced within a tick by the form or by a redirect. -->
+    <div id="login-boot">
+      <div class="login_spinner" aria-hidden="true"></div>
+      <p class="login_body" style="margin:0">Checking your session.</p>
+    </div>
+
+    <!-- Form state -->
+    <form id="login-form" hidden novalidate>
+      <p class="login_eyebrow">
+        <span class="login_eyebrow-dot" aria-hidden="true"></span>
+        <span id="login-eyebrow">Sign in</span>
+      </p>
+      <h1 class="login_headline" id="login-headline">One link. No password.</h1>
+      <p class="login_body" id="login-sub">Enter your email. A sign-in link lands in your inbox and works for 60 minutes.</p>
+
+      <div class="login_field">
+        <label class="login_label" for="login-fname">First name <span>(optional)</span></label>
+        <input class="login_input" id="login-fname" name="firstName" type="text"
+               autocomplete="given-name" placeholder="So we know what to call you" enterkeyhint="next">
+      </div>
+
+      <div class="login_field">
+        <label class="login_label" for="login-email">Email</label>
+        <input class="login_input" id="login-email" name="email" type="email"
+               autocomplete="email" inputmode="email" placeholder="you@yourbrand.com"
+               required enterkeyhint="send">
+      </div>
+
+      <button class="login_submit" id="login-submit" type="submit">Send my sign-in link →</button>
+      <p class="login_error" id="login-error" hidden></p>
+      <p class="login_fine">The link expires in 60 minutes. Ignore the email and nothing happens.</p>
+    </form>
+
+    <!-- Sent state -->
+    <div id="login-sent" hidden>
+      <p class="login_eyebrow">
+        <span class="login_eyebrow-dot" aria-hidden="true"></span>
+        <span>Link sent</span>
+      </p>
+      <h2 class="login_headline">Check your inbox.</h2>
+      <p class="login_body" id="login-sent-body">The link is on its way.</p>
+      <p class="login_fine">Open it in this browser so the work you already did stays attached to your profile. Check spam if it has not landed in two minutes.</p>
+      <button class="login_ghost" id="login-again" type="button">Use a different email</button>
+    </div>
+
+  </section>
+
+  <p class="login_aside" id="login-aside">
+    New here? Start with the <a href="/signal-scan.html">free Signal Scan</a>. Five minutes, no account needed.
+  </p>
+
+</main>
+
+<script src="/qb-cloud.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var $ = function(id){ return document.getElementById(id); };
+  var boot   = $('login-boot');
+  var form   = $('login-form');
+  var sent   = $('login-sent');
+  var errEl  = $('login-error');
+  var btn    = $('login-submit');
+  var fnameEl= $('login-fname');
+  var emailEl= $('login-email');
+
+  var DEFAULT_RETURN = '/foundation';
+
+  // Same-site path only. Rejects protocol-relative and absolute URLs so a
+  // crafted ?return_to= can never bounce a freshly-authed user off-site.
+  // Also rejects /login itself, which is the shape that produced the
+  // original redirect loop.
+  function safeReturnTo(raw){
+    if (!raw || typeof raw !== 'string') return DEFAULT_RETURN;
+    if (raw.charAt(0) !== '/' || raw.charAt(1) === '/' || raw.charAt(1) === '\\') return DEFAULT_RETURN;
+    var path = raw.split('?')[0].split('#')[0].replace(/\/+$/, '');
+    if (path === '/login' || path === '/login.html' || path === '') return DEFAULT_RETURN;
+    return raw;
+  }
+
+  var params   = new URLSearchParams(window.location.search);
+  var returnTo = safeReturnTo(params.get('return_to'));
+  var reason   = params.get('reason') || 'signin';
+
+  // Already signed in. Nothing to do here, go where they were headed.
+  if (window.QB && window.QB.isAuthed && window.QB.isAuthed()) {
+    window.location.replace(returnTo);
+    return;
+  }
+
+  if (!window.QB || !window.QB.sendMagicLink) {
+    boot.innerHTML = '<p class="login_eyebrow"><span class="login_eyebrow-dot"></span><span>Sign-in unavailable</span></p>'
+      + '<h1 class="login_headline">This page could not load.</h1>'
+      + '<p class="login_body">Refresh, or <a href="mailto:me@qtmbg.com">tell us</a> and it gets fixed today.</p>';
+    return;
+  }
+
+  // Copy per entry reason. Keeps the surface honest about why the user
+  // landed here instead of showing one generic sign-in wall.
+  var COPY = {
+    signin: {
+      eyebrow:  'Sign in',
+      headline: 'One link. No password.',
+      sub:      'Enter your email. A sign-in link lands in your inbox and works for 60 minutes.'
+    },
+    paywall: {
+      eyebrow:  'Account needed',
+      headline: 'This tool runs on your Brand Profile.',
+      sub:      'Sign in and the tool opens with your own brand data behind it. New email addresses get an account on the spot.'
+    },
+    expired: {
+      eyebrow:  'Session ended',
+      headline: 'Time to sign in again.',
+      sub:      'Sessions close after a while. Enter your email for a fresh link. Your work is on the server, nothing was lost.'
+    }
+  };
+  var copy = COPY[reason] || COPY.signin;
+  $('login-eyebrow').textContent = copy.eyebrow;
+  $('login-headline').textContent = copy.headline;
+  $('login-sub').textContent = copy.sub;
+
+  // Prefill. Returning users on this browser skip the typing.
+  try {
+    var pending = JSON.parse(localStorage.getItem('qb_pending_signup') || '{}');
+    if (pending.firstName) fnameEl.value = pending.firstName;
+    if (pending.email)     emailEl.value = pending.email;
+  } catch (e) {}
+  if (!fnameEl.value) {
+    try {
+      var stashed = localStorage.getItem('qb_first_name');
+      if (stashed) fnameEl.value = stashed;
+    } catch (e) {}
+  }
+  var prefillEmail = params.get('email');
+  if (!emailEl.value && prefillEmail && prefillEmail.indexOf('@') > 0) emailEl.value = prefillEmail;
+
+  boot.hidden = true;
+  form.hidden = false;
+  setTimeout(function(){ (emailEl.value ? btn : emailEl).focus(); }, 60);
+
+  function showError(msg){
+    errEl.textContent = msg;
+    errEl.hidden = false;
+  }
+
+  form.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    errEl.hidden = true;
+
+    var email     = emailEl.value.trim();
+    var firstName = fnameEl.value.trim();
+    if (!/.+@.+\..+/.test(email)) {
+      showError('That email does not look right.');
+      emailEl.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    var result = await window.QB.sendMagicLink(email, firstName, 'login', returnTo);
+
+    if (!result || !result.ok) {
+      showError((result && result.error) || 'Could not send. Try again.');
+      btn.disabled = false;
+      btn.textContent = 'Send my sign-in link →';
+      return;
+    }
+
+    if (firstName) {
+      try { localStorage.setItem('qb_first_name', firstName); } catch (e) {}
+    }
+
+    $('login-sent-body').textContent = 'The link is on its way to ' + email + '.';
+    form.hidden = true;
+    sent.hidden = false;
+    $('login-aside').hidden = true;
+  });
+
+  $('login-again').addEventListener('click', function(){
+    sent.hidden = true;
+    form.hidden = false;
+    $('login-aside').hidden = false;
+    btn.disabled = false;
+    btn.textContent = 'Send my sign-in link →';
+    emailEl.value = '';
+    emailEl.focus();
+  });
+})();
+</script>
+</body>
+</html>

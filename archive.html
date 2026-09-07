@@ -54,7 +54,7 @@ const root = document.getElementById('archive-root');
 
 function redirectToAuth() {
   const next = encodeURIComponent('/archive');
-  window.location.replace(`/signal-scan.html?reason=signin&return_to=${next}`);
+  window.location.replace(`/login?reason=signin&return_to=${next}`);
 }
 
 async function load() {
@@ -116,8 +116,19 @@ function mountBell(session) {
   slot.dataset.bellMounted = 'true';
 }
 
-document.addEventListener('DOMContentLoaded', load);
-if (document.readyState !== 'loading') load();
+// Module scripts execute at readyState 'interactive', which is after
+// parsing and before DOMContentLoaded fires. Both call sites below used
+// to run, so load() ran twice on every visit: two profile fetches, two
+// renders, and for an anonymous visitor two sign-in redirects racing
+// each other. One-shot guard keeps whichever fires first.
+let _bootOnce = false;
+function bootOnce() {
+  if (_bootOnce) return;
+  _bootOnce = true;
+  load();
+}
+document.addEventListener('DOMContentLoaded', bootOnce);
+if (document.readyState !== 'loading') bootOnce();
 </script>
 </body>
 </html>

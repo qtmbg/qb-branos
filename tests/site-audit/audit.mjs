@@ -36,7 +36,7 @@ const BANNER_CONSTANT = 'Signal Scan is live';
 // Public routes: clean paths from vercel.json + direct .html for the rest.
 const PUBLIC_ROUTES = [
   '/', '/ecosystem.html', '/scan', '/tools', '/atelier', '/war-room',
-  '/paywall', '/payment.html', '/terms', '/privacy', '/panel',
+  '/paywall', '/payment.html', '/login', '/terms', '/privacy', '/panel',
   '/the-profiles.html', '/archetype-compass.html',
   '/brand-soul-map.html', '/sensescape.html', '/visual-dna.html', '/war-table.html',
   '/brand-document.html', '/brand-performance-dashboard.html',
@@ -48,7 +48,8 @@ const PUBLIC_ROUTES = [
 ];
 // Marketing/tool pages that must carry the banner constant (app + legal + 404 excluded).
 // /war-room is Ship Gate, an operator dashboard, not a marketing surface: exempt.
-const BANNER_EXEMPT = new Set(['/paywall', '/payment.html', '/terms', '/privacy', '/404.html', '/war-room']);
+// /login is the sign-in surface: one job, no marketing furniture. Exempt.
+const BANNER_EXEMPT = new Set(['/paywall', '/payment.html', '/login', '/terms', '/privacy', '/404.html', '/war-room']);
 
 const APP_ROUTES = ['/foundation', '/agents', '/archive', '/qbp', '/account'];
 

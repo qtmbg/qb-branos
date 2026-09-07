@@ -70,7 +70,7 @@ function parseQuery() {
 
 function redirectToAuth() {
   const ret = encodeURIComponent('/paywall' + window.location.search);
-  window.location.href = `/signal-scan.html?reason=signin&return_to=${ret}`;
+  window.location.href = `/login?reason=signin&return_to=${ret}`;
 }
 
 async function fetchTier(token) {
