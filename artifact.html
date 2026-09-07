@@ -98,7 +98,7 @@ function isUuid(s) {
 
 function redirectToAuth(id) {
   const next = encodeURIComponent(`/artifact?id=${id}`);
-  window.location.replace(`/signal-scan.html?reason=signin&return_to=${next}`);
+  window.location.replace(`/login?reason=signin&return_to=${next}`);
 }
 
 async function load() {
@@ -198,9 +198,19 @@ async function handleShareAction(action, ev) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', load);
-// If qb-cloud already ran, kick load immediately too.
-if (document.readyState !== 'loading') load();
+// Module scripts execute at readyState 'interactive', which is after
+// parsing and before DOMContentLoaded fires. Both call sites below used
+// to run, so load() ran twice on every visit: two profile fetches, two
+// renders, and for an anonymous visitor two sign-in redirects racing
+// each other. One-shot guard keeps whichever fires first.
+let _bootOnce = false;
+function bootOnce() {
+  if (_bootOnce) return;
+  _bootOnce = true;
+  load();
+}
+document.addEventListener('DOMContentLoaded', bootOnce);
+if (document.readyState !== 'loading') bootOnce();
 </script>
 </body>
 </html>

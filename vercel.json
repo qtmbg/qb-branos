@@ -62,6 +62,15 @@
       "dest": "/account.html"
     },
     {
+      "src": "/login",
+      "dest": "/login.html"
+    },
+    {
+      "src": "/signin",
+      "status": 301,
+      "headers": {"Location": "/login"}
+    },
+    {
       "src": "/scan",
       "dest": "/signal-scan.html"
     },
@@ -176,7 +185,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://quantumbranding.ai https://app.quantumbranding.ai https://yushbxjwfhuokaezoioe.supabase.co https://api.stripe.com https://billing.stripe.com; img-src 'self' data: https:; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://billing.stripe.com https://vitals.vercel-insights.com; frame-ancestors 'self'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://quantumbranding.ai https://app.quantumbranding.ai https://yushbxjwfhuokaezoioe.supabase.co wss://yushbxjwfhuokaezoioe.supabase.co https://api.stripe.com https://billing.stripe.com; img-src 'self' data: https:; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://billing.stripe.com https://vitals.vercel-insights.com; frame-ancestors 'self'"
         }
       ]
     },

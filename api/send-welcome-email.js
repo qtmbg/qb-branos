@@ -63,11 +63,11 @@ function buildHtml({ firstName }) {
       </td></tr>
       <tr><td style="padding:0 32px 32px;font-size:16px;line-height:1.6;color:#2D1521;">
         <p style="margin:0 0 16px;">${greeting}</p>
-        <p style="margin:0 0 16px;">You just took Signal Scan. That is the start.</p>
+        <p style="margin:0 0 16px;">You took Signal Scan. That is the start.</p>
         <p style="margin:0 0 16px;">Your diagnostic is on its way to your inbox in a moment.</p>
-        <p style="margin:0 0 24px;">When you are ready to go deeper, your next step is the foundation work. Phase 01 of Quantum Branding is four exercises that surface your brand's truth. It is free and you can do it at your own pace.</p>
+        <p style="margin:0 0 24px;">Your sign-in link is in a separate email from us. Open it once and your account is live. From there, Phase 01 is four exercises that surface your brand's truth. Free, at your own pace.</p>
         <p style="margin:0 0 32px;text-align:left;">
-          <a href="https://quantumbranding.ai/foundation" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">Begin Phase 01</a>
+          <a href="https://app.quantumbranding.ai/login?return_to=%2Ffoundation" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">Sign in and begin Phase 01</a>
         </p>
         <p style="margin:0;color:#2D1521;">Nizzar</p>
       </td></tr>
@@ -85,13 +85,13 @@ function buildText({ firstName }) {
   const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
   return `${greeting}
 
-You just took Signal Scan. That is the start.
+You took Signal Scan. That is the start.
 
 Your diagnostic is on its way to your inbox in a moment.
 
-When you are ready to go deeper, your next step is the foundation work. Phase 01 of Quantum Branding is four exercises that surface your brand's truth. It is free and you can do it at your own pace.
+Your sign-in link is in a separate email from us. Open it once and your account is live. From there, Phase 01 is four exercises that surface your brand's truth. Free, at your own pace.
 
-Begin Phase 01: https://quantumbranding.ai/foundation
+Sign in and begin Phase 01: https://app.quantumbranding.ai/login?return_to=%2Ffoundation
 
 Nizzar
 

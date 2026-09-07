@@ -68,7 +68,10 @@
   --ink-25:rgba(45,21,33,0.25) !important;
   --text-1:#2D1521 !important;
   --text-2:rgba(45,21,33,0.75) !important;
-  --text-3:rgba(45,21,33,0.50) !important;
+  /* 0.62, not 0.50. Matches --ink-50 in css/qb-tokens.css, which the WCAG
+     pass nudged for exactly this reason: at 0.50 this token is 3.25:1 on
+     cream and fails AA for body text. At 0.62 it is 4.69:1. */
+  --text-3:rgba(45,21,33,0.62) !important;
   --text-4:rgba(45,21,33,0.33) !important;
   --gold:#E0B069 !important;
   --gold-deep:#B58840 !important;
@@ -1705,7 +1708,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       <a href="ecosystem.html#about" class="qb-type-nav">About</a>
     </nav>
     <div class="nav-actions">
-      <a href="https://app.quantumbranding.ai" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
+      <a href="https://app.quantumbranding.ai/login" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
       <a href="signal-scan.html" class="qb-button is-primary is-sm"><span class="qb-button_content">Start free</span></a>
       <button class="hamburger is-canonical" id="qbHamburger" aria-label="Open menu" type="button">
         <span></span><span></span><span></span>
@@ -1758,6 +1761,10 @@ window.addEventListener('load', function () {
 function toggleTheme() {}
 </script>
 
+<!-- Canonical session + tier refresh. This page reads the session, it
+     never writes one. -->
+<script src="/qb-cloud.js"></script>
+
 <script>
 // ─────────────────────────────────────────────────────────────────────────────
 // THEME TOGGLE
@@ -1772,6 +1779,15 @@ function toggleTheme() {
 // ─────────────────────────────────────────────────────────────────────────────
 // QB BrandOS - PAYMENT GATE
 // ─────────────────────────────────────────────────────────────────────────────
+/* Session note. This page used to run its own email + password auth
+   against /auth/v1/signup and /auth/v1/token, and wrote its own
+   qb_session shape ({email, token, supabaseId}). Two consequences, both
+   live in production: the shape has no userId, so QB.isAuthed() read it
+   as anonymous and bounced paying customers off /foundation back to a
+   sign-in wall; and magic-link users have no password at all, so
+   "Sign in" here could only ever fail for them. QB BrandOS authenticates
+   one way, through the magic link, and qb-cloud.js owns the session. This
+   page now reads that session and hands anonymous visitors to /login. */
 const CONFIG = {
   STRIPE_PUBLISHABLE_KEY: 'pk_live_51T4LrnEHEAcWrG55GLqBVJyczc4WGgSQEKaZOOLE0lr8lZSlvpeyfxN1YgtXoOtbTHF97qB5C0D2MC48lrOVhVJ005iEJWgbZ',
 
@@ -1856,12 +1872,11 @@ const PLANS = [
 function planPrice(plan)  { return billing === 'annual' ? plan.annualPrice : plan.price; }
 function planPer(plan)    { return billing === 'annual' ? '/month, billed ' + plan.annualTotal + ' yearly' : '/month'; }
 
-// view: 'plans' | 'auth' | 'confirm-email' | 'processing' | 'success' | 'error'
+// view: 'plans' | 'processing' | 'success' | 'error'
 let view         = 'plans';
 let billing      = 'monthly'; // 'monthly' | 'annual'
 let selectedPlan = null;
 let errorMsg     = '';
-let authMode     = 'signup';
 let prevView     = 'plans';
 
 const app = document.getElementById('app');
@@ -1875,8 +1890,6 @@ function render() {
   void app.offsetWidth;
 
   if      (view === 'plans')         renderPlans();
-  else if (view === 'auth')          renderAuth();
-  else if (view === 'confirm-email') renderConfirmEmail();
   else if (view === 'processing')    renderProcessing();
   else if (view === 'success')       renderSuccess();
   else if (view === 'error')         renderError();
@@ -1952,74 +1965,11 @@ function renderPlans() {
     </div>
     <div style="text-align:center; margin-top: 24px;">
       <span style="font-size:13px; color:var(--text-3);">Already subscribed? </span>
-      <button type="button" class="text-link" onclick="showLogin()">Sign in →</button>
+      <a class="text-link" href="/login?reason=signin&amp;return_to=%2Ffoundation">Sign in →</a>
     </div>
   `;
 
   app.innerHTML = html;
-}
-
-function renderAuth() {
-  const plan = PLANS.find(p => p.id === selectedPlan);
-
-  const passAutocomplete = authMode === 'signup' ? 'new-password' : 'current-password';
-  const passPlaceholder  = authMode === 'signup' ? 'Password (min 8 characters)' : 'Password';
-
-  let html = `
-    <button type="button" class="back-btn" onclick="goBack()">← Back to plans</button>
-  `;
-
-  if (plan) {
-    html += `<div class="auth-badge">${plan.name} · ${planPrice(plan)}${planPer(plan)}</div>`;
-  }
-
-  html += `
-    <h2 class="auth-title">${authMode === 'signup' ? 'Create your account' : 'Sign in'}</h2>
-    <p class="auth-sub">${authMode === 'signup' ? 'Your account stores your QBP and opens your tools.' : 'Welcome back to your Brand OS.'}</p>
-  `;
-
-  if (errorMsg) {
-    html += `<div class="error-msg" role="alert">${encodeHTML(errorMsg)}</div>`;
-  }
-
-  html += `
-    <div class="input-group">
-      <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email">
-    </div>
-    <div class="input-group">
-      <input type="password" id="auth-pass" placeholder="${passPlaceholder}" autocomplete="${passAutocomplete}">
-    </div>
-    <button type="button" class="btn-primary" id="auth-submit">
-      ${authMode === 'signup' ? 'Continue to Payment →' : 'Sign In →'}
-    </button>
-    <div style="text-align:center; margin-top: 24px; font-size: 13px; color: var(--text-3);">
-      ${authMode === 'signup'
-        ? 'Already have an account? <button type="button" class="text-link" onclick="toggleAuthMode()">Sign in</button>'
-        : 'New here? <button type="button" class="text-link" onclick="toggleAuthMode()">Create account</button>'}
-    </div>
-  `;
-
-  app.innerHTML = html;
-
-  document.getElementById('auth-submit').onclick = async () => {
-    const email    = document.getElementById('auth-email').value.trim();
-    const password = document.getElementById('auth-pass').value;
-    if (!email || !password) { errorMsg = 'Please fill in all fields.'; render(); return; }
-    if (password.length < 8) { errorMsg = 'Password must be at least 8 characters.'; render(); return; }
-    await handleAuth(email, password);
-  };
-}
-
-function renderConfirmEmail() {
-  app.innerHTML = `
-    <div class="center-view">
-      <div class="success-icon">✉</div>
-      <h2 style="font-size: 28px; margin-bottom: 12px;">Check your inbox</h2>
-      <p style="margin-bottom: 24px;">We sent a confirmation link to your email address. Click it, then return here to sign in and complete your checkout.</p>
-      <div class="info-note">After confirming your email, use <strong>Sign In</strong> below to proceed to payment.</div>
-      <button type="button" class="btn-primary" style="margin-top: 32px;" onclick="switchToLogin()">Sign In After Confirming →</button>
-    </div>
-  `;
 }
 
 function renderProcessing() {
@@ -2063,18 +2013,16 @@ window.goBack = function() {
   render();
 };
 
-window.switchToLogin = function() {
-  authMode = 'login';
-  errorMsg = '';
-  view = 'auth';
-  render();
-};
-
-window.toggleAuthMode = function() {
-  authMode = authMode === 'signup' ? 'login' : 'signup';
-  errorMsg = '';
-  render();
-};
+// Hand the visitor to the one surface that can sign them in, carrying
+// the plan they picked so checkout resumes the moment they are back.
+function goSignIn() {
+  let back = '/payment.html';
+  const q = [];
+  if (selectedPlan) q.push('plan=' + encodeURIComponent(selectedPlan));
+  if (billing === 'annual') q.push('billing=annual');
+  if (q.length) back += '?' + q.join('&');
+  window.location.href = '/login?reason=signin&return_to=' + encodeURIComponent(back);
+}
 
 window.setBilling = function(mode) {
   billing = mode === 'annual' ? 'annual' : 'monthly';
@@ -2083,96 +2031,12 @@ window.setBilling = function(mode) {
 
 window.selectPlan = function(planId) {
   selectedPlan = planId;
-  authMode = 'signup';
   errorMsg = '';
   prevView = 'plans';
   const session = getSession();
-  if (session) {
-    redirectToStripe(session.email);
-  } else {
-    view = 'auth';
-    render();
-  }
+  if (session) { redirectToStripe(session.email); return; }
+  goSignIn();
 };
-
-window.showLogin = function() {
-  selectedPlan = null;
-  authMode = 'login';
-  errorMsg = '';
-  prevView = 'plans';
-  view = 'auth';
-  render();
-};
-
-async function handleAuth(email, password) {
-  view = 'processing';
-  render();
-
-  if (!isConfigured) {
-    saveSession({ email, tier: selectedPlan || 'starter', demo: true });
-    localStorage.setItem('qb_user_email', email);
-    localStorage.setItem('qb_user_tier', selectedPlan || 'starter');
-    view = 'success';
-    render();
-    return;
-  }
-
-  try {
-    const endpoint = authMode === 'signup'
-      ? CONFIG.SUPABASE_URL + '/auth/v1/signup'
-      : CONFIG.SUPABASE_URL + '/auth/v1/token?grant_type=password';
-
-    const res  = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SUPABASE_ANON_KEY },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-
-    if (data.error || (!data.access_token && !data.user)) {
-      errorMsg = data.error?.message || data.msg || 'Authentication failed';
-      prevView = 'auth';
-      view = 'auth';
-      render();
-      return;
-    }
-
-    // Handle Supabase email confirmation pending: signup returns { user, session: null }
-    if (authMode === 'signup' && data.user && !data.session) {
-      view = 'confirm-email';
-      render();
-      return;
-    }
-
-    const session = authMode === 'signup' ? data.session : data;
-    saveSession({ email, token: session?.access_token, supabaseId: data.user?.id });
-    localStorage.setItem('qb_user_email', email);
-
-    // Login: go to checkout if a plan is selected, otherwise go straight to the dashboard
-    if (authMode === 'login') {
-      if (selectedPlan) {
-        await redirectToStripe(email);
-      } else {
-        window.location.href = '/foundation';
-      }
-      return;
-    }
-
-    // Signup: proceed to checkout or success
-    if (selectedPlan) {
-      await redirectToStripe(email);
-    } else {
-      view = 'success';
-      render();
-    }
-
-  } catch(e) {
-    errorMsg = 'Connection error: ' + e.message;
-    prevView = 'auth';
-    view = 'auth';
-    render();
-  }
-}
 
 // The server-side Checkout Session is the canonical path (api/stripe/checkout.js).
 // It carries client_reference_id so the webhook maps the user without an
@@ -2183,10 +2047,7 @@ async function redirectToStripe(email) {
   const session = getSession();
   if (!session?.token) {
     // The checkout endpoint requires an authenticated Supabase session.
-    authMode = 'login';
-    prevView = 'plans';
-    view = 'auth';
-    render();
+    goSignIn();
     return;
   }
 
@@ -2219,11 +2080,17 @@ async function redirectToStripe(email) {
 // ─────────────────────────────────────────────────────────────────────────────
 // SESSION & UTILS
 // ─────────────────────────────────────────────────────────────────────────────
-function saveSession(data) {
-  try { localStorage.setItem('qb_session', JSON.stringify(data)); } catch(e) {}
-}
+// Read-only view of the canonical session. Returns null unless the
+// session is one qb-cloud.js would accept, so this page can never again
+// believe someone is signed in when the rest of the app does not.
 function getSession() {
-  try { const s = localStorage.getItem('qb_session'); return s ? JSON.parse(s) : null; } catch(e) { return null; }
+  if (window.QB && typeof window.QB.isAuthed === 'function') {
+    return window.QB.isAuthed() ? window.QB.getSession() : null;
+  }
+  try {
+    const raw = JSON.parse(localStorage.getItem('qb_session') || 'null');
+    return (raw && raw.token && raw.userId) ? raw : null;
+  } catch(e) { return null; }
 }
 
 // Fires after Stripe redirects back to payment.html?payment=success
@@ -2232,9 +2099,11 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('payment') === 'success') {
   const plan = urlParams.get('plan');
   if (plan) {
+    // Optimistic local hint only. qb-cloud.js refreshes tier and
+    // subscription_status from the server on the next load, and that
+    // read is the one that decides access.
     localStorage.setItem('qb_user_tier', plan);
-    const existing = getSession();
-    if (existing) saveSession({ ...existing, tier: plan });
+    localStorage.setItem('qb_sub_status', 'active');
   }
   view = 'success';
 } else {
@@ -2246,7 +2115,10 @@ if (urlParams.get('payment') === 'success') {
   if (urlParams.get('billing') === 'annual') billing = 'annual';
   if (incomingPlan && PLAN_IDS.indexOf(incomingPlan) !== -1) {
     selectedPlan = incomingPlan;
-    view = 'auth';
+    // Deep link from the pricing page. Signed in goes straight to Stripe;
+    // anonymous gets the sign-in hop and comes back to this same URL.
+    if (getSession()) { redirectToStripe(); }
+    else { goSignIn(); }
   }
 }
 

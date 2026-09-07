@@ -1700,7 +1700,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       <a href="ecosystem.html#about" class="qb-type-nav">About</a>
     </nav>
     <div class="nav-actions">
-      <a href="https://app.quantumbranding.ai" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
+      <a href="https://app.quantumbranding.ai/login" class="qb-button is-sm"><span class="qb-button_content">Sign in</span></a>
       <a href="signal-scan.html" class="qb-button is-primary is-sm"><span class="qb-button_content">Start free</span></a>
       <button class="hamburger is-canonical" id="qbHamburger" aria-label="Open menu" type="button">
         <span></span><span></span><span></span>
@@ -1732,10 +1732,16 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 <!-- ============ TOOL ============ -->
 <main class="signal-scan">
+  <div id="signin-nudge" hidden></div>
   <div id="app"></div>
 </main>
 
 <!-- ============ FOOTER ============ -->
+
+<!-- Shared auth + QBP module. The diagnostic collects an email; without
+     this the email went nowhere but a Resend template and no account was
+     ever created, so every finisher landed back on question one. -->
+<script src="/qb-cloud.js"></script>
 
 <script>
 /* ============ Loading bar idle ============ */
@@ -2067,7 +2073,7 @@ function buildEmail(){
     ]),
     h1('Your scan is ready.',{fontSize:'clamp(1.75rem, 6vw, 2.5rem)'}),
     p('Enter your email to receive your complete Brand Signal Report. Your score, the gaps, and the exact first move.'),
-    div({marginTop:'16px',fontSize:'13px',color:'var(--ink-50)',lineHeight:'1.7'},'No spam. No sales sequences. Just your intelligence report.'),
+    div({marginTop:'16px',fontSize:'13px',color:'var(--ink-50)',lineHeight:'1.7'},'The same email carries your sign-in link, so your answers stay attached to your Brand Profile. No spam, no sales sequences.'),
   ]));
   const emailEl=document.createElement('input');
   emailEl.type='email';emailEl.placeholder='your@email.com';emailEl.className='email-input';
@@ -2107,6 +2113,20 @@ function buildEmail(){
           })
         }).catch(function(e){ console.warn('welcome-email network error:', e && e.message); });
       } catch(err) { console.warn('welcome-email send failed:', err); }
+
+      // Create the account. This is the step that was missing: the scan
+      // captured an email, mailed a report, and left the visitor
+      // anonymous, so every gated page bounced them back to question
+      // one. sendMagicLink() creates the Supabase user on first use and
+      // mails the branded sign-in link. Fire-and-forget on purpose: the
+      // diagnostic result must render even if mail is having a bad day.
+      try {
+        if (window.QB && window.QB.sendMagicLink) {
+          window.QB.sendMagicLink(email, '', 'signal-scan', '/foundation')
+            .then(function(r){ if (!r || !r.ok) console.warn('magic-link send failed:', r && r.error); })
+            .catch(function(e){ console.warn('magic-link network error:', e && e.message); });
+        }
+      } catch(err) { console.warn('magic-link send failed:', err); }
     } catch(err) {
       console.error('Signal scan submit error:', err);
     }
@@ -2225,12 +2245,25 @@ function buildResults(){
     })(),
   ]));
   wrap.appendChild(div({textAlign:'center', padding:'32px 0', borderTop:'1px solid var(--ink-25)'},[
+    (emailSubmitted && email ? div({class:'glass-card', padding:'20px 24px', marginBottom:'24px', textAlign:'left'},[
+      monoLabel('Your sign-in link is in your inbox','var(--gold-deep)',{marginBottom:'10px'}),
+      div({fontSize:'14px',color:'var(--ink-75)',lineHeight:'1.7'},'Open it in this browser and this scan follows you into QB BrandOS. The link works for 60 minutes.'),
+    ]) : div({display:'none'})),
     div({fontSize:'14px',color:'var(--ink-75)',lineHeight:'1.7',marginBottom:'20px'},'Want the full system? QB BrandOS takes you from this scan through every phase: identity, visual system, voice, content, and execution. All connected.'),
     (()=>{
       const btn=document.createElement('button');
       btn.className='cta-secondary';
       btn.textContent='Explore BrandOS →';
-      btn.onclick=()=>{window.open('/foundation','_blank');};
+      // Anonymous visitors go to the sign-in surface with the destination
+      // carried along, not to the gated app root. The old target bounced
+      // them straight back to question one of this diagnostic.
+      btn.onclick=()=>{
+        const authed = !!(window.QB && window.QB.isAuthed && window.QB.isAuthed());
+        if (authed) { window.open('/foundation','_blank'); return; }
+        let url = '/login?reason=signin&return_to=%2Ffoundation';
+        if (email && email.indexOf('@') > 0) url += '&email=' + encodeURIComponent(email);
+        window.open(url,'_blank');
+      };
       return btn;
     })(),
     div({marginTop:'24px'},[
@@ -2247,6 +2280,42 @@ function buildResults(){
   ]));
   return wrap;
 }
+// ── Stray sign-in traffic ────────────────────────────────────────────────
+// Every gated page now redirects to /login. Links minted before that fix
+// (mailed reports, bookmarks, shared URLs) still carry ?reason=signin
+// here. Rather than dropping those people on question one with no way
+// forward, hand them the door.
+(function(){
+  try {
+    const sp = new URLSearchParams(window.location.search);
+    const reason = sp.get('reason');
+    if (reason !== 'signin' && reason !== 'paywall') return;
+    const slot = document.getElementById('signin-nudge');
+    if (!slot) return;
+    const back = sp.get('return_to') || '/foundation';
+    const safe = (back.charAt(0) === '/' && back.charAt(1) !== '/') ? back : '/foundation';
+    const href = '/login?reason=' + encodeURIComponent(reason)
+               + '&return_to=' + encodeURIComponent(safe);
+    slot.hidden = false;
+    slot.style.cssText = 'margin:0 0 24px;padding:18px 22px;border:2px solid var(--ink);'
+      + 'border-radius:24px;background:var(--cream-card);box-shadow:0 6px var(--ink);'
+      + 'display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between';
+    const copy = document.createElement('div');
+    copy.style.cssText = 'font-size:14px;color:var(--ink-75);line-height:1.6;flex:1 1 16rem';
+    copy.textContent = reason === 'paywall'
+      ? 'That tool needs your Brand Profile. Sign in and it opens with your own data behind it.'
+      : 'Looking to sign in? Your account lives one email away.';
+    const link = document.createElement('a');
+    link.href = href;
+    link.textContent = 'Sign in →';
+    link.style.cssText = 'flex:none;background:var(--gold);color:var(--ink);border:2px solid var(--ink);'
+      + 'border-radius:9999px;padding:0.7em 1.3em;font-weight:600;font-size:14px;'
+      + 'text-decoration:none;box-shadow:0 4px var(--ink)';
+    slot.appendChild(copy);
+    slot.appendChild(link);
+  } catch(e) {}
+})();
+
 render();
 </script>
 
