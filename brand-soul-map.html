@@ -3479,7 +3479,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         el('div', { class:'quote-grid' },
           QUOTES.map(function(q){
             var card = el('div', { class:'quote-card' + (d.manifestoQuoteId === q.id ? ' selected' : ''),
-              onclick: function(){ updateData('manifestoQuoteId', q.id); }
+              onclick: function(){ updateData('manifestoQuoteId', q.id); rerenderStep(); }
             }, [
               el('p', { text:'“' + q.quote + '”' }),
               el('div', { class:'author', text:'- ' + q.author })
