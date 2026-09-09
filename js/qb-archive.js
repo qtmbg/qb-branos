@@ -635,7 +635,7 @@ export function renderArchiveTree(container, response, opts = {}) {
     if (!session?.token || refetchInFlight) return;
     refetchInFlight = true;
     try {
-      const r = await fetch('/api/artifacts?mode=chains', {
+      const r = await window.QB.apiFetch('/api/artifacts?mode=chains', {
         headers: { Authorization: `Bearer ${session.token}` },
       });
       if (!r.ok) return;

@@ -74,7 +74,7 @@ function redirectToAuth() {
 }
 
 async function fetchTier(token) {
-  const res = await fetch('/api/qbp', { headers: { Authorization: `Bearer ${token}` } });
+  const res = await window.QB.apiFetch('/api/qbp', { headers: { Authorization: `Bearer ${token}` } });
   if (res.status === 401) return { unauthorized: true };
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();

@@ -70,7 +70,7 @@ async function makeSeed() {
   const email = `qb-siteaudit-${uuid().slice(0, 8)}@qb-harness.test`;
   const password = `Qb-${uuid()}`;
   const u = await (await must(await fetch(`${SU}/auth/v1/admin/users`, { method: 'POST', headers: svc, body: JSON.stringify({ email, password, email_confirm: true }) }), 'createUser')).json();
-  await must(await fetch(`${SU}/rest/v1/profiles`, { method: 'POST', headers: { ...svc, Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ id: u.id, email, tier: 'starter', foundation_locked_at: new Date().toISOString(), qbp: { brandName: 'Steadfield', brandEssence: 'Patient growth.', archetypePrimary: 'Sage' } }) }), 'profile');
+  await must(await fetch(`${SU}/rest/v1/profiles`, { method: 'POST', headers: { ...svc, Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ id: u.id, email, tier: 'starter', subscription_status: 'active', foundation_locked_at: new Date().toISOString(), qbp: { brandName: 'Steadfield', brandEssence: 'Patient growth.', archetypePrimary: 'Sage' } }) }), 'profile');
   const art = await (await must(await fetch(`${SU}/rest/v1/artifacts`, { method: 'POST', headers: { ...svc, Prefer: 'return=representation' }, body: JSON.stringify({ user_id: u.id, artifact_type: 'soul_map_synthesizer', status: 'delivered', version: 1, phase: '01', content: { schema_version: '1.0', header: { eyebrow: '01 Discovery · Soul Map', title: 'The Soul of Steadfield', agent: 'soul_map_synthesizer', generated_at: new Date().toISOString(), version: 1 }, body_sections: [{ heading: 'Essence', prose: 'Steadfield grows things that take time.\n\nPrecise, warm, unhurried.' }], data_blocks: [], footer: { qbp_fields_referenced: ['brandName'] } } }) }), 'artifact')).json();
   const tok = await (await must(await fetch(`${SU}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: AK, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) }), 'signin')).json();
   return { id: u.id, email, token: tok.access_token, refreshToken: tok.refresh_token, artifactId: art[0].id };
@@ -153,6 +153,16 @@ async function auditPage(browser, route, { width, session }) {
     await ctx.addInitScript(s => { try { localStorage.setItem('qb_session', s); } catch (e) {} },
       JSON.stringify({ token: session.token, userId: session.id, refreshToken: session.refreshToken }));
   }
+  // Optional local frontend overlay with the real production API. Keeps
+  // test identities off source files while exercising an unshipped fix.
+  if (process.env.QB_SOURCE_BASE) {
+    await ctx.route(BASE + '/**', async route => {
+      const u = new URL(route.request().url());
+      if (u.pathname.startsWith('/api/')) return route.continue();
+      const r = await fetch(process.env.QB_SOURCE_BASE + u.pathname + u.search);
+      return route.fulfill({ status: r.status, headers: { 'content-type': r.headers.get('content-type') || 'application/octet-stream' }, body: Buffer.from(await r.arrayBuffer()) });
+    });
+  }
   const page = await ctx.newPage();
   const consoleErrors = [], pageErrors = [], failedRequests = [];
   page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text().slice(0, 300)); });
@@ -197,7 +207,7 @@ async function main() {
 
   try {
     // Public half
-    for (const route of PUBLIC_ROUTES) {
+    for (const route of (process.env.QB_AUDIT_APP_ONLY ? [] : PUBLIC_ROUTES)) {
       for (const width of WIDTHS) {
         const rec = await auditPage(browser, route, { width });
         report.pages.push(rec);
@@ -209,7 +219,8 @@ async function main() {
     if (HAS_ENV) {
       seed = await makeSeed();
       report.appAudited = true;
-      const appRoutes = [...APP_ROUTES, `/artifact?id=${seed.artifactId}`];
+      const paid = process.env.QB_AUDIT_PAID_TOOLS ? PUBLIC_ROUTES.filter(r => /agent|content-|panel|brand-performance/.test(r)) : [];
+      const appRoutes = [...APP_ROUTES, `/artifact?id=${seed.artifactId}`, ...paid];
       for (const route of appRoutes) {
         for (const width of WIDTHS) {
           const rec = await auditPage(browser, route, { width, session: seed });

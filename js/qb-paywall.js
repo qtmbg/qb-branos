@@ -338,7 +338,7 @@ async function triggerCheckout(ev, opts) {
   try {
     const token = opts.token || null;
     if (!token) throw new Error('Not signed in');
-    const res = await fetch('/api/stripe/checkout', {
+    const res = await window.QB.apiFetch('/api/stripe/checkout', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

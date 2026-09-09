@@ -236,7 +236,7 @@
 <body>
 <main class="login_shell">
 
-  <a class="login_brand" href="/">
+  <a class="login_brand" href="https://quantumbranding.ai/">
     <span class="login_brand-dot" aria-hidden="true"></span>
     <span class="login_wordmark">quantum branding</span>
   </a>
@@ -316,13 +316,7 @@
   // crafted ?return_to= can never bounce a freshly-authed user off-site.
   // Also rejects /login itself, which is the shape that produced the
   // original redirect loop.
-  function safeReturnTo(raw){
-    if (!raw || typeof raw !== 'string') return DEFAULT_RETURN;
-    if (raw.charAt(0) !== '/' || raw.charAt(1) === '/' || raw.charAt(1) === '\\') return DEFAULT_RETURN;
-    var path = raw.split('?')[0].split('#')[0].replace(/\/+$/, '');
-    if (path === '/login' || path === '/login.html' || path === '') return DEFAULT_RETURN;
-    return raw;
-  }
+  function safeReturnTo(raw){ return window.QB ? QB.safeReturnTo(raw) : DEFAULT_RETURN; }
 
   var params   = new URLSearchParams(window.location.search);
   var returnTo = safeReturnTo(params.get('return_to'));

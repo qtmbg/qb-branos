@@ -9,22 +9,14 @@
   const SUPA_URL = 'https://yushbxjwfhuokaezoioe.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0';
 
-  // ── Canonical host enforcement ────────────────────────────────────────────
-  // Defense against the www/non-www split: if a user lands on www.<host>,
-  // redirect to the bare <host> immediately so localStorage lives under the
-  // same origin the magic-link redirect targets. Hash + query are preserved
-  // (so this is safe to run on /auth-callback.html which reads the JWT from
-  // the URL fragment). Only applies to www.quantumbranding.ai — leaves the
-  // app subdomain and localhost alone.
-  const CANONICAL_HOST = 'quantumbranding.ai';
-  if (typeof window !== 'undefined' && window.location.host === 'www.' + CANONICAL_HOST) {
-    window.location.replace(
-      'https://' + CANONICAL_HOST
-      + window.location.pathname
-      + window.location.search
-      + window.location.hash
-    );
-    return; // The redirect interrupts the rest of this module. Re-runs on the canonical host.
+  // All product pages load this module. Keep their state on the product
+  // origin; marketing stays on the apex. Preserve deep links and auth hashes.
+  const PRODUCT_ORIGIN = 'https://app.quantumbranding.ai';
+  if (typeof window !== 'undefined'
+      && ['quantumbranding.ai', 'www.quantumbranding.ai'].includes(window.location.hostname)) {
+    window.location.replace(PRODUCT_ORIGIN + window.location.pathname
+      + window.location.search + window.location.hash);
+    return;
   }
 
   // ── Tool registry ──────────────────────────────────────────────────────────
@@ -97,8 +89,74 @@
     try { return JSON.parse(localStorage.getItem('qb_session') || '{}'); }
     catch(e){ return {}; }
   }
+  // Keep signed-out drafts tied to their owner, never to the next visitor.
+  const DRAFT_PREFIX = 'qb_saved_user:';
+  const NON_DRAFT_KEYS = new Set(['qb_session', 'qb_data_owner', 'qb_theme', 'qb-theme',
+    'qb_post_auth_return_to', 'qb_pending_signup']);
+  function privateKeys(){
+    return Object.keys(localStorage).filter(k => /^qb[_-]/.test(k)
+      && !k.startsWith(DRAFT_PREFIX) && !NON_DRAFT_KEYS.has(k));
+  }
+  function parkDraft(userId){
+    if (!userId) return;
+    const draft = {};
+    privateKeys().forEach(k => { draft[k] = localStorage.getItem(k); });
+    const key = DRAFT_PREFIX + userId;
+    const serialized = JSON.stringify(draft);
+    let persisted = false;
+    try {
+      localStorage.setItem(key, serialized);
+      sessionStorage.removeItem(key);
+      persisted = true;
+    } catch(e) {
+      // A full local store must not expose answers after sign-out. Retain
+      // the draft in this tab while making room in the active namespace.
+      try {
+        sessionStorage.setItem(key, serialized);
+        persisted = true;
+      } catch(err) {}
+    }
+    // If both stores are unavailable, keep the active values rather than
+    // clearing the only copy of a user's work.
+    if (!persisted) return;
+    privateKeys().forEach(k => localStorage.removeItem(k));
+    localStorage.removeItem('qb_data_owner');
+  }
   function setSession(s){
+    const current = getSession();
+    const oldOwner = current.userId || localStorage.getItem('qb_data_owner');
+    if (s.userId && oldOwner && oldOwner !== s.userId) parkDraft(oldOwner);
+    if (s.userId && current.userId !== s.userId) {
+      try {
+        const key = DRAFT_PREFIX + s.userId;
+        // A shared archive can be refreshed by another tab, so prefer it
+        // over this tab's quota fallback whenever it is present.
+        const archived = localStorage.getItem(key) || sessionStorage.getItem(key) || '{}';
+        const saved = JSON.parse(archived);
+        Object.entries(saved).forEach(([k,v]) => {
+          if (NON_DRAFT_KEYS.has(k) || k.startsWith(DRAFT_PREFIX)) return;
+          const fresh = localStorage.getItem(k);
+          if (fresh === null) localStorage.setItem(k,v);
+          else if (k === 'qb_qbp' || k === 'qb_completions') {
+            // Work completed since sign-out takes precedence over the archive.
+            localStorage.setItem(k, JSON.stringify({ ...JSON.parse(v), ...JSON.parse(fresh) }));
+          }
+        });
+      } catch(e) {}
+    }
     localStorage.setItem('qb_session', JSON.stringify(s));
+    if (s.userId) localStorage.setItem('qb_data_owner', s.userId);
+  }
+
+  function safeReturnTo(raw, fallback = '/foundation'){
+    if (typeof raw !== 'string' || !raw.startsWith('/') || /[\\\x00-\x20]/.test(raw)) return fallback;
+    try {
+      const url = new URL(raw, window.location.origin);
+      const path = decodeURIComponent(url.pathname).replace(/\/+$/, '');
+      if (url.origin !== window.location.origin || !path
+          || /^\/(login|signin|auth-callback)(\.html)?$/i.test(path)) return fallback;
+      return url.pathname + url.search + url.hash;
+    } catch(e) { return fallback; }
   }
   function clearSession(){
     localStorage.removeItem('qb_session');
@@ -129,8 +187,13 @@
           headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
           body: JSON.stringify({ refresh_token: s.refreshToken })
         });
-        if (!res.ok) return null;
+        if (!res.ok) {
+          if ((res.status === 400 || res.status === 401) && getSession().token === s.token) logout();
+          return null;
+        }
         const data = await res.json();
+        // A sign-out or account switch while this request was in flight wins.
+        if (getSession().userId !== s.userId || getSession().token !== s.token) return null;
         if (!data || !data.access_token) return null;
         const next = Object.assign({}, getSession(), {
           token:        data.access_token,
@@ -142,6 +205,34 @@
       finally { _refreshing = null; }
     })();
     return _refreshing;
+  }
+  // Authenticated first-party requests renew once, using the current token
+  // even when a renderer captured an older session object.
+  async function apiFetch(url, init = {}){
+    const target = new URL(url, window.location.origin);
+    if (target.origin !== window.location.origin || !target.pathname.startsWith('/api/')) {
+      throw new Error('Account requests must stay on this site.');
+    }
+    const before = getSession();
+    if (!before.token || !before.userId) return new Response('{}', { status: 401 });
+    const fire = () => {
+      const headers = new Headers(init.headers || {});
+      headers.set('Authorization', 'Bearer ' + getSession().token);
+      return fetch(url, { ...init, headers });
+    };
+    let res = await fire();
+    if (res.status !== 401) return res;
+    if (getSession().userId !== before.userId) return res;
+    // Another request may already have refreshed this token.
+    const token = getSession().token !== before.token
+      ? getSession().token : await refreshAccessToken();
+    if (token && getSession().userId === before.userId) res = await fire();
+    if (res.status === 401 && getSession().userId === before.userId) {
+      // A network failure during refresh must not discard a valid session.
+      if (before.refreshToken && !token && isAuthed()) throw new Error('Could not reconnect. Please try again.');
+      logout();
+    }
+    return res;
   }
   function isJwtExpiredResponse(res, body){
     if (res.status !== 401) return false;
@@ -229,7 +320,7 @@
       if (!res || !res.ok) return null;
       const data = await res.json();
       const profile = data && data[0];
-      if (!profile) return null;
+      if (!profile || getSession().userId !== userId) return null;
 
       // Merge cloud → local. Cloud is source of truth, but don't drop
       // local fields that haven't been pushed yet.
@@ -237,9 +328,10 @@
       const merged = Object.assign({}, local, profile.qbp || {});
       localStorage.setItem('qb_qbp', JSON.stringify(merged));
 
-      if (profile.first_name)         localStorage.setItem('qb_first_name',  profile.first_name);
+      localStorage.setItem('qb_data_owner', userId);
+      localStorage.setItem('qb_first_name', profile.first_name || '');
       if (profile.tier)               localStorage.setItem('qb_user_tier',   profile.tier);
-      if (profile.subscription_status)localStorage.setItem('qb_sub_status',  profile.subscription_status);
+      localStorage.setItem('qb_sub_status', profile.subscription_status || 'inactive');
       if (profile.tool_completions)   localStorage.setItem('qb_completions', JSON.stringify(profile.tool_completions));
 
       return profile;
@@ -315,8 +407,8 @@
     // stashed in localStorage on this origin so auth-callback.html can read
     // it back. We do not thread it through redirect_to because Supabase's
     // allowlist matcher silently rejects URLs with non-static query strings.
-    if (returnTo && typeof returnTo === 'string' && returnTo.startsWith('/') && !returnTo.startsWith('//')) {
-      try { localStorage.setItem('qb_post_auth_return_to', returnTo); } catch(e){}
+    if (returnTo) {
+      try { localStorage.setItem('qb_post_auth_return_to', safeReturnTo(returnTo)); } catch(e){}
     }
     try {
       const res = await fetch('/api/send-magic-link', {
@@ -347,11 +439,15 @@
   }
 
   function logout(){
+    parkDraft(getSession().userId);
     clearSession();
+    sessionStorage.removeItem('qb_return_to');
+    localStorage.removeItem('qb_pending_signup');
+    localStorage.removeItem('qb_post_auth_return_to');
     localStorage.removeItem('qb_first_name');
     localStorage.removeItem('qb_user_tier');
     localStorage.removeItem('qb_sub_status');
-    // Keep qb_qbp + qb_completions locally so the user doesn't lose work
+    // The private draft is restored only after this same account signs in.
   }
 
   // ── Profile confirm (single-flight) ───────────────────────────────────────
@@ -379,7 +475,7 @@
     if (feature === 'signal-scan')        return true;
     if (feature === 'brand-document')     return true;
     // Everything else requires an active paid subscription
-    return status === 'active' && tier !== 'free';
+    return isAuthed() && status === 'active' && tier !== 'free';
   }
   // Backwards-compat shim — existing code calls window.QB_HAS_ACCESS
   if (typeof window.QB_HAS_ACCESS !== 'function') {
@@ -458,6 +554,11 @@
   if (typeof window !== 'undefined') {
     window.addEventListener('storage', function(e){
       if (!e || !e.key || !QB_KEY_SCOPES[e.key]) return;
+      if (e.key === 'qb_session') {
+        let before = {}, after = {};
+        try { before = JSON.parse(e.oldValue || '{}'); after = JSON.parse(e.newValue || '{}'); } catch(err) {}
+        if (before.userId !== after.userId) { window.location.reload(); return; }
+      }
       try {
         window.dispatchEvent(new CustomEvent('qb:state-changed', {
           detail: { key: e.key, scope: QB_KEY_SCOPES[e.key] }
@@ -479,7 +580,7 @@
     recordCompletion, getCompletions, nextRecommendedTool, phase01Progress,
     sendMagicLink, logout,
     hasAccess, requireAccess,
-    cloudFetch, refreshAccessToken, confirmProfile,
+    cloudFetch, apiFetch, safeReturnTo, refreshAccessToken, confirmProfile,
     TOOL_NAMES, TOOL_FILES, PHASE_01_TOOLS, PAID_TOOLS
   };
 })();

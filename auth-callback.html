@@ -37,7 +37,7 @@
   const showError = msg => {
     $('spinner').style.display = 'none';
     $('title').textContent = 'Something went wrong';
-    $('msg').innerHTML = 'Try requesting a new link, or <a href="/">go back home</a>.';
+    $('msg').innerHTML = '<a href="/login?reason=expired">Request a new sign-in link</a>, or <a href="/">go back home</a>.';
     $('err').textContent = msg;
     $('err').style.display = 'block';
   };
@@ -52,6 +52,8 @@
   const params = new URLSearchParams(hash);
   const accessToken = params.get('access_token');
   const refreshToken = params.get('refresh_token');
+  // Remove credentials from browser history before any network work.
+  history.replaceState(null, '', location.pathname + location.search);
   const queryParams = new URLSearchParams(window.location.search);
   // Default post-auth destination is /foundation. We do not thread return_to
   // through the magic-link URL anymore (Supabase allowlist rejected the
@@ -65,7 +67,7 @@
     catch(e) { rawReturnTo = ''; }
   }
   if (!rawReturnTo) rawReturnTo = '/foundation';
-  const returnTo = rawReturnTo.replace('://www.', '://');
+  const returnTo = QB.safeReturnTo(rawReturnTo);
   try { localStorage.removeItem('qb_post_auth_return_to'); } catch(e) {}
 
   if (!accessToken) {
@@ -78,11 +80,11 @@
   // cloud writes and just bounce back to return_to. Prevents the local
   // QBP from being re-merged over a freshly-changed cloud state.
   const existingSession = QB.getSession();
-  if (existingSession && existingSession.token === accessToken) {
+  if (existingSession && existingSession.userId && existingSession.token === accessToken) {
     $('spinner').style.display = 'none';
     $('title').textContent = "You're in.";
     $('msg').innerHTML = 'Already signed in. Taking you back…';
-    setTimeout(() => { window.location.href = returnTo; }, 400);
+    setTimeout(() => { window.location.replace(returnTo); }, 400);
     return;
   }
 
@@ -159,7 +161,7 @@
     $('spinner').style.display = 'none';
     $('title').textContent = "You're in.";
     $('msg').innerHTML = 'Taking you back to your result…';
-    setTimeout(() => { window.location.href = returnTo; }, 900);
+    setTimeout(() => { window.location.replace(returnTo); }, 900);
   } catch(e) {
     showError(e.message || 'Unknown error.');
   }

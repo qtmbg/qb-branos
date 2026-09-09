@@ -553,7 +553,7 @@
       if (isDestroyed) return;
       let res;
       try {
-        res = await fetch('/api/notifications', {
+        res = await window.QB.apiFetch('/api/notifications', {
           headers: { Authorization: `Bearer ${token}` },
         });
       } catch (e) {
@@ -586,7 +586,7 @@
         if (dom) dom.setAttribute('data-read', '1');
 
         try {
-          await fetch(`/api/notifications/${encodeURIComponent(n.id)}/read`, {
+          await window.QB.apiFetch(`/api/notifications/${encodeURIComponent(n.id)}/read`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
           });

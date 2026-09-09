@@ -103,6 +103,8 @@ const RUN_ORPHAN_WINDOW_MS = 330_000;
 // but a defensive cap stops a stampede from blowing the cron budget if a
 // deploy-wide misconfiguration ever fills the table.
 const MAX_ROWS_PER_TICK = 50;
+const TRANSIENT_READ_RETRIES = 2;
+const TRANSIENT_READ_DELAYS_MS = [250, 750];
 
 // ─── Supabase REST helpers ──────────────────────────────────────────────
 
@@ -111,12 +113,15 @@ async function fetchProducingDispatches({ supaUrl, serviceKey }) {
     `?status=eq.producing` +
     `&select=id,user_id,kind,trigger,retry_count,last_retry_at,created_at,parent_agent_slug` +
     `&order=created_at.asc&limit=${MAX_ROWS_PER_TICK}`;
-  const r = await fetch(url, { headers: svcHeaders(serviceKey) });
-  if (!r.ok) {
-    const t = await r.text().catch(() => '');
-    throw new Error(`dispatch_jobs_read_failed: ${r.status} ${t.slice(0, 200)}`);
+  let r;
+  for (let attempt = 0; attempt <= TRANSIENT_READ_RETRIES; attempt += 1) {
+    r = await fetch(url, { headers: svcHeaders(serviceKey) });
+    if (r.ok) return r.json();
+    if (![502, 503, 504].includes(r.status) || attempt === TRANSIENT_READ_RETRIES) break;
+    await new Promise(resolve => setTimeout(resolve, TRANSIENT_READ_DELAYS_MS[attempt] || 750));
   }
-  return r.json();
+  const t = await r.text().catch(() => '');
+  throw new Error(`dispatch_jobs_read_failed: ${r.status} ${t.slice(0, 200)}`);
 }
 
 async function fetchArtifactsForDispatch({ supaUrl, serviceKey, dispatchId }) {

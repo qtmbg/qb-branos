@@ -635,7 +635,7 @@ async function openReplayModal(runId, session) {
   // Fetch the run detail.
   let res, data;
   try {
-    res = await fetch(`/api/agent-runs/${runId}/replay`, {
+    res = await window.QB.apiFetch(`/api/agent-runs/${runId}/replay`, {
       headers: { Authorization: `Bearer ${session.token}` },
     });
     data = await res.json().catch(() => ({}));
@@ -947,7 +947,7 @@ export function renderConsole(container, payload, opts) {
       return;
     }
     try {
-      const r = await fetch('/api/agents/rerun', {
+      const r = await window.QB.apiFetch('/api/agents/rerun', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${session.token}`,
@@ -997,7 +997,7 @@ export function renderConsole(container, payload, opts) {
 
     let res, body;
     try {
-      res = await fetch('/api/agents/dispatch', {
+      res = await window.QB.apiFetch('/api/agents/dispatch', {
         method: 'POST',
         headers: { Authorization: `Bearer ${session.token}`, 'content-type': 'application/json' },
         body: JSON.stringify(files ? { agent_slug: agent.slug, files } : { agent_slug: agent.slug }),
@@ -1028,7 +1028,7 @@ export function renderConsole(container, payload, opts) {
     if (!agent.latest_artifact?.id) { alert('No delivered artifact to refine yet.'); return; }
     let res, body;
     try {
-      res = await fetch('/api/agents/rerun', {
+      res = await window.QB.apiFetch('/api/agents/rerun', {
         method: 'POST',
         headers: { Authorization: `Bearer ${session.token}`, 'content-type': 'application/json' },
         body: JSON.stringify({ artifact_id: agent.latest_artifact.id, qbp_source: 'current', feedback }),
@@ -1078,7 +1078,7 @@ export function renderConsole(container, payload, opts) {
     if (!session?.token || refetchInFlight) return;
     refetchInFlight = true;
     try {
-      const r = await fetch('/api/agents/console', {
+      const r = await window.QB.apiFetch('/api/agents/console', {
         headers: { Authorization: `Bearer ${session.token}` },
       });
       if (!r.ok) return; // silent · the next event or poll re-tries

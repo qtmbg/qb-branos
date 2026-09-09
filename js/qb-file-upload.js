@@ -363,7 +363,7 @@
         btn.disabled = false;
         return;
       }
-      const res = await fetch('/api/agents/rerun', {
+      const res = await window.QB.apiFetch('/api/agents/rerun', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${authToken}`,

@@ -255,10 +255,11 @@ async function paidToolWithProfile(profile, { abort = false } = {}) {
   await ctx.close();
 }
 {
-  // Post-checkout return · tier hint set, session left alone
+  // Post-checkout return · server confirms the tier, session left alone
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   await ctx.addInitScript(s => { try { localStorage.setItem('qb_session', JSON.stringify(s)); } catch (e) {} }, SESSION);
   await ctx.route('**://*.supabase.co/**', r => r.fulfill({ status: 200, body: '{}' }));
+  await ctx.route('**://*.supabase.co/rest/v1/profiles**', r => r.fulfill({ json: [{ tier: 'pro', subscription_status: 'active', qbp: {} }] }));
   const page = await ctx.newPage();
   await page.goto(BASE + '/payment.html?payment=success&plan=pro', { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(800);
@@ -268,7 +269,7 @@ async function paidToolWithProfile(profile, { abort = false } = {}) {
     session: JSON.parse(localStorage.getItem('qb_session') || 'null'),
     body: document.body.innerText.slice(0, 200),
   }));
-  check('payment · post-checkout sets the local tier hint', state.tier === 'pro' && state.status === 'active', `${state.tier}/${state.status}`);
+  check('payment · post-checkout uses the server-confirmed tier', state.tier === 'pro' && state.status === 'active', `${state.tier}/${state.status}`);
   check('payment · post-checkout leaves the session intact',
     !!(state.session && state.session.userId && state.session.token), JSON.stringify(state.session));
   check('payment · post-checkout shows the success view', /You're in|Enter QB BrandOS/i.test(state.body), state.body.slice(0, 80));

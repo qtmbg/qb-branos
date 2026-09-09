@@ -1807,8 +1807,8 @@ const CONFIG = {
 
   // SUCCESS_URL points back to THIS page so the URL param handler fires correctly
   // and sets qb_user_tier after a successful Stripe checkout.
-  SUCCESS_URL: 'https://app.quantumbranding.ai/payment.html?payment=success',
-  CANCEL_URL:  'https://app.quantumbranding.ai/payment.html',
+  SUCCESS_URL: window.location.origin + '/payment.html?payment=success',
+  CANCEL_URL: window.location.origin + '/payment.html?cancelled=1',
 
   SUPABASE_URL:      'https://yushbxjwfhuokaezoioe.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1c2hieGp3Zmh1b2thZXpvaW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjEwNTAsImV4cCI6MjA5MDM5NzA1MH0.xU_jlBhmSeb1Bck04bEgNAD7HQBsGvgkf7d3PK_dbl0',
@@ -1878,6 +1878,7 @@ let billing      = 'monthly'; // 'monthly' | 'annual'
 let selectedPlan = null;
 let errorMsg     = '';
 let prevView     = 'plans';
+let confirming = false;
 
 const app = document.getElementById('app');
 
@@ -1892,6 +1893,7 @@ function render() {
   if      (view === 'plans')         renderPlans();
   else if (view === 'processing')    renderProcessing();
   else if (view === 'success')       renderSuccess();
+  else if (view === 'confirming')    renderConfirmation();
   else if (view === 'error')         renderError();
 }
 
@@ -1987,11 +1989,43 @@ function renderSuccess() {
     <div class="center-view">
       <div class="success-icon">✓</div>
       <h2 style="font-size: 36px; margin-bottom: 16px;">You're in.</h2>
-      <p style="margin-bottom: 32px;">Your account is active. Your API key and QBP are waiting in the system.</p>
-      <button type="button" class="btn-primary" onclick="window.location.href='/foundation'">Enter QB BrandOS →</button>
+      <p style="margin-bottom: 32px;">Your subscription is active. Your Brand Profile is ready.</p>
+      <button type="button" class="btn-primary" onclick="resumeTool()">Enter QB BrandOS →</button>
     </div>
   `;
 }
+
+function renderConfirmation() {
+  app.innerHTML = `<div class="center-view" aria-live="polite">
+    <h2>Confirming your subscription</h2>
+    <p>Checkout has returned. We are waiting for your account to update. This can take a moment.</p>
+    <button type="button" class="btn-primary" onclick="confirmPayment()" ${confirming ? 'disabled' : ''}>${confirming ? 'Checking…' : 'Check again'}</button>
+    <p><a href="/account">View your account</a></p>
+  </div>`;
+}
+window.confirmPayment = async function() {
+  if (confirming) return;
+  confirming = true;
+  view = 'confirming'; render();
+  try {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const profile = await window.QB.confirmProfile();
+      if (profile && profile.subscription_status === 'active' && profile.tier !== 'free'
+          && (!selectedPlan || profile.tier === selectedPlan)) {
+        view = 'success'; render(); return;
+      }
+      if (attempt < 4) await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+  } finally {
+    confirming = false;
+    if (view === 'confirming') render();
+  }
+};
+window.resumeTool = function() {
+  const target = QB.safeReturnTo(sessionStorage.getItem('qb_return_to'));
+  sessionStorage.removeItem('qb_return_to');
+  window.location.href = target;
+};
 
 function renderError() {
   app.innerHTML = `
@@ -2054,13 +2088,13 @@ async function redirectToStripe(email) {
   view = 'processing'; render();
 
   try {
-    const res = await fetch('/api/stripe/checkout', {
+    const res = await window.QB.apiFetch('/api/stripe/checkout', {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + session.token, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         price_id: CONFIG.PRICES[billing][selectedPlan],
         success_url: CONFIG.SUCCESS_URL + '&plan=' + selectedPlan,
-        cancel_url: CONFIG.CANCEL_URL,
+        cancel_url: CONFIG.CANCEL_URL + '&plan=' + selectedPlan + '&billing=' + billing,
       }),
     });
     const data = await res.json().catch(() => ({}));
@@ -2097,15 +2131,13 @@ function getSession() {
 // Sets qb_user_tier and merges plan into the session object
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('payment') === 'success') {
-  const plan = urlParams.get('plan');
-  if (plan) {
-    // Optimistic local hint only. qb-cloud.js refreshes tier and
-    // subscription_status from the server on the next load, and that
-    // read is the one that decides access.
-    localStorage.setItem('qb_user_tier', plan);
-    localStorage.setItem('qb_sub_status', 'active');
+  selectedPlan = urlParams.get('plan');
+  if (!getSession()) {
+    window.location.replace('/login?return_to=' + encodeURIComponent(location.pathname + location.search));
+  } else {
+    view = 'confirming';
+    confirmPayment();
   }
-  view = 'success';
 } else {
   // Pricing page CTAs deep-link with ?plan=starter|pro|agency and an
   // optional &billing=annual carried over from the pricing toggle.
@@ -2117,7 +2149,8 @@ if (urlParams.get('payment') === 'success') {
     selectedPlan = incomingPlan;
     // Deep link from the pricing page. Signed in goes straight to Stripe;
     // anonymous gets the sign-in hop and comes back to this same URL.
-    if (getSession()) { redirectToStripe(); }
+    if (urlParams.get('cancelled') === '1') { view = 'plans'; }
+    else if (getSession()) { redirectToStripe(); }
     else { goSignIn(); }
   }
 }

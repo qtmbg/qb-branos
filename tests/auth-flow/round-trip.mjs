@@ -77,7 +77,7 @@ try {
   await page.evaluate(() => localStorage.setItem('qb_post_auth_return_to', '/qbp'));
 
   const chain = [];
-  page.on('framenavigated', f => { if (f === page.mainFrame()) chain.push(f.url().replace(BASE, '').split('#')[0]); });
+  page.on('request', r => { if (r.isNavigationRequest() && r.frame() === page.mainFrame()) chain.push(r.url().replace(BASE, '').split('#')[0]); });
 
   await page.goto(`${BASE}/auth-callback.html#${fragment}`, { waitUntil: 'domcontentloaded' });
   await page.waitForURL(u => !u.toString().includes('auth-callback'), { timeout: 15000 }).catch(() => {});

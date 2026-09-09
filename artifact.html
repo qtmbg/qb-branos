@@ -122,8 +122,8 @@ async function load() {
   let res, data, tier = 'free';
   try {
     const [artRes, qbpRes] = await Promise.all([
-      fetch(`/api/artifacts/${id}`, { headers: { Authorization: `Bearer ${session.token}` } }),
-      fetch('/api/qbp',             { headers: { Authorization: `Bearer ${session.token}` } }),
+      window.QB.apiFetch(`/api/artifacts/${id}`, { headers: { Authorization: `Bearer ${session.token}` } }),
+      window.QB.apiFetch('/api/qbp',             { headers: { Authorization: `Bearer ${session.token}` } }),
     ]);
     res = artRes;
     data = await res.json().catch(() => ({}));
@@ -178,7 +178,7 @@ async function handleShareAction(action, ev) {
     showToast('Download starting…');
     try {
       const session = window.QB.getSession();
-      const res = await fetch('/api/qbp/export', {
+      const res = await window.QB.apiFetch('/api/qbp/export', {
         method: 'POST',
         headers: { Authorization: `Bearer ${session.token}` },
       });

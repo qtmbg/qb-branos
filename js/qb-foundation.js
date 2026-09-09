@@ -632,7 +632,7 @@ export function startArtifactPolling({ token, onUpdate, onStuck }) {
       return;
     }
     try {
-      const r = await fetch('/api/artifacts?limit=200', {
+      const r = await window.QB.apiFetch('/api/artifacts?limit=200', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (r.ok) {

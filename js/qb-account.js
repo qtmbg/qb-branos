@@ -107,7 +107,7 @@ function buildPortalControl(opts) {
       btn.classList.add('is-disabled');
       if (content) content.textContent = 'Opening the portal…';
       try {
-        const r = await fetch('/api/billing-portal', {
+        const r = await window.QB.apiFetch('/api/billing-portal', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ return_url: window.location.href }),

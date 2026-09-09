@@ -71,8 +71,8 @@ async function load() {
   let artifactsRes, qbpRes;
   try {
     [artifactsRes, qbpRes] = await Promise.all([
-      fetch('/api/artifacts?mode=chains', { headers: { Authorization: `Bearer ${session.token}` } }),
-      fetch('/api/qbp',                   { headers: { Authorization: `Bearer ${session.token}` } }),
+      window.QB.apiFetch('/api/artifacts?mode=chains', { headers: { Authorization: `Bearer ${session.token}` } }),
+      window.QB.apiFetch('/api/qbp',                   { headers: { Authorization: `Bearer ${session.token}` } }),
     ]);
   } catch (e) {
     renderArchiveError(root, e);

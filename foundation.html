@@ -109,8 +109,8 @@ function dismissUpgradeSuccessBanner(session) {
 
 async function fetchAll(token) {
   const [qbpRes, artRes] = await Promise.all([
-    fetch('/api/qbp',                   { headers: { Authorization: `Bearer ${token}` } }),
-    fetch('/api/artifacts?limit=200',   { headers: { Authorization: `Bearer ${token}` } }),
+    window.QB.apiFetch('/api/qbp',                   { headers: { Authorization: `Bearer ${token}` } }),
+    window.QB.apiFetch('/api/artifacts?limit=200',   { headers: { Authorization: `Bearer ${token}` } }),
   ]);
   if (qbpRes.status === 401 || artRes.status === 401) return { unauthorized: true };
   const qbpData = await qbpRes.json().catch(() => ({}));
@@ -129,7 +129,7 @@ async function fetchAll(token) {
 async function triggerLock(session) {
   showToast('Locking your foundation...');
   try {
-    const res = await fetch('/api/lock-foundation', {
+    const res = await window.QB.apiFetch('/api/lock-foundation', {
       method: 'POST',
       headers: { Authorization: `Bearer ${session.token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
@@ -153,7 +153,7 @@ async function triggerUpgrade(session) {
   const STARTER_PRICE = 'price_1Th8JkEHEAcWrG55Abr1OZXe';
   showToast('Opening checkout...');
   try {
-    const res = await fetch('/api/stripe/checkout', {
+    const res = await window.QB.apiFetch('/api/stripe/checkout', {
       method: 'POST',
       headers: { Authorization: `Bearer ${session.token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ price_id: STARTER_PRICE }),

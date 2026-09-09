@@ -68,7 +68,7 @@ async function load() {
 
   let consoleRes;
   try {
-    consoleRes = await fetch('/api/agents/console', {
+    consoleRes = await window.QB.apiFetch('/api/agents/console', {
       headers: { Authorization: `Bearer ${session.token}` },
     });
   } catch (e) {

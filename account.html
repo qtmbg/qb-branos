@@ -62,7 +62,7 @@ function redirectToAuth() {
 }
 
 async function fetchProfile(token) {
-  const res = await fetch('/api/qbp', { headers: { Authorization: `Bearer ${token}` } });
+  const res = await window.QB.apiFetch('/api/qbp', { headers: { Authorization: `Bearer ${token}` } });
   if (res.status === 401) return { unauthorized: true };
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
@@ -81,24 +81,19 @@ function showToast(msg) {
   showToast._tid = setTimeout(() => t.classList.remove('is-visible'), 2400);
 }
 
-async function handleSignOut(session) {
-  showToast('Signing out…');
-  try {
-    if (session?.token) {
-      try {
-        await fetch(window.QB.SUPA_URL + '/auth/v1/logout', {
-          method: 'POST',
-          headers: {
-            'apikey': window.QB.SUPA_KEY,
-            'Authorization': `Bearer ${session.token}`,
-          },
-        });
-      } catch (_) {}
-    }
-  } finally {
-    window.QB.logout();
-    window.location.href = '/';
+async function handleSignOut() {
+  const session = window.QB.getSession();
+  window.QB.logout();
+  // Clear the visible account immediately. Revocation can finish during
+  // navigation and must not trap an offline user on their account page.
+  if (session?.token) {
+    fetch(window.QB.SUPA_URL + '/auth/v1/logout', {
+      method: 'POST', keepalive: true,
+      headers: { apikey: window.QB.SUPA_KEY, Authorization: `Bearer ${session.token}` },
+    }).catch(() => {});
   }
+  window.location.replace(window.location.hostname === 'app.quantumbranding.ai'
+    ? 'https://quantumbranding.ai/' : '/');
 }
 
 (async () => {

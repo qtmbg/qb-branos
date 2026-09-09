@@ -88,7 +88,7 @@ async function exportQbp() {
   showToast('Preparing your QBP…');
   try {
     const session = window.QB.getSession();
-    const res = await fetch('/api/qbp/export', {
+    const res = await window.QB.apiFetch('/api/qbp/export', {
       method: 'POST',
       headers: { Authorization: `Bearer ${session.token}` },
     });
@@ -139,7 +139,7 @@ async function load() {
 
   let res, data;
   try {
-    res = await fetch('/api/qbp', { headers: { Authorization: `Bearer ${session.token}` } });
+    res = await window.QB.apiFetch('/api/qbp', { headers: { Authorization: `Bearer ${session.token}` } });
     data = await res.json().catch(() => ({}));
   } catch (e) {
     renderQbpError(root, e);

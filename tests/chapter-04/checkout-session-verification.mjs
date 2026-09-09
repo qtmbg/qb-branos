@@ -18,7 +18,7 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-const ENV_PATH = '/tmp/.env.qb-branos.live-backup';
+const ENV_PATH = process.env.QB_ENV_FILE || '.env.qb-branos.live';
 const BASE = process.env.QB_BASE || 'https://quantumbranding.ai';
 
 const env = Object.fromEntries(
