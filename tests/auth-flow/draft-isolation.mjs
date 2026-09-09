@@ -23,4 +23,9 @@ test('shared owner archive wins over a stale tab fallback',()=>{const{QB,ls,ss}=
   QB.setSession(A);
   assert.equal(QB.getQBP().brandName,'Shared');
 });
+test('phase completion hook records the exercise for the foundation progress state',()=>{const{QB,ls}=setup();
+  QB.setSession(A);
+  assert.equal(QB.openGate({toolId:'soul-map',toolName:'Brand Soul Map'}),true);
+  assert.equal(JSON.parse(ls.getItem('qb_completions'))['soul-map'] !== undefined,true);
+});
 process.exitCode=failures?1:0;

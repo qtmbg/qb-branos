@@ -372,6 +372,14 @@
       } catch(e){ /* silent */ }
     }
   }
+  // Completion hook used by the Phase 01 tools after they write their QBP
+  // fields. Keep the page-level contract small while routing the durable
+  // local/cloud bookkeeping through the single completion writer above.
+  function openGate({ toolId } = {}){
+    if (!toolId) return false;
+    recordCompletion(toolId);
+    return true;
+  }
   function nextRecommendedTool(){
     const done = getCompletions();
     return PHASE_01_TOOLS.find(t => !done[t]) || null;
@@ -577,7 +585,7 @@
     SUPA_URL, SUPA_KEY,
     isAuthed, getSession, setSession, clearSession,
     getQBP, setQBP, mergeQBP, syncQBPToCloud, pullQBPFromCloud,
-    recordCompletion, getCompletions, nextRecommendedTool, phase01Progress,
+    recordCompletion, openGate, getCompletions, nextRecommendedTool, phase01Progress,
     sendMagicLink, logout,
     hasAccess, requireAccess,
     cloudFetch, apiFetch, safeReturnTo, refreshAccessToken, confirmProfile,
