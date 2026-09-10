@@ -68,7 +68,7 @@ export const META = {
 // canonical default if a future META omits `model`.
 const MODEL = META.model || 'claude-sonnet-4-6';
 
-const SYSTEM_PROMPT = `You are the Sensescape Synthesizer for Quantum Branding OS.
+const SYSTEM_PROMPT = `You are the Sensescape Synthesizer for BrandOS.
 
 REQUIRED OUTPUT SCHEMA (read this first; everything below restates it):
 

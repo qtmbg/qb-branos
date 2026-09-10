@@ -3,7 +3,10 @@
     <div class="qb-stage">
       <div class="qb-mark">
         <span class="qb-dot"></span>
-        <span class="qb-wordmark">Quantum Branding</span>
+        <span class="qb-wm-stack">
+          <span class="qb-wordmark">BrandOS</span>
+          <span class="qb-endorse">by Quantum Branding</span>
+        </span>
       </div>
 
       <h1 class="qb-title">
@@ -51,6 +54,20 @@
         font-weight: 500;
         color: var(--ink-soft);
         opacity: 0;
+      }
+      [data-composition-id="intro"] .qb-wm-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        line-height: 1;
+        gap: 5px;
+      }
+      [data-composition-id="intro"] .qb-endorse {
+        font-family: "Figtree", sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        opacity: 0.62;
       }
       [data-composition-id="intro"] .qb-dot {
         width: 14px;

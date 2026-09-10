@@ -20,6 +20,30 @@
 <div class="qb-loading-bar" id="qbLoadingBar"></div>
 
 
+<!-- Brand lockup + endorsement (BrandOS by Quantum Branding).
+     The nav/footer wordmark is a two-line lockup: BrandOS, with the
+     endorsement line under it. Ship this with the chassis markup. -->
+<style id="qb-lockup-css">
+.qb-lockup { display:inline-flex; flex-direction:column; align-items:flex-start; justify-content:center; line-height:1; gap:0.22em; }
+.qb-lockup_name { font:inherit; font-variation-settings:inherit; letter-spacing:inherit; display:block; }
+.qb-lockup_by {
+  display:block;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings:normal; font-style:normal; font-weight:500;
+  font-size:max(0.5em, 0.6875rem); line-height:1; letter-spacing:0.04em;
+  color:var(--ink-50); white-space:nowrap;
+}
+.footer_endorse {
+  margin:0 0 0.75rem;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-size:0.8125rem; line-height:1.55; color:var(--ink-50);
+  max-width:52ch;
+}
+.footer_endorse a { color:inherit; text-decoration:underline; text-underline-offset:0.2em; }
+.footer_endorse a:hover { color:var(--ink); }
+</style>
+
+
 <!-- ============ 2. BANNER — verbatim copy ============ -->
 <div class="banner">
   <strong>Signal Scan is live.</strong> Free brand diagnostic. 5 minutes to your first insight.
@@ -32,7 +56,7 @@
   <header class="nav">
     <a href="index.html" class="nav-brand">
       <span class="nav-brand_dot" aria-hidden="true"></span>
-      Quantum Branding
+      <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
     </a>
     <nav class="nav-links">
       <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
@@ -53,7 +77,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu_head">
-    <span class="nav-brand"><span class="nav-brand_dot"></span>Quantum Branding</span>
+    <span class="nav-brand"><span class="nav-brand_dot"></span><span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span></span>
     <button class="mobile-menu_close" id="mobileMenuClose" aria-label="Close menu">×</button>
   </div>
   <nav class="mobile-menu_list">
@@ -74,7 +98,7 @@
   <div class="footer_inner">
     <a href="index.html" class="footer_brand">
       <span class="nav-brand_dot" aria-hidden="true"></span>
-      Quantum Branding
+      <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
     </a>
     <nav class="footer_links">
       <a href="ecosystem.html#about">About</a>
@@ -83,6 +107,7 @@
       <a href="tools.html">Tools</a>
       <a href="mailto:hello@quantumbranding.ai">Contact</a>
     </nav>
+    <p class="footer_endorse">BrandOS is a product of <a href="https://thequantumbranding.com" target="_blank" rel="noopener">Quantum Branding</a>, the independent practice founded by Nizzar Ben Chekroune.</p>
     <div class="qb-type-subtext" style="color:var(--ink-50);">© Quantum Branding · Built by Nizzar Ben Chekroune</div>
   </div>
 </footer>

@@ -51,7 +51,7 @@ function buildHtml({ firstName }) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Welcome to Quantum Branding</title>
+<title>Welcome to BrandOS</title>
 </head>
 <body style="margin:0;padding:0;background:#FBF5E6;color:#2D1521;font-family:'Inter','Helvetica Neue',Arial,sans-serif;">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#FBF5E6;padding:40px 16px;">
@@ -59,7 +59,7 @@ function buildHtml({ firstName }) {
     <table role="presentation" width="540" cellspacing="0" cellpadding="0" border="0" style="max-width:540px;width:100%;background:#F2EBD3;border:2px solid #2D1521;border-radius:18px;">
       <tr><td style="padding:32px 32px 8px;">
         <p style="font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#B58840;margin:0 0 12px;font-weight:700;">Welcome</p>
-        <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.15;color:#2D1521;margin:0 0 24px;letter-spacing:-0.01em;">Welcome to <em style="color:#B58840;">Quantum Branding</em>.</h1>
+        <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.15;color:#2D1521;margin:0 0 24px;letter-spacing:-0.01em;">Welcome to <em style="color:#B58840;">BrandOS</em>.</h1>
       </td></tr>
       <tr><td style="padding:0 32px 32px;font-size:16px;line-height:1.6;color:#2D1521;">
         <p style="margin:0 0 16px;">${greeting}</p>
@@ -72,7 +72,7 @@ function buildHtml({ firstName }) {
         <p style="margin:0;color:#2D1521;">Nizzar</p>
       </td></tr>
       <tr><td style="padding:16px 32px 28px;border-top:1px solid rgba(45,21,33,0.10);font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.08em;color:rgba(45,21,33,0.50);">
-        Quantum Branding · quantumbranding.ai
+        BrandOS by Quantum Branding · quantumbranding.ai
       </td></tr>
     </table>
   </td></tr>
@@ -95,7 +95,7 @@ Sign in and begin Phase 01: https://app.quantumbranding.ai/login?return_to=%2Ffo
 
 Nizzar
 
-Quantum Branding
+BrandOS by Quantum Branding
 quantumbranding.ai`;
 }
 
@@ -140,10 +140,10 @@ export default async function handler(req) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Quantum Branding <auth@quantumbranding.ai>',
+      from: 'BrandOS <auth@quantumbranding.ai>',
       to: [email],
       reply_to: 'me@qtmbg.com',
-      subject: 'Welcome to Quantum Branding',
+      subject: 'Welcome to BrandOS',
       html,
       text,
       headers: {

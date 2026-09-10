@@ -1528,7 +1528,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Quantum Branding">
+<meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="QB - Brand Performance Dashboard">
 <meta property="og:description" content="QB BrandOS · the brand operating system. From idea to orbit.">
 <meta property="og:url" content="https://quantumbranding.ai/brand-performance-dashboard.html">
@@ -1566,6 +1566,27 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   }
 }
 </script>
+
+<!-- Brand lockup + endorsement (BrandOS by Quantum Branding) -->
+<style id="qb-lockup-css">
+.qb-lockup { display:inline-flex; flex-direction:column; align-items:flex-start; justify-content:center; line-height:1; gap:0.22em; }
+.qb-lockup_name { font:inherit; font-variation-settings:inherit; letter-spacing:inherit; display:block; }
+.qb-lockup_by {
+  display:block;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings:normal; font-style:normal; font-weight:500;
+  font-size:max(0.5em, 0.6875rem); line-height:1; letter-spacing:0.04em;
+  color:var(--ink-50); white-space:nowrap;
+}
+.footer_endorse {
+  margin:0 0 0.75rem;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-size:0.8125rem; line-height:1.55; color:var(--ink-50);
+  max-width:52ch;
+}
+.footer_endorse a { color:inherit; text-decoration:underline; text-underline-offset:0.2em; }
+.footer_endorse a:hover { color:var(--ink); }
+</style>
 </head>
 <body>
 
@@ -1581,7 +1602,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   <header class="nav is-canonical">
     <a href="index.html" class="nav-brand is-canonical">
       <span class="nav-brand_dot is-canonical" aria-hidden="true"></span>
-      Quantum Branding
+      <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
     </a>
     <nav class="nav-links">
       <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
@@ -1604,7 +1625,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 <div class="mobile-menu" id="qbMobileMenu">
   <div class="mobile-menu_head">
-    <span class="nav-brand is-canonical"><span class="nav-brand_dot is-canonical"></span>Quantum Branding</span>
+    <span class="nav-brand is-canonical"><span class="nav-brand_dot is-canonical"></span><span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span></span>
     <button class="mobile-menu_close" id="qbMobileMenuClose" aria-label="Close menu" type="button">×</button>
   </div>
   <nav class="mobile-menu_list">
@@ -1833,7 +1854,7 @@ function App() {
 
   const isValid = () => brandName && brandEssence && platforms.some(p => p.platform && (p.topPosts || p.metrics));
 
-  const buildSystemPrompt = () => `You are the Brand Performance Intelligence Agent inside the Quantum Branding BrandOS ecosystem.
+  const buildSystemPrompt = () => `You are the Brand Performance Intelligence Agent inside the BrandOS ecosystem.
 Your function is to read performance data through the lens of the Quantum Brand Profile - not as a metrics analyst, but as a brand strategist.
 Numbers are not your output. Brand signals are.
 You interpret what the data means for brand identity, positioning, voice coherence, and strategic direction.
@@ -2260,7 +2281,7 @@ Requirements:
       </main>
 
       <footer style={{borderTop:'1px solid var(--border-strong)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center', background:'var(--bg-deep)'}}>
-        <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', letterSpacing:'.2em', textTransform:'uppercase'}}>Quantum Branding BrandOS</span>
+        <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', letterSpacing:'.2em', textTransform:'uppercase'}}>BrandOS</span>
         <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', letterSpacing:'.15em'}}>Brand Performance Dashboard / Phase 05</span>
       </footer>
     </div>
@@ -2274,7 +2295,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
     <div>
       <a href="index.html" class="footer_brand">
         <span class="nav-brand_dot is-canonical" aria-hidden="true"></span>
-        Quantum Branding
+        <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
       </a>
       <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
     </div>
@@ -2301,6 +2322,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
     </div>
   </div>
 
+  <p class="footer_endorse">BrandOS is a product of <a href="https://thequantumbranding.com" target="_blank" rel="noopener">Quantum Branding</a>, the independent practice founded by Nizzar Ben Chekroune.</p>
   <div class="footer_bottom">
     <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
     <nav class="footer_bottom_links">

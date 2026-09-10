@@ -51,7 +51,7 @@ function emailHtml({ agentSlug, dispatchId, reason }) {
         <p style="margin:0;">Nizzar</p>
       </td></tr>
       <tr><td style="padding:18px 36px 28px;border-top:1px solid rgba(45,21,33,0.10);font-family:'Courier New',Menlo,monospace;font-size:11px;letter-spacing:0.10em;color:rgba(45,21,33,0.55);">
-        Quantum Branding &middot; quantumbranding.ai
+        BrandOS by Quantum Branding &middot; quantumbranding.ai
       </td></tr>
     </table>
   </td></tr>
@@ -77,7 +77,7 @@ function emailText({ agentSlug, dispatchId, reason }) {
     'Reply to this email if anything looks wrong.',
     '',
     'Nizzar',
-    'Quantum Branding',
+    'BrandOS by Quantum Branding',
     'quantumbranding.ai',
   ].join('\n');
 }

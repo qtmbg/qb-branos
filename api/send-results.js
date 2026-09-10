@@ -67,10 +67,10 @@ function buildEmailHTML({ firstName, lastName, company, toolId, qbp, results }) 
           <tr>
             <td style="font-family:'JetBrains Mono','SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.18em;color:#A8862E;text-transform:uppercase;font-weight:600;">
               <span style="display:inline-block;width:10px;height:10px;border-radius:9999px;background:#B5455A;vertical-align:middle;margin-right:8px;"></span>
-              Quantum Branding
+              BrandOS
             </td>
             <td align="right" style="font-family:'JetBrains Mono','SF Mono',Menlo,monospace;font-size:10px;letter-spacing:0.16em;color:rgba(45,21,33,0.55);text-transform:uppercase;font-weight:500;">
-              QB BrandOS
+              by Quantum Branding
             </td>
           </tr>
         </table>
@@ -232,7 +232,7 @@ export default async function handler(req) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendKey}` },
     body: JSON.stringify({
-      from: 'Quantum Branding <results@quantumbranding.ai>',
+      from: 'BrandOS <results@quantumbranding.ai>',
       to: [email],
       reply_to: 'me@qtmbg.com',
       subject: `${brandName} — Your ${toolLabel} Results`,

@@ -3,7 +3,7 @@
  * Spec reference: CHAPTER_01_SPEC.md §14 (email templates).
  *
  * Wraps the Resend API with the QB conventions:
- *   - from:     "Quantum Branding <auth@quantumbranding.ai>"
+ *   - from:     "BrandOS <auth@quantumbranding.ai>"
  *   - reply_to: "me@qtmbg.com" (overridable)
  *   - List-Unsubscribe + X-Entity-Ref-ID headers for Gmail Primary placement
  *
@@ -20,7 +20,7 @@
  *   AGENT_EMAIL_VARS                     per-agent template variables
  */
 
-const FROM = 'Quantum Branding <auth@quantumbranding.ai>';
+const FROM = 'BrandOS <auth@quantumbranding.ai>';
 const REPLY_TO_DEFAULT = 'me@qtmbg.com';
 
 /* ──────────────────────────────────────────────
@@ -131,7 +131,7 @@ const FOUNDATION_LOCKED_HTML = `<!DOCTYPE html>
         <p style="margin:0;">Nizzar</p>
       </td></tr>
       <tr><td style="padding:18px 36px 28px;border-top:1px solid rgba(45,21,33,0.10);font-family:'Courier New',Menlo,monospace;font-size:11px;letter-spacing:0.10em;color:rgba(45,21,33,0.55);">
-        Quantum Branding &middot; quantumbranding.ai
+        BrandOS by Quantum Branding &middot; quantumbranding.ai
       </td></tr>
     </table>
   </td></tr>
@@ -154,7 +154,7 @@ Open your foundation: {{foundation_url}}
 Reply to this email anytime. I read every reply.
 
 Nizzar
-Quantum Branding
+BrandOS by Quantum Branding
 quantumbranding.ai`;
 
 const ARTIFACT_READY_HTML = `<!DOCTYPE html>
@@ -189,7 +189,7 @@ const ARTIFACT_READY_HTML = `<!DOCTYPE html>
         <p style="margin:0;">Nizzar</p>
       </td></tr>
       <tr><td style="padding:18px 36px 28px;border-top:1px solid rgba(45,21,33,0.10);font-family:'Courier New',Menlo,monospace;font-size:11px;letter-spacing:0.10em;color:rgba(45,21,33,0.55);">
-        Quantum Branding &middot; quantumbranding.ai
+        BrandOS by Quantum Branding &middot; quantumbranding.ai
       </td></tr>
     </table>
   </td></tr>
@@ -210,7 +210,7 @@ Read it now. Sit with it. Reply to this email if anything surprises you.
 Read your {{artifact_name}}: {{artifact_url}}
 
 Nizzar
-Quantum Branding
+BrandOS by Quantum Branding
 quantumbranding.ai`;
 
 export const EMAIL_TEMPLATES = {

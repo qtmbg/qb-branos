@@ -57,7 +57,7 @@ function buildEmailHTML({ firstName, magicLink, sourceTool }) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Your Quantum Branding sign-in link</title>
+<title>Your BrandOS sign-in link</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..800,0..100,0..1&family=Inter:wght@400..700&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
@@ -82,7 +82,7 @@ function buildEmailHTML({ firstName, magicLink, sourceTool }) {
           <tr>
             <td style="font-family:'JetBrains Mono','SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.18em;color:#A8862E;text-transform:uppercase;font-weight:600;">
               <span style="display:inline-block;width:10px;height:10px;border-radius:9999px;background:#B5455A;vertical-align:middle;margin-right:8px;"></span>
-              Quantum Branding
+              BrandOS
             </td>
           </tr>
         </table>
@@ -221,12 +221,12 @@ export default async function handler(req) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Quantum Branding <auth@quantumbranding.ai>',
+      from: 'BrandOS <auth@quantumbranding.ai>',
       to: [email],
       reply_to: 'me@qtmbg.com',
-      subject: 'Your sign-in link to Quantum Branding',
+      subject: 'Your sign-in link to BrandOS',
       html: emailHTML,
-      text: `Hello${firstName ? ' ' + firstName : ''},\n\nClick the link below to sign in to your Brand Profile. No password needed.\n\n${actionLink}\n\nThe link expires in 60 minutes. If you did not request this, you can ignore this email and nothing happens.\n\nQuantum Branding\nThe Brand Operating System`,
+      text: `Hello${firstName ? ' ' + firstName : ''},\n\nClick the link below to sign in to your Brand Profile. No password needed.\n\n${actionLink}\n\nThe link expires in 60 minutes. If you did not request this, you can ignore this email and nothing happens.\n\nBrandOS by Quantum Branding\nThe Brand Operating System`,
       // Purely transactional. No List-Unsubscribe header (it's a positive
       // promotional signal to Gmail's tab classifier). Per step 18 PR 3
       // deliverability pass and EMAIL_DELIVERABILITY.md.
