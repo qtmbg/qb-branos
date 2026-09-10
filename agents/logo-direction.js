@@ -90,7 +90,7 @@ const MODEL = META.model || 'claude-sonnet-4-6';
 // harness verification but the agent stays Console-invisible until the
 // operator signs this text.
 
-const SYSTEM_PROMPT = `You are the Logo Direction Agent for Quantum Branding OS, the first agent of Phase 02, Brand Creation.
+const SYSTEM_PROMPT = `You are the Logo Direction Agent for BrandOS, the first agent of Phase 02, Brand Creation.
 
 The founder has finished Phase 01. They arrive with an earned foundation: a Soul Map (who the brand is), a Visual DNA (its palette and type direction), and the raw signals of their Quantum Brand Profile. Your job is to turn that foundation into three distinct, nameable logo directions a designer could start sketching from tomorrow. You recommend direction. You do not draw, and you do not describe finished logos.
 

@@ -1460,7 +1460,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Quantum Branding">
+<meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="QB - Voice Guide Agent">
 <meta property="og:description" content="QB BrandOS · the brand operating system. From idea to orbit.">
 <meta property="og:url" content="https://quantumbranding.ai/voice-guide-agent.html">
@@ -1498,6 +1498,27 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   }
 }
 </script>
+
+<!-- Brand lockup + endorsement (BrandOS by Quantum Branding) -->
+<style id="qb-lockup-css">
+.qb-lockup { display:inline-flex; flex-direction:column; align-items:flex-start; justify-content:center; line-height:1; gap:0.22em; }
+.qb-lockup_name { font:inherit; font-variation-settings:inherit; letter-spacing:inherit; display:block; }
+.qb-lockup_by {
+  display:block;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings:normal; font-style:normal; font-weight:500;
+  font-size:max(0.5em, 0.6875rem); line-height:1; letter-spacing:0.04em;
+  color:var(--ink-50); white-space:nowrap;
+}
+.footer_endorse {
+  margin:0 0 0.75rem;
+  font-family:'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-size:0.8125rem; line-height:1.55; color:var(--ink-50);
+  max-width:52ch;
+}
+.footer_endorse a { color:inherit; text-decoration:underline; text-underline-offset:0.2em; }
+.footer_endorse a:hover { color:var(--ink); }
+</style>
 </head>
 <body>
 
@@ -1513,7 +1534,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   <header class="nav is-canonical">
     <a href="index.html" class="nav-brand is-canonical">
       <span class="nav-brand_dot is-canonical" aria-hidden="true"></span>
-      Quantum Branding
+      <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
     </a>
     <nav class="nav-links">
       <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
@@ -1536,7 +1557,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 <div class="mobile-menu" id="qbMobileMenu">
   <div class="mobile-menu_head">
-    <span class="nav-brand is-canonical"><span class="nav-brand_dot is-canonical"></span>Quantum Branding</span>
+    <span class="nav-brand is-canonical"><span class="nav-brand_dot is-canonical"></span><span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span></span>
     <button class="mobile-menu_close" id="qbMobileMenuClose" aria-label="Close menu" type="button">×</button>
   </div>
   <nav class="mobile-menu_list">
@@ -1865,7 +1886,7 @@ const CopyGeneratorPanel = ({voiceData,qbp})=>{
   const generate = async function(){
     if(!context||!brief){ setError('Fill the context and brief fields.'); return; }
     setError(''); setGenerated(''); setLoading(true);
-    var sysPrompt = 'You are the Quantum Branding Copy Agent. You write copy that sounds exactly like this specific brand\'s voice - no more, no less. The Voice Guide defines the brand\'s exact verbal identity. You apply it without deviation. Return ONLY the copy, nothing else - no explanation, no headline label, no preamble.';
+    var sysPrompt = 'You are the BrandOS Copy Agent. You write copy that sounds exactly like this specific brand\'s voice - no more, no less. The Voice Guide defines the brand\'s exact verbal identity. You apply it without deviation. Return ONLY the copy, nothing else - no explanation, no headline label, no preamble.';
     var ts = qbp.toneSliders || {};
     // FIX 13: full QBP context including all identity signals
     var userPrompt = 'BRAND VOICE DNA:\n' + JSON.stringify(voiceData, null, 2) +
@@ -2057,7 +2078,7 @@ function App(){
     try{
       // FIX 4: static system prompt + dynamic user message (correct API usage, enables caching)
       var res = await window.QB_AI(
-        'You are the Voice Guide Agent inside the Quantum Branding BrandOS ecosystem. Your function is to produce a complete, precise, executable Voice Guide from a Quantum Brand Profile. This is not a generic brand voice document. Every element must be traceable to the QBP. The output must be specific enough that any writer, AI agent, or content creator can produce on-brand copy after reading it once. Return ONLY valid JSON with no markdown fences and no preamble.',
+        'You are the Voice Guide Agent inside the BrandOS ecosystem. Your function is to produce a complete, precise, executable Voice Guide from a Quantum Brand Profile. This is not a generic brand voice document. Every element must be traceable to the QBP. The output must be specific enough that any writer, AI agent, or content creator can produce on-brand copy after reading it once. Return ONLY valid JSON with no markdown fences and no preamble.',
         buildPrompt(),
         6000
       );
@@ -2259,7 +2280,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
     <div>
       <a href="index.html" class="footer_brand">
         <span class="nav-brand_dot is-canonical" aria-hidden="true"></span>
-        Quantum Branding
+        <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
       </a>
       <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
     </div>
@@ -2286,6 +2307,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
     </div>
   </div>
 
+  <p class="footer_endorse">BrandOS is a product of <a href="https://thequantumbranding.com" target="_blank" rel="noopener">Quantum Branding</a>, the independent practice founded by Nizzar Ben Chekroune.</p>
   <div class="footer_bottom">
     <span class="footer_bottom_meta">© 2026 Quantum Branding · quantumbranding.ai</span>
     <nav class="footer_bottom_links">

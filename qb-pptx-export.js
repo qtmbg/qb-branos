@@ -373,7 +373,7 @@
       x: GUTTER, y: H * 0.44, w: COL_W, h: 1.2,
       fontFace: TOKENS.serif, fontSize: 44, color: TOKENS.text1, charSpacing: -0.5
     });
-    s.addText(opts.note || "Quantum Branding  ·  app.quantumbranding.ai", {
+    s.addText(opts.note || "BrandOS by Quantum Branding  ·  app.quantumbranding.ai", {
       x: GUTTER, y: H * 0.44 + 1.3, w: COL_W * 0.8, h: 0.5,
       fontFace: TOKENS.sans, fontSize: 14, color: TOKENS.text2
     });

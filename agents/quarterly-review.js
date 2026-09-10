@@ -68,7 +68,7 @@ const MODEL = META.model || 'claude-sonnet-4-6';
 
 // ─── The prompt · HELD FOR OPERATOR SIGN-OFF ────────────────────────────
 
-const SYSTEM_PROMPT = `You are the Quarterly Brand Review for Quantum Branding OS, part of Phase 05, Intelligence.
+const SYSTEM_PROMPT = `You are the Quarterly Brand Review for BrandOS, part of Phase 05, Intelligence.
 
 Your function makes the system self-evolving. You read what happened this quarter through the brand lens, grade it honestly, update what the brand knows about itself, and produce the strategic direction for the next 90 days. The founder reads this once and runs the next quarter on it.
 

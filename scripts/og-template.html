@@ -33,8 +33,13 @@
   .top{display:flex;align-items:center;justify-content:space-between;gap:24px;position:relative;z-index:1}
   .lockup{display:flex;align-items:center;gap:14px}
   .lockup svg{display:block}
+  .lockup .wm-stack{display:flex;flex-direction:column;align-items:flex-start;line-height:1;gap:5px}
+  .lockup .wm-by{
+    font-family:'Inter',sans-serif;font-weight:500;font-size:16px;
+    line-height:1;letter-spacing:0.04em;color:var(--ink);opacity:0.6;
+  }
   .lockup .wm{
-    font-family:'Fraunces',serif;font-style:italic;font-weight:600;
+    font-family:'Fraunces',serif;font-style:normal;font-weight:600;
     font-size:36px;line-height:1;letter-spacing:-0.01em;color:var(--ink);
     font-variation-settings:"SOFT" 60,"WONK" 0;
   }
@@ -95,7 +100,7 @@
         <path d="M32 12 L32 52 M14 32 L50 32 M19 19 L45 45 M45 19 L19 45" stroke="#2D1521" stroke-width="3" stroke-linecap="round"/>
         <circle cx="32" cy="32" r="4.5" fill="#2D1521"/>
       </svg>
-      <span class="wm">quantum branding</span>
+      <span class="wm-stack"><span class="wm">BrandOS</span><span class="wm-by">by Quantum Branding</span></span>
     </div>
     <div id="pill" class="accent-pill" data-accent="gold">
       <span class="dot"></span><span id="eyebrow">Eyebrow</span>
@@ -118,7 +123,7 @@
 <script>
   const p = new URLSearchParams(location.search);
   const headline = p.get('h') || 'Headline goes here.';
-  const eyebrow  = p.get('e') || 'Quantum Branding';
+  const eyebrow  = p.get('e') || 'BrandOS';
   const accent   = p.get('a') || 'gold';
   const deck     = p.get('d') || '';
   const size     = p.get('s') || '';

@@ -17,7 +17,7 @@ This check applies to every response in this repository. It applies to chat repl
 
 **Check 3. Exclamation points.** Search for `!` outside literal in-product user-celebration moments. If any in marketing copy, prose, or explanation, remove.
 
-**Check 4. Casing.** Confirm headlines are sentence case. Confirm "quantum branding" is lowercase italic, even at sentence start. Confirm "QB BrandOS" uses exact casing (never "QB Brandos," "QB Brand OS," "qb brandos").
+**Check 4. Casing.** Confirm headlines are sentence case. Confirm "BrandOS" uses exact casing (never "Brandos," "Brand OS," "brandos"). Confirm the parent practice is written "Quantum Branding" in title case, and that the methodology term "quantum branding" is lowercase italic, even at sentence start. Confirm "QB BrandOS" uses exact casing where it still appears in legacy strings.
 
 **Check 5. Voice register.** Read the draft aloud. If it sounds like a corporate explanation rather than a thoughtful founder, rewrite.
 
@@ -88,8 +88,10 @@ The voice rules at the top of this file are mandatory and self-applied. The full
 Additional voice rules:
 
 - The user is "you." The system is the speaker. The company recedes.
-- The wordmark "quantum branding" is always lowercase italic Fraunces.
-- "QB BrandOS" is the product name with exact casing.
+- The product is **BrandOS**. Its full display name is "BrandOS by Quantum Branding". Use the short form in running copy.
+- **Quantum Branding** is the parent practice, not the product. Every reference to the practice links to `https://thequantumbranding.com`.
+- The methodology term "quantum branding" stays lowercase italic Fraunces. It names the practice's method, not the software.
+- "QB BrandOS" survives in legacy titles and legal copy. Do not expand it back to "Quantum Branding".
 - Sentence fragments with periods are encouraged. "Three steps. That's it." reads better than "Three steps; that is all there is."
 - Contractions are allowed and encouraged. "Don't" reads warmer than "do not."
 - Pronouns: "you" is the user, "we" is sparingly the company, "I" only in founder voice.
@@ -100,8 +102,28 @@ Additional voice rules:
 - Four colourways exist and only four: ink, gold, rose, reverse. Files: `mark-ink.svg`, `mark-gold.svg`, `mark-rose.svg`, `mark-reverse.svg`.
 - Two lockups exist: horizontal (mark left, wordmark right) and vertical (mark above, wordmark below). Files: `lockup-h-ink.svg`, `lockup-h-gold.svg`, `lockup-v-ink.svg`, `lockup-v-gold.svg`.
 - Clear space around the mark equals the wordmark x-height. Nothing crosses that boundary.
-- The wordmark is `quantum branding` set in Fraunces italic, weight 600, SOFT axis 60, lowercase.
+- The product wordmark is a two-line lockup: `BrandOS` in the surrounding display face, with `by Quantum Branding` set smaller directly beneath it. Markup and CSS are in `/HEAD-SNIPPET.html` and `/CHASSIS-MARKUP-SNIPPET.html` under `id="qb-lockup-css"`:
+
+```html
+<span class="qb-lockup">
+  <span class="qb-lockup_name">BrandOS</span>
+  <span class="qb-lockup_by">by Quantum Branding</span>
+</span>
+```
+
+- The endorsement line is never dropped from the nav or footer lockup.
+- The practice wordmark `quantum branding` remains Fraunces italic, weight 600, SOFT axis 60, lowercase. It belongs to thequantumbranding.com, not to the product chassis.
 - Web favicon and OG share image assets live at `/img/brand/web/` and `/img/brand/og/`. Reference the head template at `/HEAD-SNIPPET.html` for canonical wiring.
+
+### Naming and metadata
+
+- Title tag on the homepage and in `HEAD-SNIPPET.html`: `BrandOS by Quantum Branding — Idea in, brand out`. Other pages use `<page> · BrandOS`.
+- `og:site_name` is `BrandOS by Quantum Branding` on every page.
+- JSON-LD: the `Organization` node is Quantum Branding, the practice, with `url` pointing at `https://thequantumbranding.com/`. The `WebSite` and `SoftwareApplication` nodes are BrandOS on `quantumbranding.ai`.
+- **No geolocation in metadata or JSON-LD.** No `address`, `areaServed`, `geo`, `geo.region`, `geo.placename`, or `ICBM`. Jurisdiction stays in the legal body copy of `privacy.html` and `terms.html`, where it is legally required, and nowhere else.
+- Every page footer carries: "BrandOS is a product of Quantum Branding, the independent practice founded by Nizzar Ben Chekroune." with the practice name linked to `https://thequantumbranding.com`.
+- Copyright lines stay `© Quantum Branding`. The practice owns the copyright; the product does not.
+- The domain `quantumbranding.ai` does not change.
 
 ### Typography
 

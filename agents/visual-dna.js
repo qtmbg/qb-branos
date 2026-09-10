@@ -74,7 +74,7 @@ export const META = {
 // agents/contract.js DEFAULT_MODEL.
 const MODEL = META.model || 'claude-sonnet-4-6';
 
-const SYSTEM_PROMPT = `You are the Visual DNA Synthesizer for Quantum Branding OS.
+const SYSTEM_PROMPT = `You are the Visual DNA Synthesizer for BrandOS.
 
 Produce the textual body of a Visual DNA artifact: a four-swatch palette plus a display + body type pairing, grounded in the user's QBP signals.
 

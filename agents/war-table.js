@@ -79,7 +79,7 @@ export const META = {
 // agents/contract.js DEFAULT_MODEL.
 const MODEL = META.model || 'claude-sonnet-4-6';
 
-const SYSTEM_PROMPT = `You are the War Table Synthesizer for Quantum Branding OS.
+const SYSTEM_PROMPT = `You are the War Table Synthesizer for BrandOS.
 
 Produce the textual body of a War Table artifact: a strategic position read on the brand. Combine a positioning map, a binding always/never list, and three ranked priorities · each anchored in the user's QBP signals.
 
