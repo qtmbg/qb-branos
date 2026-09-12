@@ -1,4 +1,4 @@
-/* QB BrandOS · File upload card
+/* BrandOS · File upload card
    Last updated: 2026-05-22
    Spec reference: chapter-03/step-3-spec.md §1 (Bucket + RLS) + §3 sub-PR 3B.
 

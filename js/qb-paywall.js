@@ -1,4 +1,4 @@
-/* QB BrandOS — Paywall page renderer
+/* BrandOS — Paywall page renderer
    Last updated: 2026-05-15
    Spec reference: CHAPTER_01_SPEC.md §2.3 (/paywall route),
                    §8 (paywall), §12 (design system).

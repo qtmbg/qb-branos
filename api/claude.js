@@ -1,4 +1,4 @@
-// QB BrandOS — Claude Proxy
+// BrandOS — Claude Proxy
 // Key lives in ANTHROPIC_API_KEY environment variable on Vercel.
 // Frontend tools call /api/claude — they never see the key or Anthropic directly.
 

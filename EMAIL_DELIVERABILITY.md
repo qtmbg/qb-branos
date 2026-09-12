@@ -1,10 +1,10 @@
 # Email deliverability
 
-How QB BrandOS configures transactional email for Primary-tab placement in Gmail, and how to verify it.
+How BrandOS configures transactional email for Primary-tab placement in Gmail, and how to verify it.
 
 ## Header decision matrix
 
-Every email QB BrandOS sends falls into one of two categories. The header set differs.
+Every email BrandOS sends falls into one of two categories. The header set differs.
 
 | Email | Category | `List-Unsubscribe` | Reasoning |
 | --- | --- | :---: | --- |
@@ -40,7 +40,7 @@ This procedure is human-driven. Cod cannot create Gmail accounts or read Gmail t
 
 1. Provision a fresh Gmail account dedicated to QB testing.
    - Recommended: `qb-deliverability-<initials>@gmail.com` (real Gmail, not a plus-alias of an existing inbox, because Gmail learns tab patterns per-account and plus-aliases inherit the parent's history).
-   - Store credentials in 1Password under "QB BrandOS · Test Gmail."
+   - Store credentials in 1Password under "BrandOS · Test Gmail."
 2. Sign in to the test Gmail in a clean browser profile (no extensions, no prior QB interactions).
 3. Confirm the inbox has the default tab layout enabled: Settings → Inbox → Categories → at least Primary, Social, Promotions, Updates ticked.
 

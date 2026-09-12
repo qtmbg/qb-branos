@@ -1,4 +1,4 @@
-/* QB BrandOS — Component library (vanilla DOM factories)
+/* BrandOS — Component library (vanilla DOM factories)
    Last updated: 2026-05-14
    Spec reference: CHAPTER_01_SPEC.md §3.
 

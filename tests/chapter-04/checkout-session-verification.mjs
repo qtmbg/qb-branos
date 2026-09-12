@@ -1,4 +1,4 @@
-// QB BrandOS — Chapter 4 · Pricing swap verification (short of payment)
+// BrandOS — Chapter 4 · Pricing swap verification (short of payment)
 //
 // Against production, post-deploy:
 //   1. Unauthenticated 401 probes: /api/agents/run, /api/agents/console,

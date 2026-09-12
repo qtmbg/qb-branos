@@ -1,8 +1,8 @@
-# QB BrandOS Design System v3.4
+# BrandOS Design System v3.4
 ## Pomegranate-derived. Cream palette. Editorial illustrations. Brand mark locked. Animated media. $0 budget.
 ### Drop-in for Claude Code. Synced with QB Thinking Machine Master Instruction v4 (April 2026).
 
-This document is the single source of truth for visual, motion, and interaction design across QB BrandOS. It supersedes v3, v3.1, v3.2, v3.3 and the design summary block in Part 5 of the QB Thinking Machine Master Instruction. Every HTML file in the QB BrandOS repo is to be rebuilt against these tokens, primitives, and patterns.
+This document is the single source of truth for visual, motion, and interaction design across BrandOS. It supersedes v3, v3.1, v3.2, v3.3 and the design summary block in Part 5 of the QB Thinking Machine Master Instruction. Every HTML file in the BrandOS repo is to be rebuilt against these tokens, primitives, and patterns.
 
 **What's new in v3.4:**
 - Part 21 — Brand Mark & Wordmark (full chapter locking the QB infinity-loop monogram, anatomy, four colorways, wordmark, lockups, in-context placement, and rules of use).
@@ -692,7 +692,7 @@ Content-level animation (Part 18) gets reduced-motion fallbacks per pattern.
 
 ## Part 11 — Drop-in CSS variables block
 
-Paste this into the `:root` of every QB BrandOS HTML file. Locked. No deviation.
+Paste this into the `:root` of every BrandOS HTML file. Locked. No deviation.
 
 ```css
 :root {
@@ -836,7 +836,7 @@ The following block replaces the "Design System" portion of Part 5 in the QB Thi
 
 > **The Design System (v3.3 — Pomegranate-derived)**
 >
-> Pure HTML/CSS/JS, no framework, no build step. Cream `#FBF5E6` page background, deep aubergine ink `#2D1521` for text and 2px borders. Fraunces (variable serif) for display, Inter (variable sans) for body and UI, JetBrains Mono for system text. Three-color brand triad: warm gold `#E0B069` (primary CTA), dusty rose `#CA6180` (brand mark, decorative), pastel teal `#9ED3DC` (focus and selection pulse). Six phase identifiers map to the six phases of QB BrandOS. Illustrations are New Yorker editorial style: bold ink outlines on flat color fills, character-forward, sourced from the locked 11-illustration library (see Master Instruction Part 6).
+> Pure HTML/CSS/JS, no framework, no build step. Cream `#FBF5E6` page background, deep aubergine ink `#2D1521` for text and 2px borders. Fraunces (variable serif) for display, Inter (variable sans) for body and UI, JetBrains Mono for system text. Three-color brand triad: warm gold `#E0B069` (primary CTA), dusty rose `#CA6180` (brand mark, decorative), pastel teal `#9ED3DC` (focus and selection pulse). Six phase identifiers map to the six phases of BrandOS. Illustrations are New Yorker editorial style: bold ink outlines on flat color fills, character-forward, sourced from the locked 11-illustration library (see Master Instruction Part 6).
 >
 > Key signatures: two-layer 3D pill button (signature 2), hard offset shadow on cards (signature 3), eyebrow tag plus Fraunces headline structure on every section (signature 4), fluid clamp type and space (signature 5), New Yorker illustrations inside cream cards (signature 6).
 >
@@ -850,7 +850,7 @@ The following block replaces the "Design System" portion of Part 5 in the QB Thi
 
 Paste this prompt at the start of any Claude Code session that involves rebuilding or touching a file:
 
-> You are working on QB BrandOS, a multi-page HTML application built with vanilla HTML/CSS/JS. The design system is v3.3, documented in `/qb-design-system-v3.3.md`. Read that file before writing any code. Lock these constraints:
+> You are working on BrandOS, a multi-page HTML application built with vanilla HTML/CSS/JS. The design system is v3.3, documented in `/qb-design-system-v3.3.md`. Read that file before writing any code. Lock these constraints:
 >
 > 1. CSS variables only. Drop the full `:root` block from Part 11 of the spec. No hardcoded colors or spacing anywhere outside `:root`.
 > 2. Three font families: Fraunces, Inter, JetBrains Mono. Single Google Fonts link in `<head>` (Part 12).
@@ -1288,7 +1288,7 @@ For animated screens, record the live page using Chrome's built-in screen record
 
 ## Part 20 — Pomegranate UI/UX & Interaction Patterns *(NEW in v3.3)*
 
-This is the chapter that translates pomegranate.health's full interaction language into the QB context. Pomegranate.health is the architectural reference. This chapter captures the patterns that make their site feel different from a typical SaaS landing page and tells Claude Code how to apply them inside QB BrandOS.
+This is the chapter that translates pomegranate.health's full interaction language into the QB context. Pomegranate.health is the architectural reference. This chapter captures the patterns that make their site feel different from a typical SaaS landing page and tells Claude Code how to apply them inside BrandOS.
 
 ### 20.1 The interaction philosophy
 
@@ -1400,7 +1400,7 @@ The loading bar fades out 0.75s after the request resolves. The user always sees
 
 Pomegranate forms are minimal. Single-column. Labels above fields. Mono-caps small labels. Generous vertical padding. Inputs are large (0.8em vertical padding on 18-22px text = 32-40px tall). No label-floating animations. No micro-interactions on focus other than the focus ring (Part 8.1).
 
-Apply to QB Signal Scan, payment, every form:
+Apply to Signal Scan, payment, every form:
 
 ```html
 <form class="qb-form">
@@ -1579,7 +1579,7 @@ The pill stays at the top of the viewport but does NOT stick (no `position: stic
 
 The pattern reinforces "this is editorial, not an app dashboard." App-like sticky nav is rejected on the marketing site.
 
-Inside the QB BrandOS app (post-login, qb-branidos-hub.html and downstream tools), a sticky nav IS appropriate because the user is operating the product. Marketing site = float. App = sticky. Two different contexts.
+Inside the BrandOS app (post-login, qb-branidos-hub.html and downstream tools), a sticky nav IS appropriate because the user is operating the product. Marketing site = float. App = sticky. Two different contexts.
 
 ### 20.15 Footer behavior
 
@@ -1777,7 +1777,7 @@ For app launchers, square crops, social profile images, splash screens.
     <path d="M 108,92 L 128,118"/>
   </svg>
   <span class="qb-wordmark">quantum branding</span>
-  <span class="qb-lockup_label">QB BrandOS</span>
+  <span class="qb-lockup_label">BrandOS</span>
 </div>
 ```
 
@@ -1794,7 +1794,7 @@ For app launchers, square crops, social profile images, splash screens.
 }
 ```
 
-The label slot under the wordmark in the vertical lockup names the product context. Default: "QB BrandOS." Variants: "QB Hub" (inside the app), "QB Studio" (white-label client portals), "QB Labs" (experimental tools). One line, mono caps, always.
+The label slot under the wordmark in the vertical lockup names the product context. Default: "BrandOS." Variants: "Hub" (inside the app), "Studio" (white-label client portals), "Labs" (experimental tools). One line, mono caps, always.
 
 ### 21.7 In-context placement
 
@@ -1847,7 +1847,7 @@ On first paint of marketing pages, the mark draws itself in with a 0.8s stroke-d
 ```
 
 **2. Hub loading state:**
-While the QB BrandOS hub is loading or processing a tool run, the mark sits in the nav and pulses with the system glow easing.
+While the BrandOS hub is loading or processing a tool run, the mark sits in the nav and pulses with the system glow easing.
 
 ```css
 .qb-mark--loading { animation: qb-glow 2.4s var(--ease-glow) infinite alternate; }
@@ -1928,7 +1928,7 @@ Five yeses. Otherwise, stop.
 
 ---
 
-*QB BrandOS Design System v3.4*
+*BrandOS Design System v3.4*
 *Quantum Branding · quantumbranding.ai · app.quantumbranding.ai*
 *Pomegranate-derived. Cream palette. New Yorker editorial illustrations. Brand mark locked. Animated media support. UI/UX interaction language locked. $0 budget.*
 *Synced with QB Thinking Machine Master Instruction v4. Built with and for Ahmed Nizzar Ben Chekroune.*

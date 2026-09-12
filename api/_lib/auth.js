@@ -1,4 +1,4 @@
-// QB BrandOS — Shared request helpers (auth + CORS + JSON + Supabase REST).
+// BrandOS — Shared request helpers (auth + CORS + JSON + Supabase REST).
 // Pure ESM. Edge-runtime safe.
 
 const ALLOWED_ORIGINS = new Set([

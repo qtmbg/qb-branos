@@ -1,4 +1,4 @@
-/* QB BrandOS · live sign-in round trip
+/* BrandOS · live sign-in round trip
  *
  * Proves a person can actually get in, against the real auth backend:
  *   mint a magic link  →  follow it  →  land on /auth-callback.html

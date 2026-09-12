@@ -1,8 +1,8 @@
-# QB BrandOS Voice Codex v1
+# BrandOS Voice Codex v1
 ## How Quantum Branding speaks. Across every surface, every tool, every interaction.
 ### Drop-in for Claude Code, writers, agents, AI prompts. Synced with QB Thinking Machine Master Instruction v4 and Design System v3.4 (April 2026).
 
-This document locks the QB written voice the same way v3.4 locks the visuals. Every word a user reads inside the QB BrandOS ecosystem flows through this codex. Marketing pages, in-tool copy, AI agent responses, button labels, error messages, empty states, emails, social posts. One voice. Locked.
+This document locks the QB written voice the same way v3.4 locks the visuals. Every word a user reads inside the BrandOS ecosystem flows through this codex. Marketing pages, in-tool copy, AI agent responses, button labels, error messages, empty states, emails, social posts. One voice. Locked.
 
 The codex exists for one reason: voice drift is the fastest way for a brand to feel cheap. A site can have a perfect design system and still read like a SaaS dashboard if the words are off. QB has a precise visual identity. The writing has to keep up.
 
@@ -135,7 +135,7 @@ Right: "The Brand Profile is the spine of the system. Every tool reads from it."
 
 **The product name capitalizes inconsistently on purpose:**
 - "Quantum Branding" is the company name, in running prose. Capitalized.
-- "QB BrandOS" is the product. Always exactly this casing. Never "QB Brandos," "QB Brand OS," or "qb brandos."
+- "BrandOS" is the product. Always exactly this casing. Never "QB BrandOS," "QB Brandos," "Brand OS," or "brandos."
 - "quantum branding" is the wordmark glyph (italic Fraunces). Always lowercase.
 
 **Phase names** are capitalized: "Phase 01 Discovery," "Phase 02 Brand Creation." When the phase is referenced casually in body copy, "phase one" or "the discovery phase" lowercase is fine.
@@ -337,7 +337,7 @@ Errors are the moment users decide whether your product is professional or amate
 ### 5.6 Email (transactional and newsletter)
 
 **Transactional emails** (welcome, payment confirmation, password reset, weekly digest):
-- Subject line: factual, no emoji, no urgency. "Your Brand Profile is ready." "Payment confirmed." "This week in your QB BrandOS."
+- Subject line: factual, no emoji, no urgency. "Your Brand Profile is ready." "Payment confirmed." "This week in your BrandOS."
 - Greeting: first name only, no exclamation. "Hi [name],"
 - Body: short. Three to five sentences max. State what happened. State what is now possible. Link to the next step.
 - Sign-off: "Quantum Branding" or "Nizzar" depending on context. No "Cheers!" "Best!" "Take care!" with exclamation points.
@@ -458,11 +458,11 @@ If a sentence sounds like nobody at the company would actually say it out loud a
 
 ### 7.6 The remove-the-product test
 
-Read the copy with all mentions of QB BrandOS, the agents, and the tool names removed. Does the remaining writing still hold a thought? If yes, the writing is doing its job. If no, the writing is just product description with verbs.
+Read the copy with all mentions of BrandOS, the agents, and the tool names removed. Does the remaining writing still hold a thought? If yes, the writing is doing its job. If no, the writing is just product description with verbs.
 
 ### 7.7 The competitor swap test
 
-Replace "Quantum Branding" or "QB BrandOS" with a competitor's name (Brandcrowd, Looka, Canva). Does the copy still make sense? If yes, the copy is generic to the category. Rewrite until the copy is specific enough that swapping the brand name breaks the meaning.
+Replace "Quantum Branding" or "BrandOS" with a competitor's name (Brandcrowd, Looka, Canva). Does the copy still make sense? If yes, the copy is generic to the category. Rewrite until the copy is specific enough that swapping the brand name breaks the meaning.
 
 ### 7.8 The "would I quote this" test
 
@@ -521,7 +521,7 @@ This is the canonical reference set. When in doubt, model new copy against these
 - Go Pro
 - Go Agency
 - Talk to Nizzar
-- Enter QB BrandOS
+- Enter BrandOS
 - Audit your brand
 - Start from zero
 - Enter strategic mode
@@ -566,7 +566,7 @@ This is the canonical reference set. When in doubt, model new copy against these
 ### 8.8 Email subject lines
 
 - Your Brand Profile is ready.
-- This week in QB BrandOS.
+- This week in BrandOS.
 - Payment confirmed.
 - A thought on what brands are built on. (newsletter)
 - Why most founders sound the same. (newsletter)
@@ -600,7 +600,7 @@ These three are the most common failure modes. They are how voice drift first ap
 
 ---
 
-*QB BrandOS Voice Codex v1*
+*BrandOS Voice Codex v1*
 *Quantum Branding · quantumbranding.ai · app.quantumbranding.ai*
 *The canonical written voice. Synced with the QB Brand Codex, the QB Design System, and the QB Illustration Style Lock.*
 *April 2026.*

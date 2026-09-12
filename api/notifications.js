@@ -1,4 +1,4 @@
-// QB BrandOS · GET /api/notifications
+// BrandOS · GET /api/notifications
 // Returns the caller's notifications (last 50 by default) plus unread_count.
 // Chapter 2 step 6D per spec §7.1 + §7.2.
 //

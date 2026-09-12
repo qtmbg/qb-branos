@@ -1,4 +1,4 @@
-/* QB BrandOS · Agent Console renderer
+/* BrandOS · Agent Console renderer
    Spec reference: CHAPTER_02_SPEC.md §6 (Agent Console surface),
                    §6.6.1 schema_retry badge, §6.6.2 latency badge,
                    §6.6.3 aggregate health dot + badge layout,
@@ -821,7 +821,7 @@ export function renderConsole(container, payload, opts) {
   // ─── Header ──────────────────────────────────────────────
   shell.appendChild(el('header', { class: 'console-header' }, [
     el('span', { class: 'qb-tag is-soft' }, [
-      el('span', { class: 'qb-tag_content' }, 'QB BrandOS · Agent Console'),
+      el('span', { class: 'qb-tag_content' }, 'BrandOS · Agent Console'),
     ]),
     el('h1', { class: 'console-header_title' }, 'Your workforce'),
     el('p', { class: 'console-header_subtitle' },

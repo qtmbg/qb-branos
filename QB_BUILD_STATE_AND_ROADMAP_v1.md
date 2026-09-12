@@ -1,4 +1,4 @@
-# QB BrandOS — Build State and Roadmap
+# BrandOS — Build State and Roadmap
 ## Source of truth for all build sessions
 ## Owner: Ahmed Nizzar Ben Chekroune
 
@@ -18,7 +18,7 @@ Communication style: direct, precise, no flattery, no filler. Challenge assumpti
 
 ---
 
-## What QB BrandOS is
+## What BrandOS is
 
 A brand operating system for founders. Not a course, not a toolkit, not a SaaS dashboard. A surface a founder lives inside while their brand is built around them by 20 AI agents.
 

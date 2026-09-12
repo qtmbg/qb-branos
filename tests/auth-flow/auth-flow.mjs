@@ -1,4 +1,4 @@
-/* QB BrandOS · sign-in flow regression
+/* BrandOS · sign-in flow regression
  *
  * Guards the failure that took the product down: every gated page
  * redirected anonymous visitors to /signal-scan.html?reason=signin, a page
@@ -271,7 +271,7 @@ async function paidToolWithProfile(profile, { abort = false } = {}) {
   check('payment · post-checkout sets the local tier hint', state.tier === 'pro' && state.status === 'active', `${state.tier}/${state.status}`);
   check('payment · post-checkout leaves the session intact',
     !!(state.session && state.session.userId && state.session.token), JSON.stringify(state.session));
-  check('payment · post-checkout shows the success view', /You're in|Enter QB BrandOS/i.test(state.body), state.body.slice(0, 80));
+  check('payment · post-checkout shows the success view', /You're in|Enter BrandOS/i.test(state.body), state.body.slice(0, 80));
   await ctx.close();
 }
 

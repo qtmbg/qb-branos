@@ -1,7 +1,7 @@
 # CLAUDE.md
-## QB BrandOS · Repository Instructions for Claude Code
+## BrandOS · Repository Instructions for Claude Code
 
-You are working inside the Quantum Branding QB BrandOS codebase. This file is the entry point. It is read automatically at the start of every session in this directory.
+You are working inside the Quantum Branding BrandOS codebase. This file is the entry point. It is read automatically at the start of every session in this directory.
 
 ---
 
@@ -11,13 +11,15 @@ Before sending any response in this repository, run this five-point check on YOU
 
 This check applies to every response in this repository. It applies to chat replies, code comments, generated copy, documentation, error messages, commit messages, and explanations of the voice rules themselves. The codex is enforced on its own explanations. There is no exception.
 
-**Check 1. Em dashes.** Search your draft for the character `—` (em dash, U+2014). If present, rewrite. Replace with a period, a comma, or two sentences. The em dash is the AI tell of the moment. Its presence is a brand violation. This rule has no exceptions, including in sentences about the rule itself.
+**Check 1. Em dashes.** Search your draft for the character `—` (em dash, U+2014). In page text, rewrite it. Replace with a period, a comma, or two sentences. The em dash is the AI tell of the moment, and in body copy its presence is a brand violation. This applies to sentences about the rule itself.
+
+Page text means body copy, headlines, UI strings, generated copy, documentation, error messages, commit messages, and chat replies. Three surfaces sit outside the rule and keep the em dash where the brand calls for it: title tags, navigation separators, and breadcrumbs.
 
 **Check 2. Banned phrases.** Search for: empower, unlock, supercharge, seamless, AI-powered, AI-driven, take to the next level, stand out from the crowd, in order to, at the end of the day, world-class, best-in-class, cutting-edge, robust, frictionless, effortless, leverage (as a verb), journey (as user path), really, very, just, literally. If any are present, rewrite.
 
 **Check 3. Exclamation points.** Search for `!` outside literal in-product user-celebration moments. If any in marketing copy, prose, or explanation, remove.
 
-**Check 4. Casing.** Confirm headlines are sentence case. Confirm "BrandOS" uses exact casing (never "Brandos," "Brand OS," "brandos"). Confirm the parent practice is written "Quantum Branding" in title case, and that the methodology term "quantum branding" is lowercase italic, even at sentence start. Confirm "QB BrandOS" uses exact casing where it still appears in legacy strings.
+**Check 4. Casing.** Confirm headlines are sentence case. Confirm "BrandOS" uses exact casing (never "Brandos," "Brand OS," "brandos," "QB BrandOS"). Confirm the parent practice is written "Quantum Branding" in title case. Confirm the method is written "The Collapse" in title case, and its cycle as "Observe, Collapse, Build, Hold." Confirm the wordmark glyph "quantum branding" is lowercase italic, even at sentence start.
 
 **Check 5. Voice register.** Read the draft aloud. If it sounds like a corporate explanation rather than a thoughtful founder, rewrite.
 
@@ -90,8 +92,9 @@ Additional voice rules:
 - The user is "you." The system is the speaker. The company recedes.
 - The product is **BrandOS**. Its full display name is "BrandOS by Quantum Branding". Use the short form in running copy.
 - **Quantum Branding** is the parent practice, not the product. Every reference to the practice links to `https://thequantumbranding.com`.
-- The methodology term "quantum branding" stays lowercase italic Fraunces. It names the practice's method, not the software.
-- "QB BrandOS" survives in legacy titles and legal copy. Do not expand it back to "Quantum Branding".
+- The method is **The Collapse**. Its cycle is Observe, Collapse, Build, Hold. It belongs to Quantum Branding, the practice, and BrandOS runs it as six phases.
+- "quantum branding" in lowercase italic Fraunces is the wordmark glyph of the practice. It names the mark, and The Collapse names the method.
+- "BrandOS" is the single product name. It is the name under which Quantum Branding contracts, so the legal copy in `terms.html` and `privacy.html` uses it and nothing else. Expanding it to "QB BrandOS" reopens a second name.
 - Sentence fragments with periods are encouraged. "Three steps. That's it." reads better than "Three steps; that is all there is."
 - Contractions are allowed and encouraged. "Don't" reads warmer than "do not."
 - Pronouns: "you" is the user, "we" is sparingly the company, "I" only in founder voice.
@@ -117,13 +120,20 @@ Additional voice rules:
 
 ### Naming and metadata
 
-- Title tag on the homepage and in `HEAD-SNIPPET.html`: `BrandOS by Quantum Branding — Idea in, brand out`. Other pages use `<page> · BrandOS`.
+- Title tag on the homepage and in `HEAD-SNIPPET.html`: `BrandOS by Quantum Branding — Idea in, brand out`. The em dash there is deliberate and stays; check 1 covers page text. Other pages use `<page> · BrandOS`, page name first.
 - `og:site_name` is `BrandOS by Quantum Branding` on every page.
 - JSON-LD: the `Organization` node is Quantum Branding, the practice, with `url` pointing at `https://thequantumbranding.com/`. The `WebSite` and `SoftwareApplication` nodes are BrandOS on `quantumbranding.ai`.
 - **No geolocation in metadata or JSON-LD.** No `address`, `areaServed`, `geo`, `geo.region`, `geo.placename`, or `ICBM`. Jurisdiction stays in the legal body copy of `privacy.html` and `terms.html`, where it is legally required, and nowhere else.
 - Every page footer carries: "BrandOS is a product of Quantum Branding, the independent practice founded by Nizzar Ben Chekroune." with the practice name linked to `https://thequantumbranding.com`.
 - Copyright lines stay `© Quantum Branding`. The practice owns the copyright; the product does not.
 - The domain `quantumbranding.ai` does not change.
+
+### The method
+
+- The method is **The Collapse**. Cycle: **Observe, Collapse, Build, Hold.**
+- Canonical phrasing, to adapt to context rather than paste verbatim: "The Collapse, the method used at Quantum Branding: Observe, Collapse, Build, Hold."
+- PDF colophons and cover meta carry `Methodology · The Collapse` with the cycle beneath it.
+- The six BrandOS phases implement the cycle. Observe covers Acquisition and Discovery, Collapse closes Discovery, Build spans Brand Creation through Execution, Hold is Intelligence.
 
 ### Typography
 
@@ -303,5 +313,5 @@ When the documentation does not cover a case:
 
 ---
 
-*CLAUDE.md · QB BrandOS · April 2026*
+*CLAUDE.md · BrandOS · April 2026*
 *Read this. Run the self-check. Read the canonical docs. Build accordingly.*

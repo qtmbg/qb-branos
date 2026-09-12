@@ -1,7 +1,7 @@
 # lisadoc · dossier de marque
 
 Deliverables for Mouncef's agency: an editor of websites for French specialist physicians.
-Method: <span>quantum branding</span>, Phase 01 Discovery.
+Method: The Collapse (Observe, Collapse, Build, Hold), Phase 01 Discovery.
 
 ## Files
 

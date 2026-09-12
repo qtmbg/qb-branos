@@ -1,4 +1,4 @@
-// QB BrandOS — POST /api/qbp/export
+// BrandOS — POST /api/qbp/export
 // Vercel Edge Function. Generates a downloadable QBP file, uploads it to a
 // per-user folder in Supabase Storage (qbp-exports bucket), and returns a
 // 1-hour signed URL.

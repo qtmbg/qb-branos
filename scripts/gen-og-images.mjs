@@ -22,13 +22,13 @@ if(!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
 // h supports *emphasis* markers.
 const PAGES = [
   // Marketing / infra
-  { slug:'index',              e:'Quantum Branding · home',         a:'gold',          h:'Idea in. *Brand out.*' },
+  { slug:'index',              e:'home',         a:'gold',          h:'Idea in. *Brand out.*' },
   { slug:'signal-scan',        e:'Free brand diagnostic',           a:'gold',          h:'*Signal Scan.* Eight questions. Five minutes.', s:'tight' },
-  { slug:'ecosystem',          e:'QB BrandOS · ecosystem',          a:'gold',          h:'The brand *operating system.*', s:'small' },
-  { slug:'payment',            e:'Access · QB BrandOS',             a:'gold',          h:'*Pick your plan.* Open the system.', s:'tight' },
-  { slug:'tools',              e:'QB BrandOS · tools',              a:'gold',          h:'Twenty *agents.* Six phases.' },
-  { slug:'journey-guide',      e:'QB BrandOS · journey guide',      a:'gold',          h:'Your guided *journey.*' },
-  { slug:'qb-branidos-hub',    e:'QB BrandOS · command center',     a:'gold',          h:'Your *command center.*' },
+  { slug:'ecosystem',          e:'ecosystem',          a:'gold',          h:'The brand *operating system.*', s:'small' },
+  { slug:'payment',            e:'access',             a:'gold',          h:'*Pick your plan.* Open the system.', s:'tight' },
+  { slug:'tools',              e:'tools',              a:'gold',          h:'Twenty *agents.* Six phases.' },
+  { slug:'journey-guide',      e:'journey guide',      a:'gold',          h:'Your guided *journey.*' },
+  { slug:'qb-branidos-hub',    e:'command center',     a:'gold',          h:'Your *command center.*' },
 
   // Phase 01 — Discovery
   { slug:'the-profiles',       e:'Phase 01 · the profiles',         a:'discovery',     h:'*Three* full personas. Now, next, north star.', s:'tight' },
@@ -60,9 +60,9 @@ const PAGES = [
   { slug:'quarterly-brand-review-agent', e:'Phase 06 · QBR review',    a:'intelligence', h:'*Quarterly* review.' },
 
   // Legal / utility
-  { slug:'terms',              e:'Quantum Branding · legal',        a:'ink',          h:'Terms of *service.*' },
-  { slug:'privacy',            e:'Quantum Branding · legal',        a:'ink',          h:'Privacy *policy.*' },
-  { slug:'404',                e:'Quantum Branding · 404',          a:'ink',          h:'Lost *signal.*' },
+  { slug:'terms',              e:'legal',        a:'ink',          h:'Terms of *service.*' },
+  { slug:'privacy',            e:'legal',        a:'ink',          h:'Privacy *policy.*' },
+  { slug:'404',                e:'404',          a:'ink',          h:'Lost *signal.*' },
 ];
 
 const browser = await chromium.launch();

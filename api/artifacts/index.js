@@ -1,4 +1,4 @@
-// QB BrandOS — GET /api/artifacts
+// BrandOS — GET /api/artifacts
 // Returns the user's artifact list with computed `locked` flags. Never
 // returns `content` (see /api/artifacts/[id] for the body).
 

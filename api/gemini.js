@@ -1,4 +1,4 @@
-// QB BrandOS — Gemini Proxy
+// BrandOS — Gemini Proxy
 // Key lives in GEMINI_API_KEY environment variable on Vercel (free Google AI Studio tier).
 // Clients call /api/gemini with the same body shape as /api/claude — they never see the key.
 // Used by the iOS app for result generation where the Anthropic spend is not justified.

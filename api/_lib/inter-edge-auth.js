@@ -1,4 +1,4 @@
-// QB BrandOS · Cron-trigger auth validator.
+// BrandOS · Cron-trigger auth validator.
 //
 // Single export: verifyCronTrigger(request).
 //

@@ -2,7 +2,7 @@
 ## The canonical specification for every illustration in the Quantum Branding universe.
 ### v1.0 · April 2026
 
-This document defines the visual rules for every character, scene, and object inside QB BrandOS. It is the authority that any human illustrator, generative model, or production team answers to when adding to the QB illustration library.
+This document defines the visual rules for every character, scene, and object inside BrandOS. It is the authority that any human illustrator, generative model, or production team answers to when adding to the QB illustration library.
 
 It contains no recommendations. It states what is. Any deviation is an error.
 
@@ -173,7 +173,7 @@ The machine accepts a character description, a scene context, and an optional re
 
 Text-to-image generations route through Imagen. Image-to-image transformations route through Gemini Flash Image. Both pipelines are constrained by the master prompt in Section 10. The style block is not editable at runtime. The scene description is the only variable.
 
-The machine lives inside QB BrandOS Phase 02 Brand Creation. Its output is delivered inside the qb-illus-card frame, the same cream-card chassis that holds every other QB illustration. The handshake with the QB visual system is automatic.
+The machine lives inside BrandOS Phase 02 Brand Creation. Its output is delivered inside the qb-illus-card frame, the same cream-card chassis that holds every other QB illustration. The handshake with the QB visual system is automatic.
 
 Illustrations not produced by the Character Machine are still acceptable. They follow the same Style Lock. The machine is the canonical path. It is not the only path.
 
@@ -193,7 +193,7 @@ The illustration system and the brand mark are two distinct visual systems. They
 
 The brand mark is the primary identifier of Quantum Branding. Geometric. Hand-drawn editorial character. Three strokes. Four colourways. The mark and wordmark lock together in the navigation, the footer, the favicon, and on every official surface where the brand asserts ownership. The mark identifies.
 
-The illustration system is the editorial visual language of QB BrandOS. Hand-drawn character. Seven flat fills. Character-forward composition. Illustrations appear in cards, on pages where the brand explains what it does, in tools where the system speaks to the user. The illustrations narrate.
+The illustration system is the editorial visual language of BrandOS. Hand-drawn character. Seven flat fills. Character-forward composition. Illustrations appear in cards, on pages where the brand explains what it does, in tools where the system speaks to the user. The illustrations narrate.
 
 A single page can carry the brand mark and an illustration on the same view. They sit in different roles. The mark is identity. The illustration is story. Both speak the same visual language: ink #2D1521 outlines, hand-drawn character, deliberate restraint.
 

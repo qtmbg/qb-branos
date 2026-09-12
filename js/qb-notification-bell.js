@@ -1,4 +1,4 @@
-/* QB BrandOS · Notification bell
+/* BrandOS · Notification bell
    Last updated: 2026-05-18
    Spec reference: CHAPTER_02_SPEC.md §7 + chapter-02/step-6-spec.md §7.1-§7.5
 

@@ -1,4 +1,4 @@
-// QB BrandOS · POST /api/notifications/[id]/read
+// BrandOS · POST /api/notifications/[id]/read
 // Marks a single notification row as read for the caller. Sets read_at=now()
 // on the caller's own row. RLS enforces ownership; idempotent (re-read is a
 // no-op because we filter on `read_at=is.null`, so subsequent calls match

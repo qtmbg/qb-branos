@@ -1,4 +1,4 @@
-// QB BrandOS · chain-trigger.js
+// BrandOS · chain-trigger.js
 //
 // Chapter 2 · Step 8A · chain orchestration logic.
 // Spec reference: chapter-02/step-8-spec.md §2.3-2.5 + §4.2.
@@ -31,9 +31,9 @@ async function emailDepthExceeded({ resendKey, parentDispatchId, downstreamSlug,
       method: 'POST',
       headers: { Authorization: `Bearer ${resendKey}`, 'content-type': 'application/json' },
       body: JSON.stringify({
-        from: 'QB BrandOS <ops@quantumbranding.ai>',
+        from: 'BrandOS <ops@quantumbranding.ai>',
         to: ['me@qtmbg.com'],
-        subject: `QB BrandOS · chain depth exceeded (framework defect-class event)`,
+        subject: `BrandOS · chain depth exceeded (framework defect-class event)`,
         text: `Chain trigger refused.\n\n` +
               `Parent dispatch: ${parentDispatchId}\n` +
               `Downstream agent: ${downstreamSlug}\n` +

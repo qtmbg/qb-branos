@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* QB BrandOS · test-client provisioner
+/* BrandOS · test-client provisioner
  *
  * Gives an operator a real, signed-in browser session as a test client
  * without waiting on an email and without running a live Stripe charge.
@@ -192,7 +192,7 @@ const rule = (s) => console.log(`\n${s}\n${'─'.repeat(s.length)}`);
     }
     const status = await setTier(user.id);
     const link = await magicLink();
-    rule('QB BrandOS · test client ready');
+    rule('BrandOS · test client ready');
     console.log(`email    ${EMAIL}`);
     console.log(`user_id  ${user.id}`);
     console.log(`account  ${created ? 'created' : 'existing'}`);
@@ -213,7 +213,7 @@ the link is spent. To start the run clean, add --reset.
     if (!user) { console.log(`No account for ${EMAIL}.`); process.exit(1); }
     const p = await readProfile(user.id);
     const arts = await listArtifacts(user.id);
-    rule(`QB BrandOS · test client status`);
+    rule(`BrandOS · test client status`);
     console.log(`email     ${EMAIL}`);
     console.log(`user_id   ${user.id}`);
     console.log(`tier      ${p?.tier || '—'} · ${p?.subscription_status || '—'}`);

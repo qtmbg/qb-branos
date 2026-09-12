@@ -1,4 +1,4 @@
-/* QB BrandOS · Email helper for Edge functions
+/* BrandOS · Email helper for Edge functions
  * Last updated: 2026-05-15
  * Spec reference: CHAPTER_01_SPEC.md §14 (email templates).
  *

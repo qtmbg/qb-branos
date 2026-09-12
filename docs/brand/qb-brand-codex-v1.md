@@ -10,11 +10,11 @@ It contains no recommendations, no next steps, no decision trees. It states what
 
 ## 01 · Identity
 
-Quantum Branding is the company. QB BrandOS is its sole product.
+Quantum Branding is the company. BrandOS is its sole product.
 
 Quantum Branding is a brand methodology and an AI-powered brand operating system. It is built on the conviction that most brands fail not because the work was bad, but because the identity was missing.
 
-QB BrandOS turns one founder, one idea, and zero assets into a complete brand running across twenty specialised agents. The product spans six phases, from acquisition through intelligence. The output of every tool becomes the intelligence that powers the next.
+BrandOS turns one founder, one idea, and zero assets into a complete brand running across twenty specialised agents. The product spans six phases, from acquisition through intelligence. The output of every tool becomes the intelligence that powers the next.
 
 Positioning line: From idea to orbit.
 
@@ -49,7 +49,7 @@ It is a persistent record that accumulates brand intelligence across every Phase
 
 The QBP holds: brand name, brand essence, the spark, archetype, manifesto, anti-brand, paradox, always-and-never, primary persona, sensory profile, colour direction, typography direction, visual DNA, competitor landscape, strategic priorities.
 
-The QBP is the thread that makes QB BrandOS a connected system. Without it, the agents are isolated tools. With it, they are one brain.
+The QBP is the thread that makes BrandOS a connected system. Without it, the agents are isolated tools. With it, they are one brain.
 
 ---
 
@@ -70,7 +70,7 @@ Twenty agents in total. Each agent reads from the QBP. Each agent writes to the 
 
 ## 05 · The four doors
 
-QB BrandOS meets users at their actual starting point through four entry doors. Each door is a person, not a feature.
+BrandOS meets users at their actual starting point through four entry doors. Each door is a person, not a feature.
 
 Door 01. The Blank Slate. I have an idea. No brand yet.
 Door 02. The Doubter. I have a brand. Something feels off.
@@ -208,7 +208,7 @@ White-label client delivery is built into the system. Agency-tier outputs carry 
 ## 13 · The platform
 
 quantumbranding.ai is the front door. The marketing site.
-app.quantumbranding.ai is the QB BrandOS Hub. The product.
+app.quantumbranding.ai is the BrandOS Hub. The product.
 thequantumbranding.com and thequantumbranding.ai redirect to quantumbranding.ai.
 
 One front door. One product. One brand.

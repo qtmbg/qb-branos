@@ -1,4 +1,4 @@
-// QB BrandOS · qb-realtime-manager.js
+// BrandOS · qb-realtime-manager.js
 //
 // Chapter 2 · Step 9C · single Supabase Realtime subscription manager.
 //

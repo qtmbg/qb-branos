@@ -1,4 +1,4 @@
-// QB BrandOS — Chapter 4 · Stripe webhook foreign-event gate harness
+// BrandOS — Chapter 4 · Stripe webhook foreign-event gate harness
 //
 // Runs api/stripe-webhook.js in-process with a stubbed fetch layer and a
 // locally signed Stripe signature. Proves the price gate:

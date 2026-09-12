@@ -1,4 +1,4 @@
-// QB BrandOS · GET /api/agents/console
+// BrandOS · GET /api/agents/console
 // Returns the Agent Console payload per CHAPTER_02_SPEC §6 + §6.6.1-3:
 //   - user: tier, foundation_locked_at
 //   - agents[]: registered Phase 01 agents with per-agent state, rolling
