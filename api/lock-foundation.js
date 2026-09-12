@@ -1,4 +1,4 @@
-// QB BrandOS. Lock Foundation.
+// BrandOS. Lock Foundation.
 // Vercel Edge Function
 //
 // POST /api/lock-foundation

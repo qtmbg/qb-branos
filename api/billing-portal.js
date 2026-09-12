@@ -1,4 +1,4 @@
-// QB BrandOS — Stripe Billing Portal session creator
+// BrandOS — Stripe Billing Portal session creator
 // Vercel Edge Function
 //
 // POST /api/billing-portal

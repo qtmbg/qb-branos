@@ -1,4 +1,4 @@
-// QB BrandOS · Notification emitter.
+// BrandOS · Notification emitter.
 //
 // One export: emitDispatchFailed({ env, userId, dispatchId, agentSlug, reason }).
 //

@@ -1,4 +1,4 @@
-// QB BrandOS — GET /api/artifacts/[id]
+// BrandOS — GET /api/artifacts/[id]
 // Returns the full artifact row for the authenticated user. Tier-gating
 // is enforced server-side. Locked artifacts return 402 with header
 // metadata only (never the content body).

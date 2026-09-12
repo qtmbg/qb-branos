@@ -75,7 +75,7 @@ for(const slug of PAGES){
     const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
     const descMatch  = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
     const title = (titleMatch ? titleMatch[1] : 'Quantum Branding').trim();
-    const desc  = (descMatch ? descMatch[1] : 'QB BrandOS · the brand operating system. From idea to orbit.').trim();
+    const desc  = (descMatch ? descMatch[1] : 'BrandOS · the brand operating system. From idea to orbit.').trim();
     const urlPath = slug === 'index' ? '/' : `/${file}`;
     const url = BASE_URL + urlPath;
 

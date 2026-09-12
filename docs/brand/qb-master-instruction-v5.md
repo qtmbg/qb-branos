@@ -2,7 +2,7 @@
 ## The final guidance for Quantum Branding.
 ### v5 · April 2026
 
-This document is the operational truth of Quantum Branding and QB BrandOS. It states what is. It is the authority that any human operator, AI agent, contractor, or future team member answers to when working inside the QB universe.
+This document is the operational truth of Quantum Branding and BrandOS. It states what is. It is the authority that any human operator, AI agent, contractor, or future team member answers to when working inside the QB universe.
 
 It contains no recommendations, no scope projections, no decision trees. It states what is.
 
@@ -12,9 +12,9 @@ This document is paired with three others. The QB Brand Codex (the brand truth).
 
 ## 01 · The product
 
-Quantum Branding is the company. QB BrandOS is the sole product.
+Quantum Branding is the company. BrandOS is the sole product.
 
-QB BrandOS is the brand operating system that turns one founder, one idea, and zero assets into a complete brand running across twenty specialised agents.
+BrandOS is the brand operating system that turns one founder, one idea, and zero assets into a complete brand running across twenty specialised agents.
 
 Positioning line: From idea to orbit.
 
@@ -37,7 +37,7 @@ Emotional truth comes before performance.
 Ecosystem logic matters more than isolated outputs.
 Useful depth matters more than empty sophistication.
 
-The methodology is what makes QB BrandOS different from a toolkit. The agents are the surface. The methodology is the spine.
+The methodology is what makes BrandOS different from a toolkit. The agents are the surface. The methodology is the spine.
 
 ---
 
@@ -145,7 +145,7 @@ Twenty agents. Six phases. One QBP. One product.
 
 ## 06 · The four doors
 
-QB BrandOS meets users at their actual starting point through four entry doors.
+BrandOS meets users at their actual starting point through four entry doors.
 
 Door 01. The Blank Slate. "I have an idea. No brand yet."
 Door 02. The Doubter. "I have a brand. Something feels off."
@@ -224,7 +224,7 @@ The wordmark is "quantum branding" in Fraunces italic 600, SOFT axis 60, lowerca
 
 quantumbranding.ai is the front door. The marketing site. Vanilla HTML, CSS, JS. Deployed on Vercel from the `qb-branos` GitHub repo.
 
-app.quantumbranding.ai is the QB BrandOS Hub. The product. The twenty agents live here. Stack includes Supabase for the QBP, Stripe for payments, Resend for transactional email, Buffer for content scheduling.
+app.quantumbranding.ai is the BrandOS Hub. The product. The twenty agents live here. Stack includes Supabase for the QBP, Stripe for payments, Resend for transactional email, Buffer for content scheduling.
 
 thequantumbranding.com and thequantumbranding.ai redirect to quantumbranding.ai.
 
@@ -356,7 +356,7 @@ This Master Instruction tells them how the pieces fit together.
 
 The five documents speak in one voice. They are paired. They are versioned together. They are shared together.
 
-Quantum Branding is the company. QB BrandOS is the product. The methodology is the spine. The QBP is the data backbone. The twenty agents are the hands. The cream-and-ink visual system is the face. The thoughtful-founder voice is the mouth. The illustration universe is the imagination. The four doors are the welcome mat. The Weakest Persona Principle is the design law.
+Quantum Branding is the company. BrandOS is the product. The methodology is the spine. The QBP is the data backbone. The twenty agents are the hands. The cream-and-ink visual system is the face. The thoughtful-founder voice is the mouth. The illustration universe is the imagination. The four doors are the welcome mat. The Weakest Persona Principle is the design law.
 
 That is what is.
 

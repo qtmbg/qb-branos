@@ -1,4 +1,4 @@
-// QB BrandOS · Reaper cron handler.
+// BrandOS · Reaper cron handler.
 //
 // GET /api/cron/reaper
 //   user-agent: vercel-cron/1.0

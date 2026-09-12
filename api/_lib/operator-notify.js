@@ -21,7 +21,7 @@
 import { sendEmail } from './email.js';
 
 const OPERATOR_EMAIL = 'me@qtmbg.com';
-const SUBJECT_PREFIX = '[QB BrandOS Operator]';
+const SUBJECT_PREFIX = '[BrandOS Operator]';
 const DEDUP_WINDOW_MS = 60_000;
 
 // key → lastSentAt (epoch ms). Cleared lazily on each fire to avoid

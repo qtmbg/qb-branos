@@ -1,4 +1,4 @@
-/* QB BrandOS — Shared components (v3.2 canonical)
+/* BrandOS — Shared components (v3.2 canonical)
    Last updated: 2026-05-14
    Spec reference: CHAPTER_01_SPEC.md §3 (components) + §12 (rules)
 
@@ -2126,11 +2126,24 @@
 }
 .qb-foundation-nav__wordmark {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-weight: 600;
   font-variation-settings: "wght" 600, "SOFT" 60;
   font-size: var(--step-0);
   color: var(--ink);
+}
+/* Brand lockup: BrandOS over the Quantum Branding endorsement line. */
+.qb-lockup {
+  display: inline-flex; flex-direction: column; align-items: flex-start;
+  justify-content: center; line-height: 1; gap: 0.22em;
+}
+.qb-lockup_name { font: inherit; font-variation-settings: inherit; letter-spacing: inherit; display: block; }
+.qb-lockup_by {
+  display: block;
+  font-family: var(--font-body), 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings: normal; font-style: normal; font-weight: 500;
+  font-size: max(0.5em, 0.6875rem); line-height: 1; letter-spacing: 0.04em;
+  color: var(--ink-50); white-space: nowrap;
 }
 .qb-foundation-nav .qb-nav__links {
   align-items: center;

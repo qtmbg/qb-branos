@@ -1,4 +1,4 @@
-/* QB BrandOS — QBP rendering surface
+/* BrandOS — QBP rendering surface
    Last updated: 2026-05-14
    Spec reference: CHAPTER_01_SPEC.md §3.10 (qb-qbp-section component),
                    §5.3 (GET /api/qbp), §5.4 (POST /api/qbp/export),

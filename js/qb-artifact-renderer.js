@@ -1,4 +1,4 @@
-/* QB BrandOS — Artifact reading-surface renderer
+/* BrandOS — Artifact reading-surface renderer
    Last updated: 2026-06-14 · designed component set (Chapter 5 gate)
    Visual spec: docs/design/reading-surface-reference.html
    CSS: /css/qb-reading-surface.css (scoped under .qb-rs)

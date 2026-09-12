@@ -1,4 +1,4 @@
-/* QB BrandOS — Account page renderer
+/* BrandOS — Account page renderer
    Last updated: 2026-05-15
    Spec reference: CHAPTER_01_SPEC.md §2.3 (/account route),
                    §12 (design system).

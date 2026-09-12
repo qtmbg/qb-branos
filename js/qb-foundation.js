@@ -1,4 +1,4 @@
-/* QB BrandOS — Foundation page renderer
+/* BrandOS — Foundation page renderer
    Last updated: 2026-05-14
    Spec reference: CHAPTER_01_SPEC.md §2.3 (/foundation route),
                    §3.2 (qb-phase-card), §3.3 (qb-exercise-card),
@@ -189,7 +189,10 @@ function buildNav({ tier, activeKey = 'foundation' }) {
 
   return el('header', { class: 'qb-nav qb-foundation-nav' }, [
     el('a', { class: 'qb-nav__brand', href: '/foundation' }, [
-      el('span', { class: 'qb-foundation-nav__wordmark' }, 'quantum branding'),
+      el('span', { class: 'qb-foundation-nav__wordmark qb-lockup' }, [
+        el('span', { class: 'qb-lockup_name' }, 'BrandOS'),
+        el('span', { class: 'qb-lockup_by' }, 'by Quantum Branding'),
+      ]),
     ]),
     links,
     el('button', {

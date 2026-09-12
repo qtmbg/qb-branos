@@ -1,6 +1,6 @@
 # scripts/
 
-Tooling for QB BrandOS image asset pipelines, plus the registry merge gate.
+Tooling for BrandOS image asset pipelines, plus the registry merge gate.
 
 ## registry-smoke.mjs
 

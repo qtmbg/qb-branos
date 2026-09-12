@@ -1,4 +1,4 @@
-# QB BrandOS
+# BrandOS
 
 Brand Operating System by Quantum Branding.
 

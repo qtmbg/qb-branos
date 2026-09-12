@@ -1,4 +1,4 @@
-// QB BrandOS · POST /api/agents/rerun
+// BrandOS · POST /api/agents/rerun
 //
 // Per PR #78 audit item 3 (structural call B). Routes Console rerun CTAs
 // through the contract-conformant runtime path instead of the legacy

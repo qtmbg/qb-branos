@@ -1,4 +1,4 @@
-// QB BrandOS · Shared dispatch pattern helper · Option A.
+// BrandOS · Shared dispatch pattern helper · Option A.
 //
 // Single source of truth for the four-step dispatch invariants laid down
 // in CHAPTER_02_SPEC §5.1 and step-6 spec §4.2:

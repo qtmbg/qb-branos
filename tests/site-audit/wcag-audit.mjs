@@ -1,4 +1,4 @@
-/* QB BrandOS · WCAG 2.1 A/AA audit (chapter-4 deferral, cured chapter-7)
+/* BrandOS · WCAG 2.1 A/AA audit (chapter-4 deferral, cured chapter-7)
  *
  * Visits every production surface in headless Chromium at 390px and 1280px,
  * injects axe-core 4.x, and runs the WCAG 2.0/2.1 level A + AA rule set on

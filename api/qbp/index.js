@@ -1,4 +1,4 @@
-// QB BrandOS — GET /api/qbp
+// BrandOS — GET /api/qbp
 // Vercel Edge Function. Returns the user's live QBP document, lock state,
 // and last-updated timestamp. No tier check: QBP is readable on all tiers.
 

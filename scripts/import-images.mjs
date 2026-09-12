@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// QB BrandOS — image import + optimization pipeline
+// BrandOS — image import + optimization pipeline
 //
 // Usage:
 //   node scripts/import-images.mjs <slot> <source-dir> [--prefix=xx] [--dry]

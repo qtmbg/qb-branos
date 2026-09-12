@@ -1,4 +1,4 @@
-# QB BrandOS — Visual Identity for Video
+# BrandOS — Visual Identity for Video
 
 ## Style Prompt
 

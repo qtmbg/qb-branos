@@ -1,4 +1,4 @@
-/* QB BrandOS · whole-site mechanics audit
+/* BrandOS · whole-site mechanics audit
  *
  * Visits every production page in headless Chromium at 390px and 1280px and
  * collects the mechanical defects a founder would hit:

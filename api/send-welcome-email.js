@@ -1,4 +1,4 @@
-// QB BrandOS. Welcome email sender.
+// BrandOS. Welcome email sender.
 // Vercel Edge Function
 //
 // POST /api/send-welcome-email

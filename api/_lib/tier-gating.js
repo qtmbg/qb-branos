@@ -1,4 +1,4 @@
-// QB BrandOS — Tier gating (single source of truth)
+// BrandOS — Tier gating (single source of truth)
 // Pure ESM. No deps. Edge-runtime safe.
 //
 // Specification: CHAPTER_01_SPEC.md §5.10.

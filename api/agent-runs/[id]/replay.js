@@ -1,4 +1,4 @@
-// QB BrandOS · GET /api/agent-runs/[id]/replay
+// BrandOS · GET /api/agent-runs/[id]/replay
 // Per CHAPTER_02_SPEC §5.3.1 · GET-only read surface that returns the
 // frozen inputs for any agent_runs row the caller owns.
 //

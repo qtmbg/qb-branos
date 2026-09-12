@@ -1,4 +1,4 @@
-// QB BrandOS — POST /api/stripe/checkout
+// BrandOS — POST /api/stripe/checkout
 // Creates a Stripe Checkout Session for any of the three tiers, monthly or
 // yearly. The full six-ID canonical USD price set is sellable as of the
 // annual checkout ruling (operator, 2026-06-12). The webhook recognizes

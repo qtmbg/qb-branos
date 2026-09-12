@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Access · QB BrandOS</title>
-<meta name="description" content="Choose your plan and open the full QB BrandOS. Twenty agents across six phases.">
+<title>Access · BrandOS</title>
+<meta name="description" content="Choose your plan and open the full BrandOS. Twenty agents across six phases.">
 
 <meta name="theme-color" content="#2D1521">
 <meta name="color-scheme" content="light">
@@ -17,7 +17,7 @@
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
-<meta property="og:title" content="Access · QB BrandOS">
+<meta property="og:title" content="Access · BrandOS">
 <meta property="og:description" content="Choose your plan and open the full brand operating system.">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/payment.png">
 <meta property="og:image:width" content="1200">
@@ -1669,7 +1669,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "Choose your plan",
-  "description": "Choose the QB BrandOS plan that fits your stage: Free, Starter, Pro, or Agency.",
+  "description": "Choose the BrandOS plan that fits your stage: Free, Starter, Pro, or Agency.",
   "url": "https://quantumbranding.ai/payment.html",
   "isPartOf": {
     "@id": "https://quantumbranding.ai/#website"
@@ -1798,7 +1798,7 @@ function toggleTheme() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// QB BrandOS - PAYMENT GATE
+// BrandOS - PAYMENT GATE
 // ─────────────────────────────────────────────────────────────────────────────
 /* Session note. This page used to run its own email + password auth
    against /auth/v1/signup and /auth/v1/token, and wrote its own
@@ -1806,7 +1806,7 @@ function toggleTheme() {
    live in production: the shape has no userId, so QB.isAuthed() read it
    as anonymous and bounced paying customers off /foundation back to a
    sign-in wall; and magic-link users have no password at all, so
-   "Sign in" here could only ever fail for them. QB BrandOS authenticates
+   "Sign in" here could only ever fail for them. BrandOS authenticates
    one way, through the magic link, and qb-cloud.js owns the session. This
    page now reads that session and hands anonymous visitors to /login. */
 const CONFIG = {
@@ -2009,7 +2009,7 @@ function renderSuccess() {
       <div class="success-icon">✓</div>
       <h2 style="font-size: 36px; margin-bottom: 16px;">You're in.</h2>
       <p style="margin-bottom: 32px;">Your account is active. Your API key and QBP are waiting in the system.</p>
-      <button type="button" class="btn-primary" onclick="window.location.href='/foundation'">Enter QB BrandOS →</button>
+      <button type="button" class="btn-primary" onclick="window.location.href='/foundation'">Enter BrandOS →</button>
     </div>
   `;
 }

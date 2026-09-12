@@ -1,4 +1,4 @@
-// QB BrandOS · POST /api/agents/dispatch
+// BrandOS · POST /api/agents/dispatch
 //
 // Chapter 4 · step 4 · the founder dispatch entry (outline §4 call 1,
 // RULED YES). The first production UI path that can fire a Phase 02

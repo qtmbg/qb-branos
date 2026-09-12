@@ -1,4 +1,4 @@
-// QB BrandOS — Custom magic-link sender
+// BrandOS — Custom magic-link sender
 // Vercel Edge Function
 //
 // Replaces Supabase's default email sender (noreply@mail.app.supabase.io,
@@ -92,7 +92,7 @@ function buildEmailHTML({ firstName, magicLink, sourceTool }) {
         <table role="presentation" class="qb-card" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#F4EBD3;border:2px solid #2D1521;border-radius:24px;padding:36px 32px 32px 32px;">
           <tr><td>
             <div style="font-family:'JetBrains Mono','SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.18em;color:#A8862E;text-transform:uppercase;font-weight:600;margin-bottom:14px;">
-              Sign in to QB BrandOS
+              Sign in to BrandOS
             </div>
             <h1 style="font-family:'Fraunces','Times New Roman',serif;font-weight:700;font-size:32px;line-height:1.1;letter-spacing:-0.015em;color:#2D1521;margin:0 0 16px 0;font-variation-settings:'wght' 700,'opsz' 144,'SOFT' 100,'WONK' 1;">
               One click. You are in.
@@ -114,7 +114,7 @@ function buildEmailHTML({ firstName, magicLink, sourceTool }) {
 
       <tr><td style="padding:24px 4px 0 4px;border-top:1px solid rgba(45,21,33,0.12);margin-top:24px;">
         <p style="font-family:'JetBrains Mono','SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.06em;color:rgba(45,21,33,0.55);line-height:1.7;margin:16px 0 0 0;text-align:center;">
-          QB BrandOS · The Brand Operating System<br>
+          BrandOS · The Brand Operating System<br>
           Built by Nizzar Ben Chekroune
         </p>
       </td></tr>

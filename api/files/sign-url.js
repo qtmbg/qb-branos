@@ -1,4 +1,4 @@
-// QB BrandOS · POST /api/files/sign-url
+// BrandOS · POST /api/files/sign-url
 //
 // Chapter 3 · Step 3C · per chapter-03/step-3-spec.md §1 (Bucket + RLS)
 // and §3 sub-PR 3C.

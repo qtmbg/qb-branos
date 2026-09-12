@@ -1,4 +1,4 @@
-/* QB BrandOS — Brand Archive renderer
+/* BrandOS — Brand Archive renderer
    Last updated: 2026-05-14
    Spec reference: CHAPTER_01_SPEC.md §3.4 (qb-artifact-row),
                    §5.5 (GET /api/artifacts), §5.10 (tier-gating),
