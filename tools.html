@@ -822,6 +822,11 @@ em { font-style:italic; }
 }
 .footer_endorse a { color:inherit; text-decoration:underline; text-underline-offset:0.2em; }
 .footer_endorse a:hover { color:var(--ink); }
+/* BrandOS never takes a case transform. The internal capital carries the
+   meaning, so uppercase, lowercase and capitalize are all forbidden.
+   Placed after the page's own uppercase styles; !important so an ancestor
+   rule cannot reach in and recase the name. */
+.brandos-name, .lockup-name, .qb-lockup_name { text-transform: none !important; }
 </style>
 </head>
 
@@ -838,7 +843,7 @@ em { font-style:italic; }
   <header class="nav">
     <a href="index.html" class="nav-brand">
       <span class="nav-brand_dot" aria-hidden="true"></span>
-      <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
+      <span class="qb-lockup"><span class="qb-lockup_name brandos-name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
     </a>
     <nav class="nav-links">
       <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
@@ -861,7 +866,7 @@ em { font-style:italic; }
 
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu_head">
-    <span class="nav-brand"><span class="nav-brand_dot"></span><span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span></span>
+    <span class="nav-brand"><span class="nav-brand_dot"></span><span class="qb-lockup"><span class="qb-lockup_name brandos-name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span></span>
     <button class="mobile-menu_close" id="mobileMenuClose" aria-label="Close menu">×</button>
   </div>
   <nav class="mobile-menu_list">
@@ -881,7 +886,7 @@ em { font-style:italic; }
 <main>
 
 <section class="tools-hero">
-  <div class="tools-hero_eye">The BrandOS toolkit</div>
+  <div class="tools-hero_eye">The <span class="brandos-name">BrandOS</span> toolkit</div>
   <h1>Twenty agents. <em>One brain.</em></h1>
   <p class="tools-hero_sub">From identity to execution. Every tool reads from the same Brand Profile, so nothing has to be re-explained, ever.</p>
 </section>
@@ -1122,7 +1127,7 @@ em { font-style:italic; }
   <div class="footer_inner">
     <a href="index.html" class="footer_brand">
       <span class="nav-brand_dot" aria-hidden="true"></span>
-      <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
+      <span class="qb-lockup"><span class="qb-lockup_name brandos-name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
     </a>
     <nav class="footer_links">
       <a href="ecosystem.html#about">About</a>

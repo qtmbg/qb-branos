@@ -459,6 +459,11 @@
     .tier_head { gap:var(--space-2xs); }
     .tier_name { width:100%; order:3; }
   }
+/* BrandOS never takes a case transform. The internal capital carries the
+   meaning, so uppercase, lowercase and capitalize are all forbidden.
+   Placed after the page's own uppercase styles; !important so an ancestor
+   rule cannot reach in and recase the name. */
+.brandos-name, .lockup-name, .qb-lockup_name { text-transform: none !important; }
 </style>
 </head>
 <body>
