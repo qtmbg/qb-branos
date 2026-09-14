@@ -19,7 +19,23 @@ Page text means body copy, headlines, UI strings, generated copy, documentation,
 
 **Check 3. Exclamation points.** Search for `!` outside literal in-product user-celebration moments. If any in marketing copy, prose, or explanation, remove.
 
-**Check 4. Casing.** Confirm headlines are sentence case. Confirm "BrandOS" uses exact casing (never "Brandos," "Brand OS," "brandos," "QB BrandOS"). Confirm the parent practice is written "Quantum Branding" in title case. Confirm the method is written "The Collapse" in title case, and its cycle as "Observe, Collapse, Build, Hold." Confirm the wordmark glyph "quantum branding" is lowercase italic, even at sentence start.
+**Check 4. Casing.** Confirm headlines are sentence case. Confirm the parent practice is written "Quantum Branding" in title case. Confirm the method is written "The Collapse" in title case, and its cycle as "Observe, Collapse, Build, Hold." Confirm the wordmark glyph "quantum branding" is lowercase italic, even at sentence start.
+
+**The name BrandOS never takes a case transform.** The internal capital carries the meaning. `uppercase`, `lowercase` and `capitalize` are all forbidden on it, in CSS and in prose. Write it "BrandOS" and nothing else: never "BRANDOS," "brandos," "Brandos," "Brand OS," or "QB BrandOS."
+
+This binds CSS as much as copy. An element that sets `text-transform: uppercase` recases the name even when the markup is correct, so the markup reads right while the screen reads wrong. When the surrounding label wants upper case, isolate the name:
+
+```html
+<div class="tools-hero_eye">The <span class="brandos-name">BrandOS</span> toolkit</div>
+```
+
+The global rule lives after each page's own uppercase styles, and in `css/qb-components.css` for pages that load it:
+
+```css
+.brandos-name, .lockup-name, .qb-lockup_name { text-transform: none !important; }
+```
+
+Every wordmark span carries `brandos-name` alongside `qb-lockup_name`. Enforced by `node tests/brand-casing/casing-audit.mjs`, which renders all 48 pages at 390px and 1280px and fails if "BRANDOS" or "brandos" reaches the painted text. Run it before shipping any change that touches a label, an eyebrow, or a caption.
 
 **Check 5. Voice register.** Read the draft aloud. If it sounds like a corporate explanation rather than a thoughtful founder, rewrite.
 

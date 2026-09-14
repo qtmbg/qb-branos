@@ -153,6 +153,11 @@
   @media (prefers-reduced-motion: reduce) {
     .pulse-dot, .qb-button { animation: none; transition: none; }
   }
+/* BrandOS never takes a case transform. The internal capital carries the
+   meaning, so uppercase, lowercase and capitalize are all forbidden.
+   Placed after the page's own uppercase styles; !important so an ancestor
+   rule cannot reach in and recase the name. */
+.brandos-name, .lockup-name, .qb-lockup_name { text-transform: none !important; }
 </style>
 
 <!-- Open Graph -->
@@ -187,7 +192,7 @@
       <a href="/signal-scan.html" class="qb-button is-ghost">Run a free Signal Scan</a>
       <a href="/os" class="qb-button is-ghost">Open BrandOS hub →</a>
     </div>
-    <div class="meta">BrandOS · From idea to orbit</div>
+    <div class="meta"><span class="brandos-name">BrandOS</span> · From idea to orbit</div>
   </div>
 </main>
 <footer>

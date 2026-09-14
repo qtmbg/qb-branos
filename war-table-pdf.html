@@ -284,6 +284,11 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
 }
 
 @media print{body{background:none;padding:0;}.controls{display:none;}.doc{box-shadow:none;}}
+/* BrandOS never takes a case transform. The internal capital carries the
+   meaning, so uppercase, lowercase and capitalize are all forbidden.
+   Placed after the page's own uppercase styles; !important so an ancestor
+   rule cannot reach in and recase the name. */
+.brandos-name, .lockup-name, .qb-lockup_name { text-transform: none !important; }
 </style>
 </head>
 <body>

@@ -96,6 +96,11 @@
 }
 .footer_endorse a { color:inherit; text-decoration:underline; text-underline-offset:0.2em; }
 .footer_endorse a:hover { color:var(--ink); }
+/* BrandOS never takes a case transform. The internal capital carries the
+   meaning, so uppercase, lowercase and capitalize are all forbidden.
+   Placed after the page's own uppercase styles; !important so an ancestor
+   rule cannot reach in and recase the name. */
+.brandos-name, .lockup-name, .qb-lockup_name { text-transform: none !important; }
 </style>
 
 <!-- Vercel Web Analytics – page views on every URL (static HTML, script-only) -->

@@ -2713,6 +2713,11 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 }
 .footer_endorse a { color:inherit; text-decoration:underline; text-underline-offset:0.2em; }
 .footer_endorse a:hover { color:var(--ink); }
+/* BrandOS never takes a case transform. The internal capital carries the
+   meaning, so uppercase, lowercase and capitalize are all forbidden.
+   Placed after the page's own uppercase styles; !important so an ancestor
+   rule cannot reach in and recase the name. */
+.brandos-name, .lockup-name, .qb-lockup_name { text-transform: none !important; }
 </style>
 </head>
 <body>
@@ -2729,7 +2734,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   <header class="nav is-canonical">
     <a href="index.html" class="nav-brand is-canonical">
       <span class="nav-brand_dot is-canonical" aria-hidden="true"></span>
-      <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
+      <span class="qb-lockup"><span class="qb-lockup_name brandos-name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
     </a>
     <nav class="nav-links">
       <a href="ecosystem.html" class="qb-type-nav">Ecosystem</a>
@@ -2752,7 +2757,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 <div class="mobile-menu" id="qbMobileMenu">
   <div class="mobile-menu_head">
-    <span class="nav-brand is-canonical"><span class="nav-brand_dot is-canonical"></span><span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span></span>
+    <span class="nav-brand is-canonical"><span class="nav-brand_dot is-canonical"></span><span class="qb-lockup"><span class="qb-lockup_name brandos-name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span></span>
     <button class="mobile-menu_close" id="qbMobileMenuClose" aria-label="Close menu" type="button">×</button>
   </div>
   <nav class="mobile-menu_list">
@@ -4609,7 +4614,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     <div>
       <a href="index.html" class="footer_brand">
         <span class="nav-brand_dot is-canonical" aria-hidden="true"></span>
-        <span class="qb-lockup"><span class="qb-lockup_name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
+        <span class="qb-lockup"><span class="qb-lockup_name brandos-name">BrandOS</span><span class="qb-lockup_by">by Quantum Branding</span></span>
       </a>
       <p class="footer_blurb">The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.</p>
     </div>
