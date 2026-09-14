@@ -32,7 +32,7 @@ This binds CSS as much as copy. An element that sets `text-transform: uppercase`
 The global rule lives after each page's own uppercase styles, and in `css/qb-components.css` for pages that load it:
 
 ```css
-.brandos-name, .lockup-name, .qb-lockup_name { text-transform: none !important; }
+.brandos-name, .qb-lockup_name { text-transform: none !important; }
 ```
 
 Every wordmark span carries `brandos-name` alongside `qb-lockup_name`. Enforced by `node tests/brand-casing/casing-audit.mjs`, which renders all 48 pages at 390px and 1280px and fails if "BRANDOS" or "brandos" reaches the painted text. Run it before shipping any change that touches a label, an eyebrow, or a caption.
@@ -84,6 +84,17 @@ Any merge touching `agents/`, the registry, or the dispatch path requires both h
 2. Post-deploy: probe `POST /api/agents/run` and `GET /api/agents/console` unauthenticated and confirm handler-level 401. Any 500 FUNCTION_INVOCATION_FAILED means revert immediately, then surface.
 
 Origin and full rationale: `docs/patterns/registry-merge-gate.md` (the 2026-06-10 cold-start outage, PRs #170 → #171 → #172 → #173). The load-time META validation stays unconditional; this gate moves detonation from production to a local terminal.
+
+### Audit harnesses
+
+Never truncate text before comparing it. A sweep that slices a string and then tests the slice reports a verdict about the part of the page that happened to fit, so a dirty page comes back clean. This is not hypothetical: `tests/auth-flow/auth-flow.mjs` matched its success-view regex against `innerText.slice(0, 200)`, and the match sat at index 182. Eighteen characters of margin, and one extra nav word would have turned a passing check into a false alarm.
+
+The rules:
+
+- Compare against the complete string. Slice only when building a human-readable failure line, and say so in a comment.
+- Never cap a findings array (`.slice(0, 20)` on offenders, nodes, errors). Detection survives a cap, but counts and evidence do not, so a report shows `n: 20` for a page with fifty problems.
+- Read what the browser paints (`innerText`), not what the markup says, whenever CSS can change the text. `text-transform` is invisible to a source grep.
+- A harness that cannot fail is worth nothing. Prove both directions: break the thing on purpose, confirm the run exits 1 and names the offender, then restore and confirm it exits 0.
 
 ### Code
 

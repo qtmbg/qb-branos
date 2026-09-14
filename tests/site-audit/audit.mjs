@@ -63,7 +63,7 @@ const HAS_ENV = !!(SU && SK && AK);
 const svc = HAS_ENV ? { apikey: SK, Authorization: `Bearer ${SK}`, 'Content-Type': 'application/json', Accept: 'application/json' } : null;
 const uuid = () => crypto.randomUUID();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-async function must(r, what) { if (!r.ok) throw new Error(`${what}: ${r.status} ${(await r.text().catch(() => '')).slice(0, 200)}`); return r; }
+async function must(r, what) { if (!r.ok) throw new Error(`${what}: ${r.status} ${await r.text().catch(() => '')}`); return r; }
 
 /* ── seed identity for the app half ────────────────────────── */
 async function makeSeed() {
@@ -90,7 +90,7 @@ function pageProbe() {
   const out = {};
   const doc = document;
   out.title = doc.title || null;
-  out.h1 = doc.querySelector('h1')?.textContent?.trim().slice(0, 120) || null;
+  out.h1 = doc.querySelector('h1')?.textContent?.trim() || null;
 
   // Horizontal overflow (mobile breach when width is 390)
   const se = doc.scrollingElement || doc.documentElement;
@@ -100,7 +100,7 @@ function pageProbe() {
   // Missing images (loaded but zero natural width, or errored)
   out.brokenImages = [...doc.querySelectorAll('img')]
     .filter(i => i.complete && i.naturalWidth === 0 && i.getAttribute('src'))
-    .map(i => i.getAttribute('src')).slice(0, 20);
+    .map(i => i.getAttribute('src'));
 
   // Suspicious visible CTAs
   out.suspiciousCtas = [...doc.querySelectorAll('a')]
@@ -112,8 +112,7 @@ function pageProbe() {
       const style = getComputedStyle(a);
       return r.width > 0 && r.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
     })
-    .map(a => ({ text: (a.textContent || '').trim().slice(0, 60), href: a.getAttribute('href') || '' }))
-    .slice(0, 20);
+    .map(a => ({ text: (a.textContent || '').trim(), href: a.getAttribute('href') || '' }));
 
   // All same-origin hrefs for the dead-link ledger
   out.hrefs = [...new Set([...doc.querySelectorAll('a[href]')]
@@ -155,20 +154,20 @@ async function auditPage(browser, route, { width, session }) {
   }
   const page = await ctx.newPage();
   const consoleErrors = [], pageErrors = [], failedRequests = [];
-  page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text().slice(0, 300)); });
-  page.on('pageerror', e => pageErrors.push(String(e?.message || e).slice(0, 300)));
+  page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+  page.on('pageerror', e => pageErrors.push(String(e?.message || e)));
   page.on('response', r => {
     try {
       const u = new URL(r.url());
       if (r.status() >= 400 && (u.origin === new URL(BASE).origin || u.hostname.endsWith('.supabase.co'))) {
-        failedRequests.push({ status: r.status(), url: r.url().slice(0, 180) });
+        failedRequests.push({ status: r.status(), url: r.url() });
       }
     } catch (_) {}
   });
   page.on('requestfailed', r => {
     try {
       const u = new URL(r.url());
-      if (u.origin === new URL(BASE).origin) failedRequests.push({ status: 'failed', url: r.url().slice(0, 180), err: r.failure()?.errorText });
+      if (u.origin === new URL(BASE).origin) failedRequests.push({ status: 'failed', url: r.url(), err: r.failure()?.errorText });
     } catch (_) {}
   });
 
@@ -180,11 +179,11 @@ async function auditPage(browser, route, { width, session }) {
     rec.finalUrl = page.url();
     Object.assign(rec, await page.evaluate(pageProbe));
   } catch (e) {
-    rec.navError = String(e?.message || e).slice(0, 200);
+    rec.navError = String(e?.message || e);
   }
-  rec.consoleErrors = [...new Set(consoleErrors)].slice(0, 15);
-  rec.pageErrors = [...new Set(pageErrors)].slice(0, 10);
-  rec.failedRequests = failedRequests.slice(0, 20);
+  rec.consoleErrors = [...new Set(consoleErrors)];
+  rec.pageErrors = [...new Set(pageErrors)];
+  rec.failedRequests = failedRequests;
   await ctx.close();
   return rec;
 }
@@ -230,7 +229,7 @@ async function main() {
         const r = await fetch(href, { method: 'GET', redirect: 'follow' });
         report.linkCheck[href] = r.status;
       } catch (e) {
-        report.linkCheck[href] = `ERR ${String(e?.message || e).slice(0, 80)}`;
+        report.linkCheck[href] = `ERR ${String(e?.message || e)}`;
       }
     }
   } finally {
