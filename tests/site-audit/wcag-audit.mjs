@@ -51,7 +51,7 @@ const HAS_ENV = !!(SU && SK && AK);
 const svc = HAS_ENV ? { apikey: SK, Authorization: `Bearer ${SK}`, 'Content-Type': 'application/json', Accept: 'application/json' } : null;
 const uuid = () => crypto.randomUUID();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-async function must(r, what) { if (!r.ok) throw new Error(`${what}: ${r.status} ${(await r.text().catch(() => '')).slice(0, 200)}`); return r; }
+async function must(r, what) { if (!r.ok) throw new Error(`${what}: ${r.status} ${await r.text().catch(() => '')}`); return r; }
 
 async function makeSeed() {
   const email = `qb-wcag-${uuid().slice(0, 8)}@qb-harness.test`;
@@ -90,17 +90,17 @@ async function auditRoute(browser, route, { width, session }) {
       const r = await axe.run(document, { runOnly: { type: 'tag', values: tags }, resultTypes: ['violations'] });
       return r.violations.map(v => ({
         id: v.id, impact: v.impact, help: v.help, helpUrl: v.helpUrl,
-        nodes: v.nodes.slice(0, 6).map(n => ({
+        nodes: v.nodes.map(n => ({
           target: n.target, impact: n.impact,
-          summary: (n.failureSummary || '').replace(/\s+/g, ' ').slice(0, 260),
-          html: (n.html || '').slice(0, 160),
+          summary: (n.failureSummary || '').replace(/\s+/g, ' '),
+          html: (n.html || ''),
         })),
         nodeCount: v.nodes.length,
       }));
     }, WCAG_TAGS);
     rec.violations = results;
   } catch (e) {
-    rec.navError = String(e?.message || e).slice(0, 200);
+    rec.navError = String(e?.message || e);
   }
   await ctx.close();
   return rec;

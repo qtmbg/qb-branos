@@ -84,7 +84,7 @@ for(const [slug, path] of PAGES){
         const r = el.getBoundingClientRect();
         if(r.width > 0 && r.right > docW + 1){
           const tag = el.tagName.toLowerCase();
-          const cls = (el.className||'').toString().trim().slice(0,80);
+          const cls = (el.className||'').toString().trim();
           offenders.push(`${tag}${cls?'.'+cls.replace(/\s+/g,'.'):''} right=${Math.round(r.right)} docW=${docW}`);
           if(offenders.length >= 8) break;
         }
@@ -122,6 +122,6 @@ console.log(`\nBroken / overflowing: ${broken.length}`);
 for(const b of broken){
   console.log(`  ${b.slug}: ${b.error || `+${b.overflow.scrollW - b.overflow.docW}px scroll`}`);
   if(b.overflow?.offenders?.length){
-    for(const o of b.overflow.offenders.slice(0,3)) console.log(`     -> ${o}`);
+    for(const o of b.overflow.offenders) console.log(`     -> ${o}`);
   }
 }

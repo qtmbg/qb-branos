@@ -72,7 +72,7 @@ for (const page of pages) {
         const painted = el.innerText;
         if (painted && bad.test(painted)) {
           out.push({
-            text: painted.trim().slice(0, 70),
+            text: painted.trim().replace(/\s+/g, ' '),
             transform: getComputedStyle(el).textTransform,
             where: el.tagName.toLowerCase() + (el.className ? '.' + String(el.className).split(' ').join('.') : ''),
           });

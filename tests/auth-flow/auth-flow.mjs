@@ -266,12 +266,16 @@ async function paidToolWithProfile(profile, { abort = false } = {}) {
     tier: localStorage.getItem('qb_user_tier'),
     status: localStorage.getItem('qb_sub_status'),
     session: JSON.parse(localStorage.getItem('qb_session') || 'null'),
-    body: document.body.innerText.slice(0, 200),
+    // Full text. Truncating here would test the regex against a slice and
+    // report a verdict about the part of the page that happened to fit.
+    body: document.body.innerText,
   }));
   check('payment · post-checkout sets the local tier hint', state.tier === 'pro' && state.status === 'active', `${state.tier}/${state.status}`);
   check('payment · post-checkout leaves the session intact',
     !!(state.session && state.session.userId && state.session.token), JSON.stringify(state.session));
-  check('payment · post-checkout shows the success view', /You're in|Enter BrandOS/i.test(state.body), state.body.slice(0, 80));
+  // Match against the whole body; the slice is only to keep the failure line readable.
+  check('payment · post-checkout shows the success view', /You're in|Enter BrandOS/i.test(state.body),
+    state.body.replace(/\s+/g, ' ').slice(0, 120));
   await ctx.close();
 }
 
