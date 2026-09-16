@@ -1,8 +1,13 @@
+# quantumbranding.ai
+# BrandOS by Quantum Branding
+
 User-agent: *
 Allow: /
 
 # Utility / non-public surfaces
 Disallow: /auth-callback.html
+Disallow: /login
+Disallow: /login.html
 Disallow: /foundation
 Disallow: /foundation.html
 Disallow: /account
@@ -15,6 +20,40 @@ Disallow: /qbp
 Disallow: /qbp.html
 Disallow: /artifact
 Disallow: /artifact.html
+Disallow: /agents
+Disallow: /agents.html
+Disallow: /brand-document.html
+Disallow: /brand-soul-map-pdf.html
+Disallow: /sensescape-pdf.html
+Disallow: /visual-dna-pdf.html
+Disallow: /war-table-pdf.html
+Disallow: /api/
+Disallow: /_archive/
+
+# Bing and its downstream surfaces (Copilot, DuckDuckGo, ChatGPT search) read
+# the same index. Named explicitly so crawl rules for bingbot can be tuned
+# without touching the wildcard group. The IndexNow key file at the root must
+# stay reachable: it is how Bing verifies that a push came from this host.
+User-agent: bingbot
+Allow: /
+Disallow: /auth-callback.html
+Disallow: /login
+Disallow: /login.html
+Disallow: /foundation
+Disallow: /foundation.html
+Disallow: /account
+Disallow: /account.html
+Disallow: /paywall
+Disallow: /paywall.html
+Disallow: /archive
+Disallow: /archive.html
+Disallow: /qbp
+Disallow: /qbp.html
+Disallow: /artifact
+Disallow: /artifact.html
+Disallow: /agents
+Disallow: /agents.html
+Disallow: /brand-document.html
 Disallow: /brand-soul-map-pdf.html
 Disallow: /sensescape-pdf.html
 Disallow: /visual-dna-pdf.html

@@ -2,7 +2,7 @@
   "name": "qb-branos",
   "version": "1.0.0",
   "private": true,
-  "description": "BrandOS — static site + Vercel Functions (Edge + Node serverless). Build step is null; this manifest exists so Vercel installs the runtime deps below. type:module makes the Node runtime treat the ESM api/ files as ESM natively (chapter-3 step 5 runtime migration).",
+  "description": "BrandOS \u2014 static site + Vercel Functions (Edge + Node serverless). Build step is null; this manifest exists so Vercel installs the runtime deps below. type:module makes the Node runtime treat the ESM api/ files as ESM natively (chapter-3 step 5 runtime migration).",
   "type": "module",
   "license": "UNLICENSED",
   "dependencies": {
@@ -11,6 +11,11 @@
   },
   "scripts": {
     "test:casing": "node tests/brand-casing/casing-audit.mjs",
-    "test:casing:prod": "node tests/brand-casing/casing-audit.mjs --base https://quantumbranding.ai"
+    "test:casing:prod": "node tests/brand-casing/casing-audit.mjs --base https://quantumbranding.ai",
+    "seo:sitemap": "node scripts/gen-sitemap.mjs",
+    "seo:audit": "node tests/seo-bing/bing-audit.mjs",
+    "seo:audit:prod": "node tests/seo-bing/bing-audit.mjs --base https://quantumbranding.ai",
+    "seo:indexnow": "node scripts/seo/indexnow-submit.mjs --changed",
+    "seo:indexnow:all": "node scripts/seo/indexnow-submit.mjs --all"
   }
 }
