@@ -4,7 +4,7 @@
 //   user-agent: vercel-cron/1.0
 //   authorization: Bearer <CRON_SECRET>
 //
-//   → 200 { ok, rows_examined, rows_retried, rows_flipped,
+//   → 200 { ok, rows_examined, rows_retried, rows_flipped, rows_settled,
 //           race_recoveries, race_partials_notified,
 //           ghost_dispatches_detected, errors }
 //   → 401 { error: 'unauthorized_cron_trigger', reason }
@@ -44,6 +44,18 @@
 //   7. Terminal flip · retry_count=3 + elapsed >= 300 s since last_retry_at
 //      → dispatch_jobs.status='failed_permanently', emit exactly one
 //      dispatch_failed notification (in-app row + email).
+//   8. Settle · a tick that finds nothing to re-fire and nothing still in
+//      flight writes the terminal status now rather than returning.
+//      All children delivered → 'completed' (no notification). Some
+//      delivered → 'partial'. None delivered, or no children at all past
+//      the orphan window → 'failed_permanently'. Both non-success cases
+//      emit one dispatch_failed notification.
+//
+//      Added 2026-09-16. retry_count advances only alongside a refire, so
+//      a dispatch with no retry-eligible child never reached step 7 and
+//      stayed in 'producing' permanently, re-read in full on every tick.
+//      Twelve such rows from 15 May were still being swept in September,
+//      which is what put the project over its Supabase Disk IO budget.
 //
 // Auth: trigger path uses verifyCronTrigger from api/_lib/inter-edge-auth.js
 // (CRON_SECRET). Outgoing child fetches use signInterEdge from
@@ -196,6 +208,40 @@ async function flipDispatchToFailedPermanently({ supaUrl, serviceKey, dispatchId
   return rows.length;
 }
 
+// Conditional settle for a dispatch that has nothing left to retry.
+//
+// The sweep reads only status='producing', and retry_count advances only
+// alongside a refire. So a dispatch whose children are all either
+// delivered or terminally stuck can never leave 'producing' on its own:
+// every tick re-reads its artifacts and one agent_runs row per child,
+// forever, and the retry_count>=3 terminal-flip gate is never reached.
+// That is the 2026-09-16 Disk IO finding · 12 dispatches from 15 May
+// were still being swept 123 days later, 22 REST queries every minute
+// for no possible outcome.
+//
+// Same compare-and-set shape as flipDispatchToFailedPermanently: the
+// status=eq.producing filter means a terminal state written concurrently
+// by the run handler's settleDispatch wins and we report zero rows.
+async function settleUnretryableDispatch({ supaUrl, serviceKey, dispatchId, status }) {
+  const r = await fetch(
+    `${supaUrl}/rest/v1/dispatch_jobs?id=eq.${encodeURIComponent(dispatchId)}&status=eq.producing`,
+    {
+      method: 'PATCH',
+      headers: { ...svcHeaders(serviceKey), Prefer: 'return=representation' },
+      body: JSON.stringify({ status }),
+    }
+  );
+  if (!r.ok) {
+    const t = await r.text().catch(() => '');
+    throw new Error(`dispatch_settle_failed: ${r.status} ${t.slice(0, 200)}`);
+  }
+  const rows = await r.json().catch(() => null);
+  if (!Array.isArray(rows)) {
+    throw new Error('dispatch_settle_parse_failed: 2xx with unparseable body');
+  }
+  return rows.length;
+}
+
 // Single-row status read used to classify a lost terminal-flip race.
 async function fetchDispatchStatus({ supaUrl, serviceKey, dispatchId }) {
   const r = await fetch(
@@ -341,6 +387,61 @@ async function refireChild({ baseUrl, interEdgeSecret, artifact, latestRun, disp
   }
 }
 
+// ─── Settle a dispatch that can no longer advance ──────────────────────
+// Writes the terminal status and, for a non-success outcome, emits the
+// one dispatch_failed notification the user is owed. Mutually exclusive
+// with the retry_count>=3 terminal-flip path: that branch runs only when
+// retry_count has advanced, which only happens alongside a refire, and
+// once either branch settles the row the sweep never reads it again.
+
+async function settleDispatchAndNotify({ dispatch, env, summary, status, failedChild, reason }) {
+  let settled;
+  try {
+    settled = await settleUnretryableDispatch({
+      supaUrl: env.SUPABASE_URL,
+      serviceKey: env.SUPABASE_SERVICE_ROLE_KEY,
+      dispatchId: dispatch.id,
+      status,
+    });
+  } catch (e) {
+    summary.errors.push({ dispatch_id: dispatch.id, stage: 'settle', detail: e?.message });
+    return;
+  }
+
+  // Zero rows · the run handler settled it between our children-read and
+  // this write. Its status is authoritative and it has already notified.
+  if (settled === 0) {
+    summary.race_recoveries += 1;
+    return;
+  }
+
+  summary.rows_settled += 1;
+  if (status === 'completed') return;
+
+  // Prefer the child's own failure code over the structural reason.
+  let reasonCode = reason;
+  if (failedChild?.id) {
+    const lastRun = await fetchLatestAgentRunForArtifact({
+      supaUrl: env.SUPABASE_URL,
+      serviceKey: env.SUPABASE_SERVICE_ROLE_KEY,
+      artifactId: failedChild.id,
+    });
+    if (lastRun?.error_payload?.code) reasonCode = lastRun.error_payload.code;
+  }
+
+  try {
+    await emitDispatchFailed({
+      env,
+      userId: dispatch.user_id,
+      dispatchId: dispatch.id,
+      agentSlug: failedChild?.artifact_type || dispatch.parent_agent_slug || null,
+      reason: reasonCode,
+    });
+  } catch (e) {
+    summary.errors.push({ dispatch_id: dispatch.id, stage: 'settle-notification', detail: e?.message });
+  }
+}
+
 // ─── Per-dispatch sweep ────────────────────────────────────────────────
 
 async function processDispatch({ dispatch, env, baseUrl, summary }) {
@@ -439,10 +540,24 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
     return;
   }
 
-  if (!artifacts || artifacts.length === 0) return;
+  // Zero children. Past the orphan window the dispatch produced nothing
+  // and never will, so settle it rather than re-reading it every tick.
+  // Inside the window this is the ordinary create-dispatch-then-insert-
+  // artifacts race, so leave it alone.
+  if (!artifacts || artifacts.length === 0) {
+    if (dispatchAgeMs > RUN_ORPHAN_WINDOW_MS) {
+      await settleDispatchAndNotify({
+        dispatch, env, summary, status: 'failed_permanently',
+        reason: 'no_artifacts_created', failedChild: null,
+      });
+    }
+    return;
+  }
 
   const childRefires = [];
   let sawGhost = false;
+  let inFlight = 0;
+  let terminallyStuck = 0;
 
   for (const artifact of artifacts) {
     if (artifact.status === 'delivered') continue;
@@ -452,8 +567,13 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
     });
     const verdict = classifyChild({ artifact, latestRun, dispatchAgeMs });
 
-    if (!verdict.stuck) continue;
-    if (verdict.skip) continue; // user-fixable or unknown · leave for user/operator
+    // Not stuck and not delivered · a run is legitimately still in
+    // flight (or inside the orphan window). The dispatch must stay
+    // 'producing'; settling it here would declare a live run dead.
+    if (!verdict.stuck) { inFlight += 1; continue; }
+    // Stuck but not retry-eligible: user-fixable, or an unrecognised
+    // failure code. No refire, and no reason to look again either.
+    if (verdict.skip) { terminallyStuck += 1; continue; }
 
     if (verdict.mode === 'ghost-dispatch') sawGhost = true;
     childRefires.push({ artifact, latestRun, verdict });
@@ -461,7 +581,26 @@ async function processDispatch({ dispatch, env, baseUrl, summary }) {
 
   if (sawGhost) summary.ghost_dispatches_detected += 1;
 
-  if (childRefires.length === 0) return;
+  if (childRefires.length === 0) {
+    // Nothing to re-fire. Either work is still in flight (wait), or every
+    // child has reached a terminal state (settle · see
+    // settleUnretryableDispatch). Returning unconditionally, as this did
+    // before, is what left 12 dispatches in 'producing' for 123 days.
+    if (inFlight > 0) return;
+
+    const delivered = artifacts.filter(a => a.status === 'delivered').length;
+    let status;
+    if (delivered === artifacts.length) status = 'completed';
+    else if (delivered > 0) status = 'partial';
+    else status = 'failed_permanently';
+
+    const failedChild = artifacts.find(a => a.status !== 'delivered') || null;
+    await settleDispatchAndNotify({
+      dispatch, env, summary, status, failedChild,
+      reason: terminallyStuck > 0 ? 'unretryable_child_failure' : 'dispatch_unsettled',
+    });
+    return;
+  }
 
   // Step 5 · CLAIM FIRST. The retry increment moves ahead of the refires.
   // Post-migration a refired run can take minutes; if the accounting only
@@ -536,6 +675,7 @@ async function handler(req) {
     rows_examined: 0,
     rows_retried: 0,
     rows_flipped: 0,
+    rows_settled: 0,
     race_recoveries: 0,
     race_partials_notified: 0,
     ghost_dispatches_detected: 0,
