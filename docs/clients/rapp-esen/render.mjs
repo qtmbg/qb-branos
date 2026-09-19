@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import path from 'node:path';
 
 const dir = path.dirname(new URL(import.meta.url).pathname);
-const name = process.argv[2] || 'plateforme-de-marque';
+const name = process.argv[2] || 'brand-platform';
 const src = 'file://' + path.join(dir, name + '.html');
 const out = path.join(dir, name + '.pdf');
 
