@@ -46,6 +46,9 @@ import { META as contentSchedulerMeta, run as contentSchedulerRun } from './cont
 import { META as brandPerformanceMeta, run as brandPerformanceRun } from './brand-performance.js';
 import { META as quarterlyReviewMeta, run as quarterlyReviewRun } from './quarterly-review.js';
 import { META as predictivePanelMeta, run as predictivePanelRun } from './predictive-panel.js';
+// Recut Phase 3 · Open Questions, the closing move of Observe and Collapse.
+// Three registration surfaces land together per the standing merge gate.
+import { META as openQuestionsMeta, run as openQuestionsRun } from './open-questions.js';
 import { META as chainTestMeta, run as chainTestRun } from './chain-test-agent.js';
 import { META as fileTestMeta, run as fileTestRun } from './file-test-agent.js';
 
@@ -69,6 +72,7 @@ assertAgentMetaOrThrow(contentSchedulerMeta, 'agents/content-scheduler.js');
 assertAgentMetaOrThrow(brandPerformanceMeta, 'agents/brand-performance.js');
 assertAgentMetaOrThrow(quarterlyReviewMeta, 'agents/quarterly-review.js');
 assertAgentMetaOrThrow(predictivePanelMeta, 'agents/predictive-panel.js');
+assertAgentMetaOrThrow(openQuestionsMeta, 'agents/open-questions.js');
 assertAgentMetaOrThrow(chainTestMeta, 'agents/chain-test-agent.js');
 assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 
@@ -77,7 +81,7 @@ assertAgentMetaOrThrow(fileTestMeta, 'agents/file-test-agent.js');
 // first dispatch (the operator-notify module needs Resend at runtime, not
 // at module-load).
 export const LATENCY_BUDGET_WARNINGS = [];
-for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta, newsletterArchMeta, linkedinStrategyMeta, instagramSeedMeta, youtubeStrategyMeta, contentBridgeMeta, contentRepurposingMeta, contentSchedulerMeta, brandPerformanceMeta, quarterlyReviewMeta, predictivePanelMeta]) {
+for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, logoDirectionMeta, logoEvaluationMeta, voiceGuideMeta, newsletterArchMeta, linkedinStrategyMeta, instagramSeedMeta, youtubeStrategyMeta, contentBridgeMeta, contentRepurposingMeta, contentSchedulerMeta, brandPerformanceMeta, quarterlyReviewMeta, predictivePanelMeta, openQuestionsMeta]) {
   const check = checkLatencyBudget(meta);
   if (!check.withinBudget) {
     LATENCY_BUDGET_WARNINGS.push(check);
@@ -85,7 +89,7 @@ for (const meta of [soulMapMeta, sensescapeMeta, visualDnaMeta, warTableMeta, lo
   }
 }
 
-console.log('agent registry loaded · 17 prod agents + 2 test agents (flag-gated at request time)');
+console.log('agent registry loaded · 18 prod agents + 2 test agents (flag-gated at request time)');
 
 // ─── Real agents · ALWAYS loaded · frozen at module init ─────────────────
 // These are the production agents. No env gates. The frozen map is the
@@ -127,6 +131,10 @@ export const AGENTS = Object.freeze({
   [brandPerformanceMeta.slug]: { META: brandPerformanceMeta, run: brandPerformanceRun },
   [quarterlyReviewMeta.slug]: { META: quarterlyReviewMeta, run: quarterlyReviewRun },
   [predictivePanelMeta.slug]: { META: predictivePanelMeta, run: predictivePanelRun },
+  // Recut Phase 3 · Open Questions. Phase '01', tier 'free': it runs on
+  // the free path because it is the closing move of the foundation, not
+  // a paid add-on. See docs/strategy/brandos-recut-v1.md Part 10.
+  [openQuestionsMeta.slug]: { META: openQuestionsMeta, run: openQuestionsRun },
 });
 
 // ─── Test agents · flag-gated at REQUEST TIME ─────────────────────────────

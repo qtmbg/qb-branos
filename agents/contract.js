@@ -111,6 +111,11 @@ export const AGENT_OBSERVED_LATENCY_MS = {
   brand_performance_agent:       43_000,
   quarterly_review_agent:        77_000,
   predictive_panel_agent:        54_000,
+  // Recut Phase 3 · Open Questions. No live run yet: this is the budget
+  // it is held to, set from the text-only class (voice_guide_agent
+  // measured 39 000 ms on the same shape). Replace with the measured
+  // figure after the first three production runs.
+  open_questions_agent:          42_000,
 };
 
 // Chapter-7 close · per-agent in-call timeout divergence. The fleet

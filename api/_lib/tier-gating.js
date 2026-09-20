@@ -18,7 +18,10 @@ const PHASE_02_TIERS = PAID_TIERS;
 const PRO_PLUS_TIERS = new Set(['pro', 'agency', 'atelier']);
 
 // Agents that are universally readable across tiers (free included).
-const ALWAYS_FREE_AGENTS = new Set(['soul_map_synthesizer']);
+// open_questions_agent joins soul_map here for the recut: it runs on the
+// free path and its whole purpose is to be read by someone who has paid
+// nothing. See docs/strategy/brandos-recut-v1.md Part 10.
+const ALWAYS_FREE_AGENTS = new Set(['soul_map_synthesizer', 'open_questions_agent']);
 
 // Pro+ exclusive agent slugs (Phase 05 specifically).
 const PRO_PLUS_AGENTS = new Set(['predictive_panel', 'quarterly_review_agent']);

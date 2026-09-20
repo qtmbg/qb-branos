@@ -66,10 +66,14 @@ console.log('\n1 · the parked set is exactly the content layer');
 
 console.log('\n2 · the ten brand agents are NOT parked');
 {
+  // 11 since the recut added open_questions_agent (Phase 3). Update this
+  // number deliberately when the public roster changes; the point of the
+  // assertion is that a parked agent cannot quietly reappear and a brand
+  // agent cannot quietly vanish.
   const brand = Object.keys(AGENTS).filter(s => !OPERATOR_ONLY_SLUGS.has(s));
-  if (brand.length !== 10) {
-    fail(`expected 10 public brand agents, found ${brand.length}: ${brand.join(', ')}`);
-  } else ok(`10 public agents: ${brand.join(', ')}`);
+  if (brand.length !== 11) {
+    fail(`expected 11 public brand agents, found ${brand.length}: ${brand.join(', ')}`);
+  } else ok(`11 public agents: ${brand.join(', ')}`);
 
   const phases = [...new Set(brand.map(s => AGENTS[s].META.phase))].sort();
   if (phases.join(',') !== '01,02,05') {
