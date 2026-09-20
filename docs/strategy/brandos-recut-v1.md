@@ -1,7 +1,8 @@
 # BrandOS recut · brand only, free steak
 ## Strategy note v1 · 2026-09-20
 
-Status: proposal, operator-approved in principle. Two numbers still open (see Part 8).
+Status: v1.1, 2026-09-20. Parts 5 to 8 revised after the operator dropped the Studio tier and
+named the real second rung. Parts 1 to 4 stand as written.
 
 ---
 
@@ -96,98 +97,168 @@ Reversal is a one-line change to the set.
 
 ---
 
-## 5. The revenue model · free steak, paid fries
+## 5. The offer ladder
 
-No subscription anywhere. One-time purchases, priced per brand.
+Studio and white-label are cut. They serve an audience that does not exist yet and they
+are slow to sell. Four rungs remain, and every rung is the same object at more depth.
 
-| Line | Price | What it is |
+| Rung | Price | What it is |
 |---|---|---|
-| **Foundation** | Free, one brand per account | The complete run. Observe, Collapse and Build, on screen, in full. No card, no teaser, no watermark. |
-| **Keep** | ~$79 one time, per brand | The designed Brand Document, the Brand Spec export, permanent archive, version history, re-collapse when the brand moves. |
-| **Intelligence** | ~$249 one time, per brand | Adds Hold. Brand Performance, Quarterly Review, and five Predictive Panel runs. Top-up packs after that. |
-| **Studio** | ~$990 one time | Five brands, Keep and Intelligence on all five, the agency's own brand on every output. |
-| **Atelier** | Quote | Unchanged. Nizzar, the practice, one engagement at a time. |
+| **The exercises** | Free, one brand per account | Observe, Collapse and Build, run in full, on screen. No card, no teaser. |
+| **The Platform** | $79 one time, per brand | The document. Their foundation argued, designed and rendered to A4, in their hands. |
+| **The Reading** | ~$490 one time | Ninety minutes with Nizzar on their own Platform, recorded, closing with a Direction Note appended to the document. |
+| **Atelier** | Quote | Unchanged. The practice, one engagement at a time. |
 
-### Why this is the right shape for this business
+Nothing recurs. Nobody has ever bought a subscription, so the three Stripe subscription
+prices get archived and there is nothing to migrate.
 
-The real business is the practice. A free, complete, genuinely good brand foundation
-is the strongest qualification instrument an independent strategist can own: it does
-the diagnostic work for free and hands over a prospect who has already articulated
-their own positioning. The paid lines cover infrastructure and separate the serious
-from the curious. Atelier converts at the top.
+### The constraint that shapes everything below
 
-It also removes every piece of subscription engineering. Entitlement becomes a fact
-per brand, "Keep purchased" and "Intelligence purchased", rather than a tier string on
-an account. Since nobody has ever bought a subscription, there is nothing to migrate
-and no one to grandfather. The three Stripe subscription prices get archived.
+The Rapp &amp; Esen platform is 54 pages and it is the right benchmark for craft. It is not
+the right benchmark for depth, and the difference matters. That document was built from
+262 minutes of recorded working sessions with Nizzar in the room, pushing back, killing
+"wealthy" as a client criterion at S2 01:07:45 and resolving the fake-promise objection at
+S1 01:10:07. The exercises produce structured answers. They do not produce an argument.
 
----
+So the generated Platform cannot be the Rapp &amp; Esen document, and pretending otherwise
+would be the fastest way to burn the $79. It can carry the same architecture, the same
+typographic craft, the same A4 discipline and the same honesty. What it cannot carry is
+the part that came from a human disagreeing with the founder.
 
-## 6. The portion problem
-
-Free and unlimited are different words. A complete foundation is nine agent runs on
-Sonnet 4.6. At roughly 8k input and 4k output per agent, a full foundation is about
-72k input and 36k output tokens, which comes to somewhere near **$0.75 per
-foundation** at current Sonnet pricing. That estimate needs verifying against real
-runs before launch, but if it holds, the steak is affordable.
-
-What keeps it affordable:
-
-- One free brand per account. A second brand is a Studio purchase.
-- Each agent runs at most twice on the free path. The Content Approval Loop already
-  caps revision rounds at three.
-- Re-collapse after the foundation locks is a Keep feature, not a free one.
-- Sensescape already runs on Haiku 4.5. Any other agent that holds quality on Haiku
-  moves there on the free path.
-- Rate limit per account per day, and a hard monthly ceiling on total free runs with
-  an operator alert before it is reached.
+That gap is not a defect to hide. It is the product.
 
 ---
 
-## 7. Build plan
+## 6. What the second rung actually sells
 
-Five phases, each with a gate. Phases 1 and 2 are independent of the pricing numbers
-and can start immediately.
+The operator named the problem precisely: someone receives a beautiful document and
+cannot act on it. Three things answer that, and only one of them costs Nizzar time.
 
-**Phase 1 · Operator-only gate.** `OPERATOR_ONLY_SLUGS`, pages off every public
-surface, `noindex`, sitemap rebuild.
-Gate: `node scripts/registry-smoke.mjs` output pasted verbatim into the PR body, then
-an unauthenticated probe of `POST /api/agents/run` and `GET /api/agents/console`
-confirming handler-level 401 post-deploy. Registry merge gate applies in both halves.
+### 6.1 The document teaches its own reading · free, template work
 
-**Phase 2 · One tool, four movements.** Rewrite `tools.html`, `ecosystem.html` and
-`index.html` around Observe, Collapse, Build, Hold, with the ten agents as steps
-inside one flow.
+Rapp &amp; Esen opens with "What this is" and "Three kinds of statement" and closes with
+"How to use these three." Every generated Platform gets the same treatment: a **How to
+read this** spread at the front that explains the difference between a statement that
+decides something, a statement that describes something and a statement that is an
+instruction, and a **What to do Monday** page at the back. This is written once into the
+template and costs nothing per customer. It removes a large share of the confusion
+without a call.
+
+### 6.2 The Open Questions engine · one new agent
+
+A new brand-level agent reads the locked foundation and produces, per section, what the
+exercises **settled** and what they **left open**. It runs on the free path, and its
+output lands in the Platform as a closing section.
+
+It does three jobs at once:
+
+1. **It makes the document honest.** A section the exercises genuinely settled reads as
+   settled. A section they did not reads as open, instead of being padded with confident
+   prose the data does not support.
+2. **It gives the reader a way in.** "You have not decided who this is not for" is a
+   sentence a founder can act on. Twenty-eight pages of positioning is not.
+3. **It is the sales surface, generated from their own data.** The list of things they
+   cannot resolve alone is the reason to book the Reading, in their words, about their
+   brand, with no marketing attached to it.
+
+This agent earns more than anything else in the plan for what it costs. It sits above the
+content line, it deepens the asset rather than draining it, and it converts.
+
+### 6.3 The Reading · the human, time-boxed
+
+Ninety minutes, live, recorded. Not a discovery call and not a rewrite of the Platform.
+Nizzar reads their document with them, pushes on the open questions, and the session
+closes with a **Direction Note**: four to six pages appended to their Platform, signed and
+dated, covering what the reading changed, the decisions they were avoiding, and the first
+ninety days. It lands in their archive and re-renders into the same PDF.
+
+Total operator time is about two and a half hours, because the system hands Nizzar a
+**pre-read brief** before the call: their answers, their contradictions, their flags and
+their open questions on one screen. That brief is what makes ninety minutes profitable
+instead of ninety minutes of catching up.
+
+### 6.4 The capacity math, stated plainly
+
+The Reading does not scale and should not be expected to. Four a month at $490 is about
+$2,000. The revenue engine at volume is $79 multiplied by traffic, which is why the Bing
+and AI-answer position already built matters more than any pricing decision in this note.
+The Reading is a qualification instrument that feeds Atelier, and it should be priced for
+velocity rather than for margin. $490 is the recommendation. $690 is defensible and will
+sell more slowly.
+
+---
+
+## 7. The portion problem
+
+Free and unlimited are different words. A complete foundation is nine Sonnet runs, plus
+the Open Questions agent. At roughly 8k input and 4k output per agent, that is near
+**$0.80 per foundation** at current Sonnet pricing. The estimate needs verifying against
+real runs before launch.
+
+What keeps it affordable: one free brand per account, each agent capped at two runs on the
+free path, re-collapse reserved for Platform owners, Sensescape already on Haiku 4.5 with
+any other agent that holds quality moving there, a per-account daily rate limit, and a
+hard monthly ceiling on free runs with an operator alert before it is reached.
+
+---
+
+## 8. Build plan
+
+**Phase 1 · Operator-only gate.** `OPERATOR_ONLY_SLUGS` keyed on authenticated user id,
+the seven pages off every public surface, `noindex`, sitemap rebuild.
+Gate: `node scripts/registry-smoke.mjs` output pasted verbatim into the PR body, then an
+unauthenticated probe of `POST /api/agents/run` and `GET /api/agents/console` confirming
+handler-level 401 post-deploy.
+
+**Phase 2 · One tool, four movements.** `tools.html`, `ecosystem.html` and `index.html`
+rewritten around Observe, Collapse, Build, Hold, with the ten agents as steps inside one
+flow rather than a catalogue.
 Gate: `tests/site-audit/audit.mjs` and `tests/brand-casing/casing-audit.mjs` green.
 
-**Phase 3 · Brand Spec export.** The export surface on `foundation.html` plus the
-endpoint. JSON spec, prompt pack, rules file. This is what makes Keep worth paying for.
-Gate: a real foundation exported and pasted into a fresh Claude project, producing
-on-brand copy with no other context.
+**Phase 3 · The Open Questions agent.** New agent, brand level, reads the locked
+foundation, emits settled and open per section. Registry merge gate applies.
+Gate: run against three real foundations of different completeness and confirm the open
+list actually differs between them.
 
-**Phase 4 · The money.** Free path opened end to end, per-brand entitlements replacing
-tier strings in `api/_lib/tier-gating.js`, one-time payment mode in
-`api/stripe/checkout.js` and the webhook, `payment.html` rebuilt on three lines plus
-Atelier, the three subscription prices archived in Stripe.
-Gate: test-mode purchase of Keep, Intelligence and Studio, each verified to grant the
-right entitlement on the right brand and nothing else.
+**Phase 4 · The Platform renderer.** The $79 artifact. The Rapp &amp; Esen HTML architecture
+turned into a template driven by the locked QBP, ivory `#FBFAF6` per the client-document
+rule, with the How to read this spread and the What to do Monday page built in.
+`docs/clients/rapp-esen/render.mjs` is the starting point: it already reports per-page
+A4 overflow, and that check becomes a standing harness rather than a script someone
+remembers to run.
+Gate: no page clips its sheet, on three real foundations, at A4.
 
-**Phase 5 · Re-audit and resubmit.** Sitemap drops seven URLs, IndexNow push,
+**Phase 5 · The money.** Per-brand entitlements replacing tier strings in
+`api/_lib/tier-gating.js`, one-time payment mode in `api/stripe/checkout.js` and the
+webhook, `payment.html` rebuilt on two purchasable lines plus Atelier, subscription prices
+archived.
+Gate: test-mode purchase of the Platform verified to grant the right entitlement on the
+right brand and nothing else.
+
+**Phase 6 · The Reading apparatus.** Booking link, the operator pre-read brief screen, the
+Direction Note template appended to the Platform and re-rendered.
+Gate: one Reading run end to end with a real person.
+
+**Phase 7 · Re-audit and resubmit.** Sitemap drops seven URLs, IndexNow push,
 `tests/seo-bing/bing-audit.mjs`, `tests/auth-flow/`.
-Side benefit: the open SEO problem is sixteen tool pages shipping 103 static words.
-This cut reduces it to nine before a single word of static copy is written.
 
 ---
 
-## 8. Open numbers
+## 9. Deferred, deliberately
 
-1. **Keep at $79, or lower.** $79 is impulse-priced against a free steak. $49 converts
-   harder to argue with. $149 treats the Brand Document as the deliverable it is.
-2. **Free brands per account.** One is the safe answer. Two makes the free tier feel
-   generous at roughly double the API cost.
-
-Everything else in this note is decided.
+- **Studio and white-label.** No audience yet, slow to sell.
+- **The Brand Spec export** (JSON plus prompt pack). A good idea for an audience that
+  arrives later. It folds into the Platform as an extra file when it does.
+- **Hold as a paid line.** Brand Performance, Quarterly Review and Predictive Panel stay
+  built and stay operator-reachable. They are not sold until the Platform has volume,
+  because Intelligence about a brand nobody has locked yet is a product without a user.
 
 ---
 
-*docs/strategy/brandos-recut-v1.md · BrandOS · September 2026*
+## 10. Open
+
+One number: the Reading at $490 or $690. The Platform is settled at $79.
+
+---
+
+*docs/strategy/brandos-recut-v1.md · v1.1 · BrandOS · September 2026*
