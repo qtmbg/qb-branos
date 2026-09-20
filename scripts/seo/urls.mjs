@@ -51,13 +51,6 @@ export const URLS = [
   { path: '/voice-guide-agent.html',       file: 'voice-guide-agent.html',            priority: '0.6', changefreq: 'monthly', tier: 'tool' },
 
   // Tier 4. Phase 04, Content.
-  { path: '/instagram-seed-agent.html',        file: 'instagram-seed-agent.html',         priority: '0.6', changefreq: 'monthly', tier: 'tool' },
-  { path: '/linkedin-strategy-agent.html',     file: 'linkedin-strategy-agent.html',      priority: '0.6', changefreq: 'monthly', tier: 'tool' },
-  { path: '/youtube-strategy-agent.html',      file: 'youtube-strategy-agent.html',       priority: '0.6', changefreq: 'monthly', tier: 'tool' },
-  { path: '/newsletter-architecture-agent.html',file:'newsletter-architecture-agent.html', priority: '0.6', changefreq: 'monthly', tier: 'tool' },
-  { path: '/content-bridge.html',              file: 'content-bridge.html',               priority: '0.6', changefreq: 'monthly', tier: 'tool' },
-  { path: '/content-repurposing-engine.html',  file: 'content-repurposing-engine.html',   priority: '0.6', changefreq: 'monthly', tier: 'tool' },
-  { path: '/content-scheduler.html',           file: 'content-scheduler.html',            priority: '0.6', changefreq: 'monthly', tier: 'tool' },
 
   // Tier 4. Phase 05, Execution.
   { path: '/predictive-panel..html',       file: 'predictive-panel..html',            priority: '0.6', changefreq: 'monthly', tier: 'tool' },

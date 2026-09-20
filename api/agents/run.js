@@ -41,6 +41,7 @@
 export const config = { runtime: 'nodejs', maxDuration: 300 };
 
 import { AGENTS, LATENCY_BUDGET_WARNINGS, getAgent } from '../../agents/registry.js';
+import { isOperatorOnlyHidden } from '../_lib/operator-only.js';
 import { DEFAULT_RETRY_BUDGET, DEFAULT_MODEL, CANONICAL_TIERS } from '../../agents/contract.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
 import { sendEmail, renderTemplate, EMAIL_TEMPLATES, getAgentEmailVars } from '../_lib/email.js';
@@ -532,6 +533,15 @@ async function handler(req) {
   // split). Real agents resolve from the frozen AGENTS map.
   const agent = getAgent(agent_slug);
   if (!agent) {
+    return json(400, { ok: false, error: 'unknown_agent', stage: 'registry',
+                        detail: `slug=${agent_slug}` }, corsH);
+  }
+  // Recut Phase 1 · api/_lib/operator-only.js. The seven content agents
+  // answer as non-existent to every user id outside OPERATOR_USER_IDS.
+  // Byte-identical to the branch above so the gate discloses nothing.
+  // Defence in depth: /api/agents/dispatch gates before it reaches here,
+  // and this catches any other caller holding the inter-edge secret.
+  if (isOperatorOnlyHidden(agent_slug, user_id)) {
     return json(400, { ok: false, error: 'unknown_agent', stage: 'registry',
                         detail: `slug=${agent_slug}` }, corsH);
   }
