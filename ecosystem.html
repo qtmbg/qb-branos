@@ -1036,6 +1036,11 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   .phase-card_eye.is-content   .phase-card_eye_dot { background:var(--phase-content); }
   .phase-card_eye.is-execution .phase-card_eye_dot { background:var(--phase-execution); }
   .phase-card_eye.is-intel     .phase-card_eye_dot { background:var(--phase-intelligence); }
+  /* Four movements of The Collapse · recut 2026-09-20 */
+  .phase-card_eye.is-observe  .phase-card_eye_dot { background:var(--phase-discovery); }
+  .phase-card_eye.is-collapse .phase-card_eye_dot { background:var(--gold); }
+  .phase-card_eye.is-build    .phase-card_eye_dot { background:var(--phase-creation); }
+  .phase-card_eye.is-hold     .phase-card_eye_dot { background:var(--phase-intelligence); }
 
   /* Illustration card - wraps editorial PNG or video */
   .qb-illus-card {
@@ -1097,6 +1102,10 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   .qb-phone.is-content   .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-content) 100%); }
   .qb-phone.is-execution .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-execution) 100%); }
   .qb-phone.is-intel     .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-intelligence) 100%); }
+  .qb-phone.is-observe  .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-discovery) 100%); }
+  .qb-phone.is-collapse .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--gold) 100%); }
+  .qb-phone.is-build    .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-creation) 100%); }
+  .qb-phone.is-hold     .qb-phone_screen { background:linear-gradient(180deg, var(--cream) 0%, var(--phase-intelligence) 100%); }
 
   .pm_eye {
     font-family:'JetBrains Mono',monospace; font-size:0.52rem;
@@ -2275,10 +2284,10 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
         Free forever tier · No credit card · 5 min to your first brand
       </div>
 
-      <!-- 20 agent pills cluster. Brand Profile is the spine (gold anchor); each
+      <!-- Agent pills cluster. Brand Profile is the spine (gold anchor); each
            agent's dot picks up its own phase colour so the constellation reads
            as a system, not a random list. -->
-      <div class="agent-cluster" aria-label="The 20 connected agents">
+      <div class="agent-cluster" aria-label="The ten connected brand agents">
         <span class="agent-pill is-anchor" style="--d:9s;--dl:0s"><span class="agent-pill_dot"></span>Brand Profile</span>
         <span class="agent-pill is-acquire" style="--d:7s;--dl:-0.4s"><span class="agent-pill_dot"></span>Signal Scan</span>
         <span class="agent-pill is-discover" style="--d:8s;--dl:-1s"><span class="agent-pill_dot"></span>Archetype Compass</span>
@@ -2323,10 +2332,10 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   <section class="stat-block">
     <div class="qb-x-narrow">
       <h2 class="qb-type-heading qb-type-balance qb-type-center reveal">
-        <span class="underlined">14 tools</span>, one <em>brain.</em>
+        <span class="underlined">Four movements</span>, one <em>brand.</em>
       </h2>
       <p class="qb-type-opening qb-type-pretty qb-type-center reveal rd1" style="margin-top:var(--space-s)">
-        One Brand Profile. Every tool reads from it. You answer questions once. Identity, voice, content, and strategy stay connected. Nothing drifts. Everything compounds.
+        Observe, Collapse, Build, Hold. One Brand Profile behind all four. You answer once, and identity, voice and strategy stay connected. Nothing drifts. Everything compounds.
       </p>
     </div>
   </section>
@@ -2449,16 +2458,16 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
 
       <div class="phase-spreads">
 
-        <!-- Phase 01 - Discovery -->
+        <!-- Observe -->
         <article class="phase-spread reveal is-left">
           <div class="phase-spread_text">
-            <span class="phase-card_eye is-discovery"><span class="phase-card_eye_dot"></span>Phase 01 · Discovery</span>
-            <h3 class="phase-spread_h">Your identity, <em>articulated.</em></h3>
-            <p class="qb-type-text">Signal Scan, Archetype Compass, Brand Soul Map, Sensescape. Four agents take you from idea to a Brand Profile that names what you stand for and how you sound.</p>
+            <span class="phase-card_eye is-observe"><span class="phase-card_eye_dot"></span>Observe</span>
+            <h3 class="phase-spread_h">What you already <em>know.</em></h3>
+            <p class="qb-type-text">Signal Scan, Brand Soul Map, Sensescape, The Profiles. You answer, the system listens, and the thing you have been circling for months gets written down in words you recognise.</p>
             <a href="brand-soul-map.html" class="qb-button is-sm"><span class="qb-button_content">Open Brand Soul Map →</span></a>
           </div>
           <div class="phase-spread_visual">
-            <div class="qb-phone is-discovery">
+            <div class="qb-phone is-observe">
               <div class="qb-phone_screen">
                 <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
                 <div class="qb-phone_body">
@@ -2480,16 +2489,16 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
           </div>
         </article>
 
-        <!-- Phase 02 - Creation -->
+        <!-- Collapse -->
         <article class="phase-spread reveal is-right">
           <div class="phase-spread_text">
-            <span class="phase-card_eye is-creation"><span class="phase-card_eye_dot"></span>Phase 02 · Creation</span>
-            <h3 class="phase-spread_h">Logo direction <em>+ voice guide.</em></h3>
-            <p class="qb-type-text">Visual DNA, War Table, Logo Direction, Logo Evaluation, Voice Guide. The brand becomes visible. A palette that holds. A voice that prints.</p>
-            <a href="voice-guide-agent.html" class="qb-button is-sm"><span class="qb-button_content">Open Voice Guide →</span></a>
+            <span class="phase-card_eye is-collapse"><span class="phase-card_eye_dot"></span>Collapse</span>
+            <h3 class="phase-spread_h">The moment you <em>choose.</em></h3>
+            <p class="qb-type-text">Archetype Compass, Visual DNA, War Table. Options stop multiplying. One archetype, one palette, one position, each of them argued against the ones you turned down. This is the part a chat window will never do for you.</p>
+            <a href="archetype-compass.html" class="qb-button is-sm"><span class="qb-button_content">Open Archetype Compass →</span></a>
           </div>
           <div class="phase-spread_visual">
-            <div class="qb-phone is-creation">
+            <div class="qb-phone is-collapse">
               <div class="qb-phone_screen">
                 <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
                 <div class="qb-phone_body">
@@ -2507,7 +2516,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
                   <div class="pm_chips">
                     <div class="pm_chip"><span>Type · Display</span><span class="pm_chip_v">Fraunces</span></div>
                     <div class="pm_chip"><span>Type · Body</span><span class="pm_chip_v">Inter</span></div>
-                    <div class="pm_chip"><span>Logo brief</span><span class="pm_chip_v">Ready</span></div>
+                    <div class="pm_chip"><span>Position</span><span class="pm_chip_v">Locked</span></div>
                   </div>
                 </div>
               </div>
@@ -2515,17 +2524,48 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
           </div>
         </article>
 
-        <!-- Phase 05 - Intelligence -->
+        <!-- Build -->
+        <article class="phase-spread reveal is-left">
+          <div class="phase-spread_text">
+            <span class="phase-card_eye is-build"><span class="phase-card_eye_dot"></span>Build</span>
+            <h3 class="phase-spread_h">Logo direction <em>+ voice guide.</em></h3>
+            <p class="qb-type-text">Logo Direction, Logo Evaluation, Voice Guide, Brand Document. The decision becomes an object. Something a designer can work from and an investor will accept.</p>
+            <a href="voice-guide-agent.html" class="qb-button is-sm"><span class="qb-button_content">Open Voice Guide →</span></a>
+          </div>
+          <div class="phase-spread_visual">
+            <div class="qb-phone is-build">
+              <div class="qb-phone_screen">
+                <div class="qb-phone_status"><span>9:41</span><span>●●●</span></div>
+                <div class="qb-phone_body">
+                  <div class="pm_eye">Logo brief · Direction 02</div>
+                  <div class="pm_h">Three routes,<br>one brief.</div>
+                  <div class="pm_quote">A voice that prints.</div>
+                  <div class="pm_chips">
+                    <div class="pm_chip"><span>Type · Display</span><span class="pm_chip_v">Fraunces</span></div>
+                    <div class="pm_chip"><span>Type · Body</span><span class="pm_chip_v">Inter</span></div>
+                    <div class="pm_chip"><span>Designer brief</span><span class="pm_chip_v">Ready</span></div>
+                  </div>
+                  <div class="pm_tags">
+                    <span>Anti-patterns</span>
+                    <span>Named</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Hold -->
         <article class="phase-spread reveal is-zoom">
           <div class="phase-spread_text">
-            <span class="phase-card_eye is-intel"><span class="phase-card_eye_dot"></span>Phase 05 · Intelligence</span>
+            <span class="phase-card_eye is-hold"><span class="phase-card_eye_dot"></span>Hold</span>
             <h3 class="phase-spread_h">Smarter <em>every 90 days.</em></h3>
             <p class="qb-type-text">Performance Dashboard, Quarterly Review, Predictive Panel, BrandOS Hub. The system measures itself and tells you what to scale, fix, kill.</p>
             <a href="brand-performance-dashboard.html" class="qb-button is-sm"><span class="qb-button_content">Open Dashboard →</span></a>
           </div>
           <div class="phase-spread_visual">
             <figure class="qb-illus-card is-intel">
-              <video src="img/illus/phase_5.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Phase 05 Intelligence scene."></video>
+              <video src="img/illus/phase_5.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Hold. Intelligence scene."></video>
             </figure>
           </div>
         </article>
@@ -2731,9 +2771,9 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     <div class="qb-x">
       <header class="section_header">
         <span class="qb-tag is-soft"><span class="qb-tag_content">Pricing</span></span>
-        <h2 class="qb-type-heading qb-type-balance reveal">Phase 01 free. <em>Phases 02 to 05 paid.</em></h2>
+        <h2 class="qb-type-heading qb-type-balance reveal">The scan is free. <em>The agents do the work.</em></h2>
         <p class="pricing-tagline reveal rd1"><em>Free steak, paid fries.</em></p>
-        <p class="qb-type-opening qb-type-pretty reveal rd2">Phase 01 is radically free, forever. Phase 02 to 05 is where the agents do the work for you.</p>
+        <p class="qb-type-opening qb-type-pretty reveal rd2">Signal Scan and your Brand Profile are radically free, forever. The agents are where the work gets done for you.</p>
         <div class="billing-toggle reveal rd3" role="tablist" aria-label="Billing period">
           <button type="button" class="bt-opt active" data-billing="monthly" role="tab" aria-selected="true">Monthly</button>
           <button type="button" class="bt-opt" data-billing="annual" role="tab" aria-selected="false">Annual <span class="bt-save">save 17%</span></button>
@@ -2767,8 +2807,8 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
           </div>
           <p class="price-desc">Everything in Brand Profile, plus all ten brand agents.</p>
           <ul class="price-feats">
-            <li class="price-feat">All Phase 02 Brand Creation agents</li>
-            <li class="price-feat">All Phase 05 Intelligence agents</li>
+            <li class="price-feat">Every Build agent: logo direction, logo evaluation, voice guide</li>
+            <li class="price-feat">Every Hold agent: performance, quarterly review, predictive panel</li>
             <li class="price-feat">Unlimited runs</li>
             <li class="price-feat">14-day money-back guarantee</li>
           </ul>
@@ -3099,7 +3139,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     });
   })();
 
-  // Hover-play videos (Phase 04 + Founder portrait)
+  // Hover-play videos (Hold + Founder portrait)
   (function () {
     document.querySelectorAll('[data-hover-play]').forEach(function (v) {
       var play = function () { try { v.play(); } catch (_) {} };
