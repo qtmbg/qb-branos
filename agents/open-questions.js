@@ -1,0 +1,403 @@
+// agents/open-questions.js
+// Recut Phase 3 · docs/strategy/brandos-recut-v1.md Part 10.
+//
+// The hinge of the recut. It reads the whole delivered foundation and
+// says, section by section, what the exercises SETTLED and what they
+// LEFT OPEN.
+//
+// Three jobs on one build:
+//   1. Honesty. A section the answers settled reads as settled. A
+//      section they did not reads as open, instead of being padded with
+//      confident prose the data does not support.
+//   2. A way in. "You have not decided who this is not for" is a
+//      sentence a founder can act on. Twenty-eight pages of positioning
+//      is not. This is the direct answer to the operator's observation
+//      that a beautiful document can be unreadable.
+//   3. The door. The list of what they cannot resolve alone is the
+//      reason to write in, phrased in their language, about their brand,
+//      with nothing promotional attached.
+//
+// Phase '01' and tier 'free' by design. This runs on the free path: it
+// is the closing move of Observe and Collapse, not a paid add-on. It
+// depends on the complete Phase 01 foundation, because a verdict on what
+// the exercises settled is meaningless before they are finished.
+//
+// Craft note, binding: this agent is the one place in BrandOS that is
+// allowed to say the system does not know something. It must use that
+// licence. An open list that hedges everything is as useless as a
+// settled list that claims everything.
+
+const MAX_TOKENS = 3000;
+const CLAUDE_TIMEOUT_MS = 60000;
+const DEFAULT_BRAND_NAME = 'Your Brand';
+
+export const OPEN_QUESTIONS_FIELDS = [
+  'brandName',
+  'brandEssence',
+  'archetypePrimary',
+  'archetypeSecondary',
+  'manifesto',
+  'antiBrand',
+  'antiVoice',
+  'paradox',
+  'alwaysNever',
+  'audienceLanguage',
+  'audienceDesires',
+  'audienceFears',
+  'competitorSet',
+  'visualDirection',
+];
+
+const REQUIRED_FIELDS = new Set(['archetypePrimary']);
+
+export const META = {
+  slug: 'open_questions_agent',
+  phase: '01',
+  tier_required: 'free',
+  display_name: 'Open Questions',
+  description: 'Reads your finished foundation and says, section by section, what the exercises settled and what they left open. The open list names the decision you are avoiding.',
+  artifact_type: 'open_questions_agent',
+  version: 1,
+  inputs: {
+    qbp_fields: OPEN_QUESTIONS_FIELDS.map(field => ({
+      field,
+      required: REQUIRED_FIELDS.has(field),
+    })),
+    // The complete Phase 01 foundation. All four are hard dependencies
+    // on purpose: a verdict on what the exercises settled cannot be
+    // issued before the exercises are finished, and a partial read would
+    // report a gap that is really just an unfinished step.
+    artifact_dependencies: [
+      'soul_map_synthesizer',
+      'sensescape_synthesizer',
+      'visual_dna_synthesizer',
+      'war_table_synthesizer',
+    ],
+    files: [],
+    runtime_args: { feedback: 'optional', qbp_source: 'optional' },
+  },
+  triggers: ['manual', 'regenerate'],
+  error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
+  // model omitted · resolves to the canonical Sonnet default. This agent
+  // makes judgement calls about sufficiency of evidence, which is the
+  // one thing not to economise on.
+  retry_budget: 0,
+};
+
+const MODEL = META.model || 'claude-sonnet-4-6';
+
+// ─── The prompt ─────────────────────────────────────────────────────────
+
+export const SYSTEM_PROMPT = `You are the Open Questions Agent for BrandOS.
+
+The founder has finished the foundation. Observe and Collapse are done: they have a Soul Map, a Sensescape, a Visual DNA and a War Table. Your job is the honest audit of that work. Section by section, you say what the exercises SETTLED and what they LEFT OPEN.
+
+You are the one agent in this system permitted to say the system does not know something. Use that licence. Every other agent is built to produce an answer. You are built to tell the truth about how well the answer is supported.
+
+Voice: calm, editorial, direct. A trusted reader handing back a marked-up draft, not a consultant presenting findings. Address the founder as "you / your brand." Sentence fragments are welcome. Do not pad, do not soften, do not apologise.
+
+Voice mechanics (hard rules):
+- Never use an em dash. Use a period, a comma, or two sentences.
+- No exclamation points.
+- Banned words: empower, unlock, supercharge, seamless, leverage as a verb, journey as a user path, elevate, timeless, iconic, authentic, engaging, robust, holistic.
+
+How to judge SETTLED:
+- A thing is settled when the founder's own answers force it. The archetype is settled if the Soul Map, the anti-brand and the audience language all point the same way. Quote the founder's own phrase where it earned the verdict.
+- Settled does not mean good. It means decided, and traceable to something they said. Say what decided it.
+- Do not mark something settled because it sounds finished. A confident sentence generated from thin input is the exact failure you exist to catch.
+
+How to judge OPEN:
+- A thing is open when the exercises did not force it, when two answers pull against each other, or when the founder answered around the question rather than through it.
+- Name the DECISION, not the gap. "Who this is not for" beats "audience definition needs work." "Whether the second line carries the promise or drops it" beats "product strategy is unclear."
+- Say WHY it is open in one line, pointing at the specific tension or the specific silence. Contradictions are the most valuable thing you can find, so surface them plainly and name both sides.
+- Rank the open decisions by what blocks the most downstream work. The thing a designer cannot start without ranks above the thing that can wait a quarter.
+- Never invent a gap to fill a quota. If the foundation is genuinely strong in an area, say so and move on. Three real open decisions beat eight manufactured ones.
+
+The closing section is about what a person adds that a document cannot. Be specific to THIS brand and THIS foundation: name the one or two open decisions that need a conversation rather than another exercise, and say why the answer has to be argued rather than generated. No pitch, no urgency, no pricing. If the foundation is strong enough that nothing needs a conversation, say that instead. Honesty here is worth more than a booking.
+
+Length rules (strict):
+- Each prose field: exactly TWO short paragraphs, joined with \\n\\n. Each paragraph is 2-3 sentences.
+- Each settled or open item: one line. The decision first, the evidence or the tension after.
+
+Return ONLY a JSON object with this shape. No prose preamble. No markdown fencing.
+
+{
+  "opening": "two short paragraphs · what this reading is, and the honest headline on how complete the foundation is",
+  "what_holds": "two short paragraphs · the strongest part of the foundation and what makes it strong, quoting the founder",
+  "settled": ["four to eight lines, each one decision the exercises settled, with what settled it"],
+  "open": [
+    { "rank": 1, "label": "the decision, named as a decision", "rationale": "one line on the tension or the silence that leaves it open" }
+  ],
+  "the_contradiction": "two short paragraphs · the single sharpest tension in the foundation, both sides named fairly, and what resolving it would change. If there is genuinely no contradiction, say so and explain what that means.",
+  "where_a_person_helps": "two short paragraphs · which open decisions need argument rather than another exercise, and why"
+}
+
+Provide three to seven open decisions, ranked from 1 with no gaps. Do not refuse to answer. Do not include any field other than the ones above.`;
+
+function pickInput(qbp) {
+  const safe = (qbp && typeof qbp === 'object') ? qbp : {};
+  const out = {};
+  const missing = [];
+  for (const k of OPEN_QUESTIONS_FIELDS) {
+    const v = safe[k];
+    let isPresent;
+    if (typeof v === 'string') isPresent = v.trim().length > 0;
+    else if (typeof v === 'number') isPresent = Number.isFinite(v);
+    else if (Array.isArray(v)) isPresent = v.length > 0;
+    else if (v && typeof v === 'object') isPresent = Object.keys(v).length > 0;
+    else isPresent = false;
+    if (isPresent) out[k] = v;
+    else missing.push(k);
+  }
+  return { input: out, missing };
+}
+
+function distillDependency(slug, dep) {
+  const content = dep?.content;
+  if (!content || typeof content !== 'object') return `${slug}: <not available>`;
+  const sections = (content.body_sections || [])
+    .map(s => `${s.heading}: ${s.prose}`)
+    .join('\n');
+  const blocks = (content.data_blocks || [])
+    .map(b => `${b.type}: ${JSON.stringify(b.content)}`)
+    .join('\n');
+  return `${slug} (delivered artifact):\n${sections}\n${blocks}`;
+}
+
+function defensiveParseJson(text) {
+  if (typeof text !== 'string' || !text.trim()) {
+    return { ok: false, reason: 'empty-text' };
+  }
+  let raw = text.trim();
+  const fenceMatch = raw.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
+  if (fenceMatch) raw = fenceMatch[1].trim();
+  try {
+    return { ok: true, value: JSON.parse(raw) };
+  } catch (_) {}
+  const start = raw.indexOf('{');
+  const end = raw.lastIndexOf('}');
+  if (start !== -1 && end !== -1 && end > start) {
+    try {
+      return { ok: true, value: JSON.parse(raw.substring(start, end + 1)) };
+    } catch (_) {}
+  }
+  return { ok: false, reason: 'parse-failed', raw };
+}
+
+async function callClaude({ apiKey, system, userContent }) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), CLAUDE_TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: MAX_TOKENS,
+        system,
+        messages: [{ role: 'user', content: userContent }],
+      }),
+      signal: controller.signal,
+    });
+  } catch (e) {
+    clearTimeout(timer);
+    if (e && e.name === 'AbortError') {
+      return { ok: false, retryable: false, timeout: true, status: 0, body: '' };
+    }
+    return { ok: false, retryable: true, status: 0, body: (e && e.message) || '' };
+  }
+  clearTimeout(timer);
+
+  if (res.status === 429 || res.status >= 500) {
+    return { ok: false, retryable: true, status: res.status, body: await res.text().catch(() => '') };
+  }
+  if (!res.ok) {
+    return { ok: false, retryable: false, status: res.status, body: await res.text().catch(() => '') };
+  }
+  const data = await res.json();
+  const text = data?.content?.[0]?.text || '';
+  const usage = data?.usage || {};
+  return {
+    ok: true,
+    text,
+    tokens_in: usage.input_tokens ?? null,
+    tokens_out: usage.output_tokens ?? null,
+  };
+}
+
+// priority_list is validated strictly: 1..10 items, ranks unique and
+// sequential from 1. The model is asked for that shape and usually
+// returns it, but a renumber here means one stray rank cannot fail the
+// whole artifact after a paid model call has already been spent.
+export function normalizeOpen(rawOpen) {
+  const list = Array.isArray(rawOpen) ? rawOpen : [];
+  const cleaned = list
+    .map(o => ({
+      label: String(o?.label ?? '').trim(),
+      rationale: String(o?.rationale ?? '').trim(),
+    }))
+    .filter(o => o.label.length > 0 && o.rationale.length > 0)
+    .slice(0, 10);
+  if (cleaned.length === 0) {
+    return [{
+      rank: 1,
+      label: 'Nothing was left open that the exercises could settle',
+      rationale: 'The foundation answered every question it was built to ask. The next move is a conversation, not another exercise.',
+    }];
+  }
+  return cleaned.map((o, i) => ({ rank: i + 1, label: o.label, rationale: o.rationale }));
+}
+
+export function assembleArtifact({ parsed, brandName, missingFields }) {
+  const safeBrand = (typeof brandName === 'string' && brandName.trim())
+    ? brandName.trim()
+    : DEFAULT_BRAND_NAME;
+
+  const settled = (Array.isArray(parsed.settled) ? parsed.settled : [])
+    .map(String)
+    .map(s => s.trim())
+    .filter(s => s.length > 0)
+    .slice(0, 12);
+
+  const body_sections = [
+    { heading: 'What this reading is',   prose: parsed.opening },
+    { heading: 'What holds',             prose: parsed.what_holds },
+    { heading: 'The contradiction',      prose: parsed.the_contradiction },
+    { heading: 'Where a person helps',   prose: parsed.where_a_person_helps },
+  ];
+
+  const data_blocks = [
+    {
+      type: 'descriptor_list',
+      title: 'Settled by your own answers',
+      content: {
+        groups: [
+          {
+            label: 'Decided, and here is what decided it',
+            items: settled.length > 0
+              ? settled
+              : ['<the exercises settled nothing the system could verify>'],
+          },
+        ],
+      },
+    },
+    {
+      type: 'priority_list',
+      title: 'Still open, ranked by what they block',
+      content: { items: normalizeOpen(parsed.open) },
+    },
+  ];
+
+  return {
+    schema_version: '1.0',
+    header: {
+      eyebrow: 'Collapse · Open Questions',
+      title: `What ${safeBrand} Has Not Decided`,
+      agent: META.slug,
+      generated_at: new Date().toISOString(),
+      version: 1,
+    },
+    body_sections,
+    data_blocks,
+    footer: {
+      qbp_fields_referenced: OPEN_QUESTIONS_FIELDS.filter(f => !missingFields.includes(f)),
+    },
+  };
+}
+
+export async function run({ qbp, dependencies = {}, files = [], runtime_args = {}, anthropicKey }) {
+  const t_start = Date.now();
+
+  if (!anthropicKey) {
+    return { ok: false, error: 'config_missing', stage: 'config' };
+  }
+
+  const { input, missing } = pickInput(qbp);
+
+  const qbpBlocks = OPEN_QUESTIONS_FIELDS.map(k => {
+    const v = input[k];
+    if (v == null) return `${k}: <not provided by user>`;
+    if (typeof v === 'string') return `${k}: ${v}`;
+    return `${k}: ${JSON.stringify(v)}`;
+  }).join('\n\n');
+
+  const depBlocks = META.inputs.artifact_dependencies
+    .map(slug => distillDependency(slug, dependencies?.[slug]))
+    .join('\n\n');
+
+  // The list of fields the founder left blank is evidence, not noise. A
+  // silence is one of the two ways a decision stays open, so the agent
+  // is told which questions went unanswered rather than having to infer
+  // it from an absence in the prompt.
+  const silenceBlock = missing.length > 0
+    ? `Questions the founder left unanswered (treat each silence as evidence, not as an error):\n${missing.join(', ')}`
+    : 'The founder answered every question the profile asked.';
+
+  let userText =
+    `Founder's QBP signals:\n\n${qbpBlocks}\n\n${silenceBlock}\n\n` +
+    `The delivered foundation:\n\n${depBlocks}`;
+
+  const feedback = typeof runtime_args?.feedback === 'string' && runtime_args.feedback.trim()
+    ? runtime_args.feedback.trim()
+    : null;
+  if (feedback) {
+    userText += `\n\nRevision feedback from the founder (apply concretely):\n${feedback}`;
+  }
+
+  userText += '\n\nReturn only the JSON object described in your instructions.';
+
+  let claudeRes;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    claudeRes = await callClaude({ apiKey: anthropicKey, system: SYSTEM_PROMPT, userContent: userText });
+    if (claudeRes.ok) break;
+    if (!claudeRes.retryable) break;
+    await new Promise(r => setTimeout(r, 600));
+  }
+
+  if (!claudeRes.ok) {
+    if (claudeRes.timeout) {
+      return { ok: false, error: 'edge_timeout', stage: 'claude-call' };
+    }
+    return {
+      ok: false,
+      error: 'model_call_failed',
+      stage: 'claude-call',
+      detail: `status=${claudeRes.status} body=${(claudeRes.body || '').slice(0, 200)}`,
+    };
+  }
+
+  const parsed = defensiveParseJson(claudeRes.text);
+  if (!parsed.ok) {
+    return {
+      ok: false,
+      error: 'model_call_failed',
+      stage: 'json-parse',
+      detail: (claudeRes.text || '').slice(0, 400),
+    };
+  }
+
+  const content = assembleArtifact({
+    parsed: parsed.value,
+    brandName: (qbp && typeof qbp === 'object') ? qbp.brandName : '',
+    missingFields: missing,
+  });
+
+  return {
+    ok: true,
+    content,
+    missing,
+    meta: {
+      agent_slug: META.slug,
+      phase: META.phase,
+      model: MODEL,
+      tokens_in: claudeRes.tokens_in,
+      tokens_out: claudeRes.tokens_out,
+      duration_ms: Date.now() - t_start,
+    },
+  };
+}

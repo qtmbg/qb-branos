@@ -262,7 +262,15 @@ export default async function handler(req) {
   // dashes across all ten, no-invention guard confirmed present), and all
   // ten released together so paying founders can reach every phase they
   // are billed for.
-  const PROMPT_HOLD_SLUGS = new Set([]);
+  // Recut Phase 3 · open_questions_agent is held for two reasons, and
+  // BOTH must clear before the slug is removed from this set:
+  //   1. Standing policy · the operator signs the prompt.
+  //   2. Its live path is UNVERIFIED. The Anthropic account had no
+  //      credit on 2026-09-20, so every live call returned 400
+  //      "credit balance is too low" and the happy path could not be
+  //      exercised even once. Offline conformance and the dedicated
+  //      harness are green; that is not the same as working.
+  const PROMPT_HOLD_SLUGS = new Set(['open_questions_agent']);
   //
   // OPERATOR_ONLY_SLUGS · recut 2026-09-20, docs/strategy/brandos-recut-v1.md.
   // The seven Phase 03 and Phase 04 content agents left the public product.
