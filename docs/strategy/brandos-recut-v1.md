@@ -1,8 +1,8 @@
 # BrandOS recut · brand only, free steak
 ## Strategy note v1 · 2026-09-20
 
-Status: v1.1, 2026-09-20. Parts 5 to 8 revised after the operator dropped the Studio tier and
-named the real second rung. Parts 1 to 4 stand as written.
+Status: v1.2, 2026-09-20. Parts 5 onward rewritten around one commercial decision: two prices,
+one door, and no middle tier. Parts 1 to 4 stand as written.
 
 ---
 
@@ -97,168 +97,213 @@ Reversal is a one-line change to the set.
 
 ---
 
-## 5. The offer ladder
+## 5. What is cheap now, and what is not
 
-Studio and white-label are cut. They serve an audience that does not exist yet and they
-are slow to sell. Four rungs remain, and every rung is the same object at more depth.
+Intelligence went to zero. A founder with a chat window can have a positioning statement, an
+archetype, a tone-of-voice guide and a competitor read in twenty minutes, at no cost, tonight.
+Any plan that sells brand thinking as information is selling something the market already
+gives away.
 
-| Rung | Price | What it is |
+So the question is not what BrandOS knows. It is what stays scarce.
+
+| Cheap now | Still scarce |
+|---|---|
+| Analysis, synthesis, frameworks | Being forced to choose |
+| Articulate prose about a brand | Judgment with someone accountable behind it |
+| Options, endlessly | An artifact a designer or an investor will accept |
+| Generic competence | Taste |
+
+The middle column is what a chat window is structurally bad at. It never makes anyone decide.
+It offers alternatives forever, which feels like help and produces nothing. The method is
+named The Collapse for the opposite reason.
+
+That sets the whole commercial position:
+
+> **Everything a strategist knows is free now. Everything a strategist does is not.**
+
+BrandOS gives away the knowing. It sells the doing.
+
+---
+
+## 6. The decision · two prices, one door
+
+| | | |
 |---|---|---|
-| **The exercises** | Free, one brand per account | Observe, Collapse and Build, run in full, on screen. No card, no teaser. |
-| **The Platform** | $79 one time, per brand | The document. Their foundation argued, designed and rendered to A4, in their hands. |
-| **The Reading** | ~$490 one time | Ninety minutes with Nizzar on their own Platform, recorded, closing with a Direction Note appended to the document. |
-| **Atelier** | Quote | Unchanged. The practice, one engagement at a time. |
+| **The exercises** | Free, one brand per account | The sequence, built from years of client work, run in full. Not a sample. Not a teaser. |
+| **The Platform** | $79 one time, per brand | The document. Designed, argued, A4, theirs. |
+| **Working with Nizzar** | **No price** | A door at the end of the document. Written to, not checked out. Quoted per situation. |
 
-Nothing recurs. Nobody has ever bought a subscription, so the three Stripe subscription
-prices get archived and there is nothing to migrate.
+There is no third tier. This is a decision, not a gap.
 
-### The constraint that shapes everything below
+### Why a fixed price on the human rung would be a mistake
 
-The Rapp &amp; Esen platform is 54 pages and it is the right benchmark for craft. It is not
-the right benchmark for depth, and the difference matters. That document was built from
-262 minutes of recorded working sessions with Nizzar in the room, pushing back, killing
-"wealthy" as a client criterion at S2 01:07:45 and resolving the fake-promise objection at
-S1 01:10:07. The exercises produce structured answers. They do not produce an argument.
+1. **It would damage the $79.** A $490 button sitting beside a $79 button turns the $79 into
+   the cheap option. Buyers downgrade themselves against a visible premium, and the sale that
+   was certain becomes the sale that was second best. With one price, the Platform is not a
+   tier. It is the product.
+2. **It throws away the range.** A solo founder and a funded company and a maison are three
+   different quotes for the same ninety minutes. A number on the page collapses all three to
+   the lowest one.
+3. **It contradicts a page already on the site.** `atelier.html` says scope, depth and terms
+   get shaped per engagement. Putting a price list on the operator's judgment argues against
+   the practice's own positioning.
+4. **It costs weeks to build.** Checkout, calendar, prep screens, a session ritual, a Direction
+   Note template, a second entitlement path. All of it before a single person has asked for it.
+   A form and an inbox cost an afternoon and answer the same question.
+5. **It would be answering a question nobody has asked yet.** If ten people write in during the
+   first month, the product builds itself out of what they actually asked for. If nobody writes
+   in, that was learned for free instead of learned after Phase 6.
 
-So the generated Platform cannot be the Rapp &amp; Esen document, and pretending otherwise
-would be the fastest way to burn the $79. It can carry the same architecture, the same
-typographic craft, the same A4 discipline and the same honesty. What it cannot carry is
-the part that came from a human disagreeing with the founder.
+Ambition is the risk here, and the middle tier is where the ambition was hiding.
 
-That gap is not a defect to hide. It is the product.
+### What the door looks like
 
----
-
-## 6. What the second rung actually sells
-
-The operator named the problem precisely: someone receives a beautiful document and
-cannot act on it. Three things answer that, and only one of them costs Nizzar time.
-
-### 6.1 The document teaches its own reading · free, template work
-
-Rapp &amp; Esen opens with "What this is" and "Three kinds of statement" and closes with
-"How to use these three." Every generated Platform gets the same treatment: a **How to
-read this** spread at the front that explains the difference between a statement that
-decides something, a statement that describes something and a statement that is an
-instruction, and a **What to do Monday** page at the back. This is written once into the
-template and costs nothing per customer. It removes a large share of the confusion
-without a call.
-
-### 6.2 The Open Questions engine · one new agent
-
-A new brand-level agent reads the locked foundation and produces, per section, what the
-exercises **settled** and what they **left open**. It runs on the free path, and its
-output lands in the Platform as a closing section.
-
-It does three jobs at once:
-
-1. **It makes the document honest.** A section the exercises genuinely settled reads as
-   settled. A section they did not reads as open, instead of being padded with confident
-   prose the data does not support.
-2. **It gives the reader a way in.** "You have not decided who this is not for" is a
-   sentence a founder can act on. Twenty-eight pages of positioning is not.
-3. **It is the sales surface, generated from their own data.** The list of things they
-   cannot resolve alone is the reason to book the Reading, in their words, about their
-   brand, with no marketing attached to it.
-
-This agent earns more than anything else in the plan for what it costs. It sits above the
-content line, it deepens the asset rather than draining it, and it converts.
-
-### 6.3 The Reading · the human, time-boxed
-
-Ninety minutes, live, recorded. Not a discovery call and not a rewrite of the Platform.
-Nizzar reads their document with them, pushes on the open questions, and the session
-closes with a **Direction Note**: four to six pages appended to their Platform, signed and
-dated, covering what the reading changed, the decisions they were avoiding, and the first
-ninety days. It lands in their archive and re-renders into the same PDF.
-
-Total operator time is about two and a half hours, because the system hands Nizzar a
-**pre-read brief** before the call: their answers, their contradictions, their flags and
-their open questions on one screen. That brief is what makes ninety minutes profitable
-instead of ninety minutes of catching up.
-
-### 6.4 The capacity math, stated plainly
-
-The Reading does not scale and should not be expected to. Four a month at $490 is about
-$2,000. The revenue engine at volume is $79 multiplied by traffic, which is why the Bing
-and AI-answer position already built matters more than any pricing decision in this note.
-The Reading is a qualification instrument that feeds Atelier, and it should be priced for
-velocity rather than for margin. $490 is the recommendation. $690 is defensible and will
-sell more slowly.
+The last page of every Platform, and the last card in the app, carries the open questions the
+exercises could not settle, then one line and a form. No price, no calendar, no package. The
+operator answers, and the number gets decided in that exchange.
 
 ---
 
-## 7. The portion problem
+## 7. Where the money actually is
 
-Free and unlimited are different words. A complete foundation is nine Sonnet runs, plus
-the Open Questions agent. At roughly 8k input and 4k output per agent, that is near
-**$0.80 per foundation** at current Sonnet pricing. The estimate needs verifying against
-real runs before launch.
+This has to be said plainly so nobody expects the wrong thing from $79.
 
-What keeps it affordable: one free brand per account, each agent capped at two runs on the
-free path, re-collapse reserved for Platform owners, Sensescape already on Haiku 4.5 with
-any other agent that holds quality moving there, a per-account daily rate limit, and a
-hard monthly ceiling on free runs with an operator alert before it is reached.
+The Platform is not the business. At any realistic near-term traffic, the Platform recovers
+model cost, filters the serious from the curious, and pays for the infrastructure. A few
+hundred dollars a month is the honest expectation at the start, not a few thousand.
+
+The business is Atelier, and the practice behind it. What BrandOS produces that no lead list
+can match is a stream of founders who have spent ninety minutes articulating their own brand,
+seen where it is unresolved, and paid money to keep the result. There is no warmer prospect
+in this category.
+
+Read that way, every decision in this note gets easier. The free tier should be generous past
+the point of comfort, because its job is qualification, not conversion. The $79 should stay at
+$79, because its job is to filter for seriousness rather than to maximise revenue. And the
+middle tier should not exist, because it sits between the qualifier and the business and
+competes with both.
 
 ---
 
-## 8. Build plan
+## 8. Why anyone pays $79 for something they already saw
 
-**Phase 1 · Operator-only gate.** `OPERATOR_ONLY_SLUGS` keyed on authenticated user id,
-the seven pages off every public surface, `noindex`, sitemap rebuild.
-Gate: `node scripts/registry-smoke.mjs` output pasted verbatim into the PR body, then an
-unauthenticated probe of `POST /api/agents/run` and `GET /api/agents/console` confirming
-handler-level 401 post-deploy.
+The free path must not feel like a trailer, and the paid object must not feel like a
+screenshot with a border. One boundary solves both:
 
-**Phase 2 · One tool, four movements.** `tools.html`, `ecosystem.html` and `index.html`
-rewritten around Observe, Collapse, Build, Hold, with the ten agents as steps inside one
-flow rather than a catalogue.
+> **The screen shows what was decided. The document shows why.**
+
+On screen, free, complete: the positioning, the archetype, the five words, the voice rules,
+the visual direction, the open questions. Every conclusion, nothing withheld, usable as it
+stands.
+
+In the document, paid: the argument. Which answers produced which conclusion, what was
+considered and rejected, where the tension sits, what the founder said that settled it. The
+Rapp &amp; Esen platform reads this way, and the reason it is worth 54 pages is not the
+conclusions. It is the reasoning between them.
+
+That boundary is a real product line rather than a paywall, and it is defensible in a sentence
+to anyone who asks.
+
+---
+
+## 9. The constraint that shapes the document
+
+The Rapp &amp; Esen platform is the benchmark for craft, not for depth. It came from 262 minutes
+of recorded sessions with the operator in the room, pushing back. The exercises produce
+structured answers. They do not produce an argument of that grade.
+
+A generated Platform carries the architecture, the typography, the A4 discipline and the
+honesty. It does not carry the part that came from a human disagreeing with the founder. That
+difference is precisely what the door at the end is for, and the document should say so in its
+own voice rather than pretend otherwise.
+
+---
+
+## 10. The Open Questions agent
+
+One new brand-level agent reads the locked foundation and emits, per section, what the
+exercises settled and what they left open. It runs on the free path. Its output appears on
+screen free and closes the paid document.
+
+It carries three jobs on one build:
+
+1. **Honesty.** A section the answers settled reads as settled. A section they did not reads as
+   open, rather than padded with confident prose the data does not support.
+2. **A way in.** "You have not decided who this is not for" is a sentence a founder can act on.
+   Twenty-eight pages of positioning is not. This is the direct answer to the operator's
+   observation that a beautiful document can be unreadable.
+3. **The door.** The list of what they cannot resolve alone is the reason to write in, phrased
+   in their language, about their brand, with nothing promotional attached.
+
+It should name the decision being avoided, not produce a neutral inventory of gaps.
+
+---
+
+## 11. The portion problem
+
+A complete foundation is nine Sonnet runs plus the Open Questions agent, roughly 8k input and
+4k output each, which lands near **$0.80 per foundation** at current Sonnet pricing. Verify
+against real runs before launch.
+
+Controls: one free brand per account, each agent capped at two runs on the free path,
+re-collapse reserved for Platform owners, Sensescape already on Haiku 4.5 with any other agent
+that holds quality moving there, a per-account daily rate limit, and a hard monthly ceiling on
+free runs with an operator alert before it is reached.
+
+---
+
+## 12. Build plan
+
+Six phases. The money phase is small now, because there is exactly one purchasable thing:
+one price, one-time mode, one entitlement, no tiers, no calendar, no second checkout path.
+
+**Phase 1 · Operator-only gate.** `OPERATOR_ONLY_SLUGS` keyed on authenticated user id, the
+seven content pages off every public surface, `noindex`, sitemap rebuild.
+Gate: `node scripts/registry-smoke.mjs` output verbatim in the PR body, then an unauthenticated
+probe of `POST /api/agents/run` and `GET /api/agents/console` confirming handler-level 401
+post-deploy.
+
+**Phase 2 · One tool, four movements.** `tools.html`, `ecosystem.html` and `index.html` rebuilt
+around Observe, Collapse, Build, Hold, with the ten agents as steps inside one flow. The page
+argues the position in Part 5: the knowing is free, the doing is not.
 Gate: `tests/site-audit/audit.mjs` and `tests/brand-casing/casing-audit.mjs` green.
 
-**Phase 3 · The Open Questions agent.** New agent, brand level, reads the locked
-foundation, emits settled and open per section. Registry merge gate applies.
-Gate: run against three real foundations of different completeness and confirm the open
-list actually differs between them.
+**Phase 3 · The Open Questions agent.** Registry merge gate applies.
+Gate: run against three real foundations of differing completeness and confirm the open list
+genuinely differs between them.
 
-**Phase 4 · The Platform renderer.** The $79 artifact. The Rapp &amp; Esen HTML architecture
-turned into a template driven by the locked QBP, ivory `#FBFAF6` per the client-document
-rule, with the How to read this spread and the What to do Monday page built in.
-`docs/clients/rapp-esen/render.mjs` is the starting point: it already reports per-page
-A4 overflow, and that check becomes a standing harness rather than a script someone
-remembers to run.
+**Phase 4 · The Platform renderer.** The $79 object. The Rapp &amp; Esen HTML architecture as a
+template driven by the locked QBP, ivory `#FBFAF6` per the client-document rule, carrying the
+reasoning rather than restating the screen, with a How to read this spread at the front and a
+What to do Monday page at the back. `docs/clients/rapp-esen/render.mjs` already reports
+per-page A4 overflow; that check becomes a standing harness.
 Gate: no page clips its sheet, on three real foundations, at A4.
 
-**Phase 5 · The money.** Per-brand entitlements replacing tier strings in
-`api/_lib/tier-gating.js`, one-time payment mode in `api/stripe/checkout.js` and the
-webhook, `payment.html` rebuilt on two purchasable lines plus Atelier, subscription prices
-archived.
-Gate: test-mode purchase of the Platform verified to grant the right entitlement on the
-right brand and nothing else.
+**Phase 5 · One price, and the door.** One-time mode in `api/stripe/checkout.js` and the
+webhook, a single per-brand entitlement replacing tier strings in `api/_lib/tier-gating.js`,
+`payment.html` reduced to one product, the three subscription prices archived. The door is a
+form and an inbox.
+Gate: test-mode purchase grants the entitlement on the right brand and nothing else.
 
-**Phase 6 · The Reading apparatus.** Booking link, the operator pre-read brief screen, the
-Direction Note template appended to the Platform and re-rendered.
-Gate: one Reading run end to end with a real person.
-
-**Phase 7 · Re-audit and resubmit.** Sitemap drops seven URLs, IndexNow push,
+**Phase 6 · Re-audit and resubmit.** Sitemap drops seven URLs, IndexNow push,
 `tests/seo-bing/bing-audit.mjs`, `tests/auth-flow/`.
 
 ---
 
-## 9. Deferred, deliberately
+## 13. Deferred, deliberately
 
-- **Studio and white-label.** No audience yet, slow to sell.
-- **The Brand Spec export** (JSON plus prompt pack). A good idea for an audience that
-  arrives later. It folds into the Platform as an extra file when it does.
-- **Hold as a paid line.** Brand Performance, Quarterly Review and Predictive Panel stay
-  built and stay operator-reachable. They are not sold until the Platform has volume,
-  because Intelligence about a brand nobody has locked yet is a product without a user.
-
----
-
-## 10. Open
-
-One number: the Reading at $490 or $690. The Platform is settled at $79.
+- **A priced middle tier.** Revisit only when the inbox says what it should be.
+- **Studio, white-label, multi-brand.** No audience yet.
+- **The Brand Spec export.** Folds into the Platform later, as an extra file.
+- **Hold as a paid line.** Brand Performance, Quarterly Review and Predictive Panel stay built
+  and operator-reachable. Intelligence about a brand nobody has locked yet has no user.
 
 ---
 
-*docs/strategy/brandos-recut-v1.md · v1.1 · BrandOS · September 2026*
+## 14. Open
+
+Nothing. Two prices, $0 and $79, and a door with no number on it.
+
+---
+
+*docs/strategy/brandos-recut-v1.md · v1.2 · BrandOS · September 2026*
