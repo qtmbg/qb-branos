@@ -32,6 +32,7 @@
 
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
 import { AGENTS, getAgent } from '../../agents/registry.js';
+import { isOperatorOnlyHidden } from '../_lib/operator-only.js';
 import { VISION_READABLE_MIME, VISION_MAX_FILE_SIZE_BYTES, CANONICAL_TIERS } from '../../agents/contract.js';
 import { waitUntil } from '@vercel/functions';
 import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES, BUCKET } from '../files/_lib/file-config.js';
@@ -179,6 +180,11 @@ export default async function handler(req) {
   const slug = source.artifact_type;
   const agent = getAgent(slug);
   if (!agent) return json(400, { error: 'unknown_agent', agent_slug: slug }, corsH);
+  // Recut Phase 1 · see api/_lib/operator-only.js. Same response shape as
+  // unknown_agent so the gate discloses nothing.
+  if (isOperatorOnlyHidden(slug, userId)) {
+    return json(400, { error: 'unknown_agent', agent_slug: slug }, corsH);
+  }
 
   // ─── 4.2 Tier gate · chapter-4 ruling 2 ───────────────────────────────
   // Same gate as /api/agents/run, enforced here BEFORE the dispatch and

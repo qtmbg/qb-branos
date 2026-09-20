@@ -15,6 +15,7 @@
 // require multiple RLS-scoped reads otherwise.
 
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
+import { isOperatorOnlyHidden } from '../_lib/operator-only.js';
 import { AGENTS, listAgentSlugs } from '../../agents/registry.js';
 import { DEFAULT_MODEL } from '../../agents/contract.js';
 
@@ -262,9 +263,19 @@ export default async function handler(req) {
   // ten released together so paying founders can reach every phase they
   // are billed for.
   const PROMPT_HOLD_SLUGS = new Set([]);
+  //
+  // OPERATOR_ONLY_SLUGS · recut 2026-09-20, docs/strategy/brandos-recut-v1.md.
+  // The seven Phase 03 and Phase 04 content agents left the public product.
+  // They stay registered and stay dispatchable by the operator, and they are
+  // filtered out of this payload for everyone else, so the Console shows the
+  // ten brand agents and nothing else. isOperatorOnlyHidden fails closed when
+  // OPERATOR_USER_IDS is unset, which hides them from the operator too.
   const userVisibleSlugs = listAgentSlugs().filter(slug => {
     const meta = AGENTS[slug]?.META;
-    return meta?.phase && meta.phase !== '00' && !PROMPT_HOLD_SLUGS.has(slug);
+    if (!meta?.phase || meta.phase === '00') return false;
+    if (PROMPT_HOLD_SLUGS.has(slug)) return false;
+    if (isOperatorOnlyHidden(slug, userId)) return false;
+    return true;
   });
   const agentsPayload = userVisibleSlugs.map(slug => {
     const agent = AGENTS[slug];

@@ -49,6 +49,7 @@
 
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
 import { getAgent } from '../../agents/registry.js';
+import { isOperatorOnlyHidden } from '../_lib/operator-only.js';
 import { VISION_READABLE_MIME, VISION_MAX_FILE_SIZE_BYTES, CANONICAL_TIERS } from '../../agents/contract.js';
 import { waitUntil } from '@vercel/functions';
 import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES, BUCKET } from '../files/_lib/file-config.js';
@@ -150,6 +151,13 @@ export default async function handler(req) {
   // getAgent reads test-agent env flags at REQUEST time (chapter-3 step-3E).
   const agent = getAgent(agent_slug);
   if (!agent) return json(400, { error: 'unknown_agent', agent_slug }, corsH);
+  // Recut Phase 1 · the seven content agents answer as non-existent to
+  // everyone but the operator. The response is byte-identical to the
+  // unknown_agent branch above on purpose: a distinct code would confirm
+  // the agent exists and is merely withheld.
+  if (isOperatorOnlyHidden(agent_slug, userId)) {
+    return json(400, { error: 'unknown_agent', agent_slug }, corsH);
+  }
   const meta = agent.META;
   const slug = meta.artifact_type || agent_slug;
 
