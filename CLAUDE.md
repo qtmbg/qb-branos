@@ -45,9 +45,14 @@ If you finish writing a response and realize a violation is in it, do not send t
 
 ## The canonical documents
 
-Read these in order on first session in this repo. Re-read on demand when working on relevant files.
+**0. `/docs/strategy/brandos-recut-v1.md`.** Read this first. The 2026-09-20 recut
+decided what the product is and what it costs, and it supersedes the phase model and
+the pricing in every document below. Two prices, $0 and $79. Four movements, not six
+phases. Eleven public agents, not twenty.
 
-1. `/docs/brand/qb-brand-codex-v1.md`. The absolute brand truth. Identity, beliefs, the QBP, six phases, four doors, voice summary, visual language summary, brand mark, colours, illustrations, personas, pricing, platform, public credentials.
+Read the rest in order on a first session in this repo. Re-read on demand when working on relevant files.
+
+1. `/docs/brand/qb-brand-codex-v1.md`. The absolute brand truth. Identity, beliefs, the QBP, the phase model (superseded by the recut, see 6 below), four doors, voice summary, visual language summary, brand mark, colours, illustrations, personas, pricing, platform, public credentials.
 
 2. `/docs/brand/qb-design-system-v3.4.md`. The technical visual specification. Color tokens, typography, spacing, components, layout patterns. Part 21 contains the brand mark SVG paths.
 
@@ -119,7 +124,7 @@ Additional voice rules:
 - The user is "you." The system is the speaker. The company recedes.
 - The product is **BrandOS**. Its full display name is "BrandOS by Quantum Branding". Use the short form in running copy.
 - **Quantum Branding** is the parent practice, not the product. Every reference to the practice links to `https://thequantumbranding.com`.
-- The method is **The Collapse**. Its cycle is Observe, Collapse, Build, Hold. It belongs to Quantum Branding, the practice, and BrandOS runs it as six phases.
+- The method is **The Collapse**. Its cycle is Observe, Collapse, Build, Hold. It belongs to Quantum Branding, the practice, and since the recut BrandOS *is* the four movements rather than six phases that implement them.
 - "quantum branding" in lowercase italic Fraunces is the wordmark glyph of the practice. It names the mark, and The Collapse names the method.
 - "BrandOS" is the single product name. It is the name under which Quantum Branding contracts, so the legal copy in `terms.html` and `privacy.html` uses it and nothing else. Expanding it to "QB BrandOS" reopens a second name.
 - Sentence fragments with periods are encouraged. "Three steps. That's it." reads better than "Three steps; that is all there is."
@@ -160,7 +165,7 @@ Additional voice rules:
 - The method is **The Collapse**. Cycle: **Observe, Collapse, Build, Hold.**
 - Canonical phrasing, to adapt to context rather than paste verbatim: "The Collapse, the method used at Quantum Branding: Observe, Collapse, Build, Hold."
 - PDF colophons and cover meta carry `Methodology · The Collapse` with the cycle beneath it.
-- The six BrandOS phases implement the cycle. Observe covers Acquisition and Discovery, Collapse closes Discovery, Build spans Brand Creation through Execution, Hold is Intelligence.
+- The four movements are the product. Observe covers Acquisition and Discovery, Collapse closes Discovery, Build is Brand Creation, Hold is Intelligence. The old Phase 03 (Content) and Phase 04 (Execution) are empty: their seven agents are operator-only behind `api/_lib/operator-only.js`.
 
 ### Typography
 
@@ -241,7 +246,7 @@ Additional voice rules:
 │       └── nizzarfounder.png
 │
 ├── api/                       serverless functions (Vercel)
-├── *.html                     the 25 production tool/page files
+├── *.html                     the production tool/page files (count not pinned · see below)
 ├── vercel.json                routing
 ├── stripe-webhook.ts          payment events
 └── supabase-setup.sql         schema

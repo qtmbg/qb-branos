@@ -1,7 +1,8 @@
 # BrandOS recut · brand only, free steak
 ## Strategy note v1 · 2026-09-20
 
-Status: v1.2, 2026-09-20. Parts 5 onward rewritten around one commercial decision: two prices,
+Status: v1.3, 2026-09-21. **SHIPPED.** See Part 15 for what landed and what the operator still holds.
+v1.2, 2026-09-20. Parts 5 onward rewritten around one commercial decision: two prices,
 one door, and no middle tier. Parts 1 to 4 stand as written.
 
 ---
@@ -306,4 +307,41 @@ Nothing. Two prices, $0 and $79, and a door with no number on it.
 
 ---
 
-*docs/strategy/brandos-recut-v1.md · v1.2 · BrandOS · September 2026*
+## 15. What shipped
+
+| Phase | PR | Commit | State |
+|---|---|---|---|
+| 1 · Operator-only content layer | #242 | `916b97b` | Live. Gate passed both halves. |
+| 2 · Four movements on the public product | #243 | `12b83b1` | Live. |
+| 3 · Open Questions agent | #244 | `3e937de` | Merged, **held** behind `PROMPT_HOLD_SLUGS`. |
+| 4 · The Platform renderer | #245 | `04c8644` | Merged. Builds and renders from fixtures. |
+| 5 · One price, one-time, the door | #246 | `933c664` | Merged. Not sellable until the price is wired. |
+| 6 · Re-audit and instruction files | this | | |
+
+### Standing harnesses added
+
+`tests/operator-only`, `tests/open-questions`, `tests/platform`, `tests/one-price`.
+Each one was proved to fail before it was trusted.
+
+### What the operator still holds
+
+1. **Anthropic credit.** The account is empty, so every agent fails in production and
+   the Open Questions live path has never run. This blocks the release of the held
+   agent and it blocks the product generally. It is the first thing to fix.
+2. **`OPERATOR_USER_IDS`** in Vercel. Until set, the seven content agents are hidden
+   from the operator too, which is the fail-closed default.
+3. **A Stripe $79 one-time price**, test and live, into `STRIPE_PLATFORM_PRICE_ID`
+   and `CONFIG.PLATFORM_PRICE_ID` in `payment.html`.
+4. **Migration 024** applied to production. It joins 005, 018, 021 and 022 in the
+   unapplied set. Until then nobody can own the Platform.
+5. **Archive the three Stripe subscription prices** once the above is live.
+
+### Not built, deliberately
+
+The Platform has no purchase-to-download path yet: the renderer runs from a foundation
+JSON, and nothing joins it to a paid session. That is the next build, and it needs
+items 1, 3 and 4 above before it can be tested end to end.
+
+---
+
+*docs/strategy/brandos-recut-v1.md · v1.3 · BrandOS · September 2026*
