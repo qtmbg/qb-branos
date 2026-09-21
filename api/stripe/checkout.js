@@ -13,6 +13,15 @@ import { cors, json, resolveUser, readProfile, requireEnv } from '../_lib/auth.j
 
 export const config = { runtime: 'edge' };
 
+// Recut Phase 5 · the Platform. One product, one price, bought once per
+// brand. It is NOT a tier, so it is resolved before the tier table and
+// creates a payment-mode session rather than a subscription.
+//
+// No fallback id. A subscription price falling back to a hard-coded
+// default was survivable; a one-time charge falling back to the wrong
+// price takes real money for the wrong thing. Unset means unsellable.
+const PLATFORM_PRICE_ID = (process.env.STRIPE_PLATFORM_PRICE_ID || '').trim();
+
 const TIER_BY_PRICE = {
   [process.env.STRIPE_STARTER_PRICE_ID        || 'price_1Th8JkEHEAcWrG55Abr1OZXe']: 'starter',
   [process.env.STRIPE_STARTER_ANNUAL_PRICE_ID || 'price_1Th8LVEHEAcWrG552aPNKRpD']: 'starter',
@@ -62,10 +71,14 @@ export default async function handler(req) {
 
   if (!price_id) return json(400, { error: 'price_id is required' }, corsH);
 
-  const tier = TIER_BY_PRICE[price_id];
-  if (!tier) return json(400, { error: 'unknown_price_id' }, corsH);
+  // The Platform is checked first, because it is the product the recut
+  // sells and it is not a member of the tier table.
+  const isPlatform = Boolean(PLATFORM_PRICE_ID) && price_id === PLATFORM_PRICE_ID;
 
-  if (!ENABLED_TIERS.has(tier)) {
+  const tier = TIER_BY_PRICE[price_id];
+  if (!isPlatform && !tier) return json(400, { error: 'unknown_price_id' }, corsH);
+
+  if (!isPlatform && !ENABLED_TIERS.has(tier)) {
     return json(501, { error: 'tier_not_yet_available', tier }, corsH);
   }
 
@@ -75,14 +88,23 @@ export default async function handler(req) {
   // application/x-www-form-urlencoded — Stripe's API expects this content type.
   // Nested arrays use the [n] index syntax.
   const form = new URLSearchParams();
-  form.set('mode', 'subscription');
+  form.set('mode', isPlatform ? 'payment' : 'subscription');
   form.set('line_items[0][price]', price_id);
   form.set('line_items[0][quantity]', '1');
   form.set('success_url', success_url);
   form.set('cancel_url', cancel_url);
   form.set('client_reference_id', authResult.user.id);
   form.set('metadata[user_id]', authResult.user.id);
-  form.set('metadata[tier_intent]', tier);
+  if (isPlatform) {
+    // The webhook keys on these two. product=platform is what tells it a
+    // payment-mode session is ours rather than something else's, and
+    // brand_key is carried from the start so multi-brand needs no
+    // backfill later.
+    form.set('metadata[product]', 'platform');
+    form.set('metadata[brand_key]', String(body?.brand_key || 'default').slice(0, 64));
+  } else {
+    form.set('metadata[tier_intent]', tier);
+  }
   if (email) form.set('customer_email', email);
   form.set('allow_promotion_codes', 'true');
 
