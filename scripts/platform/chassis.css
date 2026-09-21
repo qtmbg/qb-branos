@@ -1,0 +1,220 @@
+/* scripts/platform/chassis.css
+ * The Platform · A4 document chassis. Recut Phase 4.
+ *
+ * Extracted from docs/clients/rapp-esen/brand-platform.html, the 54-page
+ * client deliverable that sets the craft benchmark, with the perfume
+ * house's bespoke components and its private palette removed.
+ *
+ * Ivory, not cream. Per the standing client-document rule the paper is
+ * #FBFAF6 and the rest of the v3.4 chassis is unchanged.
+ *
+ * Every measurement is in mm because the output is paper. The renderer
+ * (scripts/platform/render.mjs) fails the build if any .page exceeds its
+ * A4 sheet, so nothing here may depend on content length.
+ */
+:root{
+  /* ── Document surface · ivory, not cream. The one departure from v3.4 tokens. ── */
+  --paper:#FBFAF6; --paper-card:#F4F3ED; --paper-warm:#EDEBE1; --paper-edge:#DEDBD0;
+  --paper-rose:#F6ECEE; --white:#FFFFFF;
+
+  /* ── Ink · v3.4 verbatim ── */
+  --ink:#2D1521; --ink-75:rgba(45,21,33,0.75); --ink-62:rgba(45,21,33,0.62);
+  --ink-50:rgba(45,21,33,0.50); --ink-25:rgba(45,21,33,0.25); --ink-12:rgba(45,21,33,0.12);
+
+  /* ── Brand triad · v3.4 verbatim ── */
+  --gold:#E0B069; --rose:#CA6180; --teal:#9ED3DC;
+  --rose-deep:#8E3F58; --gold-deep:#B58840; --aubergine:#4A2B3A; --illus-forest:#5B7E6A;
+
+  /* ── Fonts ── */
+  --f-display:'Fraunces','Times New Roman',serif;
+  --f-body:'Inter','Helvetica Neue',sans-serif;
+  --f-mono:'JetBrains Mono','Courier New',monospace;
+  /* ── Print type scale (points, fixed for print determinism) ── */
+  --t-cover:40pt; --t-h1:23pt; --t-h2:13.5pt; --t-h3:10pt;
+  --t-lead:11pt; --t-body:9.5pt; --t-small:8.4pt; --t-micro:7.1pt; --t-eyebrow:7.4pt;
+  --t-quote:12pt; --t-big:18pt;
+
+  /* ── Print space scale (mm) ── */
+  --s-3xs:1.2mm; --s-2xs:2.1mm; --s-xs:3.3mm; --s-s:5mm; --s-m:7.5mm; --s-l:10mm; --s-xl:14mm;
+
+  /* ── Page geometry ── */
+  --page-w:210mm; --page-h:297mm; --page-pad-x:17mm; --page-pad-y:15mm;
+  --radius-card:3mm; --shadow-hard:3px 3px 0 var(--ink);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{background:var(--aubergine);}
+body{font-family:var(--f-body); color:var(--ink); background:var(--aubergine);
+  -webkit-font-smoothing:antialiased; padding:12mm 0;}
+.page{position:relative; width:var(--page-w); min-height:var(--page-h);
+  margin:0 auto 8mm; background:var(--paper);
+  padding:var(--page-pad-y) var(--page-pad-x) 19mm;
+  display:flex; flex-direction:column; overflow:hidden;}
+.page--ink{background:var(--ink); color:var(--paper);}
+.page--card{background:var(--paper-card);}
+.page--dense{--t-body:9.1pt; --t-small:8.05pt; --t-h2:13pt; --s-xs:2.9mm; --s-s:4.3mm;}
+.page--dense p{line-height:1.44;}
+.page--dense li{line-height:1.38;}
+.page--tight{--t-body:8.8pt; --t-small:7.8pt; --t-h2:12.6pt; --t-h1:21pt; --s-xs:2.6mm; --s-s:3.9mm;}
+.page--tight p{line-height:1.41;}
+.page--tight li{line-height:1.34;}
+.page--xtight{--t-body:8.4pt; --t-small:7.45pt; --t-h2:12pt; --t-h1:20pt; --t-lead:10.2pt;
+  --t-micro:6.8pt; --s-xs:2.4mm; --s-s:3.6mm; --s-2xs:1.8mm;}
+.page--xtight p{line-height:1.38;}
+.page--xtight li{line-height:1.31; margin-bottom:1.1mm;}
+.page--xtight td,.page--xtight tbody th{padding-top:1.15mm; padding-bottom:1.15mm;}
+.page--xtight .quote{font-size:9.6pt; line-height:1.24;}
+.page--ink .rip i{border-color:rgba(251,250,246,.22);}
+/* ── Running foot ── */
+.rf{position:absolute; left:var(--page-pad-x); right:var(--page-pad-x); bottom:11mm;
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:var(--f-mono); font-size:var(--t-micro); letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-50);
+  border-top:0.4mm solid var(--ink-12); padding-top:2.5mm;}
+.page--ink .rf{color:rgba(251,250,246,.55); border-top-color:rgba(251,250,246,.20);}
+.rf b{font-weight:400;}
+/* ── Eyebrow and headline rhythm · Design System v3.4 Part 5.3 ── */
+.eyebrow{font-family:var(--f-mono); font-size:var(--t-eyebrow); font-weight:500;
+  letter-spacing:.20em; text-transform:uppercase; color:var(--ink-62);
+  display:flex; align-items:center; gap:3mm; margin-bottom:var(--s-xs);}
+.eyebrow::before{content:""; width:5mm; height:1.6mm; background:var(--gold); border-radius:1mm; flex:none;}
+.page--ink .eyebrow{color:rgba(251,250,246,.62);}
+h1{font-family:var(--f-display); font-size:var(--t-h1); line-height:.98;
+  letter-spacing:-.02em; font-variation-settings:"wght" 740,"opsz" 144,"SOFT" 70,"WONK" 0;
+  margin-bottom:var(--s-xs);}
+h1 em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 640,"opsz" 144,"SOFT" 60,"WONK" 1;}
+.page--ink h1 em{color:var(--gold);}
+h2{font-family:var(--f-display); font-size:var(--t-h2); line-height:1.1;
+  letter-spacing:-.012em; font-variation-settings:"wght" 700,"opsz" 72,"SOFT" 80;
+  margin-bottom:var(--s-3xs); margin-top:var(--s-xs);}
+h3{font-family:var(--f-mono); font-size:var(--t-h3); font-weight:600;
+  letter-spacing:.04em; margin-bottom:var(--s-3xs); margin-top:var(--s-xs);}
+p{font-size:var(--t-body); line-height:1.48; margin-bottom:var(--s-2xs);}
+.lead{font-size:var(--t-lead); line-height:1.5; color:var(--ink-75); margin-bottom:var(--s-s);}
+.page--ink .lead{color:rgba(251,250,246,.78);}
+.small{font-size:var(--t-small); line-height:1.42;}
+.micro{font-family:var(--f-mono); font-size:var(--t-micro); letter-spacing:.06em; color:var(--ink-62);}
+.muted{color:var(--ink-62);}
+.page--ink .muted,.page--ink .micro{color:rgba(251,250,246,.62);}
+strong{font-weight:650;}
+.rule{height:0.4mm; background:var(--ink-12); margin:var(--s-s) 0;}
+.rule--gold{height:1.2mm; width:14mm; background:var(--gold); border-radius:1mm; margin:var(--s-xs) 0;}
+.page--ink .rule{background:rgba(251,250,246,.20);}
+/* ── Grids ── */
+.g2{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-s);}
+.g3{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-xs);}
+.g4{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-2xs);}
+.g5{display:grid; grid-template-columns:repeat(5,1fr); gap:var(--s-2xs);}
+.g-2-1{display:grid; grid-template-columns:1.6fr 1fr; gap:var(--s-s);}
+.g-1-2{display:grid; grid-template-columns:1fr 1.7fr; gap:var(--s-s);}
+.g-3-2{display:grid; grid-template-columns:1.5fr 1fr; gap:var(--s-xs);}
+/* ── Cards · v3.4 two-layer offset ── */
+.card{background:var(--paper-card); border:0.5mm solid var(--ink);
+  border-radius:var(--radius-card); padding:var(--s-2xs) var(--s-xs) var(--s-xs);
+  box-shadow:var(--shadow-hard);}
+.card--flat{box-shadow:none;}
+.card--white{background:var(--white);}
+.card--warm{background:var(--paper-warm);}
+.card--rose{background:var(--paper-rose);}
+.card--ink{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+.card--ink .micro,.card--ink .muted{color:rgba(251,250,246,.66);}
+.card h3{margin-top:0;}
+.card p:last-child{margin-bottom:0;}
+.card--tight{padding:var(--s-xs);}
+.page--ink .card{border-color:rgba(251,250,246,.35); box-shadow:3px 3px 0 rgba(251,250,246,.30);}
+.tag{display:inline-flex; align-items:center; gap:2mm; font-family:var(--f-mono);
+  font-size:var(--t-micro); letter-spacing:.14em; text-transform:uppercase;
+  border:0.4mm solid var(--ink-25); border-radius:10mm; padding:1mm 3mm; color:var(--ink-75);}
+.tag .dot{width:2.2mm; height:2.2mm; border-radius:50%; background:var(--gold); flex:none;}
+/* ── Lists ── */
+ul,ol{margin:0 0 var(--s-2xs) 0; padding-left:5mm;}
+li{font-size:var(--t-body); line-height:1.42; margin-bottom:1.4mm;}
+ul.clean,ul.check,ul.cross,ul.num{list-style:none; padding-left:0;}
+ul.clean li,ul.check li,ul.cross li,ul.num li{position:relative; padding-left:4mm;}
+ul.clean li::before{content:"·"; position:absolute; left:0; top:0; font-weight:700; color:var(--gold-deep);}
+ul.check li,ul.cross li{padding-left:10mm;}
+ul.check li::before{content:"YES"; position:absolute; left:0; top:.35mm; font-family:var(--f-mono); font-size:6.4pt; letter-spacing:.08em; color:var(--illus-forest);}
+ul.cross li::before{content:"NO"; position:absolute; left:0; top:.35mm; font-family:var(--f-mono); font-size:6.4pt; letter-spacing:.08em; color:var(--rose-deep);}
+ul.num{counter-reset:n;}
+ul.num li{counter-increment:n; padding-left:6mm;}
+ul.num li::before{content:counter(n,decimal-leading-zero); position:absolute; left:0; top:.35mm;
+  font-family:var(--f-mono); font-size:var(--t-micro); color:var(--gold-deep);}
+/* ── Tables ── */
+table{width:100%; border-collapse:collapse; font-size:var(--t-small);}
+th{font-family:var(--f-mono); font-size:var(--t-micro); font-weight:500; letter-spacing:.12em;
+  text-transform:uppercase; text-align:left; color:var(--ink-62);
+  padding:0 2mm 1.8mm 0; vertical-align:bottom;}
+thead th{border-bottom:0.5mm solid var(--ink);}
+tbody th{border-bottom:0.35mm solid var(--ink-12); vertical-align:top; padding:1.5mm 2mm 1.5mm 0;}
+tbody tr:last-child th{border-bottom:none;}
+td{padding:1.5mm 2mm 1.5mm 0; border-bottom:0.35mm solid var(--ink-12); vertical-align:top; line-height:1.42;}
+tr:last-child td{border-bottom:none;}
+td.nm{font-family:var(--f-display); font-size:11pt; font-variation-settings:"wght" 700,"opsz" 48,"SOFT" 80; line-height:1.05; letter-spacing:-.01em;}
+.t-compact td,.t-compact th{padding-right:1.5mm;}
+.page--ink th{color:rgba(251,250,246,.62);}
+.page--ink thead th{border-bottom-color:rgba(251,250,246,.5);}
+.page--ink td,.page--ink tbody th{border-bottom-color:rgba(251,250,246,.18);}
+/* ── Swatches. Every colour named anywhere in this document is shown, not described. ── */
+.sw{border:0.5mm solid var(--ink); border-radius:2mm; overflow:hidden;}
+.sw .chip{height:17mm;}
+.sw .meta{padding:2mm 2.5mm 2.5mm; background:var(--white);}
+.sw .meta .n{font-family:var(--f-display); font-size:12pt; display:block; line-height:1.1;}
+.sw .meta .h{font-family:var(--f-mono); font-size:6.4pt; letter-spacing:.08em; color:var(--ink-62);}
+.sw .meta .u{font-size:7.2pt; line-height:1.35; color:var(--ink-75); display:block; margin-top:1mm;}
+/* inline chip, used wherever a colour is named in running text */
+.ic{display:inline-block; width:2.6mm; height:2.6mm; border-radius:50%;
+  border:0.25mm solid var(--ink-25); vertical-align:middle; margin:0 .6mm 0 .2mm;}
+/* ── Quote ── */
+.quote{font-family:var(--f-display); font-size:var(--t-quote); line-height:1.28;
+  font-variation-settings:"wght" 500,"opsz" 72,"SOFT" 60; font-style:italic;
+  border-left:1.2mm solid var(--gold); padding-left:var(--s-xs); margin:var(--s-xs) 0;}
+.quote cite{display:block; font-family:var(--f-mono); font-style:normal; font-size:var(--t-micro);
+  letter-spacing:.12em; text-transform:uppercase; color:var(--ink-50); margin-top:2.5mm;}
+.page--ink .quote{border-left-color:var(--gold);}
+.page--ink .quote cite{color:rgba(251,250,246,.55);}
+/* ── Cover ── */
+.cover{justify-content:space-between; background:var(--paper);}
+.cover-top{display:flex; justify-content:space-between; align-items:flex-start;}
+.cover-lockup{height:11mm;}
+.cover-h1{font-family:var(--f-display); font-size:var(--t-cover); line-height:.94; letter-spacing:-.028em;
+  font-variation-settings:"wght" 760,"opsz" 144,"SOFT" 65,"WONK" 0;}
+.cover-h1 em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 620,"opsz" 144,"SOFT" 55,"WONK" 1;}
+.cover-meta{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-xs); border-top:0.5mm solid var(--ink); padding-top:var(--s-xs);}
+.cover-meta .k{font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-50); display:block; margin-bottom:1.5mm;}
+.cover-meta .v{font-size:8.4pt; line-height:1.35;}
+/* ── Manifesto ── */
+.manifesto{max-width:146mm;}
+.manifesto p{font-family:var(--f-display); font-size:14.5pt; line-height:1.32;
+  font-variation-settings:"wght" 460,"opsz" 96,"SOFT" 60; margin-bottom:var(--s-s);}
+.manifesto p.hi{font-style:italic; color:var(--gold);}
+.statement{font-family:var(--f-display); font-size:var(--t-big); line-height:1.16; letter-spacing:-.015em;
+  font-variation-settings:"wght" 700,"opsz" 96,"SOFT" 75;}
+.statement em{font-style:italic; color:var(--gold-deep); font-variation-settings:"wght" 620,"WONK" 1;}
+.lb{display:block;}
+.spacer{flex:1 1 auto; min-height:var(--s-2xs);}
+.nowrap{white-space:nowrap;}
+.verdict{display:inline-block; font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.1em; text-transform:uppercase; padding:.8mm 2mm; border-radius:1mm;}
+.v-win{background:#DCE7DF; color:var(--illus-forest);}
+.v-risk{background:var(--paper-rose); color:var(--rose-deep);}
+.v-neu{background:var(--paper-warm); color:var(--gold-deep);}
+.stack{border-left:1mm solid var(--ink-12); padding-left:var(--s-xs); display:flex; flex-direction:column; gap:2mm;}
+.stack .row{display:flex; gap:2.5mm; align-items:baseline;}
+.stack .row .t{font-family:var(--f-mono); font-size:var(--t-micro); color:var(--gold-deep); flex:none; width:6mm;}
+.settles{font-family:var(--f-mono); font-size:6.8pt; letter-spacing:.06em; color:var(--ink-62);
+  border-left:0.8mm solid var(--gold); padding-left:2.5mm; margin-top:var(--s-xs);}
+.settles b{color:var(--ink); font-weight:500; letter-spacing:.12em; text-transform:uppercase;}
+/* ── Timecode. S1 = 17 September, S2 = 18 September. ── */
+.tc{font-family:var(--f-mono); font-size:6.6pt; letter-spacing:.06em; color:var(--gold-deep); white-space:nowrap;}
+/* ── Cross references, resolved by script so inserting a page cannot rot them ── */
+a.xr{color:inherit; text-decoration:none; border-bottom:0.25mm solid var(--ink-25);}
+.page--ink a.xr{border-bottom-color:rgba(251,250,246,.3);}
+/* ── Verbatim appendix: reference rows, tighter than reading matter ── */
+[style*="--vb:1"] td{padding-top:0.95mm; padding-bottom:0.95mm; line-height:1.33;}
+[style*="--vb:1"] .micro{line-height:1.28;}
+[style*="--vb:1"] .small{font-size:7.2pt;}
+@page{size:A4; margin:0;}
+html,body{background:none;}
+body{padding:0;}
+/* Slightly under A4 height: absorbs sub-pixel rounding so one .page = one sheet. */
+  .page{margin:0; box-shadow:none; height:296mm; min-height:0; overflow:hidden;
+        break-after:page; page-break-after:always; break-inside:avoid;}
+.page:last-child{break-after:auto; page-break-after:auto;}
