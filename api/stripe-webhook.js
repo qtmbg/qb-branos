@@ -57,9 +57,18 @@ async function resolveQbPrice(event, stripeKey) {
   const obj = event?.data?.object || {};
   switch (event.type) {
     case 'checkout.session.completed': {
-      // QB sells subscriptions only. One-time payment sessions belong to
-      // the other products on this account.
-      if (obj.mode !== 'subscription') return { qb: false, reason: 'non_subscription_mode' };
+      // Recut Phase 5 · the Platform is a one-time purchase, so a
+      // payment-mode session can now be ours. It is identified by the
+      // metadata this codebase sets at checkout, never by mode alone:
+      // the Stripe account is shared with other products and their
+      // payment sessions must still be dropped.
+      if (obj.mode === 'payment') {
+        if (obj.metadata?.product !== 'platform') {
+          return { qb: false, reason: 'non_qb_payment_session' };
+        }
+        return { qb: true, platform: true, priceId: null };
+      }
+      if (obj.mode !== 'subscription') return { qb: false, reason: 'unhandled_session_mode' };
       if (!obj.subscription) return { qb: false, reason: 'no_subscription_on_session' };
       const sub = await fetchStripe(`/subscriptions/${obj.subscription}`, stripeKey);
       const priceId = sub?.items?.data?.[0]?.price?.id || null;
@@ -313,6 +322,52 @@ export default async function handler(req) {
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
+        // Recut Phase 5 · the Platform purchase. One row per session, and
+        // the unique index on stripe_session_id is what makes a Stripe
+        // retry a no-op rather than a second entitlement.
+        if (gate.platform) {
+          const userId = obj.client_reference_id || obj.metadata?.user_id || null;
+          if (!userId) {
+            console.error('[webhook] platform purchase with no user id', obj.id);
+            // 200 back to Stripe regardless: retrying will not conjure a
+            // user id, and a retry loop helps nobody.
+            return json(200, { received: true, handled: false, reason: 'no_user_id' });
+          }
+          const row = {
+            user_id: userId,
+            brand_key: obj.metadata?.brand_key || 'default',
+            stripe_session_id: obj.id,
+            stripe_payment_intent: obj.payment_intent || null,
+            amount_total: obj.amount_total ?? null,
+            currency: obj.currency || null,
+          };
+          const insRes = await fetch(`${SUPABASE_URL}/rest/v1/platform_purchases`, {
+            method: 'POST',
+            headers: {
+              apikey: SUPABASE_SERVICE_KEY,
+              Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+              'Content-Type': 'application/json',
+              // Idempotent on the unique session index: a retry resolves
+              // to the same row instead of erroring or duplicating.
+              Prefer: 'resolution=merge-duplicates,return=minimal',
+            },
+            body: JSON.stringify(row),
+          });
+          if (!insRes.ok) {
+            const t = await insRes.text().catch(() => '');
+            console.error('[webhook] platform purchase insert failed', insRes.status, t.slice(0, 300));
+            // 5xx so Stripe retries a transient database failure. A
+            // missing table (404) is not transient, so it gets a 200 and
+            // a loud log rather than an endless retry.
+            if (insRes.status === 404) {
+              return json(200, { received: true, handled: false, reason: 'platform_purchases_missing · migration 024 not applied' });
+            }
+            return json(500, { received: true, handled: false, reason: 'purchase_insert_failed' });
+          }
+          console.log('[webhook] platform purchase recorded', userId, obj.id);
+          return json(200, { received: true, handled: true, product: 'platform' });
+        }
+
         // First successful payment for this customer. Bootstrap stripe_customer_id
         // and the active tier. Prefer client_reference_id (the user id we set
         // at checkout) over an email lookup — it is unambiguous.
