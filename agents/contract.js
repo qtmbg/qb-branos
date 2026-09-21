@@ -39,6 +39,15 @@ export const CANONICAL_MODELS = [
   // Legacy IDs retained while tools migrate
   'claude-sonnet-4-20250514',
   'claude-opus-4-20250514',
+  // Google, PAID TIER ONLY · the free path runs here because under the
+  // recut the foundation is free and model cost is its main variable
+  // cost. Google's free tier trains on prompts and lets human reviewers
+  // read them, which is disqualifying for brand positioning, so the key
+  // behind these must have billing linked. agents/model-call.js routes
+  // on these ids. https://ai.google.dev/gemini-api/terms
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash',
 ];
 export const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
@@ -80,6 +89,11 @@ export const IN_CALL_WORST_MS = 2 * 60_000 + 600;
 //   sensescape_synthesizer · step-3 phase B finishing (Pass 2 worst case) · 12.7 s
 //   visual_dna_synthesizer · step-3 phase B live happy-path · ~22.9 s
 //   war_table_synthesizer  · step-3 phase B live happy-path · ~17.0 s
+// STALE FOR THE ELEVEN PUBLIC AGENTS as of 2026-09-21. Every figure
+// below was measured against Sonnet. The public agents now run Gemini
+// Flash, which is a different latency class, so these are upper bounds
+// rather than observations until they are re-measured from agent_runs
+// after the first production runs on Google.
 export const AGENT_OBSERVED_LATENCY_MS = {
   soul_map_synthesizer:    15_000,
   sensescape_synthesizer:  12_700,

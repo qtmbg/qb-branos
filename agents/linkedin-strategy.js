@@ -28,6 +28,8 @@
 // bodies (90 to 160 words); the Content Approval Loop and regenerate
 // extend the arc.
 
+import { callModel, hasKeyFor, pickModel } from './model-call.js';
+
 const MAX_TOKENS = 8000;
 const CLAUDE_TIMEOUT_MS = 120000; // heavy class · single attempt (see header)
 const DEFAULT_BRAND_NAME = 'Your Brand';
@@ -179,48 +181,6 @@ function defensiveParseJson(text) {
 }
 
 // HEAVY-CLASS CALL · one attempt, no inner retry (see header comment).
-async function callClaude({ apiKey, system, userContent }) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), CLAUDE_TIMEOUT_MS);
-  let res;
-  try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        system,
-        messages: [{ role: 'user', content: userContent }],
-      }),
-      signal: controller.signal,
-    });
-  } catch (e) {
-    clearTimeout(timer);
-    if (e && e.name === 'AbortError') {
-      return { ok: false, timeout: true, status: 0, body: '' };
-    }
-    return { ok: false, status: 0, body: (e && e.message) || '' };
-  }
-  clearTimeout(timer);
-
-  if (!res.ok) {
-    return { ok: false, status: res.status, body: await res.text().catch(() => '') };
-  }
-  const data = await res.json();
-  const text = data?.content?.[0]?.text || '';
-  const usage = data?.usage || {};
-  return {
-    ok: true,
-    text,
-    tokens_in: usage.input_tokens ?? null,
-    tokens_out: usage.output_tokens ?? null,
-  };
-}
 
 function clampStr(v, max, fallback) {
   const s = (typeof v === 'string' && v.trim()) ? v.trim() : fallback;
@@ -310,10 +270,10 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   };
 }
 
-export async function run({ qbp, dependencies = {}, files = [], runtime_args = {}, anthropicKey }) {
+export async function run({ qbp, dependencies = {}, files = [], runtime_args = {}, anthropicKey, geminiKey }) {
   const t_start = Date.now();
 
-  if (!anthropicKey) {
+  if (!hasKeyFor(MODEL, { anthropicKey, geminiKey })) {
     return { ok: false, error: 'config_missing', stage: 'config' };
   }
 
@@ -343,7 +303,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
 
   userText += '\n\nReturn only the JSON object described in your instructions.';
 
-  const claudeRes = await callClaude({ apiKey: anthropicKey, system: SYSTEM_PROMPT, userContent: userText });
+  const claudeRes = await callModel({ model: pickModel(MODEL, runtime_args), apiKey: anthropicKey, geminiKey, system: SYSTEM_PROMPT, userContent: userText });
 
   if (!claudeRes.ok) {
     if (claudeRes.timeout) {
