@@ -29,6 +29,9 @@ export const GOOGLE_MODELS = new Set([
   'gemini-2.0-flash',
 ]);
 
+// What a Google-routed agent runs on when no Google key is present.
+export const FALLBACK_ANTHROPIC_MODEL = 'claude-sonnet-4-6';
+
 export function providerFor(model) {
   return GOOGLE_MODELS.has(model) ? 'google' : 'anthropic';
 }
@@ -40,7 +43,30 @@ export function providerFor(model) {
  * rather than when ANTHROPIC_API_KEY is.
  */
 export function hasKeyFor(model, { anthropicKey, geminiKey } = {}) {
-  return providerFor(model) === 'google' ? Boolean(geminiKey) : Boolean(anthropicKey);
+  // A Google agent is satisfied by an Anthropic key, because of the
+  // fallback below. Without this, funding one account would leave the
+  // other half of the fleet dead and the operator chasing two keys to
+  // get a working product.
+  if (providerFor(model) === 'google') return Boolean(geminiKey || anthropicKey);
+  return Boolean(anthropicKey);
+}
+
+/**
+ * Which provider will actually serve this call, given the keys present.
+ *
+ * A Google-routed agent falls back to Anthropic when GEMINI_API_KEY is
+ * absent and an Anthropic key is there. The fallback exists so that
+ * funding EITHER account produces a working product: the alternative is
+ * an operator with one funded account and a fleet split across two.
+ *
+ * It is loud, because the cost profile changes when it fires. Sonnet is
+ * materially more expensive than Flash, and a free tier quietly running
+ * on Sonnet is a bill nobody chose.
+ */
+export function effectiveProvider(model, { anthropicKey, geminiKey } = {}) {
+  const want = providerFor(model);
+  if (want === 'google' && !geminiKey && anthropicKey) return 'anthropic';
+  return want;
 }
 
 async function callAnthropic({ model, system, text, apiKey, maxTokens, signal }) {
@@ -98,7 +124,15 @@ async function callGoogle({ model, system, text, apiKey, maxTokens, signal }) {
 export async function callModel({
   model, system, userContent, userText, apiKey, geminiKey, maxTokens = 3000, timeoutMs = 60000,
 }) {
-  const provider = providerFor(model);
+  const wanted = providerFor(model);
+  const provider = effectiveProvider(model, { anthropicKey: apiKey, geminiKey });
+  const fellBack = provider !== wanted;
+  // Substituting a model, not just a provider: a Gemini id means nothing
+  // to Anthropic.
+  const effectiveModel = fellBack ? FALLBACK_ANTHROPIC_MODEL : model;
+  if (fellBack) {
+    console.warn(`[model-call] GEMINI_API_KEY absent · ${model} falling back to ${effectiveModel}. This costs materially more per call.`);
+  }
   const key = provider === 'google' ? geminiKey : apiKey;
   const text = userContent ?? userText ?? '';
 
@@ -113,7 +147,7 @@ export async function callModel({
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   let res;
   try {
-    const args = { model, system, text, apiKey: key, maxTokens, signal: controller.signal };
+    const args = { model: effectiveModel, system, text, apiKey: key, maxTokens, signal: controller.signal };
     res = provider === 'google' ? await callGoogle(args) : await callAnthropic(args);
   } catch (e) {
     clearTimeout(timer);
@@ -148,7 +182,7 @@ export async function callModel({
     }
     const u = data?.usageMetadata || {};
     return {
-      ok: true, provider, text: out, raw: data,
+      ok: true, provider, model: effectiveModel, text: out, raw: data,
       tokens_in: u.promptTokenCount ?? null,
       tokens_out: u.candidatesTokenCount ?? null,
     };
@@ -157,7 +191,7 @@ export async function callModel({
   const out = data?.content?.[0]?.text || '';
   const u = data?.usage || {};
   return {
-    ok: true, provider, text: out, raw: data,
+    ok: true, provider, model: effectiveModel, fell_back: fellBack, text: out, raw: data,
     tokens_in: u.input_tokens ?? null,
     tokens_out: u.output_tokens ?? null,
   };

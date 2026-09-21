@@ -15,7 +15,7 @@
 import { readFileSync } from 'node:fs';
 import { AGENTS } from '../../agents/registry.js';
 import { CANONICAL_MODELS, DEFAULT_MODEL } from '../../agents/contract.js';
-import { providerFor, hasKeyFor, pickModel, callModel, GOOGLE_MODELS } from '../../agents/model-call.js';
+import { providerFor, hasKeyFor, pickModel, callModel, GOOGLE_MODELS, effectiveProvider, FALLBACK_ANTHROPIC_MODEL } from '../../agents/model-call.js';
 import { OPERATOR_ONLY_SLUGS } from '../../api/_lib/operator-only.js';
 
 const failures = [];
@@ -45,7 +45,10 @@ console.log('\n1 · the provider is decided by the model id');
 console.log('\n2 · each agent needs its own provider key, not Anthropic\'s');
 {
   since();
-  if (hasKeyFor('gemini-2.5-flash', { anthropicKey: 'a' })) fail('a Gemini agent was satisfied by an Anthropic key');
+  // A Gemini agent IS satisfied by an Anthropic key, deliberately: the
+  // fallback below means funding either account yields a working
+  // product instead of a fleet split across two.
+  if (!hasKeyFor('gemini-2.5-flash', { anthropicKey: 'a' })) fail('a Gemini agent rejected an Anthropic key, so funding one account leaves half the fleet dead');
   if (!hasKeyFor('gemini-2.5-flash', { geminiKey: 'g' })) fail('a Gemini agent rejected a Google key');
   if (hasKeyFor('claude-sonnet-4-6', { geminiKey: 'g' })) fail('a Claude agent was satisfied by a Google key');
   if (!hasKeyFor('claude-sonnet-4-6', { anthropicKey: 'a' })) fail('a Claude agent rejected an Anthropic key');
@@ -55,11 +58,31 @@ console.log('\n2 · each agent needs its own provider key, not Anthropic\'s');
   since();
   // The whole point of the move: an empty Anthropic account must not
   // stop the free path.
-  const res = await callModel({ model: 'gemini-2.5-flash', system: 's', userContent: 'u', apiKey: 'anthropic-only' });
-  if (res.ok) fail('a Gemini call succeeded with no Google key');
+  const res = await callModel({ model: 'gemini-2.5-flash', system: 's', userContent: 'u' });
+  if (res.ok) fail('a Gemini call succeeded with no key at all');
   if (!String(res.body).includes('no key for provider google')) fail(`the missing-key failure was not named: ${JSON.stringify(res)}`);
   if (res.retryable) fail('a missing key was marked retryable; it will never succeed on a retry');
-  okIf('a missing Google key fails named, and not as retryable');
+  okIf('with no key at all, the call fails named and not as retryable');
+}
+
+console.log('\n2b · funding either account yields a working fleet');
+{
+  since();
+  const g = 'gemini-2.5-flash';
+  if (effectiveProvider(g, { geminiKey: 'g', anthropicKey: 'a' }) !== 'google') fail('a present Google key was not preferred');
+  if (effectiveProvider(g, { anthropicKey: 'a' }) !== 'anthropic') fail('a Google agent did not fall back when only an Anthropic key was present');
+  if (effectiveProvider(g, {}) !== 'google') fail('with no keys the reported provider should stay the declared one');
+  if (effectiveProvider('claude-sonnet-4-6', { geminiKey: 'g' }) !== 'anthropic') fail('an Anthropic agent fell back to Google · brand data must never reach Google unintentionally');
+  okIf('Google preferred when keyed, Anthropic fallback when not, never the reverse');
+
+  since();
+  // The fallback substitutes the MODEL too. A Gemini id sent to
+  // Anthropic is a 404, which would look like an outage.
+  if (!/claude/.test(FALLBACK_ANTHROPIC_MODEL)) fail(`the fallback model is not a Claude id: ${FALLBACK_ANTHROPIC_MODEL}`);
+  const src = readFileSync(new URL('../../agents/model-call.js', import.meta.url), 'utf8');
+  if (!/model: effectiveModel/.test(src)) fail('the fallback swaps provider but not model · a Gemini id would be sent to Anthropic');
+  if (!/console\.warn\(`\[model-call\] GEMINI_API_KEY absent/.test(src)) fail('the fallback is silent · a free tier quietly running on Sonnet is a bill nobody chose');
+  okIf('the fallback swaps the model too, and says so loudly');
 }
 
 console.log('\n3 · model_override is validated, not trusted');
