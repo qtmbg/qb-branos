@@ -42,6 +42,7 @@ export const config = { runtime: 'nodejs', maxDuration: 300 };
 
 import { AGENTS, LATENCY_BUDGET_WARNINGS, getAgent } from '../../agents/registry.js';
 import { isOperatorOnlyHidden } from '../_lib/operator-only.js';
+import { hasKeyFor, providerFor } from '../../agents/model-call.js';
 import { DEFAULT_RETRY_BUDGET, DEFAULT_MODEL, CANONICAL_TIERS } from '../../agents/contract.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
 import { sendEmail, renderTemplate, EMAIL_TEMPLATES, getAgentEmailVars } from '../_lib/email.js';
@@ -486,6 +487,10 @@ async function handler(req) {
   const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
   const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  // Agents on a Gemini model resolve their key from here. Absent is not
+  // fatal for the fleet: only an agent actually routed to Google fails
+  // config_missing, which is what hasKeyFor() decides per agent.
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const INTER_EDGE_SECRET = process.env.INTER_EDGE_SECRET;
 
@@ -576,17 +581,22 @@ async function handler(req) {
   // Fire the registry's collected latency warnings (one-time per boot).
   fireRegistryLatencyWarnings();
 
-  // Fast-fail config_missing · ANTHROPIC_API_KEY is required for every
-  // dispatch. Operator-notify fires immediately per §5.8.2.
-  if (!ANTHROPIC_API_KEY) {
+  // Fast-fail config_missing · the key THIS agent needs, not Anthropic's
+  // unconditionally. Agents on a Gemini model need GEMINI_API_KEY, and
+  // an absent Anthropic key must not block them: that is the whole point
+  // of moving the free path to Google. Operator-notify fires immediately
+  // per §5.8.2, naming the env var that is actually missing.
+  const resolvedModel = meta.model || DEFAULT_MODEL;
+  if (!hasKeyFor(resolvedModel, { anthropicKey: ANTHROPIC_API_KEY, geminiKey: GEMINI_API_KEY })) {
+    const envHint = providerFor(resolvedModel) === 'google' ? 'GEMINI_API_KEY' : 'ANTHROPIC_API_KEY';
     sendOperatorNotification({
       reason: 'config_missing',
       agent_slug,
       stage: 'env',
-      env_hint: 'ANTHROPIC_API_KEY',
-      context: `dispatch_id=${dispatch_id || '<none>'}`,
+      env_hint: envHint,
+      context: `dispatch_id=${dispatch_id || '<none>'} model=${resolvedModel}`,
     }).catch(e => console.error('[agents/run] config-missing notify failed', e?.message));
-    return json(503, { ok: false, error: 'config_missing', stage: 'env' }, corsH);
+    return json(503, { ok: false, error: 'config_missing', stage: 'env', detail: `${envHint} not set` }, corsH);
   }
 
   // ─── 3. Resolve QBP source ────────────────────────────────────────────
@@ -693,7 +703,7 @@ async function handler(req) {
 
   const result = await runWithSchemaRetry({
     agent,
-    runArgs: { qbp, dependencies, files, runtime_args, anthropicKey: ANTHROPIC_API_KEY },
+    runArgs: { qbp, dependencies, files, runtime_args, anthropicKey: ANTHROPIC_API_KEY, geminiKey: GEMINI_API_KEY },
     retryBudget,
     forceError,
   });

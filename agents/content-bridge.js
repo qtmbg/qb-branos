@@ -25,6 +25,8 @@
 //
 // Latency class: STANDARD (3000 max tokens, the logo-direction call shape).
 
+import { callModel, hasKeyFor, pickModel } from './model-call.js';
+
 const MAX_TOKENS = 3000;
 const CLAUDE_TIMEOUT_MS = 60000; // step-5 Node runtime envelope (see agents/contract.js budgets)
 const DEFAULT_BRAND_NAME = 'Your Brand';
@@ -185,51 +187,6 @@ function defensiveParseJson(text) {
   return { ok: false, reason: 'parse-failed', raw };
 }
 
-async function callClaude({ apiKey, system, userContent }) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), CLAUDE_TIMEOUT_MS);
-  let res;
-  try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        system,
-        messages: [{ role: 'user', content: userContent }],
-      }),
-      signal: controller.signal,
-    });
-  } catch (e) {
-    clearTimeout(timer);
-    if (e && e.name === 'AbortError') {
-      return { ok: false, retryable: false, timeout: true, status: 0, body: '' };
-    }
-    return { ok: false, retryable: true, status: 0, body: (e && e.message) || '' };
-  }
-  clearTimeout(timer);
-
-  if (res.status === 429 || res.status >= 500) {
-    return { ok: false, retryable: true, status: res.status, body: await res.text().catch(() => '') };
-  }
-  if (!res.ok) {
-    return { ok: false, retryable: false, status: res.status, body: await res.text().catch(() => '') };
-  }
-  const data = await res.json();
-  const text = data?.content?.[0]?.text || '';
-  const usage = data?.usage || {};
-  return {
-    ok: true,
-    text,
-    tokens_in: usage.input_tokens ?? null,
-    tokens_out: usage.output_tokens ?? null,
-  };
-}
 
 function clampStr(v, max, fallback) {
   const s = (typeof v === 'string' && v.trim()) ? v.trim() : fallback;
@@ -325,10 +282,10 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   };
 }
 
-export async function run({ qbp, dependencies = {}, files = [], runtime_args = {}, anthropicKey }) {
+export async function run({ qbp, dependencies = {}, files = [], runtime_args = {}, anthropicKey, geminiKey }) {
   const t_start = Date.now();
 
-  if (!anthropicKey) {
+  if (!hasKeyFor(MODEL, { anthropicKey, geminiKey })) {
     return { ok: false, error: 'config_missing', stage: 'config' };
   }
 
@@ -384,7 +341,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
 
   let claudeRes;
   for (let attempt = 0; attempt < 2; attempt++) {
-    claudeRes = await callClaude({ apiKey: anthropicKey, system: SYSTEM_PROMPT, userContent: userText });
+    claudeRes = await callModel({ model: pickModel(MODEL, runtime_args), apiKey: anthropicKey, geminiKey, system: SYSTEM_PROMPT, userContent: userText });
     if (claudeRes.ok) break;
     if (!claudeRes.retryable) break;
     await new Promise(r => setTimeout(r, 600));

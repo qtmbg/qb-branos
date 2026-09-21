@@ -112,7 +112,11 @@ The rules:
 - `localStorage` is the persistence layer for tool state and the QBP.
 - Reduced-motion is respected on every animation.
 - All tools accept `?apikey=`, `?provider=`, and `?qbp=` URL parameters. White-label entry points additionally accept `?brand=`, `?color=`, `?client=`. Signal Scan additionally accepts `?kpk=` and `?kli=`.
-- AI calls go to the Anthropic API with `claude-sonnet-4-6` (the canonical Sonnet default in `api/claude.js`). `claude-sonnet-4-20250514` is retired and kept in `ALLOWED_MODELS` only for transition. Update both `api/claude.js` and `ALLOWED_MODELS` together when changing the default.
+- **Two providers, one call site.** Every agent reaches a model through `agents/model-call.js` and nothing else. The provider is chosen from the model id, so moving an agent is editing its `META.model`.
+  - **Free path: Google, paid tier only.** The eleven public agents run `gemini-2.5-flash`, because the foundation is free under the recut and model cost is the free tier's main variable cost. Google's **free** tier uses prompts and responses to train and lets human reviewers read them, which is disqualifying for brand positioning, so the key behind `GEMINI_API_KEY` must have billing linked. This narrows the older Anthropic-only rule; the narrowing is the operator's, 2026-09-21.
+  - **Paid path and operator tools: Anthropic.** The seven operator-only content agents stay on `claude-sonnet-4-6`. The $79 document is assembled from agent prose, so the purchase path re-runs the agents with `runtime_args.model_override` set to a Sonnet id. Overrides are validated against `CANONICAL_MODELS`; an unknown id falls back rather than reaching a provider.
+  - `api/claude.js` keeps `claude-sonnet-4-6` as its default. Update it and `ALLOWED_MODELS` together when changing that, and add any new id to `CANONICAL_MODELS` in `agents/contract.js` or META validation will reject it.
+  - Enforced by `node tests/model-routing/model-routing.mjs`.
 - Every agent tool includes the Content Approval Loop (up to 3 revision rounds per output).
 
 ### Voice
