@@ -1,8 +1,8 @@
 {
   "version": 2,
   "name": "quantumbranding-ai",
-  "buildCommand": null,
-  "outputDirectory": ".",
+  "buildCommand": "node scripts/build-public.mjs",
+  "outputDirectory": "public-dist",
   "crons": [
     {
       "path": "/api/cron/reaper",
@@ -11,8 +11,18 @@
   ],
   "routes": [
     {
+      "src": "/(docs|_archive|_drafts|tests|scripts|supabase|chapter-[0-9]+|private|clients)(/.*)?",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
       "src": "/",
-      "has": [{"type": "host", "value": "app.quantumbranding.ai"}],
+      "has": [
+        {
+          "type": "host",
+          "value": "app.quantumbranding.ai"
+        }
+      ],
       "dest": "/foundation.html"
     },
     {
@@ -27,27 +37,37 @@
     {
       "src": "/os",
       "status": 301,
-      "headers": {"Location": "/foundation"}
+      "headers": {
+        "Location": "/foundation"
+      }
     },
     {
       "src": "/hub",
       "status": 301,
-      "headers": {"Location": "/foundation"}
+      "headers": {
+        "Location": "/foundation"
+      }
     },
     {
       "src": "/qb-branidos-hub(\\.html)?",
       "status": 301,
-      "headers": {"Location": "/foundation"}
+      "headers": {
+        "Location": "/foundation"
+      }
     },
     {
       "src": "/dashboard(\\.html)?",
       "status": 301,
-      "headers": {"Location": "/foundation"}
+      "headers": {
+        "Location": "/foundation"
+      }
     },
     {
       "src": "/journey-guide(\\.html)?",
       "status": 410,
-      "headers": {"Content-Type": "text/plain"}
+      "headers": {
+        "Content-Type": "text/plain"
+      }
     },
     {
       "src": "/foundation",
@@ -68,7 +88,9 @@
     {
       "src": "/signin",
       "status": 301,
-      "headers": {"Location": "/login"}
+      "headers": {
+        "Location": "/login"
+      }
     },
     {
       "src": "/scan",
@@ -149,7 +171,9 @@
     {
       "src": "/blog/what-is-quantum-branding(\\.html)?",
       "status": 301,
-      "headers": {"Location": "/blog/what-is-the-collapse"}
+      "headers": {
+        "Location": "/blog/what-is-the-collapse"
+      }
     },
     {
       "src": "/blog/?",
