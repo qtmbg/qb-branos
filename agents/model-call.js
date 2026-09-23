@@ -10,12 +10,11 @@
 // cost is the main variable cost of the free tier. Gemini Flash is a
 // fraction of Sonnet for work the free path does not need Sonnet for.
 //
-// PAID TIER ONLY, and this is not a preference. On Google's free tier
-// prompts and responses are used to improve their products and human
-// reviewers may read them. BrandOS agents ingest positioning,
-// competitive analysis and what a founder refuses to be. That belongs
-// on the paid tier, where Google states it is not used for training,
-// or it belongs nowhere. See https://ai.google.dev/gemini-api/terms
+// FREE TIER, by operator decision 2026-09-23. Google's free tier uses
+// prompts and responses to improve their products. That is accepted
+// here: the free path costs nothing to run, which is the point. The
+// seven operator-only agents and the paid document path stay on
+// Anthropic, so nothing a customer paid for is generated this way.
 //
 // The response shape is identical whichever provider answers, so every
 // caller downstream is unchanged: { ok, text, raw, tokens_in, tokens_out }

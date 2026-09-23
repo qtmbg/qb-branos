@@ -140,17 +140,17 @@ console.log('\n5 · there is exactly one model call in the codebase');
   okIf('the runtime gate and key handoff are provider-aware');
 }
 
-console.log('\n6 · the paid-tier requirement is recorded where it is made');
+console.log('\n6 · the tier decision is recorded where it is made');
 {
   since();
-  // Not decoration. Google's free tier trains on prompts and lets human
-  // reviewers read them, which is disqualifying for brand positioning.
-  // Whoever next edits this file has to meet that sentence.
+  // Which Google tier the key is on changes what happens to customer
+  // prompts, so the decision is written at the call site rather than
+  // living only in a commit message.
   const src = read('agents/model-call.js');
-  for (const probe of ['PAID TIER ONLY', 'ai.google.dev/gemini-api/terms', 'human']) {
-    if (!src.includes(probe)) fail(`agents/model-call.js lost the paid-tier rationale ("${probe}")`);
+  for (const probe of ['FREE TIER', 'operator decision']) {
+    if (!src.includes(probe)) fail(`agents/model-call.js lost the tier decision ("${probe}")`);
   }
-  okIf('the paid-tier requirement and its reason are documented at the call site');
+  okIf('the tier decision is documented at the call site');
 }
 
 const KEY = process.env.GEMINI_API_KEY || '';
