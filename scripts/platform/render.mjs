@@ -4,7 +4,7 @@
 //
 //   node scripts/platform/render.mjs <platform.html> [out.pdf]
 //
-// Derived from docs/clients/rapp-esen/render.mjs, which already did the
+// Derived from a private client rendering reference, which already did the
 // one thing that matters: it reports every .page that would clip its A4
 // sheet BEFORE writing the PDF. That report is the reason the client
 // document has no cut lines, and it is promoted here from a script
