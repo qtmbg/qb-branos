@@ -9,7 +9,7 @@
 //
 //   1. OVERFLOW · a page clips its A4 sheet. .page sets overflow:hidden,
 //      so a clip is silent in the PDF and only visible on paper. This is
-//      the check promoted out of docs/clients/rapp-esen/render.mjs.
+//      the check promoted out of a private client rendering reference.
 //   2. UNDER-FILL · pages left mostly blank. The first build of this
 //      renderer produced pages 45% full, which reads as a draft. Fill is
 //      a quality property here, not a cosmetic one.
