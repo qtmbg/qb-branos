@@ -26,6 +26,10 @@ const since = () => { mark = failures.length; };
 const okIf = m => { if (failures.length === mark) ok(m); };
 const read = p => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
 const modelOf = slug => AGENTS[slug].META.model || DEFAULT_MODEL;
+// Never hard-code a Google id here. Google retires them: the three this
+// fleet shipped with were all withdrawn, and a test pinned to one of
+// them would have gone quietly meaningless instead of failing.
+const G = [...GOOGLE_MODELS][0];
 
 console.log('\n1 · the provider is decided by the model id');
 {
@@ -38,6 +42,19 @@ console.log('\n1 · the provider is decided by the model id');
   okIf(`${GOOGLE_MODELS.size} Google ids route to Google, everything else to Anthropic`);
 
   since();
+  // Withdrawn by Google and verified 404 on 2026-09-23. Listing one of
+  // these again would 404 every public agent in production.
+  const RETIRED = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+  for (const r of RETIRED) {
+    if (GOOGLE_MODELS.has(r)) fail(`${r} is retired by Google and would 404 every public agent`);
+    if (CANONICAL_MODELS.includes(r)) fail(`${r} is retired and must not be canonical`);
+  }
+  // `-latest` aliases re-point without notice, which breaks the voice
+  // and schema guarantees this fleet makes.
+  for (const g of GOOGLE_MODELS) if (g.endsWith('-latest')) fail(`${g} is a floating alias; pin an explicit version`);
+  okIf('no retired id and no floating alias is routed to Google');
+
+  since();
   for (const g of GOOGLE_MODELS) if (!CANONICAL_MODELS.includes(g)) fail(`${g} routes to Google but is not canonical, so META validation would reject it`);
   okIf('every Google id is canonical');
 }
@@ -48,8 +65,8 @@ console.log('\n2 · each agent needs its own provider key, not Anthropic\'s');
   // A Gemini agent IS satisfied by an Anthropic key, deliberately: the
   // fallback below means funding either account yields a working
   // product instead of a fleet split across two.
-  if (!hasKeyFor('gemini-2.5-flash', { anthropicKey: 'a' })) fail('a Gemini agent rejected an Anthropic key, so funding one account leaves half the fleet dead');
-  if (!hasKeyFor('gemini-2.5-flash', { geminiKey: 'g' })) fail('a Gemini agent rejected a Google key');
+  if (!hasKeyFor(G, { anthropicKey: 'a' })) fail('a Gemini agent rejected an Anthropic key, so funding one account leaves half the fleet dead');
+  if (!hasKeyFor(G, { geminiKey: 'g' })) fail('a Gemini agent rejected a Google key');
   if (hasKeyFor('claude-sonnet-4-6', { geminiKey: 'g' })) fail('a Claude agent was satisfied by a Google key');
   if (!hasKeyFor('claude-sonnet-4-6', { anthropicKey: 'a' })) fail('a Claude agent rejected an Anthropic key');
   if (hasKeyFor('claude-sonnet-4-6', {})) fail('no key at all was accepted');
@@ -58,7 +75,7 @@ console.log('\n2 · each agent needs its own provider key, not Anthropic\'s');
   since();
   // The whole point of the move: an empty Anthropic account must not
   // stop the free path.
-  const res = await callModel({ model: 'gemini-2.5-flash', system: 's', userContent: 'u' });
+  const res = await callModel({ model: G, system: 's', userContent: 'u' });
   if (res.ok) fail('a Gemini call succeeded with no key at all');
   if (!String(res.body).includes('no key for provider google')) fail(`the missing-key failure was not named: ${JSON.stringify(res)}`);
   if (res.retryable) fail('a missing key was marked retryable; it will never succeed on a retry');
@@ -68,7 +85,7 @@ console.log('\n2 · each agent needs its own provider key, not Anthropic\'s');
 console.log('\n2b · funding either account yields a working fleet');
 {
   since();
-  const g = 'gemini-2.5-flash';
+  const g = G;
   if (effectiveProvider(g, { geminiKey: 'g', anthropicKey: 'a' }) !== 'google') fail('a present Google key was not preferred');
   if (effectiveProvider(g, { anthropicKey: 'a' }) !== 'anthropic') fail('a Google agent did not fall back when only an Anthropic key was present');
   if (effectiveProvider(g, {}) !== 'google') fail('with no keys the reported provider should stay the declared one');
@@ -80,7 +97,7 @@ console.log('\n2b · funding either account yields a working fleet');
   // Anthropic is a 404, which would look like an outage.
   if (!/claude/.test(FALLBACK_ANTHROPIC_MODEL)) fail(`the fallback model is not a Claude id: ${FALLBACK_ANTHROPIC_MODEL}`);
   const src = readFileSync(new URL('../../agents/model-call.js', import.meta.url), 'utf8');
-  if (!/model: effectiveModel/.test(src)) fail('the fallback swaps provider but not model · a Gemini id would be sent to Anthropic');
+  if (!/\[effectiveModel\]/.test(src)) fail('the fallback swaps provider but not model · a Gemini id would be sent to Anthropic');
   if (!/console\.warn\(`\[model-call\] GEMINI_API_KEY absent/.test(src)) fail('the fallback is silent · a free tier quietly running on Sonnet is a bill nobody chose');
   okIf('the fallback swaps the model too, and says so loudly');
 }
@@ -88,15 +105,15 @@ console.log('\n2b · funding either account yields a working fleet');
 console.log('\n3 · model_override is validated, not trusted');
 {
   since();
-  if (pickModel('gemini-2.5-flash', { model_override: 'claude-sonnet-4-6' }) !== 'claude-sonnet-4-6') {
+  if (pickModel(G, { model_override: 'claude-sonnet-4-6' }) !== 'claude-sonnet-4-6') {
     fail('a canonical override was ignored, so the paid path cannot upgrade to Sonnet');
   }
   okIf('a canonical override is honoured · the purchase path can re-run on Sonnet');
 
   since();
   for (const junk of ['gpt-5', '../../etc', '', '   ', null, undefined, 42, {}]) {
-    const got = pickModel('gemini-2.5-flash', { model_override: junk });
-    if (got !== 'gemini-2.5-flash') fail(`override ${JSON.stringify(junk)} was accepted and resolved to ${got}`);
+    const got = pickModel(G, { model_override: junk });
+    if (got !== G) fail(`override ${JSON.stringify(junk)} was accepted and resolved to ${got}`);
   }
   okIf('non-canonical, empty and non-string overrides all fall back to the agent model');
 }
@@ -157,8 +174,25 @@ const KEY = process.env.GEMINI_API_KEY || '';
 console.log(`\n7 · live Google call ${KEY ? '' : '(SKIPPED · no GEMINI_API_KEY)'}`);
 if (KEY) {
   since();
+  // The check that would have caught the retirement. Every id this fleet
+  // routes to Google must actually answer.
+  for (const g of GOOGLE_MODELS) {
+    const probe = await callModel({ model: g, system: 'Reply with only {"ok":true}', userContent: 'ping', geminiKey: KEY, maxTokens: 800 });
+    if (!probe.ok) {
+      // 503 is Google capacity, not a dead id. Named, not silently passed.
+      const transient = /high demand|503/i.test(String(probe.body));
+      const line = `${g} did not answer: ${String(probe.body).slice(0, 80)}`;
+      if (transient) console.log(`     note · ${line} (capacity, not retirement)`);
+      else fail(line);
+    } else {
+      console.log(`     ${g} answered`);
+    }
+  }
+  okIf('every routed Google id answers');
+
+  since();
   const r = await callModel({
-    model: 'gemini-2.5-flash',
+    model: G,
     system: 'Reply with only a JSON object {"line": "..."} . Never use an em dash. No exclamation points.',
     userContent: 'Write one sentence about a brand that refuses to compete on price.',
     geminiKey: KEY, maxTokens: 200,
