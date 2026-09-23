@@ -45,9 +45,9 @@ export const CANONICAL_MODELS = [
   // read them, which is disqualifying for brand positioning, so the key
   // behind these must have billing linked. agents/model-call.js routes
   // on these ids. https://ai.google.dev/gemini-api/terms
-  'gemini-2.5-flash',
-  'gemini-2.5-flash-lite',
-  'gemini-2.0-flash',
+  'gemini-3.5-flash',
+  'gemini-3.5-flash-lite',
+  'gemini-3.7-flash',
 ];
 export const DEFAULT_MODEL = 'claude-sonnet-4-6';
 

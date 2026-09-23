@@ -382,7 +382,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
     meta: {
       agent_slug: META.slug,
       phase: META.phase,
-      model: MODEL,
+      model: claudeRes.model || MODEL,
       tokens_in: claudeRes.tokens_in,
       tokens_out: claudeRes.tokens_out,
       duration_ms: Date.now() - t_start,

@@ -22,10 +22,18 @@
 
 import { CANONICAL_MODELS } from './contract.js';
 
+// Verified live against the production key on 2026-09-23. The three ids
+// this file shipped with (gemini-2.5-flash, -flash-lite and 2.0-flash)
+// are RETIRED: Google answers 404 "no longer available to new users".
+// Every agent would have 404'd the moment the key was set.
+//
+// The `-latest` aliases are deliberately excluded. They re-point without
+// notice, and this fleet makes voice and schema guarantees that a silent
+// model swap would break.
 export const GOOGLE_MODELS = new Set([
-  'gemini-2.5-flash-lite',
-  'gemini-2.5-flash',
-  'gemini-2.0-flash',
+  'gemini-3.5-flash',
+  'gemini-3.5-flash-lite',
+  'gemini-3.7-flash',
 ]);
 
 // What a Google-routed agent runs on when no Google key is present.
@@ -144,10 +152,29 @@ export async function callModel({
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
-  let res;
+
+  // Google's free tier answers 503 "high demand" on the busier models.
+  // Measured 2026-09-23: two of the three routed ids were unavailable
+  // while a third served every call. Retrying the SAME id does not help,
+  // so a capacity refusal walks to the next routed model instead. Claude
+  // has no equivalent list and does not walk.
+  const chain = provider === 'google'
+    ? [effectiveModel, ...[...GOOGLE_MODELS].filter(m => m !== effectiveModel)]
+    : [effectiveModel];
+
+  let res, servedBy;
   try {
-    const args = { model: effectiveModel, system, text, apiKey: key, maxTokens, signal: controller.signal };
-    res = provider === 'google' ? await callGoogle(args) : await callAnthropic(args);
+    for (const candidate of chain) {
+      const args = { model: candidate, system, text, apiKey: key, maxTokens, signal: controller.signal };
+      res = provider === 'google' ? await callGoogle(args) : await callAnthropic(args);
+      servedBy = candidate;
+      // Only capacity walks. A 4xx is a real rejection and the next
+      // model would reject it too.
+      if (res.status !== 429 && res.status !== 503) break;
+      if (candidate !== chain[chain.length - 1]) {
+        console.warn(`[model-call] ${candidate} returned ${res.status}; trying the next routed model`);
+      }
+    }
   } catch (e) {
     clearTimeout(timer);
     if (e && e.name === 'AbortError') {
@@ -181,7 +208,7 @@ export async function callModel({
     }
     const u = data?.usageMetadata || {};
     return {
-      ok: true, provider, model: effectiveModel, text: out, raw: data,
+      ok: true, provider, model: servedBy, text: out, raw: data,
       tokens_in: u.promptTokenCount ?? null,
       tokens_out: u.candidatesTokenCount ?? null,
     };
@@ -190,7 +217,7 @@ export async function callModel({
   const out = data?.content?.[0]?.text || '';
   const u = data?.usage || {};
   return {
-    ok: true, provider, model: effectiveModel, fell_back: fellBack, text: out, raw: data,
+    ok: true, provider, model: servedBy, fell_back: fellBack, text: out, raw: data,
     tokens_in: u.input_tokens ?? null,
     tokens_out: u.output_tokens ?? null,
   };

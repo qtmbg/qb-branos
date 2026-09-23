@@ -169,8 +169,12 @@ console.log('\n5 · config_missing before any network call');
   okIf('an absent key refuses at the config stage');
 }
 
-const KEY = process.env.ANTHROPIC_API_KEY || '';
-console.log(`\n6 · live run ${KEY ? '' : '(SKIPPED · no ANTHROPIC_API_KEY)'}`);
+// The agent runs on Google since the provider split, so the live case
+// needs whichever key its own model calls for.
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY || '';
+const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
+const KEY = ANTHROPIC_KEY || GEMINI_KEY;
+console.log(`\n6 · live run ${KEY ? `(${META.model})` : '(SKIPPED · set GEMINI_API_KEY or ANTHROPIC_API_KEY)'}`);
 if (KEY) {
   since();
   const dep = slug => ({ delivered: true, content: {
@@ -193,7 +197,7 @@ if (KEY) {
       visual_dna_synthesizer: dep('visual_dna_synthesizer'),
       war_table_synthesizer: dep('war_table_synthesizer'),
     },
-    files: [], runtime_args: {}, anthropicKey: KEY,
+    files: [], runtime_args: {}, anthropicKey: ANTHROPIC_KEY, geminiKey: GEMINI_KEY,
   });
   const ms = Date.now() - t0;
   if (!r.ok) { fail(`live run failed: ${JSON.stringify(r).slice(0, 300)}`); }
@@ -204,7 +208,7 @@ if (KEY) {
     if (text.includes('—')) fail('the live artifact contains an em dash');
     if (/[!]/.test(text.replace(/\\[nrt]/g, ''))) fail('the live artifact contains an exclamation point');
     const openItems = r.content.data_blocks.find(b => b.type === 'priority_list')?.content.items || [];
-    console.log(`  live · ${ms} ms · ${openItems.length} open decisions`);
+    console.log(`  live · ${ms} ms · model ${r.meta?.model} · ${openItems.length} open decisions`);
     for (const it of openItems) console.log(`     ${it.rank}. ${it.label}`);
   }
   okIf('live run produced a valid, codex-clean artifact');

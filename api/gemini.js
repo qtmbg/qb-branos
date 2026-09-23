@@ -5,12 +5,14 @@
 
 export const config = { runtime: 'edge' };
 
+// Verified live 2026-09-23. The previous three ids are retired and
+// answer 404, so this proxy was dead on arrival for the iOS app too.
 const ALLOWED_MODELS = [
-  'gemini-2.5-flash-lite',
-  'gemini-2.5-flash',
-  'gemini-2.0-flash',
+  'gemini-3.5-flash',
+  'gemini-3.5-flash-lite',
+  'gemini-3.7-flash',
 ];
-const DEFAULT_MODEL = 'gemini-2.5-flash-lite';
+const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
 
 export default async function handler(req) {
   // CORS preflight
