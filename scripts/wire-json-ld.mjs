@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://quantumbranding.ai';
-const ORG_ID = `${ORIGIN}/#organization`;
+const ORG_ID = 'https://thequantumbranding.com/#organization';
 const SITE_ID = `${ORIGIN}/#website`;
 const SOFTWARE_ID = `${ORIGIN}/#software`;
 

@@ -133,7 +133,7 @@ Five things only the account holder can do. Nothing in section 4 reaches Bing's 
 2. **Submit `https://quantumbranding.ai/sitemap.xml`.**
 3. **Register the IndexNow key in the IndexNow panel.** The key file deploys with the site. Confirm it loads as plain text at the root before registering.
 4. **Turn on the AI Performance report.** This is the citation view. It is the number that answers "are we the go to," and no other free tool reports it.
-5. **Confirm the three social profiles in the entity markup are the ones you want Bing to bind to.** They were taken from the site footer: `x.com/quantumbranding`, `instagram.com/thequantumbranding`, `linkedin.com/in/nizzar`.
+5. **Confirm the three social profiles in the entity markup are the ones you want Bing to bind to.** They were taken from the site footer: `x.com/quantumbranding`, `instagram.com/thequantumbranding`, `linkedin.com/in/nizzar`. **Resolved 27 September 2026 (identity Step 5):** `x.com/quantumbranding` belongs to an unrelated dormant account, so the footer now links the owned `x.com/qtmbranding` and the entity markup binds only to `linkedin.com/company/thequantumbranding`. The Organization now uses the practice's canonical `@id` (`https://thequantumbranding.com/#organization`) and the founder uses `https://nizzar.com/#person`. `instagram.com/thequantumbranding` stays in the footer but out of the markup until its ownership is confirmed.
 
 ---
 
