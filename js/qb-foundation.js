@@ -221,7 +221,7 @@ const UPGRADE_BANNER_COPY = {
   starter: {
     eyebrow: 'Starter is live.',
     headline: 'Your tools are unlocked.',
-    body: 'All 20 agents and unlimited runs are open. The Visual DNA and War Table exercises just unlocked · finish them to lock your foundation and trigger the full Phase 01 synthesis.',
+    body: 'Your full foundation, your QBP export and the Phase 02 agents are open. The Visual DNA and War Table exercises just unlocked · finish them to lock your foundation and trigger the full Phase 01 synthesis.',
   },
   pro: {
     eyebrow: 'Pro is live.',
@@ -505,7 +505,7 @@ function renderLocked(state, opts) {
   const banner = isPaid
     ? el('section', { class: 'qb-foundation-next' }, [
         el('p', { class: 'qb-foundation-next__text' },
-          'Phase 02 unlocks in a future chapter. Your QBP keeps accumulating as you complete the Visual DNA and War Table exercises.'),
+          'Phase 02 is open: Logo Direction, Logo Evaluation and Voice Guide. Your QBP keeps accumulating as you complete the Visual DNA and War Table exercises.'),
       ])
     : el('section', { class: 'qb-foundation-upgrade-banner' }, [
         el('div', { class: 'qb-foundation-upgrade-banner__copy' }, [

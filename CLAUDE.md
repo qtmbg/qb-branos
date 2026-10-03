@@ -45,9 +45,17 @@ If you finish writing a response and realize a violation is in it, do not send t
 
 ## The canonical documents
 
+**Commercial model (owner decision, 3 October 2026). This overrides the recut's pricing below.**
+Brand Profile, free. Starter, $97 a month (Stripe `price_1Th8JkEHEAcWrG55Abr1OZXe`,
+product "QB BrandOS Starter"), sold from `payment.html` and the in-app paywall, mapped to
+tier `starter` by `api/stripe/checkout.js` and `api/stripe-webhook.js`. The $79 one-time
+Platform is abandoned: do not offer it, do not create its Stripe price. Pro and Agency are
+dormant in code (Phase 05 gates, legacy price ids) and never offered publicly. Public
+promise, checkout, app, access and `terms.html` must all describe exactly this.
+
 **0. `/docs/strategy/brandos-recut-v1.md`.** Read this first. The 2026-09-20 recut
 decided what the product is and what it costs, and it supersedes the phase model and
-the pricing in every document below. Two prices, $0 and $79. Four movements, not six
+the pricing in every document below (its $0/$79 pricing is itself superseded, see above). Four movements, not six
 phases. Eleven public agents, not twenty.
 
 Read the rest in order on a first session in this repo. Re-read on demand when working on relevant files.

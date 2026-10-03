@@ -126,16 +126,19 @@ export function getReasonCopy(reason, params = {}) {
   }
   if (PHASE_LABELS[r]) {
     const phase = PHASE_LABELS[r];
-    const sub = {
-      phase_02: 'The visual identity phase is built on your foundation. Starter opens it.',
-      phase_03: 'The content phase is built on your foundation. Starter opens it.',
-      phase_04: 'The execution phase is built on your foundation. Starter opens it.',
-      phase_05: 'The intelligence phase is built on your foundation. Starter opens it.',
-    };
+    // Starter opens Phase 02 only. Phase 03 and 04 agents are operator-only
+    // and Phase 05 sits behind the dormant Pro gate, so neither is sold.
+    if (r !== 'phase_02') {
+      return {
+        eyebrow: 'Upgrade',
+        headline: `${phase} is not open yet.`,
+        body: 'Starter opens your full foundation and the Phase 02 agents today.',
+      };
+    }
     return {
       eyebrow: 'Upgrade',
       headline: `${phase} opens with Starter.`,
-      body: sub[r],
+      body: 'The visual identity phase is built on your foundation. Starter opens it.',
     };
   }
   if (String(params.cancelled) === '1') {
@@ -148,7 +151,7 @@ export function getReasonCopy(reason, params = {}) {
   return {
     eyebrow: 'Upgrade',
     headline: 'Open the rest of your foundation.',
-    body: 'Visual DNA, War Table, three remaining synthesis artifacts, full QBP export, and every Phase 02–05 agent. All on Starter.',
+    body: 'Visual DNA, War Table, three remaining synthesis artifacts, full QBP export, and the Phase 02 agents. All on Starter.',
   };
 }
 
@@ -261,7 +264,7 @@ export function renderPaywall(container, opts = {}) {
       }),
 
       // Plan grid
-      el('div', { class: 'qb-paywall__plans' }, [
+      el('div', { class: 'qb-paywall__plans is-single' }, [
         createPlanCard({
           name:    'Starter',
           price:   '$97',
@@ -272,49 +275,12 @@ export function renderPaywall(container, opts = {}) {
             'Visual DNA and War Table exercises',
             'Full QBP export',
             'All Phase 02 agents (Logo Direction, Logo Evaluation, Voice Guide)',
-            'All Phase 03 content agents',
             'Cancel anytime',
           ],
           ctaLabel: tier === 'starter' ? 'Current plan' : 'Upgrade to Starter',
           variant: 'starter',
           isCurrent: tier === 'starter',
           ctaOnClick: tier === 'starter' ? null : (e) => triggerCheckout(e, opts),
-        }),
-        createPlanCard({
-          name:    'Pro',
-          price:   '$247',
-          cadence: '/ month',
-          lede:    'For brands building in public, ready to publish on cadence.',
-          features: [
-            'Everything in Starter',
-            'All Phase 04 execution agents',
-            'All Phase 05 intelligence agents',
-            'Priority synthesis dispatch',
-            'Quarterly brand review',
-          ],
-          ctaLabel: tier === 'pro' ? 'Current plan' : 'Available in a future chapter',
-          variant: 'pro',
-          status: tier === 'pro' ? null : 'soon',
-          isCurrent: tier === 'pro',
-          ctaOnClick: () => showSoonToast(opts),
-        }),
-        createPlanCard({
-          name:    'Agency',
-          price:   '$1,497',
-          cadence: '/ month',
-          lede:    'For agencies running brand systems for multiple clients.',
-          features: [
-            'Everything in Pro',
-            'Up to 5 client workspaces',
-            'White-label exports and reports',
-            'Multi-tenant QBPs',
-            'Dedicated account contact',
-          ],
-          ctaLabel: tier === 'agency' ? 'Current plan' : 'Available in a future chapter',
-          variant: 'agency',
-          status: tier === 'agency' ? null : 'soon',
-          isCurrent: tier === 'agency',
-          ctaOnClick: () => showSoonToast(opts),
         }),
       ]),
 
@@ -391,9 +357,7 @@ export function renderPaywallLoading(container) {
         el('h1',  { class: 'qb-paywall__headline qb-skeleton' }, ' '),
         el('p',   { class: 'qb-paywall__body qb-skeleton' }, ' '),
       ]),
-      el('div', { class: 'qb-paywall__plans' }, [
-        el('div', { class: 'qb-plan-card qb-skeleton' }, ' '),
-        el('div', { class: 'qb-plan-card qb-skeleton' }, ' '),
+      el('div', { class: 'qb-paywall__plans is-single' }, [
         el('div', { class: 'qb-plan-card qb-skeleton' }, ' '),
       ]),
     ]),

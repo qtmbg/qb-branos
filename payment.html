@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Access · BrandOS</title>
-<meta name="description" content="The Platform: your BrandOS foundation as a designed A4 document. $79, bought once, per brand. The exercises are free.">
+<meta name="description" content="Starter: $97 a month. Everything in Brand Profile, plus your full foundation and the Phase 02 agents. Cancel anytime.">
 
 <meta name="theme-color" content="#2D1521">
 <meta name="color-scheme" content="light">
@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Access · BrandOS">
-<meta property="og:description" content="The Platform: your foundation as a designed A4 document. $79, once, per brand.">
+<meta property="og:description" content="Starter: $97 a month. The full BrandOS foundation and the Phase 02 agents.">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/payment.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -1633,8 +1633,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "The Platform",
-  "description": "The Platform: your BrandOS foundation as a designed A4 document. $79, bought once, per brand. The exercises are free.",
+  "name": "Starter",
+  "description": "Starter: $97 a month. Everything in Brand Profile, plus your full foundation and the Phase 02 agents. Cancel anytime.",
   "url": "https://quantumbranding.ai/payment.html",
   "isPartOf": {
     "@id": "https://quantumbranding.ai/#website"
@@ -1782,17 +1782,13 @@ function toggleTheme() {
 const CONFIG = {
   STRIPE_PUBLISHABLE_KEY: 'pk_live_51T4LrnEHEAcWrG55GLqBVJyczc4WGgSQEKaZOOLE0lr8lZSlvpeyfxN1YgtXoOtbTHF97qB5C0D2MC48lrOVhVJ005iEJWgbZ',
 
-  // Recut Phase 5 · one product, one price, bought once.
-  //
-  // PLATFORM_PRICE_ID must be the SAME Stripe price the server holds in
-  // STRIPE_PLATFORM_PRICE_ID. The server rejects anything else, so a
-  // mismatch fails at checkout rather than charging the wrong amount.
-  // Empty until the operator creates the price: the page then says it is
-  // not on sale instead of throwing at the checkout call.
-  PLATFORM_PRICE_ID: '',
+  // Starter, $97 / month: the canonical paid offer (owner decision,
+  // 3 October 2026). The same price the server and webhook map to
+  // tier 'starter' (api/stripe/checkout.js, api/stripe-webhook.js).
+  STARTER_PRICE_ID: 'price_1Th8JkEHEAcWrG55Abr1OZXe',
 
-  // The subscription prices are retained only so an existing Stripe
-  // dashboard link keeps resolving. Nothing on this page offers them.
+  // Dormant. Pro and Agency are not offered; the ids stay so an existing
+  // Stripe dashboard link keeps resolving. Nothing on this page sells them.
   LEGACY_SUBSCRIPTION_PRICES: {
     starter: 'price_1Th8JkEHEAcWrG55Abr1OZXe',
     pro:     'price_1Th8MKEHEAcWrG55hxpLVfCZ',
@@ -1828,20 +1824,19 @@ try {
   console.warn('Stripe.js init failed:', e.message);
 }
 
-// The Platform. The document, bought once, per brand.
-// docs/strategy/brandos-recut-v1.md Part 6: two prices, $0 and $79, and
-// a door with no number on it.
-const PLATFORM = {
-  id: 'platform',
-  name: 'The Platform',
-  price: '$79',
-  per: 'once, per brand',
-  desc: 'Your foundation as a designed A4 document. The reasoning, not just the conclusions.',
+// Starter. The one paid plan, billed monthly through Stripe.
+const STARTER = {
+  id: 'starter',
+  name: 'Starter',
+  price: '$97',
+  per: '/ month',
+  desc: 'Everything in Brand Profile, plus your full foundation and the Phase 02 agents.',
   features: [
-    'Every movement argued, not summarised',
-    'How to read this, and what to do first',
-    'The open questions your exercises did not settle',
-    'Yours to keep, print and hand to a designer',
+    'Every Phase 01 reading: Sensescape, Visual DNA, War Table',
+    'Phase 02 agents: Logo Direction, Logo Evaluation, Voice Guide',
+    'Full Brand Profile (QBP) export',
+    'Full refund within 14 days of your first payment',
+    'Cancel anytime',
   ],
 };
 
@@ -1872,7 +1867,7 @@ function createCheckIcon() {
 }
 
 function renderPlans() {
-  const onSale = isConfigured && Boolean(CONFIG.PLATFORM_PRICE_ID);
+  const onSale = isConfigured && Boolean(CONFIG.STARTER_PRICE_ID);
 
   let html = `
     <div class="logo-container">
@@ -1880,37 +1875,37 @@ function renderPlans() {
       <div class="logo-text">[QB_OS]</div>
     </div>
     <div style="text-align:center; margin-bottom: 40px;">
-      <h1>Keep the document</h1>
-      <p style="margin-top:12px;">The exercises are free. This is the object.</p>
+      <h1>Open the full BrandOS</h1>
+      <p style="margin-top:12px;">The exercises are free. Starter opens the agents that do the work.</p>
     </div>
   `;
 
   if (!onSale) {
     // Honest degradation. The page says it is not on sale rather than
     // sending a checkout request that the server will reject.
-    html += '<div class="warn-msg">The Platform is not on sale yet. The Stripe price has not been wired.</div>';
+    html += '<div class="warn-msg">Checkout is not available right now. Write to me@qtmbg.com.</div>';
   }
 
   html += `
     <div class="glass-card plan-card is-popular"
       role="${onSale ? 'button' : 'group'}"
       ${onSale ? 'tabindex="0"' : ''}
-      aria-label="The Platform, ${PLATFORM.price} once per brand"
-      ${onSale ? `onclick="selectPlan('platform')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPlan('platform')}"` : ''}
+      aria-label="Starter, ${STARTER.price} per month"
+      ${onSale ? `onclick="selectPlan('starter')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPlan('starter')}"` : ''}
     >
       <div class="plan-header">
         <div>
-          <div class="plan-name-row"><span class="plan-name">${PLATFORM.name}</span></div>
+          <div class="plan-name-row"><span class="plan-name">${STARTER.name}</span></div>
           <div class="plan-price-row">
-            <span class="plan-price">${PLATFORM.price}</span>
-            <span class="plan-per">${PLATFORM.per}</span>
+            <span class="plan-price">${STARTER.price}</span>
+            <span class="plan-per">${STARTER.per}</span>
           </div>
         </div>
         ${onSale ? '<div class="plan-arrow" aria-hidden="true">→</div>' : ''}
       </div>
-      <div class="plan-desc">${PLATFORM.desc}</div>
+      <div class="plan-desc">${STARTER.desc}</div>
       <div class="feature-list">
-        ${PLATFORM.features.map(f => `
+        ${STARTER.features.map(f => `
           <div class="feature-row">${createCheckIcon()}<span>${f}</span></div>
         `).join('')}
       </div>
@@ -1920,7 +1915,7 @@ function renderPlans() {
   html += `
     <div class="free-note">
       <div class="pulse-dot" style="animation-duration: 4s;"></div>
-      <span class="free-note-text">Free, and staying free: every exercise, Observe through Build, one brand per account</span>
+      <span class="free-note-text">Free, and staying free: Signal Scan and every Phase 01 exercise</span>
     </div>
     <div style="text-align:center; margin-top: 28px;">
       <p style="font-size:13px; color:var(--text-3); max-width:34rem; margin:0 auto 10px;">
@@ -2019,7 +2014,7 @@ async function redirectToStripe(email) {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + session.token, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        price_id: CONFIG.PLATFORM_PRICE_ID,
+        price_id: CONFIG.STARTER_PRICE_ID,
         success_url: CONFIG.SUCCESS_URL + '&plan=' + selectedPlan,
         cancel_url: CONFIG.CANCEL_URL,
       }),
@@ -2068,15 +2063,13 @@ if (urlParams.get('payment') === 'success') {
   }
   view = 'success';
 } else {
-  // Recut Phase 5 · there is one product, so a deep link only has to say
-  // "buy it". ?plan=platform is the live form; the old tier names are
-  // still accepted and resolve to the Platform, because links to
-  // ?plan=starter are already in inboxes and a dead link is worse than a
-  // redirect to the only thing on sale.
+  // Starter is the one paid plan. Old deep links (?plan=platform, pro,
+  // agency) are already in inboxes, so they resolve to Starter rather
+  // than to a dead page.
   const incomingPlan = urlParams.get('plan');
-  const ACCEPTED = ['platform', 'starter', 'pro', 'agency'];
+  const ACCEPTED = ['starter', 'platform', 'pro', 'agency'];
   if (incomingPlan && ACCEPTED.indexOf(incomingPlan) !== -1) {
-    selectedPlan = 'platform';
+    selectedPlan = 'starter';
     // Deep link from the pricing page. Signed in goes straight to Stripe;
     // anonymous gets the sign-in hop and comes back to this same URL.
     if (getSession()) { redirectToStripe(); }
