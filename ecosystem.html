@@ -1474,7 +1474,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     margin-top:var(--space-xl);
   }
   @media (min-width:700px)  { .price-grid { grid-template-columns:repeat(2,1fr); } }
-  @media (min-width:1100px) { .price-grid { grid-template-columns:repeat(4,1fr); } }
+  @media (min-width:1100px) { .price-grid { grid-template-columns:repeat(2,1fr); max-width:880px; margin-inline:auto; } }
   .price-card {
     position:relative;
     background:var(--cream-card); border:2px solid var(--ink); border-radius:24px;
@@ -1503,7 +1503,7 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
   }
   .price-card.is-feat { background:var(--butter); }
   .price-card.is-feat::after {
-    content:'Most popular'; position:absolute;
+    content:none; position:absolute;
     top:-14px; right:18px;
     background:var(--rose); color:var(--cream);
     border:2px solid var(--ink); border-radius:9999px;
@@ -1993,10 +1993,10 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     },
     {
       "@type": "Question",
-      "name": "Can I cancel anytime?",
+      "name": "Is there a subscription?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Monthly billing, cancel anytime. No contracts. The free tier stays free forever."
+        "text": "No. The foundation is free, forever. The Platform is $79, bought once, per brand. Nothing renews."
       }
     },
     {
@@ -2776,20 +2776,16 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
     <div class="qb-x">
       <header class="section_header">
         <span class="qb-tag is-soft"><span class="qb-tag_content">Pricing</span></span>
-        <h2 class="qb-type-heading qb-type-balance reveal">The scan is free. <em>The agents do the work.</em></h2>
+        <h2 class="qb-type-heading qb-type-balance reveal">Free to start. <em>$79 for the document.</em></h2>
         <p class="pricing-tagline reveal rd1"><em>Free steak, paid fries.</em></p>
-        <p class="qb-type-opening qb-type-pretty reveal rd2">Signal Scan and your Brand Profile are radically free, forever. The agents are where the work gets done for you.</p>
-        <div class="billing-toggle reveal rd3" role="tablist" aria-label="Billing period">
-          <button type="button" class="bt-opt active" data-billing="monthly" role="tab" aria-selected="true">Monthly</button>
-          <button type="button" class="bt-opt" data-billing="annual" role="tab" aria-selected="false">Annual <span class="bt-save">save 17%</span></button>
-        </div>
+        <p class="qb-type-opening qb-type-pretty reveal rd2">Signal Scan and your Brand Profile are radically free, forever. The Platform is your foundation as a designed A4 document, bought once, per brand.</p>
       </header>
 
       <div class="price-grid">
         <article class="price-card reveal">
           <div class="price-name">Brand Profile</div>
           <div class="price-num">
-            <span class="price-amount" data-monthly="0" data-annual="0">$0</span>
+            <span class="price-amount">$0</span>
             <span class="price-period">/ forever</span>
           </div>
           <p class="price-desc">Anonymous, then save with email. Cloud-synced across devices.</p>
@@ -2805,53 +2801,19 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
         </article>
 
         <article class="price-card is-feat reveal rd1">
-          <div class="price-name">Starter <span class="price-tag">Most popular</span></div>
+          <div class="price-name">The Platform</div>
           <div class="price-num">
-            <span class="price-amount" data-monthly="97" data-annual="80">$97</span>
-            <span class="price-period">/ month</span>
+            <span class="price-amount">$79</span>
+            <span class="price-period">/ once, per brand</span>
           </div>
-          <p class="price-desc">Everything in Brand Profile, plus all ten brand agents.</p>
+          <p class="price-desc">Your foundation as a designed A4 document. The reasoning, not just the conclusions.</p>
           <ul class="price-feats">
-            <li class="price-feat">Every Build agent: logo direction, logo evaluation, voice guide</li>
-            <li class="price-feat">Every Hold agent: performance, quarterly review, predictive panel</li>
-            <li class="price-feat">Unlimited runs</li>
-            <li class="price-feat">14-day money-back guarantee</li>
+            <li class="price-feat">Every movement argued, not summarised</li>
+            <li class="price-feat">How to read this, and what to do first</li>
+            <li class="price-feat">The open questions your exercises did not settle</li>
+            <li class="price-feat">Yours to keep, print and hand to a designer</li>
           </ul>
-          <a href="https://app.quantumbranding.ai/payment.html?plan=starter" class="qb-button is-primary"><span class="qb-button_content">Start Starter</span></a>
-        </article>
-
-        <article class="price-card reveal rd2">
-          <div class="price-name">Pro</div>
-          <div class="price-num">
-            <span class="price-amount" data-monthly="247" data-annual="205">$247</span>
-            <span class="price-period">/ month</span>
-          </div>
-          <p class="price-desc">For founders who want strategic depth.</p>
-          <ul class="price-feats">
-            <li class="price-feat">Everything in Starter</li>
-            <li class="price-feat">Predictive Panel (5 runs/mo)</li>
-            <li class="price-feat">Quarterly Brand Review</li>
-            <li class="price-feat">1 strategy call per quarter</li>
-            <li class="price-feat">Priority support</li>
-          </ul>
-          <a href="https://app.quantumbranding.ai/payment.html?plan=pro" class="qb-button"><span class="qb-button_content">Go Pro</span></a>
-        </article>
-
-        <article class="price-card reveal rd3">
-          <div class="price-name">Agency</div>
-          <div class="price-num">
-            <span class="price-amount" data-monthly="1497" data-annual="1242">$1,497</span>
-            <span class="price-period">/ month</span>
-          </div>
-          <p class="price-desc">White-label client delivery.</p>
-          <ul class="price-feats">
-            <li class="price-feat">Up to 5 client workspaces</li>
-            <li class="price-feat">White-label branding per client</li>
-            <li class="price-feat">Multi-tenant Brand Profiles</li>
-            <li class="price-feat">Unlimited runs across all clients</li>
-            <li class="price-feat">Direct support line</li>
-          </ul>
-          <a href="https://app.quantumbranding.ai/payment.html?plan=agency" class="qb-button is-secondary"><span class="qb-button_content">Go Agency</span></a>
+          <a href="https://app.quantumbranding.ai/payment.html?plan=platform" class="qb-button is-primary"><span class="qb-button_content">Keep the document</span></a>
         </article>
       </div>
 
@@ -2907,8 +2869,8 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
           <div class="faq-a"><div class="faq-a-inner">Those tools make assets. BrandOS builds the thinking underneath. Identity, positioning, voice, strategy. The assets come from that foundation, which is why they hold.</div></div>
         </div>
         <div class="faq-item">
-          <button class="faq-q">Can I cancel anytime?<span>+</span></button>
-          <div class="faq-a"><div class="faq-a-inner">Yes. Monthly billing, cancel anytime. No contracts. The free tier stays free forever.</div></div>
+          <button class="faq-q">Is there a subscription?<span>+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">No. The foundation is free, forever. The Platform is $79, bought once, per brand. Nothing renews.</div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q">How long does it take, start to finish?<span>+</span></button>
@@ -3115,32 +3077,6 @@ body > .vignette, body > .ambient-glow, body > .main-vignette { display: none !i
         // Switch the stage tint per active persona so the layered backdrop rotates with the character
         var stage = document.getElementById('personaStage');
         if (stage) stage.setAttribute('data-p', String(i));
-      });
-    });
-  })();
-
-  // PRICING toggle
-  (function () {
-    var opts = document.querySelectorAll('.bt-opt');
-    opts.forEach(function (b) {
-      b.addEventListener('click', function () {
-        opts.forEach(function (o) { o.classList.remove('active'); o.setAttribute('aria-selected', 'false'); });
-        b.classList.add('active'); b.setAttribute('aria-selected', 'true');
-        var mode = b.getAttribute('data-billing');
-        document.querySelectorAll('.price-amount').forEach(function (el) {
-          var v = el.getAttribute(mode === 'annual' ? 'data-annual' : 'data-monthly');
-          el.textContent = '$' + v;
-        });
-        document.querySelectorAll('.price-period').forEach(function (el) {
-          if (el.textContent.indexOf('forever') !== -1) return;
-          el.textContent = mode === 'annual' ? '/ month, billed yearly' : '/ month';
-        });
-        // Carry the interval into the payment page so checkout sells
-        // the price the card displays.
-        document.querySelectorAll('.price-card a[href*="payment.html?plan="]').forEach(function (a) {
-          var base = a.getAttribute('href').split('&billing=')[0];
-          a.setAttribute('href', mode === 'annual' ? base + '&billing=annual' : base);
-        });
       });
     });
   })();
