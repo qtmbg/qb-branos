@@ -85,6 +85,7 @@
 
   // Phase 02-5 tools — gated behind any paid tier. brand-document is the
   // synthesis page that surfaces the QBP; it stays free (the deliverable).
+  const PHASE_05_TOOLS = ['quarterly', 'dashboard', 'panel'];
   const PAID_TOOLS = [
     'logo-direction', 'logo-evaluation', 'voice-guide',
     'content-bridge', 'content-repurpose', 'content-scheduler',
@@ -378,6 +379,12 @@
     if (PHASE_01_TOOLS.includes(feature)) return true;
     if (feature === 'signal-scan')        return true;
     if (feature === 'brand-document')     return true;
+    // Phase 05 stays locked (owner decision, 3 Oct 2026). Starter does not
+    // open it; only the dormant Pro+ tiers do, matching the server gate in
+    // api/_lib/tier-gating.js and the agents' tier_required: 'pro'.
+    if (PHASE_05_TOOLS.includes(feature)) {
+      return status === 'active' && ['pro','agency','atelier'].includes(tier);
+    }
     // Everything else requires an active paid subscription
     return status === 'active' && tier !== 'free';
   }
@@ -432,6 +439,11 @@
     confirmProfile().then(profile => {
       if (!profile) return;                 // could not confirm · stay put
       if (hasAccess(toolId)) return;        // paid after all · stay put
+      // Starter does not open Phase 05, so the plan page would loop.
+      if (PHASE_05_TOOLS.includes(toolId)) {
+        window.location.replace('/paywall?reason=phase_05');
+        return;
+      }
       window.location.replace('/payment.html?reason=upgrade&tool=' + encodeURIComponent(toolId));
     }).catch(() => { /* stay put */ });
     return false;
