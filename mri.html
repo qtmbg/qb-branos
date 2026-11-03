@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="canonical" href="https://quantumbranding.ai/mri">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brand MRI : votre score de marque, puis le plan pour le faire monter</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; color: #111; background: #fff; line-height: 1.5; }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 32px; line-height: 1.15; margin: 8px 0; }
+  h2 { font-size: 22px; margin-top: 40px; }
+  h3 { font-size: 17px; margin: 20px 0 4px; }
+  .kicker { color: #8a6d00; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-size: 13px; }
+  .lead { font-size: 18px; color: #333; }
+  label { display: block; font-weight: 600; margin-top: 16px; }
+  input[type="text"], input[type="email"], input[type="url"], input[type="number"], textarea { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; margin-top: 6px; box-sizing: border-box; }
+  fieldset { border: 0; padding: 0; margin-top: 28px; }
+  legend { font-weight: 700; font-size: 17px; }
+  .opts label { font-weight: 400; margin-top: 6px; }
+  .opts input { margin-right: 8px; }
+  button { background: #111; color: #fff; border: 0; padding: 14px 22px; font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 16px; }
+  button.secondary { background: #fff; color: #111; border: 1px solid #111; }
+  button:disabled { opacity: .45; cursor: default; }
+  .score { font-size: 56px; font-weight: 800; margin: 8px 0 0; }
+  .bar { height: 10px; background: #eee; border-radius: 5px; overflow: hidden; }
+  .bar > div { height: 100%; background: #f5c133; }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-top: 12px; }
+  .price { border: 2px solid #111; }
+  .note { color: #555; font-size: 14px; }
+  .hidden { display: none; }
+  .pill { display: inline-block; background: #f5c133; padding: 2px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+  <section id="landing">
+    <p class="kicker">Quantum Branding · Brand MRI</p>
+    <h1 id="headline">Ce que votre marque dit vraiment, en 5 minutes.</h1>
+    <p class="lead">D'abord votre score gratuit. Ensuite, si vous voulez le plan, le diagnostic complet. Vous ne payez que pour fermer l'écart, pas pour le découvrir.</p>
+    <div class="card"><strong>Gratuit :</strong> score sur 100 + votre frein principal.<br><strong>19 $ :</strong> MRI Flash, vos 3 tensions + 1 chantier.<br><strong>79 $ :</strong> rapport complet, 5 piliers + phrase + 3 chantiers + plan 90 jours.<br><strong>290 $ au total :</strong> rapport + review vidéo 10 min, 5 places par semaine.</div>
+    <p id="retestNote" class="hidden"><strong>Re-test 90 jours : 39 $.</strong> Comparez votre nouveau score avec le précédent.</p>
+    <button id="startBtn">Obtenir mon score gratuit</button>
+    <p class="note">Email obligatoire pour voir le score. Garantie : remboursement sous 7 jours sur simple email, avant l'enregistrement de la review.</p>
+  </section>
+
+  <section id="form" class="hidden">
+    <h2>Votre marque</h2>
+    <label>Nom de la marque <input id="brand" type="text" placeholder="Ex : Atelier Lumen"></label>
+    <label>Site web <input id="website" type="url" placeholder="https://votresite.com"></label>
+    <label>Email pour recevoir le score <input id="email" type="email" placeholder="vous@exemple.com"></label>
+    <label>Votre phrase actuelle, en une phrase (optionnel) <input id="currentPhrase" type="text"></label>
+    <label>À qui vous vendez, en quelques mots (optionnel) <input id="target" type="text" placeholder="Ex : dirigeants de PME"></label>
+    <label id="prevScoreWrap" class="hidden">Votre score précédent (re-test) <input id="prevScore" type="number" min="0" max="100" placeholder="Ex : 52"></label>
+    <h2>10 questions</h2>
+    <p class="note">Répondez honnêtement. Il n'y a pas de bonne image à donner, seulement un écart à mesurer.</p>
+    <div id="questions"></div>
+    <button id="resultBtn">Voir mon score gratuit</button>
+  </section>
+
+  <section id="result" class="hidden">
+    <p class="kicker">Votre score gratuit</p>
+    <h2 id="resultTitle">Votre score</h2>
+    <p class="score"><span id="globalScore">–</span><span style="font-size:22px">/100</span></p>
+    <p id="frein"></p>
+    <p id="retestCompare" class="hidden"></p>
+    <p id="tierNote" class="note"></p>
+
+    <div id="flashSection" class="hidden">
+      <h3>Vos 3 tensions (Flash)</h3>
+      <div id="tensions"></div>
+      <h3>Chantier prioritaire</h3>
+      <div id="chantier"></div>
+    </div>
+
+    <div id="fullSection" class="hidden">
+      <h3>Diagnostic par pilier</h3>
+      <div id="pillarScores"></div>
+      <h3>Phrase de positionnement proposée</h3>
+      <div class="card"><p id="proposedSentence"></p><p class="note">Base de travail à affiner. Votre phrase actuelle, si renseignée : <span id="currentPhraseOut"></span></p></div>
+      <h3>3 chantiers et plan 90 jours</h3>
+      <div id="plan90"></div>
+      <button id="printBtn" class="secondary">Imprimer / enregistrer le rapport</button>
+    </div>
+
+    <div id="reviewSection" class="hidden">
+      <h3>Review vidéo : vos questions pour Nizzar</h3>
+      <p class="note">Après paiement, cette commande part avec votre rapport. Délai 72 h ouvrées, 5 places par semaine.</p>
+      <label>Ce que vous voulez que la vidéo tranche, en 2 ou 3 phrases <textarea id="reviewQuestions" rows="4"></textarea></label>
+      <button id="reviewSubmitBtn">Envoyer ma commande de review (démo)</button>
+    </div>
+
+    <h2>Passer au palier suivant</h2>
+    <div id="offerBox"></div>
+    <p class="note">Après le rapport complet : audit humain à partir de 450 $, avec vos 79 $ déduits si vous réservez sous 30 jours. Le MRI devient un acompte, pas une dépense perdue.</p>
+    <button id="exportBtn" class="secondary">Exporter mes réponses (CSV, pour l'équipe)</button>
+  </section>
+</main>
+<script src="/js/mri.js"></script>
+<script src="/js/mri-tiers.js"></script>
+<script src="/js/mri-app.js"></script>
+</body>
+</html>
