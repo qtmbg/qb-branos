@@ -29,26 +29,33 @@ function saveLead(d) {
 // bloque l'affichage du score.
 var KLAVIYO_KEY = "XnAGuL";
 var KLAVIYO_LIST = "QU5HVY";
+var CAPTURE_DEBUG = params.get("debug") === "1";
+function captureLog(msg) {
+  try {
+    var box = el("captureDebug");
+    if (CAPTURE_DEBUG && box) { box.classList.remove("hidden"); box.textContent += msg + " | "; }
+  } catch (e) {}
+}
 function captureLead(lead) {
   try {
     fetch("https://a.klaviyo.com/client/subscriptions/?company_id=" + KLAVIYO_KEY, {
       method: "POST",
       headers: { "Content-Type": "application/json", revision: "2024-10-15" },
       body: JSON.stringify({ data: { type: "subscription", attributes: { custom_source: "Brand MRI", profile: { data: { type: "profile", attributes: { email: lead.email, subscriptions: { email: { marketing: { consent: "SUBSCRIBED" } } } } } } }, relationships: { list: { data: { type: "list", id: KLAVIYO_LIST } } } } })
-    }).catch(function () {});
-  } catch (e) {}
+    }).then(function (r) { captureLog("abo Klaviyo HTTP " + r.status); }).catch(function (err) { captureLog("abo Klaviyo erreur " + err); });
+  } catch (e) { captureLog("abo Klaviyo exception " + e); }
   try {
     fetch("https://a.klaviyo.com/client/events/?company_id=" + KLAVIYO_KEY, {
       method: "POST",
       headers: { "Content-Type": "application/json", revision: "2024-10-15" },
       body: JSON.stringify({ data: { type: "event", attributes: { properties: { Score: lead.score, Frein: lead.frein, Brand: lead.brand, Website: lead.website, Tier: lead.tier }, metric: { data: { type: "metric", attributes: { name: "Completed Brand MRI" } } }, profile: { data: { type: "profile", attributes: { email: lead.email, $source: "Brand MRI" } } }, unique_id: "mri-" + lead.email + "-" + Date.now(), value: 0 } } })
-    }).catch(function () {});
-  } catch (e) {}
+    }).then(function (r) { captureLog("evenement Klaviyo HTTP " + r.status); }).catch(function (err) { captureLog("evenement Klaviyo erreur " + err); });
+  } catch (e) { captureLog("evenement Klaviyo exception " + e); }
   try {
     if (window.QB && window.QB.sendMagicLink) {
-      window.QB.sendMagicLink(lead.email, "", "brand-mri", "/mri").catch(function () {});
-    }
-  } catch (e) {}
+      window.QB.sendMagicLink(lead.email, "", "brand-mri", "/mri").then(function (r) { captureLog("magic link " + (r && r.ok ? "OK" : "echec " + (r && r.error))); }).catch(function (err) { captureLog("magic link erreur " + err); });
+    } else { captureLog("magic link absent (QB non charge)"); }
+  } catch (e) { captureLog("magic link exception " + e); }
 }
 
 var FOCUS_HEADLINES = {
