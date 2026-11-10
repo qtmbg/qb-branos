@@ -14,10 +14,40 @@ var lastDiagnosis = null;
 
 function el(id) { return document.getElementById(id); }
 function saveLead(d) {
+  var lead = { date: new Date().toISOString(), brand: el("brand").value.trim(), website: el("website").value.trim(), email: el("email").value.trim(), score: d.global, frein: d.tensions[0].name, tier: tier };
   try {
     var leads = JSON.parse(localStorage.getItem("mri_leads") || "[]");
-    leads.push({ date: new Date().toISOString(), brand: el("brand").value.trim(), website: el("website").value.trim(), email: el("email").value.trim(), score: d.global, frein: d.tensions[0].name, tier: tier });
+    leads.push(lead);
     localStorage.setItem("mri_leads", JSON.stringify(leads));
+  } catch (e) {}
+  captureLead(lead);
+}
+
+// Capture serveur (2026-11-08) : Klaviyo (profil, liste MRI Applicants,
+// evenement Completed Brand MRI avec score et frein) + compte BrandOS
+// via le magic link du site. Tout est en arriere-plan, aucun echec ne
+// bloque l'affichage du score.
+var KLAVIYO_KEY = "XnAGuL";
+var KLAVIYO_LIST = "QU5HVY";
+function captureLead(lead) {
+  try {
+    fetch("https://a.klaviyo.com/client/subscriptions/?company_id=" + KLAVIYO_KEY, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", revision: "2024-10-15" },
+      body: JSON.stringify({ data: { type: "subscription", attributes: { custom_source: "Brand MRI", profile: { data: { type: "profile", attributes: { email: lead.email, subscriptions: { email: { marketing: { consent: "SUBSCRIBED" } } } } } } }, relationships: { list: { data: { type: "list", id: KLAVIYO_LIST } } } } })
+    }).catch(function () {});
+  } catch (e) {}
+  try {
+    fetch("https://a.klaviyo.com/client/events/?company_id=" + KLAVIYO_KEY, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", revision: "2024-10-15" },
+      body: JSON.stringify({ data: { type: "event", attributes: { properties: { Score: lead.score, Frein: lead.frein, Brand: lead.brand, Website: lead.website, Tier: lead.tier }, metric: { data: { type: "metric", attributes: { name: "Completed Brand MRI" } } }, profile: { data: { type: "profile", attributes: { email: lead.email, $source: "Brand MRI" } } }, unique_id: "mri-" + lead.email + "-" + Date.now(), value: 0 } } })
+    }).catch(function () {});
+  } catch (e) {}
+  try {
+    if (window.QB && window.QB.sendMagicLink) {
+      window.QB.sendMagicLink(lead.email, "", "brand-mri", "/mri").catch(function () {});
+    }
   } catch (e) {}
 }
 
