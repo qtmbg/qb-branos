@@ -673,7 +673,7 @@ export async function handleMriSale(session, env) {
     website ? `Site : ${website}` : null,
     ...(score ? diagnosticLines({ score, answers, phrase: clean(data.phrase, 400), target: clean(data.target, 200) }) : ['Diagnostic : non retrouvé côté serveur.']),
     tier === 'review' ? '' : null,
-    tier === 'review' ? 'Review vidéo commandée : le délai de 72 h ouvrées court à partir de maintenant.' : null,
+    tier === 'review' ? 'Review vidéo payée. Délai annoncé au client : 72 h ouvrées.' : null,
     reviewLine,
     tier === 'review' ? 'Les questions du client arrivent dans un second email dès qu\'il les envoie depuis la page.' : null,
     '',
