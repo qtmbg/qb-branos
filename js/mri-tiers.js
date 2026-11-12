@@ -32,13 +32,13 @@ function mriIsProdHost(hostname) {
   return !mriIsPreviewHost(hostname);
 }
 
-// The highest tier among confirmed sessions. A re-test session carries no
-// rank: it measures progress and opens no report by itself.
 // Own keys only: "constructor" is a property of every object and names no tier.
 function mriIsTier(t) {
   return typeof t === 'string' && Object.prototype.hasOwnProperty.call(MRI_TIER_RANK, t);
 }
 
+// The highest tier among confirmed sessions. A re-test session carries no
+// rank: it measures progress and opens no report by itself.
 function mriMaxTier(tiers) {
   var best = 'free';
   (tiers || []).forEach(function (t) {

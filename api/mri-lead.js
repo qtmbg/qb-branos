@@ -29,8 +29,8 @@
 
 import {
   PRACTICE_INBOX, clean, isEmail, pickLang, sanitizeAnswers, scoreAnswers,
-  corsHeaders, originAllowed, json, mriEnv, sendMail, ledgerInsert, ledgerSelect,
-  latestCompletion, verifyPaidSession, leadText, reviewText, scoreMail,
+  corsHeaders, originAllowed, json, mriEnv, sendMail, ledgerInsert,
+  latestCompletion, verifyPaidSession, leadText, reviewText, scoreMail, scoreMailKey,
 } from './_lib/mri.js';
 
 export const config = { runtime: 'edge' };
@@ -86,18 +86,17 @@ async function handleLead(body, env, cors) {
     return json(502, { ok: false, error: 'Email send failed' }, cors);
   }
 
-  // The visitor's copy. One per address per ten minutes when the ledger can
-  // say so, which keeps this endpoint from being used to flood an inbox.
+  // The visitor's copy. One per address per UTC day, which keeps this
+  // endpoint from being used to flood an inbox. The mail provider holds the
+  // ceiling (scoreMailKey), so it applies with or without the ledger. A
+  // second diagnostic the same day changes the email body, the provider
+  // answers 409, and nothing is sent: the score is on the page.
   let scoreEmail = false;
   if (score) {
-    const since = new Date(Date.now() - 10 * 60000).toISOString();
-    const recent = await ledgerSelect(env, `select=id&event=eq.completed&email=eq.${encodeURIComponent(email)}&created_at=gte.${encodeURIComponent(since)}&limit=1`);
-    if (!(recent.ok && recent.rows.length)) {
-      const mail = scoreMail({ lang: lead.lang, brand: lead.brand, score });
-      const sent = await sendMail(env, { to: email, ...mail, refId: 'qb-brand-mri-score' });
-      scoreEmail = sent.ok;
-      if (!sent.ok) console.error('[mri-lead] score email failed', sent.status || '', sent.error || '');
-    }
+    const mail = scoreMail({ lang: lead.lang, brand: lead.brand, score });
+    const sent = await sendMail(env, { to: email, ...mail, refId: 'qb-brand-mri-score', idempotencyKey: await scoreMailKey(email) });
+    scoreEmail = sent.ok;
+    if (!sent.ok && sent.status !== 409) console.error('[mri-lead] score email failed', sent.status || '', sent.error || '');
   }
 
   const ledger = await ledgerInsert(env, {

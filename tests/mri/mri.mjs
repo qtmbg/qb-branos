@@ -92,7 +92,7 @@ console.log('\n1 · copy: two languages, one shape, the voice rules');
 
 /* ───────────────────────────────────────────────────────────── */
 console.log('\n2 · engine and report model');
-const { scoreAnswers, sanitizeAnswers, tierFromSession, verifyPaidSession, findPaidSessions, isVisitorId, LOOKUP_WINDOW_SECONDS, LEDGER_PAGE, LEDGER_MAX_PAGES, PILLARS: SERVER_PILLARS } = await import('../../api/_lib/mri.js');
+const { scoreAnswers, sanitizeAnswers, tierFromSession, verifyPaidSession, findPaidSessions, isVisitorId, scoreMailKey, looksLikeLink, LOOKUP_WINDOW_SECONDS, LEDGER_PAGE, LEDGER_MAX_PAGES, PILLARS: SERVER_PILLARS } = await import('../../api/_lib/mri.js');
 {
   since();
   const d = ENGINE.diagnose([7, 3, 7, 7, 3, 7, 3, 0, 0, 3]);
@@ -369,11 +369,27 @@ const ANSWERS = [7, 3, 7, 7, 3, 7, 3, 0, 0, 3];
 
 // A small fake of the three services the handlers talk to.
 function world({ session = null, sessionStatus = 200, sessionList = [], listStatus = 200, ledgerRows = [], ledgerStatus = 201, ledgerReadStatus = 200, resendStatus = 200 } = {}) {
-  const calls = { mail: [], ledgerInserts: [], ledgerReads: [], stripe: [], other: [] };
+  const calls = { mail: [], replayed: [], refused: [], ledgerInserts: [], ledgerReads: [], stripe: [], other: [] };
+  // The mail provider's rule for a key: same key and same body returns the
+  // first answer and sends nothing, same key and another body is refused.
+  const keys = new Map();
   globalThis.fetch = async (url, opts = {}) => {
     const u = String(url);
     const body = opts.body ? (() => { try { return JSON.parse(opts.body); } catch { return opts.body; } })() : null;
-    if (u === 'https://api.resend.com/emails') { calls.mail.push(body); return res(resendStatus, { id: 'mail_1' }); }
+    if (u === 'https://api.resend.com/emails') {
+      const key = opts.headers && opts.headers['Idempotency-Key'];
+      if (key && resendStatus === 200) {
+        const raw = JSON.stringify(body);
+        if (keys.has(key)) {
+          if (keys.get(key) === raw) { calls.replayed.push(key); return res(200, { id: 'mail_1' }); }
+          calls.refused.push({ key, body });
+          return res(409, { statusCode: 409, name: 'invalid_idempotent_request' });
+        }
+        keys.set(key, raw);
+      }
+      calls.mail.push(key ? { ...body, idempotencyKey: key } : body);
+      return res(resendStatus, { id: 'mail_1' });
+    }
     if (u.startsWith('https://api.stripe.com/v1/checkout/sessions/')) { calls.stripe.push(u); return res(sessionStatus, session || { error: {} }); }
     if (u.startsWith('https://api.stripe.com/v1/checkout/sessions?')) { calls.stripe.push(u); return res(listStatus, listStatus === 200 ? { object: 'list', data: sessionList, has_more: false } : { error: {} }); }
     if (u.startsWith('https://api.stripe.com/v1/subscriptions/')) { calls.stripe.push(u); return res(200, { items: { data: [{ price: { id: 'price_1Th8JkEHEAcWrG55Abr1OZXe' } }] } }); }
@@ -428,6 +444,10 @@ const webhookHandler = (await import('../../api/stripe-webhook.js')).default;
   if (operator && !operator.text.includes('Source : linkedin')) fail('the operator email does not carry the source');
   if (!visitor || visitor.to[0] !== 'founder@example.com' || visitor.subject !== 'Votre score Brand MRI : 40/100') fail(`visitor email wrong: ${visitor && visitor.subject}`);
   if (visitor && !visitor.text.includes('Différenciation')) fail('the visitor email does not name the main brake in French');
+  if (visitor && !/^mri-score\/[0-9a-f]{64}\/\d{4}-\d{2}-\d{2}$/.test(visitor.idempotencyKey || '')) fail(`the visitor email carries no daily key: ${visitor.idempotencyKey}`);
+  if (visitor && visitor.idempotencyKey !== await scoreMailKey('founder@example.com')) fail('the daily key is not the one for this address today');
+  if (visitor && /founder|@/.test(String(visitor.idempotencyKey || ''))) fail('the daily key spells out the address');
+  if (operator && operator.idempotencyKey) fail('the operator email must not be capped by a key');
   const row = c.ledgerInserts[0];
   if (!row || row.event !== 'completed' || row.score !== 40 || row.brake !== 'differentiation' || row.tier !== 'free' || row.data.answers.join() !== ANSWERS.join()) fail(`ledger row wrong: ${JSON.stringify(row)}`);
   okIf('a lead is refused from a foreign origin or with a bad email; a valid one emails both sides and is scored on the server');
@@ -436,16 +456,42 @@ const webhookHandler = (await import('../../api/stripe-webhook.js')).default;
   c = world();
   r = await leadHandler(post('/api/mri-lead', { email: 'old@client.co', brand: 'Old Script', score: 42, frein: 'Preuve', tier: 'free' }));
   if (r.status !== 200 || c.mail.length !== 1 || c.mail[0].subject !== 'Brand MRI lead : Old Script (42/100)') fail(`the previous script's payload was not handled as before: ${r.status}, ${c.mail.length} emails`);
-  c = world({ ledgerRows: [{ id: 'x' }] });
-  r = await leadHandler(post('/api/mri-lead', { email: 'a@b.co', answers: ANSWERS }));
-  if (c.mail.length !== 1) fail(`a second completion inside ten minutes sent ${c.mail.length - 1} visitor emails, expected none`);
+  // One score email per address per day, with or without the ledger.
+  for (const ledgerStatus of [201, 404]) {
+    c = world({ ledgerStatus });
+    const first = await (await leadHandler(post('/api/mri-lead', { email: 'a@b.co', answers: ANSWERS }))).json();
+    const again = await (await leadHandler(post('/api/mri-lead', { email: 'A@B.co ', answers: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10] }))).json();
+    const same = await (await leadHandler(post('/api/mri-lead', { email: 'a@b.co', answers: ANSWERS }))).json();
+    const other = await (await leadHandler(post('/api/mri-lead', { email: 'c@d.co', answers: ANSWERS }))).json();
+    const toVisitor = c.mail.filter(m => m.to[0] !== 'me@qtmbg.com').map(m => m.to[0]).join(',');
+    const toInbox = c.mail.filter(m => m.to[0] === 'me@qtmbg.com').length;
+    if (toVisitor !== 'a@b.co,c@d.co') fail(`ledger ${ledgerStatus}: score emails went to "${toVisitor}", expected one each for a@b.co and c@d.co`);
+    if (toInbox !== 4) fail(`ledger ${ledgerStatus}: the practice inbox got ${toInbox} of 4 leads`);
+    if (!first.ok || !first.scoreEmail || !again.ok || again.scoreEmail !== false || !same.ok || !other.scoreEmail) fail(`ledger ${ledgerStatus}: wrong answers: ${JSON.stringify([first, again, same, other])}`);
+    if (c.refused.length !== 1 || c.replayed.length !== 1) fail(`ledger ${ledgerStatus}: expected one refused and one replayed send, got ${c.refused.length} and ${c.replayed.length}`);
+  }
+  const k1 = await scoreMailKey('a@b.co', new Date('2026-11-12T23:59:59Z'));
+  if (k1 !== await scoreMailKey(' A@B.CO', new Date('2026-11-12T00:00:00Z')) || k1 === await scoreMailKey('a@b.co', new Date('2026-11-13T00:00:00Z')) || k1 === await scoreMailKey('a@b.com', new Date('2026-11-12T12:00:00Z'))) fail('the daily key must be one per address per UTC day');
+
+  // A brand name that reads like a link stays out of the visitor's copy.
+  for (const [brand, link] of [['Atelier Lumen', false], ['Dr. Martens', false], ['A.P.C.', false], ['3.14 Studio', false], ['see https://evil.example/x', true], ['www.evil.example', true], ['evil.example', true], ['WIN at EVIL.EXAMPLE/now', true]]) {
+    if (looksLikeLink(brand) !== link) fail(`"${brand}" must ${link ? '' : 'not '}read as a link`);
+    c = world();
+    await leadHandler(post('/api/mri-lead', { email: 'v@w.co', brand, answers: ANSWERS, lang: 'en' }));
+    const [op, vis] = c.mail;
+    if (!op || !op.text.includes(brand)) fail(`the operator email lost the brand "${brand}"`);
+    if (!vis) { fail(`no visitor email for brand "${brand}"`); continue; }
+    const shown = vis.text.includes(brand) || vis.html.includes(brand) || vis.subject.includes(brand);
+    if (shown === link) fail(`the visitor email ${link ? 'carries' : 'dropped'} the brand "${brand}"`);
+    if (link && /evil\.example/i.test(vis.text + vis.html + vis.subject)) fail(`a link reached the visitor email through the brand "${brand}"`);
+  }
   c = world({ ledgerStatus: 404 });
   r = await leadHandler(post('/api/mri-lead', { email: 'a@b.co', answers: ANSWERS }));
   if (r.status !== 200 || c.mail.length !== 2) fail(`with no ledger table the lead must still be emailed to both sides: ${r.status}, ${c.mail.length}`);
   c = world({ resendStatus: 500 });
   r = await leadHandler(post('/api/mri-lead', { email: 'a@b.co', answers: ANSWERS }));
   if (r.status !== 502) fail(`a failed operator email must answer 502, got ${r.status}`);
-  okIf('the previous payload still works, the visitor email is not repeated, a missing ledger loses nothing, a failed send is reported');
+  okIf('the previous payload still works; one score email per address per day with or without the ledger; no link reaches a visitor through the brand name; a failed send is reported');
 
   since();
   const order = { type: 'review', session_id: SID, email: 'buyer@example.com', brand: 'Atelier Lumen', questions: 'Is my sentence too long?', answers: ANSWERS };

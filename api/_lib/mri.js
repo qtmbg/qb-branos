@@ -335,13 +335,21 @@ export async function latestCompletion(env, { visitorId, email }) {
 
 /* ── Email ─────────────────────────────────────────────────── */
 
-export async function sendMail(env, { to, subject, text, html, replyTo, refId }) {
+// idempotencyKey: Resend sends one email per key per 24 hours. A second
+// request with the same key and the same body returns the first email's id
+// and sends nothing. With a different body it answers 409, reported here as
+// { ok: false, status: 409 }.
+export async function sendMail(env, { to, subject, text, html, replyTo, refId, idempotencyKey }) {
   if (!env.RESEND_API_KEY) return { ok: false, error: 'not_configured' };
   if (!to || !subject) return { ok: false, error: 'to and subject required' };
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+        ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
+      },
       body: JSON.stringify({
         from: MRI_FROM,
         to: [to],
@@ -401,8 +409,28 @@ function shell({ lang, eyebrow, title, paragraphs, ctaUrl, ctaLabel }) {
 }
 
 /* The score, sent to the visitor. The form promises it. */
-export function scoreMail({ lang, brand, score }) {
+// One score email per address per UTC day. The endpoint that sends it is
+// public, and without a ceiling it could be pointed at any mailbox. The
+// ceiling is this key: the mail provider enforces it, so it holds with or
+// without the ledger. The address is hashed to keep the key short and
+// well-formed, whatever characters the address holds.
+export async function scoreMailKey(email, now = new Date()) {
+  const bytes = new TextEncoder().encode(String(email || '').trim().toLowerCase());
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  const hex = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+  return `mri-score/${hex}/${now.toISOString().slice(0, 10)}`;
+}
+
+// A brand name that reads like a link. The visitor's copy leaves such a
+// name out, so the form cannot be used to send someone a link from this
+// domain. The practice inbox still receives the name as typed.
+export function looksLikeLink(s) {
+  return /(https?:|www\.|[a-z0-9-]\.[a-z]{2,}(\/|\b))/i.test(String(s || ''));
+}
+
+export function scoreMail({ lang, brand: typedBrand, score }) {
   const l = pickLang(lang);
+  const brand = looksLikeLink(typedBrand) ? '' : typedBrand;
   const brake = pillarName(score.brake, l);
   const short = pillarShort(score.brake, l);
   const url = `${SITE}/mri?lang=${l}`;
