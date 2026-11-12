@@ -447,7 +447,7 @@ export function scoreMail({ lang, brand: typedBrand, score }) {
       `Votre résultat reste ouvert sur l'appareil utilisé : ${url}`,
       'Le détail de vos trois tensions commence à 19 $. Le rapport complet avec le plan 90 jours est à 79 $.',
       '',
-      'Répondez à cet email : il arrive directement chez Nizzar Ben Chekroune.',
+      'Une question ? Répondez à cet email.',
       '',
       'Quantum Branding',
       'quantumbranding.ai/mri',
@@ -461,7 +461,7 @@ export function scoreMail({ lang, brand: typedBrand, score }) {
           `Frein principal : <strong>${escapeHtml(brake)}</strong> (${escapeHtml(short)}).`,
         'Le score mesure cinq piliers : la phrase, le test du logo, la cohérence, la différenciation, la preuve. Votre frein principal est le pilier qui retient les autres.',
         'Le détail de vos trois tensions commence à 19&nbsp;$. Le rapport complet avec le plan 90 jours est à 79&nbsp;$.',
-        'Répondez à cet email : il arrive directement chez Nizzar Ben Chekroune.',
+        'Une question ? Répondez à cet email.',
       ],
       ctaUrl: url,
       ctaLabel: 'Rouvrir mon résultat',
@@ -480,7 +480,7 @@ export function scoreMail({ lang, brand: typedBrand, score }) {
     `Your result stays open on the device you used: ${url}`,
     'The detail of your three tensions starts at $19. The full report with the 90-day plan is $79.',
     '',
-    'Reply to this email and it reaches Nizzar Ben Chekroune directly.',
+    'A question? Reply to this email.',
     '',
     'Quantum Branding',
     'quantumbranding.ai/mri',
@@ -494,7 +494,7 @@ export function scoreMail({ lang, brand: typedBrand, score }) {
         `Main brake: <strong>${escapeHtml(brake)}</strong> (${escapeHtml(short)}).`,
       'The score measures five pillars: the sentence, the logo test, coherence, differentiation, proof. Your main brake is the pillar that holds the others back.',
       'The detail of your three tensions starts at $19. The full report with the 90-day plan is $79.',
-      'Reply to this email and it reaches Nizzar Ben Chekroune directly.',
+      'A question? Reply to this email.',
     ],
     ctaUrl: url,
     ctaLabel: 'Reopen my result',
@@ -516,12 +516,14 @@ export function buyerMail({ lang, tier, sessionId }) {
   if (l === 'fr') {
     const next = tier === 'review'
       ? 'Prochaine étape : envoyez vos deux ou trois questions depuis la page du rapport. Nizzar enregistre la review sous 72 h ouvrées.'
-      : 'Gardez cet email : le lien rouvre votre palier à tout moment.';
+      : 'Gardez cet email : le lien rouvre votre palier.';
     const paragraphs = [
       `Paiement reçu, merci. Votre ${label} est ouvert.`,
       'Si la page redemande vos réponses, répondez une fois aux dix questions et votre palier s\'ouvre.',
       next,
-      'Remboursement sous 7 jours sur simple réponse à cet email, avant l\'enregistrement de la review.',
+      tier === 'review'
+        ? 'Remboursement sous 7 jours sur simple réponse à cet email, avant l\'enregistrement de la review.'
+        : 'Remboursement sous 7 jours sur simple réponse à cet email.',
     ];
     return {
       subject: `Brand MRI : votre ${label} est ouvert`,
@@ -531,12 +533,14 @@ export function buyerMail({ lang, tier, sessionId }) {
   }
   const next = tier === 'review'
     ? 'Next step: send your two or three questions from the report page. Nizzar records the review within 72 working hours.'
-    : 'Keep this email. The link reopens your tier at any time.';
+    : 'Keep this email. The link reopens your tier.';
   const paragraphs = [
     `Payment received, thank you. Your ${label} is open.`,
     'If the page asks for your answers again, answer the ten questions once and your tier opens.',
     next,
-    'Refund within 7 days on a simple reply to this email, any time before the review is recorded.',
+    tier === 'review'
+      ? 'Refund within 7 days on a simple reply to this email, before the review is recorded.'
+      : 'Refund within 7 days on a simple reply to this email.',
   ];
   return {
     subject: `Brand MRI: your ${label} is open`,
