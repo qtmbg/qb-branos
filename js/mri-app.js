@@ -23,12 +23,11 @@ function saveLead(d) {
   captureLead(lead);
 }
 
-// Capture serveur (2026-11-08) : Klaviyo (profil, liste MRI Applicants,
-// evenement Completed Brand MRI avec score et frein) + compte BrandOS
-// via le magic link du site. Tout est en arriere-plan, aucun echec ne
-// bloque l'affichage du score.
-var KLAVIYO_KEY = "XnAGuL";
-var KLAVIYO_LIST = "QU5HVY";
+// Capture serveur (2026-11-10) : les appels navigateur directs a Klaviyo
+// echouent au niveau reseau (Failed to fetch, prouve via ?debug=1), donc
+// le lead part par /api/mri-lead (email Resend vers la boite de la pratique)
+// et le compte BrandOS est cree par le magic link du site. Tout est en
+// arriere-plan, aucun echec ne bloque l'affichage du score.
 var CAPTURE_DEBUG = params.get("debug") === "1";
 function captureLog(msg) {
   try {
@@ -38,19 +37,12 @@ function captureLog(msg) {
 }
 function captureLead(lead) {
   try {
-    fetch("https://a.klaviyo.com/client/subscriptions/?company_id=" + KLAVIYO_KEY, {
+    fetch("/api/mri-lead", {
       method: "POST",
-      headers: { "Content-Type": "application/json", revision: "2024-10-15" },
-      body: JSON.stringify({ data: { type: "subscription", attributes: { custom_source: "Brand MRI", profile: { data: { type: "profile", attributes: { email: lead.email, subscriptions: { email: { marketing: { consent: "SUBSCRIBED" } } } } } } }, relationships: { list: { data: { type: "list", id: KLAVIYO_LIST } } } } })
-    }).then(function (r) { captureLog("abo Klaviyo HTTP " + r.status); }).catch(function (err) { captureLog("abo Klaviyo erreur " + err); });
-  } catch (e) { captureLog("abo Klaviyo exception " + e); }
-  try {
-    fetch("https://a.klaviyo.com/client/events/?company_id=" + KLAVIYO_KEY, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", revision: "2024-10-15" },
-      body: JSON.stringify({ data: { type: "event", attributes: { properties: { Score: lead.score, Frein: lead.frein, Brand: lead.brand, Website: lead.website, Tier: lead.tier }, metric: { data: { type: "metric", attributes: { name: "Completed Brand MRI" } } }, profile: { data: { type: "profile", attributes: { email: lead.email, $source: "Brand MRI" } } }, unique_id: "mri-" + lead.email + "-" + Date.now(), value: 0 } } })
-    }).then(function (r) { captureLog("evenement Klaviyo HTTP " + r.status); }).catch(function (err) { captureLog("evenement Klaviyo erreur " + err); });
-  } catch (e) { captureLog("evenement Klaviyo exception " + e); }
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: lead.email, brand: lead.brand, website: lead.website, score: lead.score, frein: lead.frein, tier: lead.tier })
+    }).then(function (r) { captureLog("lead serveur HTTP " + r.status); }).catch(function (err) { captureLog("lead serveur erreur " + err); });
+  } catch (e) { captureLog("lead serveur exception " + e); }
   try {
     if (window.QB && window.QB.sendMagicLink) {
       window.QB.sendMagicLink(lead.email, "", "brand-mri", "/mri").then(function (r) { captureLog("magic link " + (r && r.ok ? "OK" : "echec " + (r && r.error))); }).catch(function (err) { captureLog("magic link erreur " + err); });
