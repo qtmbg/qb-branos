@@ -5,8 +5,8 @@
 //   user-agent: vercel-cron/1.0
 //   authorization: Bearer <CRON_SECRET>
 //
-//   -> 200 { ok: true, sent, yesterday, week }
-//   -> 200 { ok: false, reason }   ledger missing or unreadable
+//   -> 200 { ok: true, sent, truncated, yesterday, week }
+//   -> 200 { ok: false, reason, sent }   ledger missing or unreadable
 //   -> 401 { error: 'unauthorized_cron_trigger', reason }
 //
 // Reads public.mri_events and sends one plain-text email to the practice
@@ -17,9 +17,16 @@
 // It stays silent on a day with no activity, except on Mondays, when the
 // week is reported even if it is empty. Silence on a Tuesday means nothing
 // happened. Silence on a Monday means this job is broken.
+//
+// A ledger that cannot be read is said on Mondays too, with its reason. The
+// usual one is that migration 025 was never applied, and without this line
+// nobody would learn why the numbers do not come.
+//
+// The week is read page by page, to the last row. If the reader's ceiling
+// is ever reached the email says the figures are incomplete.
 
 import { verifyCronTrigger } from '../_lib/inter-edge-auth.js';
-import { PRACTICE_INBOX, json, mriEnv, ledgerSelect, sendMail, pillarName, tierLabel } from '../_lib/mri.js';
+import { PRACTICE_INBOX, json, mriEnv, ledgerSelectAll, sendMail, pillarName, tierLabel } from '../_lib/mri.js';
 
 export const config = { runtime: 'edge' };
 
@@ -68,19 +75,41 @@ export default async function handler(req) {
   const yesterdayStart = todayStart - DAY;
   const weekStart = todayStart - 7 * DAY;
 
+  const isMonday = now.getUTCDay() === 1;
   const cols = 'created_at,event,tier,email,brand,website,score,brake,utm_source,amount_total,visitor_id';
-  const read = await ledgerSelect(env,
+  const read = await ledgerSelectAll(env,
     `select=${cols}&created_at=gte.${encodeURIComponent(new Date(weekStart).toISOString())}` +
-    `&created_at=lt.${encodeURIComponent(new Date(todayStart).toISOString())}&order=created_at.asc&limit=5000`);
-  if (!read.ok) return json(200, { ok: false, reason: read.reason });
+    `&created_at=lt.${encodeURIComponent(new Date(todayStart).toISOString())}&order=created_at.asc,id.asc`);
+  if (!read.ok) {
+    let told = false;
+    if (isMonday) {
+      const why = read.reason === 'table_missing'
+        ? 'La table public.mri_events n\'existe pas : la migration supabase/migrations/025_mri_events.sql n\'est pas appliquée.'
+        : `Le registre n'a pas pu être lu (${read.reason}).`;
+      const mail = await sendMail(env, {
+        to: PRACTICE_INBOX,
+        subject: 'Brand MRI chiffres : registre illisible',
+        text: [
+          'Brand MRI, pas de chiffres cette semaine.',
+          '',
+          why,
+          '',
+          'Ce qui marche sans le registre : la page, le score par email, la vérification des paiements, les alertes de lead et de vente.',
+          'Ce qui attend le registre : ce rapport quotidien, le compteur de reviews, la reprise d\'un rapport sur un autre appareil.',
+        ].join('\n'),
+        refId: 'qb-brand-mri-digest',
+      });
+      told = mail.ok;
+    }
+    return json(200, { ok: false, reason: read.reason, sent: told });
+  }
 
   const week = read.rows;
   const yesterday = week.filter(r => Date.parse(r.created_at) >= yesterdayStart);
   const y = tally(yesterday);
   const w = tally(week);
 
-  const isMonday = now.getUTCDay() === 1;
-  if (!yesterday.length && !isMonday) return json(200, { ok: true, sent: false, yesterday: y, week: w });
+  if (!yesterday.length && !isMonday) return json(200, { ok: true, sent: false, truncated: read.truncated, yesterday: y, week: w });
 
   const d = new Date(yesterdayStart);
   const dateLabel = `${WEEKDAYS[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
@@ -104,6 +133,7 @@ export default async function handler(req) {
 
   const text = [
     `Brand MRI, chiffres du ${dateLabel} (journée UTC).`,
+    read.truncated ? `Attention : lecture arrêtée à ${week.length} lignes. Les chiffres ci-dessous sont incomplets.` : null,
     '',
     ...block('Hier', y),
     '',
@@ -124,5 +154,5 @@ export default async function handler(req) {
     `${y.visits} visite${y.visits > 1 ? 's' : ''}, ${y.completions} diagnostic${y.completions > 1 ? 's' : ''}, ${y.sales} vente${y.sales > 1 ? 's' : ''}`;
   const mail = await sendMail(env, { to: PRACTICE_INBOX, subject, text, refId: 'qb-brand-mri-digest' });
   if (!mail.ok) console.error('[mri-digest] email failed', mail.status || '', mail.error || '');
-  return json(200, { ok: true, sent: mail.ok, yesterday: y, week: w });
+  return json(200, { ok: true, sent: mail.ok, truncated: read.truncated, yesterday: y, week: w });
 }

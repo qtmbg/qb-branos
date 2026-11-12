@@ -92,7 +92,7 @@ console.log('\n1 · copy: two languages, one shape, the voice rules');
 
 /* ───────────────────────────────────────────────────────────── */
 console.log('\n2 · engine and report model');
-const { scoreAnswers, sanitizeAnswers, tierFromSession, verifyPaidSession, findPaidSessions, isVisitorId, LOOKUP_WINDOW_SECONDS, PILLARS: SERVER_PILLARS } = await import('../../api/_lib/mri.js');
+const { scoreAnswers, sanitizeAnswers, tierFromSession, verifyPaidSession, findPaidSessions, isVisitorId, LOOKUP_WINDOW_SECONDS, LEDGER_PAGE, LEDGER_MAX_PAGES, PILLARS: SERVER_PILLARS } = await import('../../api/_lib/mri.js');
 {
   since();
   const d = ENGINE.diagnose([7, 3, 7, 7, 3, 7, 3, 0, 0, 3]);
@@ -368,7 +368,7 @@ Object.assign(process.env, ENV, { STRIPE_WEBHOOK_SECRET: 'whsec_test', CRON_SECR
 const ANSWERS = [7, 3, 7, 7, 3, 7, 3, 0, 0, 3];
 
 // A small fake of the three services the handlers talk to.
-function world({ session = null, sessionStatus = 200, sessionList = [], listStatus = 200, ledgerRows = [], ledgerStatus = 201, resendStatus = 200 } = {}) {
+function world({ session = null, sessionStatus = 200, sessionList = [], listStatus = 200, ledgerRows = [], ledgerStatus = 201, ledgerReadStatus = 200, resendStatus = 200 } = {}) {
   const calls = { mail: [], ledgerInserts: [], ledgerReads: [], stripe: [], other: [] };
   globalThis.fetch = async (url, opts = {}) => {
     const u = String(url);
@@ -380,6 +380,7 @@ function world({ session = null, sessionStatus = 200, sessionList = [], listStat
     if (u.includes('/rest/v1/mri_events')) {
       if ((opts.method || 'GET') === 'POST') { calls.ledgerInserts.push(body); return res(ledgerStatus, ''); }
       calls.ledgerReads.push(u);
+      if (ledgerReadStatus !== 200) return res(ledgerReadStatus, {});
       return res(200, typeof ledgerRows === 'function' ? ledgerRows(u) : ledgerRows);
     }
     calls.other.push({ u, method: opts.method || 'GET', body });
@@ -588,17 +589,59 @@ const webhookHandler = (await import('../../api/stripe-webhook.js')).default;
   if (!dg.ok || !dg.sent || dg.yesterday.visits !== 2 || dg.yesterday.completions !== 1 || dg.yesterday.sales !== 1) fail(`digest counted wrong: ${JSON.stringify(dg)}`);
   const dm = c.mail[0];
   if (!dm || !/2 visites, 1 diagnostic, 1 vente$/.test(dm.subject) || !dm.text.includes('Atelier Lumen · https://a.co · 40/100 · frein : Différenciation · source : linkedin') || !dm.text.includes('Ventes : 1 (79 $)')) fail(`digest email wrong: ${dm && dm.subject}`);
-  c = world({ ledgerRows: [] });
-  r = await digestHandler(cron('Bearer cron_test'));
-  const quiet = await r.json();
-  const monday = new Date().getUTCDay() === 1;
-  if (quiet.sent !== monday || c.mail.length !== (monday ? 1 : 0)) fail(`an empty day must be silent except on Mondays (today monday=${monday}, sent=${quiet.sent})`);
-  c = world({ ledgerStatus: 404, ledgerRows: () => { throw new Error('unreachable'); } });
-  globalThis.fetch = async () => res(404, {});
-  r = await digestHandler(cron('Bearer cron_test'));
-  const missing = await r.json();
-  if (missing.ok || missing.reason !== 'table_missing') fail(`a missing ledger must be reported, got ${JSON.stringify(missing)}`);
-  okIf('digest: refused without the cron secret, counts visitors once, lists brands and sales, stays quiet on an empty day');
+  // The day of the week decides what an empty or unreadable day does, so the
+  // clock is set here instead of trusting the day this harness happens to run.
+  const RealDate = Date;
+  const at = async (iso, fn) => {
+    const fixed = new RealDate(iso).getTime();
+    globalThis.Date = class extends RealDate {
+      constructor(...a) { if (a.length) super(...a); else super(fixed); }
+      static now() { return fixed; }
+    };
+    try { return await fn(); } finally { globalThis.Date = RealDate; }
+  };
+  const MONDAY = '2026-11-16T07:00:00Z', TUESDAY = '2026-11-17T07:00:00Z';
+  if (new Date(MONDAY).getUTCDay() !== 1 || new Date(TUESDAY).getUTCDay() !== 2) fail('the harness clock dates are not a Monday and a Tuesday');
+  const runDigest = async (iso, opts) => at(iso, async () => {
+    const calls = world(opts);
+    const body = await (await digestHandler(cron('Bearer cron_test'))).json();
+    return { calls, body };
+  });
+
+  let run = await runDigest(TUESDAY, { ledgerRows: [] });
+  if (run.body.sent !== false || run.calls.mail.length) fail(`an empty Tuesday must be silent: ${JSON.stringify(run.body)}`);
+  run = await runDigest(MONDAY, { ledgerRows: [] });
+  if (run.body.sent !== true || run.calls.mail.length !== 1 || !/0 visite, 0 diagnostic, 0 vente$/.test(run.calls.mail[0].subject)) fail(`an empty Monday must still report the week: ${JSON.stringify(run.body)}`);
+
+  // A missing ledger: said on Monday with the migration named, silent otherwise.
+  run = await runDigest(TUESDAY, { ledgerStatus: 404, ledgerReadStatus: 404 });
+  if (run.body.ok || run.body.reason !== 'table_missing' || run.body.sent !== false || run.calls.mail.length) fail(`a missing ledger on a Tuesday must be reported and silent: ${JSON.stringify(run.body)}`);
+  run = await runDigest(MONDAY, { ledgerStatus: 404, ledgerReadStatus: 404 });
+  const told = run.calls.mail[0];
+  if (run.body.ok || run.body.reason !== 'table_missing' || run.body.sent !== true || run.calls.mail.length !== 1) fail(`a missing ledger on a Monday must be said by email: ${JSON.stringify(run.body)}`);
+  if (told && (told.to[0] !== 'me@qtmbg.com' || !told.text.includes('025_mri_events.sql') || !told.subject.includes('registre illisible'))) fail(`the missing-ledger email does not name the migration: ${told.subject}`);
+  run = await runDigest(MONDAY, { ledgerReadStatus: 500 });
+  if (run.body.reason !== 'select_failed_500' || run.calls.mail.length !== 1 || !run.calls.mail[0].text.includes('select_failed_500')) fail(`an unreadable ledger on a Monday must carry its reason: ${JSON.stringify(run.body)}`);
+
+  // More rows than one request returns. Every page is read, and the count is
+  // of all of them, never of the first thousand.
+  const dayBefore = new Date(Date.parse(TUESDAY) - 13 * 3600000).toISOString();   // Monday 18:00 UTC, the day the Tuesday run reports
+  const many = n => Array.from({ length: n }, (_, i) => ({ created_at: dayBefore, event: 'start', visitor_id: `v_${i}` }));
+  const pageOf = total => u => {
+    const off = Number(/[?&]offset=(\d+)/.exec(u)[1]);
+    const lim = Number(/[?&]limit=(\d+)/.exec(u)[1]);
+    return many(Math.max(0, Math.min(lim, total - off)));
+  };
+  run = await runDigest(TUESDAY, { ledgerRows: pageOf(2003) });
+  if (run.body.yesterday.starts !== 2003 || run.body.week.starts !== 2003 || run.body.truncated !== false) fail(`the digest counted ${run.body.yesterday && run.body.yesterday.starts} of 2003 rows spread over three pages`);
+  if (run.calls.ledgerReads.length !== 3 || !run.calls.ledgerReads.every((u, i) => u.includes(`&limit=${LEDGER_PAGE}&offset=${i * LEDGER_PAGE}`) && u.includes('order=created_at.asc,id.asc'))) fail(`the digest paged wrongly: ${run.calls.ledgerReads.length} reads`);
+  run = await runDigest(TUESDAY, { ledgerRows: pageOf(LEDGER_PAGE) });
+  if (run.body.yesterday.starts !== LEDGER_PAGE || run.calls.ledgerReads.length !== 2) fail(`a week of exactly one full page needs a second, empty read: ${run.calls.ledgerReads.length} reads, ${run.body.yesterday.starts} rows`);
+  run = await runDigest(TUESDAY, { ledgerRows: pageOf(LEDGER_PAGE * LEDGER_MAX_PAGES + 5) });
+  const capped = run.calls.mail[0];
+  if (run.body.truncated !== true || run.calls.ledgerReads.length !== LEDGER_MAX_PAGES) fail(`a ledger past the ceiling must be reported as truncated: ${run.body.truncated}, ${run.calls.ledgerReads.length} reads`);
+  if (!capped || !capped.text.includes(`lecture arrêtée à ${LEDGER_PAGE * LEDGER_MAX_PAGES} lignes`) || !capped.text.includes('incomplets')) fail('the email does not say its figures are incomplete');
+  okIf('digest: refused without the cron secret, counts visitors once, lists brands and sales; an empty day is silent except on Monday; a missing ledger is said on Monday; every page is read and a capped read is declared');
 }
 restore();
 

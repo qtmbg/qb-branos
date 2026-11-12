@@ -300,6 +300,25 @@ export async function ledgerSelect(env, query) {
   }
 }
 
+// Every row a query matches, page after page. The API returns at most a
+// thousand rows a request whatever limit is asked, so a count read in one
+// request goes quietly wrong the week traffic picks up. The query must not
+// carry its own limit or offset, and must carry an order.
+// truncated: true means the last page allowed was still full. The caller
+// has to say so wherever the count is shown.
+export const LEDGER_PAGE = 1000;
+export const LEDGER_MAX_PAGES = 50;
+export async function ledgerSelectAll(env, query) {
+  const rows = [];
+  for (let page = 0; page < LEDGER_MAX_PAGES; page++) {
+    const part = await ledgerSelect(env, `${query}&limit=${LEDGER_PAGE}&offset=${page * LEDGER_PAGE}`);
+    if (!part.ok) return { ok: false, reason: part.reason, rows: [], truncated: false };
+    for (const r of part.rows) rows.push(r);
+    if (part.rows.length < LEDGER_PAGE) return { ok: true, rows, truncated: false };
+  }
+  return { ok: true, rows, truncated: true };
+}
+
 // The last completed diagnostic for a visitor, falling back to their email.
 export async function latestCompletion(env, { visitorId, email }) {
   const cols = 'select=created_at,lang,email,brand,website,score,brake,data&event=eq.completed&order=created_at.desc&limit=1';
