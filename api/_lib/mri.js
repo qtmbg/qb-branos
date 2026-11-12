@@ -22,6 +22,7 @@ const ALLOWED_ORIGINS = new Set([
   'https://quantumbranding.ai',
   'https://www.quantumbranding.ai',
   'https://app.quantumbranding.ai',
+  'https://qb-branos.vercel.app',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
 ]);

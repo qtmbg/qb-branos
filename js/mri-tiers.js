@@ -7,15 +7,29 @@
 //
 // A paid tier comes from one place only: a Stripe Checkout Session that
 // /api/mri-verify has confirmed as paid. The address bar opens nothing.
-// The single exception is ?demo= on a host that is not production, so a
-// preview deployment can show every tier without a payment.
+// The single exception is ?demo= on a preview host, so a branch can show
+// every tier without a payment. Preview hosts are named here and every
+// other host is production: the three domains, the vercel.app aliases that
+// serve the production deployment, and any domain added later.
 
 var MRI_TIER_RANK = { free: 0, flash: 1, full: 2, review: 3 };
 
-var MRI_PROD_HOSTS = ['quantumbranding.ai', 'www.quantumbranding.ai', 'app.quantumbranding.ai'];
+// A preview deployment of this project: qb-branos-<hash or branch>-<team>.
+// Vercel Authentication guards these hosts, so only the team reaches them.
+var MRI_PREVIEW_HOST = /^qb-branos-[a-z0-9-]+\.vercel\.app$/;
+
+// Two aliases fit that pattern and serve production. qb-branos.vercel.app
+// serves production too and does not fit the pattern.
+var MRI_PROD_ALIASES = ['qb-branos-qtmbg.vercel.app', 'qb-branos-git-main-qtmbg.vercel.app'];
+
+function mriIsPreviewHost(hostname) {
+  var h = String(hostname || '').toLowerCase();
+  if (h === 'localhost' || h === '127.0.0.1') return true;
+  return MRI_PREVIEW_HOST.test(h) && MRI_PROD_ALIASES.indexOf(h) === -1;
+}
 
 function mriIsProdHost(hostname) {
-  return MRI_PROD_HOSTS.indexOf(String(hostname || '').toLowerCase()) !== -1;
+  return !mriIsPreviewHost(hostname);
 }
 
 // The highest tier among confirmed sessions. A re-test session carries no
@@ -70,6 +84,7 @@ function mriTotalPaid(tier) {
 var MRI_TIERS_API = {
   RANK: MRI_TIER_RANK,
   isProdHost: mriIsProdHost,
+  isPreviewHost: mriIsPreviewHost,
   maxTier: mriMaxTier,
   resolveTier: mriResolveTier,
   visibleSections: mriVisibleSections,

@@ -164,7 +164,14 @@ console.log('\n3 · tiers: the address bar opens nothing');
     ['?demo=full on production',           { sessions: [], demo: 'full', hostname: prod }, 'free'],
     ['?demo=review on www',                { sessions: [], demo: 'review', hostname: 'www.quantumbranding.ai' }, 'free'],
     ['?demo=full on app',                  { sessions: [], demo: 'full', hostname: 'app.quantumbranding.ai' }, 'free'],
+    ['?demo=full on the vercel.app alias', { sessions: [], demo: 'full', hostname: 'qb-branos.vercel.app' }, 'free'],
+    ['?demo=full on the team alias',       { sessions: [], demo: 'full', hostname: 'qb-branos-qtmbg.vercel.app' }, 'free'],
+    ['?demo=full on the main branch alias', { sessions: [], demo: 'full', hostname: 'qb-branos-git-main-qtmbg.vercel.app' }, 'free'],
+    ['?demo=full on an unlisted domain',   { sessions: [], demo: 'full', hostname: 'brand-mri.example' }, 'free'],
+    ['?demo=full with no hostname',        { sessions: [], demo: 'full', hostname: '' }, 'free'],
+    ['?demo=full on a lookalike host',     { sessions: [], demo: 'full', hostname: 'qb-branos-abc.vercel.app.evil.example' }, 'free'],
     ['?demo=full on a preview',            { sessions: [], demo: 'full', hostname: 'qb-branos-abc-qtmbg.vercel.app' }, 'full'],
+    ['?demo=flash on localhost',           { sessions: [], demo: 'flash', hostname: 'localhost' }, 'flash'],
     ['unknown demo value on a preview',    { sessions: [], demo: 'admin', hostname: 'localhost' }, 'free'],
     ['one confirmed flash session',        { sessions: [{ tier: 'flash' }], demo: null, hostname: prod }, 'flash'],
     ['flash then upgrade',                 { sessions: [{ tier: 'flash' }, { tier: 'full' }], demo: null, hostname: prod }, 'full'],
@@ -340,7 +347,13 @@ const webhookHandler = (await import('../../api/stripe-webhook.js')).default;
   if (r.status !== 200 || !out.ok || !out.scoreEmail) fail(`a valid lead answered ${r.status} ${JSON.stringify(out)}`);
   const [operator, visitor] = c.mail;
   if (!operator || operator.to[0] !== 'me@qtmbg.com' || operator.subject !== 'Brand MRI lead : Atelier Lumen (40/100)') fail(`operator email wrong: ${operator && operator.subject}`);
-  if (operator && (operator.text.includes('99') || operator.text.includes('forged'))) fail('the operator email repeats a score the browser claimed');
+  // The email closes on a timestamp, and now and then its milliseconds hold
+  // "99". That made this check cry wolf about one run in fifty. Every line is
+  // still read in full; only the Date line is set aside.
+  const claimed = operator ? operator.text.split('\n').filter(l => !l.startsWith('Date : ')).join('\n') : '';
+  if (operator && claimed === operator.text) fail('the operator email has no Date line to set aside: this check needs a second look');
+  if (claimed.includes('99') || claimed.includes('forged')) fail('the operator email repeats a score the browser claimed');
+  if (visitor && (/\b99\b/.test(visitor.text) || visitor.text.includes('forged'))) fail('the visitor email repeats a score the browser claimed');
   if (operator && !operator.text.includes('Réponses (Q1 à Q10) : 7, 3, 7, 7, 3, 7, 3, 0, 0, 3')) fail('the operator email does not carry the ten answers');
   if (operator && !operator.text.includes('Source : linkedin')) fail('the operator email does not carry the source');
   if (!visitor || visitor.to[0] !== 'founder@example.com' || visitor.subject !== 'Votre score Brand MRI : 40/100') fail(`visitor email wrong: ${visitor && visitor.subject}`);
