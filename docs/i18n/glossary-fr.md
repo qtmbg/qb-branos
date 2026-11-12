@@ -99,8 +99,12 @@ BrandOS · Quantum Branding · by Quantum Branding (the lockup line) ·
 The Collapse · Observe, Collapse, Build, Hold (the four movements, as names) ·
 Signal Scan · Brand Soul Map · Archetype Compass · The Profiles · War Table ·
 War Room · Sensescape · Visual DNA · Voice Guide · Predictive Panel ·
-Brand MRI · Atelier · Starter · QBP · the four persona names (Blank Slate,
-Doubter, Player, Multi-Brand) · The Guide · the featured-by list.
+Brand MRI · Atelier · Starter · QBP · Quantum Brand Profile (the full name
+behind QBP) · Soul Map · Codex · Entangled Time · the four persona names
+(Blank Slate, Doubter, Player, Multi-Brand) · The Guide · the featured-by list.
+
+**Testimonials stay verbatim, in English.** They are real people's words.
+The name and the quote take `true`; the role under the name is translated.
 
 The twelve archetype names stay in English when they are names
 (« The Sage »). Their descriptions are translated.
@@ -145,6 +149,26 @@ The twelve archetype names stay in English when they are names
 | Results | Résultats |
 | Approve | Valider |
 | Revise / Revision | Réviser / Révision |
+| artifact | livrable (never « artefact ») |
+| Sensory World | Monde sensoriel |
+| Visual Language | Langage visuel |
+| Strategic Position | Position stratégique |
+| Discovery (phase label) | Découverte |
+| upgrade | passer à Starter |
+| Manifesto Line | Phrase manifeste |
+| Voice Notes | Notes sur la voix |
+| The Spark | L’Étincelle |
+| Brand Core | Cœur de marque |
+| Core motivation / Core fear | Motivation profonde / Peur profonde |
+| Binding constraint | Contrainte limitante |
+| NOW / NEXT / LATER / PARK | MAINTENANT / ENSUITE / PLUS TARD / EN RÉSERVE |
+| Content Repurposing Engine | Moteur de déclinaison de contenu |
+| repurpose | décliner, déclinaison |
+| journey (a buyer's) | cheminement (« parcours » is banned) |
+| approval loop round | Tour |
+| Marketing deck | Deck marketing |
+| We hit a snag. | Un accroc est survenu. |
+| Overall | Global |
 | Door 01: I have an idea | Porte 01 : J’ai une idée |
 | Door 02: Something feels off | Porte 02 : Quelque chose cloche |
 | Door 03: Competition coming fast | Porte 03 : La concurrence arrive vite |
@@ -155,6 +179,25 @@ gratuit. 5 minutes pour votre premier constat. Lancez le vôtre → »
 
 Footer line: « BrandOS est un produit de Quantum Branding, le cabinet
 indépendant fondé par Nizzar Ben Chekroune. »
+
+## Keeping it consistent
+
+```
+node scripts/i18n/consistency.mjs      strings rendered two ways, and voice breaches
+python3 scripts/i18n/set-value.py "<key>" "<french>" file.js ...   settle one term
+```
+
+Some strings differ on purpose: "Light" is « Clair » for a colour and
+« Léger » for a weight. A product term never should.
+
+## What a dictionary cannot reach
+
+- Text written into a downloaded file (Markdown, JSON, .txt exports) and
+  text put on the clipboard. It stays in English.
+- Text the model writes. The server tells the model to answer in French
+  (`agents/lang.js`), and to return fixed labels in English so the
+  interface can match and translate them.
+- What the founder typed. It is never read or changed.
 
 ## Colour
 

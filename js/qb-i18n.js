@@ -141,7 +141,9 @@
   }
 
   /* ── DOM translation ─────────────────────────────────────────────── */
-  var SKIP_TAGS = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, TEXTAREA: 1, TEMPLATE: 1 };
+  var SKIP_TAGS = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, TEMPLATE: 1 };
+  // A textarea's text is what the founder typed. Its placeholder is ours.
+  var TYPED_TAGS = { TEXTAREA: 1 };
   var SKIP_SEL = '[data-i18n-skip],[translate="no"],.notranslate,[contenteditable="true"]';
   var ATTRS = ['placeholder', 'title', 'aria-label', 'alt', 'data-label', 'data-tooltip', 'data-tip'];
   var META_SEL = 'meta[name="description"],meta[property="og:title"],meta[property="og:description"],' +
@@ -173,7 +175,7 @@
 
   function doText(node) {
     var parent = node.parentNode;
-    if (!parent || (parent.nodeType === 1 && skipped(parent))) return;
+    if (!parent || (parent.nodeType === 1 && (skipped(parent) || TYPED_TAGS[parent.tagName]))) return;
     var rec = textRec.get(node), cur = node.data;
     if (rec && cur === rec.out) {
       if (!active()) { node.data = rec.src; textRec.delete(node); }
@@ -210,10 +212,18 @@
     }
   }
 
+  // value is copy only on a button input; on any other field it is what
+  // the founder typed, and it is never read or changed. content is copy
+  // only on the description and share tags.
+  function eligible(el, name) {
+    if (name === 'value') return el.tagName === 'INPUT' && /^(button|submit|reset)$/i.test(el.type);
+    if (name === 'content') return el.tagName === 'META' && el.matches(META_SEL);
+    return ATTRS.indexOf(name) > -1;
+  }
   function doElement(el) {
     for (var i = 0; i < ATTRS.length; i++) if (el.hasAttribute(ATTRS[i])) doAttr(el, ATTRS[i]);
-    if (el.tagName === 'INPUT' && /^(button|submit|reset)$/i.test(el.type) && el.hasAttribute('value')) doAttr(el, 'value');
-    if (el.tagName === 'META' && el.matches(META_SEL)) doAttr(el, 'content');
+    if (el.hasAttribute('value') && eligible(el, 'value')) doAttr(el, 'value');
+    if (el.tagName === 'META' && eligible(el, 'content')) doAttr(el, 'content');
   }
 
   function walk(root) {
@@ -243,7 +253,12 @@
     for (var i = 0; i < list.length; i++) {
       var m = list[i];
       if (m.type === 'characterData') { doText(m.target); touched = true; }
-      else if (m.type === 'attributes') { doAttr(m.target, m.attributeName); }
+      else if (m.type === 'attributes') {
+        // A class change is a state change: selected, open, active. The
+        // colours may have moved, so the contrast pass runs again.
+        if (m.attributeName === 'class') touched = true;
+        else if (eligible(m.target, m.attributeName)) doAttr(m.target, m.attributeName);
+      }
       else {
         for (var j = 0; j < m.addedNodes.length; j++) { walk(m.addedNodes[j]); touched = true; }
       }
@@ -252,7 +267,7 @@
   });
   mo.observe(R, {
     subtree: true, childList: true, characterData: true,
-    attributes: true, attributeFilter: ATTRS.concat(['value', 'content'])
+    attributes: true, attributeFilter: ATTRS.concat(['value', 'content', 'class'])
   });
 
   /* ── Dictionary loading ──────────────────────────────────────────── */
@@ -310,7 +325,11 @@
   var css = [
     /* Defaults at zero specificity, for the few pages with no token block. */
     ':where(:root){--ink:#2D1521;--cream:#FBF5E6;--gold:#E0B069}',
-    /* French: the pair reverses. Ink surfaces, cream type. Accents hold. */
+    /* French: the pair reverses. Ink surfaces, cream type. Accents hold.
+       Screen only: paper has no ink ground, and a browser that drops
+       backgrounds when printing would leave cream type on white. A French
+       page prints, and saves to PDF, on cream like the English one. */
+    '@media screen{',
     ':root[data-lang="fr"][data-lang]{',
     'color-scheme:dark;',
     '--cream:#2D1521 !important;--bg-void:#2D1521 !important;--bg-base:#2D1521 !important;',
@@ -330,12 +349,17 @@
     '}',
     /* Illustrations keep the surface they were drawn for. */
     ':root[data-lang="fr"] .qb-illus-card{--cream-card:#F2EBD3 !important;--ink:#2D1521 !important;--white:#FFFEF8 !important}',
+    /* Set by the contrast pass below. */
+    ':root[data-lang="fr"] [data-qb-fix="c"]{color:#FBF5E6 !important}',
+    ':root[data-lang="fr"] [data-qb-fix="i"]{color:#2D1521 !important}',
+    ':root[data-lang="fr"] img[data-qb-mark]{content:url("/img/brand/mark-reverse.svg")}',
+    '}',
     /* The switch. The pressed side is the reversed pair, so the control
        shows what it does. */
     '.qb-lang{display:inline-flex;align-items:stretch;flex:none;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;',
     'background:var(--cream);font-family:var(--font-mono,var(--f-mono,ui-monospace,monospace));font-size:var(--step--2,0.8125rem);line-height:1}',
     '.qb-lang_opt{appearance:none;-webkit-appearance:none;border:0;margin:0;padding:var(--space-3xs,0.5625rem) var(--space-2xs,0.6875rem);',
-    'background:transparent;color:var(--ink);font:inherit;font-weight:600;letter-spacing:0.06em;cursor:pointer;min-height:0;text-transform:none}',
+    'background:transparent;color:var(--ink);font:inherit;font-weight:600;letter-spacing:0.06em;cursor:pointer;min-height:0;text-transform:none;border-radius:0;box-shadow:none;width:auto}',
     '.qb-lang_opt[aria-pressed="true"]{background:var(--ink);color:var(--cream);cursor:default}',
     '.qb-lang_opt:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}',
     '.qb-lang.is-floating{position:fixed;z-index:2147483000;inset-inline-start:var(--space-xs,0.875rem);inset-block-end:var(--space-xs,0.875rem)}',
@@ -358,7 +382,6 @@
      whose contrast against its real background fell under 2.5:1 and sets
      it to whichever of ink or cream reads. Faint decorative type (alpha
      under 0.5) is left alone on purpose. */
-  var fixed = new WeakMap();     // element -> inline colour before the fix
   function parse(c) {
     var m = /rgba?\(([^)]+)\)/.exec(c || '');
     if (!m) return null;
@@ -394,15 +417,10 @@
     return base;
   }
   function unfix() {
-    var els = D.querySelectorAll('[data-qb-fix]');
-    for (var i = 0; i < els.length; i++) {
-      var prev = fixed.get(els[i]);
-      if (prev) els[i].style.setProperty('color', prev.value, prev.priority); else els[i].style.removeProperty('color');
-      els[i].removeAttribute('data-qb-fix');
-    }
-    var imgs = D.querySelectorAll('img[data-qb-mark]');
-    for (var j = 0; j < imgs.length; j++) { imgs[j].src = imgs[j].getAttribute('data-qb-mark'); imgs[j].removeAttribute('data-qb-mark'); }
+    var els = D.querySelectorAll('[data-qb-fix],[data-qb-mark]');
+    for (var i = 0; i < els.length; i++) { els[i].removeAttribute('data-qb-fix'); els[i].removeAttribute('data-qb-mark'); }
   }
+  var FIX = { c: CREAM, i: INK };
   function guard() {
     if (lang !== 'fr' || !D.body) return;
     var cache = new Map();
@@ -412,34 +430,34 @@
       var el = n.parentElement;
       if (!el || seen.has(el) || !n.data.trim() || SKIP_TAGS[el.tagName]) continue;
       seen.add(el);
-      if (el.hasAttribute('data-qb-fix') || (el.closest && el.closest('.qb-lang'))) continue;
+      if (el.closest && el.closest('.qb-lang')) continue;
+      var bg = backdrop(el, cache);
+      if (!bg) continue;
+      // A fix made earlier stands while it still reads. A button that
+      // changed state since then gets judged again from its own colour.
+      var had = el.getAttribute('data-qb-fix');
+      if (had) {
+        if (FIX[had] && ratio(FIX[had], bg) >= 2.5) continue;
+        el.removeAttribute('data-qb-fix');
+      }
       var cs = getComputedStyle(el);
       if (cs.visibility === 'hidden' || cs.display === 'none') continue;
       var fg = parse(cs.color);
       if (!fg || fg[3] < 0.5) continue;
-      var bg = backdrop(el, cache);
-      if (!bg) continue;
       if (ratio(over(fg, bg), bg) >= 2.5) continue;
-      var best = ratio(CREAM, bg) >= ratio(INK, bg) ? CREAM : INK;
-      fixed.set(el, el.style.getPropertyValue('color')
-        ? { value: el.style.getPropertyValue('color'), priority: el.style.getPropertyPriority('color') } : null);
-      el.style.setProperty('color', 'rgb(' + best.join(',') + ')', 'important');
-      el.setAttribute('data-qb-fix', '');
+      el.setAttribute('data-qb-fix', ratio(CREAM, bg) >= ratio(INK, bg) ? 'c' : 'i');
     }
     // The ink mark disappears on ink. The reverse mark is drawn for it.
     var marks = D.querySelectorAll('img[src*="mark-ink.svg"]');
     for (var i = 0; i < marks.length; i++) {
       var b = backdrop(marks[i], cache);
-      if (b && lum(b) < 0.2) {
-        marks[i].setAttribute('data-qb-mark', marks[i].getAttribute('src'));
-        marks[i].src = marks[i].getAttribute('src').replace('mark-ink.svg', 'mark-reverse.svg');
-      }
+      if (b && lum(b) < 0.2) marks[i].setAttribute('data-qb-mark', ''); else marks[i].removeAttribute('data-qb-mark');
     }
   }
   var guardTimer = 0;
   function scheduleGuard() {
     if (lang !== 'fr' || guardTimer) return;
-    guardTimer = setTimeout(function () { guardTimer = 0; guard(); }, 60);
+    guardTimer = setTimeout(function () { guardTimer = 0; guard(); }, 80);
   }
 
   /* ── The switch ──────────────────────────────────────────────────── */
@@ -568,6 +586,21 @@
      the email template, and the checkout locale. Same origin only: a
      custom header on a cross-origin call would force a preflight the
      other host has not agreed to. */
+  // Two tools call the model straight from the browser with the founder's
+  // own key, so no server sees X-QB-Lang. For those calls the directive is
+  // appended here. It is the same text as agents/lang.js, and
+  // tests/i18n/server-lang.mjs fails if the two drift apart.
+  var DIRECTIVE = {
+    fr: [
+      'LANGUAGE OF THE OUTPUT.',
+      'The reader is French-speaking. Write every piece of prose the reader will see in French, addressing the reader as "vous". This overrides any earlier instruction about the language of the output, and nothing else.',
+      'Keep exactly as specified: JSON keys and field names, and every value the instructions restrict to a fixed list or format (ids, slugs, enum values, hex colours, dates, URLs, numbers).',
+      'Return exactly as spelled, in English, every label the instructions spell out literally: verdicts, statuses, ratings, category names, section headings and line prefixes such as "POST 1:" or "Caption:". The interface matches them and shows them in French itself.',
+      'Keep proper nouns as written: BrandOS, Quantum Branding, The Collapse, the movement names Observe, Collapse, Build and Hold, tool names, archetype names, and the founder\'s own brand, product and people names.',
+      'Quote the founder\'s own words in the language they were written in.',
+      'The voice rules above hold in French: short sentences, sentence case, no em dash, no exclamation points. Use the typographic apostrophe and French punctuation spacing.'
+    ].join('\n')
+  };
   if (typeof W.fetch === 'function') {
     var nativeFetch = W.fetch;
     W.fetch = function (input, init) {
@@ -579,9 +612,37 @@
           var h = new Headers(init.headers || (typeof input !== 'string' && input && input.headers) || {});
           if (!h.has('X-QB-Lang')) h.set('X-QB-Lang', lang);
           init.headers = h;
+        } else if (u.hostname === 'api.anthropic.com' && DIRECTIVE[lang] && init && typeof init.body === 'string') {
+          var body = JSON.parse(init.body);
+          if (body && Array.isArray(body.messages)) {
+            if (typeof body.system === 'string' || body.system == null) {
+              body.system = body.system ? body.system + '\n\n' + DIRECTIVE[lang] : DIRECTIVE[lang];
+            } else if (Array.isArray(body.system)) {
+              body.system = body.system.concat([{ type: 'text', text: DIRECTIVE[lang] }]);
+            }
+            init = Object.assign({}, init, { body: JSON.stringify(body) });
+          }
         }
       } catch (e) {}
       return nativeFetch.call(W, input, init);
+    };
+  }
+
+  // A print or export view opened in a blank window is written by the page
+  // and carries no runtime. Its text is translated from here, a few times
+  // over the first seconds, as the page finishes writing it.
+  if (typeof W.open === 'function') {
+    var nativeOpen = W.open;
+    W.open = function () {
+      var win = nativeOpen.apply(W, arguments);
+      if (win && active()) {
+        [0, 120, 400, 1000, 2500].forEach(function (ms) {
+          setTimeout(function () {
+            try { if (win.document && win.document.documentElement) { win.document.documentElement.setAttribute('lang', lang); walk(win.document.documentElement); } } catch (e) {}
+          }, ms);
+        });
+      }
+      return win;
     };
   }
 

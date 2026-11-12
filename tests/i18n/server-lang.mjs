@@ -42,6 +42,19 @@ ok(/French/.test(frPrompt) && /"vous"/.test(frPrompt), 'directive asks for Frenc
 ok(/JSON keys/.test(frPrompt), 'directive protects JSON keys');
 ok(languageDirective('en') === '', 'no directive for English');
 
+// The browser carries its own copy of the directive, for the tools that
+// call the model without a server in between. Both must say the same thing.
+{
+  const src = fs.readFileSync(path.join(process.cwd(), 'js/qb-i18n.js'), 'utf8');
+  const m = /var DIRECTIVE = \{\s*fr: \[([\s\S]*?)\]\.join\('\\n'\)/.exec(src);
+  ok(!!m, 'browser directive found in js/qb-i18n.js');
+  if (m) {
+    const browser = Function(`return [${m[1]}].join('\\n')`)();
+    ok(browser === languageDirective('fr'), 'browser directive equals the server directive',
+      browser === languageDirective('fr') ? '' : 'js/qb-i18n.js and agents/lang.js differ');
+  }
+}
+
 // 3. Agents hand the language on.
 const agentDir = path.join(process.cwd(), 'agents');
 const callers = fs.readdirSync(agentDir).filter(f => f.endsWith('.js') && f !== 'model-call.js')

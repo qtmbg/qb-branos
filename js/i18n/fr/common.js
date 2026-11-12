@@ -40,6 +40,22 @@ QBI18N.add('fr', {
   "quantumbranding.ai": true,
   "Nizzar Ben Chekroune": true,
 
+  /* ── The twelve archetypes, as names ────────────────────────────── */
+  "The Caregiver": true,
+  "The Creator": true,
+  "The Everyman": true,
+  "The Explorer": true,
+  "The Hero": true,
+  "The Innocent": true,
+  "The Jester": true,
+  "The Lover": true,
+  "The Magician": true,
+  "The Outlaw": true,
+  "The Rebel": true,
+  "The Ruler": true,
+  "The Sage": true,
+  "Soul Map": true,
+
   /* ── Featured-by list, verbatim ─────────────────────────────────── */
   "USAID": true,
   "TV5 Monde": true,
@@ -83,6 +99,10 @@ QBI18N.add('fr', {
   "Terms": "Conditions",
   "Privacy": "Confidentialité",
   "Data": "Données",
+  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
+    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
+  "© 2026 Quantum Branding": true,
+  "Observe · Collapse · Build · Hold": true,
   "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform. For founders and organizations across the US, Europe, MENA and worldwide.":
     "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée. Pour les fondateurs et les organisations aux États-Unis, en Europe, dans la région MENA et partout dans le monde."
 });

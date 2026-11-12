@@ -34,6 +34,7 @@ const DIRECTIVES = {
     'LANGUAGE OF THE OUTPUT.',
     'The reader is French-speaking. Write every piece of prose the reader will see in French, addressing the reader as "vous". This overrides any earlier instruction about the language of the output, and nothing else.',
     'Keep exactly as specified: JSON keys and field names, and every value the instructions restrict to a fixed list or format (ids, slugs, enum values, hex colours, dates, URLs, numbers).',
+    'Return exactly as spelled, in English, every label the instructions spell out literally: verdicts, statuses, ratings, category names, section headings and line prefixes such as "POST 1:" or "Caption:". The interface matches them and shows them in French itself.',
     'Keep proper nouns as written: BrandOS, Quantum Branding, The Collapse, the movement names Observe, Collapse, Build and Hold, tool names, archetype names, and the founder\'s own brand, product and people names.',
     'Quote the founder\'s own words in the language they were written in.',
     'The voice rules above hold in French: short sentences, sentence case, no em dash, no exclamation points. Use the typographic apostrophe and French punctuation spacing.',
