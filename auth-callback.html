@@ -21,6 +21,13 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   a{color:#E0B069;text-decoration:none}
   a:hover{opacity:.8}
+  /* French reverses the colour pair, as on every page (js/qb-i18n.js).
+     This page carries literal colours, so it carries its reversed pair. */
+  @media screen{
+    :root[data-lang="fr"] body{background:#2D1521;color:#FBF5E6}
+    :root[data-lang="fr"] p{color:rgba(251,245,230,0.80)}
+    :root[data-lang="fr"] .err{color:#E79BB0}
+  }
 </style>
 </head>
 <body>

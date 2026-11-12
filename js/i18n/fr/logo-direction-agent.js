@@ -69,7 +69,7 @@ QBI18N.add('fr', {
 
   /* ── Top bar ────────────────────────────────────────────────────── */
   /* The source writes the name in capitals here. French restores it. */
-  "BRANDOS · LOGO DIRECTION AGENT": "BrandOS · AGENT DE DIRECTION DE LOGO",
+  "· LOGO DIRECTION AGENT": "· AGENT DE DIRECTION DE LOGO",
   "Logo Creative @@ h1": "Direction créative",
   "Direction @@ h1": "du logo",
   "Translate brand essence into precise visual language. No vague briefs. No wasted revisions.":

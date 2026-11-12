@@ -11,7 +11,7 @@ QBI18N.add('fr', {
     "Mettez une décision de marque ou de contenu à l’épreuve avant sa sortie. Predictive Panel la soumet à une audience synthétique construite à partir de votre Profil de marque.",
 
   /* ── Tool header and footer ─────────────────────────────────────── */
-  "BRAND": true,
+  "Brand": true,
   "OS": true,
   "Toggle theme": "Changer de thème",
   "Parameters": "Paramètres",

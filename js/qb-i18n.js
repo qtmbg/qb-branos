@@ -581,6 +581,28 @@
     });
   }
 
+  /* ── Dates and numbers ───────────────────────────────────────────────
+     Scripts format with toLocaleDateString(undefined, ...), which follows
+     the browser, not the switch: an English browser reading French would
+     get "Actif depuis le October 3, 2026". When the page is in French and
+     the caller named no locale, French is used. A caller that names one
+     keeps it, and English is left to the browser as before. */
+  [[Date.prototype, ['toLocaleDateString', 'toLocaleTimeString', 'toLocaleString']],
+   [Number.prototype, ['toLocaleString']]].forEach(function (pair) {
+    pair[1].forEach(function (name) {
+      var orig = pair[0][name];
+      if (typeof orig !== 'function') return;
+      pair[0][name] = function (locales) {
+        if (lang === 'fr' && (locales === undefined || locales === null || (Array.isArray(locales) && !locales.length))) {
+          var args = Array.prototype.slice.call(arguments);
+          args[0] = 'fr-FR';
+          return orig.apply(this, args);
+        }
+        return orig.apply(this, arguments);
+      };
+    });
+  });
+
   /* ── Language header on same-origin API calls ────────────────────────
      The server reads X-QB-Lang to pick the language a model answers in,
      the email template, and the checkout locale. Same origin only: a

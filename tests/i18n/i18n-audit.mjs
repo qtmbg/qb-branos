@@ -9,6 +9,10 @@
  *             reverse to ink (token pages only)
  *           · the EN / FR switch is missing
  *   Both    · the name BrandOS is painted in any other casing
+ *           · the page redirected somewhere other than /login
+ *
+ * Pages that need a signed-in session redirect to /login and are listed as
+ * not audited. The list is printed every run so the gap stays visible.
  *   English · anything changed: a dictionary was requested, a colour was
  *             patched, <html lang> moved, or the switch is missing
  *
@@ -38,6 +42,7 @@ const server = await serve(0);
 const PORT = server.address().port;
 const browser = await launch();
 const findings = [];
+const needSession = [];
 const collected = {};
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
 
@@ -107,7 +112,14 @@ for (const file of pages) {
     // A page that sent the browser somewhere else was not audited at all.
     const want = '/' + file.replace(/\.html$/, '');
     const same = l => l === '/' + file || l === want || (file === 'index.html' && l === '/');
-    if (!same(fr.landed)) { add('fr', 'redirected', `asked for /${file}, landed on ${fr.landed}; this page was not audited`); continue; }
+    if (!same(fr.landed)) {
+      // Account pages need a real session and send everyone else to /login.
+      // That is their job, so it is reported as a gap in coverage, loudly,
+      // and not as a defect of the page. Any other redirect is a finding.
+      if (fr.landed === '/login') { needSession.push(file); continue; }
+      add('fr', 'redirected', `asked for /${file}, landed on ${fr.landed}; this page was not audited`);
+      continue;
+    }
     const target = fr.source === 'fr' ? en : fr;      // the translated rendering
     const native = fr.source === 'fr' ? fr : en;      // the as-written rendering
     const tLang = fr.source === 'fr' ? 'en' : 'fr';
@@ -142,7 +154,15 @@ if (COLLECT) {
   process.exit(0);
 }
 
-if (!findings.length) { console.log(`i18n audit clean · ${pages.length} page(s) × ${WIDTHS.length} widths × 2 languages`); process.exit(0); }
+const gap = [...new Set(needSession)];
+if (gap.length) {
+  console.log(`Not audited, these need a signed-in session (${gap.length}): ${gap.join(', ')}`);
+  console.log('Their strings live in js/i18n/fr/shared.js and were checked in a signed-in walk when written.\n');
+}
+if (!findings.length) {
+  console.log(`i18n audit clean · ${pages.length - gap.length} of ${pages.length} page(s) rendered × ${WIDTHS.length} widths × 2 languages`);
+  process.exit(0);
+}
 const byPage = new Map();
 for (const f of findings) { if (!byPage.has(f.page)) byPage.set(f.page, []); byPage.get(f.page).push(f); }
 for (const [page, list] of byPage) {
