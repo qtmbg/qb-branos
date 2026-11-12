@@ -23,6 +23,7 @@ export const URLS = [
   // Tier 1. Entry surfaces. These carry the entity and the diagnostic.
   { path: '/',                             file: 'index.html',                        priority: '1.0', changefreq: 'weekly',  tier: 'entry' },
   { path: '/signal-scan.html',             file: 'signal-scan.html',                  priority: '1.0', changefreq: 'weekly',  tier: 'entry' },
+  { path: '/mri',                          file: 'mri.html',                          priority: '0.9', changefreq: 'weekly',  tier: 'entry' },
 
   // Tier 2. Explanation and commerce.
   { path: '/ecosystem.html',               file: 'ecosystem.html',                    priority: '0.9', changefreq: 'weekly',  tier: 'explain' },
