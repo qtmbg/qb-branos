@@ -45,7 +45,7 @@ import { isOperatorOnlyHidden } from '../_lib/operator-only.js';
 import { hasKeyFor, providerFor } from '../../agents/model-call.js';
 import { DEFAULT_RETRY_BUDGET, DEFAULT_MODEL, CANONICAL_TIERS } from '../../agents/contract.js';
 import { validateArtifact } from '../../js/qb-artifact-schema.js';
-import { sendEmail, renderTemplate, EMAIL_TEMPLATES, getAgentEmailVars } from '../_lib/email.js';
+import { sendEmail, renderTemplate, emailTemplates, getAgentEmailVars, greetingFor } from '../_lib/email.js';
 import { sendOperatorNotification } from '../_lib/operator-notify.js';
 import { triggerChainIfReady } from '../_lib/chain-trigger.js';
 import { waitUntil } from '@vercel/functions';
@@ -768,7 +768,7 @@ async function handler(req) {
   if (RESEND_API_KEY && artifact_id && authMode === 'user') {
     sendReadyEmailBestEffort({
       supaUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, userId: user_id,
-      agentSlug: agent_slug, artifactId: artifact_id,
+      agentSlug: agent_slug, artifactId: artifact_id, lang: runtime_args?.lang,
     }).catch(e => console.error('[agents/run] artifact-ready email failed', artifact_id, e?.message));
   }
 
@@ -792,6 +792,7 @@ async function handler(req) {
     parentDispatchId: dispatch_id,
     interEdgeSecret: INTER_EDGE_SECRET,
     resendKey: RESEND_API_KEY,
+    lang: runtime_args?.lang,
   }).catch(e => {
     console.error('[run] chain-trigger threw', e?.message);
   });
@@ -821,7 +822,7 @@ async function handler(req) {
 export const POST = handler;
 export const OPTIONS = handler;
 
-async function sendReadyEmailBestEffort({ supaUrl, serviceKey, userId, agentSlug, artifactId }) {
+async function sendReadyEmailBestEffort({ supaUrl, serviceKey, userId, agentSlug, artifactId, lang }) {
   const profRes = await fetch(
     `${supaUrl}/rest/v1/profiles?select=email,first_name&id=eq.${encodeURIComponent(userId)}`,
     { headers: svcHeaders(serviceKey) }
@@ -829,14 +830,15 @@ async function sendReadyEmailBestEffort({ supaUrl, serviceKey, userId, agentSlug
   if (!profRes.ok) return;
   const profile = (await profRes.json().catch(() => []))?.[0];
   if (!profile?.email) return;
-  const agentVars = getAgentEmailVars(agentSlug);
+  const agentVars = getAgentEmailVars(agentSlug, lang);
   if (!agentVars) return;
   const vars = {
     ...agentVars,
     first_name: profile.first_name || 'there',
+    greeting: greetingFor(lang, profile.first_name),
     artifact_url: `${ARTIFACT_URL_BASE}?id=${encodeURIComponent(artifactId)}`,
   };
-  const tpl = EMAIL_TEMPLATES.ARTIFACT_READY;
+  const tpl = emailTemplates(lang).ARTIFACT_READY;
   await sendEmail({
     to: profile.email,
     subject: tpl.subjectFor(vars),

@@ -17,7 +17,43 @@
 //   SUPABASE_SERVICE_ROLE_KEY   (admin generate_link needs service role)
 //   RESEND_API_KEY
 
+import { langFromRequest } from '../agents/lang.js';
+
 export const config = { runtime: 'edge' };
+
+// Email copy, per language. English is the text this endpoint always sent.
+const COPY = {
+  en: {
+    htmlLang: 'en',
+    title: 'Your BrandOS sign-in link',
+    subject: 'Your sign-in link to BrandOS',
+    eyebrow: 'Sign in to BrandOS',
+    headline: 'One click. You are in.',
+    lead: (greeting, tool) => `${greeting} click the button below to sign in to your Brand Profile${tool ? ` continuing your ${tool} work` : ''}. No password needed.`,
+    greeting: name => (name ? `${name},` : 'Hello,'),
+    button: 'Sign in →',
+    paste: 'Or paste this link into your browser:',
+    expiry: 'Link expires in 60 minutes. If you did not request this, you can ignore the email and nothing happens.',
+    footer: 'BrandOS · The Brand Operating System',
+    built: 'Built by Nizzar Ben Chekroune',
+    text: (name, link) => `Hello${name ? ' ' + name : ''},\n\nClick the link below to sign in to your Brand Profile. No password needed.\n\n${link}\n\nThe link expires in 60 minutes. If you did not request this, you can ignore this email and nothing happens.\n\nBrandOS by Quantum Branding\nThe Brand Operating System`,
+  },
+  fr: {
+    htmlLang: 'fr',
+    title: 'Votre lien de connexion à BrandOS',
+    subject: 'Votre lien de connexion à BrandOS',
+    eyebrow: 'Connexion à BrandOS',
+    headline: 'Un clic. Vous y êtes.',
+    lead: (greeting, tool) => `${greeting} cliquez sur le bouton ci-dessous pour vous connecter à votre Profil de marque${tool ? ` et reprendre votre travail sur ${tool}` : ''}. Aucun mot de passe.`,
+    greeting: name => (name ? `${name},` : 'Bonjour,'),
+    button: 'Connexion →',
+    paste: 'Ou collez ce lien dans votre navigateur\u00a0:',
+    expiry: 'Le lien expire dans 60 minutes. Si vous n’êtes pas à l’origine de cette demande, ignorez cet email et rien ne se passe.',
+    footer: 'BrandOS · Le système d’exploitation de marque',
+    built: 'Conçu par Nizzar Ben Chekroune',
+    text: (name, link) => `Bonjour${name ? ' ' + name : ''},\n\nCliquez sur le lien ci-dessous pour vous connecter à votre Profil de marque. Aucun mot de passe.\n\n${link}\n\nLe lien expire dans 60 minutes. Si vous n’êtes pas à l’origine de cette demande, ignorez cet email et rien ne se passe.\n\nBrandOS by Quantum Branding\nLe système d’exploitation de marque`,
+  },
+};
 
 const ALLOWED_REDIRECT_ORIGINS = [
   'https://quantumbranding.ai',
@@ -47,17 +83,17 @@ function escapeHtml(s) {
   }[c]));
 }
 
-function buildEmailHTML({ firstName, magicLink, sourceTool }) {
+function buildEmailHTML({ firstName, magicLink, sourceTool, lang }) {
   const e = escapeHtml;
-  const greeting = firstName ? `${e(firstName)},` : 'Hello,';
-  const toolPhrase = sourceTool ? ` continuing your ${e(sourceTool)} work` : '';
+  const c = COPY[lang] || COPY.en;
+  const lead = c.lead(c.greeting(firstName ? e(firstName) : ''), sourceTool ? e(sourceTool) : '');
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${c.htmlLang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Your BrandOS sign-in link</title>
+<title>${c.title}</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..800,0..100,0..1&family=Inter:wght@400..700&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
@@ -92,21 +128,21 @@ function buildEmailHTML({ firstName, magicLink, sourceTool }) {
         <table role="presentation" class="qb-card" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#F4EBD3;border:2px solid #2D1521;border-radius:24px;padding:36px 32px 32px 32px;">
           <tr><td>
             <div style="font-family:'JetBrains Mono','SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.18em;color:#A8862E;text-transform:uppercase;font-weight:600;margin-bottom:14px;">
-              Sign in to BrandOS
+              ${c.eyebrow}
             </div>
             <h1 style="font-family:'Fraunces','Times New Roman',serif;font-weight:700;font-size:32px;line-height:1.1;letter-spacing:-0.015em;color:#2D1521;margin:0 0 16px 0;font-variation-settings:'wght' 700,'opsz' 144,'SOFT' 100,'WONK' 1;">
-              One click. You are in.
+              ${c.headline}
             </h1>
             <p style="font-family:'Inter','Helvetica Neue',Arial,sans-serif;font-weight:500;font-size:15px;line-height:1.6;color:rgba(45,21,33,0.85);margin:0 0 24px 0;">
-              ${greeting} click the button below to sign in to your Brand Profile${toolPhrase}. No password needed.
+              ${lead}
             </p>
-            <a href="${e(magicLink)}" style="display:inline-block;background:#E5C975;color:#2D1521;border:2px solid #2D1521;border-radius:9999px;padding:14px 28px;font-family:'Inter','Helvetica Neue',Arial,sans-serif;font-weight:600;font-size:15px;text-decoration:none;box-shadow:0 4px 0 #2D1521;letter-spacing:0.01em;">Sign in →</a>
+            <a href="${e(magicLink)}" style="display:inline-block;background:#E5C975;color:#2D1521;border:2px solid #2D1521;border-radius:9999px;padding:14px 28px;font-family:'Inter','Helvetica Neue',Arial,sans-serif;font-weight:600;font-size:15px;text-decoration:none;box-shadow:0 4px 0 #2D1521;letter-spacing:0.01em;">${c.button}</a>
             <p style="font-family:'Inter','Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.6;color:rgba(45,21,33,0.55);margin:24px 0 0 0;">
-              Or paste this link into your browser:<br>
+              ${c.paste}<br>
               <a href="${e(magicLink)}" style="color:#A8862E;text-decoration:none;word-break:break-all;">${e(magicLink)}</a>
             </p>
             <p style="font-family:'JetBrains Mono','SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.06em;color:rgba(45,21,33,0.55);line-height:1.6;margin:24px 0 0 0;">
-              Link expires in 60 minutes. If you did not request this, you can ignore the email and nothing happens.
+              ${c.expiry}
             </p>
           </td></tr>
         </table>
@@ -114,8 +150,8 @@ function buildEmailHTML({ firstName, magicLink, sourceTool }) {
 
       <tr><td style="padding:24px 4px 0 4px;border-top:1px solid rgba(45,21,33,0.12);margin-top:24px;">
         <p style="font-family:'JetBrains Mono','SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.06em;color:rgba(45,21,33,0.55);line-height:1.7;margin:16px 0 0 0;text-align:center;">
-          BrandOS · The Brand Operating System<br>
-          Built by Nizzar Ben Chekroune
+          ${c.footer}<br>
+          ${c.built}
         </p>
       </td></tr>
 
@@ -133,7 +169,7 @@ export default async function handler(req) {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
+        'Access-Control-Allow-Headers': 'Content-Type, X-QB-Lang'
       }
     });
   }
@@ -213,7 +249,9 @@ export default async function handler(req) {
   }
 
   // Step 2 — send the email via Resend with our branded template.
-  const emailHTML = buildEmailHTML({ firstName, magicLink: actionLink, sourceTool });
+  const lang = langFromRequest(req);
+  const copy = COPY[lang] || COPY.en;
+  const emailHTML = buildEmailHTML({ firstName, magicLink: actionLink, sourceTool, lang });
   const resendRes = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -224,9 +262,9 @@ export default async function handler(req) {
       from: 'BrandOS <auth@quantumbranding.ai>',
       to: [email],
       reply_to: 'me@qtmbg.com',
-      subject: 'Your sign-in link to BrandOS',
+      subject: copy.subject,
       html: emailHTML,
-      text: `Hello${firstName ? ' ' + firstName : ''},\n\nClick the link below to sign in to your Brand Profile. No password needed.\n\n${actionLink}\n\nThe link expires in 60 minutes. If you did not request this, you can ignore this email and nothing happens.\n\nBrandOS by Quantum Branding\nThe Brand Operating System`,
+      text: copy.text(firstName, actionLink),
       // Purely transactional. No List-Unsubscribe header (it's a positive
       // promotional signal to Gmail's tab classifier). Per step 18 PR 3
       // deliverability pass and EMAIL_DELIVERABILITY.md.

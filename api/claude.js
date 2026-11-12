@@ -2,6 +2,8 @@
 // Key lives in ANTHROPIC_API_KEY environment variable on Vercel.
 // Frontend tools call /api/claude — they never see the key or Anthropic directly.
 
+import { langFromRequest, withLanguage } from '../agents/lang.js';
+
 export const config = { runtime: 'edge' };
 
 const ALLOWED_MODELS = [
@@ -24,7 +26,7 @@ export default async function handler(req) {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Headers': 'Content-Type, X-QB-Lang',
       },
     });
   }
@@ -58,11 +60,16 @@ export default async function handler(req) {
   const model = ALLOWED_MODELS.includes(body.model) ? body.model : DEFAULT_MODEL;
   const max_tokens = Math.min(Math.max(body.max_tokens || 2048, 1), 8000);
 
+  const system = withLanguage(body.system, langFromRequest(req));
+
   const payload = {
     model,
     max_tokens,
     messages: body.messages,
-    ...(body.system && { system: body.system }),
+    // The tools send English prompts. When the founder reads in French the
+    // browser says so in X-QB-Lang and one directive is appended here, so
+    // the answer comes back in French. English is passed through untouched.
+    ...(system && { system }),
     ...(body.temperature !== undefined && { temperature: body.temperature }),
   };
 

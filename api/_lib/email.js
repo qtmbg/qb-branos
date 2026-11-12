@@ -262,6 +262,117 @@ export const AGENT_EMAIL_VARS = {
   },
 };
 
-export function getAgentEmailVars(agentSlug) {
-  return AGENT_EMAIL_VARS[agentSlug] || null;
+/* ──────────────────────────────────────────────
+   French edition
+   ──────────────────────────────────────────────
+   The French templates are the English ones with their sentences
+   replaced, so there is one HTML source to maintain. Each pair is an
+   exact English run and its French. tests/i18n/server-lang.mjs fails if a
+   pair stops matching, which is how a copy edit above is caught here.
+
+   French needs agreement ("est prête" / "est prêt"), so the ready line
+   and the button label come from the per-agent variables as whole
+   sentences rather than from a title dropped into a frame.
+   ────────────────────────────────────────────── */
+export const FR_PAIRS = {
+  FOUNDATION_LOCKED: [
+    ['<html lang="en">', '<html lang="fr">'],
+    ['<title>Your foundation is locked. Your artifacts are being prepared.</title>', '<title>Votre fondation est verrouillée. Vos livrables sont en préparation.</title>'],
+    ['Your Phase 01 answers are locked. Synthesis is running. You will receive a separate email as each artifact is delivered.', 'Vos réponses de la Phase 01 sont verrouillées. La synthèse est en cours. Vous recevrez un email distinct à la livraison de chaque livrable.'],
+    ['font-weight:700;">Foundation</p>', 'font-weight:700;">Fondation</p>'],
+    ['FOUNDATION\n', 'FONDATION\n'],
+    ['Your foundation is locked.', 'Votre fondation est verrouillée.'],
+    ['Hi {{first_name}},', '{{greeting}}'],
+    ["Your Phase 01 answers are now immutable. We're producing your synthesis artifacts in the background. You'll receive a separate email as each one is delivered.", 'Vos réponses de la Phase 01 ne peuvent plus être modifiées. Nous produisons vos livrables de synthèse en arrière-plan. Vous recevrez un email distinct à la livraison de chacun.'],
+    ['Free tier: your Soul Map artifact will be ready first. The Sensescape, Visual Language, and Strategic Position artifacts are produced and held until you upgrade.', 'Offre gratuite\u00a0: votre Soul Map sera prête en premier. Les livrables Sensescape, Langage visuel et Position stratégique sont produits, puis conservés jusqu’à votre passage à Starter.'],
+    ['Open your foundation &rarr;', 'Ouvrir votre fondation &rarr;'],
+    ['Open your foundation: {{foundation_url}}', 'Ouvrir votre fondation\u00a0: {{foundation_url}}'],
+    ['Reply to this email anytime. I read every reply.', 'Répondez à cet email quand vous voulez. Je lis chaque réponse.'],
+  ],
+  ARTIFACT_READY: [
+    ['<html lang="en">', '<html lang="fr">'],
+    ['<title>Your {{artifact_title}} is ready</title>', '<title>{{ready_line}}</title>'],
+    ['Your {{artifact_title}} is ready.', '{{ready_line}}.'],
+    ['Hi {{first_name}},', '{{greeting}}'],
+    ['Read it now. Sit with it. Reply to this email if anything surprises you.', 'À lire maintenant. Prenez le temps de vous en imprégner. Répondez à cet email si quelque chose vous surprend.'],
+    ['Read your {{artifact_name}} &rarr;', '{{cta_line}} &rarr;'],
+    ['Read your {{artifact_name}}: {{artifact_url}}', '{{cta_line}}\u00a0: {{artifact_url}}'],
+  ],
+};
+
+function localize(template, pairs) {
+  let out = template;
+  for (const [en, fr] of pairs) out = out.split(en).join(fr);
+  return out;
+}
+
+const EMAIL_TEMPLATES_FR = {
+  FOUNDATION_LOCKED: {
+    subject: 'Votre fondation est verrouillée. Vos livrables sont en préparation.',
+    html: localize(FOUNDATION_LOCKED_HTML, FR_PAIRS.FOUNDATION_LOCKED),
+    text: localize(FOUNDATION_LOCKED_TEXT, FR_PAIRS.FOUNDATION_LOCKED),
+    refId: 'qb-foundation-locked',
+  },
+  ARTIFACT_READY: {
+    subjectFor: (vars) => vars.ready_line,
+    html: localize(ARTIFACT_READY_HTML, FR_PAIRS.ARTIFACT_READY),
+    text: localize(ARTIFACT_READY_TEXT, FR_PAIRS.ARTIFACT_READY),
+    refId: 'qb-artifact-ready',
+  },
+};
+
+export const AGENT_EMAIL_VARS_FR = {
+  soul_map_synthesizer: {
+    artifact_title: 'Soul Map',
+    artifact_name: 'Soul Map',
+    ready_line: 'Votre Soul Map est prête',
+    cta_line: 'Lire votre Soul Map',
+    agent_eyebrow: '01 DÉCOUVERTE · SYNTHÈSE SOUL MAP',
+    paragraph_one: 'Votre Soul Map nomme ce que votre marque défend en son centre. L’essence, le manifeste, le paradoxe qui lui donne vie.',
+    preheader: 'Le centre de votre marque a un nom. Lisez-le.',
+  },
+  sensescape_synthesizer: {
+    artifact_title: 'Monde sensoriel',
+    artifact_name: 'Monde sensoriel',
+    ready_line: 'Votre Monde sensoriel est prêt',
+    cta_line: 'Lire votre Monde sensoriel',
+    agent_eyebrow: '01 DÉCOUVERTE · SYNTHÈSE SENSESCAPE',
+    paragraph_one: 'Votre Monde sensoriel saisit ce que votre marque fait ressentir à travers les cinq sens. Ce qu’elle donne à entendre, à voir, à goûter, à sentir et à toucher.',
+    preheader: 'Votre marque a un corps. Voici ce qu’on y ressent.',
+  },
+  visual_dna_synthesizer: {
+    artifact_title: 'Langage visuel',
+    artifact_name: 'Langage visuel',
+    ready_line: 'Votre Langage visuel est prêt',
+    cta_line: 'Lire votre Langage visuel',
+    agent_eyebrow: '01 DÉCOUVERTE · SYNTHÈSE VISUAL DNA',
+    paragraph_one: 'Votre Langage visuel définit l’allure de votre marque. Le système de couleurs, la typographie, la posture visuelle.',
+    preheader: 'Le regard que votre marque porte sur elle-même. Prêt à lire.',
+  },
+  war_table_synthesizer: {
+    artifact_title: 'Position stratégique',
+    artifact_name: 'Position stratégique',
+    ready_line: 'Votre Position stratégique est prête',
+    cta_line: 'Lire votre Position stratégique',
+    agent_eyebrow: '01 DÉCOUVERTE · SYNTHÈSE WAR TABLE',
+    paragraph_one: 'Votre Position stratégique cartographie le terrain où votre marque évolue. Les concurrents, le paradoxe, les trois priorités à venir.',
+    preheader: 'Le terrain, cartographié. Trois priorités, nommées.',
+  },
+};
+
+export function emailTemplates(lang) {
+  return lang === 'fr' ? EMAIL_TEMPLATES_FR : EMAIL_TEMPLATES;
+}
+
+// "Bonjour Nizzar," or "Bonjour," when no first name is on file. English
+// keeps its own "Hi {{first_name}}," line and ignores this.
+export function greetingFor(lang, firstName) {
+  const name = String(firstName || '').trim();
+  if (lang === 'fr') return name ? `Bonjour ${name},` : 'Bonjour,';
+  return `Hi ${name || 'there'},`;
+}
+
+export function getAgentEmailVars(agentSlug, lang) {
+  const table = lang === 'fr' ? AGENT_EMAIL_VARS_FR : AGENT_EMAIL_VARS;
+  return table[agentSlug] || null;
 }

@@ -241,7 +241,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
 
   let claudeRes;
   for (let attempt = 0; attempt < 2; attempt++) {
-    claudeRes = await callModel({ model: pickModel(MODEL, runtime_args), apiKey: anthropicKey, geminiKey, system: SYSTEM_PROMPT, userText });
+    claudeRes = await callModel({ lang: runtime_args?.lang, model: pickModel(MODEL, runtime_args), apiKey: anthropicKey, geminiKey, system: SYSTEM_PROMPT, userText });
     if (claudeRes.ok) break;
     if (!claudeRes.retryable) break;
     await new Promise(r => setTimeout(r, 600));

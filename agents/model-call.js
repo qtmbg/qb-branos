@@ -21,6 +21,7 @@
 // on success, { ok:false, retryable, timeout, status, body } on failure.
 
 import { CANONICAL_MODELS } from './contract.js';
+import { withLanguage } from './lang.js';
 
 // Verified live against the production key on 2026-09-23. The three ids
 // this file shipped with (gemini-2.5-flash, -flash-lite and 2.0-flash)
@@ -127,10 +128,15 @@ async function callGoogle({ model, system, text, apiKey, maxTokens, signal }) {
  * @param {string} [o.userText]    same thing, soul-map's name for it
  * @param {string} [o.apiKey]      Anthropic key
  * @param {string} [o.geminiKey]   Google key, paid tier
+ * @param {string} [o.lang]        language the reader gets ('en' or 'fr'); see agents/lang.js
  */
 export async function callModel({
-  model, system, userContent, userText, apiKey, geminiKey, maxTokens = 3000, timeoutMs = 60000,
+  model, system, userContent, userText, apiKey, geminiKey, maxTokens = 3000, timeoutMs = 60000, lang,
 }) {
+  // English leaves the prompt byte-identical. Any other language appends
+  // one directive, so every agent answers in the reader's language without
+  // a second copy of its prompt.
+  system = withLanguage(system, lang);
   const wanted = providerFor(model);
   const provider = effectiveProvider(model, { anthropicKey: apiKey, geminiKey });
   const fellBack = provider !== wanted;

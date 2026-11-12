@@ -33,6 +33,7 @@
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
 import { AGENTS, getAgent } from '../../agents/registry.js';
 import { isOperatorOnlyHidden } from '../_lib/operator-only.js';
+import { langFromRequest, DEFAULT_LANG } from '../../agents/lang.js';
 import { VISION_READABLE_MIME, VISION_MAX_FILE_SIZE_BYTES, CANONICAL_TIERS } from '../../agents/contract.js';
 import { waitUntil } from '@vercel/functions';
 import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES, BUCKET } from '../files/_lib/file-config.js';
@@ -344,6 +345,9 @@ export default async function handler(req) {
   const runtimeArgs = { qbp_source: resolvedSource };
   if (resolvedFeedback) runtimeArgs.feedback = resolvedFeedback;
   if (signedFiles.length > 0) runtimeArgs.files = signedFiles;
+  // Language the founder is reading in now, not the one of the first run.
+  const runLang = langFromRequest(req);
+  if (runLang !== DEFAULT_LANG) runtimeArgs.lang = runLang;
 
   const runBody = JSON.stringify({
     user_id: userId,

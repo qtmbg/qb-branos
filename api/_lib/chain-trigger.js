@@ -100,6 +100,7 @@ function canRun(profileTier, agentTierRequired) {
  * @param {string} args.parentDispatchId · the upstream agent's dispatch_jobs.id
  * @param {string} args.interEdgeSecret · for signing chain-fired child fetches
  * @param {string} [args.resendKey]
+ * @param {string} [args.lang] · language of the upstream run; children inherit it
  *
  * @returns {Promise<{candidates: string[], fired: string[], idempotent_skips: string[], depth_exceeded: string[], tier_blocked: string[], deps_unsatisfied: string[]}>}
  */
@@ -112,6 +113,7 @@ export async function triggerChainIfReady({
   parentDispatchId,
   interEdgeSecret,
   resendKey,
+  lang,
 }) {
   const summary = {
     candidates: [],
@@ -260,7 +262,8 @@ export async function triggerChainIfReady({
       dispatch_id: result.dispatchId,
       artifact_id: result.artifacts[downstreamSlug].id,
       trigger: 'chain',
-      runtime_args: { qbp_source: 'current' },
+      // A chained run answers in the language of the run that triggered it.
+      runtime_args: lang && lang !== 'en' ? { qbp_source: 'current', lang } : { qbp_source: 'current' },
       source_artifact_id: null,
     });
   }

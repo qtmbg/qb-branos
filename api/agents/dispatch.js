@@ -50,6 +50,7 @@
 import { cors, json, resolveUser, svcHeaders, requireEnv } from '../_lib/auth.js';
 import { getAgent } from '../../agents/registry.js';
 import { isOperatorOnlyHidden } from '../_lib/operator-only.js';
+import { langFromRequest, DEFAULT_LANG } from '../../agents/lang.js';
 import { VISION_READABLE_MIME, VISION_MAX_FILE_SIZE_BYTES, CANONICAL_TIERS } from '../../agents/contract.js';
 import { waitUntil } from '@vercel/functions';
 import { parseUserUploadPath, mimeFromExt, fileIdFromSegment, ALLOWED_MIME_TYPES, BUCKET } from '../files/_lib/file-config.js';
@@ -473,6 +474,10 @@ export default async function handler(req) {
   }
   if (resolvedFeedback) runtimeArgs.feedback = resolvedFeedback;
   if (signedFiles.length > 0) runtimeArgs.files = signedFiles;
+  // Language the founder is reading in. Set only when it is not English,
+  // so an English run carries the same arguments it always did.
+  const runLang = langFromRequest(req);
+  if (runLang !== DEFAULT_LANG) runtimeArgs.lang = runLang;
 
   const runBody = JSON.stringify({
     user_id: userId,

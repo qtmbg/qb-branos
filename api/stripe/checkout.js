@@ -10,6 +10,7 @@
 // is auditable from the price ID on the session itself.
 
 import { cors, json, resolveUser, readProfile, requireEnv } from '../_lib/auth.js';
+import { langFromRequest } from '../../agents/lang.js';
 
 export const config = { runtime: 'edge' };
 
@@ -93,6 +94,9 @@ export default async function handler(req) {
   form.set('line_items[0][quantity]', '1');
   form.set('success_url', success_url);
   form.set('cancel_url', cancel_url);
+  // Checkout in the language the founder is reading. English sets nothing,
+  // so Stripe keeps choosing from the browser as it did before.
+  if (langFromRequest(req) === 'fr') form.set('locale', 'fr');
   form.set('client_reference_id', authResult.user.id);
   form.set('metadata[user_id]', authResult.user.id);
   if (isPlatform) {
