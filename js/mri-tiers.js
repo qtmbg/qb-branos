@@ -1,36 +1,84 @@
-// Brand MRI V2 : regles de debloquage par palier. Pur, testable.
-// free : score + nom du frein principal seulement.
-// flash : + 3 tensions detaillees + 1er chantier.
-// full : + 5 piliers, phrase proposee, 3 chantiers, plan 90 jours.
-// review : + formulaire de commande de la review video.
+// Brand MRI · tier rules. Pure, testable.
+//
+//   free   : score and the name of the main brake.
+//   flash  : + the three tensions and the first workstream.
+//   full   : + five pillars, the positioning sentence, the 90-day plan.
+//   review : + the order form for the video review.
+//
+// A paid tier comes from one place only: a Stripe Checkout Session that
+// /api/mri-verify has confirmed as paid. The address bar opens nothing.
+// The single exception is ?demo= on a host that is not production, so a
+// preview deployment can show every tier without a payment.
 
-function visibleSections(tier) {
+var MRI_TIER_RANK = { free: 0, flash: 1, full: 2, review: 3 };
+
+var MRI_PROD_HOSTS = ['quantumbranding.ai', 'www.quantumbranding.ai', 'app.quantumbranding.ai'];
+
+function mriIsProdHost(hostname) {
+  return MRI_PROD_HOSTS.indexOf(String(hostname || '').toLowerCase()) !== -1;
+}
+
+// The highest tier among confirmed sessions. A re-test session carries no
+// rank: it measures progress and opens no report by itself.
+function mriMaxTier(tiers) {
+  var best = 'free';
+  (tiers || []).forEach(function (t) {
+    if (MRI_TIER_RANK[t] != null && MRI_TIER_RANK[t] > MRI_TIER_RANK[best]) best = t;
+  });
+  return best;
+}
+
+// ctx: { sessions: [{ tier }], demo: string|null, hostname: string }
+function mriResolveTier(ctx) {
+  var confirmed = mriMaxTier(((ctx && ctx.sessions) || []).map(function (s) { return s && s.tier; }));
+  var demo = ctx && ctx.demo;
+  if (demo && MRI_TIER_RANK[demo] != null && !mriIsProdHost(ctx.hostname)) return demo;
+  return confirmed;
+}
+
+function mriVisibleSections(tier) {
+  var rank = MRI_TIER_RANK[tier] || 0;
   return {
     score: true,
     freinPrincipal: true,
-    tensions: tier === "flash" || tier === "full" || tier === "review",
-    chantierPrioritaire: tier === "flash" || tier === "full" || tier === "review",
-    rapportComplet: tier === "full" || tier === "review",
-    reviewForm: tier === "review",
+    tensions: rank >= 1,
+    chantierPrioritaire: rank >= 1,
+    rapportComplet: rank >= 2,
+    reviewForm: rank >= 3
   };
 }
 
-function nextOffer(tier) {
-  if (tier === "free") return { label: "MRI Flash · 19 $", price: 19, to: "flash" };
-  if (tier === "flash") return { label: "Passer au rapport complet · 60 $ de plus (total 79 $)", price: 60, to: "full" };
-  if (tier === "full") return { label: "Ajouter la review video · 211 $ de plus (total 290 $)", price: 211, to: "review" };
-  return null;
+// The Stripe links to offer from a tier. `key` names the payment link.
+function mriNextOffers(tier, retest) {
+  if (tier === 'free') {
+    return retest
+      ? [{ key: 'retest39', to: 'free', primary: true }]
+      : [{ key: 'flash', to: 'flash', primary: true }, { key: 'full', to: 'full', primary: false }];
+  }
+  if (tier === 'flash') return [{ key: 'upgrade60', to: 'full', primary: true }];
+  if (tier === 'full') return [{ key: 'review211', to: 'review', primary: true }];
+  return [];
 }
 
-function totalPaid(tier) {
-  if (tier === "flash") return 19;
-  if (tier === "full") return 79;
-  if (tier === "review") return 290;
+function mriTotalPaid(tier) {
+  if (tier === 'flash') return 19;
+  if (tier === 'full') return 79;
+  if (tier === 'review') return 290;
   return 0;
 }
 
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = { visibleSections: visibleSections, nextOffer: nextOffer, totalPaid: totalPaid };
-} else if (typeof window !== "undefined") {
-  window.TIERS = { visibleSections: visibleSections, nextOffer: nextOffer, totalPaid: totalPaid };
+var MRI_TIERS_API = {
+  RANK: MRI_TIER_RANK,
+  isProdHost: mriIsProdHost,
+  maxTier: mriMaxTier,
+  resolveTier: mriResolveTier,
+  visibleSections: mriVisibleSections,
+  nextOffers: mriNextOffers,
+  totalPaid: mriTotalPaid
+};
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = MRI_TIERS_API;
+} else if (typeof window !== 'undefined') {
+  window.TIERS = MRI_TIERS_API;
 }
