@@ -155,7 +155,8 @@ const STRIPE_TIER = {
 
 export function tierFromSession(session) {
   const key = session && session.metadata && session.metadata.brand_mri_tier;
-  return (key && STRIPE_TIER[key]) || null;
+  // Own keys only: "constructor" is a property of every object and names no tier.
+  return typeof key === 'string' && Object.prototype.hasOwnProperty.call(STRIPE_TIER, key) ? STRIPE_TIER[key] : null;
 }
 
 const TIER_LABEL = {
@@ -199,6 +200,54 @@ export async function verifyPaidSession(env, id) {
   const tier = tierFromSession(session);
   if (!tier) return { ok: false, reason: 'not_mri' };
   return { ok: true, tier, session };
+}
+
+// The id a browser draws for itself and sends to Stripe as
+// client_reference_id. Eighty random bits: it cannot be guessed. The range
+// leaves room for the longer id a browser without crypto falls back to.
+export function isVisitorId(s) {
+  return typeof s === 'string' && /^v_[0-9a-f]{12,48}$/.test(s);
+}
+
+// How far back a lookup reads, and how many pages of a hundred it turns.
+export const LOOKUP_WINDOW_SECONDS = 3 * 86400;
+const LOOKUP_PAGES = 3;
+
+// The payment links return a buyer to /mri?paid=<tier> with no session id.
+// The page still knows who it is: it sent its visitor id to Stripe with the
+// payment. This lists recent completed sessions and keeps the ones that
+// carry that id, are paid, and are Brand MRI. Same rule as above: Stripe
+// answers or nothing opens.
+export async function findPaidSessions(env, visitorId) {
+  if (!isVisitorId(visitorId)) return { ok: false, reason: 'bad_visitor_id' };
+  if (!env.STRIPE_SECRET_KEY) return { ok: false, reason: 'not_configured' };
+  const since = Math.floor(Date.now() / 1000) - LOOKUP_WINDOW_SECONDS;
+  const sessions = [];
+  let after = '';
+  for (let page = 0; page < LOOKUP_PAGES; page++) {
+    const url = 'https://api.stripe.com/v1/checkout/sessions?limit=100&status=complete'
+      + `&created%5Bgte%5D=${since}` + (after ? `&starting_after=${encodeURIComponent(after)}` : '');
+    let res;
+    try {
+      res = await fetch(url, { headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}` } });
+    } catch {
+      return { ok: false, reason: 'stripe_unavailable' };
+    }
+    if (res.status === 401 || res.status === 403) return { ok: false, reason: 'stripe_forbidden' };
+    if (!res.ok) return { ok: false, reason: 'stripe_unavailable' };
+    let body;
+    try { body = await res.json(); } catch { return { ok: false, reason: 'stripe_unavailable' }; }
+    const rows = body && Array.isArray(body.data) ? body.data : null;
+    if (!rows) return { ok: false, reason: 'stripe_unavailable' };
+    for (const s of rows) {
+      if (!s || s.client_reference_id !== visitorId || s.payment_status !== 'paid' || !isSessionId(s.id)) continue;
+      const tier = tierFromSession(s);
+      if (tier) sessions.push({ tier, session: s });
+    }
+    if (!body.has_more || !rows.length) break;
+    after = rows[rows.length - 1].id;
+  }
+  return { ok: true, sessions };
 }
 
 /* ── Ledger (public.mri_events) ────────────────────────────── */

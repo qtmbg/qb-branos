@@ -34,10 +34,15 @@ function mriIsProdHost(hostname) {
 
 // The highest tier among confirmed sessions. A re-test session carries no
 // rank: it measures progress and opens no report by itself.
+// Own keys only: "constructor" is a property of every object and names no tier.
+function mriIsTier(t) {
+  return typeof t === 'string' && Object.prototype.hasOwnProperty.call(MRI_TIER_RANK, t);
+}
+
 function mriMaxTier(tiers) {
   var best = 'free';
   (tiers || []).forEach(function (t) {
-    if (MRI_TIER_RANK[t] != null && MRI_TIER_RANK[t] > MRI_TIER_RANK[best]) best = t;
+    if (mriIsTier(t) && MRI_TIER_RANK[t] > MRI_TIER_RANK[best]) best = t;
   });
   return best;
 }
@@ -46,12 +51,12 @@ function mriMaxTier(tiers) {
 function mriResolveTier(ctx) {
   var confirmed = mriMaxTier(((ctx && ctx.sessions) || []).map(function (s) { return s && s.tier; }));
   var demo = ctx && ctx.demo;
-  if (demo && MRI_TIER_RANK[demo] != null && !mriIsProdHost(ctx.hostname)) return demo;
+  if (mriIsTier(demo) && !mriIsProdHost(ctx.hostname)) return demo;
   return confirmed;
 }
 
 function mriVisibleSections(tier) {
-  var rank = MRI_TIER_RANK[tier] || 0;
+  var rank = mriIsTier(tier) ? MRI_TIER_RANK[tier] : 0;
   return {
     score: true,
     freinPrincipal: true,
@@ -85,6 +90,7 @@ var MRI_TIERS_API = {
   RANK: MRI_TIER_RANK,
   isProdHost: mriIsProdHost,
   isPreviewHost: mriIsPreviewHost,
+  isTier: mriIsTier,
   maxTier: mriMaxTier,
   resolveTier: mriResolveTier,
   visibleSections: mriVisibleSections,

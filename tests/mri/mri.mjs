@@ -92,7 +92,7 @@ console.log('\n1 · copy: two languages, one shape, the voice rules');
 
 /* ───────────────────────────────────────────────────────────── */
 console.log('\n2 · engine and report model');
-const { scoreAnswers, sanitizeAnswers, tierFromSession, verifyPaidSession, PILLARS: SERVER_PILLARS } = await import('../../api/_lib/mri.js');
+const { scoreAnswers, sanitizeAnswers, tierFromSession, verifyPaidSession, findPaidSessions, isVisitorId, LOOKUP_WINDOW_SECONDS, PILLARS: SERVER_PILLARS } = await import('../../api/_lib/mri.js');
 {
   since();
   const d = ENGINE.diagnose([7, 3, 7, 7, 3, 7, 3, 0, 0, 3]);
@@ -253,7 +253,8 @@ const paidSession = (linkTier, extra = {}) => ({
   for (const [key, tier] of [['flash', 'flash'], ['full', 'full'], ['upgrade60', 'full'], ['review211', 'review'], ['reviewFull', 'review'], ['retest39', 'retest']]) {
     if (tierFromSession({ metadata: { brand_mri_tier: key } }) !== tier) fail(`link "${key}" must open "${tier}"`);
   }
-  for (const s of [null, {}, { metadata: {} }, { metadata: { brand_mri_tier: 'owner' } }, { metadata: { product: 'platform' } }]) {
+  for (const s of [null, {}, { metadata: {} }, { metadata: { brand_mri_tier: 'owner' } }, { metadata: { product: 'platform' } },
+    { metadata: { brand_mri_tier: 'constructor' } }, { metadata: { brand_mri_tier: 'toString' } }, { metadata: { brand_mri_tier: ['full'] } }]) {
     if (tierFromSession(s) !== null) fail(`${JSON.stringify(s)} must open nothing`);
   }
   okIf('the six payment links map to their tiers and anything else maps to nothing');
@@ -292,6 +293,73 @@ const paidSession = (linkTier, extra = {}) => ({
   if (!good.ok || good.tier !== 'full') fail(`a paid upgrade session was not recognised: ${JSON.stringify(good)}`);
   if (asked !== `https://api.stripe.com/v1/checkout/sessions/${SID} Bearer sk_test`) fail(`Stripe was asked the wrong thing: ${asked}`);
   okIf('a session Stripe reports as paid opens exactly its tier');
+
+  // The return from a payment link carries no session id. The page asks
+  // with the visitor id it sent to Stripe as client_reference_id.
+  since();
+  const VID = 'v_0123456789abcdef0123';
+  const listOf = (rows, has_more = false) => async () => res(200, { object: 'list', data: rows, has_more });
+  for (const [id, valid] of [[VID, true], ['v_' + 'a'.repeat(12), true], ['v_' + 'a'.repeat(11), false], ['v_' + 'a'.repeat(49), false],
+    ['v_0123456789ABCDEF0123', false], [SID, false], ['', false], [null, false], [`${VID}&limit=1`, false], [`${VID}/x`, false]]) {
+    if (isVisitorId(id) !== valid) fail(`visitor id ${JSON.stringify(id)} must be ${valid ? 'accepted' : 'refused'}`);
+  }
+  const lookupFailures = [
+    ['no visitor id',            '',              listOf([paidSession('full')]), ENV, 'bad_visitor_id'],
+    ['a session id in its place', SID,            listOf([paidSession('full')]), ENV, 'bad_visitor_id'],
+    ['a parameter smuggled in',  `${VID}&limit=1`, listOf([paidSession('full')]), ENV, 'bad_visitor_id'],
+    ['unconfigured env',         VID,             listOf([paidSession('full')]), {}, 'not_configured'],
+    ['key lacks permission',     VID,             async () => res(403, { error: {} }), ENV, 'stripe_forbidden'],
+    ['key rejected',             VID,             async () => res(401, { error: {} }), ENV, 'stripe_forbidden'],
+    ['Stripe is down',           VID,             async () => res(500, 'oops'), ENV, 'stripe_unavailable'],
+    ['fetch throws',             VID,             async () => { throw new Error('socket'); }, ENV, 'stripe_unavailable'],
+    ['unparseable body',         VID,             async () => res(200, 'not json'), ENV, 'stripe_unavailable'],
+    ['a body with no list',      VID,             async () => res(200, { object: 'list' }), ENV, 'stripe_unavailable'],
+  ];
+  for (const [label, id, impl, env, expected] of lookupFailures) {
+    globalThis.fetch = impl;
+    const r = await findPaidSessions(env, id);
+    restore();
+    if (r.ok) fail(`lookup "${label}" answered ok · it must fail closed`);
+    if (r.reason !== expected) fail(`lookup "${label}" reported "${r.reason}", expected "${expected}"`);
+  }
+  const listed = [
+    paidSession('flash',     { id: 'cs_live_mineFlash' }),
+    paidSession('upgrade60', { id: 'cs_live_mineUpgrade' }),
+    paidSession('retest39',  { id: 'cs_live_mineRetest' }),
+    paidSession('full',      { id: 'cs_live_someoneElse', client_reference_id: 'v_ffffffffffffffffffff' }),
+    paidSession('full',      { id: 'cs_live_noReference', client_reference_id: null }),
+    paidSession('full',      { id: 'cs_live_mineUnpaid', payment_status: 'unpaid' }),
+    paidSession('full',      { id: 'cs_live_minePlatform', metadata: { product: 'platform' } }),
+    paidSession('full',      { id: 'cs_live_mineNoMetadata', metadata: null }),
+    paidSession('owner',     { id: 'cs_live_mineUnknownKey' }),
+    paidSession('review211', { id: 'not a session id' }),
+    null,
+  ];
+  let lookupAsked = '';
+  globalThis.fetch = async (url, opts) => { lookupAsked = `${url} ${opts.headers.Authorization}`; return res(200, { data: listed, has_more: false }); };
+  const mine = await findPaidSessions(ENV, VID);
+  restore();
+  const kept = mine.ok ? mine.sessions.map(x => `${x.session.id}:${x.tier}`).join(',') : `not ok: ${mine.reason}`;
+  if (kept !== 'cs_live_mineFlash:flash,cs_live_mineUpgrade:full,cs_live_mineRetest:retest') fail(`lookup kept the wrong sessions: ${kept}`);
+  const askedSince = /^https:\/\/api\.stripe\.com\/v1\/checkout\/sessions\?limit=100&status=complete&created%5Bgte%5D=(\d+) Bearer sk_test$/.exec(lookupAsked);
+  if (!askedSince) fail(`Stripe was asked the wrong list: ${lookupAsked}`);
+  else if (Math.abs(Number(askedSince[1]) - (Math.floor(Date.now() / 1000) - LOOKUP_WINDOW_SECONDS)) > 30) fail(`the lookup window is off: since=${askedSince[1]}`);
+  globalThis.fetch = listOf([]);
+  const none = await findPaidSessions(ENV, VID);
+  restore();
+  if (!none.ok || none.sessions.length) fail(`an empty list must answer ok with no session: ${JSON.stringify(none)}`);
+  const pageUrls = [];
+  globalThis.fetch = async (url) => {
+    pageUrls.push(String(url));
+    const n = pageUrls.length;
+    return res(200, { data: [paidSession('full', { id: `cs_live_page${n}`, client_reference_id: n === 2 ? VID : 'v_ffffffffffffffffffff' })], has_more: true });
+  };
+  const paged = await findPaidSessions(ENV, VID);
+  restore();
+  if (pageUrls.length !== 3) fail(`the lookup read ${pageUrls.length} pages, expected it to stop at 3`);
+  if (!paged.ok || paged.sessions.map(x => x.session.id).join() !== 'cs_live_page2') fail(`the lookup missed a session on the second page: ${JSON.stringify(paged.sessions && paged.sessions.map(x => x.session.id))}`);
+  if (pageUrls[0].includes('starting_after') || !pageUrls[1].endsWith('&starting_after=cs_live_page1') || !pageUrls[2].endsWith('&starting_after=cs_live_page2')) fail(`the lookup paged wrongly: ${pageUrls.join(' | ')}`);
+  okIf(`a lookup by visitor id fails closed ${lookupFailures.length} ways, keeps only paid Brand MRI sessions that carry the id, and stops at three pages`);
 }
 
 /* ───────────────────────────────────────────────────────────── */
@@ -300,13 +368,14 @@ Object.assign(process.env, ENV, { STRIPE_WEBHOOK_SECRET: 'whsec_test', CRON_SECR
 const ANSWERS = [7, 3, 7, 7, 3, 7, 3, 0, 0, 3];
 
 // A small fake of the three services the handlers talk to.
-function world({ session = null, sessionStatus = 200, ledgerRows = [], ledgerStatus = 201, resendStatus = 200 } = {}) {
+function world({ session = null, sessionStatus = 200, sessionList = [], listStatus = 200, ledgerRows = [], ledgerStatus = 201, resendStatus = 200 } = {}) {
   const calls = { mail: [], ledgerInserts: [], ledgerReads: [], stripe: [], other: [] };
   globalThis.fetch = async (url, opts = {}) => {
     const u = String(url);
     const body = opts.body ? (() => { try { return JSON.parse(opts.body); } catch { return opts.body; } })() : null;
     if (u === 'https://api.resend.com/emails') { calls.mail.push(body); return res(resendStatus, { id: 'mail_1' }); }
     if (u.startsWith('https://api.stripe.com/v1/checkout/sessions/')) { calls.stripe.push(u); return res(sessionStatus, session || { error: {} }); }
+    if (u.startsWith('https://api.stripe.com/v1/checkout/sessions?')) { calls.stripe.push(u); return res(listStatus, listStatus === 200 ? { object: 'list', data: sessionList, has_more: false } : { error: {} }); }
     if (u.startsWith('https://api.stripe.com/v1/subscriptions/')) { calls.stripe.push(u); return res(200, { items: { data: [{ price: { id: 'price_1Th8JkEHEAcWrG55Abr1OZXe' } }] } }); }
     if (u.includes('/rest/v1/mri_events')) {
       if ((opts.method || 'GET') === 'POST') { calls.ledgerInserts.push(body); return res(ledgerStatus, ''); }
@@ -413,6 +482,41 @@ const webhookHandler = (await import('../../api/stripe-webhook.js')).default;
   v = await (await verifyHandler(new Request(`https://quantumbranding.ai/api/mri-verify?session_id=${SID}`))).json();
   if (!v.ok || v.tier !== 'flash') fail('a sale already in the ledger must still verify');
   okIf('verify returns the tier and the stored diagnostic for a paid session, and nothing for an unpaid one');
+
+  since();
+  const VISITOR = 'v_0123456789abcdef0123';
+  const lookup = (q) => verifyHandler(new Request(`https://quantumbranding.ai/api/mri-verify?${q}`));
+  c = world({
+    sessionList: [
+      paidSession('flash', { id: 'cs_live_flashOne', amount_total: 1900 }),
+      paidSession('upgrade60', { id: 'cs_live_upgradeTwo', amount_total: 6000 }),
+      paidSession('full', { id: 'cs_live_stranger', client_reference_id: 'v_ffffffffffffffffffff' }),
+      paidSession('full', { id: 'cs_live_unpaidOne', payment_status: 'unpaid' }),
+    ],
+    ledgerRows: [{ lang: 'fr', email: 'buyer@example.com', brand: 'Atelier Lumen', website: 'https://a.co', score: 40, brake: 'differentiation', data: { answers: ANSWERS, phrase: 'p', target: 't' } }],
+  });
+  v = await (await lookup(`visitor_id=${VISITOR}`)).json();
+  if (!v.ok || JSON.stringify(v.sessions) !== JSON.stringify([{ id: 'cs_live_flashOne', tier: 'flash' }, { id: 'cs_live_upgradeTwo', tier: 'full' }])) fail(`lookup returned the wrong sessions: ${JSON.stringify(v)}`);
+  if (!v.restore || v.restore.answers.join() !== ANSWERS.join()) fail('lookup did not return the stored diagnostic');
+  if (JSON.stringify(v).includes('stranger') || JSON.stringify(v).includes('unpaidOne')) fail('lookup leaked a session that is not this visitor\'s paid one');
+  const recorded = c.ledgerInserts.filter(x => x.event === 'paid').map(x => `${x.stripe_session_id}:${x.tier}:${x.amount_total}`).join(',');
+  if (recorded !== 'cs_live_flashOne:flash:1900,cs_live_upgradeTwo:full:6000') fail(`lookup recorded the wrong sales: ${recorded}`);
+  c = world({ sessionList: [paidSession('full', { id: 'cs_live_stranger', client_reference_id: 'v_ffffffffffffffffffff' })] });
+  v = await (await lookup(`visitor_id=${VISITOR}`)).json();
+  if (!v.ok || v.sessions.length || v.restore || c.ledgerInserts.length || c.ledgerReads.length) fail(`a visitor with no payment got something: ${JSON.stringify(v)}`);
+  c = world({ sessionList: [paidSession('full')] });
+  v = await (await lookup('visitor_id=full')).json();
+  if (v.ok || v.reason !== 'bad_visitor_id' || c.stripe.length) fail(`a made-up visitor id reached Stripe or opened something: ${JSON.stringify(v)}`);
+  c = world({ listStatus: 403 });
+  v = await (await lookup(`visitor_id=${VISITOR}`)).json();
+  if (v.ok || v.reason !== 'stripe_forbidden') fail(`a refused list call must be reported: ${JSON.stringify(v)}`);
+  c = world({ session: paidSession('review211'), sessionList: [paidSession('flash', { id: 'cs_live_flashOne' })] });
+  v = await (await lookup(`visitor_id=${VISITOR}&session_id=${SID}`)).json();
+  if (!v.ok || v.tier !== 'review' || v.sessions) fail(`a session id must win over a visitor id: ${JSON.stringify(v)}`);
+  c = world();
+  v = await (await lookup('')).json();
+  if (v.ok || v.reason !== 'bad_session_id') fail(`a call with neither id must be refused: ${JSON.stringify(v)}`);
+  okIf('verify by visitor id returns that visitor\'s paid sessions and diagnostic, records them, and returns nothing for anyone else');
 
   since();
   for (const ev of ['paid', 'completed', 'review_order', 'anything']) {

@@ -19,8 +19,11 @@
   var TIERS = window.TIERS;
 
   // Live Stripe Payment Links, account Quantum Branding LLC, created
-  // 2026-11-01. Each carries brand_mri_tier metadata and redirects to
-  // /mri?paid=<tier>&session_id={CHECKOUT_SESSION_ID}.
+  // 2026-11-01. Each carries brand_mri_tier metadata and sends the buyer
+  // back to /mri?paid=<tier> (the re-test to /mri?retest=1). No session id
+  // comes back with them, so the page finds its payment by the visitor id
+  // it sent as client_reference_id. A session_id on the address, as in the
+  // access link of the buyer's email, is checked directly.
   var STRIPE = {
     flash: 'https://buy.stripe.com/4gM4gz8PY4uWfpD9xY2Ry04',
     full: 'https://buy.stripe.com/8x28wP9U29Pg7XbcKa2Ry05',
@@ -33,6 +36,11 @@
   var STATE_KEY = 'mri_state_v2';
   var LANG_KEY = 'qb_lang';
   var FINAL_REASONS = { bad_session_id: 1, not_found: 1, unpaid: 1, not_mri: 1 };
+  // A click on a pay button is remembered this long. Same window as the
+  // server reads back through Stripe.
+  var PAY_WINDOW_MS = 3 * 86400000;
+  // Stripe's list of sessions can trail its redirect by a moment.
+  var LOOKUP_DELAYS = [1500, 3000, 5000];
 
   var params = new URLSearchParams(window.location.search);
   var DEBUG = params.get('debug') === '1';
@@ -74,7 +82,7 @@
   function blankState() {
     return {
       v: 2, visitorId: newId(), lang: null, form: {}, answers: null, completedAt: null,
-      extras: { difference: '', proof: '' }, sessions: [], pendingSession: null,
+      extras: { difference: '', proof: '' }, sessions: [], pendingSession: null, pendingPay: null,
       reviewSentAt: null, magicFor: null, utm: null, referrer: null, focus: null
     };
   }
@@ -94,6 +102,9 @@
       ? s.sessions.filter(function (x) { return x && typeof x.id === 'string' && typeof x.tier === 'string'; })
       : [];
     base.pendingSession = typeof s.pendingSession === 'string' ? s.pendingSession : null;
+    base.pendingPay = s.pendingPay && typeof s.pendingPay.key === 'string' && typeof s.pendingPay.at === 'string'
+      ? { key: s.pendingPay.key, at: s.pendingPay.at }
+      : null;
     base.reviewSentAt = s.reviewSentAt || null;
     base.magicFor = s.magicFor || null;
     base.utm = s.utm || null;
@@ -174,8 +185,11 @@
     if (!TIERS.isProdHost(HOST) && DEMO === 'retest') return true;
     return state.sessions.some(function (s) { return s.tier === 'retest'; });
   }
+  function hasSession(id) {
+    return state.sessions.some(function (s) { return s.id === id; });
+  }
   function addSession(id, tier) {
-    if (!state.sessions.some(function (s) { return s.id === id; })) state.sessions.push({ id: id, tier: tier, at: new Date().toISOString() });
+    if (!hasSession(id)) state.sessions.push({ id: id, tier: tier, at: new Date().toISOString() });
   }
   function dropSession(id) {
     state.sessions = state.sessions.filter(function (s) { return s.id !== id; });
@@ -220,6 +234,11 @@
 
   function verifySession(id) {
     return window.fetch('/api/mri-verify?session_id=' + encodeURIComponent(id), { headers: { Accept: 'application/json' } })
+      .then(function (r) { return r.json(); });
+  }
+
+  function lookupSessions() {
+    return window.fetch('/api/mri-verify?visitor_id=' + encodeURIComponent(state.visitorId), { headers: { Accept: 'application/json' } })
       .then(function (r) { return r.json(); });
   }
 
@@ -460,6 +479,9 @@
 
   function goPay(key) {
     track('pay_click', { target: key });
+    // Remembered so the return from Stripe knows a payment may be waiting.
+    state.pendingPay = { key: key, at: new Date().toISOString() };
+    saveState();
     var q = new URLSearchParams();
     q.set('client_reference_id', state.visitorId);
     if (state.form.email) q.set('prefilled_email', state.form.email);
@@ -605,28 +627,47 @@
     showLanding();
   }
 
+  // What the address claims was bought, as a name for a notice. It opens
+  // nothing: only a session Stripe confirms does.
+  function claimedTierName() {
+    var claimed = RETEST ? 'retest' : (TIERS.isTier(PAID_PARAM) && PAID_PARAM !== 'free' ? PAID_PARAM : 'full');
+    return t('paid.tierNames.' + claimed);
+  }
+
+  // True while the address claims a tier above the one confirmed sessions grant.
+  function claimUnmet() {
+    var want = TIERS.isTier(PAID_PARAM) ? TIERS.RANK[PAID_PARAM] : 1;
+    return TIERS.RANK[TIERS.maxTier(state.sessions.map(function (s) { return s.tier; }))] < Math.max(want, 1);
+  }
+
+  // Where a buyer lands once a payment is confirmed.
+  function landPaid(tier) {
+    if (tier === 'retest') {
+      showForm(false);
+      notice(t('paid.retestReady'));
+    } else if (state.answers) {
+      renderResult();
+      view('result');
+      notice(t('paid.confirmed', { tier: t('paid.tierNames.' + tier) }));
+    } else {
+      showForm(false);
+      notice(t('paid.needAnswers', { tier: t('paid.tierNames.' + tier) }));
+    }
+  }
+
+  // The address carries a session id: the access link in the buyer's email.
   function confirmPayment(id) {
     show(el('paidFail'), false);
     notice(t('paid.checking'));
-    var name = function (tier) { return t('paid.tierNames.' + tier); };
     verifySession(id).then(function (res) {
       if (res && res.ok) {
         state.pendingSession = null;
+        state.pendingPay = null;
         addSession(id, res.tier);
         if (!state.answers && res.restore) restoreFrom(res.restore);
         saveState();
         cleanUrl();
-        if (res.tier === 'retest') {
-          showForm(false);
-          notice(t('paid.retestReady'));
-        } else if (state.answers) {
-          renderResult();
-          view('result');
-          notice(t('paid.confirmed', { tier: name(res.tier) }));
-        } else {
-          showForm(false);
-          notice(t('paid.needAnswers', { tier: name(res.tier) }));
-        }
+        landPaid(res.tier);
         return;
       }
       if (res && FINAL_REASONS[res.reason]) {
@@ -644,8 +685,66 @@
       state.pendingSession = id;
       saveState();
       route();
-      notice(t('paid.pending', { tier: name(RETEST ? 'retest' : (TIERS.RANK[PAID_PARAM] != null ? PAID_PARAM : 'full')) }));
+      notice(t('paid.pending', { tier: claimedTierName() }));
     });
+  }
+
+  // The address carries no session id: the return from a payment link. The
+  // page asks Stripe, through the server, which paid sessions carry its
+  // visitor id.
+  //   'return' : ?paid= is on the address. Says so, retries, and shows the
+  //              failure card when nothing turns up.
+  //   'retest' : back on ?retest=1 after a click on the re-test button.
+  //              Retries without a word, since that address is also where a
+  //              visitor who has not paid arrives.
+  //   'quiet'  : a pay click is remembered from an earlier visit. One try.
+  function findPayment(mode, attempt) {
+    attempt = attempt || 0;
+    if (mode === 'return' && attempt === 0) {
+      show(el('paidFail'), false);
+      notice(t('paid.checking'));
+    }
+    lookupSessions().then(function (res) {
+      if (res && res.ok) {
+        var fresh = (Array.isArray(res.sessions) ? res.sessions : []).filter(function (s) {
+          return s && typeof s.id === 'string' && (TIERS.isTier(s.tier) || s.tier === 'retest') && s.tier !== 'free' && !hasSession(s.id);
+        });
+        if (fresh.length) {
+          fresh.forEach(function (s) { addSession(s.id, s.tier); });
+          state.pendingPay = null;
+          if (!state.answers && res.restore) restoreFrom(res.restore);
+          saveState();
+          cleanUrl();
+          var top = TIERS.maxTier(fresh.map(function (s) { return s.tier; }));
+          landPaid(top !== 'free' ? top : 'retest');
+          return;
+        }
+        var waiting = mode === 'retest' || (mode === 'return' && claimUnmet());
+        if (waiting && attempt < LOOKUP_DELAYS.length) {
+          window.setTimeout(function () { findPayment(mode, attempt + 1); }, LOOKUP_DELAYS[attempt]);
+          return;
+        }
+        settlePayment(mode, false);
+        return;
+      }
+      if (res && res.reason === 'bad_visitor_id') { settlePayment(mode, false); return; }
+      throw new Error((res && res.reason) || 'no answer');
+    }).catch(function () {
+      settlePayment(mode, true);
+    });
+  }
+
+  // No new payment was found. Only a return from Stripe says anything.
+  function settlePayment(mode, unreachable) {
+    if (mode !== 'return') return;
+    if (unreachable) {
+      // The address keeps ?paid= so that a reload asks again.
+      notice(t('paid.pending', { tier: claimedTierName() }));
+      return;
+    }
+    cleanUrl();
+    notice('');
+    show(el('paidFail'), claimUnmet());
   }
 
   // Sessions confirmed on an earlier visit are checked again, quietly. One
@@ -705,7 +804,7 @@
   el('reviewSubmitBtn').addEventListener('click', submitReview);
   el('paidRetryBtn').addEventListener('click', function () {
     var id = SESSION_PARAM || state.pendingSession;
-    if (id) confirmPayment(id); else window.location.reload();
+    if (id) confirmPayment(id); else findPayment('return');
   });
   ['difference', 'proof'].forEach(function (id) {
     el(id).addEventListener('input', function () {
@@ -737,14 +836,22 @@
   try { viewed = window.sessionStorage.getItem('mri_viewed') === '1'; window.sessionStorage.setItem('mri_viewed', '1'); } catch (e) { viewed = false; }
   if (!viewed) track('view');
 
+  if (state.pendingPay && !(Date.now() - new Date(state.pendingPay.at).getTime() < PAY_WINDOW_MS)) {
+    state.pendingPay = null;
+    saveState();
+  }
+
   if (SESSION_PARAM) {
     confirmPayment(SESSION_PARAM);
   } else if (state.pendingSession) {
     confirmPayment(state.pendingSession);
   } else {
     route();
-    // ?paid= with no session to check: there is nothing to confirm.
-    if (PAID_PARAM) { cleanUrl(); show(el('paidFail'), true); }
     recheckSessions();
+    if (PAID_PARAM) {
+      findPayment('return');
+    } else if (state.pendingPay) {
+      findPayment(RETEST && state.pendingPay.key === 'retest39' ? 'retest' : 'quiet');
+    }
   }
 })();
