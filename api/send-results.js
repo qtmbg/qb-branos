@@ -4,6 +4,9 @@
 // Env vars required: RESEND_API_KEY
 // Env vars optional: SUPABASE_URL, SUPABASE_ANON_KEY
 
+import { langFromRequest } from '../agents/lang.js';
+import { localizeResults, FR_TOOL_LABELS } from './_lib/results-email-fr.js';
+
 export const config = { runtime: 'edge' };
 
 const TOOL_LABELS = {
@@ -21,9 +24,10 @@ function escapeHtml(s) {
   }[c]));
 }
 
-function buildEmailHTML({ firstName, lastName, company, toolId, qbp, results }) {
-  const toolLabel = TOOL_LABELS[toolId] || 'Brand Results';
-  const brandName = qbp?.brandName || 'Your Brand';
+function buildEmailHTML({ firstName, lastName, company, toolId, qbp, results, lang }) {
+  const fr = lang === 'fr';
+  const toolLabel = (fr && FR_TOOL_LABELS[toolId]) || TOOL_LABELS[toolId] || (fr ? 'Résultats de marque' : 'Brand Results');
+  const brandName = qbp?.brandName || (fr ? 'Votre marque' : 'Your Brand');
   const fullName  = [firstName, lastName].filter(Boolean).join(' ');
 
   const e = escapeHtml;
@@ -207,7 +211,7 @@ export default async function handler(req) {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' }
+      headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-QB-Lang' }
     });
   }
   if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
@@ -221,11 +225,13 @@ export default async function handler(req) {
   const { firstName, lastName, company, email, toolId, qbp, results } = body;
   if (!email) return new Response(JSON.stringify({ error: 'Email required' }), { status: 400 });
 
-  const toolLabel = TOOL_LABELS[toolId] || 'Brand Results';
-  const brandName = qbp?.brandName || 'Your Brand';
+  const lang = langFromRequest(req);
+  const fr = lang === 'fr';
+  const toolLabel = (fr && FR_TOOL_LABELS[toolId]) || TOOL_LABELS[toolId] || (fr ? 'Résultats de marque' : 'Brand Results');
+  const brandName = qbp?.brandName || (fr ? 'Votre marque' : 'Your Brand');
   const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'there';
 
-  const emailHTML = buildEmailHTML({ firstName, lastName, company, toolId, qbp, results });
+  const emailHTML = localizeResults(buildEmailHTML({ firstName, lastName, company, toolId, qbp, results, lang }), lang);
 
   // Send via Resend
   const resendRes = await fetch('https://api.resend.com/emails', {
@@ -235,7 +241,7 @@ export default async function handler(req) {
       from: 'BrandOS <results@quantumbranding.ai>',
       to: [email],
       reply_to: 'me@qtmbg.com',
-      subject: `${brandName} — Your ${toolLabel} Results`,
+      subject: lang === 'fr' ? `${brandName} · Vos résultats ${toolLabel}` : `${brandName} — Your ${toolLabel} Results`,
       html: emailHTML,
       // Spam-classifier signals: transactional sender + clear unsubscribe path
       headers: {

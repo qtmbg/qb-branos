@@ -3,6 +3,8 @@
 // Clients call /api/gemini with the same body shape as /api/claude — they never see the key.
 // Used by the iOS app for result generation where the Anthropic spend is not justified.
 
+import { langFromRequest, withLanguage } from '../agents/lang.js';
+
 export const config = { runtime: 'edge' };
 
 // Verified live 2026-09-23. The previous three ids are retired and
@@ -22,7 +24,7 @@ export default async function handler(req) {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Headers': 'Content-Type, X-QB-Lang',
       },
     });
   }
@@ -68,13 +70,16 @@ export default async function handler(req) {
     parts: [{ text: String(m.content ?? '') }],
   }));
 
+  // Same language directive as /api/claude: appended for French, absent in English.
+  const system = withLanguage(body.system, langFromRequest(req));
+
   const payload = {
     contents,
     generationConfig: {
       maxOutputTokens: maxTokens,
       ...(body.temperature !== undefined && { temperature: body.temperature }),
     },
-    ...(body.system && { systemInstruction: { parts: [{ text: String(body.system) }] } }),
+    ...(system && { systemInstruction: { parts: [{ text: String(system) }] } }),
   };
 
   try {

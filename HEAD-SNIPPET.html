@@ -9,6 +9,15 @@
   Adjust the paths if you place the files elsewhere.
 -->
 
+<!--
+  Language runtime. First thing after <meta charset>, blocking on purpose:
+  it picks EN or FR, loads the page dictionary and reverses the colours in
+  French before anything paints. data-page is the page filename without
+  .html (blog pages: blog-<name>) and names js/i18n/<lang>/<page>.js.
+  Wire it with: node scripts/i18n/wire-i18n.mjs
+-->
+<script src="/js/qb-i18n.js" data-page="PAGE-SLUG"></script>
+
 <!-- Title and description -->
 <title>BrandOS by Quantum Branding — Idea in, brand out</title>
 <meta name="description" content="BrandOS turns one founder, one idea, and zero assets into a brand that is decided. Observe, Collapse, Build, Hold.">

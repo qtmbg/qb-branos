@@ -821,7 +821,10 @@ export function renderConsole(container, payload, opts) {
   // ─── Header ──────────────────────────────────────────────
   shell.appendChild(el('header', { class: 'console-header' }, [
     el('span', { class: 'qb-tag is-soft' }, [
-      el('span', { class: 'qb-tag_content' }, 'BrandOS · Agent Console'),
+      // The tag is upper case; the name is not. See CLAUDE.md, check 4.
+      el('span', { class: 'qb-tag_content' }, [
+        el('span', { class: 'brandos-name' }, 'BrandOS'), ' · Agent Console',
+      ]),
     ]),
     el('h1', { class: 'console-header_title' }, 'Your workforce'),
     el('p', { class: 'console-header_subtitle' },

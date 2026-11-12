@@ -19,6 +19,8 @@
 // Sender:
 //   auth@quantumbranding.ai (Resend-verified domain, same as send-magic-link.js)
 
+import { langFromRequest } from '../agents/lang.js';
+
 export const config = { runtime: 'edge' };
 
 const ALLOWED_ORIGINS = new Set([
@@ -32,7 +34,7 @@ function cors(origin) {
   return {
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, X-QB-Lang',
     'Vary': 'Origin',
   };
 }
@@ -43,31 +45,60 @@ function escapeHtml(s) {
   }[c]));
 }
 
-function buildHtml({ firstName }) {
-  const greeting = firstName ? `Hi ${escapeHtml(firstName)},` : 'Hi there,';
+// Email copy, per language. English is the text this endpoint always sent.
+const COPY = {
+  en: {
+    htmlLang: 'en',
+    subject: 'Welcome to BrandOS',
+    eyebrow: 'Welcome',
+    headlineBefore: 'Welcome to ',
+    greeting: name => (name ? `Hi ${name},` : 'Hi there,'),
+    p1: 'You took Signal Scan. That is the start.',
+    p2: 'Your diagnostic is on its way to your inbox in a moment.',
+    p3: "Your sign-in link is in a separate email from us. Open it once and your account is live. From there, Phase 01 is four exercises that surface your brand's truth. Free, at your own pace.",
+    button: 'Sign in and begin Phase 01',
+    textCta: 'Sign in and begin Phase 01:',
+  },
+  fr: {
+    htmlLang: 'fr',
+    subject: 'Bienvenue dans BrandOS',
+    eyebrow: 'Bienvenue',
+    headlineBefore: 'Bienvenue dans ',
+    greeting: name => (name ? `Bonjour ${name},` : 'Bonjour,'),
+    p1: 'Vous avez fait Signal Scan. C’est le début.',
+    p2: 'Votre diagnostic arrive dans votre boîte de réception d’un instant à l’autre.',
+    p3: 'Votre lien de connexion se trouve dans un autre email de notre part. Ouvrez-le une fois et votre compte est actif. Ensuite, la Phase 01 tient en quatre exercices qui font remonter la vérité de votre marque. Gratuit, à votre rythme.',
+    button: 'Se connecter et commencer la Phase 01',
+    textCta: 'Se connecter et commencer la Phase 01\u00a0:',
+  },
+};
+
+function buildHtml({ firstName, lang }) {
+  const c = COPY[lang] || COPY.en;
+  const greeting = c.greeting(firstName ? escapeHtml(firstName) : '');
   // Minimal, table-based, dark-mode-safe HTML. No web fonts. Inline styles.
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${c.htmlLang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Welcome to BrandOS</title>
+<title>${c.subject}</title>
 </head>
 <body style="margin:0;padding:0;background:#FBF5E6;color:#2D1521;font-family:'Inter','Helvetica Neue',Arial,sans-serif;">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#FBF5E6;padding:40px 16px;">
   <tr><td align="center">
     <table role="presentation" width="540" cellspacing="0" cellpadding="0" border="0" style="max-width:540px;width:100%;background:#F2EBD3;border:2px solid #2D1521;border-radius:18px;">
       <tr><td style="padding:32px 32px 8px;">
-        <p style="font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#B58840;margin:0 0 12px;font-weight:700;">Welcome</p>
-        <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.15;color:#2D1521;margin:0 0 24px;letter-spacing:-0.01em;">Welcome to <em style="color:#B58840;">BrandOS</em>.</h1>
+        <p style="font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#B58840;margin:0 0 12px;font-weight:700;">${c.eyebrow}</p>
+        <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.15;color:#2D1521;margin:0 0 24px;letter-spacing:-0.01em;">${c.headlineBefore}<em style="color:#B58840;">BrandOS</em>.</h1>
       </td></tr>
       <tr><td style="padding:0 32px 32px;font-size:16px;line-height:1.6;color:#2D1521;">
         <p style="margin:0 0 16px;">${greeting}</p>
-        <p style="margin:0 0 16px;">You took Signal Scan. That is the start.</p>
-        <p style="margin:0 0 16px;">Your diagnostic is on its way to your inbox in a moment.</p>
-        <p style="margin:0 0 24px;">Your sign-in link is in a separate email from us. Open it once and your account is live. From there, Phase 01 is four exercises that surface your brand's truth. Free, at your own pace.</p>
+        <p style="margin:0 0 16px;">${c.p1}</p>
+        <p style="margin:0 0 16px;">${c.p2}</p>
+        <p style="margin:0 0 24px;">${c.p3}</p>
         <p style="margin:0 0 32px;text-align:left;">
-          <a href="https://app.quantumbranding.ai/login?return_to=%2Ffoundation" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">Sign in and begin Phase 01</a>
+          <a href="https://app.quantumbranding.ai/login?return_to=%2Ffoundation" style="display:inline-block;padding:14px 24px;background:#B58840;color:#FBF5E6;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;">${c.button}</a>
         </p>
         <p style="margin:0;color:#2D1521;">Nizzar</p>
       </td></tr>
@@ -81,17 +112,17 @@ function buildHtml({ firstName }) {
 </html>`;
 }
 
-function buildText({ firstName }) {
-  const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
-  return `${greeting}
+function buildText({ firstName, lang }) {
+  const c = COPY[lang] || COPY.en;
+  return `${c.greeting(firstName)}
 
-You took Signal Scan. That is the start.
+${c.p1}
 
-Your diagnostic is on its way to your inbox in a moment.
+${c.p2}
 
-Your sign-in link is in a separate email from us. Open it once and your account is live. From there, Phase 01 is four exercises that surface your brand's truth. Free, at your own pace.
+${c.p3}
 
-Sign in and begin Phase 01: https://app.quantumbranding.ai/login?return_to=%2Ffoundation
+${c.textCta} https://app.quantumbranding.ai/login?return_to=%2Ffoundation
 
 Nizzar
 
@@ -130,8 +161,9 @@ export default async function handler(req) {
     });
   }
 
-  const html = buildHtml({ firstName });
-  const text = buildText({ firstName });
+  const lang = langFromRequest(req);
+  const html = buildHtml({ firstName, lang });
+  const text = buildText({ firstName, lang });
 
   const resendRes = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -143,7 +175,7 @@ export default async function handler(req) {
       from: 'BrandOS <auth@quantumbranding.ai>',
       to: [email],
       reply_to: 'me@qtmbg.com',
-      subject: 'Welcome to BrandOS',
+      subject: (COPY[lang] || COPY.en).subject,
       html,
       text,
       headers: {

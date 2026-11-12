@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<script src="/js/qb-i18n.js" data-page="mri"></script>
 <link rel="canonical" href="https://quantumbranding.ai/mri">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Brand MRI : votre score de marque, puis le plan pour le faire monter</title>
@@ -30,6 +31,22 @@
   .note { color: #555; font-size: 14px; }
   .hidden { display: none; }
   .pill { display: inline-block; background: #f5c133; padding: 2px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+  /* French reverses the colour pair, as on every page (js/qb-i18n.js).
+     This page predates the token system, so it carries its own reversed
+     values. Screen only: it prints on white in both languages. */
+  @media screen {
+    :root[data-lang="fr"] body { color: #FBF5E6; background: #2D1521; }
+    :root[data-lang="fr"] .lead { color: rgba(251,245,230,0.80); }
+    :root[data-lang="fr"] .note { color: rgba(251,245,230,0.64); }
+    :root[data-lang="fr"] .kicker { color: #E0B069; }
+    :root[data-lang="fr"] input[type="text"], :root[data-lang="fr"] input[type="email"], :root[data-lang="fr"] input[type="url"], :root[data-lang="fr"] input[type="number"], :root[data-lang="fr"] textarea { background: #3A1E2D; color: #FBF5E6; border-color: rgba(251,245,230,0.34); }
+    :root[data-lang="fr"] button:not(.qb-lang_opt) { background: #FBF5E6; color: #2D1521; }
+    :root[data-lang="fr"] button.secondary:not(.qb-lang_opt) { background: #2D1521; color: #FBF5E6; border-color: #FBF5E6; }
+    :root[data-lang="fr"] .bar { background: rgba(251,245,230,0.16); }
+    :root[data-lang="fr"] .card { border-color: rgba(251,245,230,0.28); }
+    :root[data-lang="fr"] .price { border-color: #FBF5E6; }
+    :root[data-lang="fr"] .pill { color: #2D1521; }
+  }
 </style>
 </head>
 <body>

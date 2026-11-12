@@ -143,6 +143,18 @@ Additional voice rules:
 - Contractions are allowed and encouraged. "Don't" reads warmer than "do not."
 - Pronouns: "you" is the user, "we" is sparingly the company, "I" only in founder voice.
 
+### Two languages, one site
+
+BrandOS reads in English and in French. Same pages, same URLs, one switch.
+
+- **One runtime, `js/qb-i18n.js`.** Every public page loads it right after `<meta charset>`, wired by `node scripts/i18n/wire-i18n.mjs`. It picks the language (`?lang=`, then the saved choice, then the browser), translates text nodes as the page renders, and mounts the EN / FR switch.
+- **English is the source.** Pages are written in English. French lives in `js/i18n/fr/<page>.js`, with the chassis in `common.js` and shared-script strings in `shared.js`. `mri.html` is the one page written in French; its English is `js/i18n/en/mri.js`. Format, voice and glossary: `docs/i18n/glossary-fr.md`.
+- **French reverses the pair.** Where English sets ink on cream, French sets cream on ink. The swap is one token block inside the runtime. No page carries French colours of its own, and illustrations keep their cream card.
+- **Vouvoiement.** The voice rules above hold in French: no em dash, no exclamation points, sentence case, no banned words. Names stay as written: BrandOS, Quantum Branding, The Collapse, the four movements, every tool name.
+- **The server answers in the reader's language.** The browser sends `X-QB-Lang` on `/api/` calls. `agents/lang.js` appends one directive to the system prompt, so prompts stay in English and stay single. Agent runs carry it as `runtime_args.lang`. Emails and the checkout locale follow it.
+- **Any change to visible copy changes two things:** the page, and its dictionary. A new string with no entry shows in English on the French site.
+- Enforced by `node tests/i18n/i18n-audit.mjs` (renders every page in both languages, fails on any painted text with no entry, and on any change to the English rendering), `node tests/i18n/server-lang.mjs`, `node scripts/i18n/wire-i18n.mjs --check` and `node scripts/i18n/sync-manifest.mjs --check`. `node scripts/i18n/extract.mjs <page>` lists source strings that have no entry yet.
+
 ### Brand mark
 
 - The brand mark SVG files live at `/img/brand/`. Do not invent paths. Do not redraw the mark.

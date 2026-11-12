@@ -14,7 +14,7 @@ export function cors(origin) {
   return {
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type, X-QB-Lang',
     'Vary': 'Origin',
   };
 }

@@ -35,7 +35,8 @@
 //   SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
 //   RESEND_API_KEY (optional · email is non-blocking)
 
-import { sendEmail, renderTemplate, EMAIL_TEMPLATES } from './_lib/email.js';
+import { sendEmail, renderTemplate, emailTemplates, greetingFor } from './_lib/email.js';
+import { langFromRequest } from '../agents/lang.js';
 import { svcHeaders } from './_lib/auth.js';
 import {
   preInsertDispatch,
@@ -79,9 +80,9 @@ function jsonResp(status, body, extraHeaders = {}) {
   });
 }
 
-async function sendLockEmail({ email, firstName }) {
-  const vars = { first_name: firstName || 'there', foundation_url: FOUNDATION_URL };
-  const tpl = EMAIL_TEMPLATES.FOUNDATION_LOCKED;
+async function sendLockEmail({ email, firstName, lang }) {
+  const vars = { first_name: firstName || 'there', greeting: greetingFor(lang, firstName), foundation_url: FOUNDATION_URL };
+  const tpl = emailTemplates(lang).FOUNDATION_LOCKED;
   const result = await sendEmail({
     to: email,
     subject: tpl.subject,
@@ -118,6 +119,7 @@ async function findInflightLock({ supaUrl, serviceKey, userId }) {
 
 export default async function handler(req) {
   const origin = req.headers.get('origin') || '';
+  const lang = langFromRequest(req);
   const corsH = cors(origin);
 
   if (req.method === 'OPTIONS') {
@@ -293,6 +295,7 @@ export default async function handler(req) {
     await sendLockEmail({
       email: profile.email,
       firstName: profile.first_name || '',
+      lang,
     });
   }
 
@@ -306,7 +309,7 @@ export default async function handler(req) {
     dispatch_id: dispatchId,
     artifact_id: artifactMap[slug].id,
     trigger: 'lock',
-    runtime_args: { qbp_source: 'current' },
+    runtime_args: lang !== 'en' ? { qbp_source: 'current', lang } : { qbp_source: 'current' },
   }));
 
   let childPromises;

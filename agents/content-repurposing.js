@@ -288,7 +288,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
 
   userText += '\n\nReturn only the JSON object described in your instructions.';
 
-  const claudeRes = await callModel({ model: pickModel(MODEL, runtime_args), apiKey: anthropicKey, geminiKey, system: SYSTEM_PROMPT, userContent: userText });
+  const claudeRes = await callModel({ lang: runtime_args?.lang, model: pickModel(MODEL, runtime_args), apiKey: anthropicKey, geminiKey, system: SYSTEM_PROMPT, userContent: userText });
 
   if (!claudeRes.ok) {
     if (claudeRes.timeout) {

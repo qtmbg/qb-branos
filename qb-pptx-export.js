@@ -95,6 +95,30 @@
   }
 
   // ---------- Helpers ----------
+  // French edition. A deck is not a page, so the page translator never
+  // sees its text. Every string a slide prints goes through the same
+  // dictionary here (js/qb-i18n.js). In English, and wherever the runtime
+  // is absent, the string comes back unchanged.
+  function tr(v) { return (typeof v === "string" && window.QBI18N) ? window.QBI18N.t(v) : v; }
+  function trRun(r) {
+    return (r && typeof r === "object" && typeof r.text === "string") ? Object.assign({}, r, { text: tr(r.text) }) : tr(r);
+  }
+  function localizePres(pres) {
+    var addSlide = pres.addSlide;
+    pres.addSlide = function () {
+      var slide = addSlide.apply(pres, arguments);
+      var addText = slide.addText, addTable = slide.addTable;
+      slide.addText = function (text, opts) {
+        return addText.call(slide, Array.isArray(text) ? text.map(trRun) : tr(text), opts);
+      };
+      slide.addTable = function (rows, opts) {
+        var out = (rows || []).map(function (row) { return Array.isArray(row) ? row.map(trRun) : row; });
+        return addTable.call(slide, out, opts);
+      };
+      return slide;
+    };
+  }
+
   function txt(v) { return (v == null ? "" : String(v)).trim(); }
   function nonEmpty(arr) { return (arr || []).filter(function (x) { return txt(x); }); }
   function todayStamp() {
@@ -1059,6 +1083,7 @@
 
     return loadPptxGen().then(function (Lib) {
       var pres = new Lib();
+      localizePres(pres);
       pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5
       pres.author = "BrandOS";
       pres.company = "Quantum Branding";
