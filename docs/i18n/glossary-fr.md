@@ -192,8 +192,13 @@ Some strings differ on purpose: "Light" is « Clair » for a colour and
 
 ## What a dictionary cannot reach
 
-- Text written into a downloaded file (Markdown, JSON, .txt exports) and
-  text put on the clipboard. It stays in English.
+- JSON downloads. They are data, and their keys stay in English.
+- Text packs (.txt, .md), clipboard copies and email links ARE translated,
+  line by line: the whole line first (exact or pattern key), then a
+  `Label: value` line or a marked-up heading by its label. A line with no
+  entry is left exactly as written. Their entries sit at the end of the
+  page dictionary under "Exported text". Checked by
+  `node tests/i18n/exports.mjs`.
 - Text the model writes. The server tells the model to answer in French
   (`agents/lang.js`), and to return fixed labels in English so the
   interface can match and translate them.

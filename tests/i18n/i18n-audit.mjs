@@ -11,8 +11,9 @@
  *   Both    · the name BrandOS is painted in any other casing
  *           · the page redirected somewhere other than /login
  *
- * Pages that need a signed-in session redirect to /login and are listed as
- * not audited. The list is printed every run so the gap stays visible.
+ * Pages that need a signed-in session are visited a second time with a
+ * made-up session and empty API answers, and audited in that state. They
+ * are listed on every run. One that still redirects is listed as a gap.
  *   English · anything changed: a dictionary was requested, a colour was
  *             patched, <html lang> moved, or the switch is missing
  *
@@ -43,10 +44,11 @@ const PORT = server.address().port;
 const browser = await launch();
 const findings = [];
 const needSession = [];
+const withSession = new Set();
 const collected = {};
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
 
-async function visit(file, lang, width) {
+async function visit(file, lang, width, signedIn = false) {
   const ctx = await browser.newContext({ viewport: { width, height: 900 }, locale: 'en-US' });
   await ctx.addInitScript(() => {
     window.__QB_I18N_AUDIT = true;
@@ -56,6 +58,17 @@ async function visit(file, lang, width) {
     // only; the server gate is not involved in a static render.
     try { localStorage.setItem('qb_user_tier', 'agency'); localStorage.setItem('qb_sub_status', 'active'); } catch (e) {}
   });
+  if (signedIn) {
+    // Account pages send a browser with no session to /login. For those the
+    // audit signs in with a made-up session and answers every API call with
+    // an empty object, so the page paints its own shell, its empty state or
+    // its error state. All three are copy, and all three are audited.
+    await ctx.addInitScript(() => {
+      try { localStorage.setItem('qb_session', JSON.stringify({ token: 'audit', userId: '00000000-0000-4000-8000-000000000000' })); } catch (e) {}
+    });
+    await ctx.route('**/api/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
+    await ctx.route(/supabase\.co/, route => route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }));
+  }
   const p = await ctx.newPage();
   const dictRequests = [];
   p.on('request', r => { if (/\/js\/i18n\//.test(r.url())) dictRequests.push(r.url()); });
@@ -105,8 +118,11 @@ for (const file of pages) {
   for (const width of WIDTHS) {
     // The language that is NOT the page's own is the one under test for
     // coverage. Most pages are written in English; mri.html is in French.
-    const fr = await visit(file, 'fr', width);
-    const en = COLLECT ? null : await visit(file, 'en', width);
+    let fr = await visit(file, 'fr', width);
+    let signedIn = false;
+    if (fr.runtime && fr.landed === '/login' && file !== 'login.html') { signedIn = true; fr = await visit(file, 'fr', width, true); }
+    const en = COLLECT ? null : await visit(file, 'en', width, signedIn);
+    if (signedIn) withSession.add(file);
     const add = (lang, what, detail) => findings.push({ page: file, width, lang, what, detail });
     if (!fr.runtime) { add('fr', 'runtime missing', 'js/qb-i18n.js did not load'); continue; }
     // A page that sent the browser somewhere else was not audited at all.
@@ -154,10 +170,10 @@ if (COLLECT) {
   process.exit(0);
 }
 
+if (withSession.size) console.log(`Audited signed in, with a made-up session and empty API answers (${withSession.size}): ${[...withSession].join(', ')}`);
 const gap = [...new Set(needSession)];
 if (gap.length) {
-  console.log(`Not audited, these need a signed-in session (${gap.length}): ${gap.join(', ')}`);
-  console.log('Their strings live in js/i18n/fr/shared.js and were checked in a signed-in walk when written.\n');
+  console.log(`Not audited, these still redirect to /login with a session (${gap.length}): ${gap.join(', ')}\n`);
 }
 if (!findings.length) {
   console.log(`i18n audit clean · ${pages.length - gap.length} of ${pages.length} page(s) rendered × ${WIDTHS.length} widths × 2 languages`);

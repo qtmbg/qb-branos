@@ -12,7 +12,7 @@ QBI18N.add('fr', {
     "Comment Quantum Branding traite vos données personnelles. Conforme au RGPD. Transparent sur ce que nous collectons et pourquoi.",
 
   /* Title block */
-  "Legal · Last updated 11 May 2026": "Juridique · Dernière mise à jour le 11 mai 2026",
+  "Legal · Last updated 13 November 2026": "Juridique · Dernière mise à jour le 13 novembre 2026",
   "Privacy @@ .doc-h1": "Politique de",
   "policy.": "confidentialité.",
   "What we collect, why, and what control you have over it":
@@ -187,6 +187,12 @@ QBI18N.add('fr', {
     ". Nous répondons sous 30 jours. C’est gratuit, sauf si la demande est manifestement excessive.",
 
   /* 9. Cookies and localStorage */
+  "qb_lang": true,
+  ", the language you chose, English or French": ", la langue que vous avez choisie, anglais ou français",
+  "The language choice is also kept in one first-party cookie,":
+    "Le choix de langue est aussi conservé dans un cookie interne,",
+  ", for one year, so it follows you between quantumbranding.ai and app.quantumbranding.ai. It holds the two letters of the language and nothing else. It is sent with requests to our own site so the server can answer in your language. It is functional, not tracking.":
+    ", pendant un an, pour qu’il vous suive entre quantumbranding.ai et app.quantumbranding.ai. Il contient les deux lettres de la langue et rien d’autre. Il est envoyé avec les requêtes vers notre propre site pour que le serveur réponde dans votre langue. Il est fonctionnel, pas de suivi.",
   "BrandOS does not use third-party tracking cookies. We use the browser's":
     "BrandOS n’utilise pas de cookies de suivi tiers. Nous utilisons le",
   "localStorage": true,

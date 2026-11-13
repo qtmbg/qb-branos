@@ -1121,8 +1121,12 @@ QBI18N.add('fr', {
   "Diagnose. Posture. Ship.": "Diagnostiquer. Se positionner. Livrer.",
 
   /* Brand Document deck */
-  "The full Brand OS in one deck — soul, archetype, sensescape, visual DNA, war table and the three buyers.":
+  "The full BrandOS in one deck. Soul, archetype, sensescape, visual DNA, war table and the three buyers.":
     "Tout BrandOS en un seul deck : l’âme, l’archétype, le Sensescape,\nle Visual DNA, la War Table et les trois acheteurs.",
+  "QUANTUM BRANDING · EDITORIAL": "QUANTUM BRANDING  ·  ÉDITORIAL",
+  "BrandOS · PHASE 01": "BrandOS  ·  PHASE 01",
+  "QUANTUM BRANDING · BrandOS": "QUANTUM BRANDING  ·  BrandOS",
+  "PAGE {slide_num} / {slide_count}": "PAGE  {slide_num} / {slide_count}",
   "01 · ARCHETYPE COMPASS": "01  ·  ARCHETYPE COMPASS",
   "Primary": "Principal",
   "Secondary": "Secondaire",

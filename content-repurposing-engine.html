@@ -1441,6 +1441,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   .nav-wrap .nav-actions > a,
   .nav .nav-actions > a { display:none !important; }
 }
+/* QB mobile menu sign-in */
+.mobile-menu_foot { display:flex; flex-direction:column; gap:var(--space-xs, 0.875rem); }
 </style>
 
 <script>
@@ -1607,6 +1609,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   </nav>
   <div class="mobile-menu_foot">
     <a href="signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+    <a href="https://app.quantumbranding.ai/login" class="qb-button is-expand"><span class="qb-button_content">Sign in</span></a>
   </div>
 </div>
 
@@ -1970,7 +1973,7 @@ For each platform, identify the strongest angle from the source content - the sp
         <div style={{display:'flex',alignItems:'center',gap:20}}>
           <div className="mono" style={{fontSize:11,letterSpacing:'.2em',color:'var(--text-1)',textTransform:'uppercase', display:'flex', alignItems:'center', gap:10}}>
             <div className="pulse-dot"></div>
-            QB_BrandOS
+            <span className="brandos-name">BrandOS</span>
           </div>
           <div style={{width:1,height:16,background:'var(--border-strong)'}}/>
           <div className="mono" style={{fontSize:10,letterSpacing:'.15em',color:'var(--text-3)',textTransform:'uppercase'}}>Content Engine v2</div>

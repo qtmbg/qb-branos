@@ -98,6 +98,7 @@
         d.exact.set(key, String(val));
       }
     });
+    d.upper = null;
     if (l === lang) schedulePass();
   }
 
@@ -581,6 +582,88 @@
     });
   }
 
+  /* ── Text that leaves the page ───────────────────────────────────────
+     A downloaded .txt or .md pack and a "copy" button build their text
+     from the same English labels the page shows, but never through the
+     DOM. They are translated here, line by line: the whole line first
+     (exact or pattern key), then a line that is "Label: value" or a
+     marked-up heading, by its label. A line with no entry is left exactly
+     as it was, so the founder's words and the model's are never touched. */
+  function upperLookup(n) {
+    var d = dicts[lang];
+    if (!d || n !== n.toUpperCase() || !LETTERS.test(n)) return null;
+    if (!d.upper) {
+      d.upper = new Map();
+      d.exact.forEach(function (v, k) { var u = k.toUpperCase(); if (!d.upper.has(u)) d.upper.set(u, v.toUpperCase()); });
+    }
+    var hit = d.upper.get(n);
+    return hit == null ? null : hit;
+  }
+  function label(text) {
+    var hit = lookup(text);
+    if (hit != null) return hit;
+    var n = norm(text);
+    hit = upperLookup(n);
+    return hit == null ? null : /^\s*/.exec(text)[0] + hit + /\s*$/.exec(text)[0];
+  }
+  function tLine(line) {
+    if (!line.trim()) return line;
+    var whole = label(line);
+    if (whole != null) return whole;
+    var m = /^(\s*(?:#{1,6}\s+|[-*+\u2022]\s+|\d+[.)]\s+|>\s+)?)(\*\*|__)?([\s\S]*?)\s*$/.exec(line);
+    var pre = m[1], mark = m[2] || '', rest = m[3];
+    if (/^\s*\|.*\|\s*$/.test(line) && !/^\s*\|[\s|:-]+\|\s*$/.test(line)) {   // | a | table | row |
+      return line.split('|').map(function (cell) { return cell.trim() ? (label(cell) || cell) : cell; }).join('|');
+    }
+    if (pre && !mark) {                                        // ## Heading, - item
+      var head = label(rest);
+      if (head != null) return pre + head;
+    }
+    if (mark && rest.slice(-mark.length) === mark) {          // **Heading**
+      var inner = label(rest.slice(0, -mark.length));
+      if (inner != null) return pre + mark + inner + mark;
+    }
+    var colon = rest.indexOf(':');
+    if (colon > 0 && colon <= 60) {                            // Label: value
+      var name = rest.slice(0, colon), after = rest.slice(colon + 1);
+      var closing = '';
+      if (mark && name.slice(-mark.length) === mark) { name = name.slice(0, -mark.length); closing = mark; }
+      else if (mark && after.slice(0, mark.length) === mark) { after = after.slice(mark.length); closing = mark; }
+      var tName = label(name);
+      if (tName != null) {
+        var tAfter = after.trim() ? (label(after) || after) : after;
+        return pre + mark + tName + (lang === 'fr' ? '\u00a0:' : ':') + closing + tAfter;
+      }
+    }
+    if (!mark) return line;
+    var plain = label(rest);
+    return plain == null ? line : pre + mark + plain;
+  }
+  function tText(text) {
+    if (!active() || typeof text !== 'string' || !text) return text;
+    return text.split('\n').map(tLine).join('\n');
+  }
+  if (W.Blob) {
+    var NativeBlob = W.Blob;
+    var TextBlob = function (parts, options) {
+      try {
+        var type = (options && options.type) || '';
+        if (active() && /^text\/(plain|markdown)\b/.test(type) && Array.isArray(parts)) {
+          parts = parts.map(function (part) { return typeof part === 'string' ? tText(part) : part; });
+        }
+      } catch (e) {}
+      return arguments.length ? new NativeBlob(parts, options) : new NativeBlob();
+    };
+    TextBlob.prototype = NativeBlob.prototype;
+    W.Blob = TextBlob;
+  }
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      var nativeWrite = navigator.clipboard.writeText.bind(navigator.clipboard);
+      navigator.clipboard.writeText = function (text) { return nativeWrite(tText(text)); };
+    }
+  } catch (e) {}
+
   /* ── Dates and numbers ───────────────────────────────────────────────
      Scripts format with toLocaleDateString(undefined, ...), which follows
      the browser, not the switch: an English browser reading French would
@@ -678,6 +761,7 @@
     include: include,
     css: addCss,
     t: t,
+    text: tText,
     set: setLang,
     refresh: function () { walk(R); guard(); },
     misses: function () {

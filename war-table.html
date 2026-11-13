@@ -2644,6 +2644,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   .nav-wrap .nav-actions > a,
   .nav .nav-actions > a { display:none !important; }
 }
+/* QB mobile menu sign-in */
+.mobile-menu_foot { display:flex; flex-direction:column; gap:var(--space-xs, 0.875rem); }
 </style>
 <!-- Favicons (canonical) -->
 <link rel="icon" type="image/svg+xml" href="/img/brand/web/favicon.svg">
@@ -2772,6 +2774,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   </nav>
   <div class="mobile-menu_foot">
     <a href="signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+    <a href="https://app.quantumbranding.ai/login" class="qb-button is-expand"><span class="qb-button_content">Sign in</span></a>
   </div>
 </div>
 
@@ -3516,6 +3519,9 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     var md = dossierToMarkdown();
     var to = state.leadForm.email || '';
     var subject = 'Strategic Command Dossier · ' + (state.brandInfo.brandName || 'Brand');
+    // A mailto never passes through the page, so the language runtime is
+    // asked directly. In English it returns the text unchanged.
+    if (window.QBI18N && window.QBI18N.text) { md = window.QBI18N.text(md); subject = window.QBI18N.text(subject); }
     // Fallback: mailto. Server-side transactional delivery for the dossier is a separate flow.
     var href = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(md.slice(0, 1800));
     // Most clients cap mailto length. Warn user if truncated.
@@ -4201,7 +4207,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
             el('p',  { text:'To generate the full Strategic Command Dossier, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. You can still view the baseline dossier below - it renders everything you entered, without the AI voice.' }),
             el('div', { style:{ display:'flex', gap:'10px', flexWrap:'wrap' } }, [
               el('button', { class:'btn btn-primary btn-sm', type:'button', onclick: triggerDossierGeneration }, 'Retry synthesis'),
-              el('button', { class:'btn btn-sm', type:'button', onclick:function(){ state.dossier = {}; render(); } }, 'Show baseline dossier')
+              el('button', { class:'btn btn-sm', type:'button', onclick:function(){ state.dossierError = null; state.dossierErrorKind = null; state.dossier = {}; render(); } }, 'Show baseline dossier')
             ])
           ])
         : el('div', { class:'d-error' }, [
@@ -4210,7 +4216,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
             el('p',  { text:'Showing baseline dossier. Click retry to attempt AI synthesis again.' }),
             el('div', { class:'actions' }, [
               el('button', { class:'btn btn-primary btn-sm', type:'button', onclick: triggerDossierGeneration }, 'Retry synthesis'),
-              el('button', { class:'btn btn-sm', type:'button', onclick:function(){ state.dossier = {}; render(); } }, 'Continue with baseline')
+              el('button', { class:'btn btn-sm', type:'button', onclick:function(){ state.dossierError = null; state.dossierErrorKind = null; state.dossier = {}; render(); } }, 'Continue with baseline')
             ])
           ])
     ]);
@@ -4545,7 +4551,6 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
   /* --- Action bar (bottom) --- */
   function renderActionBar(){
-    $actionbar.innerHTML = '';
     var canProceed = isPhaseComplete(state.phase);
     var validationMessage = !canProceed
       ? (state.phase === 1 ? 'System halt: complete all diagnostic fields.'
@@ -4556,6 +4561,14 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
        : state.phase === 7 ? 'Authorization required: submit credentials to unlock.'
        : '')
       : '';
+    // Rebuild only when something the bar shows has changed. A field's
+    // change event fires on blur, which is the moment the founder presses
+    // Execute after typing. Rebuilding the bar there replaced the button
+    // between mousedown and mouseup, and the click was lost.
+    var sig = state.phase + '|' + canProceed + '|' + validationMessage;
+    if ($actionbar.getAttribute('data-sig') === sig && $actionbar.firstChild) return;
+    $actionbar.setAttribute('data-sig', sig);
+    $actionbar.innerHTML = '';
     $actionbar.appendChild(el('button', {
       class:'wt-back', type:'button',
       disabled: state.phase === 0 ? '' : null,

@@ -383,3 +383,22 @@ QBI18N.add('fr', {
   "Type your name first.": "Saisissez d’abord votre nom.",
   "Commitment signed + recorded.": "Engagement signé et enregistré."
 });
+
+/* Exported text. The Markdown copy and the email built from dossierToMarkdown().
+   These lines never reach the DOM: the runtime translates the file and
+   the clipboard line by line (js/qb-i18n.js, "Text that leaves the page"). */
+QBI18N.add('fr', {
+  "Strategic Command Dossier": "Dossier de commandement stratégique",
+  "Strategic Command Dossier · {0}": "Dossier de commandement stratégique · {0}",
+  "War Table · Strategic Command Dossier": "War Table · Dossier de commandement stratégique",
+  "03 · Field plan": "03 · Plan de terrain",
+  "06 · Persona contract (Day 61)": "06 · Contrat persona (Jour 61)",
+  "Weekly ritual (Friday, 15 minutes)": "Rituel hebdomadaire (vendredi, 15 minutes)",
+  "Now": "Maintenant",
+  "Next": "Ensuite",
+  "Later": "Plus tard",
+  "Park": "En réserve",
+  "Unlocks": "Ouvre",
+  "Week {0}": "Semaine {0}",
+  "Week {0} · {1}": "Semaine {0} · {1}"
+});

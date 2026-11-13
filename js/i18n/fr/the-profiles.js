@@ -358,3 +358,12 @@ QBI18N.add('fr', {
      shadows a more specific pattern. ───────────────────────────────── */
   "{0}%": "{0}\u00a0%"
 });
+
+/* Exported text. The Markdown file built by buildMarkdown().
+   These lines never reach the DOM: the runtime translates the file and
+   the clipboard line by line (js/qb-i18n.js, "Text that leaves the page"). */
+QBI18N.add('fr', {
+  "Hook": "Accroche",
+  "Initiating Event": "Événement déclencheur",
+  "Persona {0}: {1} - {2}": "Persona {0} : {1} · {2}"
+});

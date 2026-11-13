@@ -39,7 +39,7 @@ QBI18N.add('fr', {
   "Run my free scan": "Lancer mon scan gratuit",
   "Enter BrandOS": "Entrer dans BrandOS",
   "No download · No credit card · 5 minutes": "Sans téléchargement · Sans carte bancaire · 5 minutes",
-  "Agent tools": "Outils agents",
+  "Brand agents": "Agents de marque",
   "Brand Profile": "Profil de marque",
   "To start": "Pour commencer"
 });

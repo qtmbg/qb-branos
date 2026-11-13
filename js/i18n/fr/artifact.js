@@ -12,3 +12,10 @@ QBI18N.add('fr', {
   "Download unavailable": "Téléchargement indisponible",
   "Download failed": "Téléchargement impossible"
 });
+
+/* Exported text. The subject and body of the "email this" link.
+   They never reach the DOM, so artifact.html asks QBI18N.text() for them. */
+QBI18N.add('fr', {
+  "Your BrandOS artifact": "Votre livrable BrandOS",
+  "Read it here: {0}": "À lire ici : {0}"
+});

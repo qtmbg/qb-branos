@@ -1397,6 +1397,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   .nav-wrap .nav-actions > a,
   .nav .nav-actions > a { display:none !important; }
 }
+/* QB mobile menu sign-in */
+.mobile-menu_foot { display:flex; flex-direction:column; gap:var(--space-xs, 0.875rem); }
 </style>
 
 <script>
@@ -1573,6 +1575,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   </nav>
   <div class="mobile-menu_foot">
     <a href="signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+    <a href="https://app.quantumbranding.ai/login" class="qb-button is-expand"><span class="qb-button_content">Sign in</span></a>
   </div>
 </div>
 
@@ -1735,7 +1738,7 @@ const WritingRulesPanel = ({data})=>{
               </span>
               <span style={{fontSize:15,fontWeight:500,color:'var(--text-1)'}}>{rule.rule}</span>
             </div>
-            <span style={{color:'var(--text-3)',fontSize:14}}>{open===i?'&#8593;':'&#8595;'}</span>
+            <span style={{color:'var(--text-3)',fontSize:14}}>{open===i?'↑':'↓'}</span>
           </div>
           {open===i&&(
             <div className="slide-in" style={{marginTop:16,paddingTop:16,borderTop:'1px solid var(--border-medium)'}}>

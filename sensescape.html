@@ -3323,6 +3323,13 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 /* === END TOOL TYPOGRAPHY CONTINUITY === */
 
+/* QB narrow nav fix */
+@media (max-width:559.98px){
+  .nav-wrap .nav-actions > a,
+  .nav .nav-actions > a { display:none !important; }
+}
+/* QB mobile menu sign-in */
+.mobile-menu_foot { display:flex; flex-direction:column; gap:var(--space-xs, 0.875rem); }
 </style>
 <!-- Favicons (canonical) -->
 <link rel="icon" type="image/svg+xml" href="/img/brand/web/favicon.svg">
@@ -3451,6 +3458,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   </nav>
   <div class="mobile-menu_foot">
     <a href="signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+    <a href="https://app.quantumbranding.ai/login" class="qb-button is-expand"><span class="qb-button_content">Sign in</span></a>
   </div>
 </div>
 
@@ -6438,7 +6446,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         secSprint,
         secMoves,
         el('div', { class:'cdx-end' }, [
-          el('div', { class:'label', text:'Sensescape · BrandOS' }),
+          el('div', { class:'label', html:'Sensescape · <span class="brandos-name">BrandOS</span>' }),
           el('div', { class:'stamp', text:'Reading ' + reading.id + ' · Generated ' + (reading.createdAt || '').split('T')[0] })
         ]),
         regenModal

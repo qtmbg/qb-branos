@@ -189,6 +189,13 @@
     thead { display:table-header-group; }
     th, td { padding:10px 12px; word-break:break-word; }
   }
+/* QB narrow nav fix */
+@media (max-width:559.98px){
+  .nav-wrap .nav-actions > a,
+  .nav .nav-actions > a { display:none !important; }
+}
+/* QB mobile menu sign-in */
+.mobile-menu_foot { display:flex; flex-direction:column; gap:var(--space-xs, 0.875rem); }
 </style>
 
 <!-- Open Graph -->
@@ -294,6 +301,7 @@
   </nav>
   <div class="mobile-menu_foot">
     <a href="/signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+    <a href="https://app.quantumbranding.ai/login" class="qb-button is-expand"><span class="qb-button_content">Sign in</span></a>
   </div>
 </div>
 <script>
@@ -311,7 +319,7 @@
 
 <main>
   <article class="legal-doc">
-    <div class="doc-eyebrow">Legal · Last updated 11 May 2026</div>
+    <div class="doc-eyebrow">Legal · Last updated 13 November 2026</div>
     <h1 class="doc-h1">Privacy <em>policy.</em></h1>
     <div class="doc-meta">What we collect, why, and what control you have over it</div>
 
@@ -482,8 +490,10 @@
       <li><code>qb_completions</code>, which Phase 01 tools you've finished</li>
       <li><code>qb_user_tier</code>, <code>qb_sub_status</code>, your subscription tier, refreshed from the server on each load</li>
       <li><code>qb_first_name</code>, <code>qb_apikey</code>, convenience caches you set explicitly</li>
+      <li><code>qb_lang</code>, the language you chose, English or French</li>
     </ul>
     <p>These are functional, not tracking. They never leave your browser unless they're sent to the server as part of an API call. Clearing your browser data clears them all.</p>
+    <p>The language choice is also kept in one first-party cookie, <code>qb_lang</code>, for one year, so it follows you between quantumbranding.ai and app.quantumbranding.ai. It holds the two letters of the language and nothing else. It is sent with requests to our own site so the server can answer in your language. It is functional, not tracking.</p>
     <p>Stripe and Supabase may set their own cookies on their own domains (Stripe Checkout, the Supabase Auth callback). Those are governed by Stripe's and Supabase's privacy policies.</p>
 
     <h2 id="security">10. Security</h2>
