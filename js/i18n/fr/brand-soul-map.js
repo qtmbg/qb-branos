@@ -745,3 +745,10 @@ QBI18N.add('fr', {
   "{0} · {1} · {2}": "{0} · {1} · {2}",
   "{0} · {1}": "{0} · {1}"
 });
+
+/* Exported text. The Markdown copy of the Codex.
+   These lines never reach the DOM: the runtime translates the file and
+   the clipboard line by line (js/qb-i18n.js, "Text that leaves the page"). */
+QBI18N.add('fr', {
+  "Samples": "Exemples"
+});

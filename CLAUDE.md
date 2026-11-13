@@ -153,7 +153,8 @@ BrandOS reads in English and in French. Same pages, same URLs, one switch.
 - **Vouvoiement.** The voice rules above hold in French: no em dash, no exclamation points, sentence case, no banned words. Names stay as written: BrandOS, Quantum Branding, The Collapse, the four movements, every tool name.
 - **The server answers in the reader's language.** The browser sends `X-QB-Lang` on `/api/` calls. `agents/lang.js` appends one directive to the system prompt, so prompts stay in English and stay single. Agent runs carry it as `runtime_args.lang`. Emails and the checkout locale follow it.
 - **Any change to visible copy changes two things:** the page, and its dictionary. A new string with no entry shows in English on the French site.
-- Enforced by `node tests/i18n/i18n-audit.mjs` (renders every page in both languages, fails on any painted text with no entry, and on any change to the English rendering), `node tests/i18n/server-lang.mjs`, `node scripts/i18n/wire-i18n.mjs --check` and `node scripts/i18n/sync-manifest.mjs --check`. `node scripts/i18n/extract.mjs <page>` lists source strings that have no entry yet.
+- **Text that leaves the page is translated too**: downloaded .txt and .md packs, clipboard copies, email links and the PowerPoint decks. JSON downloads are data and stay as they are.
+- Enforced by `node tests/i18n/i18n-audit.mjs` (renders every page in both languages, signed in where a page needs it, and fails on any painted text with no entry, on a recased product name, and on any change to the English rendering), `node tests/i18n/server-lang.mjs`, `node tests/i18n/exports.mjs`, `node scripts/i18n/wire-i18n.mjs --check` and `node scripts/i18n/sync-manifest.mjs --check`. `node scripts/i18n/extract.mjs <page>` lists source strings that have no entry yet.
 
 ### Brand mark
 

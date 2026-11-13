@@ -193,8 +193,11 @@ async function handleShareAction(action, ev) {
       showToast('Download failed');
     }
   } else if (action === 'email') {
-    const subject = encodeURIComponent('Your BrandOS artifact');
-    const body = encodeURIComponent(`Read it here: ${window.location.href}`);
+    // A mailto never passes through the page, so the language runtime is
+    // asked directly. In English it returns the text unchanged.
+    const say = s => (window.QBI18N && window.QBI18N.text ? window.QBI18N.text(s) : s);
+    const subject = encodeURIComponent(say('Your BrandOS artifact'));
+    const body = encodeURIComponent(say(`Read it here: ${window.location.href}`));
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
 }
