@@ -55,9 +55,9 @@ const COPY = {
     greeting: name => (name ? `Hi ${name},` : 'Hi there,'),
     p1: 'You took Signal Scan. That is the start.',
     p2: 'Your diagnostic is on its way to your inbox in a moment.',
-    p3: "Your sign-in link is in a separate email from us. Open it once and your account is live. From there, Phase 01 is four exercises that surface your brand's truth. Free, at your own pace.",
-    button: 'Sign in and begin Phase 01',
-    textCta: 'Sign in and begin Phase 01:',
+    p3: "Your sign-in link is in a separate email from us. Open it once and your account is live. From there, the foundation starts with three exercises that surface your brand's truth. Free, at your own pace.",
+    button: 'Sign in and begin the foundation',
+    textCta: 'Sign in and begin the foundation:',
   },
   fr: {
     htmlLang: 'fr',
@@ -67,9 +67,9 @@ const COPY = {
     greeting: name => (name ? `Bonjour ${name},` : 'Bonjour,'),
     p1: 'Vous avez fait Signal Scan. C’est le début.',
     p2: 'Votre diagnostic arrive dans votre boîte de réception d’un instant à l’autre.',
-    p3: 'Votre lien de connexion se trouve dans un autre email de notre part. Ouvrez-le une fois et votre compte est actif. Ensuite, la Phase 01 tient en quatre exercices qui font remonter la vérité de votre marque. Gratuit, à votre rythme.',
-    button: 'Se connecter et commencer la Phase 01',
-    textCta: 'Se connecter et commencer la Phase 01\u00a0:',
+    p3: 'Votre lien de connexion se trouve dans un autre email de notre part. Ouvrez-le une fois et votre compte est actif. Ensuite, la fondation commence par trois exercices qui font remonter la vérité de votre marque. Gratuit, à votre rythme.',
+    button: 'Se connecter et commencer la fondation',
+    textCta: 'Se connecter et commencer la fondation\u00a0:',
   },
 };
 

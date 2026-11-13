@@ -112,7 +112,7 @@ const FOUNDATION_LOCKED_HTML = `<!DOCTYPE html>
 </style>
 </head>
 <body style="margin:0;padding:0;background:#FBF5E6;color:#2D1521;font-family:'Inter','Helvetica Neue',Arial,sans-serif;">
-<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#FBF5E6;">Your Phase 01 answers are locked. Synthesis is running. You will receive a separate email as each artifact is delivered.</div>
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#FBF5E6;">Your foundation answers are locked. Synthesis is running. You will receive a separate email as each artifact is delivered.</div>
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#FBF5E6;padding:40px 16px;">
   <tr><td align="center">
     <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;width:100%;background:#F2EBD3;border:2px solid #2D1521;border-radius:24px;">
@@ -122,7 +122,7 @@ const FOUNDATION_LOCKED_HTML = `<!DOCTYPE html>
       </td></tr>
       <tr><td style="padding:0 36px 28px;font-size:16px;line-height:1.6;color:#2D1521;">
         <p style="margin:0 0 16px;">Hi {{first_name}},</p>
-        <p style="margin:0 0 16px;">Your Phase 01 answers are now immutable. We're producing your synthesis artifacts in the background. You'll receive a separate email as each one is delivered.</p>
+        <p style="margin:0 0 16px;">Your foundation answers are now immutable. We're producing your synthesis artifacts in the background. You'll receive a separate email as each one is delivered.</p>
         <p style="margin:0 0 28px;">Free tier: your Soul Map artifact will be ready first. The Sensescape, Visual Language, and Strategic Position artifacts are produced and held until you upgrade.</p>
         <p style="margin:0 0 32px;">
           <a href="{{foundation_url}}" style="display:inline-block;padding:14px 26px;background:#E0B069;color:#2D1521;text-decoration:none;font-weight:600;border-radius:999px;border:2px solid #2D1521;box-shadow:0 6px 0 #2D1521;font-family:'Inter','Helvetica Neue',Arial,sans-serif;letter-spacing:0.04em;text-transform:uppercase;font-size:13px;">Open your foundation &rarr;</a>
@@ -145,7 +145,7 @@ Your foundation is locked.
 
 Hi {{first_name}},
 
-Your Phase 01 answers are now immutable. We're producing your synthesis artifacts in the background. You'll receive a separate email as each one is delivered.
+Your foundation answers are now immutable. We're producing your synthesis artifacts in the background. You'll receive a separate email as each one is delivered.
 
 Free tier: your Soul Map artifact will be ready first. The Sensescape, Visual Language, and Strategic Position artifacts are produced and held until you upgrade.
 
@@ -235,28 +235,28 @@ export const AGENT_EMAIL_VARS = {
   soul_map_synthesizer: {
     artifact_title: 'Soul Map',
     artifact_name: 'Soul Map',
-    agent_eyebrow: '01 DISCOVERY · SOUL MAP SYNTHESIZER',
+    agent_eyebrow: 'OBSERVE · SOUL MAP SYNTHESIZER',
     paragraph_one: 'Your Soul Map names what your brand stands for at its center. The essence, the manifesto, the paradox that gives it life.',
     preheader: 'The center of your brand has a name. Read it.',
   },
   sensescape_synthesizer: {
     artifact_title: 'Sensory World',
     artifact_name: 'Sensory World',
-    agent_eyebrow: '01 DISCOVERY · SENSESCAPE SYNTHESIZER',
+    agent_eyebrow: 'OBSERVE · SENSESCAPE SYNTHESIZER',
     paragraph_one: 'Your Sensory World captures how your brand feels across all five senses. What it sounds, looks, tastes, smells, and touches like.',
     preheader: 'Your brand has a body. This is what it feels like.',
   },
   visual_dna_synthesizer: {
     artifact_title: 'Visual Language',
     artifact_name: 'Visual Language',
-    agent_eyebrow: '01 DISCOVERY · VISUAL DNA SYNTHESIZER',
+    agent_eyebrow: 'COLLAPSE · VISUAL DNA SYNTHESIZER',
     paragraph_one: 'Your Visual Language defines how your brand looks. The color system, the typography, the visual posture.',
     preheader: 'How your brand sees itself. Now ready to read.',
   },
   war_table_synthesizer: {
     artifact_title: 'Strategic Position',
     artifact_name: 'Strategic Position',
-    agent_eyebrow: '01 DISCOVERY · WAR TABLE SYNTHESIZER',
+    agent_eyebrow: 'COLLAPSE · WAR TABLE SYNTHESIZER',
     paragraph_one: 'Your Strategic Position maps the field your brand operates in. The competitors, the paradox, the three priorities ahead.',
     preheader: 'The field, mapped. Three priorities, named.',
   },
@@ -278,12 +278,12 @@ export const FR_PAIRS = {
   FOUNDATION_LOCKED: [
     ['<html lang="en">', '<html lang="fr">'],
     ['<title>Your foundation is locked. Your artifacts are being prepared.</title>', '<title>Votre fondation est verrouillée. Vos livrables sont en préparation.</title>'],
-    ['Your Phase 01 answers are locked. Synthesis is running. You will receive a separate email as each artifact is delivered.', 'Vos réponses de la Phase 01 sont verrouillées. La synthèse est en cours. Vous recevrez un email distinct à la livraison de chaque livrable.'],
+    ['Your foundation answers are locked. Synthesis is running. You will receive a separate email as each artifact is delivered.', 'Vos réponses de la fondation sont verrouillées. La synthèse est en cours. Vous recevrez un email distinct à la livraison de chaque livrable.'],
     ['font-weight:700;">Foundation</p>', 'font-weight:700;">Fondation</p>'],
     ['FOUNDATION\n', 'FONDATION\n'],
     ['Your foundation is locked.', 'Votre fondation est verrouillée.'],
     ['Hi {{first_name}},', '{{greeting}}'],
-    ["Your Phase 01 answers are now immutable. We're producing your synthesis artifacts in the background. You'll receive a separate email as each one is delivered.", 'Vos réponses de la Phase 01 ne peuvent plus être modifiées. Nous produisons vos livrables de synthèse en arrière-plan. Vous recevrez un email distinct à la livraison de chacun.'],
+    ["Your foundation answers are now immutable. We're producing your synthesis artifacts in the background. You'll receive a separate email as each one is delivered.", 'Vos réponses de la fondation ne peuvent plus être modifiées. Nous produisons vos livrables de synthèse en arrière-plan. Vous recevrez un email distinct à la livraison de chacun.'],
     ['Free tier: your Soul Map artifact will be ready first. The Sensescape, Visual Language, and Strategic Position artifacts are produced and held until you upgrade.', 'Offre gratuite\u00a0: votre Soul Map sera prête en premier. Les livrables Sensescape, Langage visuel et Position stratégique sont produits, puis conservés jusqu’à votre passage à Starter.'],
     ['Open your foundation &rarr;', 'Ouvrir votre fondation &rarr;'],
     ['Open your foundation: {{foundation_url}}', 'Ouvrir votre fondation\u00a0: {{foundation_url}}'],
@@ -327,7 +327,7 @@ export const AGENT_EMAIL_VARS_FR = {
     artifact_name: 'Soul Map',
     ready_line: 'Votre Soul Map est prête',
     cta_line: 'Lire votre Soul Map',
-    agent_eyebrow: '01 DÉCOUVERTE · SYNTHÈSE SOUL MAP',
+    agent_eyebrow: 'OBSERVE · SYNTHÈSE SOUL MAP',
     paragraph_one: 'Votre Soul Map nomme ce que votre marque défend en son centre. L’essence, le manifeste, le paradoxe qui lui donne vie.',
     preheader: 'Le centre de votre marque a un nom. Lisez-le.',
   },
@@ -336,7 +336,7 @@ export const AGENT_EMAIL_VARS_FR = {
     artifact_name: 'Monde sensoriel',
     ready_line: 'Votre Monde sensoriel est prêt',
     cta_line: 'Lire votre Monde sensoriel',
-    agent_eyebrow: '01 DÉCOUVERTE · SYNTHÈSE SENSESCAPE',
+    agent_eyebrow: 'OBSERVE · SYNTHÈSE SENSESCAPE',
     paragraph_one: 'Votre Monde sensoriel saisit ce que votre marque fait ressentir à travers les cinq sens. Ce qu’elle donne à entendre, à voir, à goûter, à sentir et à toucher.',
     preheader: 'Votre marque a un corps. Voici ce qu’on y ressent.',
   },
@@ -345,7 +345,7 @@ export const AGENT_EMAIL_VARS_FR = {
     artifact_name: 'Langage visuel',
     ready_line: 'Votre Langage visuel est prêt',
     cta_line: 'Lire votre Langage visuel',
-    agent_eyebrow: '01 DÉCOUVERTE · SYNTHÈSE VISUAL DNA',
+    agent_eyebrow: 'COLLAPSE · SYNTHÈSE VISUAL DNA',
     paragraph_one: 'Votre Langage visuel définit l’allure de votre marque. Le système de couleurs, la typographie, la posture visuelle.',
     preheader: 'Le regard que votre marque porte sur elle-même. Prêt à lire.',
   },
@@ -354,7 +354,7 @@ export const AGENT_EMAIL_VARS_FR = {
     artifact_name: 'Position stratégique',
     ready_line: 'Votre Position stratégique est prête',
     cta_line: 'Lire votre Position stratégique',
-    agent_eyebrow: '01 DÉCOUVERTE · SYNTHÈSE WAR TABLE',
+    agent_eyebrow: 'COLLAPSE · SYNTHÈSE WAR TABLE',
     paragraph_one: 'Votre Position stratégique cartographie le terrain où votre marque évolue. Les concurrents, le paradoxe, les trois priorités à venir.',
     preheader: 'Le terrain, cartographié. Trois priorités, nommées.',
   },

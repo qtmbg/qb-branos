@@ -83,10 +83,19 @@
   };
   const PHASE_01_TOOLS = ['archetype-compass', 'soul-map', 'sensescape', 'visual-dna', 'war-table', 'profiles'];
 
+  // Which of those a free account may open. Visual DNA and War Table are
+  // not here: they open with Starter (owner decision, 13 Nov 2026), which
+  // is what /foundation already showed (tierLocked) and what the paywall
+  // copy already said. Until then hasAccess() used PHASE_01_TOOLS, so a
+  // free account could open both by direct link while the product told
+  // them they were locked. PHASE_01_TOOLS still counts progress, unchanged.
+  const FREE_FOUNDATION_TOOLS = ['archetype-compass', 'soul-map', 'sensescape', 'profiles'];
+
   // Phase 02-5 tools — gated behind any paid tier. brand-document is the
   // synthesis page that surfaces the QBP; it stays free (the deliverable).
   const PHASE_05_TOOLS = ['quarterly', 'dashboard', 'panel'];
   const PAID_TOOLS = [
+    'visual-dna', 'war-table',
     'logo-direction', 'logo-evaluation', 'voice-guide',
     'content-bridge', 'content-repurpose', 'content-scheduler',
     'instagram', 'linkedin', 'youtube', 'newsletter',
@@ -376,7 +385,7 @@
     const tier = localStorage.getItem('qb_user_tier') || 'free';
     const status = localStorage.getItem('qb_sub_status') || 'inactive';
     // Phase 01 tools are always free
-    if (PHASE_01_TOOLS.includes(feature)) return true;
+    if (FREE_FOUNDATION_TOOLS.includes(feature)) return true;
     if (feature === 'signal-scan')        return true;
     if (feature === 'brand-document')     return true;
     // Phase 05 stays locked (owner decision, 3 Oct 2026). Starter does not
