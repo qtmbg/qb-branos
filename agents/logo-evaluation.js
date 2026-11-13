@@ -94,7 +94,7 @@ const MODEL = META.model || 'claude-sonnet-4-6';
 // Verdicts are the product here. A founder pays for "change these three
 // things, in this order, because of who your brand is" · not for scores.
 
-const SYSTEM_PROMPT = `You are the Logo Evaluation Agent for BrandOS, part of Phase 02, Brand Creation.
+const SYSTEM_PROMPT = `You are the Logo Evaluation Agent for BrandOS, part of Build, the third movement of The Collapse.
 
 The founder has uploaded their logo. They also arrive with an earned foundation: a Soul Map (who the brand is), a Visual DNA (its palette and type direction), and the raw signals of their Quantum Brand Profile. Your job is to evaluate the mark they have against the brand they built. You judge fit, not fashion. You do not redesign the logo and you do not invent a new one.
 
@@ -235,7 +235,7 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   return {
     schema_version: '1.0',
     header: {
-      eyebrow: '02 Brand Creation · Logo Evaluation',
+      eyebrow: 'Build · Logo Evaluation',
       title: `The Verdict on ${safeBrand}'s Mark`,
       agent: META.slug,
       generated_at: new Date().toISOString(),
@@ -288,7 +288,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
     distillDependency('visual_dna_synthesizer', dependencies?.visual_dna_synthesizer),
   ].join('\n\n');
 
-  let userText = `The image above is the founder's uploaded logo. Evaluate it against the foundation below.\n\nFounder's QBP signals:\n\n${qbpBlocks}\n\nThe delivered Phase 01 foundation:\n\n${depBlocks}`;
+  let userText = `The image above is the founder's uploaded logo. Evaluate it against the foundation below.\n\nFounder's QBP signals:\n\n${qbpBlocks}\n\nThe delivered foundation:\n\n${depBlocks}`;
 
   // Content Approval Loop · the Logo Direction pattern.
   const feedback = typeof runtime_args?.feedback === 'string' && runtime_args.feedback.trim()

@@ -225,7 +225,7 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   return {
     schema_version: '1.0',
     header: {
-      eyebrow: '01 Discovery · War Table',
+      eyebrow: 'Collapse · War Table',
       title: `The Strategic Position of ${safeBrand}`,
       agent: META.slug,
       generated_at: new Date().toISOString(),
@@ -255,7 +255,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
     return `${k}: ${JSON.stringify(v)}`;
   }).join('\n\n');
 
-  const userText = `User's Phase 01 strategic signals:\n\n${userBlocks}\n\nReturn only the JSON object described in your instructions.`;
+  const userText = `User's strategic signals:\n\n${userBlocks}\n\nReturn only the JSON object described in your instructions.`;
 
   let claudeRes;
   for (let attempt = 0; attempt < 2; attempt++) {

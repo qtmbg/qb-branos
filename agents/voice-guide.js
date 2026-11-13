@@ -85,9 +85,9 @@ const MODEL = META.model || 'claude-sonnet-4-6';
 // first proof: every sentence it returns must already obey the rules it
 // hands the founder.
 
-const SYSTEM_PROMPT = `You are the Voice Guide Agent for BrandOS, part of Phase 02, Brand Creation.
+const SYSTEM_PROMPT = `You are the Voice Guide Agent for BrandOS, part of Build, the third movement of The Collapse.
 
-The founder has finished Phase 01. They arrive with a Soul Map (who the brand is), a War Table (who it speaks to and what it fights), and the raw signals of their Quantum Brand Profile. Your job is to turn that foundation into a working voice guide: rules concrete enough that a stranger could ghostwrite as this brand tomorrow and a reader could not tell the difference.
+The founder has finished the foundation. They arrive with a Soul Map (who the brand is), a War Table (who it speaks to and what it fights), and the raw signals of their Quantum Brand Profile. Your job is to turn that foundation into a working voice guide: rules concrete enough that a stranger could ghostwrite as this brand tomorrow and a reader could not tell the difference.
 
 You are writing the discipline, so you must demonstrate it. Every sentence you return is a sample of the standard you prescribe. If your own prose would fail the guide you are writing, rewrite before returning.
 
@@ -231,7 +231,7 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   return {
     schema_version: '1.0',
     header: {
-      eyebrow: '02 Brand Creation · Voice Guide',
+      eyebrow: 'Build · Voice Guide',
       title: `How ${safeBrand} Speaks`,
       agent: META.slug,
       generated_at: new Date().toISOString(),
@@ -266,7 +266,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
     distillDependency('war_table_synthesizer', dependencies?.war_table_synthesizer),
   ].join('\n\n');
 
-  let userText = `Founder's QBP signals:\n\n${qbpBlocks}\n\nThe delivered Phase 01 foundation:\n\n${depBlocks}`;
+  let userText = `Founder's QBP signals:\n\n${qbpBlocks}\n\nThe delivered foundation:\n\n${depBlocks}`;
 
   // Content Approval Loop · the Logo Direction pattern.
   const feedback = typeof runtime_args?.feedback === 'string' && runtime_args.feedback.trim()

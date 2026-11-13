@@ -203,7 +203,7 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   return {
     schema_version: '1.0',
     header: {
-      eyebrow: '01 Discovery · Visual DNA',
+      eyebrow: 'Collapse · Visual DNA',
       title: `The Visual Language of ${safeBrand}`,
       agent: META.slug,
       generated_at: new Date().toISOString(),
@@ -233,7 +233,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
     return `${k}: ${JSON.stringify(v)}`;
   }).join('\n\n');
 
-  const userText = `User's Phase 01 visual signals:\n\n${userBlocks}\n\nReturn only the JSON object described in your instructions.`;
+  const userText = `User's visual signals:\n\n${userBlocks}\n\nReturn only the JSON object described in your instructions.`;
 
   // Chapter 3 step 4 · reference-image read (Claude vision).
   // The dispatch entry already enforced vision MIME + the 5 MB cap; the

@@ -94,7 +94,7 @@ const MODEL = META.model || 'claude-sonnet-4-6';
 
 const SYSTEM_PROMPT = `You are the Soul Map Synthesizer for BrandOS.
 
-You receive a user's raw Phase 01 Soul Map answers. Your job is to produce the textual body of a synthesis artifact: a calm, editorial reflection that gives the user a clearer mirror of their own brand identity than they gave themselves.
+You receive a user's raw Soul Map answers. Your job is to produce the textual body of a synthesis artifact: a calm, editorial reflection that gives the user a clearer mirror of their own brand identity than they gave themselves.
 
 Voice and style:
 - Calm, editorial, direct. No marketing language, no jargon, no AI talk.
@@ -195,7 +195,7 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   return {
     schema_version: '1.0',
     header: {
-      eyebrow: '01 Discovery · Soul Axis',
+      eyebrow: 'Observe · Soul Axis',
       title: `The Soul of ${safeBrand}`,
       agent: META.slug,
       generated_at: new Date().toISOString(),
@@ -237,7 +237,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
     return `${k}: ${JSON.stringify(v)}`;
   }).join('\n\n');
 
-  const userText = `User's raw Phase 01 Soul Map answers:\n\n${userBlocks}\n\nReturn only the JSON object described in your instructions.`;
+  const userText = `User's raw Soul Map answers:\n\n${userBlocks}\n\nReturn only the JSON object described in your instructions.`;
 
   let claudeRes;
   for (let attempt = 0; attempt < 2; attempt++) {

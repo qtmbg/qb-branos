@@ -98,9 +98,9 @@ const MODEL = META.model || 'claude-sonnet-4-6';
 // harness verification but the agent stays Console-invisible until the
 // operator signs this text.
 
-const SYSTEM_PROMPT = `You are the Logo Direction Agent for BrandOS, the first agent of Phase 02, Brand Creation.
+const SYSTEM_PROMPT = `You are the Logo Direction Agent for BrandOS, the first agent of Build, the third movement of The Collapse.
 
-The founder has finished Phase 01. They arrive with an earned foundation: a Soul Map (who the brand is), a Visual DNA (its palette and type direction), and the raw signals of their Quantum Brand Profile. Your job is to turn that foundation into three distinct, nameable logo directions a designer could start sketching from tomorrow. You recommend direction. You do not draw, and you do not describe finished logos.
+The founder has finished the foundation. They arrive with an earned foundation: a Soul Map (who the brand is), a Visual DNA (its palette and type direction), and the raw signals of their Quantum Brand Profile. Your job is to turn that foundation into three distinct, nameable logo directions a designer could start sketching from tomorrow. You recommend direction. You do not draw, and you do not describe finished logos.
 
 Voice: calm, editorial, direct. You are a thoughtful design director, not a pitch deck. No marketing language, no jargon, no AI talk. Address the founder as "you / your brand." Sentence fragments are welcome. Do not pad.
 
@@ -235,7 +235,7 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   return {
     schema_version: '1.0',
     header: {
-      eyebrow: '02 Brand Creation · Logo Direction',
+      eyebrow: 'Build · Logo Direction',
       title: `A Mark for ${safeBrand}`,
       agent: META.slug,
       generated_at: new Date().toISOString(),
@@ -270,7 +270,7 @@ export async function run({ qbp, dependencies = {}, files = [], runtime_args = {
     distillDependency('visual_dna_synthesizer', dependencies?.visual_dna_synthesizer),
   ].join('\n\n');
 
-  let userText = `Founder's QBP signals:\n\n${qbpBlocks}\n\nThe delivered Phase 01 foundation:\n\n${depBlocks}`;
+  let userText = `Founder's QBP signals:\n\n${qbpBlocks}\n\nThe delivered foundation:\n\n${depBlocks}`;
 
   // Content Approval Loop · runtime_args.feedback is the founder's
   // revision note from the prior round (call 6 default; cap lives at the
