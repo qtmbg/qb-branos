@@ -8,7 +8,7 @@ QBI18N.add('en', {
 
   /* Landing */
   "Quantum Branding · Brand MRI": true,
-  "Ce que votre marque dit vraiment, en 5 minutes.": "What your brand actually says, in 5 minutes.",
+  "Ce que votre marque dit en réalité, en 5 minutes.": "What your brand actually says, in 5 minutes.",
   "D'abord votre score gratuit. Ensuite, si vous voulez le plan, le diagnostic complet. Vous ne payez que pour fermer l'écart, pas pour le découvrir.":
     "First, your free score. Then, if you want the plan, the full diagnostic. You pay only to close the gap, not to find it.",
   "Gratuit :": "Free:",

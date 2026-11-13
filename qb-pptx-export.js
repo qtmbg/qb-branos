@@ -104,6 +104,17 @@
     return (r && typeof r === "object" && typeof r.text === "string") ? Object.assign({}, r, { text: tr(r.text) }) : tr(r);
   }
   function localizePres(pres) {
+    // Master slides carry fixed text of their own (footer line, page count).
+    var defineMaster = pres.defineSlideMaster;
+    pres.defineSlideMaster = function (def) {
+      if (def && Array.isArray(def.objects)) {
+        def = Object.assign({}, def, { objects: def.objects.map(function (o) {
+          return (o && o.text && typeof o.text.text === "string")
+            ? Object.assign({}, o, { text: Object.assign({}, o.text, { text: tr(o.text.text) }) }) : o;
+        }) });
+      }
+      return defineMaster.call(pres, def);
+    };
     var addSlide = pres.addSlide;
     pres.addSlide = function () {
       var slide = addSlide.apply(pres, arguments);
@@ -123,7 +134,10 @@
   function nonEmpty(arr) { return (arr || []).filter(function (x) { return txt(x); }); }
   function todayStamp() {
     var d = new Date();
-    var m = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"][d.getMonth()];
+    var fr = window.QBI18N && window.QBI18N.lang === "fr";
+    var m = (fr
+      ? ["JANV","FÉVR","MARS","AVR","MAI","JUIN","JUIL","AOÛT","SEPT","OCT","NOV","DÉC"]
+      : ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"])[d.getMonth()];
     return m + " " + d.getFullYear();
   }
 
@@ -139,7 +153,9 @@
   // ---------- Slide master ----------
   // Two masters: QB_DARK (default) and QB_COVER (hero).
   function defineMasters(pres, brandLabel) {
-    var label = txt(brandLabel) || "BRANDOS";
+    // A deck label is upper case. The product name never is, so when it
+    // stands in for a missing label it is written as the name and left alone.
+    var label = txt(brandLabel) ? txt(brandLabel).toUpperCase() : "BrandOS";
     pres.defineSlideMaster({
       title: "QB_DARK",
       background: { color: TOKENS.bgBase },
@@ -148,14 +164,14 @@
         { rect: { x: 0, y: 0, w: W, h: 0.02, fill: { color: TOKENS.brass, transparency: 60 } } },
         // brand mark top-left
         { text: {
-            text: label.toUpperCase(),
+            text: label,
             options: { x: GUTTER, y: 0.28, w: 5, h: 0.28,
               fontFace: TOKENS.mono, fontSize: 8, color: TOKENS.brass,
               charSpacing: 4, bold: false, valign: "middle" }
         }},
         // page brand right (mode-aware framing)
         { text: {
-            text: TOKENS.mode === "editorial" ? "QUANTUM BRANDING  ·  EDITORIAL" : "BRANDOS  ·  PHASE 01",
+            text: TOKENS.mode === "editorial" ? "QUANTUM BRANDING  ·  EDITORIAL" : "BrandOS  ·  PHASE 01",
             options: { x: W - GUTTER - 5, y: 0.28, w: 5, h: 0.28,
               fontFace: TOKENS.mono, fontSize: 8, color: TOKENS.text3,
               charSpacing: 3, align: "right", valign: "middle" }
@@ -183,7 +199,7 @@
       objects: [
         { rect: { x: 0, y: 0, w: W, h: 0.02, fill: { color: TOKENS.brass } } },
         { text: {
-            text: label.toUpperCase(),
+            text: label,
             options: { x: GUTTER, y: 0.28, w: 8, h: 0.28,
               fontFace: TOKENS.mono, fontSize: 8, color: TOKENS.brass,
               charSpacing: 4, valign: "middle" }
@@ -196,7 +212,7 @@
         }},
         { rect: { x: GUTTER, y: H - 0.42, w: 0.08, h: 0.08, fill: { color: TOKENS.brass } } },
         { text: {
-            text: "QUANTUM BRANDING  ·  BRANDOS",
+            text: "QUANTUM BRANDING  ·  BrandOS",
             options: { x: GUTTER + 0.18, y: H - 0.5, w: 8, h: 0.3,
               fontFace: TOKENS.mono, fontSize: 8, color: TOKENS.text3,
               charSpacing: 3, valign: "middle" }
@@ -875,7 +891,7 @@
     addCoverSlide(pres, {
       eyebrow: "QUANTUM BRAND PROFILE  ·  EXECUTIVE SUMMARY",
       title: brandName,
-      subtitle: "The full Brand OS in one deck — soul, archetype, sensescape,\nvisual DNA, war table and the three buyers."
+      subtitle: "The full BrandOS in one deck. Soul, archetype, sensescape,\nvisual DNA, war table and the three buyers."
     });
 
     // ── 01 · ARCHETYPE COMPASS ──

@@ -329,7 +329,7 @@ QBI18N.add('fr', {
   "Free Signal Scan.": "Signal Scan gratuit.",
   "Run my free scan": "Lancer mon scan gratuit",
   "No download · No credit card · 5 minutes": "Sans téléchargement · Sans carte bancaire · 5 minutes",
-  "Agent tools": "Outils agents",
+  "Brand agents": "Agents de marque",
   "To start": "Pour commencer",
 
   /* Footer */

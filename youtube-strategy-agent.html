@@ -925,6 +925,8 @@ html:not([data-theme]){background:#080604;color:#A89A88}/* QB mobile nav fix */
   .nav-wrap .nav-actions > a,
   .nav .nav-actions > a { display:none !important; }
 }
+/* QB mobile menu sign-in */
+.mobile-menu_foot { display:flex; flex-direction:column; gap:var(--space-xs, 0.875rem); }
 </style>
 
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -1687,6 +1689,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   </nav>
   <div class="mobile-menu_foot">
     <a href="signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+    <a href="https://app.quantumbranding.ai/login" class="qb-button is-expand"><span class="qb-button_content">Sign in</span></a>
   </div>
 </div>
 
@@ -2115,7 +2118,7 @@ REQUIREMENTS:
         const msg = (envelope.error && envelope.error.message) || envelope.message || ('HTTP ' + res.status);
         throw new Error(res.status === 504 || res.status === 502 ? 'UNAVAILABLE' : ('AI service error: ' + msg));
       }
-      if(envelope.error) throw new Error(envelope.error.message || envelope.error || 'AI request failed');
+      if(envelope.error) throw new Error(envelope.error.message || (typeof envelope.error === 'string' ? envelope.error : '') || 'AI request failed');
       const text = envelope && envelope.content && envelope.content[0] && envelope.content[0].text;
       if(!text) throw new Error('UNAVAILABLE');
       const stripped = text.trim().replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
@@ -2167,7 +2170,7 @@ REQUIREMENTS:
       <header className="glass-card" style={{borderBottom:'1px solid var(--border-medium)',padding:'16px 28px',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:50,borderRadius:0,background:'var(--bg-overlay)'}}>
         <div style={{display:'flex',alignItems:'center',gap:16}}>
           <div className="pulse-dot"></div>
-          <div className="font-mono" style={{fontSize:11,letterSpacing:'.3em',color:'var(--brass)',textTransform:'uppercase',fontWeight:700}}>QB_BRANDOS</div>
+          <div className="font-mono" style={{fontSize:11,letterSpacing:'.3em',color:'var(--brass)',fontWeight:700}}>BrandOS</div>
           <div style={{width:1,height:14,background:'var(--border-strong)'}}/>
           <div className="font-mono" style={{fontSize:10,letterSpacing:'.2em',color:'var(--text-3)',textTransform:'uppercase'}}>YouTube Strategy Agent</div>
         </div>

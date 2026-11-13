@@ -206,6 +206,13 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
   }
+/* QB narrow nav fix */
+@media (max-width:559.98px){
+  .nav-wrap .nav-actions > a,
+  .nav .nav-actions > a { display:none !important; }
+}
+/* QB mobile menu sign-in */
+.mobile-menu_foot { display:flex; flex-direction:column; gap:var(--space-xs, 0.875rem); }
 </style>
 
 <!-- Brand lockup + endorsement (BrandOS by Quantum Branding) -->
@@ -282,6 +289,7 @@
   </nav>
   <div class="mobile-menu_foot">
     <a href="/signal-scan.html" class="qb-button is-primary is-expand"><span class="qb-button_content">Start free</span></a>
+    <a href="https://app.quantumbranding.ai/login" class="qb-button is-expand"><span class="qb-button_content">Sign in</span></a>
   </div>
 </div>
 

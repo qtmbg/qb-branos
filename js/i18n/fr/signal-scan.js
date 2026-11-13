@@ -205,7 +205,7 @@ QBI18N.add('fr', {
     "Le scan inscrit ses constats dans votre Quantum Brand Profile, la mémoire partagée où tous les autres outils de",
   "reads from. Answer a question here and no tool asks you again. You can stop after the scan and keep the result, or carry the profile into":
     "viennent lire. Répondez à une question ici et aucun outil ne vous la reposera. Vous pouvez vous arrêter après le scan et garder le résultat, ou emmener le profil dans",
-  "the six phases": "les six phases",
+  "the four movements": "les quatre mouvements",
   "and": "et",
   "the tools": "les outils",
   "that build on it.": "qui s’appuient dessus.",

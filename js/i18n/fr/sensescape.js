@@ -7,6 +7,7 @@
 QBI18N.add('fr', {
   /* ── Head and chassis ───────────────────────────────────────────── */
   "Sensescape · BrandOS": true,
+  "Sensescape ·": true,
   /* og:locale. The runtime writes this value itself, then its own observer
      reads it back as page text. Belongs in common.js or in the runtime. */
   "fr_FR": true,
