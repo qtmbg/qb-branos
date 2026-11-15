@@ -7,7 +7,7 @@
 // name because sixteen pages call it.
 
 import { langFromRequest, withLanguage } from '../agents/lang.js';
-import { toolProvider, toGoogleContents, unwrapJsonFence, GOOGLE_TOOL_MODELS, GOOGLE_MIN_OUTPUT, GOOGLE_THINKING, googleRequest } from './_lib/tool-provider.js';
+import { toolProvider, toGoogleContents, unwrapJsonFence, toolChain, restId, GOOGLE_MIN_OUTPUT, GOOGLE_THINKING, googleRequest } from './_lib/tool-provider.js';
 
 // Node serverless, not Edge. Edge must begin answering within about 25
 // seconds, and this route answers only once the model has finished: a long
@@ -24,10 +24,11 @@ const ANSWER_BUDGET_MS = 240000;
 // And one per Google id. Google's free tier sometimes holds a request open
 // without answering: seen live on 15 November 2026, one call sat for the
 // whole 240 seconds while every id answered the same request in 11 to 18
-// seconds a minute later. A stalled id is dropped after this long and the
-// next one is asked, as a capacity refusal already is. Three ids fit in
-// the budget above. Read at call time so a test can shorten it.
-const attemptBudgetMs = () => Number(process.env.QB_TOOL_ATTEMPT_MS) || 75000;
+// seconds a minute later. A healthy answer, long ones included, arrived
+// within 35 seconds. So the first id gets 45 seconds, the second 60, the
+// third 120: a stalled id is dropped and the next one asked, and the three
+// fit in the budget above. Read at call time so a test can shorten it.
+const attemptBudgetMs = position => (Number(process.env.QB_TOOL_ATTEMPT_MS) || 45000) * [1, 4 / 3, 8 / 3][Math.min(position, 2)];
 
 const ALLOWED_MODELS = [
   'claude-opus-4-7',
@@ -49,8 +50,8 @@ const json = (obj, status) => new Response(JSON.stringify(obj), {
 const fail = (status, message, type = 'upstream_error') => json({ type: 'error', error: { type, message } }, status);
 
 async function askGoogle({ body, system, maxTokens, apiKey, signal }) {
-  const wanted = GOOGLE_TOOL_MODELS.includes(body.model) ? body.model : GOOGLE_TOOL_MODELS[0];
-  const chain = [wanted, ...GOOGLE_TOOL_MODELS.filter(m => m !== wanted)];
+  // Preferred order, with any id that just stalled or refused moved to the end.
+  const chain = toolChain(body.model);
   const build = thinking => ({
     contents: toGoogleContents(body.messages),
     generationConfig: {
@@ -64,17 +65,19 @@ async function askGoogle({ body, system, maxTokens, apiKey, signal }) {
   });
 
   let upstream = null, servedBy;
-  for (const candidate of chain) {
+  for (let i = 0; i < chain.length; i++) {
+    const candidate = chain[i];
     // This attempt ends when its own time is up or when the whole request's is.
     const attempt = new AbortController();
     const whole = () => attempt.abort();
     if (signal) signal.addEventListener('abort', whole, { once: true });
-    const timer = setTimeout(() => attempt.abort(), attemptBudgetMs());
+    const timer = setTimeout(() => attempt.abort(), attemptBudgetMs(i));
     try {
       upstream = await googleRequest({ model: candidate, apiKey, build, signal: attempt.signal });
     } catch (err) {
       if (!(err && err.name === 'AbortError') || (signal && signal.aborted)) throw err;
-      console.warn(`[api/claude] google ${candidate} did not answer in ${attemptBudgetMs()} ms; asking the next id`);
+      console.warn(`[api/claude] google ${candidate} did not answer in ${Math.round(attemptBudgetMs(i))} ms; asking the next id`);
+      restId(candidate);
       upstream = null;
       continue;
     } finally {
@@ -85,6 +88,7 @@ async function askGoogle({ body, system, maxTokens, apiKey, signal }) {
     // Capacity walks to the next id, as a stall does above. Any other
     // refusal would be refused by the next model too.
     if (upstream.status !== 429 && upstream.status !== 503) break;
+    restId(candidate);
   }
   // Every id stalled.
   if (!upstream) return fail(504, 'The AI service took too long to answer. Try again.', 'timeout_error');
