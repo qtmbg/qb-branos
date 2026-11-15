@@ -171,7 +171,7 @@
         }},
         // page brand right (mode-aware framing)
         { text: {
-            text: TOKENS.mode === "editorial" ? "QUANTUM BRANDING  ·  EDITORIAL" : "BrandOS  ·  PHASE 01",
+            text: TOKENS.mode === "editorial" ? "QUANTUM BRANDING  ·  EDITORIAL" : "BrandOS",
             options: { x: W - GUTTER - 5, y: 0.28, w: 5, h: 0.28,
               fontFace: TOKENS.mono, fontSize: 8, color: TOKENS.text3,
               charSpacing: 3, align: "right", valign: "middle" }
@@ -224,7 +224,7 @@
   // ---------- Slide builders (atoms) ----------
   function addCoverSlide(pres, opts) {
     var s = pres.addSlide({ masterName: "QB_COVER" });
-    s.addText(opts.eyebrow || "PHASE 01  ·  DELIVERABLE", {
+    s.addText(opts.eyebrow || "BrandOS  ·  DELIVERABLE", {
       x: GUTTER, y: H * 0.32, w: COL_W, h: 0.4,
       fontFace: TOKENS.mono, fontSize: 11, color: TOKENS.brass, charSpacing: 6
     });
@@ -295,7 +295,7 @@
       lineSpacingMultiple: 1.3
     });
     if (opts.attribution) {
-      s.addText("— " + opts.attribution, {
+      s.addText(opts.attribution, {
         x: GUTTER + 0.95, y: 6.0, w: COL_W - 1.0, h: 0.4,
         fontFace: TOKENS.mono, fontSize: 10, color: TOKENS.text3, charSpacing: 3
       });
@@ -429,9 +429,9 @@
 
     // Cover
     addCoverSlide(pres, {
-      eyebrow: "PHASE 01  ·  THE PROFILES",
+      eyebrow: "OBSERVE  ·  THE PROFILES",
       title: "Three buyers.\nOne strategic thread.",
-      subtitle: brandName + " — three full persona briefs, the patterns that bind them, and the moves they unlock."
+      subtitle: brandName + ". Three full persona briefs, the patterns that bind them, and the moves they open."
     });
 
     // Binding insight first (it's the headline)
@@ -544,7 +544,7 @@
     defineMasters(pres, "BRAND SOUL MAP  ·  " + brandName);
 
     addCoverSlide(pres, {
-      eyebrow: "PHASE 01  ·  BRAND SOUL MAP",
+      eyebrow: "OBSERVE  ·  BRAND SOUL MAP",
       title: brandName,
       subtitle: "The irreducible truth, the archetype, and the emotional foundation\nyour brand is built on."
     });
@@ -749,7 +749,7 @@
     defineMasters(pres, "WAR TABLE  ·  " + brandName);
 
     addCoverSlide(pres, {
-      eyebrow: "PHASE 06  ·  WAR TABLE",
+      eyebrow: "COLLAPSE  ·  WAR TABLE",
       title: brandName + "\nStrategic command dossier.",
       subtitle: "Diagnosis. Posture. Field plan. The next 60 days, sequenced."
     });
@@ -802,11 +802,11 @@
     // 04 · Queues (Next / Later / Park) — one bullet slide each
     var queues = [
       { key: "nextList",  kicker: "04  ·  NEXT",  title: "Queued behind a trigger",
-        fmt: function (i) { return txt(i.name) + (txt(i.prerequisite) ? " — " + txt(i.prerequisite) : "") + (txt(i.triggerMilestone) ? "  (trigger: " + txt(i.triggerMilestone) + ")" : ""); } },
+        fmt: function (i) { return txt(i.name) + (txt(i.prerequisite) ? "  ·  " + txt(i.prerequisite) : "") + (txt(i.triggerMilestone) ? "  (trigger: " + txt(i.triggerMilestone) + ")" : ""); } },
       { key: "laterList", kicker: "04  ·  LATER", title: "Move when conditions change",
-        fmt: function (i) { return txt(i.name) + (txt(i.conditionToMove) ? " — " + txt(i.conditionToMove) : ""); } },
+        fmt: function (i) { return txt(i.name) + (txt(i.conditionToMove) ? "  ·  " + txt(i.conditionToMove) : ""); } },
       { key: "parkList",  kicker: "04  ·  PARK",  title: "Honestly parked",
-        fmt: function (i) { return txt(i.name) + (txt(i.honestReason) ? " — " + txt(i.honestReason) : "") + (txt(i.revisitWhen) ? "  (revisit: " + txt(i.revisitWhen) + ")" : ""); } }
+        fmt: function (i) { return txt(i.name) + (txt(i.honestReason) ? "  ·  " + txt(i.honestReason) : "") + (txt(i.revisitWhen) ? "  (revisit: " + txt(i.revisitWhen) + ")" : ""); } }
     ];
     queues.forEach(function (q) {
       var arr = Array.isArray(d[q.key]) ? d[q.key].filter(function (i) { return i && txt(i.name); }) : [];
@@ -1103,7 +1103,7 @@
       pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5
       pres.author = "BrandOS";
       pres.company = "Quantum Branding";
-      pres.title = (opts.brandName ? opts.brandName + " — " : "") + (opts.deckTitle || toolId);
+      pres.title = (opts.brandName ? opts.brandName + " · " : "") + (opts.deckTitle || toolId);
 
       switch (toolId) {
         case "the-profiles":

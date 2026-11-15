@@ -24,9 +24,6 @@ QBI18N.add('fr', {
   "✗ Try again": "✗ Réessayer",
   "✗ Sign in to receive": "✗ Connexion requise",
 
-  /* ── sendDocByEmail() reads the button label back from the DOM and restores it, so the French label comes back as source text. Declared so it is not counted as a miss. ── */
-  "✉ Envoyer par e-mail": true,
-
   /* ── alert() messages ── */
   "PDF generation failed. Use Ctrl+P / Cmd+P to print as PDF instead.":
     "La génération du PDF a échoué. Utilisez Ctrl+P / Cmd+P pour imprimer en PDF à la place.",
@@ -35,16 +32,19 @@ QBI18N.add('fr', {
 
   /* ── Completion meter ── */
   "{0}% complete": "Terminé à {0}\u00a0%",
-  "Complete Phase 01 tools to fill your brand document": "Terminez les outils de la Phase 01 pour remplir votre document de marque",
-  "All Phase 01 tools complete. Your brand document is ready to download.":
-    "Tous les outils de la Phase 01 sont terminés. Votre document de marque est prêt à être téléchargé.",
-  "{0} of {1} Phase 01 tools complete": "{0} sur {1} outils de la Phase 01 terminés",
+  "Complete the foundation exercises and The Profiles to fill your Brand Document.":
+    "Terminez les exercices de la fondation et The Profiles pour remplir votre Document de marque.",
+  "Every section is complete. Your Brand Document is ready to download.":
+    "Chaque section est terminée. Votre Document de marque est prêt à être téléchargé.",
+  "{0} of {1} sections complete.": "{0} sections terminées sur {1}.",
+  /* One of the two alone is "{0} opens with Starter.", which shared.js holds. */
+  "Visual DNA and War Table open with Starter.": "Visual DNA et War Table s’ouvrent avec Starter.",
   "Brand document completion": "Avancement du document de marque",
   "Soul Map": true,
 
   /* ── Cover ── */
-  "Entangled Time - Brand Operating System": "Entangled Time · Système d’exploitation de marque",
-  "Quantum Brand Profile - Complete Identity Document": "Quantum Brand Profile · Document d’identité complet",
+  "· Brand operating system": "· Système d’exploitation de marque",
+  "Brand Document · Assembled from your Brand Profile": "Document de marque · Assemblé à partir de votre Profil de marque",
 
   /* ── Cover date. The page formats it in en-US: "Generated: November 12, 2026 ·". ── */
   "Generated: January {0}, {1} ·": "Généré le {0} janvier {1} ·",
@@ -66,15 +66,18 @@ QBI18N.add('fr', {
   "Sensory Universe": "Univers sensoriel",
   "Strategic Direction": "Direction stratégique",
   "Buyer Personas": "Personas d’acheteurs",
-  "Complete QBP Summary": "Synthèse complète du QBP",
+  "Brand Profile summary": "Synthèse du Profil de marque",
   "Auto-generated": "Généré automatiquement",
   "Pending": "En attente",
   "✓ Complete": "✓ Terminé",
   "Complete @@ .empty-section-text": "Terminez",
   "to populate this section": "pour remplir cette section",
+  /* Tool names differ in gender (la War Table, le Visual DNA), so the lines
+     that follow a name avoid any word that would have to agree with it. */
+  "opens with Starter. Complete it to populate this section.": "s’ouvre avec Starter. Terminez l’exercice pour remplir cette section.",
   "Open {0} →": "Ouvrir {0} →",
   "is recorded as complete, but the synthesis output isn't in your profile yet. Re-run to generate it.":
-    "est enregistré comme terminé, mais sa synthèse n’est pas encore dans votre profil. Relancez-le pour la générer.",
+    "a le statut «\u00a0terminé\u00a0», mais sa synthèse n’est pas encore dans votre profil. Relancez l’exercice pour la générer.",
   "Re-run {0} →": "Relancer {0} →",
 
   /* ── Field labels ── */
@@ -148,18 +151,18 @@ QBI18N.add('fr', {
 
   /* ── Visual DNA section ── */
   "{0} reference images selected": "{0} images de référence sélectionnées",
-  "{0}% — indicates visual selectivity": "{0}\u00a0%, un indice de sélectivité visuelle",
-  "Fast Discards — Your Visual Blocklist": "Écartées d’emblée · Votre liste d’exclusion visuelle",
-  "Images rejected in under 3 seconds — these define what the brand is NOT. Provide this list to your designer as a negative reference.":
-    "Des images écartées en moins de 3 secondes. Elles définissent ce que la marque n’est PAS. Remettez cette liste à votre designer comme référence négative.",
+  "{0}% · indicates visual selectivity": "{0}\u00a0% · un indice de sélectivité visuelle",
+  "Fast Discards · Your Visual Blocklist": "Écartées d’emblée · Votre liste d’exclusion visuelle",
+  "Images rejected in under 3 seconds. These define what the brand is NOT.":
+    "Des images écartées en moins de 3 secondes. Elles définissent ce que la marque n’est PAS.",
   "Designer Note": "Note pour le designer",
-  "Your Visual DNA Brief is complete. The kept images define your visual world. The fast discards define your visual blocklist. Share both sets with your designer or use them as Midjourney reference images.":
-    "Votre brief Visual DNA est terminé. Les images gardées définissent votre monde visuel. Les images écartées d’emblée définissent votre liste d’exclusion visuelle. Partagez les deux séries avec votre designer ou utilisez-les comme images de référence dans Midjourney.",
+  "Your Visual DNA Brief is complete. The kept images define your visual world. The fast discards define your visual blocklist.":
+    "Votre brief Visual DNA est terminé. Les images gardées définissent votre monde visuel. Les images écartées d’emblée définissent votre liste d’exclusion visuelle.",
 
   /* ── War Table section ── */
   "Top Initiatives (by score)": "Initiatives prioritaires (par score)",
-  "War Table complete. Your full 60-day field plan and Strategic Command Document are available in the War Table tool.":
-    "War Table terminé. Votre plan de terrain complet sur 60 jours et votre Document de commandement stratégique sont disponibles dans l’outil War Table.",
+  "War Table complete. Your full 60-day field plan and Strategic Command Dossier are available in the War Table tool.":
+    "War Table terminée. Votre plan de terrain complet sur 60 jours et votre Dossier de commandement stratégique sont disponibles dans l’outil War Table.",
 
   /* ── The Profiles section ── */
   "Persona {0}": true,

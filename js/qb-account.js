@@ -202,8 +202,9 @@ export function renderAccountError(container, error) {
   const root = el('section', { class: 'qb-account is-error' }, [
     el('div', { class: 'qb-account__inner' }, [
       renderHeader(),
-      el('p', { class: 'qb-account__error' },
-        error?.message || 'Could not load your account. Reload and try again.'),
+      // The sentence first, always. A bare "HTTP 500" told the founder nothing.
+      el('p', { class: 'qb-account__error' }, 'Could not load your account. Reload and try again.'),
+      error?.message ? el('p', { class: 'qb-account__error-detail' }, error.message) : null,
       pill({ label: 'Try again', onClick: () => location.reload(), variant: 'primary' }),
     ]),
   ]);

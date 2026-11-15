@@ -104,6 +104,24 @@ painted, exported, emailed or put in a meta tag.
 - Verbatim and untouched: the featured-by list, the testimonials (real
   people's words, in English in both languages), "150+ reviews" with its link.
 
+## Who reads a founder's work
+
+Two providers, and the split is by tool, not by plan.
+
+- **Anthropic** answers inside the tools, as the founder works in them
+  (`/api/claude`). Inputs are used only to generate the response.
+- **Google Gemini, free API tier,** generates the readings and the agent
+  documents (`agents/*.js`, every public agent's `META.model`), on the free
+  Brand Profile and on Starter alike. Google uses those prompts and
+  responses to improve its products, and human reviewers may read them.
+
+Never write that paid work is processed by Anthropic only. It was written
+once, in `privacy.html` and `terms.html`, while all six Starter agents ran
+on Gemini. `runtime_args.model_override` exists and nothing sets it. If the
+owner routes paid runs to Anthropic, this section and both legal pages
+change together. `tests/e2e/walks/legal.mjs` reads the agents' models and
+fails when the pages say otherwise.
+
 ## What a rewrite may and may not do
 
 - It may correct a false or contradicted statement, align a name, a number or

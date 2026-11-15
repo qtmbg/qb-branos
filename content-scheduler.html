@@ -9,7 +9,7 @@
      The page stays deployable for the operator and drops out of the index. -->
 <meta name="robots" content="noindex, nofollow">
 <title>Content Scheduler · BrandOS</title>
-<meta name="description" content="Set the publishing cadence for your brand across platforms. The Content Scheduler builds a calendar your Brand Profile can sustain.">
+<meta name="description" content="Queue posts, set a date and time for each, and send them to Buffer across Instagram, LinkedIn, X and Facebook.">
 <script>
 (function(){
   try{var t=localStorage.getItem('qb-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}
@@ -1344,7 +1344,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Content Scheduler · BrandOS">
-<meta property="og:description" content="Set the publishing cadence for your brand across platforms. The Content Scheduler builds a calendar your Brand Profile can sustain.">
+<meta property="og:description" content="Queue posts, set a date and time for each, and send them to Buffer across Instagram, LinkedIn, X and Facebook.">
 <meta property="og:url" content="https://quantumbranding.ai/content-scheduler.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/content-scheduler.png">
 <meta property="og:image:width" content="1200">
@@ -1354,7 +1354,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Content Scheduler · BrandOS">
-<meta name="twitter:description" content="Set the publishing cadence for your brand across platforms. The Content Scheduler builds a calendar your Brand Profile can sustain.">
+<meta name="twitter:description" content="Queue posts, set a date and time for each, and send them to Buffer across Instagram, LinkedIn, X and Facebook.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/content-scheduler.png">
 <link rel="canonical" href="https://quantumbranding.ai/content-scheduler.html">
 <!-- QB JSON-LD -->
@@ -1505,7 +1505,6 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         Buffer connected
       </div>
       <button class="btn btn-ghost" id="btn-change-token">Change token</button>
-      <button class="btn btn-ghost creation" id="btn-load-profiles" style="display:none">Load profiles</button>
     </div>
 
     <!-- ERROR BOX -->
@@ -1673,6 +1672,11 @@ function esc(str) {
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+// A post that failed stays in play: it keeps its fields and the next
+// "Schedule All" sends it again. It used to stay in "error" for good.
+function isPending(p) { return p.status === 'queued' || p.status === 'error'; }
+function isReady(p)   { return isPending(p) && !!p.profileId && !!p.date; }
+
 function showError(msg) {
   var box = document.getElementById('error-box');
   if (msg) {
@@ -1780,7 +1784,6 @@ document.getElementById('btn-go-add').addEventListener('click', function() { swi
 
 // ─── Render Queue ─────────────────────────────────────────────────────────────
 function renderQueue() {
-  var queued = state.queue.filter(function(p) { return p.status === 'queued'; });
   var today  = todayStr();
 
   if (state.queue.length === 0) {
@@ -1791,8 +1794,11 @@ function renderQueue() {
   document.getElementById('queue-empty').style.display   = 'none';
   document.getElementById('queue-content').style.display = 'block';
 
-  var readyCount = state.queue.filter(function(p) { return p.status === 'queued' && p.profileId && p.date; }).length;
-  document.getElementById('queue-count-label').textContent = queued.length + ' post' + (queued.length !== 1 ? 's' : '') + ' ready to schedule';
+  // Ready means what the button will send: a profile and a date, and not
+  // already sent. The label used to count every queued post, so it read
+  // "1 post ready" above a warning that the same post was not ready.
+  var readyCount = state.queue.filter(isReady).length;
+  document.getElementById('queue-count-label').textContent = readyCount + ' post' + (readyCount !== 1 ? 's' : '') + ' ready to schedule';
   var btnSched = document.getElementById('btn-schedule-all');
   btnSched.disabled = readyCount === 0;
 
@@ -1804,8 +1810,8 @@ function renderQueue() {
     var preview     = esc(post.text.substring(0, 200)) + (post.text.length > 200 ? '&hellip;' : '');
 
     var warns = '';
-    if (!post.profileId && post.status === 'queued') warns += '<div class="queue-item-warn">&#9888; No profile ID - add before scheduling</div>';
-    if (!post.date     && post.status === 'queued') warns += '<div class="queue-item-warn">&#9888; No date selected - required before scheduling</div>';
+    if (!post.profileId && isPending(post)) warns += '<div class="queue-item-warn">&#9888; No profile ID - add before scheduling</div>';
+    if (!post.date     && isPending(post)) warns += '<div class="queue-item-warn">&#9888; No date selected - required before scheduling</div>';
     if (post.status === 'error' && post.error)       warns += '<div class="queue-item-err">Error: ' + esc(post.error) + '</div>';
 
     var removeBtn = post.status !== 'scheduled'
@@ -1815,7 +1821,7 @@ function renderQueue() {
     var statusClass = post.status === 'scheduled' ? 'badge-scheduled' : post.status === 'error' ? 'badge-error' : 'badge-queued';
 
     var editFields = '';
-    if (post.status === 'queued') {
+    if (isPending(post)) {
       var timeOpts = TIMES.map(function(t) {
         return '<option value="' + t + '"' + (t === post.time ? ' selected' : '') + '>' + t + '</option>';
       }).join('');
@@ -1851,7 +1857,9 @@ function renderQueue() {
 
   // Inline field event delegation
   list.querySelectorAll('.q-profile').forEach(function(el) {
-    el.addEventListener('input', function() { updateQueueItem(this.dataset.id, 'profileId', this.value); });
+    // On change, not on input: the list is rebuilt on every update, and a
+    // rebuild on each keystroke took the field away after one character.
+    el.addEventListener('change', function() { updateQueueItem(this.dataset.id, 'profileId', this.value); });
   });
   list.querySelectorAll('.q-date').forEach(function(el) {
     el.addEventListener('change', function() { updateQueueItem(this.dataset.id, 'date', this.value); });
@@ -1947,7 +1955,7 @@ document.getElementById('btn-schedule-all').addEventListener('click', async func
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Scheduling...';
 
-  var toSchedule = state.queue.filter(function(p) { return p.status === 'queued' && p.profileId && p.date; });
+  var toSchedule = state.queue.filter(isReady);
 
   for (var i = 0; i < toSchedule.length; i++) {
     var post = toSchedule[i];
@@ -1983,7 +1991,7 @@ document.getElementById('btn-schedule-all').addEventListener('click', async func
   renderQueue();
   renderScheduled();
   updateHeaderStats();
-  btn.disabled = false;
+  // renderQueue() above set the button from what is left to send.
   btn.textContent = 'Schedule All';
 });
 

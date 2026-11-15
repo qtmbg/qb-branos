@@ -59,7 +59,8 @@ Profiles, the Soul Map reading, the Brand Document. Starter adds the two other f
 exercises (Visual DNA, War Table), the three other readings, the three Build agents and
 the full Brand Profile export. Hold (Performance Dashboard, Quarterly Brand Review,
 Predictive Panel) is not open yet and no plan opens it. Never write that every exercise,
-or the whole foundation, is free. `qb-cloud.js` gates access accordingly.
+or the whole foundation, is free. `qb-cloud.js` gates access accordingly. Enforced by
+`node tests/access/access.mjs`, which keeps the gate, the tool pages and `/foundation` in step.
 
 **`/docs/brand/copy-facts.md` is the one sheet every claim on the site is checked
 against**, in English and in French: the offer, the four movements, which tool sits in

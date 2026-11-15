@@ -37,7 +37,7 @@
     'soul-map':          'Brand Soul Map',
     'sensescape':        'Sensescape',
     'visual-dna':        'Visual DNA',
-    'war-table':         'The War Table',
+    'war-table':         'War Table',
     'profiles':          'The Profiles',
     // Phase 02 — Brand Creation
     'logo-direction':    'Logo Direction',

@@ -22,8 +22,8 @@ QBI18N.add('fr', {
     "Saisissez votre e-mail. Un lien de connexion arrive dans votre boîte de réception et reste valable 60 minutes.",
   "Account needed": "Compte requis",
   "This tool runs on your Brand Profile.": "Cet outil fonctionne avec votre Profil de marque.",
-  "Sign in and the tool opens with your own brand data behind it. New email addresses get an account on the spot.":
-    "Connectez-vous et l’outil s’ouvre avec les données de votre propre marque. Une nouvelle adresse e-mail reçoit un compte sur-le-champ.",
+  "Sign in first. If your plan covers this tool, it opens with your own brand data behind it. If it does not, the next page says what does. New email addresses get an account on the spot.":
+    "Connectez-vous d’abord. Si votre offre couvre cet outil, il s’ouvre avec les données de votre propre marque. Sinon, la page suivante dit ce qui l’ouvre. Une nouvelle adresse e-mail reçoit un compte sur-le-champ.",
   "Session ended": "Session terminée",
   "Time to sign in again.": "Il est temps de vous reconnecter.",
   "Sessions close after a while. Enter your email for a fresh link. Your work is on the server, nothing was lost.":

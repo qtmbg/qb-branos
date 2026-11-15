@@ -289,7 +289,7 @@
 
     const meta = document.createElement('p');
     meta.className = 'qb-file-card_meta';
-    meta.textContent = `Upload logo references, brand documents, and other source files. ${FILE_SIZE_LIMIT_LABEL} per file. PNG, JPEG, SVG, WebP, PDF. Attach a PNG, JPEG, or WebP up to 5 MB and Visual DNA reads it on its next run.`;
+    meta.textContent = `Upload logo references, brand documents, and other source files. ${FILE_SIZE_LIMIT_LABEL} per file. PNG, JPEG, SVG, WebP, PDF. With Starter, attach a PNG, JPEG, or WebP up to 5 MB and Visual DNA reads it on its next run.`;
     card.appendChild(meta);
 
     const drop = document.createElement('label');

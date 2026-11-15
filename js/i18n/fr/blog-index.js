@@ -2,8 +2,8 @@
 QBI18N.add('fr', {
   /* Head */
   "Blog · Brand education · BrandOS": "Blog · Pédagogie de marque · BrandOS",
-  "Brand education from the BrandOS team. The method, the diagnostic, the four doors, and the six-phase path from idea to orbit.":
-    "La pédagogie de marque de l’équipe BrandOS. La méthode, le diagnostic, les quatre portes et le chemin en six phases, de l’idée à l’orbite.",
+  "Brand education from the BrandOS team. The method, the diagnostic, the four doors, and the four movements from idea to orbit.":
+    "La pédagogie de marque de l’équipe BrandOS. La méthode, le diagnostic, les quatre portes et les quatre mouvements, de l’idée à l’orbite.",
 
   /* Header */
   "Blog · Brand education": "Blog · Pédagogie de marque",
@@ -30,7 +30,7 @@ QBI18N.add('fr', {
     "Partir de zéro, quelque chose cloche, la concurrence arrive vite, ou construire pour des clients. Quatre situations de fondateur, quatre points d’entrée différents dans le même système.",
 
   "Education · Method · 7 min read": "Pédagogie · Méthode · 7 min de lecture",
-  "Six phases from idea to orbit": "Six phases, de l’idée à l’orbite",
-  "Acquisition, Discovery, Brand Creation, Content Creation, Execution, Intelligence. Why brand work has an order, and what each phase produces.":
-    "Acquisition, Découverte, Création de marque, Création de contenu, Exécution, Intelligence. Pourquoi le travail de marque suit un ordre, et ce que produit chaque phase."
+  "Four movements from idea to orbit": "Quatre mouvements, de l’idée à l’orbite",
+  "Observe, Collapse, Build, Hold. Why brand work has an order, and what each movement produces.":
+    "Observe, Collapse, Build, Hold. Pourquoi le travail de marque suit un ordre, et ce que produit chaque mouvement."
 });

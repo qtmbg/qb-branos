@@ -12,7 +12,7 @@ QBI18N.add('fr', {
     "Comment Quantum Branding traite vos données personnelles. Conforme au RGPD. Transparent sur ce que nous collectons et pourquoi.",
 
   /* Title block */
-  "Legal · Last updated 13 November 2026": "Juridique · Dernière mise à jour le 13 novembre 2026",
+  "Legal · Last updated 15 November 2026": "Juridique · Dernière mise à jour le 15 novembre 2026",
   "Privacy @@ .doc-h1": "Politique de",
   "policy.": "confidentialité.",
   "What we collect, why, and what control you have over it":
@@ -52,8 +52,8 @@ QBI18N.add('fr', {
   "Supabase Auth": true,
   "records it": "l’enregistre",
   "Brand Profile (QBP)": "Profil de marque (QBP)",
-  "Your brand name, archetype, manifesto, personas, voice notes, sensory profile, visual direction. Everything you type into a Phase 01 tool":
-    "Le nom de votre marque, l’archétype, le manifeste, les personas, les notes de voix, le profil sensoriel, la direction visuelle. Tout ce que vous saisissez dans un outil de la Phase 01",
+  "Your brand name, archetype, manifesto, personas, voice notes, sensory profile, visual direction. Everything you type into a foundation exercise":
+    "Le nom de votre marque, l’archétype, le manifeste, les personas, les notes de voix, le profil sensoriel, la direction visuelle. Tout ce que vous saisissez dans un exercice de la fondation",
   "You enter it; stored in": "Vous le saisissez ; conservé dans",
   "profiles.qbp": true,
   "Usage": true,
@@ -123,19 +123,19 @@ QBI18N.add('fr', {
     "E-mails transactionnels (liens magiques, bienvenue, résultats, reçus, confirmations de verrouillage)",
   "EU (eu-west-1)": "UE (eu-west-1)",
   "Anthropic": true,
-  "AI inference for the brand document and operator tools (Claude)":
-    "Inférence d’IA pour le document de marque et les outils d’opérateur (Claude)",
+  "AI inference inside the tools, as you work in them (Claude)":
+    "Inférence d’IA dans les outils, pendant que vous y travaillez (Claude)",
   "USA": "États-Unis",
   "Google": true,
-  "AI inference for the free exercises (Gemini)": "Inférence d’IA pour les exercices gratuits (Gemini)",
+  "AI inference for the readings and agent documents (Gemini)": "Inférence d’IA pour les lectures et les documents d’agent (Gemini)",
   "We don't share your personal data with anyone for marketing or profiling. We don't sell data. If a processor is subpoenaed or asked by a government to disclose data, that's between them and the requesting authority. We'll be told to the extent legally possible.":
     "Nous ne partageons vos données personnelles avec personne à des fins de marketing ou de profilage. Nous ne vendons pas de données. Si un sous-traitant reçoit une injonction ou une demande d’un gouvernement de divulguer des données, cela se règle entre lui et l’autorité requérante. Nous en serons informés dans la mesure où la loi le permet.",
   "For transfers to processors outside the EU/EEA, we rely on Standard Contractual Clauses (SCCs) and the processor's own compliance commitments.":
     "Pour les transferts vers des sous-traitants situés hors de l’UE/EEE, nous nous appuyons sur les clauses contractuelles types (CCT) et sur les engagements de conformité propres à chaque sous-traitant.",
 
   /* 6. Where data is stored */
-  "Your account and Brand Profile are stored in Supabase's Frankfurt region (EU). Transactional emails go through Resend's EU-West region. Stripe handles payment data on its global infrastructure but stores European customers' financial records in the EU. AI inference runs on US infrastructure under SCCs. The free exercises are processed by Google Gemini on Google's free API tier, where Google uses prompts and responses to improve its products and services, and human reviewers may read them. Anything you pay for, and the brand document itself, is processed by Anthropic, where inputs are used only to generate the response and are not retained for training (per Anthropic's API terms). If you would rather your exercises were not processed this way, do not enter anything into the free tools that you need kept confidential.":
-    "Votre compte et votre Profil de marque sont conservés dans la région Francfort de Supabase (UE). Les e-mails transactionnels passent par la région EU-West de Resend. Stripe traite les données de paiement sur son infrastructure mondiale mais conserve dans l’UE les documents financiers des clients européens. L’inférence d’IA s’exécute sur une infrastructure américaine, dans le cadre des CCT. Les exercices gratuits sont traités par Google Gemini via l’offre gratuite de l’API de Google, dans laquelle Google utilise les requêtes et les réponses pour améliorer ses produits et services, et des relecteurs humains peuvent les lire. Tout ce que vous payez, ainsi que le document de marque lui-même, est traité par Anthropic, où les saisies ne servent qu’à générer la réponse et ne sont pas conservées à des fins d’entraînement (selon les conditions de l’API d’Anthropic). Si vous préférez que vos exercices ne soient pas traités de cette façon, ne saisissez dans les outils gratuits rien que vous devez garder confidentiel.",
+  "Your account and Brand Profile are stored in Supabase's Frankfurt region (EU). Transactional emails go through Resend's EU-West region. Stripe handles payment data on its global infrastructure but stores European customers' financial records in the EU. AI inference runs on US infrastructure under SCCs. Two providers generate text for you, and which one answers depends on the tool, not on your plan. The answers a tool gives you as you work in it come from Anthropic, where inputs are used only to generate the response and are not retained for training (per Anthropic's API terms). The readings and agent documents produced from your Brand Profile, on the free Brand Profile and on Starter alike, are generated by Google Gemini on Google's free API tier, where Google uses prompts and responses to improve its products and services, and human reviewers may read them. If you would rather your work were not processed this way, do not enter anything into BrandOS that you need kept confidential.":
+    "Votre compte et votre Profil de marque sont conservés dans la région Francfort de Supabase (UE). Les e-mails transactionnels passent par la région EU-West de Resend. Stripe traite les données de paiement sur son infrastructure mondiale mais conserve dans l’UE les documents financiers des clients européens. L’inférence d’IA s’exécute sur une infrastructure américaine, dans le cadre des CCT. Deux fournisseurs génèrent du texte pour vous, et celui qui répond dépend de l’outil, pas de votre offre. Les réponses qu’un outil vous donne pendant que vous y travaillez viennent d’Anthropic, où les saisies ne servent qu’à générer la réponse et ne sont pas conservées à des fins d’entraînement (selon les conditions de l’API d’Anthropic). Les lectures et les documents d’agent produits à partir de votre Profil de marque, avec le Profil de marque gratuit comme avec Starter, sont générés par Google Gemini via l’offre gratuite de l’API de Google, dans laquelle Google utilise les requêtes et les réponses pour améliorer ses produits et services, et des relecteurs humains peuvent les lire. Si vous préférez que votre travail ne soit pas traité de cette façon, ne saisissez dans BrandOS rien que vous devez garder confidentiel.",
 
   /* 7. How long we keep it */
   "Data type": "Type de données",
@@ -204,7 +204,7 @@ QBI18N.add('fr', {
   ", your in-progress Brand Profile so you don't lose work between sessions":
     ", votre Profil de marque en cours, pour ne pas perdre votre travail entre deux sessions",
   "qb_completions": true,
-  ", which Phase 01 tools you've finished": ", les outils de la Phase 01 que vous avez terminés",
+  ", which foundation exercises you've finished": ", les exercices de la fondation que vous avez terminés",
   "qb_user_tier": true,
   "qb_sub_status": true,
   ", your subscription tier, refreshed from the server on each load":

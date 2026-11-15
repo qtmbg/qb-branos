@@ -18,13 +18,30 @@
    qbp_snapshot, runtime_args, file_refs, agent_version, model.
 */
 
-const PHASE_LABELS = {
-  '01': 'Discovery',
-  '02': 'Brand Creation',
-  '03': 'Content',
-  '04': 'Execution',
-  '05': 'Intelligence',
+// What a founder reads above each group of agents: the movement, not the
+// phase number. The key stays internal (META.phase). '03' and '04' only
+// ever reach the operator: api/_lib/operator-only.js hides those agents
+// from every other account.
+const SECTION_COPY = {
+  '01': { tag: 'Observe · Collapse', title: 'The foundation' },
+  '02': { tag: 'Build',              title: 'The Build agents' },
+  '03': { tag: 'Operator only',      title: 'Content' },
+  '04': { tag: 'Operator only',      title: 'Execution' },
+  '05': { tag: 'Hold',               title: 'The Hold tools' },
 };
+const SECTION_FALLBACK = { tag: 'Agents', title: 'Agents' };
+
+// The model family an agent runs on, read from its model id. The card used
+// to print "Sonnet" for anything that was not Haiku, which named the wrong
+// provider for the public agents: they run on Gemini.
+function modelLabel(id) {
+  const m = String(id || '').toLowerCase();
+  if (m.includes('haiku'))  return 'Haiku';
+  if (m.includes('sonnet')) return 'Sonnet';
+  if (m.includes('opus'))   return 'Opus';
+  if (m.startsWith('gemini')) return 'Gemini';
+  return id ? String(id) : 'Model';
+}
 
 // Tier ladder · mirrors CANONICAL_TIERS in agents/contract.js. The client
 // pre-gates a paid agent's card so a free founder sees an upgrade
@@ -70,10 +87,13 @@ function dispatchErrorCopy(agent, body) {
   switch (body?.error) {
     case 'tier_insufficient':
     case 'tier_unverified':
-      return `${name} is part of a paid plan. Upgrade to run it.`;
+      // Hold is shown and cannot be bought. Everything else opens with Starter.
+      return String(agent.phase) === '05'
+        ? `${name} is not open yet.`
+        : `${name} opens with Starter. Upgrade to run it.`;
     case 'missing_dependency': {
       const slug = body.missing_slug ? prettyDep(body.missing_slug) : 'your foundation';
-      return `${name} needs ${slug} first. Finish that Phase 01 exercise, then run this.`;
+      return `${name} needs ${slug} first. Finish that foundation exercise, then run this.`;
     }
     case 'missing_inputs':
       return LOGO_FILE_AGENTS.has(agent.slug)
@@ -242,7 +262,7 @@ function userActionCopy(agent, errorPayload) {
     return USER_ACTION_COPY.qbp_field_missing(agent.display_name, exercises || null);
   }
   if (code === 'missing_dependency') {
-    return USER_ACTION_COPY.missing_dependency(agent.display_name, errorPayload.missing_slug || null);
+    return USER_ACTION_COPY.missing_dependency(agent.display_name, errorPayload.missing_slug ? prettyDep(errorPayload.missing_slug) : null);
   }
   if (code === 'missing_inputs') {
     return USER_ACTION_COPY.missing_inputs(agent.display_name);
@@ -273,7 +293,7 @@ function rerunCtas(agent, opts) {
     disabled: !hasSnapshot,
     title: hasSnapshot
       ? 'Rerun against the QBP snapshot that produced this artifact.'
-      : 'No QBP snapshot available · this is a Chapter 1 legacy artifact.',
+      : 'No QBP snapshot was kept for this artifact.',
     on: { click: hasSnapshot ? () => opts.onRerun({ agent, source: 'original' }) : null },
   }, [el('span', { class: 'qb-button_content' }, 'Rerun · original QBP')]);
 
@@ -400,26 +420,29 @@ function calFeedbackBox(agent, opts) {
 }
 
 /* ─── tier-locked agent card (free founder, paid agent) ──────── */
-// A paid agent the founder's tier cannot run yet. Shows the agent and an
-// upgrade affordance instead of a Run button. The server tier gate is the
-// real wall; this is the founder-facing pre-empt.
+// An agent the founder's plan cannot run. A Build agent opens with Starter,
+// so it carries an upgrade link. A Hold agent is not open to anyone: no
+// plan that opens it is on sale, so it carries no link and names no tier.
+// The server tier gate is the real wall; this is the founder-facing pre-empt.
 function tierLockedAgentRow(agent, userTier) {
+  const isHold = String(agent.phase) === '05';
   const row = el('div', { class: 'agent-row agent-row_phase agent-row_tier-locked' });
   row.appendChild(el('div', { class: 'agent-row_header' }, [
     el('span', { class: 'agent-locked-glyph', 'aria-hidden': 'true' }, '◐'),
     el('div', { class: 'agent-row_name' }, [
       el('div', { class: 'agent-row_name-title' }, agent.display_name),
-      el('div', { class: 'agent-row_name-meta' },
-        `Requires ${String(agent.tier_required || 'starter').replace(/^\w/, c => c.toUpperCase())} tier`),
+      el('div', { class: 'agent-row_name-meta' }, isHold ? 'Not open yet' : 'Opens with Starter'),
     ]),
   ]));
   row.appendChild(el('p', { class: 'agent-row_description' }, agent.description));
-  row.appendChild(el('div', { class: 'agent-row_ctas' }, [
-    el('a', {
-      class: 'qb-button is-primary is-sm',
-      href: '/payment.html',
-    }, [el('span', { class: 'qb-button_content' }, 'Upgrade to run')]),
-  ]));
+  if (!isHold) {
+    row.appendChild(el('div', { class: 'agent-row_ctas' }, [
+      el('a', {
+        class: 'qb-button is-primary is-sm',
+        href: '/payment.html',
+      }, [el('span', { class: 'qb-button_content' }, 'Upgrade to run')]),
+    ]));
+  }
   return row;
 }
 
@@ -439,7 +462,7 @@ function phaseAgentRow(agent, opts) {
     el('div', { class: 'agent-row_name' }, [
       el('div', { class: 'agent-row_name-title' }, agent.display_name),
       el('div', { class: 'agent-row_name-meta' },
-        `${agent.model.startsWith('claude-haiku') ? 'Haiku' : 'Sonnet'} · retry_budget ${agent.retry_budget}`),
+        `${modelLabel(agent.model)} · retry_budget ${agent.retry_budget}`),
     ]),
     statusPill(pillStatus),
   ]);
@@ -535,44 +558,6 @@ function phaseAgentRow(agent, opts) {
     row.appendChild(el('div', { class: 'agent-row_ctas' }, [firstRunCta(agent, opts)]));
   }
   return row;
-}
-
-/* ─── Phase view · locked phase card ─────────────────────── */
-// Phase-to-chapter mapping for tier-active locked-row copy. Phase 02
-// ships in Chapter 4 (Brand Creation); Phase 03/04/05 ship in 5/6/7.
-const PHASE_CHAPTER = { '02': 4, '03': 5, '04': 6, '05': 7 };
-
-// §6.3 + step 9 §3.2 · tier-aware locked-row copy. Free users see the
-// upsell narrative (Starter unlock); Starter+ users see the build-ahead
-// narrative (chapter in which this phase ships). Empty/unknown tier
-// defaults to the Free copy.
-function lockedPhaseCopy(card, userTier) {
-  const tier = String(userTier || 'free').toLowerCase();
-  if (tier === 'free') {
-    return 'Unlocks when Starter tier is active';
-  }
-  const chapter = PHASE_CHAPTER[card.phase];
-  return chapter
-    ? `Available in Chapter ${chapter} · ${card.label} phase`
-    : 'Coming soon';
-}
-
-function lockedPhaseCard(card, userTier) {
-  return el('div', { class: 'phase-section phase-section_locked' }, [
-    el('div', { class: 'phase-section_header' }, [
-      el('span', { class: 'qb-tag is-soft' }, [
-        el('span', { class: 'qb-tag_content' }, `Phase ${card.phase}`),
-      ]),
-      el('h3', { class: 'phase-section_title' }, card.label),
-    ]),
-    el('div', { class: 'phase-section_locked-copy' }, lockedPhaseCopy(card, userTier)),
-    el('ul', { class: 'phase-section_locked-agents' }, card.agents.map(a =>
-      el('li', { class: 'phase-section_locked-agent' }, [
-        el('span', { class: 'agent-locked-glyph', 'aria-hidden': 'true' }, '◐'),
-        a.display_name,
-      ])
-    )),
-  ]);
 }
 
 /* ─── Run history view · row ─────────────────────────────── */
@@ -672,7 +657,7 @@ async function openReplayModal(runId, session) {
 
   const header = el('div', { class: 'replay-modal_header' }, [
     el('span', { class: 'qb-tag is-soft' }, [
-      el('span', { class: 'qb-tag_content' }, `Phase ${data.agent_slug?.includes('_synthesizer') ? '01' : '?'} · Replay`),
+      el('span', { class: 'qb-tag_content' }, 'Replay'),
     ]),
     el('h2', { class: 'replay-modal_title' }, `${data.agent_slug} · v${data.artifact_version || '·'}`),
     el('div', { class: 'replay-modal_meta' },
@@ -762,7 +747,7 @@ function viewToggle(currentView, onChange) {
       'aria-selected': String(isActive),
       class: `console-view-toggle_btn ${isActive ? 'is-active' : ''}`,
       on: { click: () => onChange(view) },
-    }, view === 'phase' ? 'Phase view' : 'Run history');
+    }, view === 'phase' ? 'By movement' : 'Run history');
     wrap.appendChild(btn);
   }
   return wrap;
@@ -878,22 +863,23 @@ export function renderConsole(container, payload, opts) {
     }
     for (const phase of Object.keys(byPhase).sort()) {
       const tagClass = phase === '01' ? 'is-teal' : 'is-gold';
+      const section = SECTION_COPY[phase] || SECTION_FALLBACK;
       viewMount.appendChild(el('section', { class: 'phase-section phase-section_active' }, [
         el('div', { class: 'phase-section_header' }, [
           el('span', { class: `qb-tag ${tagClass}` }, [
-            el('span', { class: 'qb-tag_content' }, `Phase ${phase}`),
+            el('span', { class: 'qb-tag_content' }, section.tag),
           ]),
-          el('h2', { class: 'phase-section_title' }, PHASE_LABELS[phase] || `Phase ${phase}`),
+          el('h2', { class: 'phase-section_title' }, section.title),
         ]),
         el('div', { class: 'phase-section_agents' }, byPhase[phase].map(renderAgentCard)),
       ]));
     }
 
-    // Locked phase cards · Phase 03-05 (Phase 02 retired at step 4, now live).
-    // Tier-aware copy per step 9 §3.2.
-    for (const card of (livePayload.locked_phase_cards || [])) {
-      viewMount.appendChild(lockedPhaseCard(card, tier));
-    }
+    // payload.locked_phase_cards is no longer painted. The API fills it with
+    // the agents a caller may not see, which for a public account is the
+    // seven operator-only content agents: the Console was naming them to
+    // everyone, under "Unlocks when Starter tier is active", which Starter
+    // does not do. Hold agents arrive in agents[] and render as locked rows.
   }
 
   // Per-agent card dispatcher · tier pre-empt then the full live card.

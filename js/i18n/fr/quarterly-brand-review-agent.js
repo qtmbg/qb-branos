@@ -4,26 +4,20 @@
    (trimestre suivant). */
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
-  "Quarterly Brand Review Agent · BrandOS": "Agent de revue de marque trimestrielle · BrandOS",
-  "Close the quarter with a structured brand review. What held, what drifted, what changes next, fed straight back into your Brand Profile.":
-    "Clôturez le trimestre par une revue de marque structurée. Ce qui a tenu, ce qui a dérivé, ce qui change ensuite, réinjecté directement dans votre Profil de marque.",
-
-  /* ── Footer blurb (short form used on tool pages) ───────────────── */
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
+  "Quarterly Brand Review · BrandOS": "Revue de marque trimestrielle · BrandOS",
+  "The Quarterly Brand Review reads a quarter of data against your Brand Profile: what held, what drifted, what changes next, with proposed updates to the profile. Part of Hold in BrandOS. Not open yet.":
+    "La Revue de marque trimestrielle lit un trimestre de données au regard de votre Profil de marque\u00a0: ce qui a tenu, ce qui a dérivé, ce qui change ensuite, avec des propositions de mise à jour du profil. Fait partie de Hold dans BrandOS. Pas encore ouvert.",
 
   /* ── Tool header and footer ─────────────────────────────────────── */
-  "Quarterly Review Phase": "Phase de revue trimestrielle",
+  "Quarterly Review": "Revue trimestrielle",
   "Input Data": "Saisie des données",
   "Intelligence": true,
-  "THEME": "THÈME",
-  "Entangled Time Edition": "Édition Entangled Time",
+  "Quarterly Brand Review / Hold": "Revue de marque trimestrielle / Hold",
 
   /* ── Step 1 · intro ─────────────────────────────────────────────── */
-  "Phase 05 - Intelligence + Pivot": "Phase 05 · Intelligence + Pivot",
   "Quarterly Brand Review": "Revue de marque trimestrielle",
-  "The tool that makes the system self-evolving. Feed the quarter's data, let the agent read it through your brand identity, update the QBP with learned reality, and produce the strategic direction for the next 90 days.":
-    "L’outil qui permet au système d’évoluer de lui-même. Donnez les données du trimestre, laissez l’agent les lire à travers votre identité de marque, mettre à jour le QBP avec la réalité apprise et produire la direction stratégique des 90 prochains jours.",
+  "Feed the quarter's data. The agent reads it through your brand identity, proposes updates to the QBP from what it learned, and sets the strategic direction for the next 90 days.":
+    "Donnez les données du trimestre. L’agent les lit à travers votre identité de marque, propose des mises à jour du QBP à partir de ce qu’il a appris et fixe la direction stratégique des 90 prochains jours.",
 
   /* ── Step 1 · current brand profile ─────────────────────────────── */
   "Current Brand Profile": "Profil de marque actuel",
@@ -39,18 +33,6 @@ QBI18N.add('fr', {
   "The Sunrise": "Le lever du soleil",
   "Archetype": "Archétype",
   "- select -": "- choisir -",
-  "The Rebel": true,
-  "The Sage": true,
-  "The Creator": true,
-  "The Ruler": true,
-  "The Magician": true,
-  "The Hero": true,
-  "The Explorer": true,
-  "The Caregiver": true,
-  "The Jester": true,
-  "The Everyman": true,
-  "The Innocent": true,
-  "The Lover": true,
   "Brand Essence *": "Essence de marque *",
   "Brand Essence": "Essence de marque",
   "Current irreducible truth - one sentence": "La vérité irréductible actuelle, en une phrase",
@@ -76,6 +58,17 @@ QBI18N.add('fr', {
   "Q2 (Apr–Jun)": "T2 (avr.–juin)",
   "Q3 (Jul–Sep)": "T3 (juil.–sept.)",
   "Q4 (Oct–Dec)": "T4 (oct.–déc.)",
+  /* First line of the exported text. The quarter is part of the line, so
+     each quarter has its own key, above the general pattern further down. */
+  "QUARTERLY BRAND REVIEW - Q1 (Jan–Mar) {0}": "REVUE DE MARQUE TRIMESTRIELLE · T1 (janv.–mars) {0}",
+  "QUARTERLY BRAND REVIEW - Q2 (Apr–Jun) {0}": "REVUE DE MARQUE TRIMESTRIELLE · T2 (avr.–juin) {0}",
+  "QUARTERLY BRAND REVIEW - Q3 (Jul–Sep) {0}": "REVUE DE MARQUE TRIMESTRIELLE · T3 (juil.–sept.) {0}",
+  "QUARTERLY BRAND REVIEW - Q4 (Oct–Dec) {0}": "REVUE DE MARQUE TRIMESTRIELLE · T4 (oct.–déc.) {0}",
+  /* Exported text, one line per proposed update: "Brand Essence (strengthen):". */
+  "{0} (strengthen):": "{0} (renforcer)\u00a0:",
+  "{0} (evolve):": "{0} (faire évoluer)\u00a0:",
+  "{0} (add):": "{0} (ajouter)\u00a0:",
+  "{0} (recalibrate):": "{0} (recalibrer)\u00a0:",
   "Year": "Année",
   "e.g. 2026": "ex. 2026",
 
@@ -129,8 +122,8 @@ QBI18N.add('fr', {
   /* ── Errors ─────────────────────────────────────────────────────── */
   "Complete required fields: brand name, essence, quarter, and at least one data field.":
     "Remplissez les champs obligatoires\u00a0: nom de la marque, essence, trimestre et au moins un champ de données.",
-  "Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.":
-    "La synthèse était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Réessayez dans un instant.",
+  "Synthesis was unavailable. The review could not be generated. Try again in a moment.":
+    "La synthèse était indisponible. La revue n’a pas pu être générée. Réessayez dans un instant.",
   "Agent anomaly: API error: HTTP {0}": "Anomalie de l’agent\u00a0: erreur d’API, HTTP {0}",
   "Agent anomaly: API error": "Anomalie de l’agent\u00a0: erreur d’API",
   "Agent anomaly: {0}": "Anomalie de l’agent\u00a0: {0}",
@@ -140,13 +133,13 @@ QBI18N.add('fr', {
   "Reading quarter's data through brand lens...": "Lecture des données du trimestre à travers le prisme de la marque…",
   "Evaluating brand performance & coherence...": "Évaluation de la performance et de la cohérence de marque…",
   "Extracting core intelligence traces...": "Extraction des traces d’intelligence essentielles…",
-  "Re-calibrating Quantum Brand Profile...": "Recalibrage du Quantum Brand Profile…",
+  "Proposing Quantum Brand Profile updates...": "Proposition de mises à jour du Quantum Brand Profile…",
   "Constructing Q+1 strategic directives...": "Construction des directives stratégiques de T+1…",
   "Assembling War Table initiatives...": "Assemblage des initiatives de la War Table…",
 
   /* ── Step 3 · results header ────────────────────────────────────── */
-  "// Phase 05 Intelligence Complete": "// Phase 05 · Intelligence terminée",
-  "Brand analyzed · QBP evolved · Directives set": "Marque analysée · QBP mis à jour · Directives fixées",
+  "// Hold · Review complete": "// Hold · Revue terminée",
+  "Brand analyzed · QBP updates proposed · Directives set": "Marque analysée · Mises à jour du QBP proposées · Directives fixées",
   "Export Text": "Exporter le texte",
   "New Run": "Nouvelle analyse",
   "Overall": "Global",
@@ -157,7 +150,7 @@ QBI18N.add('fr', {
 
   /* Tabs */
   "Narrative": "Récit",
-  "Learnings": "Apprentissages",
+  "Learnings": "Enseignements",
   "QBP Updates ({0})": "Mises à jour QBP ({0})",
   "Q+1 Direction": "Direction T+1",
   "Directive": true,
@@ -175,14 +168,14 @@ QBI18N.add('fr', {
   /* QBP updates */
   "The profile holds strong. No structural updates required this quarter.":
     "Le profil tient bon. Aucune mise à jour structurelle requise ce trimestre.",
-  "The QBP evolves based on what has been learned. These updates reflect what the brand has become - not what it was designed to be. Accept changes that feel true. Reject those that feel reactive.":
-    "Le QBP évolue selon ce qui a été appris. Ces mises à jour reflètent ce que la marque est devenue, pas ce pour quoi elle a été conçue. Acceptez les changements qui sonnent vrai. Refusez ceux qui semblent réactifs.",
+  "These are proposed updates to the QBP, drawn from what the quarter taught. They reflect what the brand has become - not what it was designed to be. Nothing is applied for you. Keep the changes that feel true. Leave those that feel reactive.":
+    "Voici des propositions de mise à jour du QBP, tirées de ce que le trimestre a appris. Elles reflètent ce que la marque est devenue, pas ce pour quoi elle a été conçue. Rien n’est appliqué à votre place. Gardez les changements qui sonnent vrai. Laissez ceux qui semblent réactifs.",
   "STRENGTHEN": "RENFORCER",
   "EVOLVE": "FAIRE ÉVOLUER",
   "ADD": "AJOUTER",
   "RECALIBRATE": "RECALIBRER",
-  "PRIOR STATE": "ÉTAT ANTÉRIEUR",
-  "EVOLVED STATE": "ÉTAT ÉVOLUÉ",
+  "CURRENT STATE": "ÉTAT ACTUEL",
+  "PROPOSED STATE": "ÉTAT PROPOSÉ",
   "Intelligence trace:": "Trace d’intelligence\u00a0:",
 
   /* Q+1 direction */

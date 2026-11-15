@@ -1,21 +1,14 @@
 /* fr · voice-guide-agent.html
-   Keys that carry an em dash in the source write it as \u2014. No value does.
    \u00a0 is the no-break space French sets before : ; ? */
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Voice Guide Agent · BrandOS": "Agent Voice Guide · BrandOS",
-  "Generate a working brand voice guide: anchors, mechanics, banned phrases, and rules per surface, all drawn from your Brand Profile.":
-    "Générez un guide de voix de marque prêt à l’emploi\u00a0: ancrages, mécanique, expressions bannies et règles par support, le tout tiré de votre Profil de marque.",
-
-  /* The runtime writes og:locale itself; the audit then reads it back. */
-  "fr_FR": true,
+  "Generate a working brand voice guide: voice DNA, writing rules, tone modes, content templates and a copy generator, all drawn from your Brand Profile.":
+    "Générez un guide de voix de marque prêt à l’emploi\u00a0: ADN de la voix, règles d’écriture, modes de ton, modèles de contenu et générateur de textes, le tout tiré de votre Profil de marque.",
 
   /* ── Agent chassis, shared by the four agent tool pages ─────────── */
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
-  "Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.":
-    "La synthèse était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Réessayez dans un instant.",
-  "UNAVAILABLE": "INDISPONIBLE",
+  "The agent was unavailable and nothing was generated. Try again in a moment.":
+    "L’agent était indisponible et rien n’a été généré. Réessayez dans un instant.",
   "API error {0}: {1}": "Erreur d’API {0}\u00a0: {1}",
   "API error {0}": "Erreur d’API {0}",
   "Switch to light mode": "Passer en mode clair",
@@ -39,23 +32,8 @@ QBI18N.add('fr', {
   "The Earthquake": "Le séisme",
   "The Sunrise": "Le lever du soleil",
 
-  /* Archetype names stay in English */
-  "The Rebel": true,
-  "The Outlaw": true,
-  "The Sage": true,
-  "The Creator": true,
-  "The Ruler": true,
-  "The Magician": true,
-  "The Hero": true,
-  "The Explorer": true,
-  "The Caregiver": true,
-  "The Lover": true,
-  "The Jester": true,
-  "The Everyman": true,
-  "The Innocent": true,
-
-  /* Mythological figures: names, like the archetypes. Two of them
-     (The Creator, The Sage) are the same strings as archetypes. */
+  /* Mythological figures stay in English, like the archetype names in
+     common.js: The Creator and The Sage are in both lists. */
   "The Alchemist": true,
   "The Oracle": true,
   "The Warrior": true,
@@ -69,18 +47,18 @@ QBI18N.add('fr', {
   "Generating": "Génération",
 
   /* ── Step 0 · intake ────────────────────────────────────────────── */
-  "// QBP \u2014 Verbal Identity Input": "// QBP · Saisie de l’identité verbale",
+  "// QBP · Verbal Identity Input": "// QBP · Saisie de l’identité verbale",
   "Synthesize Voice Guide": "Synthétiser le Voice Guide",
-  "Provide your Quantum Brand Profile. The system constructs a precise, executable verbal identity framework \u2014 from core DNA to living content templates.":
+  "Provide your Quantum Brand Profile. The system constructs a precise, executable verbal identity framework, from core DNA to living content templates.":
     "Fournissez votre Quantum Brand Profile. Le système construit un cadre d’identité verbale précis et applicable, de l’ADN central aux modèles de contenu vivants.",
   "The QBP token in the URL was invalid or corrupted. Please check the link or enter your brand data manually.":
     "Le jeton QBP de l’URL était invalide ou corrompu. Vérifiez le lien ou saisissez vos données de marque à la main.",
   "Complete the required fields (*).": "Remplissez les champs obligatoires (*).",
   "* required": "* obligatoire",
-  "\u2014 select \u2014": "- choisir -",
+  "- select -": "- choisir -",
 
   "The brand this voice belongs to": "La marque à qui appartient cette voix",
-  "The irreducible truth \u2014 a sentence carved in stone": "La vérité irréductible, une phrase gravée dans la pierre",
+  "The irreducible truth, a sentence carved in stone": "La vérité irréductible, une phrase gravée dans la pierre",
   "Manifesto Line": "Phrase manifeste",
   "The one belief that drives everything": "La conviction unique qui porte tout",
   "The Spark (Narrative Synthesis)": "L’Étincelle (synthèse narrative)",
@@ -89,9 +67,9 @@ QBI18N.add('fr', {
 
   "Soul Map Data": "Données Soul Map",
   "Aligned Brands": "Marques alignées",
-  "e.g. Patagonia, Bottega Veneta \u2014 with why": "ex. Patagonia, Bottega Veneta, avec la raison",
+  "e.g. Patagonia, Bottega Veneta, with why": "ex. Patagonia, Bottega Veneta, avec la raison",
   "Refused Brands": "Marques refusées",
-  "e.g. corporate consulting, startup growth hacking \u2014 with why": "ex. conseil corporate, growth hacking de startup, avec la raison",
+  "e.g. corporate consulting, startup growth hacking, with why": "ex. conseil corporate, growth hacking de startup, avec la raison",
   "Celebrity Synthesis": "Synthèse de célébrités",
   "e.g. Leads like Dieter Rams, creates like Virgil Abloh, endures like Coco Chanel":
     "ex. Dirige comme Dieter Rams, crée comme Virgil Abloh, dure comme Coco Chanel",
@@ -104,14 +82,14 @@ QBI18N.add('fr', {
   "What this brand refuses to be": "Ce que cette marque refuse d’être",
   "Fan Letter": "Lettre de fan",
   "The person this brand was built for": "La personne pour qui cette marque a été construite",
-  "The tension this brand holds \u2014 e.g. intimate yet authoritative": "La tension que tient cette marque, ex. intime et pourtant affirmée",
+  "The tension this brand holds, e.g. intimate yet authoritative": "La tension que tient cette marque, ex. intime et pourtant affirmée",
 
   "Tone Calibration": "Calibrage du ton",
   "Formal to Casual": "De formel à décontracté",
   "Formal": "Formel",
   "Casual": "Décontracté",
-  "Sparse to Generous": "De sobre à généreux",
-  "Sparse": "Sobre",
+  "Sparse to Generous": "De dépouillé à généreux",
+  "Sparse": "Dépouillé",
   "Generous": "Généreux",
   "Rational to Emotional": "De rationnel à émotionnel",
   "Rational": "Rationnel",
@@ -149,7 +127,7 @@ QBI18N.add('fr', {
 
   /* ── Step 2 · the guide ─────────────────────────────────────────── */
   "// System Output": "// Sortie du système",
-  "Complete verbal identity system \u2014 traceable to Source DNA": "Système d’identité verbale complet, traçable jusqu’à l’ADN source",
+  "Complete verbal identity system, traceable to Source DNA": "Système d’identité verbale complet, traçable jusqu’à l’ADN source",
   "Export JSON": "Exporter en JSON",
   "New Session": "Nouvelle session",
 
@@ -189,8 +167,8 @@ QBI18N.add('fr', {
   "On-brand version": "Version fidèle à la marque",
 
   /* Before and after */
-  "Before \u2014 generic": "Avant · générique",
-  "After \u2014 on brand": "Après · fidèle à la marque",
+  "Before · generic": "Avant · générique",
+  "After · on brand": "Après · fidèle à la marque",
   "Why it works:": "Pourquoi ça marche\u00a0:",
 
   /* Content templates */
@@ -216,5 +194,5 @@ QBI18N.add('fr', {
 
   /* ── Tool footer ────────────────────────────────────────────────── */
   "BrandOS Platform": "Plateforme BrandOS",
-  "Voice Agent / Phase 02": "Agent de voix / Phase 02"
+  "Voice Guide Agent / Build": "Agent Voice Guide / Build"
 });

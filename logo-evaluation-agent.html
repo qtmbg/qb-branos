@@ -5,7 +5,7 @@
 <script src="/js/qb-i18n.js" data-page="logo-evaluation-agent"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Logo Evaluation Agent · BrandOS</title>
-<meta name="description" content="Score logo candidates against your brand DNA and audience archetypes, then read a written verdict on which one holds. Phase 03 inside BrandOS.">
+<meta name="description" content="Score logo concepts against your Brand Profile on six dimensions, then read a written verdict on each one. A Build agent inside BrandOS.">
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1622,7 +1622,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Logo Evaluation Agent · BrandOS">
-<meta property="og:description" content="Score logo candidates against your brand DNA and audience archetypes, then read a written verdict on which one holds. Phase 03 inside BrandOS.">
+<meta property="og:description" content="Score logo concepts against your Brand Profile on six dimensions, then read a written verdict on each one. A Build agent inside BrandOS.">
 <meta property="og:url" content="https://quantumbranding.ai/logo-evaluation-agent.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/logo-evaluation-agent.png">
 <meta property="og:image:width" content="1200">
@@ -1632,7 +1632,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Logo Evaluation Agent · BrandOS">
-<meta name="twitter:description" content="Score logo candidates against your brand DNA and audience archetypes, then read a written verdict on which one holds. Phase 03 inside BrandOS.">
+<meta name="twitter:description" content="Score logo concepts against your Brand Profile on six dimensions, then read a written verdict on each one. A Build agent inside BrandOS.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/logo-evaluation-agent.png">
 <link rel="canonical" href="https://quantumbranding.ai/logo-evaluation-agent.html">
 <!-- QB JSON-LD -->
@@ -1641,7 +1641,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Logo Evaluation",
-  "description": "Evaluate logo candidates against the brand DNA and audience archetypes.",
+  "description": "Evaluate logo concepts against the Brand Profile on six dimensions, with a written verdict on each one.",
   "url": "https://quantumbranding.ai/logo-evaluation-agent.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -1744,13 +1744,29 @@ const { useState, useEffect, useRef, useCallback } = React;
 // ─── SCORE DIMENSIONS (Mapped to Entangled Time Colors) ──────────────────────
 
 const DIMENSIONS = [
-  { id:'geometry',    label:'Geometry Alignment',   color:'var(--phase-creation)',   desc:'Does the form vocabulary match the Sensescape scores?' },
-  { id:'archetype',   label:'Archetype Expression', color:'var(--phase-content)',    desc:'Does the mark carry the Mythological Figure and Soul?' },
+  { id:'geometry',    label:'Geometry Alignment',   color:'var(--phase-creation)',   desc:'Does the form vocabulary match the Visual Direction?' },
+  { id:'archetype',   label:'Archetype Expression', color:'var(--phase-content)',    desc:'Does the mark carry the Primary Archetype?' },
   { id:'energy',      label:'Energy Match',         color:'var(--patina)',           desc:'Does it transmit the Natural Force correctly?' },
   { id:'complexity',  label:'Complexity Score',     color:'var(--brass)',            desc:'Is the complexity level right for the brand?' },
-  { id:'antiPattern', label:'Anti-Pattern Rule',    color:'var(--status-error)',     desc:'Does it violate any blocklist items?' },
+  { id:'antiPattern', label:'Anti-Pattern Compliance', color:'var(--status-error)',  desc:'Does it violate any blocklist items?' },
   { id:'essence',     label:'Essence Test',         color:'var(--phase-intelligence)',desc:'Does it carry the Brand Essence without words?' },
 ];
+
+// A dimension is named by the page, from its id. The label the agent sends
+// back is used only for an id the page does not know.
+const dimensionLabel = (d) => (DIMENSIONS.find(x => x.id === d.id) || {}).label || d.label || '';
+
+// ─── THE THREE VERDICTS ──────────────────────────────────────────────────────
+// One list, used three times: the prompt spells these strings out, the page
+// recognises them by their first word, and the page paints them. The agent is
+// told to return one of them exactly, in English, whatever language the rest
+// of its answer is written in.
+const VERDICTS = {
+  pass:   { text:'PASS - Ready for use',                       cls:'verdict-pass',   color:'var(--status-success)' },
+  refine: { text:'REFINE - Conditional approval with changes', cls:'verdict-refine', color:'var(--status-warning)' },
+  reject: { text:'REJECT - Fundamental misalignment',          cls:'verdict-reject', color:'var(--status-error)' },
+};
+const VERDICT_TEXTS = Object.values(VERDICTS).map(v => v.text);
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -1767,21 +1783,25 @@ const scoreColor = (s) => {
   return 'var(--status-error)';
 };
 
-const verdictClass = (v) => {
-  if(!v) return '';
-  const vl = v.toLowerCase();
-  if(vl.includes('pass') || vl.includes('approved')) return 'verdict-pass';
-  if(vl.includes('refine') || vl.includes('revise') || vl.includes('conditional')) return 'verdict-refine';
-  return 'verdict-reject';
+// Which of the three a returned verdict is. The first word decides. The
+// looser English words the page accepted before still count. Anything else
+// is not a verdict the page knows: it is shown as written, in neutral ink.
+// It used to fall through to the reject style, so a passing logo whose
+// verdict came back in another language was painted as rejected.
+const verdictKind = (v) => {
+  const vl = String(v || '').trim().toLowerCase();
+  if(!vl) return '';
+  if(vl.startsWith('pass')) return 'pass';
+  if(vl.startsWith('refine')) return 'refine';
+  if(vl.startsWith('reject')) return 'reject';
+  if(vl.includes('approved')) return 'pass';
+  if(vl.includes('revise') || vl.includes('conditional')) return 'refine';
+  if(vl.includes('misalign')) return 'reject';
+  return '';
 };
-
-const verdictColor = (v) => {
-  if(!v) return 'var(--text-2)';
-  const vl = v.toLowerCase();
-  if(vl.includes('pass') || vl.includes('approved')) return 'var(--status-success)';
-  if(vl.includes('refine') || vl.includes('revise') || vl.includes('conditional')) return 'var(--status-warning)';
-  return 'var(--status-error)';
-};
+const verdictClass = (v) => (VERDICTS[verdictKind(v)] || {}).cls || '';
+const verdictColor = (v) => (VERDICTS[verdictKind(v)] || {}).color || 'var(--text-2)';
+const verdictText  = (v) => (VERDICTS[verdictKind(v)] || {}).text || v || '';
 
 // ─── SUB-COMPONENTS ───────────────────────────────────────────────────────────
 
@@ -2010,7 +2030,7 @@ Quality Test: ${qualityTest||'Does this mark carry the Brand Essence without wor
 Evaluate this logo concept against the QBP and return:
 {
   "overallScore": number 0-100,
-  "verdict": "PASS - Ready for use" | "REFINE - Conditional approval with changes" | "REJECT - Fundamental misalignment",
+  "verdict": ${VERDICT_TEXTS.map(t => JSON.stringify(t)).join(' | ')},
   "verdictReason": "2-3 sentences explaining the verdict with specific references to QBP fields",
   "dimensions": [
     { "id": "geometry", "label": "Geometry Alignment", "score": 0-100, "finding": "1-2 sentences", "evidence": "what you see in the mark that supports this score" },
@@ -2026,7 +2046,12 @@ Evaluate this logo concept against the QBP and return:
   "designerNote": "One paragraph for the designer. What to keep, what to change, and why - all traced to QBP data. Specific, not general.",
   "passedQualityTest": true | false,
   "qualityTestExplanation": "Why it passes or fails the quality test question"
-}`;
+}
+
+The "verdict" value must be exactly one of these three strings, copied character for character. Leave it in English whatever language the rest of the answer is written in. Do not translate it, shorten it, or add to it:
+${VERDICT_TEXTS.join('\n')}
+
+Keep each dimension "id" exactly as given above.`;
 
   const runEvaluation = async () => {
     const imagedConcepts = concepts.filter(c=>c.image);
@@ -2071,18 +2096,22 @@ Evaluate this logo concept against the QBP and return:
         newResults[concept.id] = parsed;
       } catch(e) {
         const msg = e.message === 'UNAVAILABLE'
-          ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+          ? 'The agent was unavailable and this concept was not scored. Try again in a moment.'
           : e.message;
         newResults[concept.id] = { error: msg };
       }
     }
     setResults(newResults);
+    // Land on a concept that was evaluated. The open tab can be a concept
+    // with no image: the verdict screen then stayed blank, and with a single
+    // evaluated concept there was no tab to reach its result.
+    if(!concepts[activeConcept]?.image) setActiveConcept(concepts.indexOf(imagedConcepts[0]));
     setStep(3);
     setLoading(false);
   };
 
   const activeResult = results[concepts[activeConcept]?.id];
-  const radarData = activeResult?.dimensions?.map(d=>({score:d.score, label:d.label})) || [];
+  const radarData = activeResult?.dimensions?.map(d=>({score:d.score, label:dimensionLabel(d)})) || [];
 
   return (
     <>
@@ -2162,7 +2191,7 @@ Evaluate this logo concept against the QBP and return:
                 <TextField label="Brand Essence - the irreducible truth *" value={brandEssence} onChange={setBrandEssence} placeholder="The sentence carved in stone. Every concept is tested against this." multiline rows={2}/>
                 <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:24}}>
                   <TextField label="Museum Room *" value={museumRoom} onChange={setMuseumRoom} placeholder="e.g. Bauhaus, Minimalism, Surrealism"/>
-                  <TextField label="Primary Archetype *" value={archetype} onChange={setArchetype} placeholder="e.g. The Alchemist, The Sage, The Rebel"/>
+                  <TextField label="Primary Archetype *" value={archetype} onChange={setArchetype} placeholder="e.g. The Magician, The Sage, The Rebel"/>
                 </div>
                 <TextField label="Anti-Brand" value={antiBrand} onChange={setAntiBrand} placeholder="What this brand refuses to be visually"/>
                 <TextField label="Central Paradox" value={paradox} onChange={setParadox} placeholder="e.g. Wild yet Restrained, Ancient yet Newborn"/>
@@ -2292,7 +2321,7 @@ Evaluate this logo concept against the QBP and return:
               <div className="text-display" style={{fontSize:28, marginBottom:16, color:'var(--text-1)'}}>Synthesizing Intelligence</div>
               <div className="text-mono" style={{color:'var(--text-3)', fontSize:12, lineHeight:2, letterSpacing:'0.05em'}}>
                 Extracting visual data<br/>
-                Mapping to Sensescape vectors<br/>
+                Mapping to the Visual Direction<br/>
                 Testing archetype resonance<br/>
                 Verifying blocklist compliance<br/>
                 Executing essence test<br/>
@@ -2360,7 +2389,7 @@ Evaluate this logo concept against the QBP and return:
                       <div>
                         <MonoLabel>System Verdict</MonoLabel>
                         <div className={verdictClass(activeResult.verdict)} style={{display:'inline-block', padding:'4px 12px', borderRadius:4, marginTop:8, marginBottom:16}}>
-                          <span className="text-mono" style={{fontSize:12, color:verdictColor(activeResult.verdict), fontWeight:700}}>{activeResult.verdict}</span>
+                          <span className="text-mono" style={{fontSize:12, color:verdictColor(activeResult.verdict), fontWeight:700}}>{verdictText(activeResult.verdict)}</span>
                         </div>
                       </div>
                       <div style={{textAlign:'right'}}>
@@ -2398,7 +2427,7 @@ Evaluate this logo concept against the QBP and return:
                   </div>
                   <div>
                     <div className="text-mono" style={{fontSize:11, color:activeResult.passedQualityTest?'var(--patina-lit)':'var(--status-error)', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:4}}>
-                      Essence Test {activeResult.passedQualityTest ? 'Passed' : 'Failed'}
+                      Quality Test {activeResult.passedQualityTest ? 'Passed' : 'Failed'}
                     </div>
                     <div style={{fontSize:14, color:'var(--text-2)'}}>{activeResult.qualityTestExplanation}</div>
                   </div>
@@ -2421,7 +2450,7 @@ Evaluate this logo concept against the QBP and return:
                         <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:16}}>
                           <div style={{display:'flex', alignItems:'center', gap:10}}>
                             <div style={{width:8, height:8, borderRadius:'2px', background:DIMENSIONS.find(x=>x.id===d.id)?.color||'var(--patina)', boxShadow:`0 0 6px ${DIMENSIONS.find(x=>x.id===d.id)?.color}60`}}/>
-                            <span style={{fontSize:14, fontWeight:600, color:'var(--text-1)'}}>{d.label}</span>
+                            <span style={{fontSize:14, fontWeight:600, color:'var(--text-1)'}}>{dimensionLabel(d)}</span>
                           </div>
                           <AnimatedScore score={d.score} color={scoreColor(d.score)} delay={i*80}/>
                         </div>

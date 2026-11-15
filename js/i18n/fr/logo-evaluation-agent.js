@@ -3,18 +3,12 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Logo Evaluation Agent · BrandOS": "Agent d’évaluation de logo · BrandOS",
-  "Score logo candidates against your brand DNA and audience archetypes, then read a written verdict on which one holds. Phase 03 inside BrandOS.":
-    "Notez vos pistes de logo face à l’ADN de votre marque et aux archétypes de votre audience, puis lisez un verdict écrit sur celle qui tient. Phase 03 dans BrandOS.",
-
-  /* The runtime writes og:locale itself; the audit then reads it back. */
-  "fr_FR": true,
+  "Score logo concepts against your Brand Profile on six dimensions, then read a written verdict on each one. A Build agent inside BrandOS.":
+    "Notez vos concepts de logo face à votre Profil de marque selon six dimensions, puis lisez un verdict écrit sur chacun. Un agent Build dans BrandOS.",
 
   /* ── Agent chassis, shared by the four agent tool pages ─────────── */
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
-  "Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.":
-    "La synthèse était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Réessayez dans un instant.",
-  "UNAVAILABLE": "INDISPONIBLE",
+  "The agent was unavailable and this concept was not scored. Try again in a moment.":
+    "L’agent était indisponible et ce concept n’a pas été noté. Réessayez dans un instant.",
   "API error {0}: {1}": "Erreur d’API {0}\u00a0: {1}",
   "API error {0}": "Erreur d’API {0}",
   "Switch to light mode": "Passer en mode clair",
@@ -29,7 +23,6 @@ QBI18N.add('fr', {
   "Central Paradox": "Paradoxe central",
 
   /* ── Tool header ────────────────────────────────────────────────── */
-  "QB": true,
   "Evaluation Agent": "Agent d’évaluation",
   "Setup": "Réglage",
   "Upload": "Import",
@@ -46,7 +39,7 @@ QBI18N.add('fr', {
   "The sentence carved in stone. Every concept is tested against this.": "La phrase gravée dans la pierre. Chaque concept est testé contre elle.",
   "Museum Room *": "Salle de musée *",
   "e.g. Bauhaus, Minimalism, Surrealism": "ex. Bauhaus, Minimalisme, Surréalisme",
-  "e.g. The Alchemist, The Sage, The Rebel": "ex. The Alchemist, The Sage, The Rebel",
+  "e.g. The Magician, The Sage, The Rebel": "ex. The Magician, The Sage, The Rebel",
   "What this brand refuses to be visually": "Ce que cette marque refuse d’être visuellement",
   "e.g. Wild yet Restrained, Ancient yet Newborn": "ex. Sauvage et pourtant contenu, ancien et pourtant nouveau-né",
 
@@ -96,14 +89,13 @@ QBI18N.add('fr', {
      translated wherever they are painted. */
   "Evaluation Dimensions": "Dimensions d’évaluation",
   "Geometry Alignment": "Alignement géométrique",
-  "Does the form vocabulary match the Sensescape scores?": "Le vocabulaire de formes correspond-il aux scores du Sensescape\u00a0?",
+  "Does the form vocabulary match the Visual Direction?": "Le vocabulaire de formes correspond-il à la Direction visuelle\u00a0?",
   "Archetype Expression": "Expression de l’archétype",
-  "Does the mark carry the Mythological Figure and Soul?": "Le signe porte-t-il la Figure mythologique et l’âme\u00a0?",
+  "Does the mark carry the Primary Archetype?": "Le signe porte-t-il l’Archétype principal\u00a0?",
   "Energy Match": "Accord d’énergie",
   "Does it transmit the Natural Force correctly?": "Transmet-il correctement la Force naturelle\u00a0?",
   "Complexity Score": "Score de complexité",
   "Is the complexity level right for the brand?": "Le niveau de complexité convient-il à la marque\u00a0?",
-  "Anti-Pattern Rule": "Règle des interdits",
   "Anti-Pattern Compliance": "Respect des interdits",
   "Does it violate any blocklist items?": "Enfreint-il un des interdits de la liste\u00a0?",
   "Essence Test": "Test d’essence",
@@ -112,7 +104,7 @@ QBI18N.add('fr', {
   /* ── Step 2 · evaluating ────────────────────────────────────────── */
   "Synthesizing Intelligence": "Synthèse de l’intelligence",
   "Extracting visual data": "Extraction des données visuelles",
-  "Mapping to Sensescape vectors": "Projection sur les vecteurs Sensescape",
+  "Mapping to the Visual Direction": "Projection sur la Direction visuelle",
   "Testing archetype resonance": "Test de la résonance d’archétype",
   "Verifying blocklist compliance": "Vérification du respect des interdits",
   "Executing essence test": "Exécution du test d’essence",
@@ -142,7 +134,8 @@ QBI18N.add('fr', {
   "Anti-Pattern": "Interdits",
   "Essence": true,
 
-  /* « Essence Test Passed » is two nodes: the label, then the result. */
+  /* « Quality Test Passed » is two nodes: the label, then the result. */
+  "Quality Test": "Test de qualité",
   "Passed @@ #root": "réussi",
   "Failed @@ #root": "échoué",
 

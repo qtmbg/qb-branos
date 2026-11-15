@@ -5,7 +5,7 @@
 <script src="/js/qb-i18n.js" data-page="payment"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Access · BrandOS</title>
-<meta name="description" content="Starter: $97 a month. Everything in Brand Profile, plus your full foundation and the Phase 02 agents. Cancel anytime.">
+<meta name="description" content="Starter: $97 a month. Everything in Brand Profile, plus your full foundation and the Build agents. Cancel anytime.">
 
 <meta name="theme-color" content="#2D1521">
 <meta name="color-scheme" content="light">
@@ -19,7 +19,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Access · BrandOS">
-<meta property="og:description" content="Starter: $97 a month. The full BrandOS foundation and the Phase 02 agents.">
+<meta property="og:description" content="Starter: $97 a month. The full BrandOS foundation and the Build agents.">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/payment.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -1642,7 +1642,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "Starter",
-  "description": "Starter: $97 a month. Everything in Brand Profile, plus your full foundation and the Phase 02 agents. Cancel anytime.",
+  "description": "Starter: $97 a month. Everything in Brand Profile, plus your full foundation and the Build agents. Cancel anytime.",
   "url": "https://quantumbranding.ai/payment.html",
   "isPartOf": {
     "@id": "https://quantumbranding.ai/#website"
@@ -1839,10 +1839,11 @@ const STARTER = {
   name: 'Starter',
   price: '$97',
   per: '/ month',
-  desc: 'Everything in Brand Profile, plus your full foundation and the Phase 02 agents.',
+  desc: 'Everything in Brand Profile, plus your full foundation and the Build agents.',
   features: [
-    'Every Phase 01 reading: Sensescape, Visual DNA, War Table',
-    'Phase 02 agents: Logo Direction, Logo Evaluation, Voice Guide',
+    'The two other foundation exercises: Visual DNA, War Table',
+    'The three other foundation readings: Sensescape, Visual DNA, War Table',
+    'The three Build agents: Logo Direction, Logo Evaluation, Voice Guide',
     'Full Brand Profile (QBP) export',
     'Full refund within 14 days of your first payment',
     'Cancel anytime',
@@ -1881,11 +1882,11 @@ function renderPlans() {
   let html = `
     <div class="logo-container">
       <div class="pulse-dot"></div>
-      <div class="logo-text">[QB_OS]</div>
+      <div class="logo-text brandos-name">BrandOS</div>
     </div>
     <div style="text-align:center; margin-bottom: 40px;">
-      <h1>Open the full BrandOS</h1>
-      <p style="margin-top:12px;">The exercises are free. Starter opens the agents that do the work.</p>
+      <h1>Open your full foundation</h1>
+      <p style="margin-top:12px;">Three foundation exercises are free. Starter opens the other two, the readings and the Build agents.</p>
     </div>
   `;
 
@@ -1924,7 +1925,7 @@ function renderPlans() {
   html += `
     <div class="free-note">
       <div class="pulse-dot" style="animation-duration: 4s;"></div>
-      <span class="free-note-text">Free, and staying free: Signal Scan and every Phase 01 exercise</span>
+      <span class="free-note-text">Free, and staying free: Signal Scan, three foundation exercises (Archetype Compass, Brand Soul Map, Sensescape), The Profiles, the Soul Map reading and the Brand Document</span>
     </div>
     <div style="text-align:center; margin-top: 28px;">
       <p style="font-size:13px; color:var(--text-3); max-width:34rem; margin:0 auto 10px;">
@@ -1958,10 +1959,34 @@ function renderSuccess() {
     <div class="center-view">
       <div class="success-icon">✓</div>
       <h2 style="font-size: 36px; margin-bottom: 16px;">You're in.</h2>
-      <p style="margin-bottom: 32px;">Your account is active. Your API key and QBP are waiting in the system.</p>
+      <p style="margin-bottom: 32px;">Your account is active. Your Brand Profile is waiting in the system.</p>
       <button type="button" class="btn-primary" onclick="window.location.href='/foundation'">Enter BrandOS →</button>
     </div>
   `;
+}
+
+// What the visitor reads when checkout fails. The endpoint answers with
+// short codes (api/stripe/checkout.js, api/_lib/auth.js). A code is not a
+// sentence, so each one is given its sentence here. A message this table
+// does not know is shown as it was sent.
+const CHECKOUT_ERRORS = {
+  'Missing authorization':  'Your session is closed. Sign in, then try again.',
+  'Invalid session':        'Your session has expired. Sign in again, then try again.',
+  'Invalid body':           'The checkout request was not accepted. Write to me@qtmbg.com.',
+  'Method not allowed':     'The checkout request was not accepted. Write to me@qtmbg.com.',
+  'price_id is required':   'The checkout request was not accepted. Write to me@qtmbg.com.',
+  'unknown_price_id':       'The checkout request was not accepted. Write to me@qtmbg.com.',
+  'tier_not_yet_available': 'This plan is not open yet.',
+  'stripe_error':           'Stripe could not start the checkout. Try again in a moment.',
+  'stripe_returned_no_url': 'Stripe could not start the checkout. Try again in a moment.',
+};
+function checkoutErrorCopy(raw) {
+  const msg = String(raw || '');
+  if (CHECKOUT_ERRORS[msg]) return CHECKOUT_ERRORS[msg];
+  if (msg.indexOf('Not configured') === 0) return 'Checkout is not available right now. Write to me@qtmbg.com.';
+  if (/^HTTP \d+$/.test(msg)) return 'The checkout did not answer (' + msg + '). Try again in a moment.';
+  if (/Failed to fetch|Load failed|NetworkError/i.test(msg)) return 'No connection. Check your network, then try again.';
+  return msg || 'Please try again, or write to me@qtmbg.com.';
 }
 
 function renderError() {
@@ -1969,8 +1994,8 @@ function renderError() {
     <div class="center-view">
       <div class="error-icon">!</div>
       <h2 style="font-size: 24px; margin-bottom: 12px; color: var(--text-1);">Something went wrong</h2>
-      <p style="margin-bottom: 32px; color: var(--text-2);">${encodeHTML(errorMsg || 'Please try again or contact support.')}</p>
-      <button type="button" class="btn-primary" onclick="goBack()">← Try Again</button>
+      <p style="margin-bottom: 32px; color: var(--text-2);">${encodeHTML(checkoutErrorCopy(errorMsg))}</p>
+      <button type="button" class="btn-primary" onclick="goBack()">← Try again</button>
     </div>
   `;
 }

@@ -22,18 +22,25 @@ QBI18N.add('fr', {
 
   /* Cards */
   "Observe · Free": "Observe · Gratuit",
+  "Collapse · Free": "Collapse · Gratuit",
+  "Build · Free": "Build · Gratuit",
+  "Collapse · Starter": true,
+  "Build · Starter": true,
+  "Hold · Not open yet": "Hold · Pas encore ouvert",
   "Free brand diagnostic. 8 questions, instant score, personalized gap analysis.":
     "Diagnostic de marque gratuit. 8 questions, score immédiat, analyse personnalisée des écarts.",
   "Try free": "Essayer gratuitement",
 
   "The first step. 10 exercises read your trinity: primary archetype, secondary texture, shadow to manage.":
     "La première étape. 10 exercices lisent votre trinité : archétype principal, texture secondaire, ombre à maîtriser.",
-  "Start discovery": "Commencer la découverte",
+  "Start the exercise": "Commencer l’exercice",
+  "Start the profiles": "Commencer les profils",
+  "Open the document": "Ouvrir le document",
 
   "Uncover your brand's irreducible truth, archetype, and emotional foundation.":
     "Révélez la vérité irréductible de votre marque, son archétype et son socle émotionnel.",
-  "Map how your brand feels, sounds, smells, and moves. Full sensory identity.":
-    "Cartographiez ce que votre marque fait ressentir, comment elle sonne, ce qu’elle sent, comment elle bouge. L’identité sensorielle complète.",
+  "Map how your brand feels, sounds, smells, and moves. Full sensory identity. The exercise is free. Its reading opens with Starter.":
+    "Cartographiez ce que votre marque fait ressentir, comment elle sonne, ce qu’elle sent, comment elle bouge. L’identité sensorielle complète. L’exercice est gratuit. Sa lecture s’ouvre avec Starter.",
   "Define your visual language: color, typography, texture, spatial rules.":
     "Définissez votre langage visuel : couleur, typographie, texture, règles d’espace.",
   "Score and rank your strategic priorities. What to do now, next, and never.":
@@ -60,7 +67,6 @@ QBI18N.add('fr', {
   "Performance Dashboard": "Tableau de bord de performance",
   "Track brand signals across channels. Performance data read as brand intelligence.":
     "Suivez les signaux de marque sur tous les canaux. Des données de performance lues comme une intelligence de marque.",
-  "View intelligence": "Voir l’intelligence",
 
   "Quarterly Brand Review": "Revue de marque trimestrielle",
   "Full brand health audit every 90 days. Trends, gaps, and next moves.":
@@ -68,7 +74,6 @@ QBI18N.add('fr', {
 
   "Synthetic personas simulate market response. Confidence zones, go or no-go verdict.":
     "Des personas synthétiques simulent la réponse du marché. Zones de confiance, verdict go ou no-go.",
-  "Run validation": "Lancer la validation",
 
   /* Bottom CTA */
   "Start with a free brand diagnostic": "Commencez par un diagnostic de marque gratuit",

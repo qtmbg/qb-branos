@@ -15,35 +15,46 @@
      renderPaywallError(container, error)
 */
 
-import { createTierBadge } from '/js/qb-components.js';
+import { createTierBadge, STARTER_ADDS } from '/js/qb-components.js';
 
 const STARTER_PRICE_ID = 'price_1Th8JkEHEAcWrG55Abr1OZXe';
 
 const PAID_TIERS = new Set(['starter','pro','agency','atelier']);
 
-const AGENT_LABELS = {
-  soul_map_synthesizer:   'Brand Soul',
+/* A reading is named after its exercise, as on the facts sheet. */
+const READING_LABELS = {
   sensescape_synthesizer: 'Sensescape',
-  visual_dna_synthesizer: 'Visual Language',
-  war_table_synthesizer:  'Strategic Position',
+  visual_dna_synthesizer: 'Visual DNA',
+  war_table_synthesizer:  'War Table',
 };
 
+const BUILD_AGENT_LABELS = {
+  logo_direction_agent:  'Logo Direction',
+  logo_evaluation_agent: 'Logo Evaluation',
+  voice_guide_agent:     'Voice Guide',
+};
+
+const HOLD_AGENTS = new Set(['brand_performance_agent', 'quarterly_review_agent', 'predictive_panel_agent']);
+
+/* The two QBP sections that open with Starter, and the exercise each
+   one fills from. */
 const SECTION_LABELS = {
   visual_dna: 'Visual Language',
   war_table:  'Strategic Position',
-};
-
-const PHASE_LABELS = {
-  phase_02: 'Phase 02',
-  phase_03: 'Phase 03',
-  phase_04: 'Phase 04',
-  phase_05: 'Phase 05',
 };
 
 const EXERCISE_LABELS = {
   visual_dna: 'Visual DNA',
   war_table:  'War Table',
 };
+
+/* Tool ids as qb-cloud.js writes them when the access gate sends a
+   visitor to a plan page (?reason=upgrade&tool=visual-dna). */
+const TOOL_EXERCISE = { 'visual-dna': 'visual_dna', 'war-table': 'war_table' };
+const BUILD_TOOLS = new Set(['logo-direction', 'logo-evaluation', 'voice-guide']);
+const HOLD_TOOLS  = new Set(['quarterly', 'dashboard', 'panel']);
+
+const FREE_EXERCISES = 'Archetype Compass, Brand Soul Map and Sensescape stay free.';
 
 /* ─── tiny vdom-like helper ─────────────────────────── */
 function el(tag, attrs = {}, children = []) {
@@ -92,56 +103,91 @@ function pill({ label, onClick, href, variant = 'primary', size = 'md', disabled
 
 /* ─── Reason → copy ─────────────────────────────────── */
 export function getReasonCopy(reason, params = {}) {
-  const r = String(reason || '').toLowerCase();
+  let r = String(reason || '').toLowerCase();
+  let p = params || {};
+  const tool = String(p.tool || '').toLowerCase();
+
+  // The same destination, three spellings: an exercise slug used as the
+  // reason (the foundation page's fallback link), an exercise key, or the
+  // tool id the access gate hands over with reason=upgrade.
+  if (TOOL_EXERCISE[r])            { p = { ...p, exercise: TOOL_EXERCISE[r] }; r = 'exercise'; }
+  else if (EXERCISE_LABELS[r])     { p = { ...p, exercise: r }; r = 'exercise'; }
+  else if (TOOL_EXERCISE[tool])    { p = { ...p, exercise: TOOL_EXERCISE[tool] }; r = 'exercise'; }
+  else if (BUILD_TOOLS.has(tool))  { r = 'phase_02'; }
+  else if (HOLD_TOOLS.has(tool))   { r = 'phase_05'; }
+
+  if (r === 'artifact' && BUILD_AGENT_LABELS[p.agent]) r = 'phase_02';
+  if (r === 'artifact' && HOLD_AGENTS.has(p.agent))    r = 'phase_05';
+
   if (r === 'qbp_export') {
     return {
       eyebrow: 'Upgrade',
       headline: 'Export your QBP.',
-      body: 'Your Quantum Brand Profile becomes a downloadable document with Starter.',
+      body: 'With Starter, your Quantum Brand Profile downloads as a file.',
     };
   }
   if (r === 'qbp_section') {
-    const section = SECTION_LABELS[params.section] || 'a locked section';
-    return {
-      eyebrow: 'Upgrade',
-      headline: `Read your ${section}.`,
-      body: `The ${section} section of your QBP is ready. Upgrade to read it.`,
-    };
-  }
-  if (r === 'artifact') {
-    const agent = AGENT_LABELS[params.agent] || 'this artifact';
-    return {
-      eyebrow: 'Upgrade',
-      headline: `Read your ${agent}.`,
-      body: `Your ${agent} synthesis is ready. Upgrade to read it.`,
-    };
-  }
-  if (r === 'exercise') {
-    const exercise = EXERCISE_LABELS[params.exercise] || 'this exercise';
-    return {
-      eyebrow: 'Upgrade',
-      headline: `${exercise} opens with Starter.`,
-      body: `Run the ${exercise} exercise and feed it into your foundation.`,
-    };
-  }
-  if (PHASE_LABELS[r]) {
-    const phase = PHASE_LABELS[r];
-    // Starter opens Phase 02 only. Phase 03 and 04 agents are operator-only
-    // and Phase 05 sits behind the dormant Pro gate, so neither is sold.
-    if (r !== 'phase_02') {
+    const section = SECTION_LABELS[p.section];
+    if (!section) {
       return {
         eyebrow: 'Upgrade',
-        headline: `${phase} is not open yet.`,
-        body: 'Starter opens your full foundation and the Phase 02 agents today.',
+        headline: 'Two sections of your QBP open with Starter.',
+        body: 'Visual Language and Strategic Position fill from the Visual DNA and War Table exercises. All of it opens with Starter.',
       };
     }
     return {
       eyebrow: 'Upgrade',
-      headline: `${phase} opens with Starter.`,
-      body: 'The visual identity phase is built on your foundation. Starter opens it.',
+      headline: `${section} opens with Starter.`,
+      body: `That section of your QBP fills from the ${EXERCISE_LABELS[p.section]} exercise. Both open with Starter.`,
     };
   }
-  if (String(params.cancelled) === '1') {
+  if (r === 'artifact') {
+    const reading = READING_LABELS[p.agent];
+    if (!reading) {
+      return {
+        eyebrow: 'Upgrade',
+        headline: 'This artifact opens with Starter.',
+        body: 'Upgrade to read it.',
+      };
+    }
+    return {
+      eyebrow: 'Upgrade',
+      headline: `Read your ${reading} reading.`,
+      body: `The ${reading} reading opens with Starter. Upgrade to read it.`,
+    };
+  }
+  if (r === 'exercise') {
+    const exercise = EXERCISE_LABELS[p.exercise];
+    if (!exercise) {
+      return {
+        eyebrow: 'Upgrade',
+        headline: 'This exercise opens with Starter.',
+        body: `Visual DNA and War Table are part of Starter. ${FREE_EXERCISES}`,
+      };
+    }
+    return {
+      eyebrow: 'Upgrade',
+      headline: `${exercise} opens with Starter.`,
+      body: `The ${exercise} exercise and its reading are part of Starter. ${FREE_EXERCISES}`,
+    };
+  }
+  if (r === 'phase_02') {
+    return {
+      eyebrow: 'Upgrade',
+      headline: 'Build opens with Starter.',
+      body: 'The Build agents work from your foundation. Starter opens them.',
+    };
+  }
+  if (r === 'phase_05') {
+    // Hold is shown and cannot be bought: Starter does not open it and no
+    // plan that does is on sale.
+    return {
+      eyebrow: 'Hold',
+      headline: 'Hold is not open yet.',
+      body: 'No plan opens Hold. Starter opens the rest of your foundation and the Build agents.',
+    };
+  }
+  if (String(p.cancelled) === '1') {
     return {
       eyebrow: 'Cancelled',
       headline: 'Checkout cancelled.',
@@ -151,7 +197,7 @@ export function getReasonCopy(reason, params = {}) {
   return {
     eyebrow: 'Upgrade',
     headline: 'Open the rest of your foundation.',
-    body: 'Visual DNA, War Table, three remaining synthesis artifacts, full QBP export, and the Phase 02 agents. All on Starter.',
+    body: `${STARTER_ADDS} All on Starter.`,
   };
 }
 
@@ -166,7 +212,7 @@ function createPlanCard({ name, price, cadence, lede, features, ctaLabel, ctaOnC
 
   const head = el('div', { class: 'qb-plan-card__head' }, [
     el('div', { class: 'qb-plan-card__eyebrow' }, name),
-    status === 'soon' ? el('span', { class: 'qb-plan-card__pip' }, 'Coming soon') : null,
+    status === 'soon' ? el('span', { class: 'qb-plan-card__pip' }, 'Not open yet') : null,
     isCurrent ? el('span', { class: 'qb-plan-card__pip is-current-pip' }, 'Current plan') : null,
   ]);
 
@@ -215,7 +261,7 @@ function renderAlreadyBanner(tier) {
 
 /* ─── Atelier line ──────────────────────────────────── */
 function renderAtelierLine() {
-  const link = el('a', { class: 'qb-paywall-atelier__link', href: 'mailto:me@qtmbg.com' }, 'Reach out.');
+  const link = el('a', { class: 'qb-paywall-atelier__link', href: 'mailto:me@qtmbg.com' }, 'Write to me@qtmbg.com.');
   return el('p', { class: 'qb-paywall-atelier' }, [
     el('strong', {}, 'Atelier '),
     'is application-only. ',
@@ -228,7 +274,7 @@ function renderFooter() {
   return el('footer', { class: 'qb-paywall__footer' }, [
     el('span', {}, 'Cancel anytime'),
     el('span', { class: 'qb-paywall__footer-dot' }, '·'),
-    el('span', {}, '14-day money-back'),
+    el('span', {}, 'Full refund within 14 days'),
     el('span', { class: 'qb-paywall__footer-dot' }, '·'),
     el('span', {}, 'Secure checkout via Stripe'),
   ]);
@@ -269,12 +315,12 @@ export function renderPaywall(container, opts = {}) {
           name:    'Starter',
           price:   '$97',
           cadence: '/ month',
-          lede:    'Everything you need to finish Phase 01 and open Phase 02.',
+          lede:    'The rest of your foundation, the Build agents and the full export.',
           features: [
-            'All Phase 01 synthesis artifacts (Sensescape, Visual DNA, War Table)',
-            'Visual DNA and War Table exercises',
+            'The Visual DNA and War Table exercises',
+            'The three other foundation readings (Sensescape, Visual DNA, War Table)',
+            'The three Build agents (Logo Direction, Logo Evaluation, Voice Guide)',
             'Full QBP export',
-            'All Phase 02 agents (Logo Direction, Logo Evaluation, Voice Guide)',
             'Cancel anytime',
           ],
           ctaLabel: tier === 'starter' ? 'Current plan' : 'Upgrade to Starter',
@@ -327,10 +373,6 @@ async function triggerCheckout(ev, opts) {
       if (content) content.textContent = 'Upgrade to Starter';
     }
   }
-}
-
-function showSoonToast(opts) {
-  showToast('Available in a future chapter.');
 }
 
 function showToast(msg) {

@@ -7,8 +7,8 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Predictive Panel · BrandOS": true,
-  "Pressure-test a brand or content decision before it ships. The Predictive Panel runs it past a synthetic audience built from your Brand Profile.":
-    "Mettez une décision de marque ou de contenu à l’épreuve avant sa sortie. Predictive Panel la soumet à une audience synthétique construite à partir de votre Profil de marque.",
+  "The Predictive Panel runs a launch past a synthetic audience built from your Brand Profile before it ships: scenarios, failure points, a go or no-go verdict. Part of Hold in BrandOS. Not open yet.":
+    "Predictive Panel soumet un lancement à une audience synthétique construite à partir de votre Profil de marque, avant sa sortie : scénarios, points de rupture, verdict go ou no-go. Fait partie de Hold dans BrandOS. Pas encore ouvert.",
 
   /* ── Tool header and footer ─────────────────────────────────────── */
   "Brand": true,
@@ -16,17 +16,17 @@ QBI18N.add('fr', {
   "Toggle theme": "Changer de thème",
   "Parameters": "Paramètres",
   "Simulating": "Simulation",
-  /* "Intelligence", the third step, stays as written (shared.js). */
+  "Results": "Résultats",
   "Predictive Panel / Active": "Predictive Panel / Actif",
 
   /* ── Step 0 · parameters ────────────────────────────────────────── */
   "Simulation Parameters": "Paramètres de simulation",
-  "Initialize a probabilistic market simulation. The engine will instantiate thousands of synthetic agents based on your persona parameters and test your product concept before capital is deployed.":
-    "Lancez une simulation de marché probabiliste. Le moteur crée des milliers d’agents synthétiques à partir des paramètres de votre persona et teste votre concept de produit avant que le capital ne soit engagé.",
+  "Initialize a probabilistic market simulation. The engine will instantiate thousands of synthetic personas based on your persona parameters and test your product concept before capital is deployed.":
+    "Lancez une simulation de marché probabiliste. Le moteur crée des milliers de personas synthétiques à partir des paramètres de votre persona et teste votre concept de produit avant que le capital ne soit engagé.",
   "Simulation Scale": "Échelle de simulation",
-  "1,000 agents / Fast": "1 000 agents / Rapide",
-  "5,000 agents / Standard": "5 000 agents / Standard",
-  "10,000 agents / Deep": "10 000 agents / Approfondi",
+  "1,000 personas": "1 000 personas",
+  "5,000 personas": "5 000 personas",
+  "10,000 personas": "10 000 personas",
 
   "Identity Vector": "Vecteur d’identité",
   "Sourced from QBP": "Issu du QBP",
@@ -60,15 +60,15 @@ QBI18N.add('fr', {
 
   /* Errors. The specific pattern sits before the general one. */
   "Parameters incomplete. Please fill all required fields.": "Paramètres incomplets. Remplissez tous les champs obligatoires.",
-  "Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.":
-    "La synthèse était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Réessayez dans un instant.",
+  "The panel was unavailable. No simulation was generated. Try again in a moment.":
+    "Le panel était indisponible. Aucune simulation n’a été générée. Réessayez dans un instant.",
   "Panel disruption: API Error: {0}": "Perturbation du panel : erreur d’API {0}",
   "Panel disruption: {0}": "Perturbation du panel : {0}",
 
   /* ── Step 1 · running ───────────────────────────────────────────── */
   "Processing": "Traitement en cours",
   "Instantiating synthetic persona architecture...": "Création de l’architecture de personas synthétiques…",
-  "Seeding {0} market agents from profile parameters...": "Génération de {0} agents de marché à partir des paramètres du profil…",
+  "Seeding {0} synthetic personas from profile parameters...": "Génération de {0} personas synthétiques à partir des paramètres du profil…",
   "Running multi-variant scenario simulations...": "Exécution des simulations de scénarios à variantes multiples…",
   "Mapping probabilistic event distributions...": "Cartographie des distributions probabilistes d’événements…",
   "Identifying structural high-confidence zones...": "Repérage des zones structurelles de haute confiance…",
@@ -79,14 +79,9 @@ QBI18N.add('fr', {
   /* "{n}%" is two nodes in JSX. French sets a no-break space before %. */
   "%": " %",
 
-  /* Agent counts, as toLocaleString() writes them in an English browser */
-  "1,000": "1 000",
-  "5,000": "5 000",
-  "10,000": "10 000",
-
   /* ── Step 2 · results ───────────────────────────────────────────── */
   "Simulation Complete /": "Simulation terminée /",
-  "Agents": "agents",
+  "Personas": "personas",
   "Configure New": "Nouvelle simulation",
   "Overall Confidence": "Confiance globale",
   "Brand Alignment": "Alignement de marque",

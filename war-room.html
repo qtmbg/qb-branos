@@ -536,7 +536,7 @@
         { id: 't1d', t: 'Account creation and magic link smoke test', d: 'Fresh email, signup, magic link arrives, click, land authenticated. Check the spam folder.', a: 'Nizzar', time: '10 min' },
         { id: 't1e', t: 'Stripe checkout completes', d: 'Pick Starter tier, Stripe checkout opens, test card 4242, redirect lands cleanly on the success page.', a: 'Nizzar', time: '10 min' },
         { id: 't1f', t: 'Webhook updates profile tier in Supabase', d: 'After test checkout, open Supabase profiles table, confirm the row updated. The critical link. Without this, payment opens nothing.', a: 'Nizzar', time: '5 min' },
-        { id: 't1g', t: 'Authenticated user runs a paid tool to output', d: 'Same session as the checkout. Open one Phase 02 agent. QBP loads. Tool calls AI. Output renders.', a: 'Nizzar', time: '15 min' },
+        { id: 't1g', t: 'Authenticated user runs a paid tool to output', d: 'Same session as the checkout. Open one Build agent. QBP loads. Tool calls AI. Output renders.', a: 'Nizzar', time: '15 min' },
         { id: 't1h', t: 'QBP writes through to Supabase, not just localStorage', d: 'brand-soul-map.html, complete one module, check the Supabase qbp table for the row. War room gl4.', a: 'Nizzar', time: '10 min' }
       ]
     },
@@ -549,7 +549,7 @@
         { id: 't2c', t: 'Mobile pass on actual phone, every tool', d: 'Open quantumbranding.ai on your phone. Walk the same flow. Note every layout break, tap target issue, and scroll trap.', a: 'Nizzar', time: '30 min' },
         { id: 't2d', t: 'War Table audience module: build or remove', d: 'Four fields (beliefs, language, platforms, pain points) are not wired. Either ship the full tool or remove it from the v1 flow. Do not ship a half-tool.', a: 'Build Chat', time: 'Decision now' },
         { id: 't2e', t: 'Error states have human messages and retry buttons', d: 'Defensive parsing covers the data side. Now check the UX side. AI timeout, rate limit, malformed response. User sees a clear message, not a stack trace.', a: 'Build Chat', time: '45 min' },
-        { id: 't2f', t: 'QBP pre-population verified across all Phase 01 tools', d: 'Complete one tool, confirm the next reads the new fields. Brand Soul Map, Sensescape, Visual DNA, War Table.', a: 'Nizzar', time: '20 min' },
+        { id: 't2f', t: 'QBP pre-population verified across the foundation exercises', d: 'Complete one tool, confirm the next reads the new fields. Brand Soul Map, Sensescape, Visual DNA, War Table.', a: 'Nizzar', time: '20 min' },
         { id: 't2g', t: 'Email deliverability tested from cold inbox', d: 'Send a magic link to a Gmail and an Outlook account you do not own. Confirm inbox placement, not spam.', a: 'Nizzar', time: '15 min' },
         { id: 't2h', t: 'Support inbox and refund flow ready', d: 'support@quantumbranding.ai live. Refund flow in Stripe tested once. A known-issues note in a doc you can paste from.', a: 'Nizzar', time: '20 min' }
       ]
@@ -560,15 +560,15 @@
       tasks: [
         { id: 't3a', t: 'BrandOS Atelier landing page', d: 'Premium consulting wedge. Highest-leverage backlog item because it monetises Scan traffic at higher price points. Shipped in PR #13.', a: 'Build Chat', time: 'Week 1 post-launch' },
         { id: 't3b', t: 'Atelier CTA after Signal Scan result', d: 'Bridges the Scan output into a consulting funnel. Copy lead: "Not enough time. Let us build it with you."', a: 'Build Chat', time: 'Week 1 post-launch' },
-        { id: 't3c', t: 'Atelier card in pricing section', d: 'Reframe the four-tier matrix as four products and one service on ecosystem.html.', a: 'Build Chat', time: 'Week 1 post-launch' },
+        { id: 't3c', t: 'Atelier card in pricing section', d: 'Place Atelier beside Brand Profile and Starter on ecosystem.html, as a door with no price.', a: 'Build Chat', time: 'Week 1 post-launch' },
         { id: 't3d', t: 'Predictive Panel gates 1 and 2: reposition or kill', d: 'Per the decisions panel, the call was "Reposition". Decide what they are before building.', a: 'Decision then Build Chat', time: 'Week 2 post-launch' },
         { id: 't3e', t: 'PDF exports: Brand Performance and Quarterly Review', d: 'Brand Document Builder pattern. Easy to add when customers ask.', a: 'Build Chat', time: 'On demand' },
-        { id: 't3f', t: 'Managed Agents: prove Phase 02 orchestration end-to-end', d: 'SDK install, quickstart, extract Phase 02 prompts, create agent, create environment, end-to-end run. The v2 of the product.', a: 'Build Chat', time: '2 to 3 weeks' },
-        { id: 't3g', t: 'Build The Feed (SSE stream)', d: 'User-facing layer that watches agents work. Only after the Phase 02 agent is proven.', a: 'Build Chat', time: 'After 3f' },
-        { id: 't3h', t: 'Phase 03, 04, 05 agents and gate wiring', d: 'Sequenced after Phase 02 works in production.', a: 'Build Chat', time: '4 to 6 weeks' },
+        { id: 't3f', t: 'Managed Agents: prove Build orchestration end-to-end', d: 'SDK install, quickstart, extract the Build prompts, create agent, create environment, end-to-end run. The v2 of the product.', a: 'Build Chat', time: '2 to 3 weeks' },
+        { id: 't3g', t: 'Build The Feed (SSE stream)', d: 'User-facing layer that watches agents work. Only after the Build agent is proven.', a: 'Build Chat', time: 'After 3f' },
+        { id: 't3h', t: 'Hold tools and gate wiring', d: 'Sequenced after Build works in production.', a: 'Build Chat', time: '4 to 6 weeks' },
         { id: 't3i', t: 'Server-side API proxy (replaces the ?apikey= pattern)', d: 'Architectural shift, not hotfix. The clean fix for the Tier 00 security note. After revenue is flowing.', a: 'Build Chat', time: '1 week focused' },
         { id: 't3j', t: 'Native app: framework choice, WebView, Feed, App Store', d: 'Do not start until agents are proven. A native shell around a half-built web app is a worse product.', a: 'Arch Chat then Build', time: 'Q3 2026' },
-        { id: 't3k', t: 'Buffer integration for Content Scheduler', d: 'Only when paying customers want auto-posting. Token paste, 5 min.', a: 'Nizzar', time: 'On demand' }
+        { id: 't3k', t: 'Buffer integration for auto-posting', d: 'Only when paying customers want auto-posting. Token paste, 5 min.', a: 'Nizzar', time: 'On demand' }
       ]
     }
   ];

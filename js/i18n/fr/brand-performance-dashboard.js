@@ -4,26 +4,20 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Brand Performance Dashboard · BrandOS": "Tableau de bord de performance de marque · BrandOS",
-  "Track brand performance across acquisition, engagement, and conversion, read against the Brand Profile you locked. Phase 06 inside BrandOS.":
-    "Suivez la performance de la marque sur l’acquisition, l’engagement et la conversion, lue au regard du Profil de marque que vous avez verrouillé. Phase 06 dans BrandOS.",
-
-  /* ── Footer blurb (short form used on tool pages) ───────────────── */
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
+  "The Brand Performance Dashboard reads the performance data you enter against your Brand Profile: health scores, signals, the next 30 days. Part of Hold in BrandOS. Not open yet.":
+    "Le Tableau de bord de performance de marque lit les données de performance que vous saisissez au regard de votre Profil de marque\u00a0: scores de santé, signaux, 30 prochains jours. Fait partie de Hold dans BrandOS. Pas encore ouvert.",
 
   /* ── Tool header and footer ─────────────────────────────────────── */
-  "QB_BrandOS": true,
-  "Phase 05 · Intelligence": true,
   "Data Input": "Saisie des données",
   "Intelligence": true,
   "Dashboard": "Tableau de bord",
-  "Brand Performance Dashboard / Phase 05": "Tableau de bord de performance de marque / Phase 05",
+  "Brand Performance Dashboard / Hold": "Tableau de bord de performance de marque / Hold",
 
   /* ── Step 1 · intro ─────────────────────────────────────────────── */
   "Intelligence Agent Ready": "Agent d’intelligence prêt",
   "Brand Performance Dashboard": "Tableau de bord de performance de marque",
-  "Feed your performance data. The agent reads it through the brand lens - not as a metrics report, but as human intelligence.":
-    "Donnez vos données de performance. L’agent les lit à travers le prisme de la marque. Pas comme un rapport de métriques, mais comme une intelligence humaine.",
+  "Feed your performance data. The agent reads it through the brand lens - not as a metrics report, but as brand intelligence.":
+    "Donnez vos données de performance. L’agent les lit à travers le prisme de la marque. Pas comme un rapport de métriques, mais comme une intelligence de marque.",
 
   /* ── Step 1 · brand context ─────────────────────────────────────── */
   "Brand Context": "Contexte de marque",
@@ -32,18 +26,6 @@ QBI18N.add('fr', {
   "The brand under review": "La marque étudiée",
   "Archetype": "Archétype",
   "- select -": "- choisir -",
-  "The Rebel": true,
-  "The Sage": true,
-  "The Creator": true,
-  "The Ruler": true,
-  "The Magician": true,
-  "The Hero": true,
-  "The Explorer": true,
-  "The Caregiver": true,
-  "The Jester": true,
-  "The Everyman": true,
-  "The Innocent": true,
-  "The Lover": true,
   "Brand Essence *": "Essence de marque *",
   "The irreducible truth - one sentence": "La vérité irréductible, en une phrase",
   "Primary Persona": "Persona principal",
@@ -107,8 +89,8 @@ QBI18N.add('fr', {
   /* ── Errors ─────────────────────────────────────────────────────── */
   "Please add a brand name, brand essence, and at least one platform with data.":
     "Ajoutez un nom de marque, une essence de marque et au moins une plateforme avec des données.",
-  "Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.":
-    "La synthèse était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Réessayez dans un instant.",
+  "Synthesis was unavailable. The reading could not be generated. Try again in a moment.":
+    "La synthèse était indisponible. La lecture n’a pas pu être générée. Réessayez dans un instant.",
   "Agent error: API error {0}: {1}": "Erreur de l’agent\u00a0: erreur d’API {0}, {1}",
   "Agent error: API error {0}:": "Erreur de l’agent\u00a0: erreur d’API {0}",
   "Agent error: {0}": "Erreur de l’agent\u00a0: {0}",

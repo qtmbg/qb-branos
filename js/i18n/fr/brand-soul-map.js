@@ -5,8 +5,8 @@
 QBI18N.add('fr', {
   /* ── Head ── */
   "The Brand Soul Map · BrandOS": "Brand Soul Map · BrandOS",
-  "The Brand Soul Map · BrandOS Phase 01 - discover your brand's irreducible truth, archetype, and emotional foundation.":
-    "Brand Soul Map · BrandOS, Phase 01. Découvrez la vérité irréductible de votre marque, son archétype et son socle émotionnel.",
+  "The Brand Soul Map, an Observe exercise in BrandOS. Discover your brand's irreducible truth, archetype, and emotional foundation.":
+    "Brand Soul Map, un exercice Observe de BrandOS. Découvrez la vérité irréductible de votre marque, son archétype et son socle émotionnel.",
 
   /* ── Chassis: sidebar, dock, save indicator, footer ── */
   "⎔ Soul Map": true,
@@ -40,7 +40,7 @@ QBI18N.add('fr', {
   "Sys.synced": "Sys.synchronisé",
 
   /* ── Step 0 · Initialize ── */
-  "Phase 01 · Soul Map · The start": "Phase 01 · Soul Map · Le départ",
+  "Observe · Soul Map · The start": "Observe · Soul Map · Le départ",
   "Name what you are uncovering.": "Nommez ce que vous mettez au jour.",
   "The brand is not being invented here. It is being uncovered. Over the next six modules you will define the core convictions, positioning, and cultural stance of your brand. No skipping ahead. The order is the work.":
     "Ici, la marque ne s’invente pas. Elle se révèle. Au fil des six modules, vous allez définir les convictions profondes, le positionnement et la position culturelle de votre marque. On ne saute aucune étape. L’ordre, c’est le travail.",
@@ -606,8 +606,8 @@ QBI18N.add('fr', {
   /* ── Step 13 · Auth ── */
   "Final protocol": "Protocole final",
   "Authorization required": "Autorisation requise",
-  "Provide your identity and email to secure your final Brand Soul Map.":
-    "Indiquez votre identité et votre e-mail pour sécuriser votre Brand Soul Map final.",
+  "Say who this Brand Soul Map is for. The synthesis comes next.":
+    "Dites à qui cette Brand Soul Map est destinée. La synthèse vient ensuite.",
   "Email address (required)": "Adresse e-mail (obligatoire)",
   "you@example.com": "vous@exemple.com",
   "Last name": "Nom",
@@ -617,8 +617,8 @@ QBI18N.add('fr', {
   /* ── Step 14 · Synthesis: loading ── */
   "· Synthesis engine": "· Moteur de synthèse",
   "Distilling your identity.": "Distillation de votre identité.",
-  "A senior brand strategist would take a week to write this. We are writing it now: verdict, essence, spark, field report, operating principles. In your voice. From your fifteen answers. This takes about thirty seconds.":
-    "Un stratège de marque senior mettrait une semaine à écrire ceci. Nous l’écrivons maintenant\u00a0: verdict, essence, étincelle, rapport de terrain, principes de fonctionnement. Dans votre voix. À partir de vos quinze réponses. Comptez une trentaine de secondes.",
+  "A senior brand strategist would take a week to write this. We are writing it now: verdict, essence, spark, field report, operating principles. In your voice. From your fifteen exercises. This takes about thirty seconds.":
+    "Un stratège de marque senior mettrait une semaine à écrire ceci. Nous l’écrivons maintenant\u00a0: verdict, essence, étincelle, rapport de terrain, principes de fonctionnement. Dans votre voix. À partir de vos quinze exercices. Comptez une trentaine de secondes.",
   "Reading the fifteen exercises back-to-back": "Lecture des quinze exercices d’une traite",
   "Surfacing the coherent identity across modules": "Mise au jour de l’identité cohérente entre les modules",
   "Reading the archetype stack tension": "Lecture de la tension entre les archétypes",
@@ -641,8 +641,8 @@ QBI18N.add('fr', {
   "Synthesis is being finalised.": "La synthèse est en cours de finalisation.",
   "To generate the Brand Soul Map Codex in your brand voice, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. Your full 15-exercise session is saved and will not be lost. You can retry once the key is active, or export the raw session below.":
     "Pour générer le Codex Brand Soul Map dans la voix de votre marque, cette page doit être servie par Vercel (ou par un `vercel dev` local) avec la clé API QB configurée. Votre session complète de 15 exercices est enregistrée et ne sera pas perdue. Vous pourrez réessayer une fois la clé active, ou exporter la session brute ci-dessous.",
-  "Something interrupted the synthesis before it completed. Your answers are preserved. Click Retry to re-run the synthesis. The founder copy of this document will be produced - the tool will not ship a template instead.":
-    "Quelque chose a interrompu la synthèse avant la fin. Vos réponses sont conservées. Cliquez sur «\u00a0Relancer la synthèse\u00a0» pour la refaire. Le document destiné au fondateur sera bien produit. L’outil ne livrera pas un modèle générique à la place.",
+  "Something interrupted the synthesis before it completed. Your answers are preserved. Use Retry synthesis to run it again. The founder copy of this document will be produced. The tool will not ship a template instead.":
+    "Quelque chose a interrompu la synthèse avant la fin. Vos réponses sont conservées. Utilisez «\u00a0Relancer la synthèse\u00a0» pour la refaire. Le document destiné au fondateur sera bien produit. L’outil ne livrera pas un modèle générique à la place.",
   "Retry synthesis": "Relancer la synthèse",
   "Export my raw session": "Exporter ma session brute",
   "Retry attempt {0}": "Tentative {0}",

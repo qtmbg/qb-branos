@@ -8,7 +8,7 @@ QBI18N.add('fr', {
   "↓ Save as PDF": "↓ Enregistrer en PDF",
 
   /* ── Cover ── */
-  "Brand Soul Map · Phase 01": true,
+  "Brand Soul Map · Observe": true,
   "Brand Name": "Nom de la marque",
   "Strategic Brand Identity Report": "Rapport stratégique d’identité de marque",
   "Generated": "Généré le",
@@ -36,7 +36,7 @@ QBI18N.add('fr', {
   "Your brand statement will appear here. This is the declaration of your brand's place in the world - specific, bold, paradoxical, and undeniably true to who you are.":
     "La déclaration de votre marque apparaîtra ici. Elle affirme la place de votre marque dans le monde\u00a0: précise, audacieuse, paradoxale et indéniablement fidèle à ce que vous êtes.",
   "Your Brand Spark will appear here once the Brand Soul Map is complete.":
-    "L’Étincelle de votre marque apparaîtra ici une fois le Brand Soul Map terminé.",
+    "L’Étincelle de votre marque apparaîtra ici une fois la Brand Soul Map terminée.",
   "Brand Essence will appear here.": "L’Essence de la marque apparaîtra ici.",
 
   /* ── Identity page ── */
@@ -88,8 +88,8 @@ QBI18N.add('fr', {
   "This is the beginning": "Ceci est le début",
   "of your brand's": "de l’architecture",
   "architecture.": "de votre marque.",
-  "The Brand Soul Map is Phase 01 of your brand's path inside BrandOS. Your outputs have been saved to your Quantum Brand Profile and will automatically inform every tool, agent, and strategy that follows. Nothing gets repeated. Everything compounds.":
-    "Le Brand Soul Map est la Phase 01 du chemin de votre marque dans BrandOS. Vos résultats ont été enregistrés dans votre Quantum Brand Profile et nourriront automatiquement chaque outil, chaque agent et chaque stratégie à venir. Rien ne se répète. Tout se cumule.",
-  "Continue to Phase 02 →": "Continuer vers la Phase 02 →",
+  "The Brand Soul Map is part of Observe, the first movement in BrandOS. Your outputs have been saved to your Quantum Brand Profile and will automatically inform every tool, agent, and strategy that follows. Nothing gets repeated. Everything compounds.":
+    "La Brand Soul Map fait partie d’Observe, le premier mouvement de BrandOS. Vos résultats ont été enregistrés dans votre Quantum Brand Profile et nourriront automatiquement chaque outil, chaque agent et chaque stratégie à venir. Rien ne se répète. Tout se cumule.",
+  "Continue your foundation →": "Poursuivre votre fondation →",
   "Created by": "Créé par"
 });

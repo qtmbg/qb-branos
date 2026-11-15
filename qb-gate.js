@@ -65,11 +65,18 @@
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
   }
+  // The gate is shown to visitors with no account, so it only ever names
+  // and counts what a free account can open. Visual DNA and War Table open
+  // with Starter (qb-cloud.js PAID_TOOLS): they are not promised here.
+  function freeFoundationTools(){
+    const paid = QB.PAID_TOOLS || [];
+    return QB.PHASE_01_TOOLS.filter(t => paid.indexOf(t) === -1);
+  }
   function remainingTools(currentToolId){
-    const remaining = QB.PHASE_01_TOOLS
+    const remaining = freeFoundationTools()
       .filter(t => t !== currentToolId)
       .map(t => QB.TOOL_NAMES[t]);
-    if (remaining.length === 0) return 'every Phase 02+ tool';
+    if (remaining.length === 0) return 'The tools that follow';
     if (remaining.length === 1) return remaining[0];
     if (remaining.length === 2) return remaining.join(' and ');
     return remaining.slice(0, -1).join(', ') + ', and ' + remaining[remaining.length - 1];
@@ -77,15 +84,18 @@
 
   function buildSaveModal(opts){
     const { toolId, toolName, brandName } = opts;
-    const progressNow = QB.phase01Progress();
-    // Pip count includes the just-completed tool, capped at total
+    // Progress over the free tools only. Pip count includes the
+    // just-completed tool, capped at total.
+    const freeTools = freeFoundationTools();
+    const done = (QB.getCompletions && QB.getCompletions()) || {};
+    const progressNow = { completed: freeTools.filter(t => done[t]).length, total: freeTools.length };
     const pipsLit = Math.min(progressNow.completed + 1, progressNow.total);
     const titleText = brandName
       ? "Save " + escapeHtml(brandName) + "'s Profile"
       : 'Your result is ready.';
     const subText = brandName
-      ? "One click and your work is saved. " + escapeHtml(remainingTools(toolId)) + " build directly on it — no re-entering anything."
-      : "One click and your result is saved. The next tools build on it — no re-entering anything.";
+      ? "One click and your work is saved. " + escapeHtml(remainingTools(toolId)) + " build directly on it. Nothing to re-enter."
+      : "One click and your result is saved. The next tools build on it. Nothing to re-enter.";
 
     const overlay = document.createElement('div');
     overlay.className = 'qb-gate-overlay';
@@ -95,7 +105,7 @@
           + '<span class="qb-gate-context-dot"></span>'
           + escapeHtml((toolName || '').toUpperCase()) + ' · COMPLETE'
         + '</div>'
-        + '<div class="qb-gate-progress" aria-label="Phase 01 progress">'
+        + '<div class="qb-gate-progress" aria-label="Foundation progress">'
           + Array.from({ length: progressNow.total }, function(_, i){
               return '<div class="qb-gate-pip ' + (i < pipsLit ? 'done' : '') + '"></div>';
             }).join('')
@@ -111,7 +121,7 @@
         + '</div>'
         + '<button class="qb-gate-btn" id="qb-gate-submit">Save my Brand Profile →</button>'
         + '<div class="qb-gate-err" id="qb-gate-err" style="display:none"></div>'
-        + '<button class="qb-gate-skip" id="qb-gate-skip">Maybe later — just show me the result</button>'
+        + '<button class="qb-gate-skip" id="qb-gate-skip">Maybe later. Show me the result</button>'
         + '<div class="qb-gate-fine">No password. Magic link. Always free. Never spam.</div>'
       + '</div>';
     return overlay;
@@ -148,7 +158,7 @@
           + '<div class="qb-gate-success-icon">✦</div>'
           + '<div class="qb-gate-label">Check your inbox</div>'
           + '<h2 class="qb-gate-title">Magic link sent to ' + escapeHtml(email) + '</h2>'
-          + '<p class="qb-gate-sub">Click the link to save your profile. We\'ll bring you right back to your result. Takes about 10 seconds.</p>'
+          + '<p class="qb-gate-sub">Click the link to save your profile. It signs you in and opens your foundation. Takes about 10 seconds.</p>'
           + '<button class="qb-gate-skip" id="qb-gate-success-close">Continue without saving</button>'
           + '<div class="qb-gate-fine">If you don\'t see it within a minute, check spam. The link expires in 60 minutes.</div>'
         + '</div>'

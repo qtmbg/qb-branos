@@ -25,7 +25,7 @@
 
 import {
   createExerciseCard, createPhaseCard, createArtifactRow, createTierBadge,
-  createPaywallModal, createLockFoundationCta,
+  createPaywallModal, createLockFoundationCta, STARTER_ADDS, STARTER_PRICE_LINE,
 } from '/js/qb-components.js';
 
 const PAID_TIERS = new Set(['starter','pro','agency','atelier']);
@@ -78,16 +78,16 @@ const PHASE_01_EXERCISES = [
   },
 ];
 
-/* The four free-tier exercises required to lock the foundation. */
+/* The three free exercises required to lock the foundation. */
 const REQUIRED_FREE_SLUGS = new Set(['archetype-compass','brand-soul-map','sensescape']);
 
-const PHASE_ROADMAP = [
-  { phase: '01', name: 'Discovery',     comingSoon: false },
-  { phase: '02', name: 'Brand Creation', comingSoon: true },
-  { phase: '03', name: 'Content',       comingSoon: true },
-  { phase: '04', name: 'Execution',     comingSoon: true },
-  { phase: '05', name: 'Intelligence',  comingSoon: true },
-];
+/* What a founder reads for each reading while it is produced. */
+const READING_NAMES = {
+  soul_map_synthesizer:   'Soul Map',
+  sensescape_synthesizer: 'Sensescape',
+  visual_dna_synthesizer: 'Visual DNA',
+  war_table_synthesizer:  'War Table',
+};
 
 /* ─── DOM helpers ─────────────────────────────────────────── */
 function el(tag, attrs = {}, children = []) {
@@ -217,30 +217,21 @@ function buildBanner(text, modifier = '') {
 // rule (adj #2 override): (1) confirm decision was right, (2) name what
 // is now open, (3) point at the single next action on the foundation
 // page today.
+/* One paid plan is sold, so one banner. It says what Starter opens and
+   nothing else: no Pro, no Agency, no client workspaces, no white-label.
+   An account on a dormant tier that lands here reads the same true list
+   under a neutral line, because "Starter is live." would not be its plan. */
 const UPGRADE_BANNER_COPY = {
-  starter: {
-    eyebrow: 'Starter is live.',
-    headline: 'Your tools are unlocked.',
-    body: 'Your full foundation, your QBP export and the Phase 02 agents are open. The Visual DNA and War Table exercises just unlocked · finish them to lock your foundation and trigger the full Phase 01 synthesis.',
-  },
-  pro: {
-    eyebrow: 'Pro is live.',
-    headline: 'Everything is open.',
-    body: 'Your full foundation and all agents are open today. Visual DNA and War Table are waiting · finish them to trigger your Phase 01 synthesis. Predictive Panel and Phase 02 brand creation come online as they ship, and everything you build now compounds into them.',
-  },
-  agency: {
-    eyebrow: 'Agency is live.',
-    headline: 'Client mode is on.',
-    body: 'Multi-brand workspaces and white-label exports are yours. Run this brand\'s foundation first · Visual DNA and War Table are waiting · then create your first client workspace.',
-  },
+  headline: 'Your tools are open.',
+  body: 'The Visual DNA and War Table exercises, the three other foundation readings, the Build agents and the full QBP export are open. Visual DNA and War Table are next, on this page.',
 };
-// Default fallback · if tier is unrecognized (atelier or unknown future
-// tier), use the Starter copy. Atelier tier is documented in PAID_TIERS
-// but has no chapter-2-specific copy yet.
-const UPGRADE_BANNER_DEFAULT = UPGRADE_BANNER_COPY.starter;
 
 function buildUpgradeSuccessBanner({ tier, onDismiss }) {
-  const copy = UPGRADE_BANNER_COPY[String(tier || 'starter').toLowerCase()] || UPGRADE_BANNER_DEFAULT;
+  const copy = {
+    eyebrow: String(tier || 'starter').toLowerCase() === 'starter' ? 'Starter is live.' : 'Your plan is live.',
+    headline: UPGRADE_BANNER_COPY.headline,
+    body: UPGRADE_BANNER_COPY.body,
+  };
   const closeBtn = el('button', {
     type: 'button',
     class: 'qb-foundation-upgrade-success__close',
@@ -261,39 +252,60 @@ function buildUpgradeSuccessBanner({ tier, onDismiss }) {
   ]);
 }
 
-/* ─── Phase roadmap ──────────────────────────────────────── */
-function buildPhaseRoadmap(state) {
-  const phase01State =
-    state.bucket === 'locked' ? 'complete'
-    : state.allRequiredComplete ? 'complete'
-    : state.anyComplete ? 'available'
-    : 'available';
+/* ─── Movement roadmap ───────────────────────────────────── */
+/* Three cards for the four movements: the foundation (Observe and
+   Collapse), Build, Hold. The phase key only picks the card colour.
+   The foundation card reads "locked" only once it is locked: it used to
+   say "Locked. Artifacts delivered." as soon as the three exercises were
+   done, before anything had been locked or produced. */
+function buildPhaseRoadmap(state, opts = {}) {
+  const locked = state.bucket === 'locked';
+  const count = state.requiredExercises.filter(e => e.state === 'complete').length;
+  const next = state.exercises.find(e => e.state !== 'complete' && !e.locked);
 
-  const cards = PHASE_ROADMAP.map(p => {
-    if (p.phase === '01') {
-      const count = state.requiredExercises.filter(e => e.state === 'complete').length;
-      return createPhaseCard({
-        phase: '01',
-        name: 'Discovery',
-        state: phase01State,
-        count,
-        total: state.requiredExercises.length,
-        ctaLabel: phase01State === 'complete' ? 'View artifacts' : 'Continue',
-        ctaHref: phase01State === 'complete' ? '/archive' : (state.exercises.find(e => e.state !== 'complete' && !e.locked)?.href || '/foundation'),
-      });
-    }
-    return createPhaseCard({
-      phase: p.phase,
-      name: p.name,
+  const cards = [
+    createPhaseCard({
+      phase: '01',
+      eyebrow: 'Observe · Collapse',
+      name: 'The foundation',
+      state: locked ? 'complete' : 'available',
+      count,
+      total: state.requiredExercises.length,
+      ctaLabel: locked ? 'Open the archive' : 'Continue',
+      ctaHref: locked ? '/archive' : (next?.href || '/foundation'),
+    }),
+    state.isPaid
+      ? createPhaseCard({
+          phase: '02',
+          eyebrow: 'Build',
+          name: 'The Build agents',
+          state: 'available',
+          note: 'Logo Direction, Logo Evaluation, Voice Guide.',
+          ctaLabel: 'Open the Console',
+          ctaHref: '/agents',
+        })
+      : createPhaseCard({
+          phase: '02',
+          eyebrow: 'Build',
+          name: 'The Build agents',
+          state: 'locked',
+          lockReason: 'Opens with Starter.',
+          ctaLabel: 'Upgrade',
+          onCta: () => openPaywall('phase_02', opts),
+        }),
+    createPhaseCard({
+      phase: '05',
+      eyebrow: 'Hold',
+      name: 'The Hold tools',
       state: 'locked',
-      lockReason: 'Coming in a future chapter',
-      ctaLabel: 'Coming soon',
+      lockReason: 'Not open yet.',
+      ctaLabel: 'Not open yet',
       ctaDisabled: true,
-    });
-  });
+    }),
+  ];
 
   return el('section', { class: 'qb-foundation-roadmap' }, [
-    el('div', { class: 'qb-foundation-roadmap__eyebrow' }, 'Your journey'),
+    el('div', { class: 'qb-foundation-roadmap__eyebrow' }, 'The four movements'),
     el('div', { class: 'qb-foundation-roadmap__grid' }, cards),
   ]);
 }
@@ -322,9 +334,9 @@ function openPaywall(reasonSlug, opts) {
   const overlay = createPaywallModal({
     reason: reasonSlug || 'artifact',
     eyebrow: 'Locked',
-    headline: 'Unlock the rest of your foundation.',
-    body: 'Visual DNA, War Table, three remaining synthesis artifacts, and your QBP export — all on Starter.',
-    price: 'Starter, $97 / month. Cancel anytime.',
+    headline: 'Open the rest of your foundation.',
+    body: STARTER_ADDS,
+    price: STARTER_PRICE_LINE,
     primaryCta: 'Upgrade to Starter',
     secondaryCta: 'Not now',
     onPrimary: () => (opts.onUpgradeClick ? opts.onUpgradeClick() : (window.location.href = `/paywall?reason=${reasonSlug || 'artifact'}`)),
@@ -357,7 +369,7 @@ function renderCold(state, opts) {
       }),
     ]),
   ]);
-  return [hero, buildPhaseRoadmap(state)];
+  return [hero, buildPhaseRoadmap(state, opts)];
 }
 
 /* ─── In-progress state ──────────────────────────────────── */
@@ -366,14 +378,14 @@ function renderInProgress(state, opts) {
   const totalCount    = state.requiredExercises.length;
   const hero = el('section', { class: 'qb-foundation-hero is-in-progress' }, [
     el('div', { class: 'qb-foundation-hero__copy' }, [
-      el('div', { class: 'qb-foundation-hero__eyebrow' }, 'Phase 01 · Discovery'),
+      el('div', { class: 'qb-foundation-hero__eyebrow' }, 'The foundation'),
       el('h1',  { class: 'qb-foundation-hero__title' }, 'Continue your foundation.'),
       el('p',   { class: 'qb-foundation-hero__body' },
-        'Complete the Phase 01 exercises to lock your foundation. After lock, your synthesis artifacts are produced.'),
+        'Archetype Compass, Brand Soul Map and Sensescape are what it takes to lock your foundation. After lock, your readings are produced.'),
       buildProgressBar(completeCount, totalCount),
     ]),
   ]);
-  return [hero, buildExerciseList(state, opts), buildPhaseRoadmap(state)];
+  return [hero, buildExerciseList(state, opts), buildPhaseRoadmap(state, opts)];
 }
 
 function buildProgressBar(complete, total) {
@@ -397,7 +409,7 @@ function renderLockReady(state, opts) {
       el('div', { class: 'qb-foundation-hero__eyebrow' }, 'Ready'),
       el('h1',  { class: 'qb-foundation-hero__title' }, 'Your foundation is ready to lock.'),
       el('p',   { class: 'qb-foundation-hero__body' },
-        'Once locked, your Phase 01 answers become immutable. Your synthesis artifacts will be produced and delivered to your inbox within minutes.'),
+        'Once locked, your foundation answers become immutable. Your readings are produced, and an email reaches you as each one is ready, within minutes.'),
       el('div', { class: 'qb-foundation-hero__actions' }, [
         createLockFoundationCta({
           enabled: true,
@@ -407,7 +419,7 @@ function renderLockReady(state, opts) {
       ]),
     ]),
   ]);
-  return [hero, buildExerciseList(state, opts), buildPhaseRoadmap(state)];
+  return [hero, buildExerciseList(state, opts), buildPhaseRoadmap(state, opts)];
 }
 
 function triggerLockConfirmation(opts) {
@@ -415,7 +427,7 @@ function triggerLockConfirmation(opts) {
     reason: 'lock_confirm',
     eyebrow: 'Confirm',
     headline: 'Lock your foundation?',
-    body: 'Once you lock your foundation, your Phase 01 answers become immutable. Your synthesis artifacts will be produced and emailed to you within minutes.',
+    body: 'Once you lock your foundation, your answers become immutable. Your readings are produced, and an email reaches you as each one is ready, within minutes.',
     price: '',
     primaryCta: 'Yes, lock my foundation',
     secondaryCta: 'Not yet',
@@ -440,7 +452,7 @@ function buildQueueRow(agentSlug, row) {
   const statusClass = `is-${(row?.status || 'queued')}`;
 
   return el('div', { class: 'qb-foundation-queue__row', dataset: { agent: agentSlug } }, [
-    el('div', { class: 'qb-foundation-queue__agent' }, agentSlug.replace(/_/g, ' ')),
+    el('div', { class: 'qb-foundation-queue__agent' }, READING_NAMES[agentSlug] || agentSlug.replace(/_/g, ' ')),
     el('span', { class: `qb-status-pill ${statusClass}` }, [
       el('span', { class: 'qb-status-pill__dot' }),
       el('span', {}, statusLabel),
@@ -457,22 +469,27 @@ function renderLocked(state, opts) {
     const hero = el('section', { class: 'qb-foundation-hero is-producing' }, [
       el('div', { class: 'qb-foundation-hero__copy' }, [
         el('div', { class: 'qb-foundation-hero__eyebrow' }, 'Producing'),
-        el('h1',  { class: 'qb-foundation-hero__title' }, 'Your artifacts are being prepared.'),
+        el('h1',  { class: 'qb-foundation-hero__title' }, 'Your readings are being prepared.'),
         el('p',   { class: 'qb-foundation-hero__body' },
           `We will email you when each one is ready. ${state.foundationLockedAt ? `Foundation locked at ${formatDateLight(state.foundationLockedAt)}.` : ''}`),
         queue,
       ]),
     ]);
-    return [hero, buildPhaseRoadmap(state)];
+    return [hero, buildPhaseRoadmap(state, opts)];
   }
 
   // 12.6.B / 12.6.C — All delivered
   const isPaid = state.isPaid;
   const eyebrow = 'Foundation locked';
-  const headline = isPaid ? 'Your foundation is built.' : 'Your Soul Map is ready.';
+  // "Your Soul Map is ready." only when it is: a failed run used to read
+  // as ready too.
+  const soulReady = state.byAgent.get('soul_map_synthesizer')?.status === 'delivered';
+  const headline = isPaid ? 'Your foundation is built.'
+    : soulReady ? 'Your Soul Map is ready.'
+    : 'Your foundation is locked.';
   const body = isPaid
-    ? 'Read each artifact. Your QBP is your living document.'
-    : 'The rest of your foundation is locked. Unlock with Starter to read.';
+    ? 'Read each one. Your QBP is your living document.'
+    : 'The three other readings open with Starter.';
 
   const hero = el('section', { class: 'qb-foundation-hero is-delivered' }, [
     el('div', { class: 'qb-foundation-hero__copy' }, [
@@ -505,14 +522,14 @@ function renderLocked(state, opts) {
   const banner = isPaid
     ? el('section', { class: 'qb-foundation-next' }, [
         el('p', { class: 'qb-foundation-next__text' },
-          'Phase 02 is open: Logo Direction, Logo Evaluation and Voice Guide. Your QBP keeps accumulating as you complete the Visual DNA and War Table exercises.'),
+          'Build is open: Logo Direction, Logo Evaluation and Voice Guide. Your QBP keeps growing as you complete the Visual DNA and War Table exercises.'),
       ])
     : el('section', { class: 'qb-foundation-upgrade-banner' }, [
         el('div', { class: 'qb-foundation-upgrade-banner__copy' }, [
           el('h2', { class: 'qb-foundation-upgrade-banner__title' },
-            'Unlock the rest of your foundation.'),
+            'Open the rest of your foundation.'),
           el('p',  { class: 'qb-foundation-upgrade-banner__body' },
-            'Starter unlocks the Sensescape, Visual DNA, and War Table artifacts, plus the Visual DNA and War Table exercises.'),
+            'Starter opens the Sensescape, Visual DNA and War Table readings, plus the Visual DNA and War Table exercises.'),
         ]),
         el('div', { class: 'qb-foundation-upgrade-banner__cta' }, [
           el('button', {
@@ -524,7 +541,7 @@ function renderLocked(state, opts) {
         ]),
       ]);
 
-  return [hero, tiles, banner, buildPhaseRoadmap(state)];
+  return [hero, tiles, banner, buildPhaseRoadmap(state, opts)];
 }
 
 function formatDateLight(iso) {

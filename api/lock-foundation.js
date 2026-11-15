@@ -193,7 +193,7 @@ export default async function handler(req) {
   if (missing.length > 0) {
     return jsonResp(
       409,
-      { ok: false, error: 'Phase 01 incomplete', missing },
+      { ok: false, error: 'Foundation incomplete', missing },
       corsH
     );
   }

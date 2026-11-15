@@ -16,9 +16,9 @@ function visibleSections(tier) {
 }
 
 function nextOffer(tier) {
-  if (tier === "free") return { label: "MRI Flash · 19 $", price: 19, to: "flash" };
-  if (tier === "flash") return { label: "Passer au rapport complet · 60 $ de plus (total 79 $)", price: 60, to: "full" };
-  if (tier === "full") return { label: "Ajouter la review video · 211 $ de plus (total 290 $)", price: 211, to: "review" };
+  if (tier === "free") return { label: "MRI Flash · 19 $", price: 19, to: "flash" };
+  if (tier === "flash") return { label: "Passer au rapport complet · 60 $ de plus (total 79 $)", price: 60, to: "full" };
+  if (tier === "full") return { label: "Ajouter la review vidéo · 211 $ de plus (total 290 $)", price: 211, to: "review" };
   return null;
 }
 

@@ -9,7 +9,7 @@
      The page stays deployable for the operator and drops out of the index. -->
 <meta name="robots" content="noindex, nofollow">
 <title>Content Bridge · BrandOS</title>
-<meta name="description" content="Carry raw insight into publishable content across platforms. The Content Bridge turns what you already know into posts that sound like your brand.">
+<meta name="description" content="Carry any agent output into production. Content Bridge turns a script, a strategy or a brand profile into a precise, platform-ready production brief.">
 
 <!-- Flash Prevention & Theme Init -->
 <script>
@@ -1657,7 +1657,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Content Bridge · BrandOS">
-<meta property="og:description" content="Carry raw insight into publishable content across platforms. The Content Bridge turns what you already know into posts that sound like your brand.">
+<meta property="og:description" content="Carry any agent output into production. Content Bridge turns a script, a strategy or a brand profile into a precise, platform-ready production brief.">
 <meta property="og:url" content="https://quantumbranding.ai/content-bridge.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/content-bridge.png">
 <meta property="og:image:width" content="1200">
@@ -1667,7 +1667,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Content Bridge · BrandOS">
-<meta name="twitter:description" content="Carry raw insight into publishable content across platforms. The Content Bridge turns what you already know into posts that sound like your brand.">
+<meta name="twitter:description" content="Carry any agent output into production. Content Bridge turns a script, a strategy or a brand profile into a precise, platform-ready production brief.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/content-bridge.png">
 <link rel="canonical" href="https://quantumbranding.ai/content-bridge.html">
 <!-- QB JSON-LD -->
@@ -1676,7 +1676,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Content Bridge",
-  "description": "Connect raw insight to publishable content across platforms.",
+  "description": "Turn any agent output into a platform-ready production brief.",
   "url": "https://quantumbranding.ai/content-bridge.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -2093,13 +2093,16 @@ Requirements: productionInstructions must be step-by-step for someone who has ne
   /* ── Render ───────────────────────────────────────────────────────────── */
   return (
     <div className="main-content">
-      {/* API Key Modal */}
-      {showApiModal && (
+      {/* API Key Modal. Mounted on <body>: inside .main-content (z-index 10)
+          its scrim sat under the banner and the site nav, which stayed bright
+          and clickable above the modal and clipped the top of its card. */}
+      {showApiModal && ReactDOM.createPortal(
         <ApiKeyModal
           currentKey={apiKey}
           onSave={saveApiKey}
           onClose={() => setShowApiModal(false)}
-        />
+        />,
+        document.body
       )}
 
       {/* HEADER */}

@@ -65,6 +65,7 @@ function parseQuery() {
     section:  params.get('section'),
     agent:    params.get('agent'),
     exercise: params.get('exercise'),
+    tool:     params.get('tool'),
     cancelled: params.get('cancelled'),
   };
 }
@@ -113,6 +114,7 @@ async function fetchTier(token) {
       section:   params.section,
       agent:     params.agent,
       exercise:  params.exercise,
+      tool:      params.tool,
       cancelled: params.cancelled,
     },
     tier,

@@ -13,15 +13,14 @@ QBI18N.add('fr', {
     "8 questions. 5 minutes. Une lecture précise des forces de votre marque, de ses faiblesses, et de ce qu’il faut corriger en premier.",
 
   /* ── Intro ──────────────────────────────────────────────────────── */
-  "· Intelligence": true,
-  "Brand Signal Scan": true,
+  "· Observe": true,
   "8 questions. 5 minutes. A precise read on where your brand is strong, where it is losing you money, and exactly what to do first.":
     "8 questions. 5 minutes. Une lecture précise de ce qui tient dans votre marque, de ce qui vous fait perdre de l’argent, et de ce qu’il faut faire en premier.",
   "5 minutes": true,
   "Instant score": "Score immédiat",
   "No credit card": "Sans carte bancaire",
   "Start the scan →": "Lancer le scan →",
-  "Used by 1,000+ founders and brand builders.": "Utilisé par plus de 1 000 fondateurs et bâtisseurs de marque.",
+  "Built on 20 years of brand practice.": "Bâti sur 20 ans de pratique de marque.",
 
   /* ── Questions ──────────────────────────────────────────────────── */
   "Step {0} of {1}": "Étape {0} sur {1}",
@@ -84,10 +83,10 @@ QBI18N.add('fr', {
   /* ── Email capture. The address placeholder is in shared.js. ────── */
   "Almost there": "Presque fini",
   "Your scan is ready.": "Votre scan est prêt.",
-  "Enter your email to receive your complete Brand Signal Report. Your score, the gaps, and the exact first move.":
-    "Saisissez votre e-mail pour recevoir votre rapport Brand Signal complet. Votre score, les écarts, et le premier geste précis à faire.",
-  "The same email carries your sign-in link, so your answers stay attached to your Brand Profile. No spam, no sales sequences.":
-    "Le même e-mail contient votre lien de connexion, pour que vos réponses restent attachées à votre Profil de marque. Pas de spam, pas de séquences commerciales.",
+  "Enter your email to open your Brand Signal Report. Your score, the gaps, and the exact first move.":
+    "Saisissez votre e-mail pour ouvrir votre rapport Brand Signal. Votre score, les écarts, et le premier geste précis à faire.",
+  "Your sign-in link goes to the same address. No spam, no sales sequences.":
+    "Votre lien de connexion part à la même adresse. Pas de spam, pas de séquences commerciales.",
   "Send my report →": "Envoyer mon rapport →",
 
   /* ── Analyzing ──────────────────────────────────────────────────── */
@@ -98,7 +97,7 @@ QBI18N.add('fr', {
   "Brand Signal Report": "Rapport Brand Signal",
   "Your intelligence brief.": "Votre note d’analyse.",
   "Based on 6 brand health dimensions": "Fondé sur 6 dimensions de santé de marque",
-  "Results on the way. Check your inbox.": "Résultats en route. Consultez votre boîte de réception.",
+  "Your sign-in link is on the way. Check your inbox.": "Votre lien de connexion est en route. Consultez votre boîte de réception.",
   "Check your spam folder if you don't see it within 2 minutes.": "Regardez dans vos spams si vous ne le voyez pas d’ici 2 minutes.",
 
   /* Verdict bands */
@@ -141,41 +140,46 @@ QBI18N.add('fr', {
     "Votre marque ne tient pas les prix que vous devriez pratiquer. C’est un écart d’autorité, pas un problème de tarif.",
 
   /* Recommended first move. The four tool names come from common.js and
-     shared.js. */
+     shared.js. Logo Evaluation and War Table are Starter tools, and the
+     line says so. */
   "Recommended first move": "Premier geste recommandé",
-  "Read your archetype trinity in 10 minutes. The shortest path to a clear identity foundation.":
-    "Lisez votre trinité d’archétypes en 10 minutes. Le chemin le plus court vers une fondation d’identité claire.",
+  "Read your archetype trinity. The shortest path to a clear identity foundation.":
+    "Lisez votre trinité d’archétypes. Le chemin le plus court vers une fondation d’identité claire.",
   "Start at identity. Everything else is built from here.": "Commencez par l’identité. Tout le reste se construit à partir de là.",
-  "Audit what you have against identity standards before rebuilding.": "Auditez l’existant au regard des standards d’identité avant de reconstruire.",
-  "Pressure-test your next move with strategic prioritization.": "Mettez votre prochain geste à l’épreuve grâce à une priorisation stratégique.",
+  "Audit what you have against identity standards before rebuilding. Opens with Starter.":
+    "Auditez l’existant au regard des standards d’identité avant de reconstruire. S’ouvre avec Starter.",
+  "Pressure-test your next move with strategic prioritization. Opens with Starter.":
+    "Mettez votre prochain geste à l’épreuve grâce à une priorisation stratégique. S’ouvre avec Starter.",
   "The identity is the root problem. Resolve this before any visual or voice work.": "L’identité est la racine du problème. Réglez cela avant tout travail visuel ou de voix.",
-  "The visual system is your primary gap. Audit it against identity standards first.": "Le système visuel est votre écart principal. Auditez-le d’abord au regard des standards d’identité.",
+  "The visual system is your primary gap. Audit it against identity standards first. Opens with Starter.":
+    "Le système visuel est votre écart principal. Auditez-le d’abord au regard des standards d’identité. S’ouvre avec Starter.",
   "Scale without a clear identity compounds confusion. Fix the foundation first.": "Grandir sans identité claire amplifie la confusion. Réparez d’abord la fondation.",
-  "Sharpen your positioning before scaling. The gap is actively costing you market share.": "Affûtez votre positionnement avant de grandir. Cet écart vous coûte des parts de marché en ce moment même.",
+  "Sharpen your positioning before scaling. The gap is actively costing you market share. Opens with Starter.":
+    "Affûtez votre positionnement avant de grandir. Cet écart vous coûte des parts de marché en ce moment même. S’ouvre avec Starter.",
   "Open {0} →": "Ouvrir {0} →",
 
   /* Sign-in and next step */
   "Your sign-in link is in your inbox": "Votre lien de connexion est dans votre boîte de réception",
-  "Open it in this browser and this scan follows you into BrandOS. The link works for 60 minutes.":
-    "Ouvrez-le dans ce navigateur et ce scan vous suit dans BrandOS. Le lien fonctionne pendant 60 minutes.",
-  "Want the full system? BrandOS takes you from this scan through every phase: identity, visual system, voice, content, and execution. All connected.":
-    "Vous voulez le système complet ? BrandOS vous emmène de ce scan à travers chaque phase : identité, système visuel, voix, contenu et exécution. Tout est relié.",
+  "Open it in this browser and you land in BrandOS, signed in. The link works for 60 minutes.":
+    "Ouvrez-le dans ce navigateur et vous arrivez dans BrandOS, déjà connecté. Le lien fonctionne pendant 60 minutes.",
+  "Want the full system? BrandOS takes you from this scan through identity, visual system, and voice. All connected.":
+    "Vous voulez le système complet ? BrandOS vous emmène de ce scan vers l’identité, le système visuel et la voix. Tout est relié.",
   "Explore BrandOS →": "Explorer BrandOS →",
   "Run another scan": "Refaire un scan",
 
   /* Sign-in nudge (?reason=signin, ?reason=paywall) */
-  "That tool needs your Brand Profile. Sign in and it opens with your own data behind it.":
-    "Cet outil a besoin de votre Profil de marque. Connectez-vous et il s’ouvre avec vos propres données.",
+  "That tool needs your Brand Profile. Sign in first. If your plan covers it, it opens with your own data behind it.":
+    "Cet outil a besoin de votre Profil de marque. Connectez-vous d’abord. Si votre offre le couvre, il s’ouvre avec vos propres données.",
   "Looking to sign in? Your account lives one email away.": "Vous cherchez à vous connecter ? Votre compte est à un e-mail d’ici.",
   "Sign in →": "Connexion →",
 
   /* ── Static brief ───────────────────────────────────────────────── */
   "Free brand diagnostic": "Diagnostic de marque gratuit",
-  "Signal Scan is a free brand diagnostic. You answer eight questions about your brand and it returns a score out of 100, broken down across six dimensions, with a written read on what is holding and what is not. It takes about five minutes. There is no card, no call, and nothing behind a paywall.":
-    "Signal Scan est un diagnostic de marque gratuit. Vous répondez à huit questions sur votre marque et il vous rend un score sur 100, détaillé selon six dimensions, avec une lecture écrite de ce qui tient et de ce qui ne tient pas. Comptez environ cinq minutes. Pas de carte, pas d’appel, rien derrière un mur payant.",
+  "Signal Scan is a free brand diagnostic. You answer eight questions about your brand and it returns a score out of 100, broken down across six dimensions, with a written read on what is holding and what is not. It takes about five minutes. There is no card and no call, and no part of the result sits behind a paywall.":
+    "Signal Scan est un diagnostic de marque gratuit. Vous répondez à huit questions sur votre marque et il vous rend un score sur 100, détaillé selon six dimensions, avec une lecture écrite de ce qui tient et de ce qui ne tient pas. Comptez environ cinq minutes. Pas de carte, pas d’appel, et aucune partie du résultat derrière un mur payant.",
 
   "What the scan measures": "Ce que le scan mesure",
-  "Eight questions feed six weighted dimensions:": "Huit questions alimentent six dimensions pondérées :",
+  "Six of the eight questions each feed one weighted dimension:": "Six des huit questions alimentent chacune une dimension pondérée :",
   "Identity clarity.": "Clarté de l’identité.",
   "Whether you can say what the brand stands for in one sentence.": "Si vous savez dire en une phrase ce que la marque défend.",
   "Visual coherence.": "Cohérence visuelle.",
@@ -192,44 +196,47 @@ QBI18N.add('fr', {
   "What the score means": "Ce que signifie le score",
   "80 and above, Strong Foundation.": "80 et plus, Fondation solide.",
   "The brand holds. The work is sharpening, not rebuilding.": "La marque tient. Le travail consiste à affûter, pas à reconstruire.",
-  "60 to 79, Structural Issues.": "De 60 à 79, Problèmes structurels.",
+  "60 to 79, Clear Gaps.": "De 60 à 79, Écarts nets.",
+  "The bones are right. Key elements are misaligned.": "L’ossature est bonne. Des éléments clés sont désalignés.",
+  "40 to 59, Structural Issues.": "De 40 à 59, Problèmes structurels.",
   "Something load-bearing is off. The scan names which dimension.": "Un élément porteur est déréglé. Le scan nomme la dimension en cause.",
-  "Below 60, Foundation Needed.": "Moins de 60, Fondation à bâtir.",
+  "Below 40, Foundation Needed.": "Moins de 40, Fondation à bâtir.",
   "The brand is being read differently from how you intend it. Start at identity.": "La marque est lue autrement que vous ne le voulez. Commencez par l’identité.",
 
   /* One sentence split by inline tags. Read the fragments side by side:
-     "… où tous les autres outils de | BrandOS | viennent lire. … emmener le
-     profil dans | les six phases | et | les outils | qui s’appuient dessus." */
+     "… un lien de connexion à | BrandOS | , où vit votre Quantum Brand
+     Profile … poursuivre vers | les quatre mouvements | et | les outils |
+     qui s’appuient sur le profil." */
   "What happens with your answers": "Ce que deviennent vos réponses",
-  "The scan writes its findings into your Quantum Brand Profile, the shared memory every other tool in":
-    "Le scan inscrit ses constats dans votre Quantum Brand Profile, la mémoire partagée où tous les autres outils de",
-  "reads from. Answer a question here and no tool asks you again. You can stop after the scan and keep the result, or carry the profile into":
-    "viennent lire. Répondez à une question ici et aucun outil ne vous la reposera. Vous pouvez vous arrêter après le scan et garder le résultat, ou emmener le profil dans",
+  "Your answers are scored on this page and the result shows here. The email you enter receives a sign-in link to":
+    "Vos réponses sont notées sur cette page et le résultat s’affiche ici. L’e-mail que vous saisissez reçoit un lien de connexion à",
+  ", where your Quantum Brand Profile lives: the shared memory every tool reads from, so nothing is asked twice. You can stop after the scan, or sign in and go on to":
+    ", où vit votre Quantum Brand Profile : la mémoire partagée que lisent tous les outils, pour que rien ne soit demandé deux fois. Vous pouvez vous arrêter après le scan, ou vous connecter et poursuivre vers",
   "the four movements": "les quatre mouvements",
   "and": "et",
   "the tools": "les outils",
-  "that build on it.": "qui s’appuient dessus.",
+  "that build on the profile.": "qui s’appuient sur le profil.",
 
   "Where the scan sits in the method": "La place du scan dans la méthode",
-  "Signal Scan is the Observe step of": "Signal Scan est l’étape Observe de",
+  "Signal Scan is the Observe movement of": "Signal Scan est le mouvement Observe de",
   ", the method used at Quantum Branding: Observe, Collapse, Build, Hold. You cannot collapse a brand into one clear state until you have read the states it is currently in. That reading is what this page does.":
     ", la méthode utilisée chez Quantum Branding : Observe, Collapse, Build, Hold. Impossible de ramener une marque à un seul état clair avant d’avoir lu les états dans lesquels elle se trouve. Cette lecture, c’est ce que fait cette page.",
 
   "Questions about Signal Scan": "Questions sur Signal Scan",
   "Is Signal Scan free?": "Signal Scan est-il gratuit ?",
-  "Yes. The scan and its result are free, with no card and no trial clock. Phase 01 of":
-    "Oui. Le scan et son résultat sont gratuits, sans carte et sans compte à rebours d’essai. La Phase 01 de",
-  "stays free forever.": "reste gratuite à vie.",
+  "Yes. The scan and its result are free, with no card and no trial clock. So are three foundation exercises (Archetype Compass, Brand Soul Map, Sensescape), The Profiles and the Brand Document.":
+    "Oui. Le scan et son résultat sont gratuits, sans carte et sans compte à rebours d’essai. Le sont aussi trois exercices de la fondation (Archetype Compass, Brand Soul Map, Sensescape), The Profiles et le Document de marque.",
   "How long does the scan take?": "Combien de temps dure le scan ?",
   "About five minutes. Eight questions, one of them in your own words.": "Environ cinq minutes. Huit questions, dont une avec vos propres mots.",
   "Do I need an account to see my result?": "Faut-il un compte pour voir mon résultat ?",
-  "You see the result at the end of the scan. An account is what keeps it, along with the Brand Profile it writes, so the other tools can read from it later.":
-    "Vous voyez le résultat à la fin du scan. Le compte sert à le conserver, avec le Profil de marque qu’il écrit, pour que les autres outils puissent le lire plus tard.",
+  "You need an email, not a password. Enter it and the result shows on the page. A sign-in link goes to the same address. Open it once and your account is live, with your Brand Profile behind it.":
+    "Il vous faut un e-mail, pas un mot de passe. Saisissez-le et le résultat s’affiche sur la page. Un lien de connexion part à la même adresse. Ouvrez-le une fois et votre compte est actif, avec votre Profil de marque derrière.",
   "What do I get at the end?": "Qu’est-ce que j’obtiens à la fin ?",
-  "A score out of 100, a per-dimension breakdown across the six dimensions above, a band verdict, and a written read on the single biggest problem you described.":
-    "Un score sur 100, le détail pour chacune des six dimensions ci-dessus, un verdict par palier, et une lecture écrite du plus gros problème que vous avez décrit.",
+  "A score out of 100, a per-dimension breakdown across the six dimensions above, a band verdict, and a written read on your weakest dimension.":
+    "Un score sur 100, le détail pour chacune des six dimensions ci-dessus, un verdict par palier, et une lecture écrite de votre dimension la plus faible.",
   "Is this a template or is it generated?": "Est-ce un modèle tout fait ou un texte généré ?",
-  "The read is generated against your answers. No templates and no recycled copy.": "La lecture est générée à partir de vos réponses. Aucun modèle, aucun texte recyclé.",
+  "The score is calculated from your answers. The read is written per dimension, and you get the one for your weakest. The first move follows from where you say you are and from that dimension.":
+    "Le score est calculé à partir de vos réponses. La lecture est écrite par dimension, et vous recevez celle de votre dimension la plus faible. Le premier geste découle de là où vous dites en être, et de cette dimension.",
   "How is this different from a logo maker?": "En quoi est-ce différent d’un générateur de logo ?",
   "A logo maker makes an asset. Signal Scan tells you whether the thinking under the asset holds.":
     "Un générateur de logo produit un actif. Signal Scan vous dit si la réflexion sous cet actif tient.",

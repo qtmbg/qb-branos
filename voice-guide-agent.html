@@ -5,7 +5,7 @@
 <script src="/js/qb-i18n.js" data-page="voice-guide-agent"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Voice Guide Agent · BrandOS</title>
-<meta name="description" content="Generate a working brand voice guide: anchors, mechanics, banned phrases, and rules per surface, all drawn from your Brand Profile.">
+<meta name="description" content="Generate a working brand voice guide: voice DNA, writing rules, tone modes, content templates and a copy generator, all drawn from your Brand Profile.">
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1410,13 +1410,13 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   var urlQBP = params.get('qbp');
   if(urlQBP){
     try{
-      localStorage.setItem('qb-qbp', atob(urlQBP));
+      localStorage.setItem('qb_qbp', atob(urlQBP));
     }catch(e){
       console.warn('[QB] Invalid QBP token in URL:', e.message);
       try{ sessionStorage.setItem('qb_token_error','1'); }catch(se){}
     }
   }
-  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb-qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
+  try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
 
   // FIX 1: res.ok guard before res.json()
   // FIX 4: systemPrompt is now a static string; userPrompt carries dynamic QBP data
@@ -1466,7 +1466,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Voice Guide Agent · BrandOS">
-<meta property="og:description" content="Generate a working brand voice guide: anchors, mechanics, banned phrases, and rules per surface, all drawn from your Brand Profile.">
+<meta property="og:description" content="Generate a working brand voice guide: voice DNA, writing rules, tone modes, content templates and a copy generator, all drawn from your Brand Profile.">
 <meta property="og:url" content="https://quantumbranding.ai/voice-guide-agent.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/voice-guide-agent.png">
 <meta property="og:image:width" content="1200">
@@ -1476,7 +1476,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Voice Guide Agent · BrandOS">
-<meta name="twitter:description" content="Generate a working brand voice guide: anchors, mechanics, banned phrases, and rules per surface, all drawn from your Brand Profile.">
+<meta name="twitter:description" content="Generate a working brand voice guide: voice DNA, writing rules, tone modes, content templates and a copy generator, all drawn from your Brand Profile.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/voice-guide-agent.png">
 <link rel="canonical" href="https://quantumbranding.ai/voice-guide-agent.html">
 <!-- QB JSON-LD -->
@@ -1485,7 +1485,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Voice Guide",
-  "description": "Generate the brand voice guide: anchors, mechanics, banned phrases, surface rules.",
+  "description": "Generate the brand voice guide: voice DNA, writing rules, tone modes per platform, before and after examples, content templates and a copy generator.",
   "url": "https://quantumbranding.ai/voice-guide-agent.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -1621,7 +1621,9 @@ const SF = ({label,options,value,onChange})=>(
   <div style={{marginBottom:24}}>
     <MonoLabel>{label}</MonoLabel>
     <select className="qb-select" value={value} onChange={e=>onChange(e.target.value)}>
-      <option value="">&#8212; select &#8212;</option>
+      <option value="">- select -</option>
+      {/* The Brand Profile can hold a value in the founder's own words. It stays selected and shown. */}
+      {value&&options.indexOf(value)<0&&<option value={value}>{value}</option>}
       {options.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -1824,11 +1826,11 @@ const BeforeAfterPanel = ({data})=>{
           <div style={{fontSize:12,color:'var(--brass)',fontFamily:'var(--font-mono)',letterSpacing:'.15em',textTransform:'uppercase',marginBottom:12}}>{item.scenario}</div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
             <div className="glass-card" style={{padding:0}}>
-              <div className="ba-label" style={{background:'rgba(138,90,90,0.05)',color:'var(--phase-content)',borderBottomColor:'rgba(138,90,90,0.1)'}}>Before &#8212; generic</div>
+              <div className="ba-label" style={{background:'rgba(138,90,90,0.05)',color:'var(--phase-content)',borderBottomColor:'rgba(138,90,90,0.1)'}}>Before · generic</div>
               <div className="ba-text" style={{color:'var(--text-3)'}}>{item.before}</div>
             </div>
             <div className="glass-card" style={{padding:0}}>
-              <div className="ba-label" style={{background:'var(--patina-faint)',color:'var(--patina-lit)',borderBottomColor:'var(--patina-dim)'}}>After &#8212; on brand</div>
+              <div className="ba-label" style={{background:'var(--patina-faint)',color:'var(--patina-lit)',borderBottomColor:'var(--patina-dim)'}}>After · on brand</div>
               <div className="ba-text">{item.after}</div>
             </div>
           </div>
@@ -1915,7 +1917,7 @@ const CopyGeneratorPanel = ({voiceData,qbp})=>{
     try{
       var res = await window.QB_AI(sysPrompt, userPrompt, 800);
       setGenerated(res.trim());
-    }catch(e){ setError(e.message); }
+    }catch(e){ setError(e.message === 'UNAVAILABLE' ? 'The agent was unavailable and nothing was generated. Try again in a moment.' : e.message); }
     setLoading(false);
   };
 
@@ -2100,7 +2102,7 @@ function App(){
       setStep(2);
     }catch(e){
       var msg = e.message === 'UNAVAILABLE'
-        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        ? 'The agent was unavailable and nothing was generated. Try again in a moment.'
         : 'Agent error: '+e.message;
       setError(msg);
       setStep(0);
@@ -2158,9 +2160,9 @@ function App(){
           /* STEP 0 */
           step===0 && React.createElement('div', {className:'fade-in'},
             React.createElement('div', {style:{marginBottom:64}},
-              React.createElement(MonoLabel, {color:'var(--brass)'}, '// QBP \u2014 Verbal Identity Input'),
+              React.createElement(MonoLabel, {color:'var(--brass)'}, '// QBP · Verbal Identity Input'),
               React.createElement('h1', {style:{fontFamily:'var(--font-serif)',fontSize:48,fontWeight:400,letterSpacing:'-0.015em',lineHeight:1.1,marginBottom:16,color:'var(--text-1)'}}, 'Synthesize Voice Guide'),
-              React.createElement('p', {style:{color:'var(--text-2)',fontSize:16,lineHeight:1.7,maxWidth:680}}, 'Provide your Quantum Brand Profile. The system constructs a precise, executable verbal identity framework \u2014 from core DNA to living content templates.')
+              React.createElement('p', {style:{color:'var(--text-2)',fontSize:16,lineHeight:1.7,maxWidth:680}}, 'Provide your Quantum Brand Profile. The system constructs a precise, executable verbal identity framework, from core DNA to living content templates.')
             ),
             /* FIX 6: invalid QBP token warning */
             qbpTokenError && React.createElement('div', {style:{background:'rgba(168,144,62,0.08)',border:'1px solid var(--brass-dim)',borderRadius:8,padding:'12px 20px',marginBottom:24,fontSize:13,color:'var(--brass)',display:'flex',gap:10,alignItems:'center'}},
@@ -2174,7 +2176,7 @@ function App(){
                   React.createElement(TF, {label:'Brand Name *',value:brandName,onChange:setBrandName,placeholder:'The brand this voice belongs to',rows:1}),
                   React.createElement(SF, {label:'Natural Force *',options:NATURAL_FORCES,value:naturalForce,onChange:setNaturalForce})
                 ),
-                React.createElement(TF, {label:'Brand Essence *',value:brandEssence,onChange:setBrandEssence,placeholder:'The irreducible truth \u2014 a sentence carved in stone',rows:2}),
+                React.createElement(TF, {label:'Brand Essence *',value:brandEssence,onChange:setBrandEssence,placeholder:'The irreducible truth, a sentence carved in stone',rows:2}),
                 React.createElement(TF, {label:'Manifesto Line',value:manifestoLine,onChange:setManifestoLine,placeholder:'The one belief that drives everything',rows:1}),
                 React.createElement(TF, {label:'The Spark (Narrative Synthesis)',value:spark,onChange:setSpark,placeholder:'3-5 sentence synthesis of who this brand is, why it exists, what it is here to do',rows:3})
               ),
@@ -2184,8 +2186,8 @@ function App(){
                   React.createElement(SF, {label:'Mythological Figure',options:MYTH_FIGURES,value:mythFigure,onChange:setMythFigure})
                 ),
                 React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}},
-                  React.createElement(TF, {label:'Aligned Brands',value:alignedBrands,onChange:setAlignedBrands,placeholder:'e.g. Patagonia, Bottega Veneta \u2014 with why',rows:2}),
-                  React.createElement(TF, {label:'Refused Brands',value:refusedBrands,onChange:setRefusedBrands,placeholder:'e.g. corporate consulting, startup growth hacking \u2014 with why',rows:2})
+                  React.createElement(TF, {label:'Aligned Brands',value:alignedBrands,onChange:setAlignedBrands,placeholder:'e.g. Patagonia, Bottega Veneta, with why',rows:2}),
+                  React.createElement(TF, {label:'Refused Brands',value:refusedBrands,onChange:setRefusedBrands,placeholder:'e.g. corporate consulting, startup growth hacking, with why',rows:2})
                 ),
                 React.createElement(TF, {label:'Celebrity Synthesis',value:celebritySynth,onChange:setCelebritySynth,placeholder:'e.g. Leads like Dieter Rams, creates like Virgil Abloh, endures like Coco Chanel',rows:2}),
                 React.createElement(TF, {label:'Rhythm / Tempo',value:rhythm,onChange:setRhythm,placeholder:'e.g. Short declarative sentences. Occasional long arcs. Never lists.',rows:2}),
@@ -2194,7 +2196,7 @@ function App(){
                   React.createElement(TF, {label:'Anti-Brand',value:antiBrand,onChange:setAntiBrand,placeholder:'What this brand refuses to be',rows:2}),
                   React.createElement(TF, {label:'Fan Letter',value:fanLetter,onChange:setFanLetter,placeholder:'The person this brand was built for',rows:2})
                 ),
-                React.createElement(TF, {label:'Central Paradox',value:paradox,onChange:setParadox,placeholder:'The tension this brand holds \u2014 e.g. intimate yet authoritative',rows:2})
+                React.createElement(TF, {label:'Central Paradox',value:paradox,onChange:setParadox,placeholder:'The tension this brand holds, e.g. intimate yet authoritative',rows:2})
               ),
               React.createElement(Section, {number:3,title:'Tone Calibration'},
                 React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 48px'}},
@@ -2244,7 +2246,7 @@ function App(){
               React.createElement('div', null,
                 React.createElement(MonoLabel, {color:'var(--brass)'}, '// System Output'),
                 React.createElement('h1', {style:{fontFamily:'var(--font-serif)',fontSize:42,fontWeight:400,marginBottom:8,color:'var(--text-1)'}}, brandName),
-                React.createElement('p', {style:{color:'var(--text-2)',fontSize:15}}, 'Complete verbal identity system \u2014 traceable to Source DNA')
+                React.createElement('p', {style:{color:'var(--text-2)',fontSize:15}}, 'Complete verbal identity system, traceable to Source DNA')
               ),
               React.createElement('div', {style:{display:'flex',gap:12}},
                 React.createElement('button', {onClick:exportGuide,className:'btn-secondary'}, 'Export JSON'),
@@ -2270,7 +2272,7 @@ function App(){
         /* FOOTER */
         React.createElement('footer', {style:{borderTop:'1px solid var(--border-medium)',padding:'24px 32px',display:'flex',justifyContent:'space-between',alignItems:'center',background:'var(--bg-deep)'}},
           React.createElement('span', {style:{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-4)',letterSpacing:'.2em'}}, 'BrandOS Platform'),
-          React.createElement('span', {style:{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',letterSpacing:'.15em',textTransform:'uppercase'}}, 'Voice Agent / Phase 02')
+          React.createElement('span', {style:{fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text-3)',letterSpacing:'.15em',textTransform:'uppercase'}}, 'Voice Guide Agent / Build')
         )
       )
     )

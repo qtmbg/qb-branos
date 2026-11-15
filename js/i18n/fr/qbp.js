@@ -7,11 +7,11 @@ QBI18N.add('fr', {
   /* Export */
   "Preparing your QBP…": "Préparation de votre QBP…",
   "Export failed": "Export impossible",
-  "Downloading as JSON (PDF format coming soon).": "Téléchargement au format JSON (le format PDF arrive bientôt).",
+  "Downloading as JSON.": "Téléchargement au format JSON.",
   "Downloading…": "Téléchargement…",
 
   /* Export paywall */
   "Open QBP export.": "Ouvrez l’export du QBP.",
-  "Starter tier gives you the full QBP as a downloadable file.":
-    "L’offre Starter vous donne le QBP complet en fichier téléchargeable."
+  "Starter gives you the full QBP as a downloadable file.":
+    "Starter vous donne le QBP complet en fichier téléchargeable."
 });

@@ -5,7 +5,7 @@
 <script src="/js/qb-i18n.js" data-page="logo-direction-agent"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Logo Direction Agent · BrandOS</title>
-<meta name="description" content="Turn a locked Brand Profile into logo direction prompts you can hand to a designer or a generator. Phase 03 inside BrandOS, no brief writing needed.">
+<meta name="description" content="Turn your Brand Profile into a logo creative direction you can hand to a designer. A Build agent inside BrandOS, no brief writing needed.">
 <script>
   (function(){
     try {
@@ -1454,7 +1454,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Logo Direction Agent · BrandOS">
-<meta property="og:description" content="Turn a locked Brand Profile into logo direction prompts you can hand to a designer or a generator. Phase 03 inside BrandOS, no brief writing needed.">
+<meta property="og:description" content="Turn your Brand Profile into a logo creative direction you can hand to a designer. A Build agent inside BrandOS, no brief writing needed.">
 <meta property="og:url" content="https://quantumbranding.ai/logo-direction-agent.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/logo-direction-agent.png">
 <meta property="og:image:width" content="1200">
@@ -1464,7 +1464,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Logo Direction Agent · BrandOS">
-<meta name="twitter:description" content="Turn a locked Brand Profile into logo direction prompts you can hand to a designer or a generator. Phase 03 inside BrandOS, no brief writing needed.">
+<meta name="twitter:description" content="Turn your Brand Profile into a logo creative direction you can hand to a designer. A Build agent inside BrandOS, no brief writing needed.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/logo-direction-agent.png">
 <link rel="canonical" href="https://quantumbranding.ai/logo-direction-agent.html">
 <!-- QB JSON-LD -->
@@ -1473,7 +1473,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Logo Direction",
-  "description": "Generate logo direction prompts grounded in the locked Quantum Brand Profile.",
+  "description": "Generate a logo creative direction grounded in the Brand Profile.",
   "url": "https://quantumbranding.ai/logo-direction-agent.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -1577,7 +1577,7 @@ const { useState, useRef } = React;
 const NATURAL_FORCES   = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
 const MUSEUM_ROOMS     = ['Impressionism','Surrealism','Bauhaus','Renaissance','Abstract Expressionism','Minimalism','Art Nouveau','Pop Art'];
 const MYTH_FIGURES     = ['The Alchemist','The Oracle','The Warrior','The Creator','The Sage','The Trickster','The Sovereign','The Healer'];
-const ARCHETYPES       = ['The Innocent','The Explorer','The Sage','The Hero','The Outlaw','The Magician','The Lover','The Jester','The Caregiver','The Ruler','The Creator','The Everyman'];
+const ARCHETYPES       = ['The Innocent','The Explorer','The Sage','The Hero','The Rebel','The Magician','The Lover','The Jester','The Caregiver','The Ruler','The Creator','The Everyman'];
 const PARADOX_OPTIONS  = ['Timeless yet modern','Simple yet profound','Bold yet refined','Familiar yet surprising','Serious yet warm','Minimal yet expressive'];
 const INDUSTRIES       = ['Luxury Lifestyle','Technology','Finance & Wealth','Fashion','Health & Wellness','Architecture & Design','Food & Hospitality','Creative Agency','Legal & Professional','Education & Knowledge'];
 
@@ -1727,6 +1727,27 @@ function MarkdownOutput({ text }) {
   return <div>{elements}</div>;
 }
 
+// ── BRAND PROFILE ─────────────────────────────────────────────────────────────
+// The Brand Profile fills what it already holds, so the founder is not asked
+// twice. The spine loaded window.QB_QBP and nothing read it. A profile value
+// written in the founder's own words is not one of the pills, so that field
+// is left for the founder to pick.
+function fromProfile() {
+  const q = window.QB_QBP || {};
+  const text = v => (typeof v === 'string' ? v : '');
+  const pick = (list, v) => (typeof v === 'string' && list.includes(v) ? v : null);
+  return {
+    brandName: text(q.brandName),
+    brandEssence: text(q.brandEssence),
+    // The profile stores "The Sage + The Rebel". Up to 3 pills, as the field allows.
+    archetypes: text(q.archetype).split(/\s*\+\s*/).filter(a => ARCHETYPES.includes(a)).slice(0, 3),
+    naturalForce: pick(NATURAL_FORCES, q.naturalForce),
+    museumRoom: pick(MUSEUM_ROOMS, q.museumRoom),
+    mythFigure: pick(MYTH_FIGURES, q.mythFigure),
+    paradox: pick(PARADOX_OPTIONS, q.paradox),
+  };
+}
+
 // ── APP ───────────────────────────────────────────────────────────────────────
 function App() {
   const [theme, setTheme] = useState(() => { try { return localStorage.getItem('qb-theme') || 'light'; } catch(e) { return 'dark'; } });
@@ -1736,12 +1757,13 @@ function App() {
     try { localStorage.setItem('qb-theme', t); } catch(e) {}
   };
 
-  const [f, setF] = useState({
+  const [f, setF] = useState(() => ({
     brandName:'', industry:null, positioning:'', targetAudience:'', brandEssence:'',
     archetypes:[], naturalForce:null, museumRoom:null, mythFigure:null, paradox:null,
     boldness:6, complexity:5, timelessness:7,
-    existingColor:'', constraints:'', competitive:'', additionalContext:''
-  });
+    existingColor:'', constraints:'', competitive:'', additionalContext:'',
+    ...fromProfile()
+  }));
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
 
   const [loading, setLoading] = useState(false);
@@ -1760,7 +1782,7 @@ function App() {
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior:'smooth', block:'start' }), 120);
     } catch(e) {
       const msg = e.message === 'UNAVAILABLE'
-        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        ? 'The agent was unavailable and nothing was generated. Try again in a moment.'
         : (e.message || 'Generation failed. Check your API connection.');
       setError(msg);
     } finally { setLoading(false); }

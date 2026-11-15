@@ -3,12 +3,13 @@
 QBI18N.include('fr', 'war-table');
 QBI18N.add('fr', {
   /* ── Head and controls ──────────────────────────────────────────── */
+  "War Table report · BrandOS": "Rapport War Table · BrandOS",
   "BrandOS Report": "Rapport BrandOS",
   "War Table Report": "Rapport War Table",
   "↓ Save as PDF": "↓ Enregistrer en PDF",
 
   /* ── Cover ──────────────────────────────────────────────────────── */
-  "Phase 01 Report": "Rapport Phase 01",
+  "Foundation report": "Rapport de la fondation",
   "War Table · Strategic Priorities": "War Table · Priorités stratégiques",
   "Strategic Brand Report": "Rapport stratégique de marque",
   "{0} · Brand Intelligence": "{0} · Intelligence de marque",
@@ -32,7 +33,6 @@ QBI18N.add('fr', {
   "{0} December 20{1}": "{0} décembre 20{1}",
 
   /* ── Page header ────────────────────────────────────────────────── */
-  "Phase 01": true,
   "Strategic Intelligence": "Intelligence stratégique",
   "Brand Intelligence": "Intelligence de marque",
 
@@ -41,6 +41,8 @@ QBI18N.add('fr', {
   "Where you": "Là où vous",
   "commit your force": "engagez vos forces",
   "Priority {0}": "Priorité {0}",
+  "No priorities yet. Finish the War Table and your three highest-scoring initiatives appear here.":
+    "Aucune priorité pour l’instant. Terminez War Table et vos trois initiatives les mieux notées apparaîtront ici.",
   "02 · Competitive Landscape": "02 · Paysage concurrentiel",
   "Who shares": "Qui partage",
   "your territory": "votre territoire",
@@ -69,8 +71,8 @@ QBI18N.add('fr', {
   "Document Complete": "Document terminé",
   "Your brand intelligence": "Votre intelligence de marque",
   "is building.": "se construit.",
-  "Each Phase 01 tool adds a layer to your Quantum Brand Profile. Every output flows automatically into the tools that follow. Nothing gets repeated. Everything compounds.":
-    "Chaque outil de la Phase 01 ajoute une couche à votre Quantum Brand Profile. Chaque résultat alimente automatiquement les outils qui suivent. Rien ne se répète. Tout se cumule.",
+  "Each foundation exercise adds a layer to your Quantum Brand Profile. Every output flows automatically into the tools that follow. Nothing gets repeated. Everything compounds.":
+    "Chaque exercice de la fondation ajoute une couche à votre Quantum Brand Profile. Chaque résultat alimente automatiquement les outils qui suivent. Rien ne se répète. Tout se cumule.",
   "Continue in BrandOS →": "Continuer dans BrandOS →",
   "Created by": "Créé par"
 });

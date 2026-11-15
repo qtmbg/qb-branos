@@ -9,7 +9,8 @@ QBI18N.add('fr', {
   "· Education · Personas": "· Pédagogie · Personas",
   "The four doors into a": "Les quatre portes d’un",
   "brand system.": "système de marque.",
-  "Published 2026-07-06 · 6 min read · by Nizzar Ben Chekroune": "Publié le 6 juillet 2026 · 6 min de lecture · par Nizzar Ben Chekroune",
+  "Published 2026-07-06 · Updated 2026-11-13 · 6 min read · by Nizzar Ben Chekroune":
+    "Publié le 6 juillet 2026 · Mis à jour le 13 novembre 2026 · 6 min de lecture · par Nizzar Ben Chekroune",
 
   /* Opening */
   "Nobody arrives at branding from nowhere. You arrive with a situation. And the situation, not the industry or the budget, decides where you should start.":
@@ -41,8 +42,8 @@ QBI18N.add('fr', {
   "03 · The Player": true,
   "Your brand is fine. Your market is not. New entrants, price pressure, a competitor who suddenly looks sharper than you. You don't need identity work, you need strategy and intelligence.":
     "Votre marque va bien. Votre marché, non. De nouveaux entrants, une pression sur les prix, un concurrent qui paraît soudain plus affûté que vous. Vous n’avez pas besoin d’un travail d’identité, vous avez besoin de stratégie et d’intelligence.",
-  "This door skips ahead: pressure-test the next move at the War Table, simulate market response with the Predictive Panel before spending, and review performance on a cycle instead of on panic.":
-    "Cette porte va droit plus loin : mettez la prochaine décision à l’épreuve à la War Table, simulez la réponse du marché avec le Predictive Panel avant de dépenser, et passez la performance en revue selon un cycle plutôt que dans la panique.",
+  "This door skips ahead to the War Table, which opens with Starter: score and rank the next moves, and decide what to do now, next, and never. The tools that watch the market after that, the Predictive Panel and the Quarterly Brand Review, sit in Hold and are not open yet.":
+    "Cette porte va droit à la War Table, qui s’ouvre avec Starter : notez et classez les prochaines décisions, et décidez quoi faire maintenant, ensuite, et jamais. Les outils qui surveillent ensuite le marché, le Predictive Panel et la Revue de marque trimestrielle, se trouvent dans Hold et ne sont pas encore ouverts.",
 
   /* Door four */
   "Door four: building for clients": "Porte quatre : construire pour des clients",
@@ -50,8 +51,8 @@ QBI18N.add('fr', {
   "04 · The Multi-Brand": true,
   "You're an agency, a studio, or a fractional CMO. The brand in question isn't yours, and there are several of them. Your problems are workspace separation, repeatable process, and delivery that carries your mark.":
     "Vous êtes une agence, un studio ou un directeur marketing à temps partagé. La marque en question n’est pas la vôtre, et il y en a plusieurs. Vos problèmes : la séparation des espaces de travail, un processus reproductible, et une livraison qui porte votre marque.",
-  "The agency door runs clients through the same sequence with white-label output: your logo on the result, one method under every engagement.":
-    "La porte agence fait passer les clients par la même séquence, avec une sortie en marque blanche : votre logo sur le résultat, une seule méthode sous chaque mission.",
+  "BrandOS does not sell an agency plan. No client workspaces, no white-label. What this door gives you is the sequence itself: run it once on a brand you know, and if you want it for your clients, write to me@qtmbg.com.":
+    "BrandOS ne vend pas d’offre agence. Pas d’espaces de travail clients, pas de marque blanche. Ce que cette porte vous donne, c’est la séquence elle-même : suivez-la une fois sur une marque que vous connaissez, et si vous la voulez pour vos clients, écrivez à me@qtmbg.com.",
 
   /* Closing */
   "One system, four entrances": "Un système, quatre entrées",

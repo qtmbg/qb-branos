@@ -9,7 +9,7 @@
      The page stays deployable for the operator and drops out of the index. -->
 <meta name="robots" content="noindex, nofollow">
 <title>Instagram Seed Content Agent · BrandOS</title>
-<meta name="description" content="Plant an Instagram presence with a first-month content seed built from your Brand Profile. Hooks, posts, and a cadence you can publish against.">
+<meta name="description" content="Plant an Instagram presence with a 12-post content seed built from your Brand Profile. Hooks, posts, and a sequence you can publish against.">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1527,22 +1527,38 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 (function(){
   var params = new URLSearchParams(window.location.search);
 
+  // The profile link is base64 of the UTF-8 bytes (brand-document.html,
+  // openTool). atob alone returns those bytes as Latin-1, which turned every
+  // accent into two wrong characters and then saved them over the stored
+  // profile. Bytes that are not UTF-8 are kept as they were read.
   function decodeQBP(value){
     if(!value) return null;
     try{
       var normalized = value.replace(/-/g,'+').replace(/_/g,'/').replace(/\s/g,'+');
       while(normalized.length % 4) normalized += '=';
-      return atob(normalized);
+      var binary = atob(normalized);
+      try{
+        var bytes = new Uint8Array(binary.length);
+        for(var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+      }catch(e){
+        return binary;
+      }
     }catch(e){
       return null;
     }
+  }
+  // Only a payload that reads as a profile replaces the stored one.
+  function isProfile(text){
+    try{ var o = JSON.parse(text); return !!o && typeof o === 'object' && !Array.isArray(o); }
+    catch(e){ return false; }
   }
 
   var urlQBP = params.get('qbp');
   if(urlQBP){
     try{
       var decoded = decodeQBP(urlQBP);
-      if(decoded) localStorage.setItem('qb_qbp', decoded);
+      if(decoded && isProfile(decoded)) localStorage.setItem('qb_qbp', decoded);
       else localStorage.setItem('qb_qbp_error', 'Invalid qbp payload');
     }catch(e){
       localStorage.setItem('qb_qbp_error', 'Invalid qbp payload');
@@ -1611,7 +1627,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Instagram Seed Content Agent · BrandOS">
-<meta property="og:description" content="Plant an Instagram presence with a first-month content seed built from your Brand Profile. Hooks, posts, and a cadence you can publish against.">
+<meta property="og:description" content="Plant an Instagram presence with a 12-post content seed built from your Brand Profile. Hooks, posts, and a sequence you can publish against.">
 <meta property="og:url" content="https://quantumbranding.ai/instagram-seed-agent.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/instagram-seed-agent.png">
 <meta property="og:image:width" content="1200">
@@ -1621,7 +1637,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Instagram Seed Content Agent · BrandOS">
-<meta name="twitter:description" content="Plant an Instagram presence with a first-month content seed built from your Brand Profile. Hooks, posts, and a cadence you can publish against.">
+<meta name="twitter:description" content="Plant an Instagram presence with a 12-post content seed built from your Brand Profile. Hooks, posts, and a sequence you can publish against.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/instagram-seed-agent.png">
 <link rel="canonical" href="https://quantumbranding.ai/instagram-seed-agent.html">
 <!-- QB JSON-LD -->
@@ -1630,7 +1646,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Instagram Seed",
-  "description": "Plant the Instagram presence with a first-month content seed.",
+  "description": "Plant the Instagram presence with a 12-post content seed.",
   "url": "https://quantumbranding.ai/instagram-seed-agent.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -2158,7 +2174,7 @@ Return ONLY valid JSON - no markdown, no preamble.`;
       setStep(2);
     }catch(e){
       const msg = e.message === 'UNAVAILABLE'
-        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        ? 'Generation was unavailable. Nothing was produced. Try again in a moment.'
         : 'Agent error: ' + (e.message || 'Unknown error');
       setError(msg);
       setStep(0);
@@ -2389,7 +2405,6 @@ Return ONLY valid JSON - no markdown, no preamble.`;
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 
 <footer class="footer">

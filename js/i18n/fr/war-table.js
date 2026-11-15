@@ -4,11 +4,11 @@
    Values carry a literal no-break space (U+00A0) before : ; ? and inside « ». */
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
-  "The War Table · BrandOS": "War Table · BrandOS",
-  "The War Table · BrandOS Phase 01 - score, interrogate, and prioritise your strategic initiatives.":
-    "War Table · BrandOS, Phase 01. Notez, interrogez et priorisez vos initiatives stratégiques.",
+  "War Table · BrandOS": true,
+  "War Table · BrandOS. A Collapse exercise: score, interrogate and prioritise your strategic initiatives. Opens with Starter.":
+    "War Table · BrandOS. Un exercice Collapse : notez, interrogez et priorisez vos initiatives stratégiques. S’ouvre avec Starter.",
 
-  /* ── Phase nav and action bar ───────────────────────────────────── */
+  /* ── Step nav and action bar ───────────────────────────────────── */
   "est. 1 min": "env. 1 min",
   "est. 3 min": "env. 3 min",
   "est. 5 min": "env. 5 min",
@@ -26,16 +26,18 @@ QBI18N.add('fr', {
   "System halt: resolve all strategic conflicts.": "Arrêt système : tranchez tous les conflits stratégiques.",
   "Authorization required: submit credentials to unlock.": "Autorisation requise : envoyez vos identifiants pour ouvrir l’accès.",
 
-  /* ── Kickers. Same in French, listed so they count as covered. ──── */
-  "Phase 1": true,
-  "Phase 2": true,
-  "Phase 3": true,
-  "Phase 4": true,
-  "Phase 5": true,
-  "Phase 6": true,
+  /* ── Kickers. The tool's own steps, numbered as the step dots number
+     them (0 to 9). The unlock step, 7, carries no kicker. ───────────── */
+  "Step 1": "Étape 1",
+  "Step 2": "Étape 2",
+  "Step 3": "Étape 3",
+  "Step 4": "Étape 4",
+  "Step 5": "Étape 5",
+  "Step 6": "Étape 6",
+  "Step 8": "Étape 8",
 
-  /* ── Intro (phase 0) ────────────────────────────────────────────── */
-  "Phase 01 · War Table · Strategic prioritization": "Phase 01 · War Table · Priorisation stratégique",
+  /* ── Intro (step 0) ────────────────────────────────────────────── */
+  "Collapse · War Table · Strategic prioritization": "Collapse · War Table · Priorisation stratégique",
   "Every resource you deploy": "Chaque ressource que vous engagez",
   "has an opportunity cost.": "a un coût d’opportunité.",
   "Score every initiative, defend it through four interrogations, and produce a NOW list that earns its place. By the end the work that matters has been chosen, and the rest is at peace below the line.":
@@ -55,7 +57,7 @@ QBI18N.add('fr', {
     "Cette expérience va vous bousculer. Elle vous demandera de défendre vos idées, de les comparer entre elles, et parfois de tuer celles que vous aimez.",
   "That discomfort is the product.": "Cet inconfort, c’est le produit.",
 
-  /* ── The Brief (phase 1) ────────────────────────────────────────── */
+  /* ── The Brief (step 1) ────────────────────────────────────────── */
   "The Brief": "Le brief",
   "Where are you, where are you going, and what’s in the way?": "Où en êtes-vous, où allez-vous, et qu’est-ce qui barre la route ?",
   "System Parameters": "Paramètres système",
@@ -82,7 +84,7 @@ QBI18N.add('fr', {
   "Team": "Équipe",
   "Trust": "Confiance",
 
-  /* ── Audience Intelligence (phase 2) ────────────────────────────── */
+  /* ── Audience Intelligence (step 2) ────────────────────────────── */
   "Audience Intelligence.": "Connaissance de l’audience.",
   "Who you are speaking to, in their words.": "À qui vous parlez, avec ses mots.",
   "You are mapping the internal world of the audience. What they fear, what they want, how they speak, and what makes them hesitate. Downstream agents will read this verbatim. Write in their voice, not yours.":
@@ -101,7 +103,7 @@ QBI18N.add('fr', {
   "What objections, hesitations, or resistance points come up when this audience considers a brand like yours? List the specific ones.":
     "Quelles objections, hésitations ou résistances apparaissent quand cette audience envisage une marque comme la vôtre ? Listez-les précisément.",
 
-  /* ── Brainstorm (phase 3) ───────────────────────────────────────── */
+  /* ── Brainstorm (step 3) ───────────────────────────────────────── */
   "The Brainstorm": "Le brainstorm",
   "Generate everything. Commit to nothing. Yet.": "Générez tout. Ne vous engagez sur rien. Pas encore.",
   "Total assets": "Total des actifs",
@@ -121,10 +123,10 @@ QBI18N.add('fr', {
   "USR: {0}": "CIBLE : {0}",
   "Delete": "Supprimer",
 
-  /* ── Interrogation (phase 4) ────────────────────────────────────── */
+  /* ── Interrogation (step 4) ────────────────────────────────────── */
   "⚡ Interrogation": "⚡ Interrogatoire",
   "Every initiative must earn its place. Expand and defend.": "Chaque initiative doit mériter sa place. Dépliez et défendez.",
-  "No initiatives in memory. Return to Phase 2.": "Aucune initiative en mémoire. Revenez à la Phase 2.",
+  "No initiatives in memory. Return to Step 3.": "Aucune initiative en mémoire. Revenez à l’étape 3.",
   "01. The Utility Test": "01. Le test d’utilité",
   "Name specific client + real cost if unsolved.": "Nommez un client précis + le coût réel si rien n’est résolu.",
   "02. The Timing Test": "02. Le test du moment",
@@ -135,7 +137,7 @@ QBI18N.add('fr', {
   "Compounding cost of a 90-day delay.": "Coût cumulé d’un retard de 90 jours.",
   "Commit block": "Valider le bloc",
 
-  /* ── Scoring (phase 5) ──────────────────────────────────────────── */
+  /* ── Scoring (step 5) ──────────────────────────────────────────── */
   "Scoring Engine": "Moteur de notation",
   "Translate interrogation into objective priorities.": "Traduisez l’interrogatoire en priorités objectives.",
   "Asset": "Actif",
@@ -156,7 +158,7 @@ QBI18N.add('fr', {
   "LATER": "PLUS TARD",
   "PARK": "EN RÉSERVE",
 
-  /* ── Trade-offs (phase 6) ───────────────────────────────────────── */
+  /* ── Trade-offs (step 6) ───────────────────────────────────────── */
   "Trade-off Arena": "Arène des arbitrages",
   "One winner. No compromises.": "Un seul vainqueur. Aucun compromis.",
   "Conflict 01": "Conflit 01",
@@ -186,7 +188,7 @@ QBI18N.add('fr', {
   "Initial public deployment": "Premier déploiement public",
   "Brand alignment mechanism": "Mécanisme d’alignement de marque",
 
-  /* ── Unlock (phase 7) ───────────────────────────────────────────── */
+  /* ── Unlock (step 7) ───────────────────────────────────────────── */
   "System ready": "Système prêt",
   "Authorization required to extract final command document.": "Autorisation requise pour extraire le document de commandement final.",
   "Compiling output": "Compilation en cours",
@@ -198,7 +200,7 @@ QBI18N.add('fr', {
   "Send me my results": "M’envoyer mes résultats",
   "Sent ✓": "Envoyé ✓",
 
-  /* ── Roadmap (phase 8) ──────────────────────────────────────────── */
+  /* ── Roadmap (step 8) ──────────────────────────────────────────── */
   "Roadmap": "Feuille de route",
   "A sequence of bets.": "Une suite de paris.",
   "The NOW list": "La liste MAINTENANT",
@@ -213,11 +215,11 @@ QBI18N.add('fr', {
   "Empty": "Vide",
   "Nothing dropped.": "Rien d’écarté.",
 
-  /* ── Synthesis (phase 9) · loading ──────────────────────────────── */
+  /* ── Synthesis (step 9) · loading ──────────────────────────────── */
   "Strategic Command · AI synthesis": "Commandement stratégique · Synthèse IA",
   "Composing your Dossier": "Composition de votre dossier",
-  "A senior strategic advisor would take a week to write this. We are drafting it now: diagnosis, field plan, persona contract, principles, handoffs. All from your 30 minutes of input. All in your brand voice.":
-    "Un conseiller stratégique senior mettrait une semaine à écrire ceci. Nous le rédigeons maintenant : diagnostic, plan de terrain, contrat persona, principes, relais. Le tout à partir de vos 30 minutes de saisie. Le tout dans votre voix de marque.",
+  "A senior strategic advisor would take a week to write this. We are drafting it now: diagnosis, field plan, persona contract, principles, handoffs. All from your hour of input. All in your brand voice.":
+    "Un conseiller stratégique senior mettrait une semaine à écrire ceci. Nous le rédigeons maintenant : diagnostic, plan de terrain, contrat persona, principes, relais. Le tout à partir de votre heure de saisie. Le tout dans votre voix de marque.",
   "Please keep this tab open · 20–40 seconds · Do not reload": "Gardez cet onglet ouvert · 20 à 40 secondes · Ne rechargez pas",
   "Analyzing your NOW list against the binding constraint": "Analyse de votre liste MAINTENANT face à la contrainte limitante",
   "Surfacing contradictions in the Interrogation answers": "Mise au jour des contradictions dans les réponses de l’interrogatoire",
@@ -236,11 +238,11 @@ QBI18N.add('fr', {
   "Full synthesis needs the QB API key.": "La synthèse complète nécessite la clé API QB.",
   "We hit a snag.": "Un accroc est survenu.",
   "This environment cannot call the AI service.": "Cet environnement ne peut pas appeler le service d’IA.",
-  "To generate the full Strategic Command Dossier, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. You can still view the baseline dossier below - it renders everything you entered, without the AI voice.":
-    "Pour générer le Dossier de commandement stratégique complet, cette page doit être servie par Vercel (ou un `vercel dev` local) avec la clé API QB configurée. Vous pouvez tout de même consulter le dossier de base ci-dessous. Il reprend tout ce que vous avez saisi, sans la voix de l’IA.",
+  "To generate the full Strategic Command Dossier, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. You can still open the baseline dossier. It shows the frame of the document with every section pending, without the AI reading.":
+    "Pour générer le Dossier de commandement stratégique complet, cette page doit être servie par Vercel (ou un `vercel dev` local) avec la clé API QB configurée. Vous pouvez tout de même ouvrir le dossier de base. Il montre l’ossature du document, chaque section en attente, sans la lecture de l’IA.",
   "Retry synthesis": "Relancer la synthèse",
   "Show baseline dossier": "Afficher le dossier de base",
-  "Showing baseline dossier. Click retry to attempt AI synthesis again.": "Affichage du dossier de base. Cliquez sur Relancer pour retenter la synthèse IA.",
+  "The baseline dossier is available. Retry the synthesis, or continue with the baseline.": "Le dossier de base est disponible. Relancez la synthèse, ou continuez avec le dossier de base.",
   "Continue with baseline": "Continuer avec le dossier de base",
   "The /api/claude endpoint is not running here. Deploy to Vercel (or run `vercel dev`) to enable AI synthesis.":
     "Le point d’accès /api/claude ne tourne pas ici. Déployez sur Vercel (ou lancez `vercel dev`) pour activer la synthèse IA.",
@@ -281,8 +283,7 @@ QBI18N.add('fr', {
   "02 · Posture statement": "02 · Déclaration de posture",
   "In your brand voice.": "Dans votre voix de marque.",
   "Declared": "Déclaré",
-  "You are choosing focus over motion. Three bets, one persona, one constraint.":
-    "Vous choisissez la concentration plutôt que l’agitation. Trois paris, un persona, une contrainte.",
+  "Pending posture statement.": "Déclaration de posture en attente.",
 
   /* ── Dossier · 03 Field plan ────────────────────────────────────── */
   "03 · 8-week field plan": "03 · Plan de terrain sur 8 semaines",
@@ -350,22 +351,41 @@ QBI18N.add('fr', {
   "Pending": "En attente",
   "No handoffs generated.": "Aucun relais généré.",
   "Retry synthesis to receive next-tool recommendations.": "Relancez la synthèse pour recevoir les recommandations d’outils suivants.",
-  "Tool": "Outil",
-  "Open {0}.html": "Ouvrir {0}.html",
-  "Open foundation": "Ouvrir foundation",
+  /* Each card names its tool as the site names it. Names not held by
+     common.js are listed here with the rendering shared.js uses. */
+  "Brand Document": "Document de marque",
+  "Logo Direction": "Direction de logo",
+  "Logo Evaluation": "Évaluation de logo",
+  "Performance Dashboard": "Tableau de bord de performance",
+  "Quarterly Brand Review": "Revue de marque trimestrielle",
+  "Foundation": "Fondation",
+  "Open Signal Scan": "Ouvrir Signal Scan",
+  "Open Brand Soul Map": "Ouvrir Brand Soul Map",
+  "Open Sensescape": "Ouvrir Sensescape",
+  "Open The Profiles": "Ouvrir The Profiles",
+  "Open Archetype Compass": "Ouvrir Archetype Compass",
+  "Open Visual DNA": "Ouvrir Visual DNA",
+  "Open Brand Document": "Ouvrir le Document de marque",
+  "Open Logo Direction": "Ouvrir Direction de logo",
+  "Open Logo Evaluation": "Ouvrir Évaluation de logo",
+  "Open Voice Guide": "Ouvrir Voice Guide",
+  "Open Foundation": "Ouvrir la Fondation",
   "IMMEDIATE": "IMMÉDIAT",
   "WEEK 2": "SEMAINE 2",
   "DAY 30": "JOUR 30",
+  /* A handoff to a Hold tool carries this in place of a priority. */
+  "NOT OPEN YET": "PAS ENCORE OUVERT",
+  "not open yet": "pas encore ouvert",
 
   /* ── Dossier · signature ────────────────────────────────────────── */
   "The commitment · {0}": "L’engagement · {0}",
   /* Zero and one take the singular in French. Listed before the general pattern. */
   "0 initiatives NOW · {0} parked": "0 initiative MAINTENANT · {0} en réserve",
-  "1 initiatives NOW · {0} parked": "1 initiative MAINTENANT · {0} en réserve",
+  "1 initiative NOW · {0} parked": "1 initiative MAINTENANT · {0} en réserve",
   "{0} initiatives NOW · {1} parked": "{0} initiatives MAINTENANT · {1} en réserve",
   "You are choosing this plan. Sign it.": "Vous choisissez ce plan. Signez-le.",
-  "Signing writes this dossier to your commitment log. You can revisit it in the BrandOS Hub, but the version you sign today is preserved - so you can tell yourself, honestly, six months from now, what you chose to believe on this day.":
-    "Signer inscrit ce dossier dans votre journal d’engagements. Vous pourrez y revenir dans le hub BrandOS, mais la version que vous signez aujourd’hui est conservée. Dans six mois, vous pourrez ainsi vous dire, honnêtement, ce que vous avez choisi de croire ce jour-là.",
+  "Signing writes this dossier to a commitment log kept in this browser. The version you sign today is preserved, so you can tell yourself, honestly, six months from now, what you chose to believe on this day.":
+    "Signer inscrit ce dossier dans un journal d’engagements tenu dans ce navigateur. La version que vous signez aujourd’hui est conservée. Dans six mois, vous pourrez ainsi vous dire, honnêtement, ce que vous avez choisi de croire ce jour-là.",
   "Sign your name to commit": "Signez de votre nom pour vous engager",
   "Sign & commit": "Signer et s’engager",
   "Signed {0} · {1}": "Signé le {0} · {1}",
@@ -399,6 +419,7 @@ QBI18N.add('fr', {
   "Later": "Plus tard",
   "Park": "En réserve",
   "Unlocks": "Ouvre",
+  "Not open yet": "Pas encore ouvert",
   "Week {0}": "Semaine {0}",
   "Week {0} · {1}": "Semaine {0} · {1}"
 });

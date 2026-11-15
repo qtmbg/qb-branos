@@ -13,22 +13,22 @@ QBI18N.add('fr', {
   "The Brand Operating System": "Le système d’exploitation de marque",
   "Answer questions,": "Répondez aux questions,",
   "get a brand": "obtenez une marque",
-  "The AI brand operating system that turns your answers into identity, voice, content, and strategy.":
-    "Le système d’exploitation de marque assisté par IA qui transforme vos réponses en identité, voix, contenu et stratégie.",
+  "The AI brand operating system that turns your answers into identity, voice and strategy.":
+    "Le système d’exploitation de marque assisté par IA qui transforme vos réponses en identité, voix et stratégie.",
   "All connected through one Brand Profile.": "Le tout relié par un seul Profil de marque.",
   "See how it works": "Voir comment ça marche",
-  "Free forever tier · No credit card · 5 min to your first brand":
-    "Offre gratuite à vie · Sans carte bancaire · 5 min pour votre première marque",
+  "Free forever tier · No credit card · 5 minutes to your first result":
+    "Offre gratuite à vie · Sans carte bancaire · 5 minutes pour votre premier résultat",
 
   /* Agent cluster */
-  "The ten connected brand agents": "Les dix agents de marque connectés",
+  "The Brand Profile and the tools that read it": "Le Profil de marque et les outils qui le lisent",
   "Brand Profile": "Profil de marque",
   "Logo Direction": "Direction de logo",
   "Logo Evaluation": "Évaluation de logo",
-  "Dashboard": "Tableau de bord",
-  "Quarterly Review": "Revue trimestrielle",
-  "BrandOS Hub": "Hub BrandOS",
+  "Performance Dashboard": "Tableau de bord de performance",
+  "Quarterly Brand Review": "Revue de marque trimestrielle",
   "connected agents": "agents connectés",
+  "The three Hold tools are not open yet.": "Les trois outils Hold ne sont pas encore ouverts.",
 
   /* Featured by */
   "Press and clients": "Presse et clients",
@@ -51,31 +51,28 @@ QBI18N.add('fr', {
   "01 · Answer": "01 · Répondre",
   "A guided conversation captures your idea, your audience, your edge.":
     "Une conversation guidée saisit votre idée, votre audience, votre avantage.",
-  "No blank-page anxiety. Just questions designed to surface what your brand actually is.":
+  "No blank-page anxiety. Only questions designed to surface what your brand actually is.":
     "Pas d’angoisse de la page blanche. Seulement des questions conçues pour faire émerger ce qu’est réellement votre marque.",
   "Result · Your Brand Profile": "Résultat · Votre Profil de marque",
   "02 · Build": "02 · Construire",
-  "The agents work in concert. Identity, look, voice, content, strategy.":
-    "Les agents travaillent de concert. Identité, allure, voix, contenu, stratégie.",
+  "The agents work in concert. Identity, look, voice, strategy.":
+    "Les agents travaillent de concert. Identité, allure, voix, stratégie.",
   "Your Brand Profile feeds ten brand agents. Each one builds the next layer.":
     "Votre Profil de marque alimente dix agents de marque. Chacun construit la couche suivante.",
-  "Result · Logo · Voice · 30+ posts": "Résultat · Logo · Voix · Plus de 30 publications",
+  "Result · Logo direction · Voice guide": "Résultat · Direction de logo · Guide de voix",
   "03 · Launch": "03 · Lancer",
-  "Approve, schedule, ship. Brand-aligned across every channel.":
-    "Validez, planifiez, publiez. Fidèle à la marque sur chaque canal.",
-  "Output is ready to publish. Same voice everywhere. No drift between platforms.":
-    "Le résultat est prêt à publier. La même voix partout. Aucune dérive d’une plateforme à l’autre.",
-  "Result · A brand ready to publish": "Résultat · Une marque prête à publier",
+  "Approve, export, share. One brand, written down.":
+    "Validez, exportez, partagez. Une marque, écrite noir sur blanc.",
+  "Your Brand Document is ready to print or share. One voice, one look, one position.":
+    "Votre Document de marque est prêt à imprimer ou à partager. Une voix, une allure, une position.",
+  "Result · Your Brand Document": "Résultat · Votre Document de marque",
 
-  /* Video frame */
-  "See": "Voir",
-  "in action · 60 seconds": "en action · 60 secondes",
 
   /* Brand Profile feature */
   "The secret": "Le secret",
   "One profile, every tool reads it.": "Un seul profil, lu par chaque outil.",
-  "Your Brand Profile is the single source of truth. The Voice Guide writes from it. The Logo Direction designs from it. The Content Engine ships from it. Update once, propagate everywhere.":
-    "Votre Profil de marque est l’unique source de vérité. Le Voice Guide écrit à partir de lui. La Direction de logo dessine à partir de lui. Le Moteur de contenu publie à partir de lui. Une mise à jour, et tout suit.",
+  "Your Brand Profile is the single source of truth. The Voice Guide writes from it. Logo Direction designs from it. The Brand Document is compiled from it. Update once, propagate everywhere.":
+    "Votre Profil de marque est l’unique source de vérité. Le Voice Guide écrit à partir de lui. La Direction de logo dessine à partir de lui. Le Document de marque est composé à partir de lui. Une mise à jour, et tout suit.",
   "Start your Brand Profile": "Commencer votre Profil de marque",
   "Brand Soul Map · Live": "Brand Soul Map · En direct",
   "Selvaggi Built, California": "Selvaggi Built, Californie",
@@ -86,13 +83,14 @@ QBI18N.add('fr', {
     "« Built wild, built to last. » The Creator, avec la conviction du Hero. Clients de construction sur mesure.",
 
   /* Scanner */
-  "Free · 30 seconds · Instant": "Gratuit · 30 secondes · Immédiat",
+  "Free · 5 minutes · Instant score": "Gratuit · 5 minutes · Score immédiat",
   "Try it,": "Essayez,",
   "right now.": "tout de suite.",
-  "Type your brand name and what you do. Get an instant brand signal read across 6 dimensions.":
-    "Saisissez le nom de votre marque et ce que vous faites. Obtenez aussitôt une lecture du signal de votre marque sur 6 dimensions.",
+  "Answer eight questions. Get a score out of 100, read across six dimensions.":
+    "Répondez à huit questions. Obtenez un score sur 100, lu sur six dimensions.",
   "Scan my brand free": "Scanner ma marque gratuitement",
-  "No account · No credit card · Instant results": "Sans compte · Sans carte bancaire · Résultats immédiats",
+  "No credit card · Your email for the report · Instant score":
+    "Sans carte bancaire · Votre e-mail pour le rapport · Score immédiat",
 
   /* What you get */
   "What you get": "Ce que vous obtenez",
@@ -138,7 +136,7 @@ QBI18N.add('fr', {
     "Direction de logo, Évaluation de logo, Voice Guide, Document de marque. La décision devient un objet. Quelque chose sur quoi un designer peut travailler, et qu’un investisseur acceptera.",
   "Open Voice Guide →": "Ouvrir Voice Guide →",
   "Logo brief · Direction 02": "Brief logo · Direction 02",
-  "Three routes,": "Trois pistes,",
+  "One direction,": "Une direction,",
   "one brief.": "un brief.",
   "A voice that prints.": "Une voix qui s’imprime.",
   "Designer brief": "Brief designer",
@@ -149,14 +147,14 @@ QBI18N.add('fr', {
   /* Hold */
   "Smarter": "Plus intelligent",
   "every 90 days.": "tous les 90 jours.",
-  "Performance Dashboard, Quarterly Review, Predictive Panel, BrandOS Hub. The system measures itself and tells you what to scale, fix, kill.":
-    "Tableau de bord de performance, Revue trimestrielle, Predictive Panel, Hub BrandOS. Le système se mesure lui-même et vous dit quoi amplifier, corriger, arrêter.",
-  "Open Dashboard →": "Ouvrir le tableau de bord →",
+  "Performance Dashboard, Quarterly Brand Review, Predictive Panel. The system measures itself and tells you what to scale, fix, kill. Hold is not open yet.":
+    "Tableau de bord de performance, Revue de marque trimestrielle, Predictive Panel. Le système se mesure lui-même et vous dit quoi amplifier, corriger, arrêter. Hold n’est pas encore ouvert.",
+  "Not open yet": "Pas encore ouvert",
   "Hold. Intelligence scene.": "Hold. Scène Intelligence.",
 
   /* Personas. The four tabs swap the title, text, button and tag. */
   "Who it's for": "Pour qui",
-  "QB is made": "QB est fait",
+  "BrandOS is made": "BrandOS est fait",
   "for you.": "pour vous.",
   "Starting from zero": "Partir de zéro",
   "Something feels off": "Quelque chose cloche",
@@ -181,32 +179,31 @@ QBI18N.add('fr', {
   "02 · The Doubter": true,
   "I have a brand.": "J’ai une marque.",
   "Something feels off.": "Quelque chose cloche.",
-  "The tools audit what you have and tell you what to keep, fix, or rebuild. Logo evaluation, voice analysis, performance review. Precise verdict, clear path forward.":
-    "Les outils auditent ce que vous avez et vous disent quoi garder, corriger ou reconstruire. Évaluation du logo, analyse de la voix, revue de performance. Un verdict précis, une suite claire.",
+  "The tools audit what you have and tell you what to keep, fix, or rebuild. A scored diagnostic, a logo evaluation, a voice guide. Precise verdict, clear path forward.":
+    "Les outils auditent ce que vous avez et vous disent quoi garder, corriger ou reconstruire. Un diagnostic noté, une évaluation de logo, un guide de voix. Un verdict précis, une suite claire.",
   "Audit your brand": "Auditer votre marque",
 
   "03 · The Player": true,
   "Competition is": "La concurrence",
   "coming fast.": "arrive vite.",
-  "Skip to strategy and intelligence. The War Table pressure-tests your next move. The Predictive Panel simulates market response before you spend.":
-    "Passez directement à la stratégie et à l’intelligence. La War Table met votre prochaine décision à l’épreuve. Le Predictive Panel simule la réponse du marché avant que vous ne dépensiez.",
+  "Skip to strategy. The War Table opens with Starter. It scores and ranks your next moves: what to do now, next, and never. The Predictive Panel, which simulates market response before you spend, is not open yet.":
+    "Passez directement à la stratégie. La War Table s’ouvre avec Starter. Elle note et classe vos prochaines décisions : quoi faire maintenant, ensuite, et jamais. Le Predictive Panel, qui simule la réponse du marché avant que vous ne dépensiez, n’est pas encore ouvert.",
   "Enter strategic mode": "Passer en mode stratégique",
 
   "04 · The Multi-Brand": true,
   "I build brands": "Je construis des marques",
   "for clients.": "pour des clients.",
-  "Up to 5 client workspaces. Your brand on every output. White-label delivery. Run clients through the same sequence with your logo on the result.":
-    "Jusqu’à 5 espaces de travail clients. Votre marque sur chaque résultat. Livraison en marque blanche. Faites passer vos clients par la même séquence, avec votre logo sur le résultat.",
-  "Book a call": "Réserver un appel",
+  "BrandOS sells one plan, and it is not an agency plan. No client workspaces, no white-label. If you build for clients, write to me@qtmbg.com and say what you need.":
+    "BrandOS vend une seule offre, et ce n’est pas une offre agence. Pas d’espaces de travail clients, pas de marque blanche. Si vous construisez pour des clients, écrivez à me@qtmbg.com et dites ce dont vous avez besoin.",
+  "Write to Nizzar": "Écrire à Nizzar",
 
   /* Predictive Panel feature */
-  "Before you spend a dollar": "Avant de dépenser un dollar",
+  "Hold · Not open yet": "Hold · Pas encore ouvert",
   "Test the idea": "Testez l’idée",
   "before you launch it.": "avant de la lancer.",
-  "The Predictive Panel runs your brand move past simulated buyers. You get a confidence score, the friction points, and the verdict. Before you spend on an ad, hire, or launch.":
-    "Le Predictive Panel soumet votre décision de marque à des acheteurs simulés. Vous obtenez un score de confiance, les points de friction et le verdict. Avant de dépenser pour une publicité, une embauche ou un lancement.",
-  "Try the Panel": "Essayer le Panel",
-  "Predictive Panel · Pricing test": "Predictive Panel · Test de prix",
+  "The Predictive Panel runs a brand move past simulated buyers and returns a confidence score, the friction points, and a verdict. It sits in Hold, and Hold is not open yet.":
+    "Le Predictive Panel soumet une décision de marque à des acheteurs simulés et renvoie un score de confiance, les points de friction et un verdict. Il se trouve dans Hold, et Hold n’est pas encore ouvert.",
+  "Predictive Panel · Sample reading": "Predictive Panel · Exemple de lecture",
   "Overall confidence": "Confiance d’ensemble",
   "Strong launch": "Lancement fort",
   "Price adj": "Ajust. prix",
@@ -252,33 +249,35 @@ QBI18N.add('fr', {
   "The scan is free.": "Le scan est gratuit.",
   "The agents do the work.": "Les agents font le travail.",
   "Free steak, paid fries.": "Le steak est offert, les frites sont payantes.",
-  "Signal Scan and your Brand Profile are radically free, forever. The agents are where the work gets done for you.":
-    "Signal Scan et votre Profil de marque sont radicalement gratuits, pour toujours. Les agents, c’est là que le travail se fait pour vous.",
+  "Signal Scan, three foundation exercises, The Profiles, your Soul Map reading and the Brand Document are free, forever. Starter opens the rest of the foundation and the Build agents.":
+    "Signal Scan, trois exercices de la fondation, The Profiles, votre lecture Soul Map et le Document de marque sont gratuits, pour toujours. Starter ouvre le reste de la fondation et les agents Build.",
   "$0": "0 $",
   "/ forever": "/ à vie",
   "Anonymous, then save with email. Cloud-synced across devices.":
     "Anonyme, puis sauvegarde par e-mail. Synchronisé dans le cloud sur tous vos appareils.",
   "Signal Scan diagnostic": "Diagnostic Signal Scan",
-  "Archetype Compass (full)": "Archetype Compass (complet)",
-  "Brand Soul Map (full)": "Brand Soul Map (complet)",
-  "Sensescape (full)": "Sensescape (complet)",
+  "Three foundation exercises: Archetype Compass, Brand Soul Map, Sensescape":
+    "Trois exercices de la fondation : Archetype Compass, Brand Soul Map, Sensescape",
+  "Your Soul Map reading": "Votre lecture Soul Map",
+  "Brand Document": "Document de marque",
   "Cloud-synced Brand Profile": "Profil de marque synchronisé dans le cloud",
-  "Codex PDFs by email": "PDF du Codex par e-mail",
   "$97": "97 $",
   "/ month": "/ mois",
-  "Everything in Brand Profile, plus your full foundation and the Phase 02 agents.":
-    "Tout le Profil de marque, plus votre fondation complète et les agents de la Phase 02.",
-  "Every Phase 01 reading: Sensescape, Visual DNA, War Table":
-    "Chaque lecture de la Phase 01 : Sensescape, Visual DNA, War Table",
-  "Phase 02 agents: Logo Direction, Logo Evaluation, Voice Guide":
-    "Agents de la Phase 02 : Direction de logo, Évaluation de logo, Voice Guide",
+  "Everything in Brand Profile, plus your full foundation and the Build agents.":
+    "Tout le Profil de marque, plus votre fondation complète et les agents Build.",
+  "The two other foundation exercises: Visual DNA, War Table":
+    "Les deux autres exercices de la fondation : Visual DNA, War Table",
+  "The three other foundation readings: Sensescape, Visual DNA, War Table":
+    "Les trois autres lectures de la fondation : Sensescape, Visual DNA, War Table",
+  "The three Build agents: Logo Direction, Logo Evaluation, Voice Guide":
+    "Les trois agents Build : Direction de logo, Évaluation de logo, Voice Guide",
   "Full Brand Profile (QBP) export": "Export complet du Profil de marque (QBP)",
   "Full refund within 14 days of your first payment":
     "Remboursement intégral dans les 14 jours suivant votre premier paiement",
   "Cancel anytime": "Résiliation à tout moment",
   "Start Starter": "Démarrer Starter",
   "Building something larger?": "Vous construisez plus grand ?",
-  "Talk to Nizzar →": "Parlez à Nizzar →",
+  "Write to me@qtmbg.com →": "Écrivez à me@qtmbg.com →",
 
   /* Founder */
   "Nizzar Ben Chekroune at his desk with headphones, world map behind.":
@@ -302,14 +301,14 @@ QBI18N.add('fr', {
   "BrandOS serves founders and organizations across the US, Europe, MENA and worldwide. The interface is available in English and French.":
     "BrandOS accompagne les fondateurs et les organisations aux États-Unis, en Europe, dans la région MENA et partout dans le monde. L’interface existe en anglais et en français.",
   "Is this real AI or a template?": "Est-ce une vraie IA ou un modèle tout fait ?",
-  "Every output is generated fresh by AI, informed by your Brand Profile. No templates. No recycled content. Your answers shape everything.":
-    "Chaque résultat est généré à neuf par l’IA, à partir de votre Profil de marque. Aucun modèle tout fait. Aucun contenu recyclé. Vos réponses façonnent tout.",
+  "Each reading and each agent output is generated fresh by AI, informed by your Brand Profile. No templates. No recycled content. Your answers shape everything.":
+    "Chaque lecture et chaque production d’agent est générée à neuf par l’IA, à partir de votre Profil de marque. Aucun modèle tout fait. Aucun contenu recyclé. Vos réponses façonnent tout.",
   "Do I need design skills?": "Faut-il des compétences en design ?",
   "No. The system guides you with questions, not blank canvases. You bring the knowledge of your brand. The system handles the structure.":
     "Non. Le système vous guide avec des questions, pas avec des toiles blanches. Vous apportez la connaissance de votre marque. Le système s’occupe de la structure.",
   "What do I actually get?": "Qu’est-ce que j’obtiens concrètement ?",
-  "Your archetype, your soul map, your visual DNA, a competitive war table, logo direction briefs, a voice guide, and the brand platform document. All exportable.":
-    "Votre archétype, votre carte d’âme, votre ADN visuel, une table de guerre concurrentielle, des briefs de direction de logo, un guide de voix et le document de plateforme de marque. Le tout exportable.",
+  "With the free Brand Profile: your archetype, your soul map and its reading, your sensory map, your buyer profiles and the Brand Document. With Starter: your visual DNA, your war table, the three other readings, a logo direction, a logo evaluation, a voice guide and the full Brand Profile export.":
+    "Avec le Profil de marque gratuit : votre archétype, votre carte d’âme et sa lecture, votre carte sensorielle, vos profils d’acheteurs et le Document de marque. Avec Starter : votre ADN visuel, votre table de guerre, les trois autres lectures, une direction de logo, une évaluation de logo, un guide de voix et l’export complet du Profil de marque.",
   "How is this different from Canva or Looka?": "En quoi est-ce différent de Canva ou de Looka ?",
   "Those tools make assets. BrandOS builds the thinking underneath. Identity, positioning, voice, strategy. The assets come from that foundation, which is why they hold.":
     "Ces outils fabriquent des actifs. BrandOS construit la réflexion qui se trouve dessous. Identité, positionnement, voix, stratégie. Les actifs viennent de cette fondation, et c’est pourquoi ils tiennent.",
@@ -317,22 +316,19 @@ QBI18N.add('fr', {
   "Yes. Starter is $97 a month and renews monthly. Cancel anytime from your account; you keep access until the end of the billing cycle. The free tier stays free forever.":
     "Oui. Starter coûte 97 $ par mois et se renouvelle chaque mois. Résiliez à tout moment depuis votre compte ; vous gardez l’accès jusqu’à la fin du cycle de facturation. L’offre gratuite reste gratuite à vie.",
   "How long does it take, start to finish?": "Combien de temps faut-il, du début à la fin ?",
-  "Your first result in 5 minutes. A complete brand foundation in 2–3 hours across multiple sessions. Content and strategy build from there.":
-    "Votre premier résultat en 5 minutes. Une fondation de marque complète en 2 à 3 heures, sur plusieurs sessions. Le contenu et la stratégie se construisent à partir de là.",
+  "Your first result in 5 minutes. A complete brand foundation in 2–3 hours across multiple sessions. The Build agents work from there.":
+    "Votre premier résultat en 5 minutes. Une fondation de marque complète en 2 à 3 heures, sur plusieurs sessions. Les agents Build travaillent à partir de là.",
 
   /* Final CTA */
   "Start building": "Commencer à construire",
   "Free forever tier": "Offre gratuite à vie",
   "Start @@ .final-cta h2": "Commencez à",
   "building.": "construire.",
-  "From idea, to orbit. Just like that.": "De l’idée à l’orbite. Tout simplement.",
+  "From idea, to orbit. That's it.": "De l’idée à l’orbite. C’est tout.",
   "Free Signal Scan.": "Signal Scan gratuit.",
   "Run my free scan": "Lancer mon scan gratuit",
   "No download · No credit card · 5 minutes": "Sans téléchargement · Sans carte bancaire · 5 minutes",
   "Brand agents": "Agents de marque",
-  "To start": "Pour commencer",
+  "To start": "Pour commencer"
 
-  /* Footer */
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée."
 });

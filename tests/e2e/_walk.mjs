@@ -11,6 +11,7 @@
  *   export const title = 'eight questions, lead form, report';
  *   export const session = false;          // true for account pages
  *   export const switchesLanguage = false; // true if the walk uses the switch
+ *   export const timeout = 240;            // seconds the whole walk may take
  *   export async function walk(w) { ... }
  *
  * What `w` offers:
@@ -96,8 +97,13 @@ export async function runWalk(mod, lang, { browser, port, shotsDir }) {
       // Matched on text nodes, the way the dictionary is keyed: "Idea in,"
       // is its own node inside a heading that also holds an <em>.
       const lit = text.includes("'") ? `concat('${text.split("'").join(`', "'", '`)}')` : `'${text}'`;
-      const test = exact ? `normalize-space(.)=${lit}` : `contains(normalize-space(.), ${lit})`;
-      return scope.locator(`xpath=.//*[text()[${test}]]`).filter({ visible: true }).first();
+      // French sets a no-break space before : ; ? and inside guillemets.
+      // XPath's normalize-space leaves it alone, so it is turned into a
+      // plain space first, the same way norm() treated the expected text.
+      const node = `normalize-space(translate(., '\u00a0\u202f', '  '))`;
+      const test = exact ? `${node}=${lit}` : `contains(${node}, ${lit})`;
+      // descendant-or-self: `within` may be the very element that holds the text.
+      return scope.locator(`xpath=descendant-or-self::*[text()[${test}]]`).filter({ visible: true }).first();
     },
     async see(english, opts = {}) { await (await w.locate(english, opts)).waitFor({ state: 'visible', timeout: opts.timeout ?? 8000 }); },
     async gone(english, opts = {}) {
@@ -135,14 +141,25 @@ export async function runWalk(mod, lang, { browser, port, shotsDir }) {
     check(cond, message) { if (!cond) failures.push(`check failed in "${current}": ${message}`); },
   };
 
-  try { await mod.walk(w); }
-  catch (e) { if (!failures.some(f => f.startsWith('step "'))) failures.push(`walk stopped in "${current}": ${String(e.message).split('\n')[0].slice(0, 220)}`); }
+  // A walk gets a budget. One that is still going after it is stopped and
+  // reported, so a click that can never land costs seconds, not the run.
+  const budget = (mod.timeout ?? 240) * 1000;
+  let timer;
+  const expired = new Promise(resolve => { timer = setTimeout(() => resolve('expired'), budget); });
+  const outcome = await Promise.race([
+    mod.walk(w).then(() => 'done', e => { if (!failures.some(f => f.startsWith('step "'))) failures.push(`walk stopped in "${current}": ${String(e.message).split('\n')[0].slice(0, 220)}`); return 'done'; }),
+    expired,
+  ]);
+  clearTimeout(timer);
+  if (outcome === 'expired') failures.push(`walk exceeded its ${budget / 1000}s budget, stopped in "${current}"`);
 
   const state = await page.evaluate(() => ({
     htmlLang: document.documentElement.getAttribute('lang'),
     source: window.QBI18N ? window.QBI18N.source : null,
     misses: window.QBI18N ? window.QBI18N.misses() : [],
-  })).catch(() => ({ htmlLang: null, source: null, misses: [] }));
+    stats: window.QBI18N && window.QBI18N.stats ? window.QBI18N.stats : null,
+  })).catch(() => ({ htmlLang: null, source: null, misses: [], stats: null }));
+  if (state.stats) notes.push(`runtime · contrast pass ran ${state.stats.guardRuns} times, ${Math.round(state.stats.guardMs)} ms over ${state.stats.guardNodes} elements · observer ${state.stats.observerCalls} calls, ${Math.round(state.stats.observerMs)} ms`);
 
   if (state.htmlLang !== lang) failures.push(`<html lang> is ${JSON.stringify(state.htmlLang)}, expected "${lang}"`);
   if (state.source && lang === state.source && dictRequests.length && !mod.switchesLanguage) failures.push(`the page loaded a dictionary in its own language: ${dictRequests[0]}`);

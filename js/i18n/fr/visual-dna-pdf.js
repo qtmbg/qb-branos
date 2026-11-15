@@ -2,12 +2,13 @@
    The print view of Visual DNA. Tool labels come from visual-dna.js. */
 QBI18N.include('fr', 'visual-dna');
 QBI18N.add('fr', {
-  /* ── Controls ───────────────────────────────────────────────────── */
+  /* ── Head and controls ──────────────────────────────────────────── */
+  "Visual DNA report · BrandOS": "Rapport Visual DNA · BrandOS",
   "Visual DNA - Print Preview": "Visual DNA · Aperçu avant impression",
   "↓ Save as PDF": "↓ Enregistrer en PDF",
 
   /* ── Cover ──────────────────────────────────────────────────────── */
-  "Visual DNA · Phase 01": true,
+  "Visual DNA · Collapse": true,
   "Your Brand": "Votre marque",
   "Visual Language Report": "Rapport de langage visuel",
   "Generated": "Généré le",
@@ -46,6 +47,7 @@ QBI18N.add('fr', {
   "Energy": "Énergie",
   "Density": "Densité",
   "Era": "Époque",
+  "No visual dimensions recorded.": "Aucune dimension visuelle enregistrée.",
 
   /* ── Page 02 ────────────────────────────────────────────────────── */
   "Color · Typography · Feeling": "Couleur · Typographie · Ressenti",
@@ -53,17 +55,18 @@ QBI18N.add('fr', {
   "The palette": "La palette",
   "of your world": "de votre univers",
   "Color Intelligence": "Intelligence couleur",
+  "No color direction recorded.": "Aucune direction couleur enregistrée.",
   "04 · What this opens": "04 · Ce que cela ouvre",
   "How this feeds into your brand system": "Comment cela nourrit votre système de marque",
-  "Your Visual DNA flows directly into the Logo Direction Agent, the Voice Guide, and every content tool downstream. Your aesthetic language is now embedded in your Quantum Brand Profile - informing decisions without requiring you to explain yourself twice.":
-    "Votre Visual DNA alimente directement l’agent de direction de logo, le Voice Guide et chaque outil de contenu en aval. Votre langage esthétique est désormais inscrit dans votre Quantum Brand Profile. Il éclaire les décisions sans que vous ayez à vous expliquer deux fois.",
+  "Your Visual DNA flows directly into Logo Direction and Logo Evaluation. Your aesthetic language is now embedded in your Quantum Brand Profile - informing decisions without requiring you to explain yourself twice.":
+    "Votre Visual DNA alimente directement les agents Direction de logo et Évaluation de logo. Votre langage esthétique est désormais inscrit dans votre Quantum Brand Profile. Il éclaire les décisions sans que vous ayez à vous expliquer deux fois.",
 
   /* ── Closing page and colophon ──────────────────────────────────── */
   "Document Complete": "Document terminé",
   "Your visual world": "Votre univers visuel",
   "is now operational.": "est désormais opérationnel.",
-  "Visual DNA feeds the Logo Direction Agent, the Sensescape, and every piece of content your brand produces. The aesthetic coordinates you've defined will shape every visual decision from here forward.":
-    "Visual DNA nourrit l’agent de direction de logo, le Sensescape et chaque contenu que produit votre marque. Les coordonnées esthétiques que vous avez définies guideront chaque décision visuelle à partir d’ici.",
-  "Continue to Phase 02 →": "Continuer vers la Phase 02 →",
+  "Visual DNA feeds Logo Direction and Logo Evaluation. The aesthetic coordinates you've defined will shape every visual decision from here forward.":
+    "Visual DNA nourrit les agents Direction de logo et Évaluation de logo. Les coordonnées esthétiques que vous avez définies guideront chaque décision visuelle à partir d’ici.",
+  "Continue to Build →": "Continuer vers Build →",
   "Created by": "Créé par"
 });

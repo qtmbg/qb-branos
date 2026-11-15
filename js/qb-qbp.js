@@ -91,10 +91,9 @@ function sectionLocked(sectionId) {
   const sheet = createPaywallModal({
     reason: 'qbp_section',
     eyebrow: 'Locked',
-    headline: 'Available with Starter.',
-    body: 'Visual DNA and War Table are locked on free. Upgrade to read them.',
-    price: 'Starter, $97 / month. Cancel anytime.',
-    primaryCta: 'Unlock with Starter',
+    headline: 'Opens with Starter.',
+    body: 'Visual DNA and War Table open with Starter: the two exercises, their readings, and these sections of your QBP.',
+    primaryCta: 'Upgrade to Starter',
     secondaryCta: 'Back to top',
     onPrimary: () => { window.location.href = `/paywall?reason=qbp_section&section=${sectionId}`; },
     onSecondary: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); },
@@ -296,7 +295,7 @@ function renderVisualDna(qbp, opts) {
   ]);
 
   const handoff = el('p', { class: 'qb-qbp-handoff' }, [
-    'Your full palette and typography direction live in the Visual DNA artifact. ',
+    'Your full palette and typography direction live in the Visual DNA reading. ',
     el('a', { href: '/archive' }, 'Open the archive'),
     el('span', {}, ' to read it.'),
   ]);
@@ -377,7 +376,7 @@ function renderWarTable(qbp, opts) {
   }
 
   blocks.push(el('p', { class: 'qb-qbp-handoff' }, [
-    'Your full positioning map and ranked priorities live in the War Table artifact. ',
+    'Your full positioning map and ranked priorities live in the War Table reading. ',
     el('a', { href: '/archive' }, 'Open the archive'),
     el('span', {}, ' to read it.'),
   ]));
@@ -432,7 +431,7 @@ function buildToc() {
 function buildEmptyBanner() {
   return el('div', { class: 'qb-qbp-empty-banner' }, [
     el('h2', {}, 'Your QBP is empty.'),
-    el('p',  {}, 'Start with the Archetype Compass or the Brand Soul Map. Each exercise adds a section here.'),
+    el('p',  {}, 'Start with the Archetype Compass or the Brand Soul Map. Each exercise fills part of this page.'),
     el('div', { class: 'qb-qbp-empty-banner__actions' }, [
       el('a', { class: 'qb-button is-primary is-sm', href: '/archetype-compass.html' },
         [el('span', { class: 'qb-button_content' }, 'Begin the Archetype Compass')]),

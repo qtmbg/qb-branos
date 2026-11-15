@@ -762,6 +762,23 @@
     .document { box-shadow: none; }
     .cover, .page, .spark-page, .closing-page { page-break-after: always; }
   }
+/* Dark surfaces keep light type. The canonical pass at the top paints ink on
+   every heading and paragraph, but the cover, the Spark page and the code
+   block stayed dark: ink on ink, unreadable in English and on paper. */
+.cover .cover-brand-name,
+.cover .cover-meta-value,
+.spark-page .spark-text,
+.code-block .code-text { color: var(--cream) !important; }
+.cover .cover-subtitle,
+.cover .cover-meta-label,
+.cover .cover-meta-cycle,
+.spark-page .spark-essence,
+.code-block .code-marker.never { color: var(--cream-warm) !important; }
+.code-block .code-marker { color: var(--gold) !important; }
+.cover-meta-cycle { font-size: 11px; font-weight: 300; margin-top: 4px; }
+@media print {
+  .cover, .spark-page, .code-block { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 /* BrandOS never takes a case transform. The internal capital carries the
    meaning, so uppercase, lowercase and capitalize are all forbidden.
    Placed after the page's own uppercase styles; !important so an ancestor
@@ -791,7 +808,7 @@
         <span class="cover-logo-name">BrandOS</span>
       </div>
       <div class="cover-main">
-        <div class="cover-doc-type">Brand Soul Map · Phase 01</div>
+        <div class="cover-doc-type">Brand Soul Map · Observe</div>
         <div class="cover-brand-name" id="cover-brand-name">Brand Name</div>
         <div class="cover-subtitle" id="cover-subtitle">Strategic Brand Identity Report</div>
         <div class="cover-meta">
@@ -806,6 +823,7 @@
           <div class="cover-meta-item">
             <span class="cover-meta-label">Methodology</span>
             <div class="cover-meta-value">The Collapse</div>
+            <div class="cover-meta-cycle">Observe · Collapse · Build · Hold</div>
           </div>
         </div>
       </div>
@@ -832,7 +850,7 @@
         <div class="page-section-label">Identity Architecture</div>
         <div class="page-brand" id="page-brand-1">Brand Name</div>
       </div>
-      <div class="page-num">02 / 04</div>
+      <div class="page-num">03 / 05</div>
     </div>
 
     <div class="chapter">
@@ -877,7 +895,7 @@
         <div class="page-section-label">Audience · Persona · World</div>
         <div class="page-brand" id="page-brand-2">Brand Name</div>
       </div>
-      <div class="page-num">03 / 04</div>
+      <div class="page-num">04 / 05</div>
     </div>
 
     <div class="chapter">
@@ -945,17 +963,17 @@
         <div class="page-section-label">Document Complete</div>
         <div class="page-brand" id="page-brand-3">Brand Name</div>
       </div>
-      <div class="page-num">04 / 04</div>
+      <div class="page-num">05 / 05</div>
     </div>
 
     <div class="closing-title">
       This is the beginning<br>of your brand's<br>architecture.
     </div>
     <div class="closing-body">
-      The Brand Soul Map is Phase 01 of your brand's path inside BrandOS. Your outputs have been saved to your Quantum Brand Profile and will automatically inform every tool, agent, and strategy that follows. Nothing gets repeated. Everything compounds.
+      The Brand Soul Map is part of Observe, the first movement in BrandOS. Your outputs have been saved to your Quantum Brand Profile and will automatically inform every tool, agent, and strategy that follows. Nothing gets repeated. Everything compounds.
     </div>
     <a class="closing-cta" href="https://quantumbranding.ai/os">
-      Continue to Phase 02 →
+      Continue your foundation →
     </a>
 
     <div style="margin-top: auto; padding-top: 64px; border-top: 1px solid #e0ddd7; display: flex; justify-content: space-between; align-items: flex-end;">
@@ -1007,7 +1025,12 @@
   };
 
   set('cover-brand-name', brandName);
-  set('cover-subtitle', qbp.brandEssence ? qbp.brandEssence.split('-')[1]?.trim() : 'Strategic Brand Identity Report', 'Strategic Brand Identity Report');
+  // An older essence was stored as "Name - line" and the cover showed the
+  // line. Splitting on a bare hyphen cut today's one-sentence essence at its
+  // first hyphenated word ("well-made" left "made ..."). Only the spaced
+  // form is a separator now; anything else keeps the report line.
+  const essenceParts = (qbp.brandEssence || '').split(' - ');
+  set('cover-subtitle', essenceParts.length === 2 ? essenceParts[1].trim() : '', 'Strategic Brand Identity Report');
   set('cover-for', fullName || company || 'Founder');
   document.getElementById('cover-date').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 

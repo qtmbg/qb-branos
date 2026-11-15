@@ -4,8 +4,8 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Content Repurposing Engine · BrandOS": "Moteur de déclinaison de contenu · BrandOS",
-  "Turn one anchor piece into ten platform-native variations, each written in your own brand voice. The repurposing engine inside BrandOS.":
-    "Transformez un contenu pilier en dix variations conçues pour chaque plateforme, chacune écrite dans votre propre voix de marque. Le moteur de déclinaison intégré à BrandOS.",
+  "Turn one anchor piece into ten platform-native formats, each written in your own brand voice. The repurposing engine inside BrandOS.":
+    "Transformez un contenu pilier en dix formats conçus pour chaque plateforme, chacun écrit dans votre propre voix de marque. Le moteur de déclinaison intégré à BrandOS.",
 
   /* ── Chassis shared by the agent tools (not in common.js) ───────── */
   "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
@@ -21,8 +21,8 @@ QBI18N.add('fr', {
   "Brand Name *": "Nom de la marque *",
   "Always / Never": "Toujours / Jamais",
   "Visual Direction": "Direction visuelle",
-  "Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.":
-    "La synthèse était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Réessayez dans un instant.",
+  "Generation was unavailable. Nothing was produced. Try again in a moment.":
+    "La génération était indisponible. Rien n’a été produit. Réessayez dans un instant.",
 
   /* Archetype names stay as written */
   "The Rebel": true,
@@ -38,8 +38,6 @@ QBI18N.add('fr', {
   "The Innocent": true,
 
   /* ── Tool header and footer ─────────────────────────────────────── */
-  /* Kept as written, as on the sibling tools. The fix belongs in the page. */
-  "QB_BrandOS": true,
   "Content Engine v2": "Moteur de contenu v2",
   "Input": "Saisie",
   "Processing": "Traitement",
@@ -50,7 +48,7 @@ QBI18N.add('fr', {
   "Phase 04 - Execution": "Phase 04 · Exécution",
   "Content Repurposing Engine": "Moteur de déclinaison de contenu",
   /* One sentence, cut in three by the two live counts. */
-  "One core insight. Up to": "Un constat central. Jusqu’à",
+  "One core insight.": "Un constat central.",
   "+ pieces across": "+ pièces sur",
   "surfaces. Each reframed natively for its platform. The engine extracts the tension and rebuilds the narrative.":
     "supports. Chacune repensée dans les codes de sa plateforme. Le moteur extrait la tension et reconstruit le récit.",
@@ -142,11 +140,57 @@ QBI18N.add('fr', {
   "Core Idea Extracted": "Idée centrale extraite",
   "Narrative Angles Identified": "Angles narratifs repérés",
   "Platform Outputs - Click to expand": "Sorties par plateforme · cliquez pour déplier",
-  /* "{n} piece(s) generated" is built from four nodes: the count, "piece",
-     an "s" when plural, "generated". French needs a tail that does not
-     agree in number, so the line reads "3 pièces de contenu". */
-  "piece": "pièce",
-  "generated": "de contenu",
+  /* One text node per count line, so noun and participle agree. */
+  "{0} piece generated": "{0} pièce générée",
+  "{0} pieces generated": "{0} pièces générées",
+
+  /* ── Piece labels the model returns as the prompt spells them ─────
+     In French the model keeps these prefixes in English and the page
+     shows them in French, on screen and in the pack. What follows the
+     dash is the model's own. Each number is its own entry, so a line of
+     prose that happens to start with "Post" or "Short" is left alone.
+     The counts are the most the prompt asks for. */
+  "Caption 1 - {0}": "Légende 1 · {0}",
+  "Caption 2 - {0}": "Légende 2 · {0}",
+  "Caption 3 - {0}": "Légende 3 · {0}",
+  "Slide 1 - {0}": "Slide 1 · {0}",
+  "Slide 2 - {0}": "Slide 2 · {0}",
+  "Slide 3 - {0}": "Slide 3 · {0}",
+  "Slide 4 - {0}": "Slide 4 · {0}",
+  "Slide 5 - {0}": "Slide 5 · {0}",
+  "Slide 6 - {0}": "Slide 6 · {0}",
+  "Slide 7 - {0}": "Slide 7 · {0}",
+  "Slide 8 - {0}": "Slide 8 · {0}",
+  "Post 1 - {0}": "Post 1 · {0}",
+  "Post 2 - {0}": "Post 2 · {0}",
+  "Tweet 1 - {0}": "Tweet 1 · {0}",
+  "Tweet 2 - {0}": "Tweet 2 · {0}",
+  "Tweet 3 - {0}": "Tweet 3 · {0}",
+  "Tweet 4 - {0}": "Tweet 4 · {0}",
+  "Tweet 5 - {0}": "Tweet 5 · {0}",
+  "Tweet 6 - {0}": "Tweet 6 · {0}",
+  "Tweet 7 - {0}": "Tweet 7 · {0}",
+  "Tweet 8 - {0}": "Tweet 8 · {0}",
+  "Tweet 9 - {0}": "Tweet 9 · {0}",
+  "Short 1 - {0}": "Short 1 · {0}",
+  "Short 2 - {0}": "Short 2 · {0}",
+  "Short 3 - {0}": "Short 3 · {0}",
+  "Subject 1 - {0}": "Objet 1 · {0}",
+  "Subject 2 - {0}": "Objet 2 · {0}",
+  "Subject 3 - {0}": "Objet 3 · {0}",
+  "Subject 4 - {0}": "Objet 4 · {0}",
+  "Subject 5 - {0}": "Objet 5 · {0}",
+  "Quote 1": "Citation 1",
+  "Quote 2": "Citation 2",
+  "Quote 3": "Citation 3",
+  "Company Post": "Post entreprise",
+  "Podcast Teaser": "Teaser de podcast",
+  "Hook": "Accroche",
+  "Belief-driven": "Porté par une conviction",
+  "Story-driven": "Porté par un récit",
+  "Direct": true,
+  "Belief post": "Post conviction",
+  "Method/Proof": "Méthode/Preuve",
 
   /* ── Content approval loop (up to 3 revision rounds) ────────────── */
   "Content Review": "Revue du contenu",
@@ -160,6 +204,7 @@ QBI18N.add('fr', {
   "Revising…": "Révision en cours…",
   "Revised - review again": "Révisé · à revoir",
   "(Round {0}/3)": "(Tour {0}/3)",
+  "Revision failed. Try again.": "La révision a échoué. Réessayez.",
   "✓ Approve": "✓ Valider",
   "↻ Revise": "↻ Réviser",
   "× Remove": "× Retirer",
@@ -171,16 +216,18 @@ QBI18N.add('fr', {
   "Submit Revision →": "Envoyer la révision →"
 });
 
-/* Exported text. The .txt pack built by the export button.
+/* Exported text. The .txt pack built by exportAll().
    These lines never reach the DOM: the runtime translates the file and
-   the clipboard line by line (js/qb-i18n.js, "Text that leaves the page"). */
+   the clipboard line by line (js/qb-i18n.js, "Text that leaves the page").
+   Platform headings are the labels above, upper-cased in code: the runtime
+   finds them through the same entries. "Untitled" is in shared.js. */
 QBI18N.add('fr', {
   "CONTENT REPURPOSING PACK - {0}": "PACK DE DÉCLINAISON DE CONTENU · {0}",
-  "Source: {0}": "Source : {0}",
+  "Source: {0}": "Source\u00A0: {0}",
   "Generated by BrandOS / Phase 04": "Généré par BrandOS / Phase 04",
-  "CORE IDEA:": "IDÉE CENTRALE :",
-  "NARRATIVE ANGLES:": "ANGLES NARRATIFS :",
+  "CORE IDEA:": "IDÉE CENTRALE\u00A0:",
+  "NARRATIVE ANGLES:": "ANGLES NARRATIFS\u00A0:",
   "Item {0}": "Élément {0}",
-  "Visual: {0}": "Visuel : {0}",
-  "Note: {0}": "Note : {0}"
+  "Visual: {0}": "Visuel\u00A0: {0}",
+  "Note: {0}": "Note\u00A0: {0}"
 });
