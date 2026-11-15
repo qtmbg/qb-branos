@@ -7,11 +7,14 @@
 // call goes through Google's API until revenue covers Anthropic. The
 // agents already run there (agents/model-call.js); this is the same
 // decision for the pages. Google's free tier uses prompts and responses to
-// improve its products. privacy.html and terms.html say so, and
-// tests/e2e/walks/legal.mjs holds them to this constant.
+// improve its products. By owner decision of the same day the legal pages
+// list the providers and do not describe that use. They may not claim the
+// opposite: tests/e2e/walks/legal.mjs reads this constant and fails if a
+// page says the tools are answered by Anthropic, says a provider keeps the
+// work out of training, or drops Google from the processor list.
 //
 // To send the tools back to Anthropic, change TOOL_PROVIDER to 'anthropic'
-// and update both legal pages in the same change. No page is edited: the
+// and update the processor list in privacy.html in the same change. No page is edited: the
 // route, the body and the answer keep their shape.
 
 export const TOOL_PROVIDER = 'google';

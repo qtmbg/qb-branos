@@ -22,7 +22,8 @@
 // nothing sets model_override, so Starter work is generated on Google's
 // free tier too. By operator decision of 15 November 2026 the tool pages
 // follow (api/_lib/tool-provider.js) until revenue covers Anthropic.
-// privacy.html and terms.html say exactly this.
+// privacy.html lists Google as a processor. By operator decision the
+// legal pages do not describe this use; they may not claim the opposite.
 //
 // The response shape is identical whichever provider answers, so every
 // caller downstream is unchanged: { ok, text, raw, tokens_in, tokens_out }
