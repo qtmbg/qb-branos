@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <script src="/js/qb-i18n.js" data-page="war-table-pdf"></script>
-<title>BrandOS Report</title>
+<title>War Table report · BrandOS</title>
+<!-- The print view of a Starter exercise. Same boot-time gate as war-table.html. -->
+<script src="/qb-cloud.js"></script>
+<script>if(window.QB&&QB.requireAccess){QB.requireAccess("war-table", "War Table");}</script>
 <!-- QB fonts unblocked -->
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
@@ -294,7 +297,7 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
 </head>
 <body>
 <div class="controls">
-  <span class="lbl" id="doc-label-ctrl">BrandOS Report</span>
+  <span class="lbl" id="doc-label-ctrl">War Table Report</span>
   <button class="print-btn" onclick="window.print()">↓ Save as PDF</button>
 </div>
 <div class="doc">
@@ -304,7 +307,7 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
     <div class="cover-content">
       <div class="logo"><div class="logo-mark"></div><span class="logo-name">BrandOS</span></div>
       <div class="cover-main">
-        <div class="doc-type" id="doc-type-label">Phase 01 Report</div>
+        <div class="doc-type" id="doc-type-label">War Table · Strategic Priorities</div>
         <div class="brand-name" id="cover-brand">Your Brand</div>
         <div class="cover-sub" id="cover-sub">Strategic Brand Report</div>
         <div class="meta">
@@ -318,7 +321,7 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
 
   <div class="page" id="main-page">
     <div class="ph">
-      <div><div class="ps-label" id="ps-label">Phase 01</div><div class="pb" id="pb-brand">Your Brand</div></div>
+      <div><div class="ps-label" id="ps-label">Strategic Intelligence</div><div class="pb" id="pb-brand">Your Brand</div></div>
       <div class="pnum">01 / 02</div>
     </div>
     <div id="page-content">
@@ -332,7 +335,7 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
       <div class="pnum">02 / 02</div>
     </div>
     <div class="closing-title">Your brand intelligence<br>is building.</div>
-    <div class="closing-body">Each Phase 01 tool adds a layer to your Quantum Brand Profile. Every output flows automatically into the tools that follow. Nothing gets repeated. Everything compounds.</div>
+    <div class="closing-body">Each foundation exercise adds a layer to your Quantum Brand Profile. Every output flows automatically into the tools that follow. Nothing gets repeated. Everything compounds.</div>
     <a href="https://quantumbranding.ai/os" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;color:#2D1521;text-decoration:none;padding-bottom:4px;border-bottom:1px solid #2D1521;">Continue in BrandOS →</a>
     <div style="margin-top:auto;padding-top:48px;border-top:1px solid #e0ddd7;display:flex;justify-content:space-between;">
       <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.25em;color:#9c9890;text-transform:uppercase;margin-bottom:8px;">Methodology</div><div style="font-family:'Fraunces','Times New Roman',serif;font-size:18px;color:#2D1521;">The Collapse</div><div style="font-size:11px;color:#9c9890;margin-top:4px;font-weight:300;">Observe · Collapse · Build · Hold</div><div style="font-size:12px;color:#9c9890;margin-top:2px;font-weight:300;">quantumbranding.ai</div></div>
@@ -363,9 +366,12 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
     'sensescape': { docType: 'Sensescape · Sensory World', psLabel: 'Sensory Architecture', ctrl: 'Sensescape Report' },
     'war-table': { docType: 'War Table · Strategic Priorities', psLabel: 'Strategic Intelligence', ctrl: 'War Table Report' },
   };
-  const lbl = labels[toolId] || { docType: 'Phase 01 Report', psLabel: 'Brand Intelligence', ctrl: 'BrandOS Report' };
+  const lbl = labels[toolId] || { docType: 'Foundation report', psLabel: 'Brand Intelligence', ctrl: 'BrandOS Report' };
 
   const set = (id, v) => { const el = document.getElementById(id); if(el && v) el.textContent = v; };
+  // Everything read from the profile is text. ?qbp= arrives from a link, so
+  // a value written into innerHTML unescaped would run as markup.
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   set('doc-type-label', lbl.docType);
   set('doc-label-ctrl', lbl.ctrl);
   set('cover-brand', brand);
@@ -381,27 +387,33 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
     pc.innerHTML = `
       <div class="chapter-num">01 · Sensory World</div>
       <div class="chapter-title">The physical world<br><em>of your brand</em></div>
-      <div class="field fa"><span class="fl">Sensory Profile</span><div class="fv lg">${qbp.sensoryProfile}</div></div>
-      ${qbp.colorDirection ? `<div class="field"><span class="fl">Color Direction</span><div class="fv">${qbp.colorDirection}</div></div>` : ''}
-      ${qbp.typographyDirection ? `<div class="field"><span class="fl">Typography Direction</span><div class="fv">${qbp.typographyDirection}</div></div>` : ''}
+      <div class="field fa"><span class="fl">Sensory Profile</span><div class="fv lg">${esc(qbp.sensoryProfile)}</div></div>
+      ${qbp.colorDirection ? `<div class="field"><span class="fl">Color Direction</span><div class="fv">${esc(qbp.colorDirection)}</div></div>` : ''}
+      ${qbp.typographyDirection ? `<div class="field"><span class="fl">Typography Direction</span><div class="fv">${esc(qbp.typographyDirection)}</div></div>` : ''}
       <div class="chapter-num" style="margin-top:40px;">02 · Brand Paradox</div>
       <div class="chapter-title">The tension<br><em>that makes you real</em></div>
-      ${qbp.paradox ? `<div class="dark-block"><div class="dark-label">The Paradox</div><div class="dark-val" style="font-family:'Fraunces','Times New Roman',serif;font-size:22px;font-weight:300;">${qbp.paradox}</div></div>` : ''}
+      ${qbp.paradox ? `<div class="dark-block"><div class="dark-label">The Paradox</div><div class="dark-val" style="font-family:'Fraunces','Times New Roman',serif;font-size:22px;font-weight:300;">${esc(qbp.paradox)}</div></div>` : ''}
     `;
   } else if (toolId === 'war-table') {
-    const priorities = Array.isArray(qbp.strategicPriorities) ? qbp.strategicPriorities : (qbp.strategicPriorities ? [qbp.strategicPriorities] : []);
+    // The War Table writes its three highest-scoring initiatives to
+    // warTableTopInitiatives. Nothing writes strategicPriorities any more,
+    // so the sheet came out empty after a finished run. Read both.
+    const topInitiatives = Array.isArray(qbp.warTableTopInitiatives) ? qbp.warTableTopInitiatives : [];
+    const priorities = Array.isArray(qbp.strategicPriorities) ? qbp.strategicPriorities : (qbp.strategicPriorities ? [qbp.strategicPriorities] : topInitiatives);
     pc.innerHTML = `
       <div class="chapter-num">01 · Strategic Priorities</div>
       <div class="chapter-title">Where you<br><em>commit your force</em></div>
-      ${priorities.map((p, i) => `<div class="field ${i===0?'fa':''}"><span class="fl">Priority ${i+1}</span><div class="fv lg">${p}</div></div>`).join('')}
+      ${priorities.length
+        ? priorities.map((p, i) => `<div class="field ${i===0?'fa':''}"><span class="fl">Priority ${i+1}</span><div class="fv lg">${esc(p)}</div></div>`).join('')
+        : `<div class="field"><div class="fv">No priorities yet. Finish the War Table and your three highest-scoring initiatives appear here.</div></div>`}
       ${qbp.competitorLandscape ? `
         <div class="chapter-num" style="margin-top:40px;">02 · Competitive Landscape</div>
         <div class="chapter-title">Who shares<br><em>your territory</em></div>
-        <div class="dark-block"><div class="dark-label">Landscape Intelligence</div><div class="dark-val">${qbp.competitorLandscape}</div></div>
+        <div class="dark-block"><div class="dark-label">Landscape Intelligence</div><div class="dark-val">${esc(qbp.competitorLandscape)}</div></div>
       ` : ''}
     `;
   } else {
-    pc.innerHTML = `<div class="field fa"><span class="fl">Brand Intelligence</span><div class="fv lg">${brand} - Your brand data has been captured in your Quantum Brand Profile and is ready to power every downstream tool.</div></div>`;
+    pc.innerHTML = `<div class="field fa"><span class="fl">Brand Intelligence</span><div class="fv lg">${esc(brand)} - Your brand data has been captured in your Quantum Brand Profile and is ready to power every downstream tool.</div></div>`;
   }
 
   if (params.get('autoprint') === '1') setTimeout(() => window.print(), 1200);

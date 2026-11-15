@@ -10,15 +10,15 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "The Profiles · BrandOS": true,
-  "Three full buyer personas built across biography, pain, journey, and psychology. Phase 01 of BrandOS.":
-    "Trois personas d’acheteurs complets, construits à travers la biographie, la douleur, le cheminement et la psychologie. Phase 01 de BrandOS.",
-  "Three full buyer personas: NOW, NEXT, NORTH STAR.": "Trois personas d’acheteurs complets : NOW, NEXT, NORTH STAR.",
+  "Three full buyer personas built across biography, pain, journey, and psychology. Part of Observe in BrandOS.":
+    "Trois personas d’acheteurs complets, construits à travers la biographie, la douleur, le cheminement et la psychologie. Fait partie du mouvement Observe dans BrandOS.",
+  "Three full buyer personas, built across biography, pain, journey, and psychology.":
+    "Trois personas d’acheteurs complets, construits à travers la biographie, la douleur, le cheminement et la psychologie.",
 
   /* ── Tool header ────────────────────────────────────────────────── */
-  "Phase 01 · The Profiles": true,
+  "Observe · The Profiles": true,
   "Chapter {0} · {1}": "Chapitre {0} · {1}",
   "Three Seats": "Trois sièges",
-  "Biographies + Hooks": "Biographies + accroches",
   "Pain Map": "Carte des douleurs",
   "Journey Map": "Carte du cheminement",
   "Psychological X-Ray": "Radiographie psychologique",
@@ -27,8 +27,8 @@ QBI18N.add('fr', {
   "Save and exit": "Enregistrer et quitter",
   "Progress saved. You can return any time.": "Progression enregistrée. Revenez quand vous voulez.",
 
-  /* ── Shared pieces. "Continue", "Cancel", "First name" and "Open
-     Foundation" are in shared.js. ─────────────────────────────────── */
+  /* ── Shared pieces. "Continue", "Cancel" and "First name" are in
+     shared.js. ─────────────────────────────────────────────────────── */
   "Persona 1": true,
   "Persona 2": true,
   "Persona 3": true,
@@ -39,18 +39,14 @@ QBI18N.add('fr', {
   "No API key configured": "aucune clé API configurée",
 
   /* ── Intro ──────────────────────────────────────────────────────── */
-  "Phase 01 · The Profiles · The journey": "Phase 01 · The Profiles · Le cheminement",
   "Three buyers.": "Trois acheteurs.",
   "Three lives.": "Trois vies.",
   "An hour of structured depth. Identity, pain, journey, psychology. By the end you have three complete persona briefs in the format your strategy work demands.":
     "Une heure de profondeur structurée. Identité, douleur, cheminement, psychologie. À la fin, vous avez trois briefs de persona complets, au format qu’exige votre travail stratégique.",
-  "Built in coherence with Brand Soul Map. Reads from your QBP. Writes back when complete.":
-    "Conçu en cohérence avec Brand Soul Map. Lit votre QBP. Y écrit une fois terminé.",
-  "Saved progress detected.": "Progression enregistrée détectée.",
-  "Resume where you left off": "Reprenez là où vous vous êtes arrêté",
-  "or start over below.": "ou recommencez ci-dessous.",
+  "Built in coherence with Brand Soul Map. Writes to your QBP when complete.":
+    "Conçu en cohérence avec Brand Soul Map. Écrit dans votre QBP une fois terminé.",
 
-  "PHASE {0}": "PHASE {0}",
+  "CHAPTER {0}": "CHAPITRE {0}",
   "5 min": true,
   "18 min": true,
   "10 min": true,
@@ -74,12 +70,12 @@ QBI18N.add('fr', {
   "The Synthesis": "La synthèse",
   "Final deliverable assembled. Three full persona briefs. Ready to share.": "Livrable final assemblé. Trois briefs de persona complets. Prêts à partager.",
 
-  "Begin · 60 minutes": "Commencer · 60 minutes",
+  "Begin · about an hour": "Commencer · une heure environ",
   "Reset": "Réinitialiser",
   "Clear all saved progress and start over?": "Effacer toute la progression enregistrée et recommencer ?",
 
-  /* ── Phase I · three seats ──────────────────────────────────────── */
-  "Phase I · The Three Seats": "Phase I · Les trois sièges",
+  /* ── Chapter I · three seats ──────────────────────────────────────── */
+  "Chapter I · The Three Seats": "Chapitre I · Les trois sièges",
   "Who is in the room?": "Qui est dans la pièce ?",
   "Three buyers. Three names. Three roles. Three opening lines. Begin specific. The rest of the hour builds on whatever you write here, so do not generalize.":
     "Trois acheteurs. Trois prénoms. Trois rôles. Trois phrases d’ouverture. Soyez précis dès le départ. Le reste de l’heure se construit sur ce que vous écrivez ici, alors ne généralisez pas.",
@@ -100,8 +96,8 @@ QBI18N.add('fr', {
   "e.g. Racing seismic compliance deadlines while orchestrating a billion-dollar greenfield hospital":
     "ex. Court après les échéances de mise aux normes sismiques tout en orchestrant un hôpital neuf à un milliard de dollars",
 
-  /* ── Phase II · biography and hook ──────────────────────────────── */
-  "// Phase II · Biography and Hook": "// Phase II · Biographie et accroche",
+  /* ── Chapter II · biography and hook ──────────────────────────────── */
+  "// Chapter II · Biography and Hook": "// Chapitre II · Biographie et accroche",
   "Build {0}'s profile.": "Construisez le profil de {0}.",
   "this persona": "ce persona",
   "Five fields of biography, then a three-pass writing exercise to land their hook. Write as if you are introducing them to a new strategist.":
@@ -143,18 +139,18 @@ QBI18N.add('fr', {
     "Reprenez la passe 1. Retirez tous les adjectifs. Ne gardez que les noms et les verbes. Regardez ce qui survit.",
   "Rewrite pass 1 with no adjectives": "Réécrivez la passe 1 sans adjectifs",
   "Complete pass 1 first": "Terminez d’abord la passe 1",
-  "Pass 3 · Active and under 15 words": "Passe 3 · Actif et moins de 15 mots",
-  "Make it about their doing, not their being. Active form. Under 15 words. Final hook.":
-    "Parlez de ce qu’il fait, pas de ce qu’il est. Voix active. Moins de 15 mots. Accroche finale.",
-  "The final hook, under 15 words": "L’accroche finale, moins de 15 mots",
+  "Pass 3 · Active, 15 words at most": "Passe 3 · Actif, 15 mots au plus",
+  "Make it about their doing, not their being. Active form. 15 words at most. Final hook.":
+    "Parlez de ce qu’il fait, pas de ce qu’il est. Voix active. 15 mots au plus. Accroche finale.",
+  "The final hook, 15 words at most": "L’accroche finale, 15 mots au plus",
   "Complete pass 2 first": "Terminez d’abord la passe 2",
   "✓ {0} words": "✓ {0} mots",
-  "{0} words. Cut to under 15.": "{0} mots. Passez sous 15.",
+  "{0} words. Cut to 15 or fewer.": "{0} mots. Réduisez à 15 ou moins.",
   "Next persona": "Persona suivant",
   "Continue to Pain Map": "Vers la carte des douleurs",
 
-  /* ── Phase III · pain map ───────────────────────────────────────── */
-  "Phase III · The Pain Map": "Phase III · La carte des douleurs",
+  /* ── Chapter III · pain map ───────────────────────────────────────── */
+  "Chapter III · The Pain Map": "Chapitre III · La carte des douleurs",
   "Five pains. Three buyers. Side by side.": "Cinq douleurs. Trois acheteurs. Côte à côte.",
   "Cross-cutting, not sequential. Read each row across all three personas. If two cells in a row say the same thing, sharpen them until they do not.":
     "En transversal, pas en séquence. Lisez chaque ligne sur les trois personas. Si deux cases d’une ligne disent la même chose, affûtez-les jusqu’à ce que ce ne soit plus le cas.",
@@ -179,8 +175,8 @@ QBI18N.add('fr', {
   "Different from the other two. Sharpen the contrast.": "Différent des deux autres. Accentuez le contraste.",
   "Continue to Journey Map": "Vers la carte du cheminement",
 
-  /* ── Phase IV · journey map ─────────────────────────────────────── */
-  "// Phase IV · Journey Map · Stage {0} of 5": "// Phase IV · Carte du cheminement · Étape {0} sur 5",
+  /* ── Chapter IV · journey map ─────────────────────────────────────── */
+  "// Chapter IV · Journey Map · Stage {0} of 5": "// Chapitre IV · Carte du cheminement · Étape {0} sur 5",
   "STAGE {0}": "ÉTAPE {0}",
   "Fill 4 fields per persona": "Remplissez 4 champs par persona",
   "Awareness": "Prise de conscience",
@@ -205,8 +201,8 @@ QBI18N.add('fr', {
   "Next stage": "Étape suivante",
   "Continue to Psychology": "Vers la psychologie",
 
-  /* ── Phase V · psychological X-Ray ──────────────────────────────── */
-  "Phase V · The Psychological X-Ray": "Phase V · La radiographie psychologique",
+  /* ── Chapter V · psychological X-Ray ──────────────────────────────── */
+  "Chapter V · The Psychological X-Ray": "Chapitre V · La radiographie psychologique",
   "Now the layer underneath.": "Maintenant, la couche du dessous.",
   "Six psychological patterns per persona. Drawn from the biography, mindset, pain, and journey you have built so far. Claude proposes. You sharpen.":
     "Six schémas psychologiques par persona. Tirés de la biographie, de l’état d’esprit, de la douleur et du cheminement que vous avez construits jusqu’ici. Claude propose. Vous affûtez.",
@@ -240,8 +236,8 @@ QBI18N.add('fr', {
     "Ce pour quoi il veut qu’on se souvienne de lui. L’héritage sous le travail.",
   "Continue to Common Thread": "Vers le fil conducteur",
 
-  /* ── Phase VI · common thread ───────────────────────────────────── */
-  "Phase VI · The Common Thread": "Phase VI · Le fil conducteur",
+  /* ── Chapter VI · common thread ───────────────────────────────────── */
+  "Chapter VI · The Common Thread": "Chapitre VI · Le fil conducteur",
   "What runs through all three?": "Qu’est-ce qui traverse les trois ?",
   "Different roles, different pains, different journeys. But underneath, a pattern. The single insight that becomes your strategic core.":
     "Des rôles différents, des douleurs différentes, des cheminements différents. Mais en dessous, un schéma. Le constat unique qui devient votre noyau stratégique.",
@@ -263,8 +259,8 @@ QBI18N.add('fr', {
     "Les trois acheteurs évoluent dans des systèmes réglementés, à fort enjeu, où un seul signal manqué peut abîmer des décennies de crédibilité. Ils achètent des partenaires qui absorbent cette charge de signaux à leur place.",
   "Build the deliverable": "Construire le livrable",
 
-  /* ── Phase VII · synthesis ──────────────────────────────────────── */
-  "Phase VII · Synthesis": "Phase VII · Synthèse",
+  /* ── Chapter VII · synthesis ──────────────────────────────────────── */
+  "Chapter VII · Synthesis": "Chapitre VII · Synthèse",
   "Final assembly.": "Assemblage final.",
   "Claude assembles your work into the full deliverable: three persona briefs in your strategy format, plus the cross-cutting layers. You review, refine if needed, then save.":
     "Claude assemble votre travail dans le livrable complet : trois briefs de persona au format de votre stratégie, plus les couches transversales. Vous relisez, vous affinez si besoin, puis vous enregistrez.",
@@ -329,13 +325,14 @@ QBI18N.add('fr', {
   /* ── Finish ─────────────────────────────────────────────────────── */
   "Saved to QBP": "Enregistré dans le QBP",
   "Done.": "Terminé.",
-  "Three full persona briefs written into your QBP. War Table, Voice Guide, and Predictive Panel will read this automatically. Below: download formats and the branded export that mirrors your strategy deck.":
-    "Trois briefs de persona complets inscrits dans votre QBP. War Table, Voice Guide et Predictive Panel les liront automatiquement. Ci-dessous : les formats de téléchargement et l’export de marque, calqué sur votre présentation stratégique.",
+  "Three full persona briefs written into your QBP. Your Brand Document reads them from there. Below: the download formats and the branded export, ready to print.":
+    "Trois briefs de persona complets inscrits dans votre QBP. Votre Document de marque les lit à partir de là. Ci-dessous : les formats de téléchargement et l’export de marque, prêt à imprimer.",
   "Branded export (PDF)": "Export de marque (PDF)",
   "Download PPTX": "Télécharger le PPTX",
   "Marketing deck": "Deck marketing",
   "Download JSON": "Télécharger le JSON",
   "Download Markdown": "Télécharger le Markdown",
+  "Open Foundation": "Ouvrir la Fondation",
   "Start over": "Recommencer",
   "Run The Profiles again? Saved profiles remain in QBP. Tool progress resets.":
     "Relancer The Profiles ? Les profils enregistrés restent dans le QBP. La progression de l’outil est remise à zéro.",
@@ -363,6 +360,19 @@ QBI18N.add('fr', {
    These lines never reach the DOM: the runtime translates the file and
    the clipboard line by line (js/qb-i18n.js, "Text that leaves the page"). */
 QBI18N.add('fr', {
+  /* The branded export. It opens in a blank window the page writes itself;
+     the runtime walks that window with this dictionary. "COMMON / THEMES /
+     ACROSS / ALL PERSONAS" is one heading broken over four lines. */
+  "Print to PDF": "Imprimer en PDF",
+  "THE PROFILES": true,
+  "{0}'s hook": "L’accroche de {0}",
+  "COMMON": "THÈMES",
+  "THEMES": "COMMUNS",
+  "ACROSS": "À TOUS",
+  "ALL PERSONAS": "LES PERSONAS",
+  "Across all three personas": "Pour les trois personas",
+
+  /* The Markdown file */
   "Hook": "Accroche",
   "Initiating Event": "Événement déclencheur",
   "Persona {0}: {1} - {2}": "Persona {0} : {1} · {2}"

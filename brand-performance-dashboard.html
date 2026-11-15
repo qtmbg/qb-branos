@@ -5,7 +5,7 @@
 <script src="/js/qb-i18n.js" data-page="brand-performance-dashboard"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brand Performance Dashboard · BrandOS</title>
-<meta name="description" content="Track brand performance across acquisition, engagement, and conversion, read against the Brand Profile you locked. Phase 06 inside BrandOS.">
+<meta name="description" content="The Brand Performance Dashboard reads the performance data you enter against your Brand Profile: health scores, signals, the next 30 days. Part of Hold in BrandOS. Not open yet.">
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1534,7 +1534,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Brand Performance Dashboard · BrandOS">
-<meta property="og:description" content="Track brand performance across acquisition, engagement, and conversion, read against the Brand Profile you locked. Phase 06 inside BrandOS.">
+<meta property="og:description" content="The Brand Performance Dashboard reads the performance data you enter against your Brand Profile: health scores, signals, the next 30 days. Part of Hold in BrandOS. Not open yet.">
 <meta property="og:url" content="https://quantumbranding.ai/brand-performance-dashboard.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/brand-performance-dashboard.png">
 <meta property="og:image:width" content="1200">
@@ -1544,7 +1544,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Brand Performance Dashboard · BrandOS">
-<meta name="twitter:description" content="Track brand performance across acquisition, engagement, and conversion, read against the Brand Profile you locked. Phase 06 inside BrandOS.">
+<meta name="twitter:description" content="The Brand Performance Dashboard reads the performance data you enter against your Brand Profile: health scores, signals, the next 30 days. Part of Hold in BrandOS. Not open yet.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/brand-performance-dashboard.png">
 <link rel="canonical" href="https://quantumbranding.ai/brand-performance-dashboard.html">
 <!-- QB JSON-LD -->
@@ -1553,7 +1553,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Brand Performance Dashboard",
-  "description": "Track how the brand is performing across acquisition, engagement, and conversion.",
+  "description": "Reads performance data against the Brand Profile and returns health scores, signals and the next 30 days. Part of Hold. Not open yet.",
   "url": "https://quantumbranding.ai/brand-performance-dashboard.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -1662,7 +1662,7 @@ const toggleTheme = () => {
 // ── PLATFORM OPTIONS ──────────────────────────────────────────────────────────
 const PLATFORMS_LIST=['Instagram','LinkedIn Personal','LinkedIn Company','YouTube','Newsletter','X/Twitter','Podcast','Website'];
 const PERIODS=['Last 7 days','Last 30 days','Last 90 days','Last 6 months','Custom period'];
-const ARCHETYPES=['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
+const ARCHETYPES=['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Lover','The Jester','The Everyman','The Innocent'];
 
 // ── SHARED UI ─────────────────────────────────────────────────────────────────
 const ML = ({c, children, mb=10}) => (
@@ -1857,7 +1857,7 @@ function App() {
   const updatePlatform = (i, field, val) => setPlatforms(prev => prev.map((p, idx) => idx === i ? {...p, [field]: val} : p));
   const removePlatform = (i) => setPlatforms(prev => prev.filter((_, idx) => idx !== i));
 
-  const isValid = () => brandName && brandEssence && platforms.some(p => p.platform && (p.topPosts || p.metrics));
+  const isValid = () => brandName && brandEssence && platforms.some(p => p.platform && (p.topPosts || p.lowPosts || p.metrics || p.observations));
 
   const buildSystemPrompt = () => `You are the Brand Performance Intelligence Agent inside the BrandOS ecosystem.
 Your function is to read performance data through the lens of the Quantum Brand Profile - not as a metrics analyst, but as a brand strategist.
@@ -1977,7 +1977,7 @@ Requirements:
       setStep(2);
     }catch(e){
       const msg = e.message === 'UNAVAILABLE'
-        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        ? 'Synthesis was unavailable. The reading could not be generated. Try again in a moment.'
         : 'Agent error: ' + e.message;
       setError(msg);
       setStep(0);
@@ -1993,7 +1993,7 @@ Requirements:
         <div style={{display:'flex', alignItems:'center', gap:20}}>
           <div style={{fontFamily:'var(--font-display)', fontSize:18, letterSpacing:'0.02em', color:'var(--text-1)'}}>BrandOS</div>
           <div style={{width:1, height:16, background:'var(--border-strong)'}}/>
-          <div style={{fontFamily:'var(--font-mono)', fontSize:10, letterSpacing:'.15em', color:'var(--text-3)', textTransform:'uppercase'}}>Phase 05 · Intelligence</div>
+          <div style={{fontFamily:'var(--font-mono)', fontSize:10, letterSpacing:'.15em', color:'var(--text-3)', textTransform:'uppercase'}}>Hold</div>
         </div>
         <div style={{display:'flex', gap:24, alignItems:'center'}}>
           <div className="hide-tablet" style={{display:'flex', alignItems:'center', gap:8}}>
@@ -2020,7 +2020,7 @@ Requirements:
                 <ML mb={0} c="var(--brass)">Intelligence Agent Ready</ML>
               </div>
               <h1 style={{fontSize:48, marginBottom:16}}>Brand Performance Dashboard</h1>
-              <p style={{color:'var(--text-2)', fontSize:16, maxWidth:600, margin:'0 auto', lineHeight: 1.7}}>Feed your performance data. The agent reads it through the brand lens - not as a metrics report, but as human intelligence.</p>
+              <p style={{color:'var(--text-2)', fontSize:16, maxWidth:600, margin:'0 auto', lineHeight: 1.7}}>Feed your performance data. The agent reads it through the brand lens - not as a metrics report, but as brand intelligence.</p>
             </div>
 
             <Sec n={1} title="Brand Context" note="* required">
@@ -2287,7 +2287,7 @@ Requirements:
 
       <footer style={{borderTop:'1px solid var(--border-strong)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center', background:'var(--bg-deep)'}}>
         <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', letterSpacing:'.2em'}}>BrandOS</span>
-        <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', letterSpacing:'.15em'}}>Brand Performance Dashboard / Phase 05</span>
+        <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-4)', letterSpacing:'.15em'}}>Brand Performance Dashboard / Hold</span>
       </footer>
     </div>
   );

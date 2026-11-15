@@ -5,63 +5,63 @@
 const PILLARS = [
   { id: "phrase", name: "La phrase", short: "Positionnement en une phrase", questions: [0, 1] },
   { id: "logo", name: "Le test du logo", short: "Reconnaissable sans logo", questions: [2, 3] },
-  { id: "coherence", name: "Cohérence", short: "Meme promesse partout", questions: [4, 5] },
+  { id: "coherence", name: "Cohérence", short: "Même promesse partout", questions: [4, 5] },
   { id: "differentiation", name: "Différenciation", short: "Ce que les concurrents ne peuvent pas dire", questions: [6, 7] },
   { id: "preuve", name: "Preuve", short: "Ce qui prouve la promesse", questions: [8, 9] },
 ];
 
 const QUESTIONS = [
-  "Un visiteur comprend-il en 5 secondes ce que vous vendez, a qui, et pourquoi vous ?",
-  "Votre phrase de positionnement tient-elle en une phrase, sans jargon ?",
-  "Sans logo, votre site reste-t-il reconnaissable face a 3 concurrents ?",
-  "Votre identite visuelle (couleurs, typographie, ton) est-elle distincte, ou generique ?",
-  "La meme promesse apparait-elle sur le site, les reseaux et les documents commerciaux ?",
-  "Le ton et le message sont-ils les memes partout, sans contradiction ?",
-  "Avez-vous une affirmation que vos concurrents ne peuvent pas reprendre telle quelle ?",
-  "Un client peut-il dire pourquoi vous choisir, vous, plutot qu'un concurrent, en une phrase ?",
-  "Des preuves visibles soutiennent-elles la promesse (cas clients, chiffres, presse, avis) ?",
-  "Ces preuves sont-elles precises et verifiables, ou vagues et generiques ?",
+  "Un visiteur comprend-il en 5 secondes ce que vous vendez, à qui, et pourquoi vous ?",
+  "Votre phrase de positionnement tient-elle en une phrase, sans jargon ?",
+  "Sans logo, votre site reste-t-il reconnaissable face à 3 concurrents ?",
+  "Votre identité visuelle (couleurs, typographie, ton) est-elle distincte, ou générique ?",
+  "La même promesse apparaît-elle sur le site, les réseaux et les documents commerciaux ?",
+  "Le ton et le message sont-ils les mêmes partout, sans contradiction ?",
+  "Avez-vous une affirmation que vos concurrents ne peuvent pas reprendre telle quelle ?",
+  "Un client peut-il dire pourquoi vous choisir, vous, plutôt qu’un concurrent, en une phrase ?",
+  "Des preuves visibles soutiennent-elles la promesse (cas clients, chiffres, presse, avis) ?",
+  "Ces preuves sont-elles précises et vérifiables, ou vagues et génériques ?",
 ];
 
 const OPTIONS = [
   { label: "Non", value: 0 },
-  { label: "Plutot non", value: 3 },
-  { label: "Plutot oui", value: 7 },
+  { label: "Plutôt non", value: 3 },
+  { label: "Plutôt oui", value: 7 },
   { label: "Oui, clairement", value: 10 },
 ];
 
 function level(score) {
   if (score < 40) return "faible";
-  if (score < 70) return "a renforcer";
+  if (score < 70) return "à renforcer";
   return "solide";
 }
 
 function pillarAdvice(pillar, score) {
   const texts = {
     phrase: {
-      faible: "Reecrire la phrase en une ligne : ce que vous vendez, a qui, pourquoi vous. La tester sur 5 inconnus.",
-      "a renforcer": "Raccourcir la phrase et la placer en haut de la page d'accueil, mot pour mot, partout.",
+      faible: "Réécrire la phrase en une ligne : ce que vous vendez, à qui, pourquoi vous. La tester sur 5 inconnus.",
+      "à renforcer": "Raccourcir la phrase et la placer en haut de la page d’accueil, mot pour mot, partout.",
       solide: "Garder cette phrase intacte. Ne pas la diluer avec des variantes par canal.",
     },
     logo: {
-      faible: "Definir 3 signes distinctifs hors logo : une couleur, une typographie, un ton. Les appliquer partout.",
-      "a renforcer": "Supprimer les elements generiques et garder un seul signe fort, repete a chaque point de contact.",
-      solide: "Proteger cette identite. Tout nouveau support doit passer le test sans logo.",
+      faible: "Définir 3 signes distinctifs hors logo : une couleur, une typographie, un ton. Les appliquer partout.",
+      "à renforcer": "Supprimer les éléments génériques et garder un seul signe fort, répété à chaque point de contact.",
+      solide: "Protéger cette identité. Tout nouveau support doit passer le test sans logo.",
     },
     coherence: {
-      faible: "Aligner site, reseaux et documents sur une seule promesse ecrite. Corriger les contradictions en premier.",
-      "a renforcer": "Faire une passe canal par canal et remplacer chaque promesse divergente par la promesse centrale.",
-      solide: "Documenter la promesse centrale pour que chaque nouveau contenu la reprenne sans derivation.",
+      faible: "Aligner site, réseaux et documents sur une seule promesse écrite. Corriger les contradictions en premier.",
+      "à renforcer": "Faire une passe canal par canal et remplacer chaque promesse divergente par la promesse centrale.",
+      solide: "Documenter la promesse centrale pour que chaque nouveau contenu la reprenne sans dérive.",
     },
     differentiation: {
-      faible: "Trouver une affirmation que les concurrents ne peuvent pas dire, puis la prouver. Sans elle, le prix decide.",
-      "a renforcer": "Formuler la difference en une affirmation concrete, pas en adjectifs (premium, innovant, humain).",
-      solide: "Rendre la difference plus difficile a copier : un actif, une methode, une preuve propre a vous.",
+      faible: "Trouver une affirmation que les concurrents ne peuvent pas dire, puis la prouver. Sans elle, le prix décide.",
+      "à renforcer": "Formuler la différence en une affirmation concrète, pas en adjectifs (premium, innovant, humain).",
+      solide: "Rendre la différence plus difficile à copier : un actif, une méthode, une preuve propre à vous.",
     },
     preuve: {
-      faible: "Ajouter 3 preuves precises sur la page d'accueil : un cas client, un chiffre, un temoignage nomme.",
-      "a renforcer": "Remplacer les preuves vagues par des preuves chiffrees et verifiables, avec noms et contextes.",
-      solide: "Mettre les meilleures preuves au meme niveau que la promesse, pas en bas de page.",
+      faible: "Ajouter 3 preuves précises sur la page d’accueil : un cas client, un chiffre, un témoignage nommé.",
+      "à renforcer": "Remplacer les preuves vagues par des preuves chiffrées et vérifiables, avec noms et contextes.",
+      solide: "Mettre les meilleures preuves au même niveau que la promesse, pas en bas de page.",
     },
   };
   return texts[pillar][level(score)];
@@ -69,7 +69,7 @@ function pillarAdvice(pillar, score) {
 
 function diagnose(answers) {
   if (!Array.isArray(answers) || answers.length !== 10) {
-    throw new Error("diagnose attend exactement 10 reponses");
+    throw new Error("diagnose attend exactement 10 réponses");
   }
   const pillars = PILLARS.map(function (p) {
     const score = Math.round((answers[p.questions[0]] + answers[p.questions[1]]) / 2 * 10) / 10;
@@ -80,10 +80,10 @@ function diagnose(answers) {
   const sorted = pillars.slice().sort(function (a, b) { return a.score - b.score; });
   const tensions = sorted.slice(0, 3);
   const strongest = sorted[sorted.length - 1];
-  const reading = "Point le plus solide : " + strongest.name + " (" + strongest.score + "/100). Frein principal : " + tensions[0].name + " (" + tensions[0].score + "/100). " +
-    (global < 40 ? "Le diagnostic est faible dans l'ensemble : commencer par les 3 tensions, dans l'ordre."
-    : global < 70 ? "La base existe, mais les tensions ci-dessous limitent la lisibilite de la marque."
-    : "La marque est lisible. Le travail porte sur les derniers ecarts, pas sur une refonte.");
+  const reading = "Point le plus solide : " + strongest.name + " (" + strongest.score + "/100). Frein principal : " + tensions[0].name + " (" + tensions[0].score + "/100). " +
+    (global < 40 ? "Le diagnostic est faible dans l’ensemble : commencer par les 3 tensions, dans l’ordre."
+    : global < 70 ? "La base existe, mais les tensions ci-dessous limitent la lisibilité de la marque."
+    : "La marque est lisible. Le travail porte sur les derniers écarts, pas sur une refonte.");
   return { global: global, globalLevel: level(global), pillars: pillars, tensions: tensions, strongest: strongest, reading: reading };
 }
 
@@ -92,7 +92,7 @@ function proposedSentence(inputs) {
   const target = (inputs && inputs.target) || "vos clients";
   const diff = (inputs && inputs.difference) || "ce que vos concurrents ne peuvent pas dire";
   const proof = (inputs && inputs.proof) || "vos preuves";
-  return "Pour " + target + ", " + brand + " est " + diff + ", prouve par " + proof + ".";
+  return "Pour " + target + ", " + brand + " est " + diff + ", prouvé par " + proof + ".";
 }
 
 // Export Node (tests) et navigateur (window).

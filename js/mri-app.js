@@ -51,14 +51,14 @@ function captureLead(lead) {
 }
 
 var FOCUS_HEADLINES = {
-  phrase: "Votre phrase tient-elle en une ligne ? Votre score le dit en 5 minutes.",
-  logo: "Sans logo, votre marque est-elle reconnaissable ? Votre score le dit en 5 minutes.",
-  coherence: "Votre promesse est-elle la même partout ? Votre score le dit en 5 minutes.",
-  differentiation: "Ce que vos concurrents ne peuvent pas dire : votre score le dit en 5 minutes.",
-  preuve: "Votre promesse est-elle prouvée ? Votre score le dit en 5 minutes."
+  phrase: "Votre phrase tient-elle en une ligne ? Votre score le dit en 5 minutes.",
+  logo: "Sans logo, votre marque est-elle reconnaissable ? Votre score le dit en 5 minutes.",
+  coherence: "Votre promesse est-elle la même partout ? Votre score le dit en 5 minutes.",
+  differentiation: "Ce que vos concurrents ne peuvent pas dire : votre score le dit en 5 minutes.",
+  preuve: "Votre promesse est-elle prouvée ? Votre score le dit en 5 minutes."
 };
 if (FOCUS && FOCUS_HEADLINES[FOCUS]) el("headline").textContent = FOCUS_HEADLINES[FOCUS];
-if (PAID) el("headline").textContent = "Paiement recu, merci. Refaites le diagnostic, votre palier est deja debloque.";
+if (PAID) el("headline").textContent = "Paiement reçu, merci. Refaites le diagnostic, votre palier est déjà ouvert.";
 if (RETEST) el("retestNote").classList.remove("hidden");
 
 function renderQuestions() {
@@ -94,29 +94,29 @@ function readAnswers() {
 function renderOffer() {
   var offer = window.TIERS.nextOffer(tier);
   var box = el("offerBox");
-  if (!offer) { box.innerHTML = '<div class="card price"><strong>Palier maximal atteint.</strong><p>Rapport complet + review commandée. Prochaine étape : audit humain, avec vos 79 $ déduits sous 30 jours.</p></div>'; return; }
+  if (!offer) { box.innerHTML = '<div class="card price"><strong>Palier maximal atteint.</strong><p>Rapport complet + review commandée. Prochaine étape : audit humain, avec vos 79 $ déduits sous 30 jours.</p></div>'; return; }
   var stripeKey = tier === "free" ? (RETEST ? "retest39" : "flash") : tier === "flash" ? "upgrade60" : "review211";
   var url = STRIPE[stripeKey];
-  var label = RETEST && tier === "free" ? "Re-test 90 jours · 39 $" : offer.label;
+  var label = RETEST && tier === "free" ? "Re-test 90 jours · 39 $" : offer.label;
   box.innerHTML = '<div class="card price"><strong>' + label + '</strong><p>' +
     (tier === "free" ? "Le détail de vos tensions et votre premier chantier, livrés immédiatement." :
-     tier === "flash" ? "Le rapport complet, sans repayer le Flash : 19 $ déjà payés, 60 $ de plus." :
+     tier === "flash" ? "Le rapport complet, sans repayer le Flash : 19 $ déjà payés, 60 $ de plus." :
      "La vidéo de Nizzar sur votre rapport, 10 min, sous 72 h ouvrées.") + '</p></div>';
   var btn = document.createElement("button");
-  btn.textContent = url ? label + " · Payer par Stripe" : label + " · Paiement en cours d'activation";
+  btn.textContent = url ? label + " · Payer par Stripe" : label + " · Paiement en cours d’activation";
   btn.disabled = !url;
   if (url) btn.addEventListener("click", function () { window.location.href = url; });
   box.appendChild(btn);
   if (tier === "free" && !RETEST && STRIPE.full) {
     var btn2 = document.createElement("button");
     btn2.className = "secondary";
-    btn2.textContent = "Rapport complet direct · 79 $ · Payer par Stripe";
+    btn2.textContent = "Rapport complet direct · 79 $ · Payer par Stripe";
     btn2.addEventListener("click", function () { window.location.href = STRIPE.full; });
     box.appendChild(btn2);
   }
   if (!url) {
     var note = document.createElement("p"); note.className = "note";
-    note.textContent = "Mode démo : ajoutez ?demo=flash, ?demo=full ou ?demo=review à l'adresse pour tester ce palier sans payer. En production, ce bouton ouvre Stripe.";
+    note.textContent = "Mode démo : ajoutez ?demo=flash, ?demo=full ou ?demo=review à l’adresse pour tester ce palier sans payer. En production, ce bouton ouvre Stripe.";
     box.appendChild(note);
   }
 }
@@ -124,26 +124,26 @@ function renderOffer() {
 function renderResult(d) {
   lastDiagnosis = d;
   el("globalScore").textContent = d.global;
-  el("frein").textContent = "Votre frein principal : " + d.tensions[0].name + ". Le détail et le plan sont dans les paliers payants.";
-  el("tierNote").textContent = (PAID ? "Paiement recu, merci. " : "") + "Palier actuel : " + (tier === "free" ? "score gratuit" : tier === "flash" ? "Flash (19 $, total payé 19 $)" : tier === "full" ? "Rapport complet (total payé 79 $)" : "Rapport + review (total payé 290 $)") + ".";
+  el("frein").textContent = "Votre frein principal : " + d.tensions[0].name + ". Le détail et le plan sont dans les paliers payants.";
+  el("tierNote").textContent = (PAID ? "Paiement reçu, merci. " : "") + "Palier actuel : " + (tier === "free" ? "score gratuit" : tier === "flash" ? "Flash (19 $, total payé 19 $)" : tier === "full" ? "Rapport complet (total payé 79 $)" : "Rapport + review (total payé 290 $)") + ".";
   var vis = window.TIERS.visibleSections(tier);
   if (vis.tensions) {
     el("flashSection").classList.remove("hidden");
     el("tensions").innerHTML = d.tensions.map(function (p, i) {
       return '<div class="card"><strong>' + (i + 1) + '. ' + p.name + ' (' + p.score + '/100)</strong><p>' + p.advice + '</p></div>';
     }).join("");
-    el("chantier").innerHTML = '<div class="card"><strong>Chantier 1 : ' + d.tensions[0].name + '</strong><p>' + d.tensions[0].advice + '</p></div>';
+    el("chantier").innerHTML = '<div class="card"><strong>Chantier 1 : ' + d.tensions[0].name + '</strong><p>' + d.tensions[0].advice + '</p></div>';
   }
   if (vis.rapportComplet) {
     el("fullSection").classList.remove("hidden");
     el("pillarScores").innerHTML = d.pillars.map(function (p) {
-      return '<div class="card"><strong>' + p.name + ' : ' + p.score + '/100</strong> (' + p.level + ')<div class="bar"><div style="width:' + p.score + '%"></div></div><p>' + p.short + '</p><p>' + p.advice + '</p></div>';
+      return '<div class="card"><strong>' + p.name + ' : ' + p.score + '/100</strong> (' + p.level + ')<div class="bar"><div style="width:' + p.score + '%"></div></div><p>' + p.short + '</p><p>' + p.advice + '</p></div>';
     }).join("");
     el("proposedSentence").textContent = window.MRI.proposedSentence({ brand: el("brand").value.trim(), target: el("target").value.trim() });
     el("currentPhraseOut").textContent = el("currentPhrase").value.trim() || "non renseignée";
     el("plan90").innerHTML = d.tensions.map(function (p, i) {
       var phase = ["Jours 1 à 30", "Jours 31 à 60", "Jours 61 à 90"][i];
-      return '<div class="card"><strong>' + phase + ' : ' + p.name + '</strong><p>' + p.advice + '</p></div>';
+      return '<div class="card"><strong>' + phase + ' : ' + p.name + '</strong><p>' + p.advice + '</p></div>';
     }).join("");
   }
   if (vis.reviewForm) el("reviewSection").classList.remove("hidden");
@@ -151,7 +151,7 @@ function renderResult(d) {
     var prev = parseInt(el("prevScore").value, 10);
     var diff = d.global - prev;
     el("retestCompare").classList.remove("hidden");
-    el("retestCompare").textContent = "Comparaison re-test : " + prev + " → " + d.global + " (" + (diff >= 0 ? "+" : "") + diff + " points).";
+    el("retestCompare").textContent = "Comparaison re-test : " + prev + " → " + d.global + " (" + (diff >= 0 ? "+" : "") + diff + " points).";
   }
   renderOffer();
 }
@@ -178,9 +178,13 @@ el("resultBtn").addEventListener("click", function () {
 el("printBtn").addEventListener("click", function () { window.print(); });
 el("reviewSubmitBtn").addEventListener("click", function () {
   var q = el("reviewQuestions").value.trim();
-  if (!q) { alert("Ecrivez vos 2 ou 3 phrases pour la review, puis envoyez."); return; }
-  var subject = encodeURIComponent("Brand MRI review : " + el("brand").value.trim());
-  var body = encodeURIComponent("Marque : " + el("brand").value.trim() + "\nSite : " + el("website").value.trim() + "\nEmail : " + el("email").value.trim() + "\nScore : " + (lastDiagnosis ? lastDiagnosis.global : "") + "/100\n\nQuestions pour la review :\n" + q);
+  if (!q) { alert("Écrivez vos 2 ou 3 phrases pour la review, puis envoyez."); return; }
+  // The subject and the labels follow the language of the page (they never
+  // reach the DOM, so they go through QBI18N.text). The founder's own words
+  // are sent exactly as written.
+  var say = function (s) { return window.QBI18N && window.QBI18N.text ? window.QBI18N.text(s) : s; };
+  var subject = encodeURIComponent(say("Brand MRI review : " + el("brand").value.trim()));
+  var body = encodeURIComponent(say("Marque : " + el("brand").value.trim() + "\nSite : " + el("website").value.trim() + "\nEmail : " + el("email").value.trim() + "\nScore : " + (lastDiagnosis ? lastDiagnosis.global : "") + "/100\n\nQuestions pour la review :") + "\n" + q);
   window.location.href = "mailto:me@qtmbg.com?subject=" + subject + "&body=" + body;
 });
 el("exportBtn").addEventListener("click", function () {

@@ -51,7 +51,7 @@
   };
 
   if (!window.QB) {
-    showError('qb-cloud.js failed to load.');
+    showError('This page did not load fully. Reload it.');
     return;
   }
 
@@ -166,7 +166,7 @@
     // Success → redirect back
     $('spinner').style.display = 'none';
     $('title').textContent = "You're in.";
-    $('msg').innerHTML = 'Taking you back to your result…';
+    $('msg').innerHTML = 'Opening your page…';
     setTimeout(() => { window.location.href = returnTo; }, 900);
   } catch(e) {
     showError(e.message || 'Unknown error.');

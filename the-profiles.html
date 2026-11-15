@@ -5,7 +5,7 @@
 <script src="/js/qb-i18n.js" data-page="the-profiles"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Profiles · BrandOS</title>
-<meta name="description" content="Three full buyer personas built across biography, pain, journey, and psychology. Phase 01 of BrandOS.">
+<meta name="description" content="Three full buyer personas built across biography, pain, journey, and psychology. Part of Observe in BrandOS.">
 
 <meta name="theme-color" content="#2D1521">
 <meta name="color-scheme" content="light">
@@ -19,7 +19,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="The Profiles · BrandOS">
-<meta property="og:description" content="Three full buyer personas: NOW, NEXT, NORTH STAR.">
+<meta property="og:description" content="Three full buyer personas, built across biography, pain, journey, and psychology.">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/the-profiles.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -1625,7 +1625,7 @@ body main #app .seat-card-num {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "The Profiles",
-  "description": "Identify your audience archetypes and map their beliefs, language, and platforms.",
+  "description": "Build three buyer personas across biography, pain, journey, and psychology.",
   "url": "https://quantumbranding.ai/the-profiles.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -1795,7 +1795,7 @@ var XRAY_FIELDS = [
 
 var PHASES = [
   { phase: "I", label: "Three Seats", steps: [1] },
-  { phase: "II", label: "Biographies + Hooks", steps: [2, 3, 4] },
+  { phase: "II", label: "Biographies and Hooks", steps: [2, 3, 4] },
   { phase: "III", label: "Pain Map", steps: [5] },
   { phase: "IV", label: "Journey Map", steps: [6, 7, 8, 9, 10] },
   { phase: "V", label: "Psychological X-Ray", steps: [11, 12] },
@@ -2008,7 +2008,7 @@ function renderHeader(phaseLabel) {
   return h("div", { class: "header" },
     h("div", { class: "header-inner" },
       h("div", { class: "header-left" },
-        h("div", { class: "header-tag", text: "Phase 01 · The Profiles" }),
+        h("div", { class: "header-tag", text: "Observe · The Profiles" }),
         phase ? h("div", { class: "header-phase", text: "Chapter " + phase.phase + " · " + phase.label }) : null
       ),
       h("div", { class: "header-right" },
@@ -2218,35 +2218,25 @@ function renderIntro() {
   ];
   var cards = phaseList.map(function(p) {
     return h("div", { class: "intro-card" },
-      h("div", { class: "intro-card-num", text: "PHASE " + p.num }),
+      h("div", { class: "intro-card-num", text: "CHAPTER " + p.num }),
       h("div", { class: "intro-card-title", text: p.title }),
       h("div", { class: "intro-card-time", text: p.time }),
       h("div", { class: "intro-card-desc", text: p.desc })
     );
   });
 
-  var resumeNotice = hasSavedProgress() && state.step > 0 ? h("div", { class: "notice" },
-    h("div", { class: "notice-icon" }, ico("info", 16)),
-    h("div", { class: "notice-text" },
-      "Saved progress detected. ",
-      h("button", { style: { color: "var(--green)", textDecoration: "underline", cursor: "pointer" }, onclick: function() { goToStep(state.step); } }, "Resume where you left off"),
-      " or start over below."
-    )
-  ) : null;
-
   return h("div", { class: "screen fade-in" },
     h("div", { class: "container-lg" },
-      h("div", { class: "kicker", text: 'Phase 01 · The Profiles · The journey' }),
+      h("div", { class: "kicker", text: 'Observe · The Profiles' }),
       h("h1", { class: "display" },
         "Three buyers. ",
         h("em", {}, "Three lives.")
       ),
       h("p", { class: "hook", text: "An hour of structured depth. Identity, pain, journey, psychology. By the end you have three complete persona briefs in the format your strategy work demands." }),
-      h("p", { class: "small", text: "Built in coherence with Brand Soul Map. Reads from your QBP. Writes back when complete." }),
-      resumeNotice,
+      h("p", { class: "small", text: "Built in coherence with Brand Soul Map. Writes to your QBP when complete." }),
       h("div", { class: "intro-grid" }, cards),
       h("div", { class: "flex justify-end gap-3 flex-wrap" },
-        btn("Begin · 60 minutes", { size: "lg", iconRight: "arrowRight", onClick: function() { if (state.step === 0) goNext(); else goToStep(1); } }),
+        btn("Begin · about an hour", { size: "lg", iconRight: "arrowRight", onClick: function() { if (state.step === 0) goNext(); else goToStep(1); } }),
         hasSavedProgress() ? btn("Reset", { size: "md", variant: "ghost", onClick: function() {
           if (confirm("Clear all saved progress and start over?")) {
             clearProgress();
@@ -2290,7 +2280,7 @@ function renderSeats() {
   return h("div", { class: "screen" },
     h("div", { class: "container-xl fade-in" },
       h("div", { class: "center mb-8" },
-        h("div", { class: "kicker", text: 'Phase I · The Three Seats' }),
+        h("div", { class: "kicker", text: 'Chapter I · The Three Seats' }),
         h("h2", { class: "display mt-2 mb-3", text: "Who is in the room?" }),
         h("p", { class: "body", style: { maxWidth: "620px", margin: "0 auto" }, text: "Three buyers. Three names. Three roles. Three opening lines. Begin specific. The rest of the hour builds on whatever you write here, so do not generalize." })
       ),
@@ -2335,7 +2325,7 @@ function renderProfile(idx) {
         ),
         h("div", { style: { fontFamily: "var(--mono)", fontSize: "11px", letterSpacing: "0.25em", color: "var(--text3)" }, text: (idx + 1) + " of 3" })
       ),
-      h("div", { class: "label-mono muted mb-3", text: "// Phase II · Biography and Hook" }),
+      h("div", { class: "label-mono muted mb-3", text: "// Chapter II · Biography and Hook" }),
       h("h2", { class: "display", style: { fontSize: "32px", marginBottom: "12px" }, text: "Build " + (seat.name || "this persona") + "'s profile." }),
       h("p", { class: "body mb-8", text: "Five fields of biography, then a three-pass writing exercise to land their hook. Write as if you are introducing them to a new strategist." }),
 
@@ -2371,10 +2361,10 @@ function renderProfile(idx) {
         textarea({ persona: key, rows: 2, value: profile.hookCut, placeholder: instinctValid ? "Rewrite pass 1 with no adjectives" : "Complete pass 1 first", onChange: function(v) { setProfile("hookCut", v); } })
       ),
       h("div", { class: "hook-pass " + (!cutValid ? "locked" : "active " + key) },
-        h("div", { class: "hook-pass-num" }, "Pass 3 · Active and under 15 words"),
-        h("div", { class: "hook-pass-prompt", text: "Make it about their doing, not their being. Active form. Under 15 words. Final hook." }),
-        textarea({ persona: key, rows: 2, value: profile.hookFinal, placeholder: cutValid ? "The final hook, under 15 words" : "Complete pass 2 first", onChange: function(v) { setProfile("hookFinal", v); } }),
-        finalValid ? h("div", { class: "field-hint", style: { color: "var(--green)" }, text: "✓ " + profile.hookFinal.trim().split(/\s+/).length + " words" }) : profile.hookFinal.trim() ? h("div", { class: "field-hint", style: { color: "var(--p3)" }, text: profile.hookFinal.trim().split(/\s+/).length + " words. Cut to under 15." }) : null
+        h("div", { class: "hook-pass-num" }, "Pass 3 · Active, 15 words at most"),
+        h("div", { class: "hook-pass-prompt", text: "Make it about their doing, not their being. Active form. 15 words at most. Final hook." }),
+        textarea({ persona: key, rows: 2, value: profile.hookFinal, placeholder: cutValid ? "The final hook, 15 words at most" : "Complete pass 2 first", onChange: function(v) { setProfile("hookFinal", v); } }),
+        finalValid ? h("div", { class: "field-hint", style: { color: "var(--green)" }, text: "✓ " + profile.hookFinal.trim().split(/\s+/).length + " words" }) : profile.hookFinal.trim() ? h("div", { class: "field-hint", style: { color: "var(--p3)" }, text: profile.hookFinal.trim().split(/\s+/).length + " words. Cut to 15 or fewer." }) : null
       ),
 
       h("div", { class: "center mt-10 flex justify-center gap-3" },
@@ -2434,7 +2424,7 @@ function renderPainMap() {
   return h("div", { class: "screen" },
     h("div", { class: "container-xxl fade-in" },
       h("div", { class: "center mb-8" },
-        h("div", { class: "kicker", text: 'Phase III · The Pain Map' }),
+        h("div", { class: "kicker", text: 'Chapter III · The Pain Map' }),
         h("h2", { class: "display mt-2 mb-3", text: "Five pains. Three buyers. Side by side." }),
         h("p", { class: "body", style: { maxWidth: "640px", margin: "0 auto" }, text: "Cross-cutting, not sequential. Read each row across all three personas. If two cells in a row say the same thing, sharpen them until they do not." })
       ),
@@ -2488,7 +2478,7 @@ function renderJourney(stageIdx) {
   return h("div", { class: "screen" },
     h("div", { class: "container-xxl fade-in" },
       h("div", { class: "center mb-8" },
-        h("div", { class: "label-mono muted", text: "// Phase IV · Journey Map · Stage " + (stageIdx + 1) + " of 5" }),
+        h("div", { class: "label-mono muted", text: "// Chapter IV · Journey Map · Stage " + (stageIdx + 1) + " of 5" }),
         h("h2", { class: "display mt-2 mb-3", text: stage.label }),
         h("p", { class: "body", style: { maxWidth: "620px", margin: "0 auto" }, text: stage.desc })
       ),
@@ -2529,7 +2519,7 @@ function renderXrayGenerate() {
     h("div", { class: "container-md fade-in" },
       state.error ? errorBanner(state.error) : null,
       h("div", { class: "center" },
-        h("div", { class: "kicker", text: 'Phase V · The Psychological X-Ray' }),
+        h("div", { class: "kicker", text: 'Chapter V · The Psychological X-Ray' }),
         h("h2", { class: "display mt-2 mb-4", text: "Now the layer underneath." }),
         h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 12px" }, text: "Six psychological patterns per persona. Drawn from the biography, mindset, pain, and journey you have built so far. Claude proposes. You sharpen." }),
         h("p", { class: "small", style: { maxWidth: "520px", margin: "0 auto 32px" }, text: "Micro-behaviors of control. Rationalizations. Hidden drivers. Defense mechanisms. Emotional contradiction. Aspirational undercurrent." }),
@@ -2642,7 +2632,7 @@ function renderXrayEdit() {
   return h("div", { class: "screen" },
     h("div", { class: "container-md fade-in" },
       h("div", { class: "center mb-8" },
-        h("div", { class: "kicker", text: 'Phase V · The Psychological X-Ray' }),
+        h("div", { class: "kicker", text: 'Chapter V · The Psychological X-Ray' }),
         h("h2", { class: "display mt-2 mb-3", text: "Sharpen the language." }),
         h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto" }, text: "Six patterns per persona. Edit each one until it reads true. If a sentence does not sound like this person, rewrite it." })
       ),
@@ -2676,7 +2666,7 @@ function renderCommonGenerate() {
     h("div", { class: "container-md fade-in" },
       state.error ? errorBanner(state.error) : null,
       h("div", { class: "center" },
-        h("div", { class: "kicker", text: 'Phase VI · The Common Thread' }),
+        h("div", { class: "kicker", text: 'Chapter VI · The Common Thread' }),
         h("h2", { class: "display mt-2 mb-4", text: "What runs through all three?" }),
         h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 32px" }, text: "Different roles, different pains, different journeys. But underneath, a pattern. The single insight that becomes your strategic core." }),
         h("div", { class: "flex justify-center gap-3" },
@@ -2763,7 +2753,7 @@ function renderCommonEdit() {
   return h("div", { class: "screen" },
     h("div", { class: "container-md fade-in" },
       h("div", { class: "center mb-8" },
-        h("div", { class: "kicker", text: 'Phase VI · The Common Thread' }),
+        h("div", { class: "kicker", text: 'Chapter VI · The Common Thread' }),
         h("h2", { class: "display mt-2 mb-3", text: "Sharpen the constants." }),
         h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto" }, text: "Three to five common themes plus the one binding insight. These are the strategic constants that travel across every audience." })
       ),
@@ -2805,7 +2795,7 @@ function renderSynthesize() {
     h("div", { class: "container-md fade-in" },
       state.error ? errorBanner(state.error) : null,
       h("div", { class: "center" },
-        h("div", { class: "kicker", text: 'Phase VII · Synthesis' }),
+        h("div", { class: "kicker", text: 'Chapter VII · Synthesis' }),
         h("h2", { class: "display mt-2 mb-4", text: "Final assembly." }),
         h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 32px" }, text: "Claude assembles your work into the full deliverable: three persona briefs in your strategy format, plus the cross-cutting layers. You review, refine if needed, then save." }),
         h("div", { class: "flex justify-center gap-3" },
@@ -3173,17 +3163,39 @@ function buildCompleteOutput() {
   };
 }
 
-// Override render dispatch for finished state
+// Override render dispatch for finished state.
+// Every keystroke goes through setState(), which rebuilds the whole screen.
+// Without the lines below the field lost focus after one character and the
+// page jumped to the top, so nothing could be typed. The caret and the scroll
+// position are carried across a rebuild of the same step.
 var _origRender = render;
+var _renderedStep = null;
 render = function() {
+  var app = document.getElementById("app");
+  var active = document.activeElement;
+  var keep = null;
+  if (_renderedStep === state.step && active && app.contains(active) && (active.tagName === "INPUT" || active.tagName === "TEXTAREA")) {
+    keep = { index: Array.prototype.indexOf.call(app.querySelectorAll("input, textarea"), active), y: window.scrollY, start: null, end: null };
+    try { keep.start = active.selectionStart; keep.end = active.selectionEnd; } catch (e) {}
+  }
   if (state._finished) {
-    var app = document.getElementById("app");
     app.innerHTML = "";
     app.appendChild(renderHeader());
     app.appendChild(renderFinish());
-    return;
+  } else {
+    _origRender();
   }
-  _origRender();
+  _renderedStep = state.step;
+  if (keep && keep.index >= 0) {
+    var field = app.querySelectorAll("input, textarea")[keep.index];
+    if (field) {
+      field.focus({ preventScroll: true });
+      try { if (keep.start != null) field.setSelectionRange(keep.start, keep.end); } catch (e) {}
+      window.scrollTo(0, keep.y);
+      // Textareas grow to their content on the next tick; hold the position after that too.
+      setTimeout(function() { window.scrollTo(0, keep.y); }, 0);
+    }
+  }
 };
 
 function renderFinish() {
@@ -3230,7 +3242,7 @@ function renderFinish() {
     h("div", { class: "container-md center fade-in" },
       h("div", { class: "kicker", text: 'Saved to QBP' }),
       h("h2", { class: "display mt-2 mb-4", text: "Done." }),
-      h("p", { class: "body", style: { marginBottom: "32px", maxWidth: "520px", marginLeft: "auto", marginRight: "auto" }, text: "Three full persona briefs written into your QBP. War Table, Voice Guide, and Predictive Panel will read this automatically. Below: download formats and the branded export that mirrors your strategy deck." }),
+      h("p", { class: "body", style: { marginBottom: "32px", maxWidth: "520px", marginLeft: "auto", marginRight: "auto" }, text: "Three full persona briefs written into your QBP. Your Brand Document reads them from there. Below: the download formats and the branded export, ready to print." }),
       h("div", { class: "flex justify-center gap-3 flex-wrap" },
         btn("Branded export (PDF)", { icon: "print", onClick: openBrandedExport }),
         btn("Download PPTX", { icon: "download", onClick: downloadPPTX }),

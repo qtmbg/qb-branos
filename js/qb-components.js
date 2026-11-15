@@ -19,6 +19,35 @@ const PHASE_MOD = {
   '05': 'is-intelligence',
 };
 
+/* The offer, in one place. Every surface that names what Starter adds
+   uses these lines, so the app cannot say two different things.
+   Checked against docs/brand/copy-facts.md. */
+export const STARTER_ADDS = 'The Visual DNA and War Table exercises, the Sensescape, Visual DNA and War Table readings, the three Build agents and the full QBP export.';
+export const STARTER_PRICE_LINE = 'Starter, $97 / month. Cancel anytime.';
+
+/* Which movement of The Collapse an agent's work belongs to. The phase
+   numbers stay internal (META.phase, CSS classes). A founder reads the
+   movement. Unknown slugs fall back on the phase where it is unambiguous. */
+const AGENT_MOVEMENT = {
+  soul_map_synthesizer:    'Observe',
+  sensescape_synthesizer:  'Observe',
+  visual_dna_synthesizer:  'Collapse',
+  war_table_synthesizer:   'Collapse',
+  open_questions_agent:    'Collapse',
+  logo_direction_agent:    'Build',
+  logo_evaluation_agent:   'Build',
+  voice_guide_agent:       'Build',
+  brand_performance_agent: 'Hold',
+  quarterly_review_agent:  'Hold',
+  predictive_panel_agent:  'Hold',
+};
+export function movementOf(agentSlug, phase) {
+  if (agentSlug && AGENT_MOVEMENT[agentSlug]) return AGENT_MOVEMENT[agentSlug];
+  if (String(phase) === '02') return 'Build';
+  if (String(phase) === '05') return 'Hold';
+  return null;
+}
+
 function el(tag, attrs = {}, children = []) {
   const node = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -97,7 +126,7 @@ function createPillButton({ label, href, onClick, variant = 'primary', size, exp
 /* =====================================================
    createPhaseCard
    ===================================================== */
-export function createPhaseCard({ phase, name, state, count, total, lockReason, ctaLabel, ctaHref, onCta, ctaDisabled } = {}) {
+export function createPhaseCard({ phase, eyebrow, name, state, count, total, note, lockReason, ctaLabel, ctaHref, onCta, ctaDisabled } = {}) {
   if (!state) throw new Error('createPhaseCard: state is required');
   if (!PHASE_KEYS.has(String(phase))) throw new Error(`createPhaseCard: invalid phase ${phase}`);
 
@@ -105,21 +134,24 @@ export function createPhaseCard({ phase, name, state, count, total, lockReason, 
   cls.push(PHASE_MOD[phase]);
   cls.push(`is-${state}`);
 
-  const eyebrow = el('div', { class: 'qb-phase-card__eyebrow' }, `${phase} ${name || ''}`.trim());
-  const title   = el('h3',  { class: 'qb-phase-card__title' }, name || `Phase ${phase}`);
+  // The eyebrow names the movement. The phase key only picks the colour.
+  const eyebrowEl = el('div', { class: 'qb-phase-card__eyebrow' }, eyebrow || name || '');
+  const title     = el('h3',  { class: 'qb-phase-card__title' }, name || '');
 
   let meta;
-  if (state === 'available' && typeof count === 'number' && typeof total === 'number') {
+  if (note) {
+    meta = el('div', { class: 'qb-phase-card__meta' }, note);
+  } else if (state === 'available' && typeof count === 'number' && typeof total === 'number') {
     meta = el('div', { class: 'qb-phase-card__meta' }, `${count} of ${total} exercises complete`);
   } else if (state === 'complete') {
-    meta = el('div', { class: 'qb-phase-card__meta' }, 'Locked. Artifacts delivered.');
+    meta = el('div', { class: 'qb-phase-card__meta' }, 'Foundation locked.');
   } else if (state === 'locked') {
-    meta = el('div', { class: 'qb-phase-card__meta' }, lockReason || 'Unlock with the next tier.');
+    meta = el('div', { class: 'qb-phase-card__meta' }, lockReason || 'Opens with Starter.');
   }
 
   const ctaWrap = el('div', { class: 'qb-phase-card__cta' }, [
     createPillButton({
-      label: ctaLabel || (state === 'available' ? 'Continue' : state === 'complete' ? 'View artifacts' : 'Upgrade'),
+      label: ctaLabel || (state === 'available' ? 'Continue' : state === 'complete' ? 'Open the archive' : 'Upgrade'),
       href: ctaHref,
       onClick: onCta,
       variant: state === 'available' ? 'primary' : (state === 'locked' ? 'secondary' : 'primary'),
@@ -128,7 +160,7 @@ export function createPhaseCard({ phase, name, state, count, total, lockReason, 
     }),
   ]);
 
-  return el('section', { class: cls.join(' '), dataset: { phase, state } }, [eyebrow, title, meta, ctaWrap]);
+  return el('section', { class: cls.join(' '), dataset: { phase, state } }, [eyebrowEl, title, meta, ctaWrap]);
 }
 
 /* =====================================================
@@ -180,9 +212,10 @@ export function createArtifactRow({ id, title, phase, agentSlug, generatedAt, st
   }
 
   const titleEl = el('h3', { class: 'qb-artifact-row__title' }, title || 'Artifact');
+  const movement = movementOf(agentSlug, phase);
   const meta = el('div', { class: 'qb-artifact-row__meta' }, [
-    phase ? el('span', {}, `Phase ${phase}`) : null,
-    phase ? el('span', { class: 'qb-artifact-row__meta-dot' }) : null,
+    movement ? el('span', {}, movement) : null,
+    movement ? el('span', { class: 'qb-artifact-row__meta-dot' }) : null,
     agentSlug ? el('span', {}, agentSlug.replace(/_/g, ' ')) : null,
     generatedAt ? el('span', { class: 'qb-artifact-row__meta-dot' }) : null,
     generatedAt ? el('span', {}, formatDateLight(generatedAt)) : null,
@@ -220,9 +253,9 @@ export function createLockFoundationCta({ enabled, onClick, label, disabledReaso
 export function createPaywallModal({ reason, eyebrow, headline, body, price, primaryCta, secondaryCta, onPrimary, onSecondary } = {}) {
   const sheet = el('div', { class: 'qb-paywall-modal__sheet' }, [
     el('div', { class: 'qb-paywall-modal__eyebrow' }, eyebrow || 'Locked'),
-    el('h2',  { class: 'qb-paywall-modal__headline' }, headline || 'Unlock the rest of your foundation.'),
-    el('p',   { class: 'qb-paywall-modal__body' }, body || 'Visual DNA, War Table, three more synthesis artifacts, and your QBP export.'),
-    el('div', { class: 'qb-paywall-modal__price' }, price || 'Starter, $97 / month. Cancel anytime.'),
+    el('h2',  { class: 'qb-paywall-modal__headline' }, headline || 'Open the rest of your foundation.'),
+    el('p',   { class: 'qb-paywall-modal__body' }, body || STARTER_ADDS),
+    el('div', { class: 'qb-paywall-modal__price' }, price || STARTER_PRICE_LINE),
     el('div', { class: 'qb-paywall-modal__actions' }, [
       createPillButton({ label: primaryCta || 'Upgrade to Starter', onClick: onPrimary, variant: 'primary', expand: true }),
       el('button', { class: 'qb-paywall-modal__secondary', type: 'button', on: { click: onSecondary || (() => {}) } }, secondaryCta || 'Not now'),
@@ -324,6 +357,9 @@ export function createStatusPill({ status } = {}) {
    Default export
    ===================================================== */
 const QBComponents = {
+  STARTER_ADDS,
+  STARTER_PRICE_LINE,
+  movementOf,
   createTag,
   createCard,
   createPhaseCard,

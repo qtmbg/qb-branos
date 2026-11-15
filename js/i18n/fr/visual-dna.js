@@ -3,11 +3,11 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Visual DNA · BrandOS": true,
-  "Visual DNA · BrandOS Phase 01 - trust your eye, discover your brand's visual signature.":
-    "Visual DNA · BrandOS, Phase 01. Fiez-vous à votre œil, découvrez la signature visuelle de votre marque.",
+  "Visual DNA · BrandOS. A Collapse exercise: trust your eye, discover your brand's visual signature. Opens with Starter.":
+    "Visual DNA · BrandOS. Un exercice Collapse : fiez-vous à votre œil, découvrez la signature visuelle de votre marque. S’ouvre avec Starter.",
 
   /* ── Studio (first screen) ──────────────────────────────────────── */
-  "Phase 01 · Visual DNA · Build the look": "Phase 01 · Visual DNA · Construire l’allure",
+  "Collapse · Visual DNA · Build the look": "Collapse · Visual DNA · Construire l’allure",
   "Trust your eye.": "Fiez-vous à votre œil.",
   "Build the look.": "Construisez l’allure.",
   "Two hundred images, one at a time. Keep what feels like your brand. Discard what does not. About twenty minutes. Stop anytime. Your run saves itself and waits for you.":
@@ -17,7 +17,7 @@ QBI18N.add('fr', {
   "Begin →": "Commencer →",
 
   /* ── Resume (welcome-back card) ─────────────────────────────────── */
-  "Phase 01 · Visual DNA · Welcome back": "Phase 01 · Visual DNA · Bon retour",
+  "Collapse · Visual DNA · Welcome back": "Collapse · Visual DNA · Bon retour",
   "Pick up where you stopped.": "Reprenez là où vous en étiez.",
   "Your finals are waiting.": "Vos finales vous attendent.",
   "Your reveal is ready.": "Votre révélation est prête.",
@@ -70,7 +70,7 @@ QBI18N.add('fr', {
   "Sent ✓": "Envoyé ✓",
 
   /* ── Report · head ──────────────────────────────────────────────── */
-  "Report securely generated to": "Rapport généré en toute sécurité pour",
+  "Report generated for": "Rapport généré pour",
   "Diagnostic Output": "Résultat du diagnostic",
   "Client: {0}": "Client : {0}",
   "Reset": "Réinitialiser",
@@ -87,7 +87,6 @@ QBI18N.add('fr', {
      names the marker so the sentence holds whatever its gender or initial. */
   "The client's eye moves instinctively toward": "L’œil du client va d’instinct vers le marqueur",
   "and violently away from": "et s’écarte violemment du marqueur",
-  ". The initial calibration strongly rejects historical/static norms.": ". Le calibrage initial rejette nettement les normes historiques et statiques.",
   "neutrality": "neutralité",
   "standard": true,
 

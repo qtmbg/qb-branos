@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <script src="/js/qb-i18n.js" data-page="visual-dna-pdf"></script>
-<title>Visual DNA · BrandOS</title>
+<title>Visual DNA report · BrandOS</title>
+<!-- The print view of a Starter exercise. Same boot-time gate as visual-dna.html. -->
+<script src="/qb-cloud.js"></script>
+<script>if(window.QB&&QB.requireAccess){QB.requireAccess("visual-dna", "Visual DNA");}</script>
 <!-- QB fonts unblocked -->
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,50..100,0..1;1,9..144,300..800,50..100,0..1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap"></noscript>
@@ -304,7 +307,7 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
     <div class="cc">
       <div class="logo"><div class="lm"></div><span class="ln">BrandOS</span></div>
       <div class="cm">
-        <div class="dt">Visual DNA · Phase 01</div>
+        <div class="dt">Visual DNA · Collapse</div>
         <div class="bn" id="cover-brand">Your Brand</div>
         <div class="cs">Visual Language Report</div>
         <div class="meta">
@@ -332,7 +335,8 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
     <div class="cn">02 · Visual Dimensions</div>
     <div class="ct" style="font-size:32px;">Your aesthetic<br><em>coordinates</em></div>
     <div class="dim-grid" id="dim-grid">
-      <!-- Populated by JS -->
+      <!-- Replaced by JS when the profile holds a dimension -->
+      <div class="dim-card"><div class="dim-value">No visual dimensions recorded.</div></div>
     </div>
   </div>
 
@@ -343,12 +347,12 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
     </div>
     <div class="cn">03 · Color Direction</div>
     <div class="ct" style="font-size:32px;">The palette<br><em>of your world</em></div>
-    <div id="color-section"></div>
+    <div id="color-section"><div class="dim-card"><div class="dim-value">No color direction recorded.</div></div></div>
 
     <div class="cn" style="margin-top:40px;">04 · What this opens</div>
     <div style="background:#fff;border:1px solid #e8e5df;border-radius:6px;padding:28px 32px;margin-bottom:16px;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#9c9890;margin-bottom:12px;">How this feeds into your brand system</div>
-      <div style="font-size:14px;color:#2D1521;line-height:1.7;font-weight:300;">Your Visual DNA flows directly into the Logo Direction Agent, the Voice Guide, and every content tool downstream. Your aesthetic language is now embedded in your Quantum Brand Profile - informing decisions without requiring you to explain yourself twice.</div>
+      <div style="font-size:14px;color:#2D1521;line-height:1.7;font-weight:300;">Your Visual DNA flows directly into Logo Direction and Logo Evaluation. Your aesthetic language is now embedded in your Quantum Brand Profile - informing decisions without requiring you to explain yourself twice.</div>
     </div>
   </div>
 
@@ -357,8 +361,8 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
       <div><div class="psl">Document Complete</div><div class="pbn" id="close-brand">Your Brand</div></div>
     </div>
     <div class="closing-title">Your visual world<br>is now operational.</div>
-    <div class="closing-body">Visual DNA feeds the Logo Direction Agent, the Sensescape, and every piece of content your brand produces. The aesthetic coordinates you've defined will shape every visual decision from here forward.</div>
-    <a href="https://quantumbranding.ai/os" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#2D1521;text-decoration:none;padding-bottom:4px;border-bottom:1px solid #2D1521;">Continue to Phase 02 →</a>
+    <div class="closing-body">Visual DNA feeds Logo Direction and Logo Evaluation. The aesthetic coordinates you've defined will shape every visual decision from here forward.</div>
+    <a href="https://quantumbranding.ai/os" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#2D1521;text-decoration:none;padding-bottom:4px;border-bottom:1px solid #2D1521;">Continue to Build →</a>
     <div style="margin-top:auto;padding-top:48px;border-top:1px solid #e0ddd7;display:flex;justify-content:space-between;">
       <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.25em;color:#9c9890;text-transform:uppercase;margin-bottom:8px;">Methodology</div><div style="font-family:'Fraunces','Times New Roman',serif;font-size:18px;color:#2D1521;">The Collapse</div><div style="font-size:11px;color:#9c9890;margin-top:4px;font-weight:300;">Observe · Collapse · Build · Hold</div><div style="font-size:12px;color:#9c9890;margin-top:2px;font-weight:300;">quantumbranding.ai</div></div>
       <div style="text-align:right;"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.25em;color:#9c9890;text-transform:uppercase;margin-bottom:8px;">Created by</div><div style="font-size:13px;color:#2D1521;font-weight:300;">Nizzar Ben Chekroune</div></div>
@@ -379,6 +383,9 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
   const brand=qbp.brandName||'Your Brand';
   const fullName=[fn,ln].filter(Boolean).join(' ');
   const set=(id,v)=>{const el=document.getElementById(id);if(el&&v)el.textContent=v;};
+  // Everything read from the profile is text. ?qbp= arrives from a link, so
+  // a value written into innerHTML unescaped would run as markup.
+  const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   set('cover-brand',brand); ['page-brand','page-brand-2','close-brand'].forEach(id=>set(id,brand));
   set('meta-date',new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}));
   set('meta-for',fullName||co||'Founder');
@@ -395,12 +402,12 @@ body{background:#2D1521;display:flex;flex-direction:column;align-items:center;pa
     ['Era',qbp.visualEra],
   ].filter(d=>d[1]);
   if(dims&&dimData.length){
-    dims.innerHTML=dimData.map((d,i)=>`<div class="dim-card ${i===0?'accent-card':''}"><span class="dim-label">${d[0]}</span><div class="dim-value">${d[1]}</div></div>`).join('');
+    dims.innerHTML=dimData.map((d,i)=>`<div class="dim-card ${i===0?'accent-card':''}"><span class="dim-label">${d[0]}</span><div class="dim-value">${esc(d[1])}</div></div>`).join('');
   }
   // Color section
   const cs=document.getElementById('color-section');
   if(cs&&qbp.colorDirection){
-    cs.innerHTML=`<div class="dna-summary"><div class="dna-summary-label">Color Intelligence</div><div class="dna-summary-text">${qbp.colorDirection}</div></div>`;
+    cs.innerHTML=`<div class="dna-summary"><div class="dna-summary-label">Color Intelligence</div><div class="dna-summary-text">${esc(qbp.colorDirection)}</div></div>`;
   }
   if(params.get('autoprint')==='1') setTimeout(()=>window.print(),1200);
 })();

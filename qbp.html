@@ -105,7 +105,7 @@ async function exportQbp() {
     // The export ships JSON in Chapter 1 (PDF deferred). Surface that
     // to the user honestly so the download is not surprising.
     const note = data.format === 'json'
-      ? 'Downloading as JSON (PDF format coming soon).'
+      ? 'Downloading as JSON.'
       : 'Downloading…';
     showToast(note);
     setTimeout(() => { window.location.href = data.signed_url; }, 600);
@@ -119,8 +119,7 @@ function showPaywallModal() {
     reason: 'qbp_export',
     eyebrow: 'Locked',
     headline: 'Open QBP export.',
-    body: 'Starter tier gives you the full QBP as a downloadable file.',
-    price: 'Starter, $97 / month. Cancel anytime.',
+    body: 'Starter gives you the full QBP as a downloadable file.',
     primaryCta: 'Upgrade to Starter',
     secondaryCta: 'Not now',
     onPrimary:   () => { window.location.href = '/paywall?reason=qbp_export'; },

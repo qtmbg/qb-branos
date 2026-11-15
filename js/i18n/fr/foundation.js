@@ -9,8 +9,8 @@ QBI18N.add('fr', {
   "Locking your foundation...": "Verrouillage de votre fondation...",
   "Lock failed: network error": "Verrouillage impossible : erreur réseau",
   "Lock failed: {0}": "Verrouillage impossible : {0}",
-  "Your foundation is locked. Your artifacts are being prepared.":
-    "Votre fondation est verrouillée. Vos livrables sont en préparation.",
+  "Your foundation is locked. Your readings are being prepared.":
+    "Votre fondation est verrouillée. Vos lectures sont en préparation.",
   "Taking longer than expected. You can refresh manually.":
     "C’est plus long que prévu. Vous pouvez actualiser la page vous-même.",
 

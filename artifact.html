@@ -140,7 +140,10 @@ async function load() {
   if (res.status === 200) {
     renderArtifact(root, data.content, {
       artifactId: id,
-      canDownloadPdf: tier !== 'free',
+      // No PDF is produced for an artifact. The button this flag shows used
+      // to call the QBP export and hand back a JSON file under the label
+      // "Download PDF". Print covers the PDF: the browser saves the page.
+      canDownloadPdf: false,
       canShareEmail:  tier !== 'free',
       onShareAction: handleShareAction,
     });

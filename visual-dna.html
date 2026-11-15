@@ -5,9 +5,11 @@
 <script src="/js/qb-i18n.js" data-page="visual-dna"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Visual DNA · BrandOS</title>
-<meta name="description" content="Visual DNA · BrandOS Phase 01 - trust your eye, discover your brand's visual signature.">
+<meta name="description" content="Visual DNA · BrandOS. A Collapse exercise: trust your eye, discover your brand's visual signature. Opens with Starter.">
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
+<!-- Visual DNA opens with Starter (owner decision, 13 Nov 2026). Same boot-time gate as the Build tools. -->
+<script>if(window.QB&&QB.requireAccess){QB.requireAccess("visual-dna", "Visual DNA");}</script>
 <script src="/qb-gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2200,7 +2202,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Visual DNA · BrandOS">
-<meta property="og:description" content="Visual DNA · BrandOS Phase 01 - trust your eye, discover your brand's visual signature.">
+<meta property="og:description" content="Visual DNA · BrandOS. A Collapse exercise: trust your eye, discover your brand's visual signature. Opens with Starter.">
 <meta property="og:url" content="https://quantumbranding.ai/visual-dna.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/visual-dna.png">
 <meta property="og:image:width" content="1200">
@@ -2210,7 +2212,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Visual DNA · BrandOS">
-<meta name="twitter:description" content="Visual DNA · BrandOS Phase 01 - trust your eye, discover your brand's visual signature.">
+<meta name="twitter:description" content="Visual DNA · BrandOS. A Collapse exercise: trust your eye, discover your brand's visual signature. Opens with Starter.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/visual-dna.png">
 <link rel="canonical" href="https://quantumbranding.ai/visual-dna.html">
 <!-- QB JSON-LD -->
@@ -2228,11 +2230,6 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   },
   "publisher": {
     "@id": "https://thequantumbranding.com/#organization"
-  },
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
   }
 }
 </script>
@@ -2689,7 +2686,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
     var wrap = el('section', { class: 'vd-intro animate-in' },
       el('div', { class: 'vd-intro_inner' }, [
-        el('div', { class: 'vd-intro_eyebrow', text: 'Phase 01 · Visual DNA · Build the look' }),
+        el('div', { class: 'vd-intro_eyebrow', text: 'Collapse · Visual DNA · Build the look' }),
         (function(){
           var h = el('h1', { class: 'vd-intro_h' });
           h.appendChild(document.createTextNode('Trust your eye. '));
@@ -2752,7 +2749,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
     var wrap = el('section', { class: 'vd-intro animate-in' },
       el('div', { class: 'vd-intro_inner' }, [
-        el('div', { class: 'vd-intro_eyebrow', text: 'Phase 01 · Visual DNA · Welcome back' }),
+        el('div', { class: 'vd-intro_eyebrow', text: 'Collapse · Visual DNA · Welcome back' }),
         el('h1', { class: 'vd-intro_h', text: headline }),
         el('p', { class: 'vd-intro_deck', text: "Your run is exactly where you left it. Continue when you're ready." }),
         el('div', { class: 'vd-intro_panel' }, [
@@ -3091,7 +3088,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       el('div', { class:'report-banner' },
         el('div', { class:'report-banner-inner' }, [
           el('span', { class:'pulse-dot' }),
-          document.createTextNode('Report securely generated to'),
+          document.createTextNode('Report generated for'),
           el('strong', { text: lead.email || '-' })
         ])
       ),
@@ -3130,7 +3127,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
             ]),
             el('div', { class:'manifesto-block' }, [
               el('div', { class:'label-system', style:{color:'var(--brass)', marginBottom:'14px'}, text:'Generated Insight' }),
-              el('p', { class:'body-copy', html:'The client\'s eye moves instinctively toward <strong style="color:var(--text-1); font-weight:500">' + (r.dominantKept[0] || 'neutrality') + '</strong> and violently away from <strong style="color:var(--text-1); font-weight:500">' + (r.dominantDiscarded[0] || 'standard') + '</strong>. The initial calibration strongly rejects historical/static norms.' })
+              el('p', { class:'body-copy', html:'The client\'s eye moves instinctively toward <strong style="color:var(--text-1); font-weight:500">' + (r.dominantKept[0] || 'neutrality') + '</strong> and violently away from <strong style="color:var(--text-1); font-weight:500">' + (r.dominantDiscarded[0] || 'standard') + '</strong>.' })
             ])
           ])
         ]),

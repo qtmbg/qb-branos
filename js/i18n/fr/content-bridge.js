@@ -4,8 +4,8 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Content Bridge · BrandOS": true,
-  "Carry raw insight into publishable content across platforms. The Content Bridge turns what you already know into posts that sound like your brand.":
-    "Menez un constat brut jusqu’au contenu publiable, sur chaque plateforme. Content Bridge transforme ce que vous savez déjà en posts qui sonnent comme votre marque.",
+  "Carry any agent output into production. Content Bridge turns a script, a strategy or a brand profile into a precise, platform-ready production brief.":
+    "Menez n’importe quelle sortie d’agent jusqu’à la production. Content Bridge transforme un script, une stratégie ou un profil de marque en un brief de production précis, prêt pour la plateforme.",
 
   /* ── Chassis shared by the agent tools (not in common.js) ───────── */
   "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
@@ -16,8 +16,6 @@ QBI18N.add('fr', {
   "Unknown API error": "Erreur d’API inconnue",
 
   /* ── Tool header and footer ─────────────────────────────────────── */
-  /* Kept as written, as on the sibling tools. The fix belongs in the page. */
-  "QB_BRANDOS": true,
   "Content Bridge v1.0": true,
   "Phase 03 · Execution": "Phase 03 · Exécution",
   "Configure API key": "Configurer la clé API",

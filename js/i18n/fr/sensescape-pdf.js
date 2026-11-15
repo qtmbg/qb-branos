@@ -1,19 +1,18 @@
 /* fr · sensescape-pdf.html
    Glossary and rules: docs/i18n/glossary-fr.md
-   The tool's own labels come from sensescape.js. That file loads after this
-   one, so a key present in both takes the tool's rendering. */
+   The tool's own labels come from sensescape.js: the page title, and the
+   labels above each answer ("The brand object", "Sound signature", ...).
+   That file loads after this one, so a key present in both takes the tool's
+   rendering. */
 QBI18N.include('fr', 'sensescape');
 
 QBI18N.add('fr', {
-  /* ── Controls and title ─────────────────────────────────────────── */
-  "BrandOS Report": "Rapport BrandOS",
+  /* ── Controls ───────────────────────────────────────────────────── */
   "Sensescape Report": "Rapport Sensescape",
   "↓ Save as PDF": "↓ Enregistrer en PDF",
 
   /* ── Cover ──────────────────────────────────────────────────────── */
-  "Phase 01 Report": "Rapport Phase 01",
   "Sensescape · Sensory World": "Sensescape · Monde sensoriel",
-  "Your Brand": "Votre marque",
   "Strategic Brand Report": "Rapport stratégique de marque",
   "{0} · Brand Intelligence": "{0} · Intelligence de marque",
   "Generated": "Généré le",
@@ -36,24 +35,40 @@ QBI18N.add('fr', {
   "{0} December {1}": "{0} décembre {1}",
 
   /* ── Main page ──────────────────────────────────────────────────── */
-  "Phase 01": true,
   "Sensory Architecture": "Architecture sensorielle",
-  "Brand Intelligence": "Intelligence de marque",
   "01 · Sensory World": "01 · Monde sensoriel",
   "The physical world": "Le monde physique",
   "of your brand": "de votre marque",
+  /* What Sensescape saves as its visual territory. The profile keeps the
+     English; each part is painted as its own text. The label itself
+     ("Visual territory") and "Your Brand" are held by shared.js. */
+  "Photography-led": "Dominante photographie",
+  "Illustration-led": "Dominante illustration",
+  "Mixed photography & illustration": "Photographie et illustration mêlées",
+  "high contrast": "contraste fort",
+  "soft gradients": "dégradés doux",
+  "futuristic visual language": "langage visuel futuriste",
+  "nostalgic visual language": "langage visuel nostalgique",
+  /* Fields no tool writes today. Shown when a profile carries them. */
   "Sensory Profile": "Profil sensoriel",
   "Color Direction": "Direction couleur",
   "Typography Direction": "Direction typographique",
+  /* The paradox comes from Brand Soul Map, when it has been done. */
   "02 · Brand Paradox": "02 · Paradoxe de marque",
   "The tension": "La tension",
   "that makes you real": "qui vous rend réel",
   "The Paradox": "Le paradoxe",
-  "{0} - Your brand data has been captured in your Quantum Brand Profile and is ready to power every downstream tool.":
-    "{0}. Les données de votre marque sont enregistrées dans votre Quantum Brand Profile, prêtes à alimenter chaque outil qui suit.",
+  /* Nothing from Sensescape in the profile yet. */
+  "Not filled yet": "Pas encore rempli",
+  "This report fills from your Sensescape answers. None are saved on this device yet.":
+    "Ce rapport se remplit à partir de vos réponses Sensescape. Aucune n’est enregistrée sur cet appareil pour l’instant.",
 
-  /* The page also carries a War Table branch it never reaches (its tool id
-     is fixed to sensescape). Covered so the source reads clean. */
+  /* The script also carries labels it never reaches: a generic default and
+     a War Table branch (its tool id is fixed to sensescape). Covered so the
+     source reads clean. */
+  "BrandOS Report": "Rapport BrandOS",
+  "Foundation report": "Rapport de la fondation",
+  "Brand Intelligence": "Intelligence de marque",
   "War Table · Strategic Priorities": "War Table · Priorités stratégiques",
   "War Table Report": "Rapport War Table",
   "Strategic Intelligence": "Intelligence stratégique",
@@ -70,9 +85,8 @@ QBI18N.add('fr', {
   "Document Complete": "Document terminé",
   "Your brand intelligence": "Votre intelligence de marque",
   "is building.": "se construit.",
-  "Each Phase 01 tool adds a layer to your Quantum Brand Profile. Every output flows automatically into the tools that follow. Nothing gets repeated. Everything compounds.":
-    "Chaque outil de la Phase 01 ajoute une couche à votre Quantum Brand Profile. Chaque résultat alimente automatiquement les outils qui suivent. Rien ne se répète. Tout se cumule.",
+  "Each foundation exercise adds a layer to your Quantum Brand Profile. Every output flows automatically into the tools that follow. Nothing gets repeated. Everything compounds.":
+    "Chaque exercice de la fondation ajoute une couche à votre Quantum Brand Profile. Chaque résultat alimente automatiquement les outils qui suivent. Rien ne se répète. Tout se cumule.",
   "Continue in BrandOS →": "Continuer dans BrandOS →",
-  "Observe · Collapse · Build · Hold": true,
   "Created by": "Créé par"
 });

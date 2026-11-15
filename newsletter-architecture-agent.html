@@ -9,7 +9,7 @@
      The page stays deployable for the operator and drops out of the index. -->
 <meta name="robots" content="noindex, nofollow">
 <title>Newsletter Architecture Agent · BrandOS</title>
-<meta name="description" content="Design a newsletter that compounds. Rhythm, segments, and signature sections drawn from your Brand Profile. Phase 04 inside BrandOS.">
+<meta name="description" content="Design a newsletter that compounds. Rhythm, segments, and signature sections drawn from your Brand Profile. Phase 03 inside BrandOS.">
 
 <!-- Theme Flash Prevention -->
 <script>
@@ -1534,6 +1534,21 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 /* === END TOOL TYPOGRAPHY CONTINUITY === */
 
+/* The step rail in the tool header is a progress hint, not a control. Below
+   1000px it ran past the edge of the page, so it is hidden there. The inline
+   display on the element needs !important to be overruled. */
+@media (max-width:999px) { .hide-mobile { display:none !important; } }
+
+/* The list and the piece under review sit side by side from 1000px up and
+   stack below that. The two columns used to be fixed inline, so on a phone
+   the second one was pushed past the edge of the page and clipped. */
+.qb-split { grid-template-columns:minmax(0,1fr); gap:var(--space-m); align-items:start; }
+.qb-split > * { min-width:0; }
+@media (min-width:1000px) {
+  .qb-split { grid-template-columns:260px minmax(0,1fr); }
+  .qb-split_list { position:sticky; top:100px; }
+}
+
 </style>
 
 <script>
@@ -1597,7 +1612,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Newsletter Architecture Agent · BrandOS">
-<meta property="og:description" content="Design a newsletter that compounds. Rhythm, segments, and signature sections drawn from your Brand Profile. Phase 04 inside BrandOS.">
+<meta property="og:description" content="Design a newsletter that compounds. Rhythm, segments, and signature sections drawn from your Brand Profile. Phase 03 inside BrandOS.">
 <meta property="og:url" content="https://quantumbranding.ai/newsletter-architecture-agent.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/newsletter-architecture-agent.png">
 <meta property="og:image:width" content="1200">
@@ -1607,7 +1622,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Newsletter Architecture Agent · BrandOS">
-<meta name="twitter:description" content="Design a newsletter that compounds. Rhythm, segments, and signature sections drawn from your Brand Profile. Phase 04 inside BrandOS.">
+<meta name="twitter:description" content="Design a newsletter that compounds. Rhythm, segments, and signature sections drawn from your Brand Profile. Phase 03 inside BrandOS.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/newsletter-architecture-agent.png">
 <link rel="canonical" href="https://quantumbranding.ai/newsletter-architecture-agent.html">
 <!-- QB JSON-LD -->
@@ -1717,21 +1732,6 @@ const { useState, useEffect } = React;
 const ARCHETYPES = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
 const NATURAL_FORCES = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
 const STEPS = ['QBP Input','Generating','Newsletter'];
-
-const ThemeToggle = () => {
-  const toggle = () => {
-    const current = document.documentElement.getAttribute('data-theme') || 'dark';
-    const next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('qb-theme', next); } catch(e) {}
-  };
-  return (
-    <button onClick={toggle} style={{background:'var(--bg-surface)', border:'1px solid var(--border-medium)', color:'var(--text-2)', padding:'6px 12px', borderRadius:20, fontSize:10, fontFamily:'var(--font-mono)', letterSpacing:'0.05em', cursor:'pointer', transition:'all 0.3s', display:'flex', alignItems:'center', gap:8}}>
-      <span style={{width:6, height:6, borderRadius:'50%', background:'var(--brass)', boxShadow: '0 0 4px var(--brass-dim)'}}></span>
-      THEME
-    </button>
-  );
-};
 
 const ML = ({c, children, mb=8}) => (
   <div style={{fontFamily:'var(--font-mono)', fontSize:9, letterSpacing:'.15em', color:c||'var(--text-3)', textTransform:'uppercase', marginBottom:mb}}>
@@ -2007,6 +2007,9 @@ function App() {
   const [result, setResult] = useState(null);
   const [activeIssue, setActiveIssue] = useState(0);
   const [mainTab, setMainTab] = useState('architecture');
+  // The review of the four issues: each one with its status, in order.
+  // null until the review has mounted.
+  const [review, setReview] = useState(null);
 
   const [brandName, setBrandName] = useState('');
   const [founderName, setFounderName] = useState('');
@@ -2153,11 +2156,14 @@ REQUIREMENTS:
       let parsed;
       try { parsed = JSON.parse(jsonMatch[0]); }
       catch(parseErr){ throw new Error('UNAVAILABLE'); }
+      // An answer with no architecture or no issues used to open an empty
+      // "System Complete" screen. It is a failed run and reads as one.
+      if(!parsed.architecture || !Array.isArray(parsed.issues) || !parsed.issues.length) throw new Error('UNAVAILABLE');
       setResult(parsed);
       setActiveIssue(0); setMainTab('architecture'); setStep(2);
     } catch(e) {
       const msg = e.message === 'UNAVAILABLE'
-        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        ? 'The agent could not finish. Nothing was generated. Try again in a moment.'
         : 'Agent error: ' + e.message;
       setError(msg);
       setStep(0);
@@ -2172,13 +2178,16 @@ REQUIREMENTS:
     lines.push('ARCHITECTURE'); lines.push('='.repeat(60));
     lines.push(`Name: ${a?.name}`); lines.push(`Tagline: ${a?.tagline}`);
     lines.push(`Cadence: ${a?.cadence}`); lines.push('');
-    result.issues?.forEach(issue => {
+    // The file holds what the review holds: removed issues are left out and
+    // a revised issue is exported as revised.
+    const kept = review ? review.filter(r => r.status !== 'removed').map(r => r.item) : result.issues;
+    kept?.forEach(issue => {
       lines.push('='.repeat(60));
       lines.push(`ISSUE ${String(issue.issueNumber).padStart(2,'0')} - ${issue.issueType}`);
       lines.push(`Subject: ${issue.subjectLine}`);
       lines.push(`Preview: ${issue.previewText}`); lines.push('');
       lines.push('OPENING:'); lines.push(issue.opening||''); lines.push('');
-      issue.sections?.forEach(s => { lines.push(`[${s.sectionName}]`); lines.push(s.content||''); lines.push(''); });
+      issue.sections?.forEach((s,i) => { lines.push(`[${s.sectionName||`Section ${i+1}`}]`); lines.push(s.content||''); lines.push(''); });
       lines.push('CLOSING:'); lines.push(issue.closing||''); lines.push('');
       if(issue.ps) { lines.push(`P.S. ${issue.ps}`); lines.push(''); }
     });
@@ -2190,6 +2199,9 @@ REQUIREMENTS:
   };
 
   const issues = result?.issues || [];
+  // The list beside the issues follows the review: a revised subject line
+  // shows as revised and a removed issue is dimmed.
+  const rows = review && review.length === issues.length ? review : issues.map(issue => ({item: issue, status: 'pending'}));
 
   return (
     <div className="main-wrapper">
@@ -2201,7 +2213,7 @@ REQUIREMENTS:
         </div>
         
         <div style={{display:'flex', gap:24, alignItems:'center'}}>
-          <div style={{display:'flex', gap:8, alignItems:'center'}}>
+          <div className="hide-mobile" style={{display:'flex', gap:8, alignItems:'center'}}>
             {STEPS.map((s,i) => (
               <React.Fragment key={i}>
                 <div style={{display:'flex', alignItems:'center', gap:6}}>
@@ -2215,7 +2227,6 @@ REQUIREMENTS:
               </React.Fragment>
             ))}
           </div>
-          <ThemeToggle />
         </div>
       </header>
 
@@ -2309,7 +2320,7 @@ REQUIREMENTS:
               </div>
               <div style={{display:'flex', gap:12}}>
                 <button onClick={exportAll} className="tab-btn" style={{border:'1px solid var(--border-medium)', color:'var(--text-1)'}}>Export Pack</button>
-                <button onClick={()=>{setStep(0); setResult(null);}} className="tab-btn" style={{border:'1px solid var(--border-medium)', color:'var(--text-1)'}}>New Session</button>
+                <button onClick={()=>{setStep(0); setResult(null); setReview(null);}} className="tab-btn" style={{border:'1px solid var(--border-medium)', color:'var(--text-1)'}}>New Session</button>
               </div>
             </div>
 
@@ -2320,14 +2331,17 @@ REQUIREMENTS:
 
             {mainTab === 'architecture' && <ArchitecturePanel data={result}/>}
 
-            {mainTab === 'issues' && (
-              <div style={{display:'grid', gridTemplateColumns:'260px 1fr', gap:32, alignItems:'start'}}>
-                <div style={{position:'sticky', top: 100}}>
+            {/* Kept mounted and only hidden on the other tab, so a tab change
+                does not throw the review away. */}
+            {issues.length > 0 && (
+              <div className="qb-split" style={{display: mainTab === 'issues' ? 'grid' : 'none'}}>
+                <div className="qb-split_list">
                   <ML c="var(--text-3)" mb={16}>The Sequence</ML>
-                  {issues.map((issue,i) => {
+                  {rows.map((row,i) => {
+                    const issue = row.item;
                     const colors = ['var(--patina)', 'var(--brass)', 'var(--phase-creation)', 'var(--phase-content)'];
                     return (
-                      <div key={i} className={`issue-card${activeIssue===i?' active':''}`} onClick={()=>setActiveIssue(i)}>
+                      <div key={i} className={`issue-card${activeIssue===i?' active':''}`} style={{opacity: row.status === 'removed' ? 0.4 : 1}} onClick={()=>setActiveIssue(i)}>
                         <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:8}}>
                           <span style={{fontFamily:'var(--font-mono)', fontSize:10, color:colors[i]}}>
                             NO. {String(i+1).padStart(2,'0')}
@@ -2339,7 +2353,15 @@ REQUIREMENTS:
                     );
                   })}
                 </div>
-                <IssueDetail issue={issues[activeIssue]} index={activeIssue}/>
+                {/* Content Approval Loop: approve, revise up to 3 rounds, or
+                    remove, per issue. One issue shows at a time. */}
+                <QBApprovalWrapper
+                  items={issues}
+                  activeIndex={activeIssue}
+                  revisionTokens={4000}
+                  renderItem={(issue,i) => <IssueDetail issue={issue} index={i}/>}
+                  onReview={setReview}
+                />
               </div>
             )}
           </div>
@@ -2351,7 +2373,7 @@ REQUIREMENTS:
 }
 
 // ── QB CONTENT APPROVAL LOOP ─────────────────────────────────────────────────
-function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revisionField='content'}) {
+function QBApprovalWrapper({items, renderItem, onAllApproved, onReview, activeIndex, revisionTokens=1000}) {
   const [states, setStates] = React.useState(() => {
     const s = {};
     items.forEach((item,i) => { s[i] = {status:'pending', round:0, feedback:'', item}; });
@@ -2366,6 +2388,10 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
   React.useEffect(() => {
     if (allApproved && approvedItems.length > 0) onAllApproved && onAllApproved(approvedItems);
   }, [allApproved]);
+  // Every piece with its status, in order, each time the review changes.
+  React.useEffect(() => {
+    onReview && onReview(Object.values(states).map(s => ({item: s.item, status: s.status})));
+  }, [states]);
 
   const approve = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'approved'}}));
   const remove = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'removed'}}));
@@ -2382,26 +2408,28 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
         const original = JSON.stringify(states[i].item);
         const prompt = 'You produced this content piece: ' + original + '\n\nThe user requests this revision: ' + feedback + '\n\nReturn ONLY the revised version as a JSON object with the same structure. No markdown, no preamble.';
         const sys = 'You are a content revision agent. Revise the content piece exactly as requested. Maintain brand voice and platform requirements. Return only valid JSON.';
-        const raw = await window.QB_AI(sys, prompt, 1000);
+        const raw = await window.QB_AI(sys, prompt, revisionTokens);
         const jsonMatch2 = raw.match(/\{[\s\S]*\}/);
         if (!jsonMatch2) throw new SyntaxError('No JSON in revision response');
         const revised = JSON.parse(jsonMatch2[0]);
         setStates(prev => ({...prev, [i]: {...prev[i], status:'revised', item: revised}}));
       } catch(e) {
-        setStates(prev => ({...prev, [i]: {...prev[i], status:'pending'}}));
+        // A revision that fails does not use up one of the three rounds,
+        // and the piece says so instead of going quietly back to pending.
+        setStates(prev => ({...prev, [i]: {...prev[i], status:'failed', round: Math.max(0, prev[i].round - 1)}}));
       }
     }
   };
 
-  const statusColor = {pending:'var(--text-3)', approved:'var(--patina)', removed:'var(--red)', revising:'var(--brass)', revised:'var(--phase-creation)'};
-  const statusLabel = {pending:'Pending Review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised - Review Again'};
+  const statusColor = {pending:'var(--text-3)', approved:'var(--patina)', removed:'var(--red)', revising:'var(--brass)', revised:'var(--phase-creation)', failed:'var(--red)'};
+  const statusLabel = {pending:'Pending Review', approved:'✓ Approved', removed:'Removed', revising:'Revising…', revised:'Revised - Review Again', failed:'Revision failed - try again'};
 
   return (
-    <div>
+    <div className="qb-review">
       <div style={{background:'var(--bg-surface)', border:'1px solid var(--border-medium)', borderRadius:10, padding:'16px 20px', marginBottom:24, display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:12}}>
         <div>
           <div style={{fontFamily:'var(--font-mono)', fontSize:10, color:'var(--brass)', letterSpacing:'.15em', textTransform:'uppercase', marginBottom:4}}>Content Review</div>
-          <div style={{fontSize:13, color:'var(--text-2)'}}>{Object.values(states).filter(s=>s.status==='approved').length} approved · {Object.values(states).filter(s=>s.status==='pending'||s.status==='revised').length} pending · {Object.values(states).filter(s=>s.status==='removed').length} removed</div>
+          <div style={{fontSize:13, color:'var(--text-2)'}}>{Object.values(states).filter(s=>s.status==='approved').length} approved · {Object.values(states).filter(s=>s.status==='pending'||s.status==='revised'||s.status==='failed').length} pending · {Object.values(states).filter(s=>s.status==='removed').length} removed</div>
         </div>
         {allApproved && approvedItems.length > 0 && (
           <div style={{fontFamily:'var(--font-mono)', fontSize:11, padding:'8px 16px', borderRadius:6, background:'var(--patina)', color:'#E6DDD0', fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase'}}>All done ✓</div>
@@ -2415,7 +2443,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
         const maxRoundsReached = s.round >= 3;
         
         return (
-          <div key={i} className="glass-card" style={{marginBottom:16, opacity: s.status==='removed' ? 0.4 : 1, borderColor: s.status==='approved' ? 'var(--patina)' : s.status==='removed' ? 'var(--red)' : 'var(--border-subtle)'}}>
+          <div key={i} className="glass-card qb-review_item" style={{marginBottom:16, display: (activeIndex === undefined || activeIndex === i) ? 'block' : 'none', opacity: s.status==='removed' ? 0.4 : 1, borderColor: s.status==='approved' ? 'var(--patina)' : s.status==='removed' ? 'var(--red)' : 'var(--border-subtle)'}}>
             <div style={{padding:'20px 24px 0'}}>
               {renderItem(s.item, i)}
             </div>
@@ -2424,7 +2452,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
                 {statusLabel[s.status]} {s.round > 0 ? `(ROUND ${s.round}/3)` : ''}
               </div>
               
-              {(s.status==='pending'||s.status==='revised') && !isRevising && (
+              {(s.status==='pending'||s.status==='revised'||s.status==='failed') && !isRevising && (
                 <>
                   <button onClick={()=>approve(i)} className="tab-btn" style={{background:'var(--patina-faint)', color:'var(--patina-lit)', borderColor:'var(--patina-dim)'}}>✓ Approve</button>
                   {!maxRoundsReached && <button onClick={()=>startRevise(i)} className="tab-btn" style={{background:'var(--brass-faint)', color:'var(--brass-lit)', borderColor:'var(--brass-dim)'}}>↻ Revise</button>}

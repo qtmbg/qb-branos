@@ -8,13 +8,13 @@ QBI18N.add('fr', {
   /* Success */
   "You're in.": "Vous y êtes.",
   "Already signed in. Taking you back…": "Déjà connecté. Nous vous ramenons…",
-  "Taking you back to your result…": "Nous vous ramenons à votre résultat…",
+  "Opening your page…": "Ouverture de votre page…",
 
   /* Failure */
   "Something went wrong": "Une erreur est survenue",
   "Try requesting a new link, or": "Demandez un nouveau lien, ou",
   "go back home": "revenez à l’accueil",
-  "qb-cloud.js failed to load.": "qb-cloud.js n’a pas pu se charger.",
+  "This page did not load fully. Reload it.": "Cette page ne s’est pas chargée en entier. Rechargez-la.",
   "No token in the URL. The link may have expired or already been used.":
     "Aucun jeton dans l’URL. Le lien a peut-être expiré ou a déjà été utilisé.",
   "Could not verify session.": "Impossible de vérifier la session.",

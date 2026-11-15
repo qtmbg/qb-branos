@@ -250,6 +250,10 @@
   }
 
   var mo = new MutationObserver(function (list) {
+    var t0 = performance.now();
+    try { observed(list); } finally { stats.observerCalls++; stats.observerMs += performance.now() - t0; }
+  });
+  function observed(list) {
     var touched = false;
     for (var i = 0; i < list.length; i++) {
       var m = list[i];
@@ -265,7 +269,7 @@
       }
     }
     if (touched) { scheduleGuard(); ensureSwitch(); }
-  });
+  }
   mo.observe(R, {
     subtree: true, childList: true, characterData: true,
     attributes: true, attributeFilter: ATTRS.concat(['value', 'content', 'class'])
@@ -369,7 +373,10 @@
        it and floats. The nav itself is laid out exactly as before. */
     '@media (max-width:999.98px){.nav-actions .qb-lang{display:none}}',
     '@media (min-width:1000px){.qb-lang.is-floating.has-nav{display:none}}',
-    '@media print{.qb-lang{display:none !important}}'
+    '@media print{.qb-lang{display:none !important}}',
+    /* Switching to print re-colours a French page from ink to cream. A
+       colour transition would let the printer catch it halfway. */
+    '@media print{*,*::before,*::after{transition:none !important}}'
   ].join('');
   var styleEl = D.createElement('style');
   styleEl.id = 'qb-i18n-css';
@@ -422,8 +429,13 @@
     for (var i = 0; i < els.length; i++) { els[i].removeAttribute('data-qb-fix'); els[i].removeAttribute('data-qb-mark'); }
   }
   var FIX = { c: CREAM, i: INK };
+  var stats = { guardRuns: 0, guardMs: 0, guardNodes: 0, observerCalls: 0, observerMs: 0 };
   function guard() {
     if (lang !== 'fr' || !D.body) return;
+    var t0 = performance.now();
+    try { guardPass(); } finally { stats.guardRuns++; stats.guardMs += performance.now() - t0; }
+  }
+  function guardPass() {
     var cache = new Map();
     var tw = D.createTreeWalker(D.body, NodeFilter.SHOW_TEXT, null);
     var seen = new Set(), n;
@@ -431,6 +443,7 @@
       var el = n.parentElement;
       if (!el || seen.has(el) || !n.data.trim() || SKIP_TAGS[el.tagName]) continue;
       seen.add(el);
+      stats.guardNodes++;
       if (el.closest && el.closest('.qb-lang')) continue;
       var bg = backdrop(el, cache);
       if (!bg) continue;
@@ -764,6 +777,7 @@
     text: tText,
     set: setLang,
     refresh: function () { walk(R); guard(); },
+    stats: stats,
     misses: function () {
       var out = [];
       missed.forEach(function (at, text) { out.push({ text: text, at: at }); });

@@ -5,7 +5,7 @@
 <script src="/js/qb-i18n.js" data-page="sensescape"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sensescape · BrandOS</title>
-<meta name="description" content="Sensescape · BrandOS Phase 01 - before a brand speaks, it is felt.">
+<meta name="description" content="Sensescape · Observe · BrandOS. Before a brand speaks, it is felt.">
 <script>(function(){try{var legacy=localStorage.getItem('qb_theme');if(legacy){localStorage.setItem('qb-theme',legacy);localStorage.removeItem('qb_theme');}var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
 <script src="/qb-gate.js"></script>
@@ -1209,6 +1209,10 @@ button{ font-family:inherit; }
 body.immersive .nav-spacer,
 body.immersive .nav,
 body.immersive .mmenu{ display:none !important; }
+/* The nav's wrapper goes with it. Left in place it was an empty sticky strip
+   above the chapter nav: once a chapter was scrolled it covered the top half
+   of the Proceed button and of everything beside it. */
+body.immersive .nav-wrap{ display:none !important; }
 
 /* ================== TYPE PRIMITIVES ================== */
 .mono{ font-family:var(--f-mono); }
@@ -2361,7 +2365,8 @@ body.phase-intro{ overflow:hidden; }
 
 /* ================== CODEX · READING SWITCHER / TOOLBAR ================== */
 .cdx-toolbar{
-  position:sticky; top:14px; z-index:40;
+  /* Sticks below the canonical nav (sticky, about 7rem tall), not under it. */
+  position:sticky; top:7.75rem; z-index:40;
   margin:-60px auto 40px;
   max-width:1160px;
   display:flex; align-items:center; justify-content:space-between;
@@ -2373,6 +2378,11 @@ body.phase-intro{ overflow:hidden; }
   border:1px solid var(--border-medium);
   border-radius:999px;
   box-shadow:0 10px 30px -16px rgba(26,22,16,.25);
+}
+/* On a phone the toolbar wraps to four rows. Pinned, it would cover a
+   quarter of the screen, so there it stays where it starts. */
+@media (max-width:640px){
+  .cdx-toolbar{ position:relative; top:auto; }
 }
 .cdx-toolbar .readings{
   display:inline-flex; gap:4px;
@@ -2608,8 +2618,16 @@ body.phase-intro{ overflow:hidden; }
   padding:24px;
   -webkit-backdrop-filter:blur(10px);
   backdrop-filter:blur(10px);
+  overflow-y:auto;
 }
 .regen-modal.open{ display:flex; }
+/* The dialog covers the sticky nav while it is open. */
+.codex-shell:has(.regen-modal.open){ z-index:120; }
+/* Centred when it fits. On a phone or a short window it starts at the top
+   and the overlay scrolls, so the question is never cut off. */
+@media (max-width:640px), (max-height:640px){
+  .regen-modal{ align-items:flex-start; }
+}
 .regen-modal-card{
   max-width:520px; width:100%;
   padding:40px;
@@ -2634,6 +2652,9 @@ body.phase-intro{ overflow:hidden; }
   html, body{ background:#FFF !important; color:#000 !important; }
   body::after, body::before, .ambient-glow, .main-vignette{ display:none !important; }
   .nav, .nav-spacer, .mmenu, .micro-foot, .cdx-toolbar, .regen-modal{ display:none !important; }
+  /* The canonical chassis (banner, nav pill, mobile menu, footer, loading bar)
+     is not part of the document. */
+  .banner, .nav-wrap, .mobile-menu, .footer, .qb-loading-bar, .qb-gate-overlay{ display:none !important; }
   .codex-shell{ padding:28px !important; min-height:auto !important; }
   .codex-wrap{ gap:48px !important; max-width:none !important; }
   .cdx-section{ break-inside:avoid; page-break-inside:avoid; }
@@ -3344,7 +3365,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Sensescape · BrandOS">
-<meta property="og:description" content="Sensescape · BrandOS Phase 01 - before a brand speaks, it is felt.">
+<meta property="og:description" content="Sensescape · Observe · BrandOS. Before a brand speaks, it is felt.">
 <meta property="og:url" content="https://quantumbranding.ai/sensescape.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/sensescape.png">
 <meta property="og:image:width" content="1200">
@@ -3354,7 +3375,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sensescape · BrandOS">
-<meta name="twitter:description" content="Sensescape · BrandOS Phase 01 - before a brand speaks, it is felt.">
+<meta name="twitter:description" content="Sensescape · Observe · BrandOS. Before a brand speaks, it is felt.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/sensescape.png">
 <link rel="canonical" href="https://quantumbranding.ai/sensescape.html">
 <!-- QB JSON-LD -->
@@ -3363,7 +3384,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Sensescape",
-  "description": "Capture the multi-sensory texture of the brand: sound, motion, material, scent.",
+  "description": "Capture the sensory texture of the brand: color, type, shape, motion, material, voice, sound, ritual.",
   "url": "https://quantumbranding.ai/sensescape.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -3646,7 +3667,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     },
     {
       chapter:'VII', title:'The Sensory World',
-      subtitle:'What the brand feels, sounds, weighs, and smells like.',
+      subtitle:'The temperature, the texture, the object and the hour of the brand.',
       time:'7 min',
       questions:[
         { id:'swcoldhot',     type:'slider', left:'Cold',   right:'Hot',    leftDesc:'Aluminum, glass, marble. Clinical precision.',        rightDesc:'Fire, skin, terracotta. Biologically inviting.',   previewType:'temperature', anchorLeft:'Ice',      anchorRight:'Amber' },
@@ -3870,10 +3891,10 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         el('div', { class:'intro-hero' }, [
           el('div', { class:'intro-eyebrow' }, [
             el('span', { class:'pulse-dot' }),
-            el('span', { class:'label', text:'Phase 01 · Sensescape · The sensory layer' })
+            el('span', { class:'label', text:'Observe · Sensescape · The sensory layer' })
           ]),
           el('h1', { html:'Before a brand speaks, <em>it is felt.</em>' }),
-          el('p', { class:'intro-lede', text:'Six chapters, fifteen spectrums. You will rate where your brand sits between two anchors. Every spectrum carries a real cultural reference. The first read is the truthful one.' })
+          el('p', { class:'intro-lede', text:'Ten chapters, thirty spectrums. You will rate where your brand sits between two anchors. Every spectrum carries a real cultural reference. The first read is the truthful one.' })
         ]),
         el('div', { class:'intro-protocols' }, [
           { n:'01', title:'Instinct Over Logic.',  body:'Answer in the first five seconds. Your score is not a preference. It is a pure recognition.' },
@@ -4724,19 +4745,9 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       state.isSubmitting = true;
       submit.disabled = true; submit.textContent = 'Transmitting…';
       saveToQBP();
-      // Fire-and-forget webhook (placeholder URL; safe if it fails)
-      try {
-        var WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/YOURHOOKID';
-        fetch(WEBHOOK_URL, {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body:JSON.stringify({
-            name:name, company:comp, email:email,
-            answers: state.answers,
-            submittedAt:new Date().toISOString()
-          })
-        }).catch(function(){});
-      } catch(e){}
+      // The name, company and email stay on this device, with the readings.
+      // A webhook used to post them, with every answer, to a placeholder
+      // Zapier address that no one had configured. It is gone.
       // Start fresh: clear any prior stored readings
       state.readings = [];
       state.canRegenerate = true;
@@ -5431,17 +5442,30 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     if (!text || !text.trim()) return null;
     var t = text.toLowerCase();
     var destination = null;
-    if (/\b(dawn|sunrise|first\s*light|4:?\d\d\s*am|5:?\d\d\s*am|6:?\d\d\s*am)\b/.test(t) || /\b(4am|5am|6am)\b/.test(t))
+    // French answers sit beside the English ones. French tells the hour on
+    // the 24-hour clock ("6 h", "18h30", "15 heures"), and an hour outranks
+    // a word: "2 h du matin" is night, not morning.
+    var fhm = /(?:^|[^0-9])([01]?\d|2[0-3])\s*(?:h|heures?)\s*(?:\d\d)?(?![a-z0-9])/.exec(t);
+    var fh = fhm ? parseInt(fhm[1], 10) : -1;
+    var frAfternoon = /apr[èe]s[\s-]?midi|\bapr[èe]m\b/.test(t);
+    function fr(re){ return fh < 0 && re.test(t); }
+    if (/\b(dawn|sunrise|first\s*light|4:?\d\d\s*am|5:?\d\d\s*am|6:?\d\d\s*am)\b/.test(t) || /\b(4am|5am|6am)\b/.test(t)
+        || (fh >= 4 && fh <= 6) || fr(/\b(aube|aurore|lever du (soleil|jour)|point du jour|petit matin|premi[èe]res? (lumi[èe]res?|lueurs?))/))
       destination = 'A pre-dawn brand - built on quiet conviction before the world arrives. Your discipline is your differentiator. Communication should feel like it was there before the reader, waiting.';
-    else if (/\b(morning|7\s*am|8\s*am|9\s*am|10\s*am|7am|8am|9am|10am|mattin)\b/.test(t))
+    else if (/\b(morning|7\s*am|8\s*am|9\s*am|10\s*am|7am|8am|9am|10am|mattin)\b/.test(t)
+        || (fh >= 7 && fh <= 10) || fr(/\bmatin(al|ale|[ée]e)?\b/))
       destination = 'A morning brand - alert, focused, freshly arrived. Your tone carries the clarity of a day not yet complicated. Design every touchpoint to feel sharp, optimistic, unhurried.';
-    else if (/\b(11\s*am|noon|midday|12\s*pm|high noon)\b/.test(t) || /\b11am\b/.test(t))
+    else if (/\b(11\s*am|noon|midday|12\s*pm|high noon)\b/.test(t) || /\b11am\b/.test(t)
+        || fh === 11 || fh === 12 || (!frAfternoon && fr(/\b(midi|z[ée]nith)\b/)))
       destination = 'A high-noon brand - fully present, at peak, nothing hidden. This is the light of confidence, not ceremony. Be direct. Your communication should be the thing itself, not a trailer for it.';
-    else if (/\b(afternoon|1\s*pm|2\s*pm|3\s*pm|4\s*pm|5\s*pm|1pm|2pm|3pm|4pm|5pm)\b/.test(t))
+    else if (/\b(afternoon|1\s*pm|2\s*pm|3\s*pm|4\s*pm|5\s*pm|1pm|2pm|3pm|4pm|5pm)\b/.test(t)
+        || (fh >= 13 && fh <= 17) || (fh < 0 && frAfternoon))
       destination = 'An afternoon brand - sustained, productive, earning its position. Your voice is the voice of someone mid-sentence in a long conversation: already trusted, already at work. Write like you have been here all day.';
-    else if (/\b(evening|dusk|6\s*pm|7\s*pm|golden hour|6pm|7pm|twilight)\b/.test(t))
+    else if (/\b(evening|dusk|6\s*pm|7\s*pm|golden hour|6pm|7pm|twilight)\b/.test(t)
+        || fh === 18 || fh === 19 || fr(/\b(soir|soir[ée]e|cr[ée]puscule|coucher du soleil|tomb[ée]e (du jour|de la nuit)|heure (dor[ée]e|bleue)|entre chien et loup)\b/))
       destination = 'A dusk brand - reflective, warm, softening. Your tone invites - never demands. Every surface should feel like a room lit at the end of the day: considered, honest, slightly tired in the right way.';
-    else if (/\b(night|midnight|8\s*pm|9\s*pm|10\s*pm|11\s*pm|8pm|9pm|10pm|11pm|1\s*am|2\s*am|3\s*am|1am|2am|3am|late)\b/.test(t))
+    else if (/\b(night|midnight|8\s*pm|9\s*pm|10\s*pm|11\s*pm|8pm|9pm|10pm|11pm|1\s*am|2\s*am|3\s*am|1am|2am|3am|late)\b/.test(t)
+        || fh >= 20 || (fh >= 0 && fh <= 3) || fr(/\b(nuit|minuit|nocturne|tard)\b/))
       destination = 'A night brand - intimate, honest, unafraid of shadows. Your communication says the things daytime cannot. Reserve plain language for difficult truths; reserve beauty for the ones worth hearing twice.';
     if (destination) return { raw: text, destination: destination };
     return { raw: text, destination: 'This light is your habitat - measure every touchpoint against it. If an ad would look wrong at your chosen hour, it is not your ad. Shoot photography at this time, set type for this time, write copy that reads at this time.' };
@@ -5451,16 +5475,18 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     if (!text || !text.trim()) return null;
     var t = text.toLowerCase();
     var destination = null;
-    if (/\bcompass\b/.test(t))      destination = 'Your brand is a compass - wayfinding, oriented, sure of north. Your primary job is to help the customer locate themselves. Every product feature is a bearing, not a decoration.';
-    else if (/\bglass|crystal|lens|mirror\b/.test(t)) destination = 'Your brand is glass - transparent, fragile if mishandled, beautiful when lit. Design for respect. The customer should feel the seriousness of what they are holding without needing it explained.';
-    else if (/\bstone|marble|granite|rock|brick\b/.test(t)) destination = 'Your brand is stone - permanent, weighty, unarguable. Move slowly and land hard. Do not apologise for taking time to respond. Authority is built from refusal to hurry.';
-    else if (/\bknife|blade|sword|scalpel\b/.test(t)) destination = 'Your brand is a blade - precise, useful, consequential. You cut through confusion. Your copy should be shorter than the reader expects; your decisions sharper than your competitors\'.';
-    else if (/\bbook|paper|letter|document|journal\b/.test(t)) destination = 'Your brand is a document - it remembers, it preserves, it is read with care. Build for archive quality. Nothing you publish should feel disposable; nothing should be retired before it has had a chance to age.';
-    else if (/\bwatch|clock|timepiece\b/.test(t)) destination = 'Your brand is a timekeeper - the thing people trust with their rhythm. Reliability is your product, not a feature of it. If the customer cannot set their day by you, you have failed a single job.';
-    else if (/\bbrass|gold|copper|bronze|metal\b/.test(t)) destination = 'Your brand is metal - dense, conductive, it records touch. Every interaction should leave a small mark. Design so patina is an asset, not a flaw.';
-    else if (/\bsilk|linen|cotton|fabric|textile\b/.test(t)) destination = 'Your brand is a textile - intimate, tactile, chosen for how it meets skin. Your communication is read with the hand as well as the eye. Paper stock, material, weight - these are your unspoken arguments.';
-    else if (/\bwater|river|ocean|liquid\b/.test(t)) destination = 'Your brand is water - it takes the shape of its container without losing itself. Design for adaptation across contexts while holding one clear character. The customer should always recognise you by taste, not logo.';
-    else if (/\bwood|oak|timber|grain\b/.test(t)) destination = 'Your brand is wood - grown, grained, warm. It wears well. Celebrate wear as evidence of life. Let your surfaces feel handled, not manufactured.';
+    if (/\bcompass\b/.test(t) || /\b(boussole|compas)\b/.test(t)) destination = 'Your brand is a compass - wayfinding, oriented, sure of north. Your primary job is to help the customer locate themselves. Every product feature is a bearing, not a decoration.';
+    else if (/\bglass|crystal|lens|mirror\b/.test(t) || /\b(verre|cristal|lentille|miroir)\b/.test(t)) destination = 'Your brand is glass - transparent, fragile if mishandled, beautiful when lit. Design for respect. The customer should feel the seriousness of what they are holding without needing it explained.';
+    else if (/\bstone|marble|granite|rock|brick\b/.test(t) || /\b(pierre|marbre|granit|roche|rocher|brique|galet|caillou)\b/.test(t)) destination = 'Your brand is stone - permanent, weighty, unarguable. Move slowly and land hard. Do not apologise for taking time to respond. Authority is built from refusal to hurry.';
+    else if (/\bknife|blade|sword|scalpel\b/.test(t) || /\b(couteau|lame|sabre)\b|[ée]p[ée]e\b/.test(t)) destination = 'Your brand is a blade - precise, useful, consequential. You cut through confusion. Your copy should be shorter than the reader expects; your decisions sharper than your competitors\'.';
+    else if (/\bbook|paper|letter|document|journal\b/.test(t) || /\b(livre|papier|lettre|carnet|cahier)\b/.test(t)) destination = 'Your brand is a document - it remembers, it preserves, it is read with care. Build for archive quality. Nothing you publish should feel disposable; nothing should be retired before it has had a chance to age.';
+    else if (/\bwatch|clock|timepiece\b/.test(t) || /\b(horloge|pendule|chronom[èe]tre|garde-temps)\b/.test(t)
+          // "montre" is the watch, unless it is the verb ("qui montre le chemin").
+          || (/\bmontre\b/.test(t) && !/\b(qui|se|me|te|nous|vous|on|il|elle|lui|leur)\s+montre\b/.test(t))) destination = 'Your brand is a timekeeper - the thing people trust with their rhythm. Reliability is your product, not a feature of it. If the customer cannot set their day by you, you have failed a single job.';
+    else if (/\bbrass|gold|copper|bronze|metal\b/.test(t) || /\b(laiton|cuivre|m[ée]tal)\b|\b(en|d['’]|l['’])\s?or\b/.test(t)) destination = 'Your brand is metal - dense, conductive, it records touch. Every interaction should leave a small mark. Design so patina is an asset, not a flaw.';
+    else if (/\bsilk|linen|cotton|fabric|textile\b/.test(t) || /\b(soie|lin|coton|tissu|laine)\b|[ée]toffe/.test(t)) destination = 'Your brand is a textile - intimate, tactile, chosen for how it meets skin. Your communication is read with the hand as well as the eye. Paper stock, material, weight - these are your unspoken arguments.';
+    else if (/\bwater|river|ocean|liquid\b/.test(t) || /\b(eaux?|rivi[èe]re|fleuve|oc[ée]an|mer|liquide)\b/.test(t)) destination = 'Your brand is water - it takes the shape of its container without losing itself. Design for adaptation across contexts while holding one clear character. The customer should always recognise you by taste, not logo.';
+    else if (/\bwood|oak|timber|grain\b/.test(t) || /\b(bois|ch[êe]ne|noyer)\b/.test(t)) destination = 'Your brand is wood - grown, grained, warm. It wears well. Celebrate wear as evidence of life. Let your surfaces feel handled, not manufactured.';
     if (destination) return { raw: text, destination: destination };
     return { raw: text, destination: 'Treat this object as a physical standard. Every touchpoint should feel like the same thing made by the same hand. If you can\'t imagine this object next to what you just shipped, do not ship it.' };
   }
@@ -5469,12 +5495,15 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     if (!text || !text.trim()) return null;
     var t = text.toLowerCase();
     var destination = null;
-    if (/\b(calm|peace|stil|quiet|serene)\b/.test(t)) destination = 'Your dominant colour emotion is stillness. This is a discipline. Do not let anyone inside the brand argue for a louder shade "just this once." The moment you allow energy to enter, the stillness is gone - and with it, the brand.';
-    else if (/\b(warm|comfort|home|cozy|intim)\b/.test(t)) destination = 'Your dominant colour emotion is warmth. Every surface should feel lit from behind - by lamplight, not a screen. Avoid cold whites and fluorescents. Your photography lives in 2500–3500K light.';
-    else if (/\b(clarity|clean|clear|fresh|bright|alert)\b/.test(t)) destination = 'Your dominant colour emotion is clarity. Saturation is a liability. Hold the palette high-contrast and white-forward; resist decorative tints. Any colour you add must earn its pigment.';
-    else if (/\b(power|bold|strong|intens|assert)\b/.test(t)) destination = 'Your dominant colour emotion is assertion. Your brand arrives before it speaks. Use colour at full strength - no pastel versions, no 40% opacity hedges. If it is not committing, it is not you.';
-    else if (/\b(depth|mystery|deep|shadow|dark|secret)\b/.test(t)) destination = 'Your dominant colour emotion is depth. Work primarily in dark fields with a single point of light. Let emptiness do the heavy lifting. The eye should have to look for detail - and be rewarded for looking.';
-    else if (/\b(joy|play|fun|happy|cheer|bright)\b/.test(t)) destination = 'Your dominant colour emotion is joy. This is permission to use colour without apology. Block it flat, saturate fully, and never dilute with gradients or glow. Joy has edges.';
+    // The keywords are stems, matched from the start of a word. They used to
+    // be closed by a word boundary, so "warmth", "powerful" or "intimate"
+    // fell through to the generic reading. French stems sit beside them.
+    if (/\b(calm|peace|stillness|quiet|s[ée]r[ée]n|serein|paix|paisible|tranquil|apais|qui[ée]tude|silenc)/.test(t)) destination = 'Your dominant colour emotion is stillness. This is a discipline. Do not let anyone inside the brand argue for a louder shade "just this once." The moment you allow energy to enter, the stillness is gone - and with it, the brand.';
+    else if (/\b(warm|comfort|home|cozy|cosy|intima|chaleur|chaud|r[ée]confort|confort|foyer|maison|cocon|douillet|intime|intimit)/.test(t)) destination = 'Your dominant colour emotion is warmth. Every surface should feel lit from behind - by lamplight, not a screen. Avoid cold whites and fluorescents. Your photography lives in 2500–3500K light.';
+    else if (/\b(clarity|clean|clear|fresh|bright|alert|clart|clair|nette|propre|frais|fra[îi]ch|limpid|lucid|lumineu|puret)|\b(net|pur|pure|vif|vive)\b/.test(t)) destination = 'Your dominant colour emotion is clarity. Saturation is a liability. Hold the palette high-contrast and white-forward; resist decorative tints. Any colour you add must earn its pigment.';
+    else if (/\b(power|bold|strong|intens|assert|puissan|pouvoir|audac|affirm|assuranc)|\b(fort|forte|forts|fortes|force|forces)\b/.test(t)) destination = 'Your dominant colour emotion is assertion. Your brand arrives before it speaks. Use colour at full strength - no pastel versions, no 40% opacity hedges. If it is not committing, it is not you.';
+    else if (/\b(depth|myst[èe]r|deep|shadow|dark|secret|profond|ombre|sombre|obscur|t[ée]n[èe]br)/.test(t)) destination = 'Your dominant colour emotion is depth. Work primarily in dark fields with a single point of light. Let emptiness do the heavy lifting. The eye should have to look for detail - and be rewarded for looking.';
+    else if (/\b(joy|play|happy|happi|cheer|bright|joie|ludique|amus|heureu|bonheur|gaiet|ga[îi]t|enjou|plaisir)|\b(fun|funny|gai|gaie|jeu|jeux)\b/.test(t)) destination = 'Your dominant colour emotion is joy. This is permission to use colour without apology. Block it flat, saturate fully, and never dilute with gradients or glow. Joy has edges.';
     if (destination) return { raw: text, destination: destination };
     return { raw: text, destination: 'Test every photo shoot, ad, and surface against this feeling. If it does not produce this response in the first half-second, it is the wrong image - no matter how technically correct.' };
   }
@@ -5685,7 +5714,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     var secEssence = el('section', { class:'cdx-section' }, [
       sectionHeader('01.', 'The Essence', 'STRATEGIC SYNTHESIS'),
       el('div', { class:'glass-card cdx-essence' }, [
-        el('div', { class:'caption', text: claudeOut ? 'Synthesized by AI strategist' : 'Derived from your 40+ answers' }),
+        el('div', { class:'caption', text: claudeOut ? 'Synthesized by AI strategist' : 'Derived from your 38 answers' }),
         essenceText
           ? el('p', { class:'statement', text: essenceText })
           : el('p', { class:'statement', html: essenceHTML }),
@@ -6448,9 +6477,13 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         el('div', { class:'cdx-end' }, [
           el('div', { class:'label', html:'Sensescape · <span class="brandos-name">BrandOS</span>' }),
           el('div', { class:'stamp', text:'Reading ' + reading.id + ' · Generated ' + (reading.createdAt || '').split('T')[0] })
-        ]),
-        regenModal
-      ])
+        ])
+      ]),
+      // Outside .codex-wrap on purpose. The wrapper keeps a transform from its
+      // entrance animation, and a transformed ancestor becomes the containing
+      // block of a position:fixed child: inside it, the dialog was centred on
+      // the whole Codex, thousands of pixels below the button that opens it.
+      regenModal
     ]);
   };
 

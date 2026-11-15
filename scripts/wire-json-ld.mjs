@@ -24,7 +24,9 @@ const SOFTWARE_ID = `${ORIGIN}/#software`;
 
 // slug, file, kind, label, description (override; falls back to <meta name="description">)
 const PAGES = [
-  // tools (the 20 agents)
+  // tools. The description here is only a fallback: the page's own
+  // <meta name="description"> wins, so this list cannot write a claim the
+  // page no longer makes (see docs/brand/copy-facts.md).
   ['signal-scan',                     'tool',  'Signal Scan',                  'Free five-minute brand diagnostic. The entry point to BrandOS.'],
   ['the-profiles',                    'tool',  'The Profiles',                 'Identify your audience archetypes and map their beliefs, language, and platforms.'],
   ['archetype-compass',               'tool',  'Archetype Compass',            'Pinpoint the founder archetype that the brand should embody.'],
@@ -47,8 +49,8 @@ const PAGES = [
   ['quarterly-brand-review-agent',    'tool',  'Quarterly Brand Review',       'Close the quarter with a structured brand review and feed the next QBP loop.'],
 
   // marketing + system pages
-  ['ecosystem',                       'page',  'The QB Ecosystem',             'Tour the BrandOS ecosystem: six phases, twenty agents, one Quantum Brand Profile.'],
-  ['payment',                         'page',  'Choose your plan',             'Choose the BrandOS plan that fits your stage: Free, Starter, Pro, or Agency.'],
+  ['ecosystem',                       'page',  'The QB Ecosystem',             'Tour the BrandOS ecosystem: four movements, ten brand agents, one Brand Profile.'],
+  ['payment',                         'page',  'Choose your plan',             'Starter: $97 a month. Everything in Brand Profile, plus your full foundation and the Build agents. Cancel anytime.'],
   ['journey-guide',                   'page',  'Find your path',               'A guided path through BrandOS based on where you are starting from.'],
   ['qb-branidos-hub',                 'page',  'BrandOS Hub',               'The signed-in workspace for BrandOS: tools, agents, Quantum Brand Profile.'],
   ['terms',                           'page',  'Terms of Service',             'The terms governing your use of BrandOS.'],
@@ -109,7 +111,10 @@ for(const [slug, kind, label, description] of PAGES){
     console.log(`-    ${file} (already has JSON-LD)`); skipped++; continue;
   }
 
-  const json = kind === 'tool' ? toolBlock(slug, label, description) : pageBlock(slug, label, description);
+  // The page states its own description; the list above is the fallback.
+  const own = /<meta\s+name="description"\s+content="([^"]*)"/.exec(html);
+  const desc = own && own[1] ? own[1] : description;
+  const json = kind === 'tool' ? toolBlock(slug, label, desc) : pageBlock(slug, label, desc);
   const next = inject(html, json);
   if(next == null){ console.log(`SKIP no </head>  ${file}`); skipped++; continue; }
   writeFileSync(path, next);

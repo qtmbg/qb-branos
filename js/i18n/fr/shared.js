@@ -7,17 +7,11 @@ QBI18N.add('fr', {
 
   /* ══ Names, codes and units that stay as written ══════════════════ */
   "The War Table": true,
-  "Content Bridge": true,
   "Pro": true,
   "Agency": true,
   "Notifications": true,
-  "Phase 00": true,
-  "Phase 01": true,
-  "Phase 02": true,
-  "Phase 03": true,
-  "Phase 04": true,
-  "Phase 05": true,
   "Quantum Brand Profile": true,
+  "Observe · Collapse": true,
   "me@qtmbg.com": true,
   "P.S.": true,
 
@@ -89,13 +83,6 @@ QBI18N.add('fr', {
   /* ══ Tool and agent names ═════════════════════════════════════════ */
   "Logo Direction": "Direction de logo",
   "Logo Evaluation": "Évaluation de logo",
-  "Content Repurposing Engine": "Moteur de déclinaison de contenu",
-  "Content Scheduler": "Planificateur de contenu",
-  "Instagram Seed Agent": "Agent d’amorçage Instagram",
-  "Instagram Seed": "Amorçage Instagram",
-  "LinkedIn Strategy": "Stratégie LinkedIn",
-  "YouTube Strategy": "Stratégie YouTube",
-  "Newsletter Architecture": "Architecture Newsletter",
   "Quarterly Brand Review": "Revue de marque trimestrielle",
   "Brand Performance Dashboard": "Tableau de bord de performance de marque",
   "Brand Document": "Document de marque",
@@ -114,20 +101,20 @@ QBI18N.add('fr', {
   "Predictive Panel Agent": "Agent Predictive Panel",
   "Agent": true,
 
-  /* ══ Phases ═══════════════════════════════════════════════════════ */
-  "Acquisition": true,
-  "Discovery": "Découverte",
-  "Brand Creation": "Création de marque",
+  /* ══ Movements. The phase numbers are retired from everything painted ══ */
   "Content @@ .qb-phase-card, .phase-section": "Contenu",
-  "Content Creation": "Création de contenu",
   "Execution": "Exécution",
-  "Intelligence": true,
-  "01 Discovery": "01 Découverte",
-  "02 Brand Creation": "02 Création de marque",
-  "03 Content": "03 Contenu",
-  "04 Execution": "04 Exécution",
-  "05 Intelligence": true,
-  "Phase 01 · Discovery": "Phase 01 · Découverte",
+  "The foundation": "La fondation",
+  "The Build agents": "Les agents Build",
+  "The Hold tools": "Les outils Hold",
+  "The four movements": "Les quatre mouvements",
+  "Movement": "Mouvement",
+  "Operator only": "Réservé à l’opérateur",
+  "Agents": true,
+  "Not open yet": "Pas encore ouvert",
+  "Not open yet.": "Pas encore ouvert.",
+  "Opens with Starter": "S’ouvre avec Starter",
+  "Opens with Starter.": "S’ouvre avec Starter.",
 
   /* ══ Tiers and statuses ═══════════════════════════════════════════ */
   "Free @@ .qb-tier-badge": "Gratuit",
@@ -155,12 +142,11 @@ QBI18N.add('fr', {
   "Review @@ .qb-exercise-card": "Revoir",
   "Upgrade": "Passer à Starter",
   "Upgrade to Starter": "Passer à Starter",
-  "Unlock with Starter": "Ouvrir avec Starter",
   "Not now": "Pas maintenant",
   "Not yet": "Pas encore",
   "Back to top": "Retour en haut",
-  "View artifacts": "Voir les livrables",
-  "Coming soon": "Bientôt",
+  "Open the Console": "Ouvrir la Console",
+  "Open the archive @@ .qb-phase-card": "Ouvrir les archives",
   "Reload": "Recharger",
   "Cancel": "Annuler",
   "Remove": "Retirer",
@@ -173,16 +159,16 @@ QBI18N.add('fr', {
   "Something went wrong.": "Une erreur est survenue.",
 
   /* ══ qb-components.js ═════════════════════════════════════════════ */
+  "0 of 3 exercises complete": "0 exercice terminé sur 3",
+  "1 of 3 exercises complete": "1 exercice terminé sur 3",
   "{0} of {1} exercises complete": "{0} exercices terminés sur {1}",
-  "Locked. Artifacts delivered.": "Verrouillée. Livrables remis.",
-  "Unlock with the next tier.": "S’ouvre avec l’offre suivante.",
+  "Foundation locked.": "Fondation verrouillée.",
   "Exercise": "Exercice",
   "Artifact": "Livrable",
   "Last saved {0}": "Dernier enregistrement : {0}",
   "Lock my foundation": "Verrouiller ma fondation",
-  "Unlock the rest of your foundation.": "Ouvrez le reste de votre fondation.",
-  "Visual DNA, War Table, three more synthesis artifacts, and your QBP export.":
-    "Visual DNA, War Table, trois autres livrables de synthèse et l’export de votre QBP.",
+  "The Visual DNA and War Table exercises, the Sensescape, Visual DNA and War Table readings, the three Build agents and the full QBP export.":
+    "Les exercices Visual DNA et War Table, les lectures Sensescape, Visual DNA et War Table, les trois agents Build et l’export complet du QBP.",
   "Starter, $97 / month. Cancel anytime.": "Starter, 97 $ par mois. Résiliable à tout moment.",
   "This will populate when you complete": "Cette section se remplira quand vous aurez terminé",
   "the exercise": "l’exercice",
@@ -204,59 +190,55 @@ QBI18N.add('fr', {
 
   /* ══ qb-paywall.js ════════════════════════════════════════════════ */
   "Export your QBP.": "Exportez votre QBP.",
-  "Your Quantum Brand Profile becomes a downloadable document with Starter.":
-    "Votre Quantum Brand Profile devient un document téléchargeable avec Starter.",
-  "Brand Soul": "Âme de marque",
+  "With Starter, your Quantum Brand Profile downloads as a file.":
+    "Avec Starter, votre Quantum Brand Profile se télécharge sous forme de fichier.",
   "Visual Language": "Langage visuel",
   "Strategic Position": "Position stratégique",
-  "Read your a locked section.": "Lisez la section verrouillée.",
-  "Read your this artifact.": "Lisez ce livrable.",
-  "Read your {0}.": "Lisez votre {0}.",
-  "The a locked section section of your QBP is ready. Upgrade to read it.":
-    "Une section verrouillée de votre QBP est prête. Passez à Starter pour la lire.",
-  "The {0} section of your QBP is ready. Upgrade to read it.":
-    "La section {0} de votre QBP est prête. Passez à Starter pour la lire.",
-  "Your this artifact synthesis is ready. Upgrade to read it.":
-    "Ce livrable est prêt. Passez à Starter pour le lire.",
-  "Your {0} synthesis is ready. Upgrade to read it.":
-    "Votre synthèse {0} est prête. Passez à Starter pour la lire.",
-  "this exercise opens with Starter.": "Cet exercice s’ouvre avec Starter.",
-  "Phase 02 opens with Starter.": "La Phase 02 s’ouvre avec Starter.",
+  "Two sections of your QBP open with Starter.": "Deux sections de votre QBP s’ouvrent avec Starter.",
+  "This artifact opens with Starter.": "Ce livrable s’ouvre avec Starter.",
+  "Read your {0} reading.": "Lisez votre lecture {0}.",
+  "Visual Language and Strategic Position fill from the Visual DNA and War Table exercises. All of it opens with Starter.":
+    "Langage visuel et Position stratégique se remplissent à partir des exercices Visual DNA et War Table. L’ensemble s’ouvre avec Starter.",
+  "That section of your QBP fills from the {0} exercise. Both open with Starter.":
+    "Cette section de votre QBP se remplit à partir de l’exercice {0}. Les deux s’ouvrent avec Starter.",
+  "Upgrade to read it.": "Passez à Starter pour le lire.",
+  "The {0} reading opens with Starter. Upgrade to read it.":
+    "La lecture {0} s’ouvre avec Starter. Passez à Starter pour la lire.",
+  "This exercise opens with Starter.": "Cet exercice s’ouvre avec Starter.",
+  "Build opens with Starter.": "Build s’ouvre avec Starter.",
   "{0} opens with Starter.": "{0} s’ouvre avec Starter.",
-  "Run the this exercise exercise and feed it into your foundation.":
-    "Faites cet exercice et versez-le dans votre fondation.",
-  "Run the {0} exercise and feed it into your foundation.":
-    "Faites l’exercice {0} et versez-le dans votre fondation.",
-  "Phase 03 is not open yet.": "La Phase 03 n’est pas encore ouverte.",
-  "Phase 04 is not open yet.": "La Phase 04 n’est pas encore ouverte.",
-  "Phase 05 is not open yet.": "La Phase 05 n’est pas encore ouverte.",
-  "Starter opens your full foundation and the Phase 02 agents today.":
-    "Starter ouvre dès aujourd’hui votre fondation complète et les agents de la Phase 02.",
-  "The visual identity phase is built on your foundation. Starter opens it.":
-    "La phase d’identité visuelle se construit sur votre fondation. Starter l’ouvre.",
+  "Visual DNA and War Table are part of Starter. Archetype Compass, Brand Soul Map and Sensescape stay free.":
+    "Visual DNA et War Table font partie de Starter. Archetype Compass, Brand Soul Map et Sensescape restent gratuits.",
+  "The {0} exercise and its reading are part of Starter. Archetype Compass, Brand Soul Map and Sensescape stay free.":
+    "L’exercice {0} et sa lecture font partie de Starter. Archetype Compass, Brand Soul Map et Sensescape restent gratuits.",
+  "Hold is not open yet.": "Hold n’est pas encore ouvert.",
+  "No plan opens Hold. Starter opens the rest of your foundation and the Build agents.":
+    "Aucune offre n’ouvre Hold. Starter ouvre le reste de votre fondation et les agents Build.",
+  "The Build agents work from your foundation. Starter opens them.":
+    "Les agents Build travaillent à partir de votre fondation. Starter les ouvre.",
   "Cancelled": "Annulé",
   "Checkout cancelled.": "Paiement annulé.",
   "No charge was made. Pick up where you left off.":
     "Aucun montant n’a été débité. Reprenez là où vous en étiez.",
   "Open the rest of your foundation.": "Ouvrez le reste de votre fondation.",
-  "Visual DNA, War Table, three remaining synthesis artifacts, full QBP export, and the Phase 02 agents. All on Starter.":
-    "Visual DNA, War Table, les trois livrables de synthèse restants, l’export complet du QBP et les agents de la Phase 02. Tout est dans Starter.",
+  "The Visual DNA and War Table exercises, the Sensescape, Visual DNA and War Table readings, the three Build agents and the full QBP export. All on Starter.":
+    "Les exercices Visual DNA et War Table, les lectures Sensescape, Visual DNA et War Table, les trois agents Build et l’export complet du QBP. Tout est dans Starter.",
   "Current plan": "Offre actuelle",
   "$97": "97 $",
   "/ month": "/ mois",
-  "Everything you need to finish Phase 01 and open Phase 02.":
-    "Tout ce qu’il faut pour terminer la Phase 01 et ouvrir la Phase 02.",
-  "All Phase 01 synthesis artifacts (Sensescape, Visual DNA, War Table)":
-    "Tous les livrables de synthèse de la Phase 01 (Sensescape, Visual DNA, War Table)",
-  "Visual DNA and War Table exercises": "Les exercices Visual DNA et War Table",
+  "The rest of your foundation, the Build agents and the full export.":
+    "Le reste de votre fondation, les agents Build et l’export complet.",
+  "The three other foundation readings (Sensescape, Visual DNA, War Table)":
+    "Les trois autres lectures de la fondation (Sensescape, Visual DNA, War Table)",
+  "The Visual DNA and War Table exercises": "Les exercices Visual DNA et War Table",
   "Full QBP export": "Export complet du QBP",
-  "All Phase 02 agents (Logo Direction, Logo Evaluation, Voice Guide)":
-    "Tous les agents de la Phase 02 (Direction de logo, Évaluation de logo, Voice Guide)",
+  "The three Build agents (Logo Direction, Logo Evaluation, Voice Guide)":
+    "Les trois agents Build (Direction de logo, Évaluation de logo, Voice Guide)",
   "Cancel anytime": "Résiliation à tout moment",
   "You're already on {0}.": "Vous avez déjà l’offre {0}.",
   "is application-only.": "est accessible sur candidature uniquement.",
-  "Reach out.": "Prenez contact.",
-  "14-day money-back": "Remboursement sous 14 jours",
+  "Write to me@qtmbg.com.": "Écrivez à me@qtmbg.com.",
+  "Full refund within 14 days": "Remboursement intégral sous 14 jours",
   "Secure checkout via Stripe": "Paiement sécurisé par Stripe",
   "Opening checkout…": "Ouverture du paiement…",
   "Not signed in": "Vous n’êtes pas connecté",
@@ -267,31 +249,32 @@ QBI18N.add('fr', {
   "Missing authorization. Try again.": "Autorisation manquante. Réessayez.",
   "Invalid session. Try again.": "Session invalide. Réessayez.",
   "Checkout failed (HTTP {0}). Try again.": "Le paiement n’a pas pu s’ouvrir (HTTP {0}). Réessayez.",
-  "Available in a future chapter.": "Disponible dans un prochain chapitre.",
   "Issue @@ .qb-paywall": "Incident",
   "Could not load checkout.": "Impossible de charger le paiement.",
   "Reload and try again. If this keeps happening, write to me@qtmbg.com.":
     "Rechargez la page et réessayez. Si le problème persiste, écrivez à me@qtmbg.com.",
 
   /* ══ qb-gate.js ═══════════════════════════════════════════════════ */
-  "Phase 01 progress": "Progression de la Phase 01",
+  "Foundation progress": "Progression de la fondation",
   "Save your Brand Profile": "Enregistrez votre Profil de marque",
   "Your result is ready.": "Votre résultat est prêt.",
   "Save {0}'s Profile": "Enregistrer le profil de la marque {0}",
-  "every Phase 02+ tool": "Chaque outil à partir de la Phase 02",
-  "One click and your work is saved. {0}, and {1} build directly on it — no re-entering anything.":
-    "Un clic et votre travail est enregistré. {0} et {1} s’appuient directement dessus, sans rien ressaisir.",
-  "One click and your work is saved. {0} and {1} build directly on it — no re-entering anything.":
-    "Un clic et votre travail est enregistré. {0} et {1} s’appuient directement dessus, sans rien ressaisir.",
-  "One click and your work is saved. {0} build directly on it — no re-entering anything.":
-    "Un clic et votre travail est enregistré. {0} s’appuie directement dessus, sans rien ressaisir.",
-  "One click and your result is saved. The next tools build on it — no re-entering anything.":
-    "Un clic et votre résultat est enregistré. Les outils suivants s’appuient dessus, sans rien ressaisir.",
+  "The tools that follow": "Les outils qui suivent",
+  "One click and your work is saved. The tools that follow build directly on it. Nothing to re-enter.":
+    "Un clic et votre travail est enregistré. Les outils qui suivent s’appuient directement dessus. Rien à ressaisir.",
+  "One click and your work is saved. {0}, and {1} build directly on it. Nothing to re-enter.":
+    "Un clic et votre travail est enregistré. {0} et {1} s’appuient directement dessus. Rien à ressaisir.",
+  "One click and your work is saved. {0} and {1} build directly on it. Nothing to re-enter.":
+    "Un clic et votre travail est enregistré. {0} et {1} s’appuient directement dessus. Rien à ressaisir.",
+  "One click and your work is saved. {0} build directly on it. Nothing to re-enter.":
+    "Un clic et votre travail est enregistré. {0} s’appuie directement dessus. Rien à ressaisir.",
+  "One click and your result is saved. The next tools build on it. Nothing to re-enter.":
+    "Un clic et votre résultat est enregistré. Les outils suivants s’appuient dessus. Rien à ressaisir.",
   "{0} · COMPLETE": "{0} · TERMINÉ",
   "First name": "Prénom",
   "your@email.com": "vous@email.com",
   "Save my Brand Profile →": "Enregistrer mon Profil de marque →",
-  "Maybe later — just show me the result": "Plus tard, montrez-moi le résultat",
+  "Maybe later. Show me the result": "Plus tard. Montrez-moi le résultat",
   "No password. Magic link. Always free. Never spam.":
     "Sans mot de passe. Lien magique. Toujours gratuit. Jamais de spam.",
   "Welcome back": "Bon retour",
@@ -302,8 +285,8 @@ QBI18N.add('fr', {
   "No password. Magic link. Always free.": "Sans mot de passe. Lien magique. Toujours gratuit.",
   "Check your inbox": "Vérifiez votre boîte de réception",
   "Magic link sent to {0}": "Lien magique envoyé à {0}",
-  "Click the link to save your profile. We'll bring you right back to your result. Takes about 10 seconds.":
-    "Cliquez sur le lien pour enregistrer votre profil. Nous vous ramenons directement à votre résultat. Comptez environ 10 secondes.",
+  "Click the link to save your profile. It signs you in and opens your foundation. Takes about 10 seconds.":
+    "Cliquez sur le lien pour enregistrer votre profil. Il vous connecte et ouvre votre fondation. Comptez environ 10 secondes.",
   "Continue without saving": "Continuer sans enregistrer",
   "If you don't see it within a minute, check spam. The link expires in 60 minutes.":
     "Si vous ne le voyez pas d’ici une minute, vérifiez vos spams. Le lien expire dans 60 minutes.",
@@ -343,8 +326,8 @@ QBI18N.add('fr', {
   "Your files": "Vos fichiers",
   "Brand references": "Références de marque",
   "25 MB": "25 Mo",
-  "Upload logo references, brand documents, and other source files. {0} per file. PNG, JPEG, SVG, WebP, PDF. Attach a PNG, JPEG, or WebP up to 5 MB and Visual DNA reads it on its next run.":
-    "Importez vos références de logo, vos documents de marque et vos autres fichiers sources. {0} par fichier. PNG, JPEG, SVG, WebP, PDF. Joignez un PNG, un JPEG ou un WebP de 5 Mo au plus et Visual DNA le lit à son prochain lancement.",
+  "Upload logo references, brand documents, and other source files. {0} per file. PNG, JPEG, SVG, WebP, PDF. With Starter, attach a PNG, JPEG, or WebP up to 5 MB and Visual DNA reads it on its next run.":
+    "Importez vos références de logo, vos documents de marque et vos autres fichiers sources. {0} par fichier. PNG, JPEG, SVG, WebP, PDF. Avec Starter, joignez un PNG, un JPEG ou un WebP de 5 Mo au plus et Visual DNA le lit à son prochain lancement.",
   "Drop files here or click to choose": "Déposez vos fichiers ici ou cliquez pour choisir",
   "25 MB max": "25 Mo max",
   "Uploaded files": "Fichiers importés",
@@ -383,37 +366,33 @@ QBI18N.add('fr', {
   "{0} (waiting)": "{0} (en attente)",
   "{0} (generating)": "{0} (génération)",
   "{0} (failed)": "{0} (échec)",
-  "Phase": true,
   "Status": "Statut",
   "All @@ .qb-archive-filter-bar": "Tout",
   "Clear filters": "Effacer les filtres",
   "Latest versions": "Dernières versions",
   "Show all": "Tout afficher",
-  "{0} and the other paid synthesis artifacts unlock with Starter.":
-    "{0} et les autres livrables de synthèse payants s’ouvrent avec Starter.",
   "No artifacts match these filters.": "Aucun livrable ne correspond à ces filtres.",
   "Lost @@ .qb-archive, .qb-foundation, .qb-qbp-article, .qb-artifact-article": "Introuvable",
   "Your archive could not load.": "Vos archives n’ont pas pu se charger.",
   "Empty @@ .qb-archive": "Vide",
-  "Your archive will fill as your foundation is built.":
-    "Vos archives se rempliront à mesure que votre fondation se construit.",
-  "Start with the Brand Soul Map. Each completed exercise produces a synthesis artifact you can read here.":
-    "Commencez par la Brand Soul Map. Chaque exercice terminé produit un livrable de synthèse à lire ici.",
+  "Your archive fills once your foundation is locked.":
+    "Vos archives se remplissent une fois votre fondation verrouillée.",
+  "Start with the Brand Soul Map. Locking your foundation produces the readings you read here.":
+    "Commencez par la Brand Soul Map. Le verrouillage de votre fondation produit les lectures que vous lisez ici.",
   "Go to Foundation": "Aller à la Fondation",
   "Stuck @@ .qb-archive": "Bloqué",
   "Your foundation is locked but no artifacts have arrived.":
     "Votre fondation est verrouillée mais aucun livrable n’est arrivé.",
-  "Something went wrong during synthesis. The retry surface on Foundation can re-dispatch the agents.":
-    "Une erreur est survenue pendant la synthèse. Depuis la Fondation, vous pouvez relancer les agents.",
-  "Open Foundation": "Ouvrir la Fondation",
+  "Something went wrong while your readings were produced. Open the Console to run them again, or write to me@qtmbg.com.":
+    "Une erreur est survenue pendant la production de vos lectures. Ouvrez la Console pour les relancer, ou écrivez à me@qtmbg.com.",
   "Chain @@ .qb-archive-chain": "Chaîne",
   "Locked recently · {0} agents": "Verrouillage récent · {0} agents",
   "Locked recently · {0} agent": "Verrouillage récent · {0} agent",
   "Locked {0} · {1} agents": "Verrouillage du {0} · {1} agents",
   "Locked {0} · {1} agent": "Verrouillage du {0} · {1} agent",
   "Earlier work": "Travaux antérieurs",
-  "Artifacts from before chain history started tracking.":
-    "Les livrables produits avant le suivi de l’historique des chaînes.",
+  "Artifacts produced before runs were grouped by lock.":
+    "Les livrables produits avant que les exécutions soient regroupées par verrouillage.",
 
   /* ══ qb-artifact-renderer.js ══════════════════════════════════════ */
   "Qualities": "Qualités",
@@ -476,17 +455,15 @@ QBI18N.add('fr', {
   "Brand Performance Agent · {0} · v{1}": "Agent de performance de marque · {0} · v{1}",
   "Quarterly Review Agent · {0} · v{1}": "Agent de revue trimestrielle · {0} · v{1}",
   "Predictive Panel Agent · {0} · v{1}": "Agent Predictive Panel · {0} · v{1}",
-  "Phase {0} · Locked": "Phase {0} · Verrouillé",
+  "{0} · Locked": "{0} · Verrouillé",
   "This artifact is locked.": "Ce livrable est verrouillé.",
-  "Visual DNA, War Table, three remaining synthesis artifacts, and QBP export.":
-    "Visual DNA, War Table, les trois livrables de synthèse restants et l’export du QBP.",
   "Back to Foundation": "Retour à la Fondation",
-  "This artifact did not generate cleanly.": "Ce livrable ne s’est pas généré correctement.",
+  "This artifact could not be shown.": "Ce livrable n’a pas pu être affiché.",
   "Try regenerating": "Régénérer",
-  "This artifact did not generate successfully. We have been notified.":
-    "Ce livrable ne s’est pas généré. Nous en sommes informés.",
-  "The stored content does not match the current schema. Regenerating will produce a clean version.":
-    "Le contenu enregistré ne correspond pas au schéma actuel. Une régénération produira une version propre.",
+  "Something went wrong on the way. Reload the page, or write to me@qtmbg.com.":
+    "Une erreur est survenue en chemin. Rechargez la page, ou écrivez à me@qtmbg.com.",
+  "The stored content does not match the current format. A rerun from the Console produces a clean version.":
+    "Le contenu enregistré ne correspond pas au format actuel. Une relance depuis la Console produit une version propre.",
   "This artifact does not exist.": "Ce livrable n’existe pas.",
   "It may have been removed, or the link is wrong.": "Il a peut-être été retiré, ou le lien est erroné.",
 
@@ -501,53 +478,42 @@ QBI18N.add('fr', {
   "Strategic position, audience signals, top initiatives.":
     "Position stratégique, signaux d’audience, initiatives prioritaires.",
   "Starter is live.": "Starter est actif.",
-  "Your tools are unlocked.": "Vos outils sont ouverts.",
-  "Your full foundation, your QBP export and the Phase 02 agents are open. The Visual DNA and War Table exercises just unlocked · finish them to lock your foundation and trigger the full Phase 01 synthesis.":
-    "Votre fondation complète, l’export de votre QBP et les agents de la Phase 02 sont ouverts. Les exercices Visual DNA et War Table viennent de s’ouvrir · terminez-les pour verrouiller votre fondation et lancer la synthèse complète de la Phase 01.",
-  "Pro is live.": "Pro est actif.",
-  "Everything is open.": "Tout est ouvert.",
-  "Your full foundation and all agents are open today. Visual DNA and War Table are waiting · finish them to trigger your Phase 01 synthesis. Predictive Panel and Phase 02 brand creation come online as they ship, and everything you build now compounds into them.":
-    "Votre fondation complète et tous les agents sont ouverts dès aujourd’hui. Visual DNA et War Table vous attendent · terminez-les pour lancer votre synthèse de la Phase 01. Predictive Panel et la création de marque de la Phase 02 arrivent à mesure de leur sortie, et tout ce que vous construisez maintenant s’y ajoute.",
-  "Agency is live.": "Agency est actif.",
-  "Client mode is on.": "Le mode client est activé.",
-  "Multi-brand workspaces and white-label exports are yours. Run this brand's foundation first · Visual DNA and War Table are waiting · then create your first client workspace.":
-    "Les espaces multi-marques et les exports en marque blanche sont à vous. Faites d’abord la fondation de cette marque · Visual DNA et War Table vous attendent · puis créez votre premier espace client.",
+  "Your tools are open.": "Vos outils sont ouverts.",
+  "The Visual DNA and War Table exercises, the three other foundation readings, the Build agents and the full QBP export are open. Visual DNA and War Table are next, on this page.":
+    "Les exercices Visual DNA et War Table, les trois autres lectures de la fondation, les agents Build et l’export complet du QBP sont ouverts. Visual DNA et War Table sont la suite, sur cette page.",
+  "Your plan is live.": "Votre offre est active.",
   "Dismiss upgrade confirmation": "Fermer la confirmation",
-  "Coming in a future chapter": "Arrive dans un prochain chapitre",
-  "Your journey": "Votre progression",
-  "Visual DNA, War Table, three remaining synthesis artifacts, and your QBP export — all on Starter.":
-    "Visual DNA, War Table, les trois livrables de synthèse restants et l’export de votre QBP. Tout est dans Starter.",
   "Your foundation starts with one question.": "Votre fondation commence par une question.",
   "Identity comes before tactics. Start with the Brand Soul Map, or take the Signal Scan if you want a diagnostic first.":
     "L’identité passe avant la tactique. Commencez par la Brand Soul Map, ou faites le Signal Scan si vous voulez d’abord un diagnostic.",
   "Begin the Brand Soul Map": "Commencer la Brand Soul Map",
   "Take the Signal Scan": "Faire le Signal Scan",
   "Continue your foundation.": "Poursuivez votre fondation.",
-  "Complete the Phase 01 exercises to lock your foundation. After lock, your synthesis artifacts are produced.":
-    "Terminez les exercices de la Phase 01 pour verrouiller votre fondation. Une fois verrouillée, vos livrables de synthèse sont produits.",
+  "Archetype Compass, Brand Soul Map and Sensescape are what it takes to lock your foundation. After lock, your readings are produced.":
+    "Archetype Compass, Brand Soul Map et Sensescape suffisent pour verrouiller votre fondation. Une fois verrouillée, vos lectures sont produites.",
   "Your foundation is ready to lock.": "Votre fondation est prête à être verrouillée.",
-  "Once locked, your Phase 01 answers become immutable. Your synthesis artifacts will be produced and delivered to your inbox within minutes.":
-    "Une fois la fondation verrouillée, vos réponses de la Phase 01 ne peuvent plus être modifiées. Vos livrables de synthèse seront produits et envoyés dans votre boîte de réception en quelques minutes.",
+  "Once locked, your foundation answers become immutable. Your readings are produced, and an email reaches you as each one is ready, within minutes.":
+    "Une fois la fondation verrouillée, vos réponses ne peuvent plus être modifiées. Vos lectures sont produites, et un e-mail vous parvient dès que chacune est prête, en quelques minutes.",
   "Confirm @@ .qb-paywall-modal": "Confirmer",
   "Lock your foundation?": "Verrouiller votre fondation ?",
-  "Once you lock your foundation, your Phase 01 answers become immutable. Your synthesis artifacts will be produced and emailed to you within minutes.":
-    "Une fois votre fondation verrouillée, vos réponses de la Phase 01 ne peuvent plus être modifiées. Vos livrables de synthèse seront produits et envoyés par e-mail en quelques minutes.",
+  "Once you lock your foundation, your answers become immutable. Your readings are produced, and an email reaches you as each one is ready, within minutes.":
+    "Une fois votre fondation verrouillée, vos réponses ne peuvent plus être modifiées. Vos lectures sont produites, et un e-mail vous parvient dès que chacune est prête, en quelques minutes.",
   "Yes, lock my foundation": "Oui, verrouiller ma fondation",
-  "Your artifacts are being prepared.": "Vos livrables sont en préparation.",
-  "We will email you when each one is ready.": "Nous vous écrirons par e-mail dès que chacun sera prêt.",
+  "Your readings are being prepared.": "Vos lectures sont en préparation.",
+  "We will email you when each one is ready.": "Nous vous écrirons par e-mail dès que chacune sera prête.",
   "We will email you when each one is ready. Foundation locked at {0}.":
-    "Nous vous écrirons par e-mail dès que chacun sera prêt. Fondation verrouillée le {0}.",
+    "Nous vous écrirons par e-mail dès que chacune sera prête. Fondation verrouillée le {0}.",
   "Foundation locked": "Fondation verrouillée",
   "Your foundation is built.": "Votre fondation est construite.",
   "Your Soul Map is ready.": "Votre Soul Map est prête.",
-  "Read each artifact. Your QBP is your living document.":
-    "Lisez chaque livrable. Votre QBP est votre document vivant.",
-  "The rest of your foundation is locked. Unlock with Starter to read.":
-    "Le reste de votre fondation est verrouillé. Ouvrez-le avec Starter pour le lire.",
-  "Phase 02 is open: Logo Direction, Logo Evaluation and Voice Guide. Your QBP keeps accumulating as you complete the Visual DNA and War Table exercises.":
-    "La Phase 02 est ouverte : Direction de logo, Évaluation de logo et Voice Guide. Votre QBP continue de s’enrichir à mesure que vous terminez les exercices Visual DNA et War Table.",
-  "Starter unlocks the Sensescape, Visual DNA, and War Table artifacts, plus the Visual DNA and War Table exercises.":
-    "Starter ouvre les livrables Sensescape, Visual DNA et War Table, ainsi que les exercices Visual DNA et War Table.",
+  "Your foundation is locked.": "Votre fondation est verrouillée.",
+  "Read each one. Your QBP is your living document.": "Lisez chacune. Votre QBP est votre document vivant.",
+  "The three other readings open with Starter.": "Les trois autres lectures s’ouvrent avec Starter.",
+  "Build is open: Logo Direction, Logo Evaluation and Voice Guide. Your QBP keeps growing as you complete the Visual DNA and War Table exercises.":
+    "Build est ouvert : Direction de logo, Évaluation de logo et Voice Guide. Votre QBP continue de s’enrichir à mesure que vous terminez les exercices Visual DNA et War Table.",
+  "Starter opens the Sensescape, Visual DNA and War Table readings, plus the Visual DNA and War Table exercises.":
+    "Starter ouvre les lectures Sensescape, Visual DNA et War Table, ainsi que les exercices Visual DNA et War Table.",
+  "Logo Direction, Logo Evaluation, Voice Guide.": "Direction de logo, Évaluation de logo, Voice Guide.",
   "$97 / month. Cancel anytime.": "97 $ par mois. Résiliable à tout moment.",
   "Your foundation could not load.": "Votre fondation n’a pas pu se charger.",
 
@@ -560,9 +526,8 @@ QBI18N.add('fr', {
   "The Strategic Position of Your Brand": "La position stratégique de votre marque",
   "The Sensory World": "Le monde sensoriel",
   "The Visual Language": "Le langage visuel",
-  "Available with Starter.": "Disponible avec Starter.",
-  "Visual DNA and War Table are locked on free. Upgrade to read them.":
-    "Visual DNA et War Table sont verrouillés dans l’offre gratuite. Passez à Starter pour les lire.",
+  "Visual DNA and War Table open with Starter: the two exercises, their readings, and these sections of your QBP.":
+    "Visual DNA et War Table s’ouvrent avec Starter : les deux exercices, leurs lectures et ces sections de votre QBP.",
   "This will populate when you complete the Brand Soul Map. Go to":
     "Cette section se remplira quand vous aurez terminé la Brand Soul Map. Rendez-vous sur",
   "the Brand Soul Map": "la Brand Soul Map",
@@ -605,12 +570,12 @@ QBI18N.add('fr', {
   "Kept images": "Images gardées",
   "Signature keeps": "Images signatures",
   "Fast discards (R1)": "Écartées d’emblée (R1)",
-  "Your full palette and typography direction live in the Visual DNA artifact.":
-    "Votre palette complète et votre direction typographique se trouvent dans le livrable Visual DNA.",
-  "Your full positioning map and ranked priorities live in the War Table artifact.":
-    "Votre carte de positionnement complète et vos priorités classées se trouvent dans le livrable War Table.",
+  "Your full palette and typography direction live in the Visual DNA reading.":
+    "Votre palette complète et votre direction typographique se trouvent dans la lecture Visual DNA.",
+  "Your full positioning map and ranked priorities live in the War Table reading.":
+    "Votre carte de positionnement complète et vos priorités classées se trouvent dans la lecture War Table.",
   "Open the archive": "Ouvrez les archives",
-  "to read it.": "pour le lire.",
+  "to read it.": "pour la lire.",
   "Posture": true,
   "Challenge": "Défi",
   "Goal": "Objectif",
@@ -629,8 +594,8 @@ QBI18N.add('fr', {
   "Table of contents": "Sommaire",
   "Contents": "Sommaire",
   "Your QBP is empty.": "Votre QBP est vide.",
-  "Start with the Archetype Compass or the Brand Soul Map. Each exercise adds a section here.":
-    "Commencez par l’Archetype Compass ou la Brand Soul Map. Chaque exercice ajoute une section ici.",
+  "Start with the Archetype Compass or the Brand Soul Map. Each exercise fills part of this page.":
+    "Commencez par l’Archetype Compass ou la Brand Soul Map. Chaque exercice remplit une partie de cette page.",
   "Begin the Archetype Compass": "Commencer l’Archetype Compass",
   "Or the Brand Soul Map": "Ou la Brand Soul Map",
   "Generated by": "Généré par",
@@ -645,7 +610,7 @@ QBI18N.add('fr', {
   "{0}, here is what is running on your behalf.": "{0}, voici ce qui tourne pour vous.",
   "Complete your foundation to put your agents to work.":
     "Terminez votre fondation pour mettre vos agents au travail.",
-  "Phase view": "Vue par phase",
+  "By movement": "Par mouvement",
   "Run history": "Historique des exécutions",
   "Loading your agents…": "Chargement de vos agents…",
   "Lock your foundation to see your agents at work.":
@@ -666,10 +631,10 @@ QBI18N.add('fr', {
     "{0} attend {1}. Le lancement se fera automatiquement dès que {2} aura livré.",
   "{0} needs a file you haven't uploaded yet. Add the required file, then re-run.":
     "{0} a besoin d’un fichier que vous n’avez pas encore importé. Ajoutez le fichier requis, puis relancez.",
-  "{0} is part of a paid plan. Upgrade to run it.":
-    "{0} fait partie d’une offre payante. Passez à Starter pour le lancer.",
-  "{0} needs {1} first. Finish that Phase 01 exercise, then run this.":
-    "{0} a d’abord besoin de {1}. Terminez cet exercice de la Phase 01, puis lancez cet agent.",
+  "{0} opens with Starter. Upgrade to run it.": "{0} s’ouvre avec Starter. Passez à Starter pour le lancer.",
+  "{0} is not open yet.": "{0} n’est pas encore ouvert.",
+  "{0} needs {1} first. Finish that foundation exercise, then run this.":
+    "{0} a d’abord besoin de {1}. Terminez cet exercice de la fondation, puis lancez cet agent.",
   "{0} needs a logo image. Attach one, then run.":
     "{0} a besoin d’une image de logo. Joignez-en une, puis lancez.",
   "{0} needs a file you haven't attached yet.":
@@ -706,13 +671,14 @@ QBI18N.add('fr', {
   "{0} ms": true,
   "Sonnet · retry_budget {0}": true,
   "Haiku · retry_budget {0}": true,
+  "Gemini · retry_budget {0}": true,
+  "Opus · retry_budget {0}": true,
   "Rerun this agent against your live QBP. Default for most reruns.":
     "Relancer cet agent sur votre QBP actuel. Le choix par défaut pour la plupart des relances.",
   "Rerun · current QBP": "Relancer · QBP actuel",
   "Rerun against the QBP snapshot that produced this artifact.":
     "Relancer sur l’instantané du QBP qui a produit ce livrable.",
-  "No QBP snapshot available · this is a Chapter 1 legacy artifact.":
-    "Aucun instantané du QBP disponible · ce livrable date du chapitre 1.",
+  "No QBP snapshot was kept for this artifact.": "Aucun instantané du QBP n’a été conservé pour ce livrable.",
   "Rerun · original QBP": "Relancer · QBP d’origine",
   "Attach a logo image, then run the first evaluation.":
     "Joignez une image de logo, puis lancez la première évaluation.",
@@ -738,7 +704,6 @@ QBI18N.add('fr', {
   "Rerun this agent with your feedback applied.": "Relancer cet agent en appliquant votre retour.",
   "Refine · round {0} of {1}": "Affiner · tour {0} sur {1}",
   "Refine": "Affiner",
-  "Requires {0} tier": "Nécessite l’offre {0}",
   "Upgrade to run": "Passer à Starter",
   "Last run moments ago": "Dernière exécution à l’instant",
   "Last run {0}m ago": "Dernière exécution il y a {0} min",
@@ -755,12 +720,9 @@ QBI18N.add('fr', {
   "{0}d ago": "il y a {0} j",
   "No runs yet": "Aucune exécution pour l’instant",
   "Retry manually": "Relancer manuellement",
-  "Unlocks when Starter tier is active": "S’ouvre quand l’offre Starter est active",
-  "Available in Chapter {0} · {1} phase": "Disponible au chapitre {0} · phase {1}",
   "Replay details for {0}": "Détails de relecture pour {0}",
   "Close replay panel": "Fermer le panneau de relecture",
-  "Phase 01 · Replay": "Phase 01 · Relecture",
-  "Phase ? · Replay": "Phase ? · Relecture",
+  "Replay": "Relecture",
   /* Replay title: slug · version */
   "soul_map_synthesizer · v{0}": true,
   "sensescape_synthesizer · v{0}": true,
@@ -833,17 +795,17 @@ QBI18N.add('fr', {
 
   /* ══ Livrable chrome written by the agents ════════════════════════ */
   /* Eyebrows */
-  "01 Discovery · Soul Axis": "01 Découverte · Axe de l’âme",
-  "01 Discovery · Sensescape": "01 Découverte · Sensescape",
-  "01 Discovery · Visual DNA": "01 Découverte · Visual DNA",
-  "01 Discovery · War Table": "01 Découverte · War Table",
+  "Observe · Soul Axis": "Observe · Axe de l’âme",
+  "Observe · Sensescape": true,
+  "Collapse · Visual DNA": true,
+  "Collapse · War Table": true,
   "Collapse · Open Questions": "Collapse · Questions ouvertes",
-  "02 Brand Creation · Logo Direction": "02 Création de marque · Direction de logo",
-  "02 Brand Creation · Logo Evaluation": "02 Création de marque · Évaluation de logo",
-  "02 Brand Creation · Voice Guide": "02 Création de marque · Voice Guide",
-  "05 Intelligence · Brand Performance": "05 Intelligence · Performance de marque",
-  "05 Intelligence · Quarterly Review": "05 Intelligence · Revue trimestrielle",
-  "05 Intelligence · Predictive Panel": true,
+  "Build · Logo Direction": "Build · Direction de logo",
+  "Build · Logo Evaluation": "Build · Évaluation de logo",
+  "Build · Voice Guide": true,
+  "Hold · Brand Performance": "Hold · Performance de marque",
+  "Hold · Quarterly Review": "Hold · Revue trimestrielle",
+  "Hold · Predictive Panel": true,
 
   /* Titles. "de la marque" keeps the line right whatever the name starts with. */
   "What Your Brand Has Not Decided": "Ce que votre marque n’a pas décidé",
@@ -932,7 +894,7 @@ QBI18N.add('fr', {
   "Speak plainly": "Parler simplement",
   "Borrow hype": "Emprunter le ton du battage",
 
-  /* Phase 05 agents */
+  /* Hold agents */
   "The executive read": "La lecture de direction",
   "The patterns": "Les tendances",
   "Health scores": "Scores de santé",
@@ -982,10 +944,10 @@ QBI18N.add('fr', {
      Table headers reach the dictionary in upper case. Labelled bodies are
      one string per slide, so each combination of present parts has its
      own pattern, longest first. */
-  "PHASE 01 · DELIVERABLE": "PHASE 01  ·  LIVRABLE",
-  "PHASE 01 · THE PROFILES": "PHASE 01  ·  THE PROFILES",
-  "PHASE 01 · BRAND SOUL MAP": "PHASE 01  ·  BRAND SOUL MAP",
-  "PHASE 06 · WAR TABLE": "PHASE 06  ·  WAR TABLE",
+  "BrandOS · DELIVERABLE": "BrandOS  ·  LIVRABLE",
+  "OBSERVE · THE PROFILES": "OBSERVE  ·  THE PROFILES",
+  "OBSERVE · BRAND SOUL MAP": "OBSERVE  ·  BRAND SOUL MAP",
+  "COLLAPSE · WAR TABLE": "COLLAPSE  ·  WAR TABLE",
   "QUANTUM BRAND PROFILE · EXECUTIVE SUMMARY": "QUANTUM BRAND PROFILE  ·  SYNTHÈSE",
   "Untitled": "Sans titre",
   "Brand": "Marque",
@@ -999,8 +961,8 @@ QBI18N.add('fr', {
 
   /* The Profiles deck */
   "Three buyers. One strategic thread.": "Trois acheteurs.\nUn seul fil stratégique.",
-  "{0} — three full persona briefs, the patterns that bind them, and the moves they unlock.":
-    "{0} : trois briefs de persona complets, les schémas qui les relient et les actions qu’ils ouvrent.",
+  "{0}. Three full persona briefs, the patterns that bind them, and the moves they open.":
+    "{0}. Trois briefs de persona complets, les schémas qui les relient et les actions qu’ils ouvrent.",
   "THE BINDING INSIGHT": "LE CONSTAT QUI RELIE",
   "What runs through all three": "Ce qui traverse les trois",
   "PERSONA · {0}": "PERSONA  ·  {0}",
@@ -1085,7 +1047,7 @@ QBI18N.add('fr', {
   "01 · DIAGNOSIS": "01  ·  DIAGNOSTIC",
   "What is actually true": "Ce qui est réellement vrai",
   "02 · POSTURE STATEMENT": "02  ·  DÉCLARATION DE POSTURE",
-  "— {0} · the next 60 days": "· {0}  ·  les 60 prochains jours",
+  "{0} · the next 60 days": "{0}  ·  les 60 prochains jours",
   "03 · FIELD PLAN": "03  ·  PLAN DE TERRAIN",
   "What we ship, week by week": "Ce que nous livrons, semaine après semaine",
   "One initiative per row. Owner, leading indicator, kill condition.":
@@ -1124,7 +1086,6 @@ QBI18N.add('fr', {
   "The full BrandOS in one deck. Soul, archetype, sensescape, visual DNA, war table and the three buyers.":
     "Tout BrandOS en un seul deck : l’âme, l’archétype, le Sensescape,\nle Visual DNA, la War Table et les trois acheteurs.",
   "QUANTUM BRANDING · EDITORIAL": "QUANTUM BRANDING  ·  ÉDITORIAL",
-  "BrandOS · PHASE 01": "BrandOS  ·  PHASE 01",
   "QUANTUM BRANDING · BrandOS": "QUANTUM BRANDING  ·  BrandOS",
   "PAGE {slide_num} / {slide_count}": "PAGE  {slide_num} / {slide_count}",
   "01 · ARCHETYPE COMPASS": "01  ·  ARCHETYPE COMPASS",
@@ -1251,7 +1212,6 @@ QBI18N.add('fr', {
 
   /* Quote attributions. The source sets a dash before each; French drops
      it for a middle dot. Kept last so the longer forms above win. */
-  "— {0}": "· {0}",
 
   /* ══ Messages the API returns as text ═════════════════════════════ */
   "Failed to fetch": "Connexion impossible. Vérifiez votre réseau.",
@@ -1269,7 +1229,8 @@ QBI18N.add('fr', {
   "Profile read failed": "Lecture du profil impossible",
   "Profile not found": "Profil introuvable",
   "Profile lookup failed": "Recherche du profil impossible",
-  "Phase 01 incomplete": "Phase 01 incomplète",
+  "Foundation incomplete": "Fondation incomplète",
+  "Foundation incomplete": "Fondation incomplète",
   "Lock write failed": "Écriture du verrouillage impossible",
   "Billing portal not configured": "Portail de facturation non configuré",
   "No active subscription": "Aucun abonnement actif",
@@ -1292,7 +1253,6 @@ QBI18N.add('fr', {
   "Could not load notifications": "Impossible de charger les notifications",
   "Notification not found": "Notification introuvable",
   "Could not mark notification read": "Impossible de marquer la notification comme lue",
-  "Invalid phase": "Phase invalide",
   "Invalid status": "Statut invalide",
   "Invalid mode": "Mode invalide",
   "Storage bucket unavailable": "Espace de stockage indisponible",

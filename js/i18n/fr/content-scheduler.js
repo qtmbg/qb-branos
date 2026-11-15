@@ -3,18 +3,10 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Content Scheduler · BrandOS": "Planificateur de contenu · BrandOS",
-  "Set the publishing cadence for your brand across platforms. The Content Scheduler builds a calendar your Brand Profile can sustain.":
-    "Fixez le rythme de publication de votre marque sur toutes les plateformes. Le Planificateur de contenu construit un calendrier que votre Profil de marque peut tenir.",
-
-  /* The runtime writes og:locale itself; the audit then reads it back. */
-  "fr_FR": true,
-
-  /* ── Agent chassis, shared by the four agent tool pages ─────────── */
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
+  "Queue posts, set a date and time for each, and send them to Buffer across Instagram, LinkedIn, X and Facebook.":
+    "Mettez des posts en file, fixez une date et une heure pour chacun, puis envoyez-les à Buffer sur Instagram, LinkedIn, X et Facebook.",
 
   /* ── Tool header ────────────────────────────────────────────────── */
-  "QB_BrandOS": true,
   "Content Scheduler": "Planificateur de contenu",
   /* Counts sit after a colon so the line reads right for 0, 1 and many. */
   "{0} in queue · {1} scheduled": "En file\u00a0: {0} · Programmés\u00a0: {1}",
@@ -33,7 +25,6 @@ QBI18N.add('fr', {
   "4. Copy the Access Token and paste it above": "4. Copiez le jeton d’accès (Access Token) et collez-le ci-dessus",
   "Buffer connected": "Buffer connecté",
   "Change token": "Changer de jeton",
-  "Load profiles": "Charger les profils",
   "Add your Buffer access token first.": "Ajoutez d’abord votre jeton d’accès Buffer.",
   "Note: Buffer API requires a server-side proxy for CORS. If blocked, copy your profile IDs from buffer.com/app/profile/[YOUR_ID]":
     "Note\u00a0: l’API Buffer exige un proxy côté serveur pour le CORS. En cas de blocage, copiez vos ID de profil depuis buffer.com/app/profile/[YOUR_ID]",

@@ -1128,6 +1128,14 @@ main { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; position: rela
 }
 .pdf-render .doc-cover { background: var(--bg-deep) !important; }
 
+/* Paper gets the document and nothing around it. When the PDF download
+   fails the page sends the founder to Ctrl+P, and that printed the banner,
+   the nav, the action buttons, the meter and the footer along with it. */
+@media print {
+  .qb-loading-bar, .banner, .nav-wrap, .mobile-menu, body > header,
+  .completion-meter, .footer, .empty-section .qb-button { display: none !important; }
+}
+
 /* Completion meter — ecosystem progress bar */
 .completion-meter { padding: 1.5rem 1.75rem; margin-bottom: 2rem; }
 .meter-bar-bg { height: 8px; background: var(--ink-25); border: 2px solid var(--ink); border-radius: 9999px; overflow: hidden; margin: 1rem 0 0.75rem; }
@@ -1596,7 +1604,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       <div style="font-family:var(--serif);font-size:20px;color:var(--text-1)">Brand Document</div>
       <div id="completion-pct" style="font-family:var(--mono);font-size:12px;color:var(--patina-lit);letter-spacing:0.05em">0% complete</div>
     </div>
-    <div id="completion-sub" style="font-size:13px;color:var(--text-2);margin-bottom:16px">Complete Phase 01 tools to fill your brand document</div>
+    <div id="completion-sub" style="font-size:13px;color:var(--text-2);margin-bottom:16px">Complete the foundation exercises and The Profiles to fill your Brand Document.</div>
     <div class="meter-bar-bg" id="meter-container" role="progressbar" aria-label="Brand document completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
       <div class="meter-bar-fill" id="meter-bar" style="width:0%"></div>
     </div>
@@ -1608,9 +1616,9 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
     <!-- Cover -->
     <div class="doc-cover">
-      <div class="doc-cover-label">Entangled Time - Brand Operating System</div>
+      <div class="doc-cover-label"><span class="brandos-name">BrandOS</span> · Brand operating system</div>
       <div class="doc-cover-brand" id="cover-brand">Your Brand</div>
-      <div class="doc-cover-sub">Quantum Brand Profile - Complete Identity Document</div>
+      <div class="doc-cover-sub">Brand Document · Assembled from your Brand Profile</div>
       <div class="doc-cover-date" id="cover-date"></div>
     </div>
 
@@ -1684,7 +1692,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     <div class="doc-section" id="section-summary">
       <div class="doc-section-header">
         <div class="doc-section-num">07</div>
-        <div class="doc-section-title">Complete QBP Summary</div>
+        <div class="doc-section-title">Brand Profile summary</div>
         <div class="doc-section-phase">Auto-generated</div>
       </div>
       <div id="summary-content"></div>
@@ -1725,11 +1733,27 @@ function fieldGrid(fields) {
   return '<div class="doc-fields-grid">' + fields.map(([l, v, large]) => field(l, v, large)).join('') + '</div>';
 }
 
-function emptySection(toolName, file) {
+// Visual DNA and War Table open with Starter. On an account that cannot
+// open them, the empty state says so instead of sending the founder to do
+// an exercise that ends on a plan page.
+function needsStarter(toolId) {
+  return !!(toolId && window.QB && QB.hasAccess && !QB.hasAccess(toolId));
+}
+
+function emptySection(toolName, file, toolId) {
   const safeName = escHtml(toolName);
   const safeFile = escHtml(file);
+  const name = '<span style="color:var(--text-1)">' + safeName + '</span>';
+  // Locked: name the plan and lead to it. The plan page reads the tool id
+  // and says which exercise it opens (js/qb-paywall.js).
+  if (needsStarter(toolId)) {
+    return '<div class="empty-section">' +
+      '<div class="empty-section-text">' + name + ' opens with Starter. Complete it to populate this section.</div>' +
+      '<button onclick="window.location.href=\'/paywall?reason=upgrade&amp;tool=' + escHtml(toolId) + '\'" class="qb-button is-primary is-sm">' +
+      '<span class="qb-button_content">Upgrade to Starter</span></button></div>';
+  }
   return '<div class="empty-section">' +
-    '<div class="empty-section-text">Complete <span style="color:var(--text-1)">' + safeName + '</span> to populate this section</div>' +
+    '<div class="empty-section-text">Complete ' + name + ' to populate this section</div>' +
     '<button onclick="openTool(\'' + safeFile + '\')" class="qb-button is-primary is-sm">' +
     '<span class="qb-button_content">Open ' + safeName + ' \u2192</span></button></div>';
 }
@@ -1874,15 +1898,15 @@ function render() {
     document.getElementById('visual-content').innerHTML =
       fieldGrid([
         ['Images Kept', keepCount + ' reference images selected'],
-        ['Discard Rate', discardRate + '% \u2014 indicates visual selectivity'],
+        ['Discard Rate', discardRate + '% \u00b7 indicates visual selectivity'],
       ]) +
       (qbp.visualDnaFastDiscards && qbp.visualDnaFastDiscards.length ?
-        '<div class="doc-field"><div class="doc-field-label">Fast Discards \u2014 Your Visual Blocklist</div><div class="doc-field-value">Images rejected in under 3 seconds \u2014 these define what the brand is NOT. Provide this list to your designer as a negative reference.</div></div>' : '') +
-      '<div class="doc-field"><div class="doc-field-label">Designer Note</div><div class="doc-field-value">Your Visual DNA Brief is complete. The kept images define your visual world. The fast discards define your visual blocklist. Share both sets with your designer or use them as Midjourney reference images.</div></div>';
+        '<div class="doc-field"><div class="doc-field-label">Fast Discards \u00b7 Your Visual Blocklist</div><div class="doc-field-value">Images rejected in under 3 seconds. These define what the brand is NOT.</div></div>' : '') +
+      '<div class="doc-field"><div class="doc-field-label">Designer Note</div><div class="doc-field-value">Your Visual DNA Brief is complete. The kept images define your visual world. The fast discards define your visual blocklist.</div></div>';
   } else if (visDone) {
     document.getElementById('visual-content').innerHTML = pendingSynthesisSection('Visual DNA', 'visual-dna.html');
   } else {
-    document.getElementById('visual-content').innerHTML = emptySection('Visual DNA', 'visual-dna.html');
+    document.getElementById('visual-content').innerHTML = emptySection('Visual DNA', 'visual-dna.html', 'visual-dna');
   }
 
   // ── SECTION 05: Strategic Direction ──────────────────────────────────────
@@ -1900,11 +1924,11 @@ function render() {
       (initiatives.length ? '<div class="doc-field"><div class="doc-field-label">Top Initiatives (by score)</div><div class="tag-grid">' +
         initiatives.map(i => '<div class="doc-tag">' + escHtml(i) + '</div>').join('') +
         '</div></div>' : '') +
-      '<div class="doc-field"><div class="doc-field-label">Status</div><div class="doc-field-value">War Table complete. Your full 60-day field plan and Strategic Command Document are available in the War Table tool.</div></div>';
+      '<div class="doc-field"><div class="doc-field-label">Status</div><div class="doc-field-value">War Table complete. Your full 60-day field plan and Strategic Command Dossier are available in the War Table tool.</div></div>';
   } else if (warDone) {
     document.getElementById('strategy-content').innerHTML = pendingSynthesisSection('War Table', 'war-table.html');
   } else {
-    document.getElementById('strategy-content').innerHTML = emptySection('War Table', 'war-table.html');
+    document.getElementById('strategy-content').innerHTML = emptySection('War Table', 'war-table.html', 'war-table');
   }
 
   // ── SECTION 06: Buyer Personas (from The Profiles) ───────────────────────
@@ -1966,11 +1990,14 @@ function render() {
     ]);
 
   // ── COMPLETION METER ──────────────────────────────────────────────────────
+  // One entry per section a tool fills. Archetype Compass was missing, so
+  // the meter could read 100% above an empty first section.
   const sections = [
+    { label: 'Archetype Compass', done: compassDone },
     { label: 'Soul Map',     done: idDone },
     { label: 'Sensescape',   done: sensDone },
-    { label: 'Visual DNA',   done: visDone },
-    { label: 'War Table',    done: warDone },
+    { label: 'Visual DNA',   done: visDone,  toolId: 'visual-dna' },
+    { label: 'War Table',    done: warDone,  toolId: 'war-table' },
     { label: 'The Profiles', done: profilesDone },
   ];
   const doneCt = sections.filter(s => s.done).length;
@@ -1978,10 +2005,19 @@ function render() {
   document.getElementById('completion-pct').textContent = pct + '% complete';
   document.getElementById('meter-bar').style.width = pct + '%';
   document.getElementById('meter-container').setAttribute('aria-valuenow', pct);
-  document.getElementById('completion-sub').textContent =
-    doneCt === 0 ? 'Complete Phase 01 tools to fill your brand document' :
-    doneCt === sections.length ? 'All Phase 01 tools complete. Your brand document is ready to download.' :
-    doneCt + ' of ' + sections.length + ' Phase 01 tools complete';
+  const sub = document.getElementById('completion-sub');
+  sub.textContent =
+    doneCt === 0 ? 'Complete the foundation exercises and The Profiles to fill your Brand Document.' :
+    doneCt === sections.length ? 'Every section is complete. Your Brand Document is ready to download.' :
+    doneCt + ' of ' + sections.length + ' sections complete.';
+  // What stands between this account and a full document, when it is a plan.
+  const locked = sections.filter(s => !s.done && needsStarter(s.toolId)).map(s => s.label);
+  if (locked.length) {
+    const note = document.createElement('span');
+    note.id = 'completion-starter';
+    note.textContent = ' ' + (locked.length === 2 ? 'Visual DNA and War Table open with Starter.' : locked[0] + ' opens with Starter.');
+    sub.appendChild(note);
+  }
 
   document.getElementById('section-dots').innerHTML = sections.map(s =>
     '<div style="display:flex;align-items:center;gap:6px">' +
@@ -2011,7 +2047,7 @@ async function downloadDoc() {
 
   const opt = {
     margin: [8, 8, 8, 8],
-    filename: brandName + '-quantum-brand-profile.pdf',
+    filename: brandName + '-brand-document.pdf',
     image: { type: 'jpeg', quality: 0.95 },
     html2canvas: {
       scale: 2,
@@ -2055,8 +2091,8 @@ async function exportDocPPTXMode(mode, btnId, idleLabel) {
   try {
     await window.QB_exportPPTX('brand-document', qbp, {
       brandName: qbp.brandName || 'Brand',
-      filename: (qbp.brandName || 'brand') + '-quantum-brand-profile' + suffix,
-      deckTitle: 'Quantum Brand Profile',
+      filename: (qbp.brandName || 'brand') + '-brand-document' + suffix,
+      deckTitle: 'Brand Document',
       mode: mode
     });
   } catch (err) {
@@ -2075,7 +2111,10 @@ async function downloadDocMarketingDeck()  { return exportDocPPTXMode('editorial
 async function sendDocByEmail() {
   const btn = document.getElementById('dl-email-btn');
   if (!btn) return;
-  const origLabel = btn.textContent;
+  // The label is restored from its English source, never read back from the
+  // button: what is painted may be the French rendering, and writing that
+  // back would leave the button in French after a switch to English.
+  const origLabel = '\u2709 Send to inbox';
   const qbp = getQBP();
 
   function fireSend(email, firstName) {

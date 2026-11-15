@@ -28,8 +28,8 @@ QBI18N.add('fr', {
 
   /* What this is */
   "What this is": "Ce que c’est",
-  "Atelier is one engagement at a time, run with me personally. The BrandOS methodology, at a different resolution than self-serve.":
-    "Atelier, c’est un engagement à la fois, que je mène en personne. La méthodologie BrandOS, à une autre résolution que le libre-service.",
+  "Atelier is one engagement at a time, run with me personally. The Collapse, the method behind BrandOS, at a different resolution than self-serve.":
+    "Atelier, c’est un engagement à la fois, que je mène en personne. The Collapse, la méthode derrière BrandOS, à une autre résolution que le libre-service.",
   "It exists outside the tier structure because some brand work does not survive being templated. Scope and shape follow what the work requires, not the other way around.":
     "Il existe en dehors des offres parce que certains travaux de marque ne survivent pas à un gabarit. Le périmètre et la forme suivent ce que le travail exige, pas l’inverse.",
   "No two engagements are the same. The page describes the door. The work is defined inside.":

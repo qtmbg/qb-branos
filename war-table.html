@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <script src="/js/qb-i18n.js" data-page="war-table"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The War Table · BrandOS</title>
-<meta name="description" content="The War Table · BrandOS Phase 01 - score, interrogate, and prioritise your strategic initiatives.">
+<title>War Table · BrandOS</title>
+<meta name="description" content="War Table · BrandOS. A Collapse exercise: score, interrogate and prioritise your strategic initiatives. Opens with Starter.">
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
+<!-- War Table opens with Starter (owner decision, 13 Nov 2026). Same boot-time gate as the Build tools. -->
+<script>if(window.QB&&QB.requireAccess){QB.requireAccess("war-table", "War Table");}</script>
 <script src="/qb-gate.js"></script>
 <script src="/qb-pptx-export.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2659,8 +2661,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
-<meta property="og:title" content="The War Table · BrandOS">
-<meta property="og:description" content="The War Table · BrandOS Phase 01 - score, interrogate, and prioritise your strategic initiatives.">
+<meta property="og:title" content="War Table · BrandOS">
+<meta property="og:description" content="War Table · BrandOS. A Collapse exercise: score, interrogate and prioritise your strategic initiatives. Opens with Starter.">
 <meta property="og:url" content="https://quantumbranding.ai/war-table.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/war-table.png">
 <meta property="og:image:width" content="1200">
@@ -2669,8 +2671,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The War Table · BrandOS">
-<meta name="twitter:description" content="The War Table · BrandOS Phase 01 - score, interrogate, and prioritise your strategic initiatives.">
+<meta name="twitter:title" content="War Table · BrandOS">
+<meta name="twitter:description" content="War Table · BrandOS. A Collapse exercise: score, interrogate and prioritise your strategic initiatives. Opens with Starter.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/war-table.png">
 <link rel="canonical" href="https://quantumbranding.ai/war-table.html">
 <!-- QB JSON-LD -->
@@ -2678,8 +2680,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "The War Table",
-  "description": "Map the competitive territory the brand is entering and the space it can own.",
+  "name": "War Table",
+  "description": "Score, interrogate and prioritise strategic initiatives into now, next, later and park.",
   "url": "https://quantumbranding.ai/war-table.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -2688,11 +2690,6 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   },
   "publisher": {
     "@id": "https://thequantumbranding.com/#organization"
-  },
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
   }
 }
 </script>
@@ -2837,6 +2834,48 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   ];
   var CONSTRAINTS = ['Time', 'Money', 'Clarity', 'Team', 'Trust'];
   var DEFAULT_SCORES = { impact:5, ease:5, personaFit:5, brandSoul:5, multiplier:5, urgency:5, leadCapture:false };
+
+  /* Where a dossier may hand off. One table feeds the model's menu, the
+     names painted on the cards and the "not open yet" mark, so the three
+     cannot drift apart. The seven content agents are operator-only and are
+     not listed. The three Hold tools exist but no plan on sale opens them:
+     a handoff to one is shown, marked, and never linked. */
+  var HANDOFF_TOOLS = [
+    { file:'signal-scan.html',                  name:'Signal Scan' },
+    { file:'brand-soul-map.html',               name:'Brand Soul Map' },
+    { file:'sensescape.html',                   name:'Sensescape' },
+    { file:'the-profiles.html',                 name:'The Profiles' },
+    { file:'archetype-compass.html',            name:'Archetype Compass' },
+    { file:'visual-dna.html',                   name:'Visual DNA' },
+    { file:'brand-document.html',               name:'Brand Document' },
+    { file:'logo-direction-agent.html',         name:'Logo Direction' },
+    { file:'logo-evaluation-agent.html',        name:'Logo Evaluation' },
+    { file:'voice-guide-agent.html',            name:'Voice Guide' },
+    { file:'brand-performance-dashboard.html',  name:'Performance Dashboard',  hold:true },
+    { file:'quarterly-brand-review-agent.html', name:'Quarterly Brand Review', hold:true },
+    { file:'predictive-panel..html',            name:'Predictive Panel',       hold:true },
+    { file:'foundation',                        name:'Foundation' }
+  ];
+  var NOT_OPEN_YET = 'not open yet';
+  function handoffTool(file){
+    for (var i = 0; i < HANDOFF_TOOLS.length; i++){ if (HANDOFF_TOOLS[i].file === file) return HANDOFF_TOOLS[i]; }
+    return null;
+  }
+  /* Keeps only handoffs to a tool in the table, names each one as the site
+     names it, and marks the Hold tools. Safe to run twice. */
+  function cleanHandoffs(list){
+    return (Array.isArray(list) ? list : []).map(function(h){
+      var t = handoffTool(h && h.tool);
+      if (!t) return null;
+      return {
+        tool: t.file,
+        toolLabel: t.name,
+        reason: (h.reason || ''),
+        priority: t.hold ? NOT_OPEN_YET : (h.priority || ''),
+        hold: !!t.hold
+      };
+    }).filter(Boolean);
+  }
 
   /* --- State --- */
   var state = {
@@ -3139,7 +3178,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
                     .catch(function(){});
                 }
               } else if (window.QB && QB.openGate) {
-                QB.openGate({ toolId: 'war-table', toolName: 'The War Table', brandName: (qbp && qbp.brandName) || '' });
+                QB.openGate({ toolId: 'war-table', toolName: 'War Table', brandName: (qbp && qbp.brandName) || '' });
               }
             });
             document.body.appendChild(btn);
@@ -3236,7 +3275,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       '    "day60Retro":  [ "up to 7 questions" ]\n' +
       '  },\n' +
       '  "handoffs": [\n' +
-      '    { "tool":"signal-scan.html|archetype-compass.html|brand-soul-map.html|sensescape.html|visual-dna.html|logo-direction-agent.html|logo-evaluation-agent.html|voice-guide-agent.html|instagram-seed-agent.html|linkedin-strategy-agent.html|youtube-strategy-agent.html|newsletter-architecture-agent.html|content-bridge.html|content-repurposing-engine.html|content-scheduler.html|predictive-panel..html|brand-performance-dashboard.html|quarterly-brand-review-agent.html|foundation", "toolLabel":"Human-readable name", "reason":"why this plan points here next", "priority":"immediate|week 2|day 30" }\n' +
+      '    { "tool":"' + HANDOFF_TOOLS.map(function(t){ return t.file; }).join('|') + '", "toolLabel":"Human-readable name", "reason":"why this plan points here next", "priority":"immediate|week 2|day 30" }\n' +
       '  ],\n' +
       '  "qbpFieldsWritten": [ "list of QBP field names this run populates" ]\n' +
       '}\n\n' +
@@ -3245,8 +3284,10 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       '- Every initiative in the plan must have a kill condition naming a measurable trigger (e.g., "if no customer reply by Friday week 2, demote to NEXT").\n' +
       '- Leading indicator = what to measure by Friday of that week. Owner = role or named person pulled from Interrogation if mentioned.\n\n' +
       'HANDOFF RULES\n' +
-      '- Pick 3 specific BrandOS tools that this plan should hand off to next. Use exact .html file names from the enum. ' +
-      'If the brand hasn\'t done Archetype Compass, Brand Soul Map, or Visual DNA yet, prioritise those (Compass is the 10-min entry point - Brand Soul Map is the 90-min depth pass). If scoring surfaced an Awareness gap, suggest Instagram/LinkedIn/YouTube agents. If content velocity is the bottleneck, suggest Content Bridge or Repurposing Engine.\n\n' +
+      '- Pick 3 specific BrandOS tools that this plan should hand off to next. Use the exact values from the enum. ' +
+      'If the brand hasn\'t done Archetype Compass, Brand Soul Map, or Visual DNA yet, prioritise those (Compass is the short entry point - Brand Soul Map is the depth pass). ' +
+      'If the plan needs the look or the voice built next, hand off to Logo Direction, Logo Evaluation or Voice Guide. ' +
+      'Performance Dashboard, Quarterly Brand Review and Predictive Panel are not open yet: pick one only if the plan depends on it, never as the first handoff, and say in the reason that it is not open yet. Do not state how long any tool takes.\n\n' +
       'Return ONLY the JSON. Begin with { and end with }.';
 
     return { system: system, user: userPrompt };
@@ -3331,6 +3372,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     startDossierStatusCycle();
     callDossierAPI().then(function(json){
       stopDossierStatusCycle();
+      if (json && typeof json === 'object') json.handoffs = cleanHandoffs(json.handoffs);
       state.dossier = json;
       state.isDossierLoading = false;
       persistDossierRun(json);
@@ -3339,7 +3381,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       try {
         if (window.QB && QB.openGate){
           var qbp = QB.getQBP();
-          QB.openGate({ toolId:'war-table', toolName:'The War Table', brandName: (qbp && qbp.brandName) || state.brandInfo.brandName || '' });
+          QB.openGate({ toolId:'war-table', toolName:'War Table', brandName: (qbp && qbp.brandName) || state.brandInfo.brandName || '' });
         }
       } catch(e){ console.warn('QB gate:', e); }
     }).catch(function(err){
@@ -3480,7 +3522,14 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     }
     if (d.handoffs && d.handoffs.length){
       lines.push('## 08 · Handoffs');
-      d.handoffs.forEach(function(h){ lines.push('- **' + (h.toolLabel || h.tool) + '** (' + h.priority + '): ' + h.reason + ' → `' + h.tool + '`'); });
+      cleanHandoffs(d.handoffs).forEach(function(h){
+        if (h.hold){
+          lines.push('- **' + h.toolLabel + '**: ' + h.reason);
+          lines.push('  - Not open yet');
+        } else {
+          lines.push('- **' + h.toolLabel + '** (' + h.priority + '): ' + h.reason + ' → `' + h.tool + '`');
+        }
+      });
       lines.push('');
     }
     return lines.join('\n');
@@ -3542,7 +3591,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       el('div', { class:'wt-intro-hero' }, [
         el('div', { class:'wt-intro-eyebrow' }, [
           el('span', { class:'wt-intro-pulse' }),
-          'Phase 01 · War Table · Strategic prioritization'
+          'Collapse · War Table · Strategic prioritization'
         ]),
         (function(){
           var h = el('h1');
@@ -3606,7 +3655,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     }
     return el('div', { class:'wt-phase animate-in', style:{ maxWidth:'960px', margin:'0 auto' } }, [
       el('div', { class:'wt-phase-head' }, [
-        el('div', { class:'kicker', text:'Phase 1' }),
+        el('div', { class:'kicker', text:'Step 1' }),
         el('h2', { text:'The Brief' }),
         el('p',  { class:'hook', text:'Where are you, where are you going, and what’s in the way?' })
       ]),
@@ -3703,7 +3752,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     }
     return el('div', { class:'wt-phase animate-in', style:{ maxWidth:'960px', margin:'0 auto' } }, [
       el('div', { class:'wt-phase-head' }, [
-        el('div', { class:'kicker', text:'Phase 2' }),
+        el('div', { class:'kicker', text:'Step 2' }),
         el('h2', {}, [
           document.createTextNode('Audience Intelligence. '),
           el('em', { text:'Who you are speaking to, in their words.' })
@@ -3765,7 +3814,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     return el('div', { class:'wt-phase animate-in', style:{ maxWidth:'1200px', margin:'0 auto' } }, [
       el('div', { class:'wt-phase-head', style:{ flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap' } }, [
         el('div', { style:{ display:'flex', flexDirection:'column', gap:'12px' } }, [
-          el('div', { class:'kicker', text:'Phase 2' }),
+          el('div', { class:'kicker', text:'Step 3' }),
           el('h2', { text:'The Brainstorm' }),
           el('p',  { class:'hook', text:'Generate everything. Commit to nothing. Yet.' })
         ]),
@@ -3820,13 +3869,13 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     }
     return el('div', { class:'wt-phase animate-in', style:{ maxWidth:'1000px', margin:'0 auto' } }, [
       el('div', { class:'wt-phase-head' }, [
-        el('div', { class:'kicker', text:'Phase 3' }),
+        el('div', { class:'kicker', text:'Step 4' }),
         el('h2', { text:'⚡ Interrogation' }),
         el('p',  { class:'hook', text:'Every initiative must earn its place. Expand and defend.' })
       ]),
       el('div', { class:'wt-interrogate' },
         state.initiatives.length === 0
-          ? el('p', { class:'label-mono', style:{ textAlign:'center', padding:'48px 0' }, text:'No initiatives in memory. Return to Phase 2.' })
+          ? el('p', { class:'label-mono', style:{ textAlign:'center', padding:'48px 0' }, text:'No initiatives in memory. Return to Step 3.' })
           : state.initiatives.map(function(init){
               var active = state.expandedInterrogation === init.id;
               var allDone = Object.values(init.interrogation).every(function(v){ return v.trim() !== ''; });
@@ -3931,7 +3980,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
     return el('div', { class:'wt-phase animate-in', style:{ maxWidth:'1400px', margin:'0 auto' } }, [
       el('div', { class:'wt-phase-head' }, [
-        el('div', { class:'kicker', text:'Phase 4' }),
+        el('div', { class:'kicker', text:'Step 5' }),
         el('h2', { text:'Scoring Engine' }),
         el('p',  { class:'hook', text:'Translate interrogation into objective priorities.' })
       ]),
@@ -3982,7 +4031,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
     return el('div', { class:'wt-phase animate-in', style:{ maxWidth:'960px', margin:'0 auto' } }, [
       el('div', { class:'wt-phase-head', style:{ textAlign:'center', alignItems:'center' } }, [
-        el('div', { class:'kicker', text:'Phase 5' }),
+        el('div', { class:'kicker', text:'Step 6' }),
         el('h2', { text:'Trade-off Arena' }),
         el('p',  { class:'hook', text:'One winner. No compromises.' })
       ]),
@@ -4078,7 +4127,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
     return el('div', { class:'wt-phase animate-in wt-roadmap', style:{ maxWidth:'1120px', margin:'0 auto' } }, [
       el('div', { class:'wt-phase-head', style:{ textAlign:'center', alignItems:'center' } }, [
-        el('div', { class:'kicker', text:'Phase 6' }),
+        el('div', { class:'kicker', text:'Step 8' }),
         el('h2', { text:'Roadmap' }),
         el('p',  { class:'hook', text:'A sequence of bets.' })
       ]),
@@ -4171,7 +4220,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
           document.createTextNode('Strategic Command · AI synthesis')
         ]),
         el('h1', { text:'Composing your Dossier' }),
-        el('p',  { text:'A senior strategic advisor would take a week to write this. We are drafting it now: diagnosis, field plan, persona contract, principles, handoffs. All from your 30 minutes of input. All in your brand voice.' })
+        el('p',  { text:'A senior strategic advisor would take a week to write this. We are drafting it now: diagnosis, field plan, persona contract, principles, handoffs. All from your hour of input. All in your brand voice.' })
       ]),
       el('div', { class:'d-loading-status', id:'d-loading-status', text: state.dossierStatus || DOSSIER_STATUS_MESSAGES[0] }),
       el('div', { class:'d-loading-bar' }),
@@ -4204,7 +4253,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       isKey
         ? el('div', { class:'d-apikey' }, [
             el('h3', { text:'This environment cannot call the AI service.' }),
-            el('p',  { text:'To generate the full Strategic Command Dossier, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. You can still view the baseline dossier below - it renders everything you entered, without the AI voice.' }),
+            el('p',  { text:'To generate the full Strategic Command Dossier, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. You can still open the baseline dossier. It shows the frame of the document with every section pending, without the AI reading.' }),
             el('div', { style:{ display:'flex', gap:'10px', flexWrap:'wrap' } }, [
               el('button', { class:'btn btn-primary btn-sm', type:'button', onclick: triggerDossierGeneration }, 'Retry synthesis'),
               el('button', { class:'btn btn-sm', type:'button', onclick:function(){ state.dossierError = null; state.dossierErrorKind = null; state.dossier = {}; render(); } }, 'Show baseline dossier')
@@ -4213,7 +4262,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         : el('div', { class:'d-error' }, [
             el('h3', { text:'AI synthesis failed' }),
             el('p',  { text: msg }),
-            el('p',  { text:'Showing baseline dossier. Click retry to attempt AI synthesis again.' }),
+            el('p',  { text:'The baseline dossier is available. Retry the synthesis, or continue with the baseline.' }),
             el('div', { class:'actions' }, [
               el('button', { class:'btn btn-primary btn-sm', type:'button', onclick: triggerDossierGeneration }, 'Retry synthesis'),
               el('button', { class:'btn btn-sm', type:'button', onclick:function(){ state.dossierError = null; state.dossierErrorKind = null; state.dossier = {}; render(); } }, 'Continue with baseline')
@@ -4287,7 +4336,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       sectionHead('02.', 'Posture statement', 'In your brand voice.'),
       el('div', { class:'glass-card d-posture' }, [
         el('span', { class:'d-posture-eyebrow', text:'Declared' }),
-        el('p', { text: d.postureStatement || 'You are choosing focus over motion. Three bets, one persona, one constraint.' })
+        el('p', { text: d.postureStatement || 'Pending posture statement.' })
       ])
     ]);
 
@@ -4455,7 +4504,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     ]);
 
     // ---- 08 HANDOFFS ----
-    var handoffs = d.handoffs || [];
+    var handoffs = cleanHandoffs(d.handoffs);
     var s08 = el('section', { class:'d-section' }, [
       sectionHead('08.', 'Handoffs', 'Where this plan points next in BrandOS.'),
       el('div', { class:'d-handoffs' },
@@ -4466,16 +4515,19 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
               el('p', { text:'Retry synthesis to receive next-tool recommendations.' })
             ])]
           : handoffs.map(function(h){
+              var body = [
+                el('span', { class:'priority', text: (h.priority || '').toUpperCase() }),
+                el('h4', { text: h.toolLabel }),
+                el('p',  { text: h.reason || '' })
+              ];
+              // A Hold tool is named and explained, never linked.
+              if (h.hold) return el('div', { class:'glass-card d-handoff' }, body);
+              body.push(el('span', { class:'goto' }, [ document.createTextNode('Open ' + h.toolLabel), document.createTextNode(' →') ]));
               return el('a', {
                 class:'glass-card d-handoff',
-                href: (h.tool || '#') + (h.tool ? '?from=war-table' : ''),
+                href: h.tool + '?from=war-table',
                 target: '_self'
-              }, [
-                el('span', { class:'priority', text: (h.priority || '').toUpperCase() }),
-                el('h4', { text: h.toolLabel || h.tool || 'Tool' }),
-                el('p',  { text: h.reason || '' }),
-                el('span', { class:'goto' }, [ document.createTextNode('Open ' + (h.tool || '')), document.createTextNode(' →') ])
-              ]);
+              }, body);
             })
       )
     ]);
@@ -4507,11 +4559,11 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     var signature = el('section', { class:'d-signature' }, [
       el('div', { class:'label-row' }, [
         el('span', { class:'stamp', text:'The commitment · ' + today }),
-        el('span', { class:'stamp', style:{ color:'var(--text-3)' }, text: nowCount + ' initiatives NOW · ' + parkCount + ' parked' })
+        el('span', { class:'stamp', style:{ color:'var(--text-3)' }, text: nowCount + (nowCount === 1 ? ' initiative NOW · ' : ' initiatives NOW · ') + parkCount + ' parked' })
       ]),
       el('h3', { text:'You are choosing this plan. Sign it.' }),
       el('p', { style:{ fontFamily:'var(--f-body)', fontSize:'14.5px', lineHeight:'1.65', color:'var(--text-2)', maxWidth:'560px' },
-        text:'Signing writes this dossier to your commitment log. You can revisit it in the BrandOS Hub, but the version you sign today is preserved - so you can tell yourself, honestly, six months from now, what you chose to believe on this day.' }),
+        text:'Signing writes this dossier to a commitment log kept in this browser. The version you sign today is preserved, so you can tell yourself, honestly, six months from now, what you chose to believe on this day.' }),
       signed ? signed : sigRow
     ]);
 

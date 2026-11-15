@@ -11,7 +11,7 @@ QBI18N.add('fr', {
     "Conditions d’utilisation de Quantum Branding. L’accord entre vous et Quantum Branding lorsque vous utilisez BrandOS.",
 
   /* Title block */
-  "Legal · Last updated 4 October 2026": "Juridique · Dernière mise à jour le 4 octobre 2026",
+  "Legal · Last updated 15 November 2026": "Juridique · Dernière mise à jour le 15 novembre 2026",
   "Terms of": "Conditions",
   "service.": "d’utilisation.",
   "The agreement between you and Quantum Branding when you use":
@@ -58,12 +58,11 @@ QBI18N.add('fr', {
   "for the retention details.": "pour le détail des durées de conservation.",
 
   /* 3. Subscriptions, billing, refunds */
-  "Free tier": "Offre gratuite",
-  "Signal Scan and the six Phase 01 tools (Archetype Compass, Brand Soul Map, Sensescape, Visual DNA, War Table, The Profiles) are free to use as long as we offer them. Free tier has no payment obligation and you can stop using the service at any time.":
-    "Signal Scan et les six outils de la Phase 01 (Archetype Compass, Brand Soul Map, Sensescape, Visual DNA, War Table, The Profiles) sont gratuits tant que nous les proposons. L’offre gratuite n’entraîne aucune obligation de paiement et vous pouvez cesser d’utiliser le service à tout moment.",
-  "Paid tiers": "Offres payantes",
-  "Starter ($97/month) is a subscription plan that opens the paid Phase 01 readings and the Phase 02 agent tools. Pricing displayed on":
-    "Starter (97 $ par mois) est un abonnement qui ouvre les lectures payantes de la Phase 01 et les outils agents de la Phase 02. Le prix affiché sur",
+  "Brand Profile, free": "Profil de marque, gratuit",
+  "The Brand Profile is free and needs no card. It covers Signal Scan, three foundation exercises (Archetype Compass, Brand Soul Map, Sensescape), The Profiles, the Soul Map reading and the Brand Document, for as long as we offer them. It carries no payment obligation and you can stop using the service at any time.":
+    "Le Profil de marque est gratuit et ne demande aucune carte. Il couvre Signal Scan, trois exercices de la fondation (Archetype Compass, Brand Soul Map, Sensescape), The Profiles, la lecture Soul Map et le Document de marque, tant que nous les proposons. Il n’entraîne aucune obligation de paiement et vous pouvez cesser d’utiliser le service à tout moment.",
+  "Starter is a subscription at $97 a month. It adds the two other foundation exercises (Visual DNA, War Table), the three other foundation readings (Sensescape, Visual DNA, War Table), the three Build agents (Logo Direction, Logo Evaluation, Voice Guide) and the full Brand Profile export. No other plan is sold. The price displayed on":
+    "Starter est un abonnement à 97 $ par mois. Il ajoute les deux autres exercices de la fondation (Visual DNA, War Table), les trois autres lectures de la fondation (Sensescape, Visual DNA, War Table), les trois agents Build (Direction de logo, Évaluation de logo, Voice Guide) et l’export complet du Profil de marque. Aucune autre offre n’est vendue. Le prix affiché sur",
   "/payment": true,
   "at the moment you subscribe is the price you pay until you cancel.":
     "au moment où vous vous abonnez est le prix que vous payez jusqu’à votre résiliation.",
@@ -71,11 +70,11 @@ QBI18N.add('fr', {
     "Tous les paiements sont traités par Stripe. Nous ne voyons ni ne conservons jamais les données de votre carte. En vous abonnant, vous acceptez aussi le",
   "Stripe's Services Agreement": "Contrat de services de Stripe",
   "Renewals and cancellation": "Renouvellement et résiliation",
-  "Subscriptions renew automatically each month on the date you first paid until you cancel. You can cancel at any time from the \"Manage\" link on your hub (which opens the Stripe Customer Portal). Cancellation takes effect at the end of the current billing cycle. You keep access until then.":
-    "Les abonnements se renouvellent automatiquement chaque mois, à la date de votre premier paiement, jusqu’à ce que vous résiliiez. Vous pouvez résilier à tout moment depuis le lien « Gérer » de votre espace (qui ouvre le portail client Stripe). La résiliation prend effet à la fin du cycle de facturation en cours. Vous conservez l’accès jusque-là.",
+  "Subscriptions renew automatically each month on the date you first paid until you cancel. You can cancel at any time from the \"Manage subscription\" button on your account page (which opens the Stripe Customer Portal). Cancellation takes effect at the end of the current billing cycle. You keep access until then.":
+    "Les abonnements se renouvellent automatiquement chaque mois, à la date de votre premier paiement, jusqu’à ce que vous résiliiez. Vous pouvez résilier à tout moment depuis le bouton « Gérer l’abonnement » de votre page de compte (qui ouvre le portail client Stripe). La résiliation prend effet à la fin du cycle de facturation en cours. Vous conservez l’accès jusque-là.",
   "Refunds": "Remboursements",
-  "Within 14 days of your first payment on any plan, you can request a full refund by emailing":
-    "Dans les 14 jours suivant votre premier paiement, quelle que soit l’offre, vous pouvez demander un remboursement intégral en écrivant à",
+  "Within 14 days of your first payment, you can request a full refund by emailing":
+    "Dans les 14 jours suivant votre premier paiement, vous pouvez demander un remboursement intégral en écrivant à",
   "for any reason. After 14 days, refunds are at our discretion and generally not given for partial-month usage. We do not refund Stripe processing fees.":
     "pour quelque motif que ce soit. Après 14 jours, les remboursements sont à notre discrétion et ne sont généralement pas accordés pour un mois partiellement utilisé. Nous ne remboursons pas les frais de traitement de Stripe.",
   "Price changes": "Changements de prix",
@@ -83,10 +82,10 @@ QBI18N.add('fr', {
     "Nous pouvons modifier à tout moment le prix des abonnements pour les nouveaux abonnés. Si nous modifions le prix d’un abonnement en cours, nous vous en informons par e-mail au moins 30 jours à l’avance. Si vous n’acceptez pas le nouveau prix, résiliez avant le prochain renouvellement.",
 
   /* 4. How you can and cannot use the service */
-  "On the Free tier and on Starter, you can use BrandOS to build your own brand, or the brand of a business you own or are employed by, and to share the output documents (Brand Document, exports) with anyone you choose.":
-    "Avec l’offre gratuite et avec Starter, vous pouvez utiliser BrandOS pour construire votre propre marque, ou celle d’une entreprise que vous possédez ou qui vous emploie, et partager les documents produits (Document de marque, exports) avec qui vous voulez.",
-  "Building brands for clients or other third parties as a commercial service is not included in Free or Starter. It requires a separate written agreement with us, which you can request at":
-    "Construire des marques pour des clients ou d’autres tiers dans le cadre d’un service commercial n’est pas inclus dans l’offre gratuite ni dans Starter. Cela exige un accord écrit distinct avec nous, que vous pouvez demander à",
+  "On the free Brand Profile and on Starter, you can use BrandOS to build your own brand, or the brand of a business you own or are employed by, and to share the output documents (Brand Document, exports) with anyone you choose.":
+    "Avec le Profil de marque gratuit et avec Starter, vous pouvez utiliser BrandOS pour construire votre propre marque, ou celle d’une entreprise que vous possédez ou qui vous emploie, et partager les documents produits (Document de marque, exports) avec qui vous voulez.",
+  "Building brands for clients or other third parties as a commercial service is not included in the free Brand Profile or in Starter. It requires a separate written agreement with us, which you can request at":
+    "Construire des marques pour des clients ou d’autres tiers dans le cadre d’un service commercial n’est inclus ni dans le Profil de marque gratuit ni dans Starter. Cela exige un accord écrit distinct avec nous, que vous pouvez demander à",
   "You cannot:": "Vous ne pouvez pas :",
   "Reverse-engineer, decompile, or extract our prompts, system messages, or the methodology underlying the agents":
     "Procéder à l’ingénierie inverse, décompiler ou extraire nos prompts, nos messages système ou la méthodologie qui sous-tend les agents",
@@ -108,18 +107,20 @@ QBI18N.add('fr', {
     "La plateforme BrandOS elle-même, c’est-à-dire les outils, la méthodologie, le système de design, la voix de marque et les agents, est la propriété intellectuelle de Quantum Branding et ne vous est pas transférée du fait de votre utilisation du service.",
 
   /* 6. AI-generated outputs */
-  "Several tools call third-party AI models (Anthropic Claude). The output of these models is generated probabilistically based on your inputs. We do our best to produce useful, on-brand results, but we don't and can't guarantee that any specific output will be accurate, complete, suitable for a particular purpose, or free of unintended similarity to the work of others.":
-    "Plusieurs outils font appel à des modèles d’IA tiers (Anthropic Claude). Les résultats de ces modèles sont générés de façon probabiliste à partir de vos saisies. Nous faisons de notre mieux pour produire des résultats utiles et fidèles à la marque, mais nous ne garantissons pas, et ne pouvons pas garantir, qu’un résultat donné sera exact, complet, adapté à un usage particulier ou exempt de ressemblance involontaire avec le travail d’autrui.",
+  "Several tools call third-party AI models (Anthropic Claude and Google Gemini). The output of these models is generated probabilistically based on your inputs. We do our best to produce useful, on-brand results, but we don't and can't guarantee that any specific output will be accurate, complete, suitable for a particular purpose, or free of unintended similarity to the work of others.":
+    "Plusieurs outils font appel à des modèles d’IA tiers (Anthropic Claude et Google Gemini). Les résultats de ces modèles sont générés de façon probabiliste à partir de vos saisies. Nous faisons de notre mieux pour produire des résultats utiles et fidèles à la marque, mais nous ne garantissons pas, et ne pouvons pas garantir, qu’un résultat donné sera exact, complet, adapté à un usage particulier ou exempt de ressemblance involontaire avec le travail d’autrui.",
   "You are responsible for reviewing the outputs before publishing them, contracting on them, or otherwise relying on them. Treat them as a starting point for human review, not as final deliverables.":
     "Il vous appartient de relire les résultats avant de les publier, de contracter sur leur fondement ou de vous y fier de toute autre manière. Considérez-les comme un point de départ pour une relecture humaine, pas comme des livrables définitifs.",
-  "Per Anthropic's terms, we do not use your inputs to train AI models. Anthropic processes the input only to generate the response, then deletes it on the timeline specified in their data policy.":
-    "Conformément aux conditions d’Anthropic, nous n’utilisons pas vos saisies pour entraîner des modèles d’IA. Anthropic traite la saisie uniquement pour générer la réponse, puis la supprime dans le délai prévu par sa politique relative aux données.",
+  "We do not use your inputs to train AI models of our own. What each provider does with them differs, and the":
+    "Nous n’utilisons pas vos saisies pour entraîner des modèles d’IA qui nous appartiennent. Ce que chaque fournisseur en fait diffère, et la",
+  "sets it out. The answers a tool gives you as you work in it come from Anthropic, where inputs are used only to generate the response and are not retained for training. The readings and agent documents produced from your Brand Profile, on the free Brand Profile and on Starter alike, are generated by Google Gemini on Google's free API tier, where Google uses prompts and responses to improve its products and services.":
+    "le détaille. Les réponses qu’un outil vous donne pendant que vous y travaillez viennent d’Anthropic, où les saisies ne servent qu’à générer la réponse et ne sont pas conservées à des fins d’entraînement. Les lectures et les documents d’agent produits à partir de votre Profil de marque, avec le Profil de marque gratuit comme avec Starter, sont générés par Google Gemini via l’offre gratuite de l’API de Google, dans laquelle Google utilise les requêtes et les réponses pour améliorer ses produits et services.",
 
   /* 7. Availability, changes, downtime */
-  "We aim for high availability but do not guarantee uninterrupted access. The service is hosted on Vercel; Anthropic, Supabase, Stripe, and Resend are critical third-party dependencies. Any of them having an outage will affect parts of BrandOS, and that is outside our control.":
-    "Nous visons une haute disponibilité mais ne garantissons pas un accès ininterrompu. Le service est hébergé chez Vercel ; Anthropic, Supabase, Stripe et Resend sont des dépendances tierces critiques. Une panne de l’un d’eux affectera certaines parties de BrandOS, et cela échappe à notre contrôle.",
-  "We may add, modify, or remove tools, agents, or features at any time. If a removal materially reduces the value of a paid plan, we will (at our discretion) offer a partial refund, a downgrade to a lower plan, or compensation for the unused portion of your billing cycle.":
-    "Nous pouvons ajouter, modifier ou retirer des outils, des agents ou des fonctionnalités à tout moment. Si un retrait réduit de façon substantielle la valeur d’une offre payante, nous proposerons (à notre discrétion) un remboursement partiel, le passage à une offre inférieure ou une compensation pour la part non utilisée de votre cycle de facturation.",
+  "We aim for high availability but do not guarantee uninterrupted access. The service is hosted on Vercel; Anthropic, Google, Supabase, Stripe, and Resend are critical third-party dependencies. Any of them having an outage will affect parts of BrandOS, and that is outside our control.":
+    "Nous visons une haute disponibilité mais ne garantissons pas un accès ininterrompu. Le service est hébergé chez Vercel ; Anthropic, Google, Supabase, Stripe et Resend sont des dépendances tierces critiques. Une panne de l’un d’eux affectera certaines parties de BrandOS, et cela échappe à notre contrôle.",
+  "We may add, modify, or remove tools, agents, or features at any time. If a removal materially reduces the value of Starter, we will (at our discretion) offer a partial refund, a move to the free Brand Profile, or compensation for the unused portion of your billing cycle.":
+    "Nous pouvons ajouter, modifier ou retirer des outils, des agents ou des fonctionnalités à tout moment. Si un retrait réduit de façon substantielle la valeur de Starter, nous proposerons (à notre discrétion) un remboursement partiel, le retour au Profil de marque gratuit ou une compensation pour la part non utilisée de votre cycle de facturation.",
 
   /* 8. No warranty */
   "The service is provided \"as is\" and \"as available,\" without warranty of any kind, express or implied, including merchantability, fitness for a particular purpose, or non-infringement. Your use of the outputs is at your own risk.":

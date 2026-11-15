@@ -4,19 +4,15 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Archetype Compass · BrandOS": true,
-  "Archetype Compass · BrandOS Phase 01 - the first step. A 10-exercise diagnostic that reads your brand's archetype trinity.":
-    "Archetype Compass · BrandOS Phase 01, la première étape. Un diagnostic en 10 exercices qui lit la trinité d’archétypes de votre marque.",
-
-  /* ── Footer blurb (short form used on tool pages) ───────────────── */
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
+  "Archetype Compass · the first step of the BrandOS foundation. A 10-exercise diagnostic that reads your brand's archetype trinity.":
+    "Archetype Compass · la première étape de la fondation BrandOS. Un diagnostic en 10 exercices qui lit la trinité d’archétypes de votre marque.",
 
   /* ── Intro ──────────────────────────────────────────────────────── */
-  "Phase 01 · Diagnostic · 01 of 05": "Phase 01 · Diagnostic · 01 sur 05",
+  "Collapse · Foundation · 01 of 05": "Collapse · Fondation · 01 sur 05",
   "The Archetype": "L’archétype",
   "Compass.": true,
-  "Ten exercises, about seven minutes. The clearest read of your brand's identity foundation: primary archetype, secondary texture, and the shadow to manage. Everything else in BrandOS sharpens once this is set.":
-    "Dix exercices, environ sept minutes. La lecture la plus nette du socle identitaire de votre marque\u00a0: archétype primaire, texture secondaire et ombre à gérer. Tout le reste de BrandOS gagne en précision une fois ce socle posé.",
+  "Ten exercises, about seven minutes. The clearest read of your brand's identity foundation: primary archetype, secondary texture, and the tension to manage. The work that follows in BrandOS sharpens once this is set.":
+    "Dix exercices, environ sept minutes. La lecture la plus nette du socle identitaire de votre marque\u00a0: archétype primaire, texture secondaire et tension à gérer. Le travail qui suit dans BrandOS gagne en précision une fois ce socle posé.",
   "10 exercises": "10 exercices",
   "~7 minutes": true,
   "Rank your top 3": "Classez votre top 3",
@@ -27,8 +23,8 @@ QBI18N.add('fr', {
   "Your brand is a primary archetype, a secondary texture, and a tension to manage. Binary is a trap.":
     "Votre marque, c’est un archétype primaire, une texture secondaire et une tension à gérer. Le binaire est un piège.",
   "The diagnostic is the starting line.": "Le diagnostic est la ligne de départ.",
-  "Soul Map, Sensescape, Visual DNA - every downstream tool reads from what you set here.":
-    "Soul Map, Sensescape, Visual DNA. Chaque outil en aval lit ce que vous posez ici.",
+  "Soul Map, Visual DNA, War Table, Voice Guide. Each one reads from what you set here.":
+    "Soul Map, Visual DNA, War Table, Voice Guide. Chacun lit ce que vous posez ici.",
   "Profile loaded ·": "Profil chargé ·",
   "No brand profile yet · Trinity will save to a new profile":
     "Pas encore de profil de marque · La trinité sera enregistrée dans un nouveau profil",
@@ -54,18 +50,6 @@ QBI18N.add('fr', {
   "{0} expression": "Expression\u00a0: {0}",
 
   /* ── The twelve archetypes: names stay ──────────────────────────── */
-  "The Innocent": true,
-  "The Sage": true,
-  "The Explorer": true,
-  "The Rebel": true,
-  "The Magician": true,
-  "The Hero": true,
-  "The Lover": true,
-  "The Jester": true,
-  "The Everyman": true,
-  "The Caregiver": true,
-  "The Creator": true,
-  "The Ruler": true,
   "Innocent": true,
   "Sage": true,
   "Explorer": true,
@@ -416,11 +400,11 @@ QBI18N.add('fr', {
   "Could not reach Claude (upstream error).": "Impossible de joindre Claude (erreur en amont).",
   "Unexpected response from the AI service.": "Réponse inattendue du service d’IA.",
   "The AI response was not valid JSON.": "La réponse de l’IA n’était pas un JSON valide.",
-  "Local reading · AI synthesis was skipped. Deploy with ANTHROPIC_API_KEY configured for the deep reading tied to your answers.":
-    "Lecture locale · La synthèse par l’IA n’a pas eu lieu. Déployez avec ANTHROPIC_API_KEY configurée pour obtenir la lecture approfondie liée à vos réponses.",
+  "Local reading · AI synthesis was skipped. Retry for the deep reading tied to your answers.":
+    "Lecture locale · La synthèse par l’IA n’a pas eu lieu. Réessayez pour obtenir la lecture approfondie liée à vos réponses.",
 
   /* ── Results ────────────────────────────────────────────────────── */
-  "Trinity locked · Strategic reading": "Trinité verrouillée · Lecture stratégique",
+  "Trinity set · Strategic reading": "Trinité posée · Lecture stratégique",
   "Your brand reads as": "Votre marque se lit comme",
   "The Trinity": "La trinité",
   "01 · Primary": "01 · Primaire",
@@ -503,8 +487,8 @@ QBI18N.add('fr', {
     "Tenue avec intention, cette combinaison produit une marque qui livre {0} à travers la texture de {1}.",
   "Without discipline, {0} amplifies {1}, and {2} pulls the brand off-axis.":
     "Sans discipline, {0} amplifie {1}, et {2} désaxe la marque.",
-  "{0} is the operating system. The diagnostic points to a brand built around {1}. Deploy with ANTHROPIC_API_KEY configured for the deep reading tied to your specific answers.":
-    "{0} est le système d’exploitation. Le diagnostic désigne une marque construite sur {1}. Déployez avec ANTHROPIC_API_KEY configurée pour obtenir la lecture approfondie liée à vos réponses.",
+  "{0} is the operating system. The diagnostic points to a brand built around {1}. Retry for the deep reading tied to your specific answers.":
+    "{0} est le système d’exploitation. Le diagnostic désigne une marque construite sur {1}. Réessayez pour obtenir la lecture approfondie liée à vos réponses.",
   "{0} adds texture. It brings {1} into how the brand expresses itself.":
     "{0} ajoute de la texture. Cet archétype fait entrer {1} dans la façon dont la marque s’exprime.",
   "{0} is the archetype this brand is tempted by. When governed it adds {1}; when ungoverned it produces {2}.":
@@ -548,14 +532,14 @@ QBI18N.add('fr', {
     "La voix doit mettre en avant {0} propre à {1}, modulée par {2} propre à {3}.",
   "Never sound like the {0} - this is where the brand drifts when uncertain.":
     "Ne sonnez jamais comme {0}. C’est là que la marque dérive quand elle doute.",
-  "Deploy with ANTHROPIC_API_KEY for a brand-specific signature phrase.":
-    "Déployez avec ANTHROPIC_API_KEY pour obtenir une phrase signature propre à la marque.",
+  "Retry for a brand-specific signature phrase.":
+    "Réessayez pour obtenir une phrase signature propre à la marque.",
   "Visual identity should sit in the world of the {0}, with inflections from the {1}.":
     "L’identité visuelle doit s’installer dans l’univers de {0}, avec des inflexions venues de {1}.",
   "Never look like the {0} - these visual cues take over the system fast.":
     "Ne ressemblez jamais à {0}. Ces signaux visuels envahissent vite le système.",
-  "Deploy with ANTHROPIC_API_KEY for a brand-specific signature visual move.":
-    "Déployez avec ANTHROPIC_API_KEY pour obtenir un geste visuel signature propre à la marque.",
+  "Retry for a brand-specific signature visual move.":
+    "Réessayez pour obtenir un geste visuel signature propre à la marque.",
   "Audit one piece of recent brand output. Test it against the trinity: does it lead with {0}? Does the {1} texture come through? Does any {2} sneak in?":
     "Auditez une production récente de la marque. Testez-la contre la trinité\u00a0: commence-t-elle par {0}\u00a0? La texture de {1} ressort-elle\u00a0? Voit-on s’y glisser {2}\u00a0?"
 });

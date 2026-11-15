@@ -27,8 +27,30 @@
 
 import { validateArtifact, ILLUSTRATION_INVENTORY } from '/js/qb-artifact-schema.js';
 import {
-  createPaywallModal, createShareControls, createTag, createStatusPill,
+  createPaywallModal, createShareControls, createTag, createStatusPill, movementOf,
 } from '/js/qb-components.js';
+
+/* Artifacts written before the movements replaced the numbered phases
+   still carry the old eyebrow in the database. It is mapped to its
+   present form before it is painted, so a founder never reads a phase
+   number, whatever the age of the artifact. The ten public agents, one
+   case each. Anything else is left exactly as stored. */
+const LEGACY_EYEBROWS = {
+  '01 Discovery · Soul Axis':            'Observe · Soul Axis',
+  '01 Discovery · Sensescape':           'Observe · Sensescape',
+  '01 Discovery · Visual DNA':           'Collapse · Visual DNA',
+  '01 Discovery · War Table':            'Collapse · War Table',
+  '02 Brand Creation · Logo Direction':  'Build · Logo Direction',
+  '02 Brand Creation · Logo Evaluation': 'Build · Logo Evaluation',
+  '02 Brand Creation · Voice Guide':     'Build · Voice Guide',
+  '05 Intelligence · Brand Performance': 'Hold · Brand Performance',
+  '05 Intelligence · Quarterly Review':  'Hold · Quarterly Review',
+  '05 Intelligence · Predictive Panel':  'Hold · Predictive Panel',
+};
+export function currentEyebrow(eyebrow) {
+  if (typeof eyebrow !== 'string') return '';
+  return LEGACY_EYEBROWS[eyebrow.replace(/\s+/g, ' ').trim()] || eyebrow;
+}
 
 const RESTRICTED_MD_BOLD  = /\*\*([^*]+)\*\*/g;
 const RESTRICTED_MD_ITAL  = /(?<!\*)\*([^*\n]+)\*(?!\*)/g;
@@ -101,14 +123,18 @@ function prettyAgent(slug) {
 
 /* ─── Header (state renderers only · qb-components.css) ────── */
 function buildHeader(header) {
+  // A date is printed only when the artifact has one. The locked and
+  // failed states used to fall back on today's date, which read as the
+  // day the artifact was made.
+  const date = header.generated_at ? formatDateRich(header.generated_at) : '';
   return el('header', { class: 'qb-artifact-header' }, [
-    el('div', { class: 'qb-artifact-header__eyebrow' }, header.eyebrow || ''),
+    el('div', { class: 'qb-artifact-header__eyebrow' }, currentEyebrow(header.eyebrow)),
     el('h1',  { class: 'qb-artifact-header__title' }, header.title || ''),
     header.subtitle ? el('p', { class: 'qb-artifact-header__subtitle' }, header.subtitle) : null,
     el('div', { class: 'qb-artifact-header__meta' }, [
       el('span', { class: 'qb-artifact-header__agent' }, prettyAgent(header.agent || '')),
-      el('span', { class: 'qb-artifact-header__dot' }),
-      el('span', { class: 'qb-artifact-header__date' }, formatDateRich(header.generated_at)),
+      date ? el('span', { class: 'qb-artifact-header__dot' }) : null,
+      date ? el('span', { class: 'qb-artifact-header__date' }, date) : null,
       header.version
         ? el('span', { class: 'qb-artifact-header__version' }, `v${header.version}`)
         : null,
@@ -124,7 +150,7 @@ function buildMasthead(header) {
     header.version ? `v${header.version}` : null,
   ].filter(Boolean).join(' · ');
   return el('header', { class: 'qb-rs-masthead' }, [
-    header.eyebrow ? el('span', { class: 'qb-rs-tag' }, header.eyebrow) : null,
+    header.eyebrow ? el('span', { class: 'qb-rs-tag' }, currentEyebrow(header.eyebrow)) : null,
     el('h1', { class: 'qb-rs-title' }, header.title || ''),
     el('p', { class: 'qb-rs-meta' }, meta),
     el('hr', { class: 'qb-rs-rule' }),
@@ -490,23 +516,22 @@ export function renderArtifact(container, content, opts = {}) {
 /* ─── Public: renderLocked ────────────────────────────────── */
 export function renderLocked(container, artifactMeta = {}, paywallUrl = '/paywall?reason=artifact') {
   clear(container);
+  // The movement, when the agent slug tells it. Plain "Locked" otherwise.
+  const movement = movementOf(artifactMeta.agent_slug);
   const fakeHeader = {
-    eyebrow: artifactMeta.phase
-      ? `Phase ${artifactMeta.phase} · Locked`
-      : 'Locked',
+    eyebrow: movement ? `${movement} · Locked` : 'Locked',
     title: artifactMeta.title || 'This artifact is locked.',
     agent: artifactMeta.agent_slug || '',
-    generated_at: artifactMeta.generated_at || new Date().toISOString(),
-    version: 1,
+    generated_at: artifactMeta.generated_at || null,
+    version: null,
   };
   const frosted = el('div', { class: 'qb-artifact-locked-frost' }, [
     createPaywallModal({
       reason: 'artifact',
+      // Headline, body and price are the component's own: one statement
+      // of what Starter adds, the same on every surface.
       eyebrow: 'Locked',
-      headline: 'Unlock the rest of your foundation.',
-      body: artifactMeta.lockedBody
-        || 'Visual DNA, War Table, three remaining synthesis artifacts, and QBP export.',
-      price: 'Starter, $97 / month. Cancel anytime.',
+      body: artifactMeta.lockedBody || undefined,
       primaryCta: 'Upgrade to Starter',
       secondaryCta: 'Back to Foundation',
       onPrimary: () => { window.location.href = paywallUrl; },
@@ -526,10 +551,10 @@ export function renderFailed(container, artifactMeta = {}, opts = {}) {
   clear(container);
   const fakeHeader = {
     eyebrow: 'Failed',
-    title: artifactMeta.title || 'This artifact did not generate cleanly.',
+    title: artifactMeta.title || 'This artifact could not be shown.',
     agent: artifactMeta.agent_slug || '',
-    generated_at: new Date().toISOString(),
-    version: 1,
+    generated_at: null,
+    version: null,
   };
 
   const actions = el('div', { class: 'qb-artifact-failed__actions' }, [
@@ -549,9 +574,11 @@ export function renderFailed(container, artifactMeta = {}, opts = {}) {
   const article = el('article', { class: 'qb-artifact-article is-failed' }, [
     buildHeader(fakeHeader),
     el('div', { class: 'qb-artifact-failed__body' }, [
-      el('p', {}, 'This artifact did not generate successfully. We have been notified.'),
+      // This state also covers a dropped connection and a server error,
+      // where nobody is notified, so the copy no longer says someone was.
+      el('p', {}, 'Something went wrong on the way. Reload the page, or write to me@qtmbg.com.'),
       opts.reason === 'schema_drift'
-        ? el('p', { class: 'qb-artifact-failed__detail' }, 'The stored content does not match the current schema. Regenerating will produce a clean version.')
+        ? el('p', { class: 'qb-artifact-failed__detail' }, 'The stored content does not match the current format. A rerun from the Console produces a clean version.')
         : null,
       actions,
     ]),

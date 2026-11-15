@@ -2,15 +2,15 @@
 QBI18N.add('fr', {
   /* Head */
   "What is The Collapse? · BrandOS": "Qu’est-ce que The Collapse ? · BrandOS",
-  "Before you commit, your brand exists in many possible states at once. Quantum branding is the method for collapsing them into one that holds. Here is how it works.":
-    "Avant que vous ne vous engagiez, votre marque existe dans plusieurs états possibles à la fois. Le quantum branding est la méthode qui les réduit à un seul, celui qui tient. Voici comment elle fonctionne.",
+  "Before you commit, your brand exists in many possible states at once. The Collapse is the method for resolving them into one that holds. Here is how it works.":
+    "Avant que vous ne vous engagiez, votre marque existe dans plusieurs états possibles à la fois. The Collapse est la méthode qui les résout en un seul, celui qui tient. Voici comment elle fonctionne.",
 
   /* Header */
   "· Education · Method": "· Pédagogie · Méthode",
   "What is": "Qu’est-ce que",
   "The Collapse?": "The Collapse ?",
-  "Published 2026-07-06 · Updated 2026-09-11 · 6 min read · by Nizzar Ben Chekroune":
-    "Publié le 6 juillet 2026 · Mis à jour le 11 septembre 2026 · 6 min de lecture · par Nizzar Ben Chekroune",
+  "Published 2026-07-06 · Updated 2026-11-13 · 6 min read · by Nizzar Ben Chekroune":
+    "Publié le 6 juillet 2026 · Mis à jour le 13 novembre 2026 · 6 min de lecture · par Nizzar Ben Chekroune",
 
   /* Opening */
   "Before you commit to anything, your brand exists in many possible states at once. The playful version. The premium version. The technical one. The warm one. Every direction stays open, and every direction looks plausible at 2am.":
@@ -31,16 +31,16 @@ QBI18N.add('fr', {
     "existe pour cela : cinq minutes, de vraies questions, et un relevé de là où se trouve votre marque, face à là où vous croyez qu’elle se trouve.",
 
   /* Collapse */
-  "Collapse is the decision. You take the readout and choose one state. Archetype, soul, senses, strategic position. Four commitments, made in order, each one narrowing the field for the next.":
-    "Collapse, c’est la décision. Vous prenez le relevé et vous choisissez un état. Archétype, âme, sens, position stratégique. Quatre engagements, pris dans l’ordre, chacun resserrant le champ du suivant.",
-  "This is the expensive beat. It is also the only one that creates a brand. Everything downstream inherits the choice you make here, which is why the method spends four tools on it and moves on.":
-    "C’est le temps qui coûte. C’est aussi le seul qui crée une marque. Tout ce qui suit hérite du choix fait ici, et c’est pourquoi la méthode y consacre quatre outils, puis avance.",
+  "Collapse is the decision. You take the readout and choose one state. Archetype, visual language, strategic position. Three commitments, made in order, each one narrowing the field for the next.":
+    "Collapse, c’est la décision. Vous prenez le relevé et vous choisissez un état. Archétype, langage visuel, position stratégique. Trois engagements, pris dans l’ordre, chacun resserrant le champ du suivant.",
+  "This is the expensive beat. It is also the only one that creates a brand. Everything downstream inherits the choice you make here, which is why the method spends three tools on it and moves on.":
+    "C’est le temps qui coûte. C’est aussi le seul qui crée une marque. Tout ce qui suit hérite du choix fait ici, et c’est pourquoi la méthode y consacre trois outils, puis avance.",
 
   /* Build */
-  "Build turns the collapsed state into assets. Logo directions, visual DNA, a voice guide, then the content that carries them: newsletters, LinkedIn, Instagram, YouTube.":
-    "Build transforme l’état retenu en actifs. Des directions de logo, un ADN visuel, un guide de voix, puis le contenu qui les porte : newsletters, LinkedIn, Instagram, YouTube.",
-  "Sequence carries the weight here. A logo designed after the archetype expresses something. A content calendar built after the voice guide sounds like you. Order is the method.":
-    "Ici, c’est la séquence qui porte le poids. Un logo dessiné après l’archétype exprime quelque chose. Un calendrier éditorial construit après le guide de voix vous ressemble. L’ordre est la méthode.",
+  "Build turns the collapsed state into assets. A brand document, a logo direction, a logo evaluation, a voice guide.":
+    "Build transforme l’état retenu en actifs. Un document de marque, une direction de logo, une évaluation de logo, un guide de voix.",
+  "Sequence carries the weight here. A logo designed after the archetype expresses something. Copy written after the voice guide sounds like you. Order is the method.":
+    "Ici, c’est la séquence qui porte le poids. Un logo dessiné après l’archétype exprime quelque chose. Un texte écrit après le guide de voix vous ressemble. L’ordre est la méthode.",
 
   /* Hold */
   "Once you choose a state, drift becomes the enemy. Every new asset is a chance to contradict yourself.":
@@ -48,18 +48,16 @@ QBI18N.add('fr', {
   "The cure is one source of truth that every downstream decision reads from. In BrandOS that spine is the":
     "Le remède est une source de vérité unique, que lit chaque décision en aval. Dans BrandOS, cette colonne vertébrale est le",
   "Quantum Brand Profile": true,
-  ", the QBP. Your archetype, your manifesto, your sensory map, your visual language, your voice. Defined once, then consumed by every tool that writes copy, evaluates a logo, or plans a campaign. You explain your brand to your own system exactly once.":
-    ", le QBP. Votre archétype, votre manifeste, votre carte sensorielle, votre langage visuel, votre voix. Définis une fois, puis consommés par chaque outil qui écrit un texte, évalue un logo ou planifie une campagne. Vous expliquez votre marque à votre propre système une fois, et une seule.",
-  "Hold also means watching. Performance reviews, quarterly audits, and simulated market response keep the collapsed state honest as the market moves.":
-    "Hold, c’est aussi surveiller. Les revues de performance, les audits trimestriels et la réponse simulée du marché gardent l’état retenu honnête quand le marché bouge.",
+  ", the QBP. Your archetype, your manifesto, your sensory map, your visual language, your voice. Defined once, then consumed by every tool that writes copy, directs a logo, or evaluates one. You explain your brand to your own system exactly once.":
+    ", le QBP. Votre archétype, votre manifeste, votre carte sensorielle, votre langage visuel, votre voix. Définis une fois, puis consommés par chaque outil qui écrit un texte, dirige un logo ou en évalue un. Vous expliquez votre marque à votre propre système une fois, et une seule.",
+  "Hold also means watching. Performance reviews, quarterly audits, and simulated market response keep the collapsed state honest as the market moves. In BrandOS those are the Performance Dashboard, the Quarterly Brand Review and the Predictive Panel, and they are not open yet.":
+    "Hold, c’est aussi surveiller. Les revues de performance, les audits trimestriels et la réponse simulée du marché gardent l’état retenu honnête quand le marché bouge. Dans BrandOS, ce sont le Tableau de bord de performance, la Revue de marque trimestrielle et le Predictive Panel, et ils ne sont pas encore ouverts.",
 
   /* Mapping */
   "How the cycle maps to the product": "Comment le cycle se retrouve dans le produit",
-  "BrandOS runs The Collapse as six phases:": "BrandOS déroule The Collapse en six phases :",
-  "Acquisition, Discovery, Brand Creation, Content Creation, Execution, Intelligence.":
-    "Acquisition, Découverte, Création de marque, Création de contenu, Exécution, Intelligence.",
-  "Observe is Acquisition and Discovery. Collapse closes Discovery. Build spans Brand Creation, Content Creation, and Execution. Hold is Intelligence, running continuously from there.":
-    "Observe, c’est l’Acquisition et la Découverte. Collapse clôt la Découverte. Build couvre la Création de marque, la Création de contenu et l’Exécution. Hold, c’est l’Intelligence, qui tourne en continu à partir de là.",
+  "BrandOS is the four movements:": "BrandOS, ce sont les quatre mouvements :",
+  "Observe is Signal Scan, Brand Soul Map, Sensescape and The Profiles. Collapse is Archetype Compass, Visual DNA and War Table. Build is the Brand Document, Logo Direction, Logo Evaluation and Voice Guide. Hold is the Performance Dashboard, the Quarterly Brand Review and the Predictive Panel.":
+    "Observe, c’est Signal Scan, Brand Soul Map, Sensescape et The Profiles. Collapse, c’est Archetype Compass, Visual DNA et War Table. Build, c’est le Document de marque, la Direction de logo, l’Évaluation de logo et le Voice Guide. Hold, c’est le Tableau de bord de performance, la Revue de marque trimestrielle et le Predictive Panel.",
 
   /* Where to start */
   "Where to start": "Par où commencer",

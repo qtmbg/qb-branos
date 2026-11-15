@@ -5,7 +5,7 @@
 <script src="/js/qb-i18n.js" data-page="brand-soul-map"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Brand Soul Map · BrandOS</title>
-<meta name="description" content="The Brand Soul Map · BrandOS Phase 01 - discover your brand's irreducible truth, archetype, and emotional foundation.">
+<meta name="description" content="The Brand Soul Map, an Observe exercise in BrandOS. Discover your brand's irreducible truth, archetype, and emotional foundation.">
 <script>(function(){try{var t=localStorage.getItem('qb-theme');if(t)document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
 <script src="/qb-cloud.js"></script>
 <script src="/qb-gate.js"></script>
@@ -2903,7 +2903,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="The Brand Soul Map · BrandOS">
-<meta property="og:description" content="The Brand Soul Map · BrandOS Phase 01 - discover your brand's irreducible truth, archetype, and emotional foundation.">
+<meta property="og:description" content="The Brand Soul Map, an Observe exercise in BrandOS. Discover your brand's irreducible truth, archetype, and emotional foundation.">
 <meta property="og:url" content="https://quantumbranding.ai/brand-soul-map.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/brand-soul-map.png">
 <meta property="og:image:width" content="1200">
@@ -2913,7 +2913,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Brand Soul Map · BrandOS">
-<meta name="twitter:description" content="The Brand Soul Map · BrandOS Phase 01 - discover your brand's irreducible truth, archetype, and emotional foundation.">
+<meta name="twitter:description" content="The Brand Soul Map, an Observe exercise in BrandOS. Discover your brand's irreducible truth, archetype, and emotional foundation.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/brand-soul-map.png">
 <link rel="canonical" href="https://quantumbranding.ai/brand-soul-map.html">
 <!-- QB JSON-LD -->
@@ -2922,7 +2922,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Brand Soul Map",
-  "description": "The deep discovery interview that locks the Quantum Brand Profile.",
+  "description": "Six modules and fifteen exercises that uncover your brand's irreducible truth, archetype, and emotional foundation.",
   "url": "https://quantumbranding.ai/brand-soul-map.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -3448,7 +3448,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   views[0] = function(){
     return el('div', { class:'sm-frame' }, [
       el('div', { class:'sm-frame_inner' }, [
-        vizHeader('Name what you are uncovering.', 'Phase 01 · Soul Map · The start', 'intro'),
+        vizHeader('Name what you are uncovering.', 'Observe · Soul Map · The start', 'intro'),
         el('p', { class:'sm-frame_deck',
           text:'The brand is not being invented here. It is being uncovered. Over the next six modules you will define the core convictions, positioning, and cultural stance of your brand. No skipping ahead. The order is the work.' }),
         el('div', { class:'sm-frame_panel' }, [
@@ -4062,7 +4062,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       ]),
       el('div', { class:'glass-panel' }, [
         el('p', { class:'helper-text', style:{ fontSize:'15px', marginBottom:'32px', textAlign:'center' },
-          text:'Provide your identity and email to secure your final Brand Soul Map.' }),
+          text:'Say who this Brand Soul Map is for. The synthesis comes next.' }),
         formField('Email address (required)', null, lineInput('email', 'you@example.com', 'email')),
         el('div', { class:'grid-2' }, [
           lineInput('firstName', 'First name'),
@@ -4093,7 +4093,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
           document.createTextNode(' · Synthesis engine')
         ]),
         el('h1', { text:'Distilling your identity.' }),
-        el('p', { class:'cx-loading-sub', text:'A senior brand strategist would take a week to write this. We are writing it now: verdict, essence, spark, field report, operating principles. In your voice. From your fifteen answers. This takes about thirty seconds.' }),
+        el('p', { class:'cx-loading-sub', text:'A senior brand strategist would take a week to write this. We are writing it now: verdict, essence, spark, field report, operating principles. In your voice. From your fifteen exercises. This takes about thirty seconds.' }),
         el('div', { class:'cx-status', id:'codex-status', text: state.codexStatus || CODEX_STATUS_LINES[0] }),
         el('div', { class:'cx-loading-bar' }),
         el('div', { class:'cx-loading-warn' }, [
@@ -4129,7 +4129,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
         el('h2', { text: isKey ? 'Full synthesis requires the QB API key.' : 'Synthesis is being finalised.' }),
         el('p', { text: isKey
           ? 'To generate the Brand Soul Map Codex in your brand voice, this page needs to be served by Vercel (or a local `vercel dev`) with the QB API key configured. Your full 15-exercise session is saved and will not be lost. You can retry once the key is active, or export the raw session below.'
-          : 'Something interrupted the synthesis before it completed. Your answers are preserved. Click Retry to re-run the synthesis. The founder copy of this document will be produced - the tool will not ship a template instead.'
+          : 'Something interrupted the synthesis before it completed. Your answers are preserved. Use Retry synthesis to run it again. The founder copy of this document will be produced. The tool will not ship a template instead.'
         }),
         state.codexError ? el('div', { class:'detail', text: state.codexError }) : null,
         el('div', { class:'actions' }, [
@@ -4399,12 +4399,27 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       'Voice Guide':      'voice-guide-agent.html',
       'Logo Direction':   'logo-direction-agent.html'
     };
+    // A move can point at a tool this account cannot open. Say so on the
+    // card instead of letting the link end on a sign-in or a plan page.
+    var TOOL_IDS = {
+      'Sensescape':       'sensescape',
+      'Visual DNA':       'visual-dna',
+      'War Table':        'war-table',
+      'Profiles':         'profiles',
+      'Voice Guide':      'voice-guide',
+      'Logo Direction':   'logo-direction'
+    };
+    function needsStarter(tool){
+      var id = TOOL_IDS[tool];
+      return !!(id && window.QB && QB.hasAccess && !QB.hasAccess(id));
+    }
     var moves = section('cx-moves', '10', 'Next three moves', 'What to do next in BrandOS.', el('div', { class:'cx-moves' },
       movesArr.map(function(m, i){
         return el('div', { class:'cx-move' }, [
           el('span', { class:'move-num', text:'Move ' + ('0' + (i + 1)).slice(-2) }),
           el('div', { class:'move-action', text: m.move || '' }),
           el('p',   { class:'move-rationale', text: m.rationale || '' }),
+          needsStarter(m.tool) ? el('p', { class:'move-rationale move-starter', text: m.tool + ' opens with Starter.' }) : null,
           m.tool ? el('a', {
             class:'move-cta',
             href: TOOL_HREFS[m.tool] || '#',
@@ -4958,6 +4973,27 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       // Cloud-aware write: mirrors to Supabase if user is authed, no-op otherwise
       if (window.QB && QB.setQBP) { QB.setQBP(updated); }
       else { localStorage.setItem('qb_qbp', JSON.stringify(updated)); }
+      // The PDF view reads five answers from qb_soul_map_data. Nothing wrote
+      // that key, so its audience and world fields never filled.
+      try {
+        localStorage.setItem('qb_soul_map_data', JSON.stringify({
+          fanSurprise:  data.fanSurprise || '',
+          fanTarget:    data.fanTarget || '',
+          movementName: (MOVEMENTS.find(function(m){ return m.id === data.movementId; }) || {}).name || '',
+          leadChoice:   data.leadChoice || '',
+          innChoice:    data.innChoice || ''
+        }));
+      } catch(e){}
+      // Step 13 asked for a name and an email. The save step that follows
+      // pre-fills from qb_pending_signup, so hand them over instead of
+      // asking twice. An attempt already pending is left alone.
+      try {
+        if ((data.email || '').trim() && !localStorage.getItem('qb_pending_signup')) {
+          localStorage.setItem('qb_pending_signup', JSON.stringify({
+            email: data.email.trim(), firstName: (data.firstName || '').trim(), sourceTool: 'soul-map'
+          }));
+        }
+      } catch(e){}
       // Note: qb_soul_map_done legacy flag removed - completion is recorded
       // by QB.openGate() → QB.recordCompletion() below as the single source.
       try {

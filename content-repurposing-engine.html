@@ -9,7 +9,7 @@
      The page stays deployable for the operator and drops out of the index. -->
 <meta name="robots" content="noindex, nofollow">
 <title>Content Repurposing Engine · BrandOS</title>
-<meta name="description" content="Turn one anchor piece into ten platform-native variations, each written in your own brand voice. The repurposing engine inside BrandOS.">
+<meta name="description" content="Turn one anchor piece into ten platform-native formats, each written in your own brand voice. The repurposing engine inside BrandOS.">
 
 <!-- Theme Flash Prevention -->
 <script>
@@ -1450,7 +1450,41 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 (function(){
   var params = new URLSearchParams(window.location.search);
   var urlQBP = params.get('qbp');
-  if(urlQBP){ try{ localStorage.setItem('qb_qbp', atob(decodeURIComponent(urlQBP))); }catch(e){} }
+  // The profile link is base64 of the UTF-8 bytes (brand-document.html,
+  // openTool). atob alone returns those bytes as Latin-1, which turned every
+  // accent into two wrong characters and then saved them over the stored
+  // profile. Bytes that are not UTF-8 are kept as they were read.
+  function decodeQBP(value){
+    if(!value) return null;
+    try{
+      var normalized = value.replace(/-/g,'+').replace(/_/g,'/').replace(/\s/g,'+');
+      while(normalized.length % 4) normalized += '=';
+      var binary = atob(normalized);
+      try{
+        var bytes = new Uint8Array(binary.length);
+        for(var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+      }catch(e){
+        return binary;
+      }
+    }catch(e){
+      return null;
+    }
+  }
+  // Only a payload that reads as a profile replaces the stored one.
+  function isProfile(text){
+    try{ var o = JSON.parse(text); return !!o && typeof o === 'object' && !Array.isArray(o); }
+    catch(e){ return false; }
+  }
+  if(urlQBP){
+    try{
+      // A link that was percent-encoded twice is still read, as before.
+      var raw = urlQBP;
+      try{ raw = decodeURIComponent(urlQBP); }catch(e){}
+      var decoded = decodeQBP(raw);
+      if(decoded && isProfile(decoded)) localStorage.setItem('qb_qbp', decoded);
+    }catch(e){}
+  }
   try{ window.QB_QBP = JSON.parse(localStorage.getItem('qb_qbp') || '{}'); }catch(e){ window.QB_QBP = {}; }
   
   window.QB_MODEL = 'claude-sonnet-4-6';
@@ -1500,7 +1534,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
 <meta property="og:title" content="Content Repurposing Engine · BrandOS">
-<meta property="og:description" content="Turn one anchor piece into ten platform-native variations, each written in your own brand voice. The repurposing engine inside BrandOS.">
+<meta property="og:description" content="Turn one anchor piece into ten platform-native formats, each written in your own brand voice. The repurposing engine inside BrandOS.">
 <meta property="og:url" content="https://quantumbranding.ai/content-repurposing-engine.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/content-repurposing-engine.png">
 <meta property="og:image:width" content="1200">
@@ -1510,7 +1544,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Content Repurposing Engine · BrandOS">
-<meta name="twitter:description" content="Turn one anchor piece into ten platform-native variations, each written in your own brand voice. The repurposing engine inside BrandOS.">
+<meta name="twitter:description" content="Turn one anchor piece into ten platform-native formats, each written in your own brand voice. The repurposing engine inside BrandOS.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/content-repurposing-engine.png">
 <link rel="canonical" href="https://quantumbranding.ai/content-repurposing-engine.html">
 <!-- QB JSON-LD -->
@@ -1519,7 +1553,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Content Repurposing Engine",
-  "description": "Turn one anchor piece into ten platform-native variations.",
+  "description": "Turn one anchor piece into ten platform-native formats.",
   "url": "https://quantumbranding.ai/content-repurposing-engine.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -1619,12 +1653,15 @@ const {useState,useEffect,useRef}=React;
 
 // ── PLATFORM CONFIG ────────────────────────────────────────────────────────────
 // Converted to Entangled Time phase colors
+// count is the least the prompt asks for, counted the way the output is:
+// one per item. A carousel comes back as 6 to 8 slides, a thread as an
+// opening tweet and 6 to 8 more, each its own item (see buildUserPrompt).
 const PLATFORMS={
   instagram_caption:{label:'Instagram Caption', rgb:'var(--rgb-phase-content)', icon:'IG', count:3},
-  instagram_carousel:{label:'Instagram Carousel', rgb:'var(--rgb-phase-content)', icon:'IG+', count:1},
+  instagram_carousel:{label:'Instagram Carousel', rgb:'var(--rgb-phase-content)', icon:'IG+', count:6},
   linkedin_personal:{label:'LinkedIn Personal', rgb:'var(--rgb-phase-creation)', icon:'LI', count:2},
   linkedin_company:{label:'LinkedIn Company', rgb:'var(--rgb-phase-creation)', icon:'LI+', count:1},
-  twitter_thread:{label:'X/Twitter Thread', rgb:'var(--rgb-phase-execution)', icon:'X', count:1},
+  twitter_thread:{label:'X/Twitter Thread', rgb:'var(--rgb-phase-execution)', icon:'X', count:7},
   newsletter_excerpt:{label:'Newsletter Excerpt', rgb:'var(--rgb-phase-intelligence)', icon:'✉', count:1},
   youtube_short:{label:'YouTube Short Script', rgb:'var(--rgb-phase-content)', icon:'YT', count:3},
   quote_graphic:{label:'Quote Graphics', rgb:'var(--rgb-phase-discovery)', icon:'QQ', count:3},
@@ -1669,13 +1706,15 @@ const Sec=({n,title,children,note})=>(
 );
 
 // ── OUTPUT CARD ───────────────────────────────────────────────────────────────
-const OutputCard=({platformKey,items,config})=>{
+const OutputCard=({platformKey,items,config,onReviewed})=>{
   const [open,setOpen]=useState(false);
   const [copiedIdx,setCopiedIdx]=useState(null);
   
   const copy=async(text,i)=>{
     try{await navigator.clipboard.writeText(text);setCopiedIdx(i);setTimeout(()=>setCopiedIdx(null),2000);}catch(e){}
   };
+  // Stable, so the review loop reports only when a piece changes.
+  const reviewed=React.useCallback(list=>{ if(onReviewed) onReviewed(platformKey,list); },[platformKey,onReviewed]);
   
   if(!items?.length) return null;
   
@@ -1692,7 +1731,7 @@ const OutputCard=({platformKey,items,config})=>{
           </div>
           <div>
             <div className="serif" style={{fontSize:20,color:'var(--text-1)',marginBottom:2}}>{config.label}</div>
-            <div style={{fontSize:12,color:'var(--text-3)'}}>{items.length} piece{items.length>1?'s':''} generated</div>
+            <div style={{fontSize:12,color:'var(--text-3)'}}>{`${items.length} ${items.length>1?'pieces':'piece'} generated`}</div>
           </div>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:16}}>
@@ -1701,10 +1740,14 @@ const OutputCard=({platformKey,items,config})=>{
         </div>
       </div>
       
-      {open&&(
-        <div className="fade-in">
-          {items.map((item,i)=>(
-            <div key={i} style={{padding:'20px 0',borderTop:'1px solid var(--border-subtle)',marginLeft:24,marginRight:24}}>
+      {/* Stays mounted while closed, so a review in progress is not lost. */}
+      <div className="fade-in" style={{display:open?'block':'none',padding:'4px 24px 8px',borderTop:'1px solid var(--border-subtle)'}}>
+        <QBApprovalWrapper
+          scope={platformKey}
+          items={items}
+          onItemsChange={reviewed}
+          renderItem={(item,i)=>(
+            <div style={{paddingBottom:20}}>
               {item.label&&(
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,gap:12}}>
                   <span className="mono" style={{fontSize:11,color:colorStr,letterSpacing:'.1em'}}>{item.label}</span>
@@ -1734,9 +1777,9 @@ const OutputCard=({platformKey,items,config})=>{
                 </div>
               )}
             </div>
-          ))}
-        </div>
-      )}
+          )}
+        />
+      </div>
     </div>
   );
 };
@@ -1774,6 +1817,10 @@ function App(){
   const [error,setError]=useState('');
   const [result,setResult]=useState(null);
   const [loadingStatus,setLoadingStatus]=useState('');
+  // Per platform, the pieces as the review loop holds them: revised text in
+  // place of the original, removed pieces left out. The pack exports these.
+  const [reviewed,setReviewed]=useState({});
+  const onReviewed=React.useCallback((key,list)=>setReviewed(prev=>({...prev,[key]:list})),[]);
 
   const [sourceType,setSourceType]=useState('');
   const [sourceTitle,setSourceTitle]=useState('');
@@ -1925,12 +1972,13 @@ For each platform, identify the strongest angle from the source content - the sp
       let parsed;
       try { parsed = JSON.parse(stripped.substring(sliceStart, sliceEnd + 1)); }
       catch(parseErr){ throw new Error('UNAVAILABLE'); }
+      setReviewed({});
       setResult(parsed);
       setStep(2);
     }catch(e){
       clearInterval(statusIntervalRef.id);
       const msg = e.message === 'UNAVAILABLE'
-        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        ? 'Generation was unavailable. Nothing was produced. Try again in a moment.'
         : 'Engine anomaly: '+e.message;
       setError(msg);
       setStep(0);
@@ -1945,10 +1993,14 @@ For each platform, identify the strongest angle from the source content - the sp
     if(result.contentAngles?.length){lines.push('NARRATIVE ANGLES:');result.contentAngles.forEach(a=>{lines.push(`  ${a.angle}: ${a.description||''} ${a.bestFor?'→ '+a.bestFor:''}`.trim());});lines.push('');}
     Object.entries(PLATFORMS).forEach(([key,cfg])=>{
       if(!selectedPlatforms[key]||!result[key]?.length) return;
+      // The pack holds what the review shows. A platform nobody opened
+      // exports as generated; one with every piece removed is left out.
+      const pieces=reviewed[key]||result[key];
+      if(!pieces.length) return;
       lines.push('='.repeat(50));
       lines.push(cfg.label.toUpperCase());
       lines.push('='.repeat(50),'');
-      result[key].forEach((item,i)=>{
+      pieces.forEach((item,i)=>{
         lines.push(item.label||`Item ${i+1}`);
         lines.push(item.content||'');
         if(item.hashtags?.length) lines.push(item.hashtags.map(h=>'#'+h).join(' '));
@@ -2007,7 +2059,7 @@ For each platform, identify the strongest angle from the source content - the sp
             <div className="manifesto-block" style={{marginBottom:56}}>
               <ML c="var(--brass)">Phase 04 - Execution</ML>
               <h1 style={{fontSize:48,lineHeight:1.15,marginBottom:16}}>Content Repurposing Engine</h1>
-              <p style={{color:'var(--text-2)',fontSize:16,maxWidth:640}}>One core insight. Up to {totalExpected}+ pieces across {activeCount} surfaces. Each reframed natively for its platform. The engine extracts the tension and rebuilds the narrative.</p>
+              <p style={{color:'var(--text-2)',fontSize:16,maxWidth:640}}>One core insight. {totalExpected}+ pieces across {activeCount} surfaces. Each reframed natively for its platform. The engine extracts the tension and rebuilds the narrative.</p>
             </div>
 
             <Sec n={1} title="Source Material" note="* required">
@@ -2111,7 +2163,7 @@ For each platform, identify the strongest angle from the source content - the sp
               </div>
               <div style={{display:'flex',gap:12}}>
                 <button onClick={exportAll} style={{background:'var(--bg-surface)',border:'1px solid var(--border-strong)',color:'var(--text-1)',padding:'10px 20px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',letterSpacing:'.1em',textTransform:'uppercase',transition:'all 0.2s'}} onMouseOver={e=>e.currentTarget.style.background='var(--bg-elevated)'} onMouseOut={e=>e.currentTarget.style.background='var(--bg-surface)'}>Export Pack</button>
-                <button onClick={()=>{setStep(0);setResult(null);}} style={{background:'transparent',border:'1px solid var(--border-medium)',color:'var(--text-2)',padding:'10px 20px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',letterSpacing:'.1em',textTransform:'uppercase',transition:'all 0.2s'}} onMouseOver={e=>e.currentTarget.style.borderColor='var(--text-3)'} onMouseOut={e=>e.currentTarget.style.borderColor='var(--border-medium)'}>New Source</button>
+                <button onClick={()=>{setStep(0);setResult(null);setReviewed({});}} style={{background:'transparent',border:'1px solid var(--border-medium)',color:'var(--text-2)',padding:'10px 20px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',letterSpacing:'.1em',textTransform:'uppercase',transition:'all 0.2s'}} onMouseOver={e=>e.currentTarget.style.borderColor='var(--text-3)'} onMouseOut={e=>e.currentTarget.style.borderColor='var(--border-medium)'}>New Source</button>
               </div>
             </div>
 
@@ -2145,7 +2197,7 @@ For each platform, identify the strongest angle from the source content - the sp
               <ML mb={20}>Platform Outputs - Click to expand</ML>
               {Object.entries(PLATFORMS).map(([key,cfg])=>{
                 if(!selectedPlatforms[key]||!result[key]?.length) return null;
-                return <OutputCard key={key} platformKey={key} items={result[key]} config={cfg}/>;
+                return <OutputCard key={key} platformKey={key} items={result[key]} config={cfg} onReviewed={onReviewed}/>;
               })}
             </div>
           </div>
@@ -2162,9 +2214,12 @@ For each platform, identify the strongest angle from the source content - the sp
 }
 
 // ── QB CONTENT APPROVAL LOOP ────────────────────────────────────────────────
-// Reusable approval/revision wrapper - not yet wired into App render tree.
-// To activate: wrap any items array with <QBApprovalWrapper items={...} renderItem={...} onAllApproved={...} />
-function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revisionField='content'}) {
+// Approve, revise (up to 3 rounds) or remove each piece. Wired into every
+// OutputCard: <QBApprovalWrapper scope={platformKey} items={...} renderItem={...} onItemsChange={...} />
+// scope keeps the revision field ids apart when several cards are open.
+// onItemsChange receives the pieces as they stand: revised text in place of
+// the original, removed pieces left out. Pass a stable function.
+function QBApprovalWrapper({items, renderItem, onAllApproved, onItemsChange, scope='', itemKey='id', revisionField='content'}) {
   const [states, setStates] = React.useState(() => {
     const s = {};
     items.forEach((item,i) => { s[i] = {status:'pending', round:0, feedback:'', item}; });
@@ -2179,18 +2234,26 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
     if (allApproved && approvedItems.length > 0) onAllApproved && onAllApproved(approvedItems);
   }, [allApproved, onAllApproved]);
 
-  const approve = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'approved'}}));
-  const remove = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'removed'}}));
+  React.useEffect(() => {
+    if (!onItemsChange) return;
+    onItemsChange(items.map((_, i) => states[i]).filter(s => s && s.status !== 'removed').map(s => s.item));
+  }, [states, onItemsChange]);
+
+  const fieldId = (i) => 'revision-input-' + (scope ? scope + '-' : '') + i;
+
+  const approve = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'approved', failed:false}}));
+  const remove = (i) => setStates(prev => ({...prev, [i]: {...prev[i], status:'removed', failed:false}}));
   const startRevise = (i) => setRevising(prev => ({...prev, [i]: true}));
   // FIX 6 - QB_AI checked BEFORE state mutation; prevents stuck "revising" state
   const submitRevise = async (i) => {
-    const feedback = document.getElementById('revision-input-' + i)?.value || '';
+    const feedback = document.getElementById(fieldId(i))?.value || '';
     if (!feedback.trim()) return;
     if (!window.QB_AI || states[i].round >= 3) {
       setStates(prev => ({...prev, [i]: {...prev[i], status:'pending'}}));
       return;
     }
-    setStates(prev => ({...prev, [i]: {...prev[i], status:'revising', round: prev[i].round + 1, feedback}}));
+    const before = states[i].status;
+    setStates(prev => ({...prev, [i]: {...prev[i], status:'revising', round: prev[i].round + 1, feedback, failed:false}}));
     setRevising(prev => ({...prev, [i]: false}));
     try {
       const original = JSON.stringify(states[i].item);
@@ -2201,7 +2264,9 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
       const revised = JSON.parse(clean);
       setStates(prev => ({...prev, [i]: {...prev[i], status:'revised', item: revised}}));
     } catch(e) {
-      setStates(prev => ({...prev, [i]: {...prev[i], status:'pending'}}));
+      // A call that failed is not a revision round: the round is given back,
+      // the piece keeps the state it had, and the failure is said on screen.
+      setStates(prev => ({...prev, [i]: {...prev[i], status: before === 'revised' ? 'revised' : 'pending', round: Math.max(0, prev[i].round - 1), failed:true}}));
     }
   };
 
@@ -2235,8 +2300,8 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
               {renderItem(s.item, i)}
             </div>
             <div style={{display:'flex',alignItems:'center',gap:12,padding:'16px 24px',borderTop:'1px solid var(--border-subtle)',background:'var(--bg-deep)',flexWrap:'wrap'}}>
-              <div className="mono" style={{fontSize:10,color:statusColor[s.status],letterSpacing:'.1em',flex:1}}>
-                {statusLabel[s.status]} {s.round > 0 ? '(Round '+s.round+'/3)' : ''}
+              <div className="mono" style={{fontSize:10,color:s.failed?'var(--error-warm)':statusColor[s.status],letterSpacing:'.1em',flex:1}}>
+                {s.failed ? 'Revision failed. Try again.' : statusLabel[s.status]} {s.round > 0 ? '(Round '+s.round+'/3)' : ''}
               </div>
               {(s.status==='pending'||s.status==='revised') && !isRevising && (
                 <>
@@ -2251,7 +2316,7 @@ function QBApprovalWrapper({items, renderItem, onAllApproved, itemKey='id', revi
             {isRevising && (
               <div style={{padding:'16px 24px',background:'var(--bg-surface)',borderTop:'1px solid var(--border-medium)'}}>
                 <div className="mono" style={{fontSize:10,color:'var(--brass)',letterSpacing:'.1em',marginBottom:8}}>REVISION REQUEST {s.round+1}/3</div>
-                <textarea id={'revision-input-'+i} placeholder="What should change? Be specific: e.g. 'Make the hook more direct' or 'Remove the question format'" style={{width:'100%',background:'var(--bg-deep)',border:'1px solid var(--brass-dim)',color:'var(--text-1)',borderRadius:8,padding:'12px 16px',fontSize:14,fontFamily:'var(--font-sans)',resize:'vertical',minHeight:80,outline:'none'}} rows={2}/>
+                <textarea id={fieldId(i)} placeholder="What should change? Be specific: e.g. 'Make the hook more direct' or 'Remove the question format'" style={{width:'100%',background:'var(--bg-deep)',border:'1px solid var(--brass-dim)',color:'var(--text-1)',borderRadius:8,padding:'12px 16px',fontSize:14,fontFamily:'var(--font-sans)',resize:'vertical',minHeight:80,outline:'none'}} rows={2}/>
                 <div style={{display:'flex',gap:12,marginTop:12}}>
                   <button onClick={()=>submitRevise(i)} style={{background:'var(--brass)',color:'#111',padding:'8px 20px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',fontWeight:700,letterSpacing:'.08em',cursor:'pointer'}}>Submit Revision →</button>
                   <button onClick={()=>setRevising(prev=>({...prev,[i]:false}))} style={{background:'transparent',color:'var(--text-3)',border:'1px solid var(--border-medium)',padding:'8px 16px',borderRadius:6,fontSize:11,fontFamily:'var(--font-mono)',cursor:'pointer'}}>Cancel</button>

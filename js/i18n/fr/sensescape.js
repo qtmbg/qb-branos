@@ -8,20 +8,16 @@ QBI18N.add('fr', {
   /* ── Head and chassis ───────────────────────────────────────────── */
   "Sensescape · BrandOS": true,
   "Sensescape ·": true,
-  /* og:locale. The runtime writes this value itself, then its own observer
-     reads it back as page text. Belongs in common.js or in the runtime. */
-  "fr_FR": true,
-  "Sensescape · BrandOS Phase 01 - before a brand speaks, it is felt.": "Sensescape · BrandOS Phase 01. Avant qu’une marque ne parle, elle se ressent.",
-  "© 2026 Quantum Branding": true,
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
+  "Sensescape · Observe · BrandOS. Before a brand speaks, it is felt.": "Sensescape · Observe · BrandOS. Avant qu’une marque ne parle, elle se ressent.",
 
   /* ── Intro ──────────────────────────────────────────────────────── */
-  "Phase 01 · Sensescape · The sensory layer": "Phase 01 · Sensescape · La couche sensorielle",
+  "Observe · Sensescape · The sensory layer": "Observe · Sensescape · La couche sensorielle",
   "Before a brand speaks,": "Avant qu’une marque ne parle,",
   "it is felt.": "elle se ressent.",
-  "Six chapters, fifteen spectrums. You will rate where your brand sits between two anchors. Every spectrum carries a real cultural reference. The first read is the truthful one.":
-    "Six chapitres, quinze spectres. Vous situez votre marque entre deux repères. Chaque spectre porte une vraie référence culturelle. La première lecture est la vraie.",
+  /* The numbers are the tool's own: ten chapters, thirty spectrums, eight
+     written answers. tests/e2e/walks/sensescape.mjs counts them. */
+  "Ten chapters, thirty spectrums. You will rate where your brand sits between two anchors. Every spectrum carries a real cultural reference. The first read is the truthful one.":
+    "Dix chapitres, trente spectres. Vous situez votre marque entre deux repères. Chaque spectre porte une vraie référence culturelle. La première lecture est la vraie.",
   "Protocol {0}": "Protocole {0}",
   "Instinct Over Logic.": "L’instinct avant la logique.",
   "Answer in the first five seconds. Your score is not a preference. It is a pure recognition.":
@@ -61,20 +57,19 @@ QBI18N.add('fr', {
   "{0} logo": "Logo {0}",
   "{0} portrait": "Portrait de {0}",
 
-  /* ── Chapter titles (plain, and with the period the header adds) ── */
+  /* ── Chapter titles (plain, and with the period the header adds) ──
+     "Visual Language" and "The Sensory World" are held by shared.js. */
   "Emotional Frequency": "Fréquence émotionnelle",
   "Emotional Frequency.": "Fréquence émotionnelle.",
   "The Color World": "Le monde de la couleur",
   "The Color World.": "Le monde de la couleur.",
   "Type Architecture": "Architecture typographique",
   "Type Architecture.": "Architecture typographique.",
-  "Visual Language": "Langage visuel",
   "Visual Language.": "Langage visuel.",
   "Shape & Form": "Formes et volumes",
   "Shape & Form.": "Formes et volumes.",
   "Motion & Rhythm": "Mouvement et rythme",
   "Motion & Rhythm.": "Mouvement et rythme.",
-  "The Sensory World": "Le monde sensoriel",
   "The Sensory World.": "Le monde sensoriel.",
   "Voice & Pace": "Voix et tempo",
   "Voice & Pace.": "Voix et tempo.",
@@ -90,7 +85,7 @@ QBI18N.add('fr', {
   "What the brand shows and how it shows it.": "Ce que la marque montre, et comment elle le montre.",
   "The geometry of the brand’s physical existence.": "La géométrie de l’existence physique de la marque.",
   "How the brand moves through time.": "Comment la marque se déplace dans le temps.",
-  "What the brand feels, sounds, weighs, and smells like.": "La texture, le son, le poids et l’odeur de la marque.",
+  "The temperature, the texture, the object and the hour of the brand.": "La température, la texture, l’objet et l’heure de la marque.",
   "How the brand speaks when no one is there to answer back.": "Comment la marque parle quand personne n’est là pour lui répondre.",
   "The acoustic footprint of the brand — including what it refuses to make noise about.":
     "L’empreinte acoustique de la marque, y compris ce sur quoi elle refuse de faire du bruit.",
@@ -282,7 +277,7 @@ QBI18N.add('fr', {
   "Brutalism": "Brutalisme",
   "Zero Radius": "Rayon zéro",
   "Apple Radius": "Rayon Apple",
-  "Print": "Imprimé",
+  "Print @@ .q-anchor": "Imprimé",
   "Digital Native": "Natif numérique",
   "Spring": "Ressort",
   "Hard Cut": "Coupe franche",
@@ -396,7 +391,6 @@ QBI18N.add('fr', {
   "Identity Lock.": "Verrouillage d’identité.",
   "Full Name": "Nom complet",
   "Company / Brand": "Société / Marque",
-  "Email": "E-mail",
   "Generate final codex": "Générer le Codex final",
   "Transmitting…": "Transmission…",
   "Enter a valid email address.": "Saisissez une adresse e-mail valide.",
@@ -426,7 +420,6 @@ QBI18N.add('fr', {
   "Codex generation paused": "Génération du Codex en pause",
   "We hit a snag.": "Un accroc est survenu.",
   "What happened": "Ce qui s’est passé",
-  "Try again": "Réessayer",
   "Continue without AI synthesis": "Continuer sans synthèse IA",
   "The /api/claude endpoint is not running in this environment. This is expected on a local Python server. To generate the Codex with AI, deploy to Vercel or run `vercel dev` locally. You can also click \"Continue without AI synthesis\" to see the derived Codex now.":
     "Le point d’accès /api/claude ne tourne pas dans cet environnement. C’est normal sur un serveur Python local. Pour générer le Codex avec l’IA, déployez sur Vercel ou lancez `vercel dev` en local. Vous pouvez aussi cliquer sur « Continuer sans synthèse IA » pour voir le Codex dérivé dès maintenant.",
@@ -457,7 +450,6 @@ QBI18N.add('fr', {
     "L’IA va synthétiser vos réponses une seconde fois. Les deux lectures seront enregistrées. Vous pourrez passer de l’une à l’autre en haut du Codex et exporter l’une ou l’autre en PDF. C’est la dernière régénération disponible pour cette session (deux lectures au maximum).",
   "Generation takes 20–40 seconds. Please keep this tab open.": "La génération prend 20 à 40 secondes. Gardez cet onglet ouvert.",
   "Yes, generate a second reading": "Oui, générer une seconde lecture",
-  "Cancel": "Annuler",
 
   /* ── 00 Brand Identity Card ─────────────────────────────────────── */
   "Brand Identity Card": "Carte d’identité de marque",
@@ -471,7 +463,7 @@ QBI18N.add('fr', {
   "The Essence": "L’essence",
   "STRATEGIC SYNTHESIS": "SYNTHÈSE STRATÉGIQUE",
   "Synthesized by AI strategist": "Synthétisé par le stratège IA",
-  "Derived from your 40+ answers": "Dérivé de vos plus de 40 réponses",
+  "Derived from your 38 answers": "Dérivé de vos 38 réponses",
   /* Derived sentence: "Your brand is <a>, <b>, and <c>." The adjectives
      agree with « marque ». The value of ", and" opens with a space on
      purpose: the node has none before the comma. */
@@ -502,16 +494,16 @@ QBI18N.add('fr', {
   "WHO WE ARE · HOW WE SHOW UP · WHAT WE REFUSE": "QUI NOUS SOMMES · COMMENT NOUS NOUS PRÉSENTONS · CE QUE NOUS REFUSONS",
   "Who we are": "Qui nous sommes",
   "How we show up": "Comment nous nous présentons",
-  "What we refuse": "Ce que nous refusons",
 
   /* ── 05 Colour ──────────────────────────────────────────────────── */
   "The Colour Territory": "Le territoire de couleur",
   "GENERATED PALETTE · 5 CHIPS": "PALETTE GÉNÉRÉE · 5 PASTILLES",
+  /* A colour role here. shared.js renders "Primary" as « Principal », for an
+     archetype; this page file loads last and keeps the colour sense. */
   "Primary": "Primaire",
   "Shadow": "Ombre",
   "Accent": true,
   "Surface": true,
-  "Secondary": "Secondaire",
   "Primary #{0}.": "Primaire #{0}.",
   "Accent #{0}.": "Accent #{0}.",
   "Neutral #{0}.": "Neutre #{0}.",
@@ -561,7 +553,6 @@ QBI18N.add('fr', {
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ": true,
   "abcdefghijklmnopqrstuvwxyz · 0123456789": true,
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789": true,
-  "Weight {0}": "Graisse {0}",
   "This brand": "Cette marque",
   "{0} makes a specific kind of work for a specific kind of person. Every sentence we write lands in this typeface: {1}, at 16 pixels over 28 pixels of line-height, with enough room around it to breathe. The writing should feel like someone who knows what they are doing - not someone performing that knowledge. We reserve the display family ({2}) for the first word you see. Everything else is this voice.":
     "{0} fait un travail précis pour une personne précise. Chaque phrase que nous écrivons arrive dans ce caractère : {1}, en 16 pixels sur 28 pixels d’interligne, avec assez d’espace autour pour respirer. L’écriture doit évoquer quelqu’un qui sait ce qu’il fait, pas quelqu’un qui met ce savoir en scène. Nous réservons la famille de titrage ({2}) au premier mot que vous voyez. Tout le reste, c’est cette voix.",
@@ -656,8 +647,6 @@ QBI18N.add('fr', {
   "Dominant colour emotion": "Émotion de la couleur dominante",
   "Forbidden colour": "Couleur interdite",
   "The speaking voice": "La voix parlée",
-  "Sound signature": "Signature sonore",
-  "Signature gesture": "Geste signature",
   "You said:": "Vous avez dit :",
 
   /* The brand moment */
@@ -801,7 +790,6 @@ QBI18N.add('fr', {
   "COLOUR": "COULEUR",
   "TYPOGRAPHY": "TYPOGRAPHIE",
   "SHAPE · MOTION": "FORME · MOUVEMENT",
-  "VOICE": "VOIX",
   "RITUAL": "RITUEL",
   "Lock your system around the primary": "Verrouillez votre système autour de la primaire",
   "Build every surface, button and illustration from {0} as your anchor. For UI states, nudge lightness ±8 without changing hue. Reserve the accent chip for interactive moments only - never as background.":
@@ -833,7 +821,23 @@ QBI18N.add('fr', {
 
   /* ── Quoted text: the reader's own words, and the social specimen ── */
   "“{0}”": "« {0} »",
-  "\"{0}\"": "« {0} »"
+  "\"{0}\"": "« {0} »",
+
+  /* ── Values the Codex computes and paints as code ───────────────────
+     They are CSS, so they read the same in French. Written out one by one:
+     every radius, stroke, duration and curve the derivation can produce. */
+  "2px": true, "3px": true, "4px": true, "5px": true, "6px": true, "7px": true,
+  "8px": true, "9px": true, "10px": true, "11px": true, "12px": true, "13px": true,
+  "14px": true, "15px": true, "16px": true, "17px": true, "18px": true,
+  "1.0px": true, "1.1px": true, "1.2px": true, "1.3px": true, "1.4px": true,
+  "1.5px": true, "1.6px": true, "1.7px": true, "1.8px": true,
+  "88ms": true, "132ms": true, "198ms": true, "160ms": true, "240ms": true,
+  "360ms": true, "264ms": true, "396ms": true, "594ms": true,
+  "cubic-bezier(.22,1,.36,1)": true,
+  "cubic-bezier(.85,0,.15,1)": true,
+  "cubic-bezier(.4,0,.2,1)": true,
+  /* A hex code, on a palette chip or a token line. */
+  "#{0}": "#{0}"
 });
 
 /* Section kickers built by joining three derived values in upper case.

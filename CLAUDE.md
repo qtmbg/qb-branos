@@ -53,6 +53,20 @@ Platform is abandoned: do not offer it, do not create its Stripe price. Pro and 
 dormant in code (Phase 05 gates, legacy price ids) and never offered publicly. Public
 promise, checkout, app, access and `terms.html` must all describe exactly this.
 
+**What is free and what Starter opens (owner decision, 13 November 2026).** Free: Signal
+Scan, three foundation exercises (Archetype Compass, Brand Soul Map, Sensescape), The
+Profiles, the Soul Map reading, the Brand Document. Starter adds the two other foundation
+exercises (Visual DNA, War Table), the three other readings, the three Build agents and
+the full Brand Profile export. Hold (Performance Dashboard, Quarterly Brand Review,
+Predictive Panel) is not open yet and no plan opens it. Never write that every exercise,
+or the whole foundation, is free. `qb-cloud.js` gates access accordingly. Enforced by
+`node tests/access/access.mjs`, which keeps the gate, the tool pages and `/foundation` in step.
+
+**`/docs/brand/copy-facts.md` is the one sheet every claim on the site is checked
+against**, in English and in French: the offer, the four movements, which tool sits in
+which movement, the numbers. The numbered phases are retired from everything a visitor
+reads. Read it before writing or changing any copy.
+
 **0. `/docs/strategy/brandos-recut-v1.md`.** Read this first. The 2026-09-20 recut
 decided what the product is and what it costs, and it supersedes the phase model and
 the pricing in every document below (its $0/$79 pricing is itself superseded, see above). Four movements, not six
@@ -154,6 +168,7 @@ BrandOS reads in English and in French. Same pages, same URLs, one switch.
 - **The server answers in the reader's language.** The browser sends `X-QB-Lang` on `/api/` calls. `agents/lang.js` appends one directive to the system prompt, so prompts stay in English and stay single. Agent runs carry it as `runtime_args.lang`. Emails and the checkout locale follow it.
 - **Any change to visible copy changes two things:** the page, and its dictionary. A new string with no entry shows in English on the French site.
 - **Text that leaves the page is translated too**: downloaded .txt and .md packs, clipboard copies, email links and the PowerPoint decks. JSON downloads are data and stay as they are.
+- **Every tool is walked end to end in both languages.** `node tests/e2e/run.mjs` runs one walk per page (`tests/e2e/walks/<page>.mjs`): open, answer, generate, read, export. Every backend call is answered locally. A walk is written once, in the page's own language. A new tool, or a new step in one, gets its walk.
 - Enforced by `node tests/i18n/i18n-audit.mjs` (renders every page in both languages, signed in where a page needs it, and fails on any painted text with no entry, on a recased product name, and on any change to the English rendering), `node tests/i18n/server-lang.mjs`, `node tests/i18n/exports.mjs`, `node scripts/i18n/wire-i18n.mjs --check` and `node scripts/i18n/sync-manifest.mjs --check`. `node scripts/i18n/extract.mjs <page>` lists source strings that have no entry yet.
 
 ### Brand mark

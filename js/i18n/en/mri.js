@@ -9,7 +9,7 @@ QBI18N.add('en', {
   /* Landing */
   "Quantum Branding · Brand MRI": true,
   "Ce que votre marque dit en réalité, en 5 minutes.": "What your brand actually says, in 5 minutes.",
-  "D'abord votre score gratuit. Ensuite, si vous voulez le plan, le diagnostic complet. Vous ne payez que pour fermer l'écart, pas pour le découvrir.":
+  "D’abord votre score gratuit. Ensuite, si vous voulez le plan, le diagnostic complet. Vous ne payez que pour fermer l’écart, pas pour le découvrir.":
     "First, your free score. Then, if you want the plan, the full diagnostic. You pay only to close the gap, not to find it.",
   "Gratuit :": "Free:",
   "score sur 100 + votre frein principal.": "score out of 100 + your main blocker.",
@@ -24,7 +24,7 @@ QBI18N.add('en', {
   "Re-test 90 jours : 39 $.": "90-day re-test: $39.",
   "Comparez votre nouveau score avec le précédent.": "Compare your new score with the previous one.",
   "Obtenir mon score gratuit": "Get my free score",
-  "Email obligatoire pour voir le score. Garantie : remboursement sous 7 jours sur simple email, avant l'enregistrement de la review.":
+  "Email obligatoire pour voir le score. Garantie : remboursement sous 7 jours sur simple email, avant l’enregistrement de la review.":
     "Email required to see the score. Guarantee: refund within 7 days on a simple email request, before the review is recorded.",
 
   /* Focus headlines (?focus=) and the return from Stripe (?paid=) */
@@ -38,7 +38,7 @@ QBI18N.add('en', {
     "What your competitors cannot say: your score tells you in 5 minutes.",
   "Votre promesse est-elle prouvée ? Votre score le dit en 5 minutes.":
     "Is your promise proven? Your score tells you in 5 minutes.",
-  "Paiement recu, merci. Refaites le diagnostic, votre palier est deja debloque.":
+  "Paiement reçu, merci. Refaites le diagnostic, votre palier est déjà ouvert.":
     "Payment received, thank you. Run the diagnostic again, your tier is already open.",
 
   /* Form */
@@ -55,35 +55,35 @@ QBI18N.add('en', {
   "Votre score précédent (re-test)": "Your previous score (re-test)",
   "Ex : 52": "E.g. 52",
   "10 questions": true,
-  "Répondez honnêtement. Il n'y a pas de bonne image à donner, seulement un écart à mesurer.":
+  "Répondez honnêtement. Il n’y a pas de bonne image à donner, seulement un écart à mesurer.":
     "Answer honestly. There is no good image to project, only a gap to measure.",
   "Voir mon score gratuit": "See my free score",
 
   /* Questions. Each legend is built as "1. [Pillar] Question". */
   "{0}. [{1}] {2}": "{0}. [{1}] {2}",
-  "Un visiteur comprend-il en 5 secondes ce que vous vendez, a qui, et pourquoi vous ?":
+  "Un visiteur comprend-il en 5 secondes ce que vous vendez, à qui, et pourquoi vous ?":
     "Does a visitor understand in 5 seconds what you sell, to whom, and why you?",
   "Votre phrase de positionnement tient-elle en une phrase, sans jargon ?":
     "Does your positioning fit in one sentence, with no jargon?",
-  "Sans logo, votre site reste-t-il reconnaissable face a 3 concurrents ?":
+  "Sans logo, votre site reste-t-il reconnaissable face à 3 concurrents ?":
     "Without the logo, does your site stay recognisable next to 3 competitors?",
-  "Votre identite visuelle (couleurs, typographie, ton) est-elle distincte, ou generique ?":
+  "Votre identité visuelle (couleurs, typographie, ton) est-elle distincte, ou générique ?":
     "Is your visual identity (colours, typography, tone) distinct, or generic?",
-  "La meme promesse apparait-elle sur le site, les reseaux et les documents commerciaux ?":
+  "La même promesse apparaît-elle sur le site, les réseaux et les documents commerciaux ?":
     "Does the same promise appear on the site, on social and in sales documents?",
-  "Le ton et le message sont-ils les memes partout, sans contradiction ?":
+  "Le ton et le message sont-ils les mêmes partout, sans contradiction ?":
     "Are the tone and the message the same everywhere, with no contradiction?",
   "Avez-vous une affirmation que vos concurrents ne peuvent pas reprendre telle quelle ?":
     "Do you have a claim your competitors cannot repeat as it stands?",
-  "Un client peut-il dire pourquoi vous choisir, vous, plutot qu'un concurrent, en une phrase ?":
+  "Un client peut-il dire pourquoi vous choisir, vous, plutôt qu’un concurrent, en une phrase ?":
     "Can a customer say why they would choose you over a competitor, in one sentence?",
   "Des preuves visibles soutiennent-elles la promesse (cas clients, chiffres, presse, avis) ?":
     "Does visible proof back the promise (client cases, figures, press, reviews)?",
-  "Ces preuves sont-elles precises et verifiables, ou vagues et generiques ?":
+  "Ces preuves sont-elles précises et vérifiables, ou vagues et génériques ?":
     "Is that proof precise and verifiable, or vague and generic?",
   "Non": "No",
-  "Plutot non": "Mostly no",
-  "Plutot oui": "Mostly yes",
+  "Plutôt non": "Mostly no",
+  "Plutôt oui": "Mostly yes",
   "Oui, clairement": "Yes, clearly",
 
   /* Pillars */
@@ -94,43 +94,43 @@ QBI18N.add('en', {
   "Preuve": "Proof",
   "Positionnement en une phrase": "Positioning in one sentence",
   "Reconnaissable sans logo": "Recognisable without the logo",
-  "Meme promesse partout": "Same promise everywhere",
+  "Même promesse partout": "Same promise everywhere",
   "Ce que les concurrents ne peuvent pas dire": "What competitors cannot say",
   "Ce qui prouve la promesse": "What proves the promise",
   "(faible)": "(weak)",
-  "(a renforcer)": "(to strengthen)",
+  "(à renforcer)": "(to strengthen)",
   "(solide)": "(solid)",
 
   /* Advice, per pillar and level */
-  "Reecrire la phrase en une ligne : ce que vous vendez, a qui, pourquoi vous. La tester sur 5 inconnus.":
+  "Réécrire la phrase en une ligne : ce que vous vendez, à qui, pourquoi vous. La tester sur 5 inconnus.":
     "Rewrite the sentence on one line: what you sell, to whom, why you. Test it on 5 strangers.",
-  "Raccourcir la phrase et la placer en haut de la page d'accueil, mot pour mot, partout.":
+  "Raccourcir la phrase et la placer en haut de la page d’accueil, mot pour mot, partout.":
     "Shorten the sentence and place it at the top of the homepage, word for word, everywhere.",
   "Garder cette phrase intacte. Ne pas la diluer avec des variantes par canal.":
     "Keep this sentence intact. Do not dilute it with a variant per channel.",
-  "Definir 3 signes distinctifs hors logo : une couleur, une typographie, un ton. Les appliquer partout.":
+  "Définir 3 signes distinctifs hors logo : une couleur, une typographie, un ton. Les appliquer partout.":
     "Define 3 distinctive signs beyond the logo: a colour, a typeface, a tone. Apply them everywhere.",
-  "Supprimer les elements generiques et garder un seul signe fort, repete a chaque point de contact.":
+  "Supprimer les éléments génériques et garder un seul signe fort, répété à chaque point de contact.":
     "Remove the generic elements and keep one strong sign, repeated at every touchpoint.",
-  "Proteger cette identite. Tout nouveau support doit passer le test sans logo.":
+  "Protéger cette identité. Tout nouveau support doit passer le test sans logo.":
     "Protect this identity. Every new piece has to pass the test without the logo.",
-  "Aligner site, reseaux et documents sur une seule promesse ecrite. Corriger les contradictions en premier.":
+  "Aligner site, réseaux et documents sur une seule promesse écrite. Corriger les contradictions en premier.":
     "Align site, social and documents on one written promise. Fix the contradictions first.",
   "Faire une passe canal par canal et remplacer chaque promesse divergente par la promesse centrale.":
     "Go through channel by channel and replace every diverging promise with the central one.",
-  "Documenter la promesse centrale pour que chaque nouveau contenu la reprenne sans derivation.":
+  "Documenter la promesse centrale pour que chaque nouveau contenu la reprenne sans dérive.":
     "Document the central promise so every new piece of content repeats it without drift.",
-  "Trouver une affirmation que les concurrents ne peuvent pas dire, puis la prouver. Sans elle, le prix decide.":
+  "Trouver une affirmation que les concurrents ne peuvent pas dire, puis la prouver. Sans elle, le prix décide.":
     "Find a claim competitors cannot make, then prove it. Without it, price decides.",
-  "Formuler la difference en une affirmation concrete, pas en adjectifs (premium, innovant, humain).":
+  "Formuler la différence en une affirmation concrète, pas en adjectifs (premium, innovant, humain).":
     "State the difference as one concrete claim, not as adjectives (premium, innovative, human).",
-  "Rendre la difference plus difficile a copier : un actif, une methode, une preuve propre a vous.":
+  "Rendre la différence plus difficile à copier : un actif, une méthode, une preuve propre à vous.":
     "Make the difference harder to copy: an asset, a method, a proof that is yours alone.",
-  "Ajouter 3 preuves precises sur la page d'accueil : un cas client, un chiffre, un temoignage nomme.":
+  "Ajouter 3 preuves précises sur la page d’accueil : un cas client, un chiffre, un témoignage nommé.":
     "Add 3 precise proofs to the homepage: a client case, a figure, a named testimonial.",
-  "Remplacer les preuves vagues par des preuves chiffrees et verifiables, avec noms et contextes.":
+  "Remplacer les preuves vagues par des preuves chiffrées et vérifiables, avec noms et contextes.":
     "Replace vague proof with verifiable proof in numbers, with names and context.",
-  "Mettre les meilleures preuves au meme niveau que la promesse, pas en bas de page.":
+  "Mettre les meilleures preuves au même niveau que la promesse, pas en bas de page.":
     "Put your best proof at the same level as the promise, not at the bottom of the page.",
 
   /* Result */
@@ -140,7 +140,7 @@ QBI18N.add('en', {
     "Your main blocker: {0}. The detail and the plan are in the paid tiers.",
   "Comparaison re-test : {0} → {1} ({2} points).": "Re-test comparison: {0} → {1} ({2} points).",
   "Palier actuel : {0}.": "Current tier: {0}.",
-  "Paiement recu, merci. Palier actuel : {0}.": "Payment received, thank you. Current tier: {0}.",
+  "Paiement reçu, merci. Palier actuel : {0}.": "Payment received, thank you. Current tier: {0}.",
   "score gratuit": "free score",
   "Flash (19 $, total payé 19 $)": "Flash ($19, total paid $19)",
   "Rapport complet (total payé 79 $)": "Full report (total paid $79)",
@@ -156,7 +156,7 @@ QBI18N.add('en', {
   "Diagnostic par pilier": "Diagnosis by pillar",
   "{0} : {1}/100": "{0}: {1}/100",
   "Phrase de positionnement proposée": "Proposed positioning sentence",
-  "Pour {0}, {1} est ce que vos concurrents ne peuvent pas dire, prouve par vos preuves.":
+  "Pour {0}, {1} est ce que vos concurrents ne peuvent pas dire, prouvé par vos preuves.":
     "For {0}, {1} is what your competitors cannot say, proven by your proof.",
   "vos clients": "your customers",
   "[Votre marque]": "[Your brand]",
@@ -179,7 +179,7 @@ QBI18N.add('en', {
   "Passer au palier suivant": "Move to the next tier",
   "MRI Flash · 19 $": "MRI Flash · $19",
   "Passer au rapport complet · 60 $ de plus (total 79 $)": "Move to the full report · $60 more ($79 total)",
-  "Ajouter la review video · 211 $ de plus (total 290 $)": "Add the video review · $211 more ($290 total)",
+  "Ajouter la review vidéo · 211 $ de plus (total 290 $)": "Add the video review · $211 more ($290 total)",
   "Re-test 90 jours · 39 $": "90-day re-test · $39",
   "Le détail de vos tensions et votre premier chantier, livrés immédiatement.":
     "The detail of your tensions and your first project, delivered immediately.",
@@ -188,20 +188,36 @@ QBI18N.add('en', {
   "La vidéo de Nizzar sur votre rapport, 10 min, sous 72 h ouvrées.":
     "Nizzar's video on your report, 10 min, within 72 business hours.",
   "{0} · Payer par Stripe": "{0} · Pay with Stripe",
-  "{0} · Paiement en cours d'activation": "{0} · Payment being activated",
+  "{0} · Paiement en cours d’activation": "{0} · Payment being activated",
   "Rapport complet direct · 79 $ · Payer par Stripe": "Full report, direct · $79 · Pay with Stripe",
-  "Mode démo : ajoutez ?demo=flash, ?demo=full ou ?demo=review à l'adresse pour tester ce palier sans payer. En production, ce bouton ouvre Stripe.":
+  "Mode démo : ajoutez ?demo=flash, ?demo=full ou ?demo=review à l’adresse pour tester ce palier sans payer. En production, ce bouton ouvre Stripe.":
     "Demo mode: add ?demo=flash, ?demo=full or ?demo=review to the address to test this tier without paying. In production, this button opens Stripe.",
   "Palier maximal atteint.": "Top tier reached.",
   "Rapport complet + review commandée. Prochaine étape : audit humain, avec vos 79 $ déduits sous 30 jours.":
     "Full report + review ordered. Next step: a human audit, with your $79 deducted within 30 days.",
   "Après le rapport complet : audit humain à partir de 450 $, avec vos 79 $ déduits si vous réservez sous 30 jours. Le MRI devient un acompte, pas une dépense perdue.":
     "After the full report: a human audit from $450, with your $79 deducted if you book within 30 days. The MRI becomes a deposit, not money lost.",
-  "Exporter mes réponses (CSV, pour l'équipe)": "Export my answers (CSV, for the team)",
+  "Exporter mes réponses (CSV, pour l’équipe)": "Export my answers (CSV, for the team)",
 
   /* Alerts */
   "Indiquez votre email pour voir le score gratuit.": "Enter your email to see the free score.",
   "Répondez aux 10 questions pour voir le résultat.": "Answer all 10 questions to see the result.",
-  "Ecrivez vos 2 ou 3 phrases pour la review, puis envoyez.": "Write your 2 or 3 sentences for the review, then send.",
+  "Écrivez vos 2 ou 3 phrases pour la review, puis envoyez.": "Write your 2 or 3 sentences for the review, then send.",
   "Aucun lead enregistré dans ce navigateur.": "No lead saved in this browser."
+});
+
+/* Exported text. The subject and the labels of the review order email.
+   They never reach the DOM, so js/mri-app.js asks QBI18N.text() for them.
+   The founder's own questions are appended as written. "Score : 54/100"
+   is already covered by the pillar pattern above. */
+QBI18N.add('en', {
+  "Brand MRI review : {0}": "Brand MRI review: {0}",
+  "Brand MRI review :": "Brand MRI review:",
+  "Marque : {0}": "Brand: {0}",
+  "Marque :": "Brand:",
+  "Site : {0}": "Website: {0}",
+  "Site :": "Website:",
+  "Email : {0}": "Email: {0}",
+  "Email :": "Email:",
+  "Questions pour la review :": "Questions for the review:"
 });

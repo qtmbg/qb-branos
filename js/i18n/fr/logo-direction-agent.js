@@ -3,18 +3,12 @@
 QBI18N.add('fr', {
   /* ── Head ───────────────────────────────────────────────────────── */
   "Logo Direction Agent · BrandOS": "Agent de direction de logo · BrandOS",
-  "Turn a locked Brand Profile into logo direction prompts you can hand to a designer or a generator. Phase 03 inside BrandOS, no brief writing needed.":
-    "Transformez un Profil de marque verrouillé en prompts de direction de logo, à confier à un designer ou à un générateur. Phase 03 dans BrandOS, sans brief à rédiger.",
-
-  /* The runtime writes og:locale itself; the audit then reads it back. */
-  "fr_FR": true,
+  "Turn your Brand Profile into a logo creative direction you can hand to a designer. A Build agent inside BrandOS, no brief writing needed.":
+    "Transformez votre Profil de marque en une direction créative de logo à confier à un designer. Un agent Build dans BrandOS, sans brief à rédiger.",
 
   /* ── Agent chassis, shared by the four agent tool pages ─────────── */
-  "The Brand Operating System. From idea to orbit. Identity, look, voice, content, strategy. One connected platform.":
-    "Le système d’exploitation de marque. De l’idée à l’orbite. Identité, allure, voix, contenu, stratégie. Une seule plateforme connectée.",
-  "Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.":
-    "La synthèse était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Réessayez dans un instant.",
-  "UNAVAILABLE": "INDISPONIBLE",
+  "The agent was unavailable and nothing was generated. Try again in a moment.":
+    "L’agent était indisponible et rien n’a été généré. Réessayez dans un instant.",
   "API error {0}: {1}": "Erreur d’API {0}\u00a0: {1}",
   "API error {0}": "Erreur d’API {0}",
 
@@ -33,23 +27,8 @@ QBI18N.add('fr', {
   "The Earthquake": "Le séisme",
   "The Sunrise": "Le lever du soleil",
 
-  /* Archetype names stay in English */
-  "The Rebel": true,
-  "The Outlaw": true,
-  "The Sage": true,
-  "The Creator": true,
-  "The Ruler": true,
-  "The Magician": true,
-  "The Hero": true,
-  "The Explorer": true,
-  "The Caregiver": true,
-  "The Lover": true,
-  "The Jester": true,
-  "The Everyman": true,
-  "The Innocent": true,
-
-  /* Mythological figures: names, like the archetypes. Two of them
-     (The Creator, The Sage) are the same strings as archetypes. */
+  /* Mythological figures stay in English, like the archetype names in
+     common.js: The Creator and The Sage are in both lists. */
   "The Alchemist": true,
   "The Oracle": true,
   "The Warrior": true,

@@ -121,8 +121,8 @@ QBI18N.add('fr', {
   "After test checkout, open Supabase profiles table, confirm the row updated. The critical link. Without this, payment opens nothing.":
     "Après le paiement de test, ouvrez la table profiles de Supabase et confirmez que la ligne est à jour. Le maillon critique. Sans lui, le paiement n’ouvre rien.",
   "Authenticated user runs a paid tool to output": "Un utilisateur authentifié lance un outil payant jusqu’au résultat",
-  "Same session as the checkout. Open one Phase 02 agent. QBP loads. Tool calls AI. Output renders.":
-    "Même session que le paiement. Ouvrez un agent de la Phase 02. Le QBP se charge. L’outil appelle l’IA. Le résultat s’affiche.",
+  "Same session as the checkout. Open one Build agent. QBP loads. Tool calls AI. Output renders.":
+    "Même session que le paiement. Ouvrez un agent Build. Le QBP se charge. L’outil appelle l’IA. Le résultat s’affiche.",
   "QBP writes through to Supabase, not just localStorage":
     "Le QBP s’écrit jusque dans Supabase, pas seulement dans localStorage",
   "brand-soul-map.html, complete one module, check the Supabase qbp table for the row. War room gl4.":
@@ -148,8 +148,8 @@ QBI18N.add('fr', {
     "Les états d’erreur ont des messages humains et des boutons pour réessayer",
   "Defensive parsing covers the data side. Now check the UX side. AI timeout, rate limit, malformed response. User sees a clear message, not a stack trace.":
     "L’analyse défensive couvre le côté données. Vérifiez maintenant le côté UX. Délai d’IA dépassé, limite de débit, réponse mal formée. L’utilisateur voit un message clair, pas une trace d’exécution.",
-  "QBP pre-population verified across all Phase 01 tools":
-    "Préremplissage du QBP vérifié sur tous les outils de la Phase 01",
+  "QBP pre-population verified across the foundation exercises":
+    "Préremplissage du QBP vérifié sur les exercices de la fondation",
   "Complete one tool, confirm the next reads the new fields. Brand Soul Map, Sensescape, Visual DNA, War Table.":
     "Terminez un outil, confirmez que le suivant lit les nouveaux champs. Brand Soul Map, Sensescape, Visual DNA, War Table.",
   "Email deliverability tested from cold inbox": "Délivrabilité des e-mails testée sur une boîte neuve",
@@ -169,8 +169,8 @@ QBI18N.add('fr', {
   "Bridges the Scan output into a consulting funnel. Copy lead: \"Not enough time. Let us build it with you.\"":
     "Relie le résultat du Scan à un tunnel de conseil. Accroche : « Pas assez de temps. Construisons-le avec vous. »",
   "Atelier card in pricing section": "Carte Atelier dans la section Tarifs",
-  "Reframe the four-tier matrix as four products and one service on ecosystem.html.":
-    "Recadrer la matrice à quatre offres en quatre produits et un service sur ecosystem.html.",
+  "Place Atelier beside Brand Profile and Starter on ecosystem.html, as a door with no price.":
+    "Placer Atelier à côté du Profil de marque et de Starter sur ecosystem.html, comme une porte sans prix.",
   "Predictive Panel gates 1 and 2: reposition or kill": "Portes 1 et 2 de Predictive Panel : repositionner ou abandonner",
   "Per the decisions panel, the call was \"Reposition\". Decide what they are before building.":
     "D’après le panneau des décisions, le choix était « Repositionner ». Décidez de ce qu’elles sont avant de construire.",
@@ -178,15 +178,15 @@ QBI18N.add('fr', {
     "Exports PDF : Performance de marque et Revue trimestrielle",
   "Brand Document Builder pattern. Easy to add when customers ask.":
     "Même schéma que le générateur du Document de marque. Facile à ajouter quand les clients le demandent.",
-  "Managed Agents: prove Phase 02 orchestration end-to-end":
-    "Managed Agents : prouver l’orchestration de la Phase 02 de bout en bout",
-  "SDK install, quickstart, extract Phase 02 prompts, create agent, create environment, end-to-end run. The v2 of the product.":
-    "Installation du SDK, démarrage rapide, extraction des prompts de la Phase 02, création de l’agent, création de l’environnement, exécution de bout en bout. La v2 du produit.",
+  "Managed Agents: prove Build orchestration end-to-end":
+    "Managed Agents : prouver l’orchestration de Build de bout en bout",
+  "SDK install, quickstart, extract the Build prompts, create agent, create environment, end-to-end run. The v2 of the product.":
+    "Installation du SDK, démarrage rapide, extraction des prompts de Build, création de l’agent, création de l’environnement, exécution de bout en bout. La v2 du produit.",
   "Build The Feed (SSE stream)": "Construire The Feed (flux SSE)",
-  "User-facing layer that watches agents work. Only after the Phase 02 agent is proven.":
-    "La couche visible par l’utilisateur, qui regarde les agents travailler. Seulement une fois l’agent de la Phase 02 éprouvé.",
-  "Phase 03, 04, 05 agents and gate wiring": "Agents des Phases 03, 04, 05 et branchement des portes",
-  "Sequenced after Phase 02 works in production.": "À enchaîner une fois la Phase 02 en service en production.",
+  "User-facing layer that watches agents work. Only after the Build agent is proven.":
+    "La couche visible par l’utilisateur, qui regarde les agents travailler. Seulement une fois l’agent Build éprouvé.",
+  "Hold tools and gate wiring": "Outils Hold et branchement des portes",
+  "Sequenced after Build works in production.": "À enchaîner une fois Build en service en production.",
   "Server-side API proxy (replaces the ?apikey= pattern)": "Proxy d’API côté serveur (remplace le schéma ?apikey=)",
   "Architectural shift, not hotfix. The clean fix for the Tier 00 security note. After revenue is flowing.":
     "Un changement d’architecture, pas un correctif à chaud. La correction propre de la note de sécurité du palier 00. Une fois le revenu en place.",
@@ -194,7 +194,7 @@ QBI18N.add('fr', {
     "Application native : choix du framework, WebView, Feed, App Store",
   "Do not start until agents are proven. A native shell around a half-built web app is a worse product.":
     "Ne commencez pas avant que les agents soient éprouvés. Une coque native autour d’une application web à moitié construite est un moins bon produit.",
-  "Buffer integration for Content Scheduler": "Intégration de Buffer pour le Planificateur de contenu",
+  "Buffer integration for auto-posting": "Intégration de Buffer pour la publication automatique",
   "Only when paying customers want auto-posting. Token paste, 5 min.":
     "Seulement quand des clients payants veulent la publication automatique. Collage du jeton, 5 min."
 });

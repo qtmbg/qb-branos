@@ -20,13 +20,12 @@
 
 import { createArtifactRow, createPaywallModal } from '/js/qb-components.js';
 
+// Filter labels. The key is the internal phase an artifact is stored
+// under; what is painted is the movement it belongs to.
 const PHASE_LABELS = {
-  '00': 'Acquisition',
-  '01': 'Discovery',
-  '02': 'Brand Creation',
-  '03': 'Content',
-  '04': 'Execution',
-  '05': 'Intelligence',
+  '01': 'The foundation',
+  '02': 'Build',
+  '05': 'Hold',
 };
 const PHASE_ENABLED = new Set(['01']); // Chapter 1 only enables Phase 01.
 
@@ -174,11 +173,11 @@ function buildFilterBar({ artifacts, state, onChange }) {
 
   // Phase group
   const phaseGroup = el('div', { class: 'qb-archive-filter-group', dataset: { filter: 'phase' } }, [
-    el('span', { class: 'qb-archive-filter-group__label' }, 'Phase'),
+    el('span', { class: 'qb-archive-filter-group__label' }, 'Movement'),
     el('div',  { class: 'qb-archive-filter-group__pills' }, [
       pill('All',           state.phase === 'all', () => onChange({ phase: 'all' })),
-      ...['01','02','03','04','05'].map(p => pill(
-        `${p} ${PHASE_LABELS[p]}`,
+      ...['01','02','05'].map(p => pill(
+        PHASE_LABELS[p],
         state.phase === p,
         () => onChange({ phase: p }),
         !PHASE_ENABLED.has(p),
@@ -266,10 +265,9 @@ function buildHeader({ totalCount, lockedCount }) {
 function openPaywallFor(row) {
   const overlay = createPaywallModal({
     reason: 'artifact',
+    // Headline, body and price are the component's own: one statement of
+    // what Starter adds, the same on every surface.
     eyebrow: 'Locked',
-    headline: 'Unlock the rest of your foundation.',
-    body: `${humanizeAgentSlug(row.agent_slug)} and the other paid synthesis artifacts unlock with Starter.`,
-    price: 'Starter, $97 / month. Cancel anytime.',
     primaryCta: 'Upgrade to Starter',
     secondaryCta: 'Not now',
     onPrimary:   () => { window.location.href = `/paywall?reason=artifact&agent=${encodeURIComponent(row.agent_slug || '')}`; },
@@ -431,17 +429,18 @@ export function renderArchiveEmpty(container, opts = {}) {
   if (!lockedAt) {
     // No lock yet → normal cold-start empty state.
     eyebrow = 'Empty';
-    headline = 'Your archive will fill as your foundation is built.';
-    body = 'Start with the Brand Soul Map. Each completed exercise produces a synthesis artifact you can read here.';
+    headline = 'Your archive fills once your foundation is locked.';
+    body = 'Start with the Brand Soul Map. Locking your foundation produces the readings you read here.';
     ctaLabel = 'Go to Foundation';
     ctaHref  = '/foundation';
   } else {
     // Locked but no artifacts → unusual state.
     eyebrow = 'Stuck';
     headline = 'Your foundation is locked but no artifacts have arrived.';
-    body = 'Something went wrong during synthesis. The retry surface on Foundation can re-dispatch the agents.';
-    ctaLabel = 'Open Foundation';
-    ctaHref  = '/foundation';
+    // The Console is where a run is started again. Foundation has no retry.
+    body = 'Something went wrong while your readings were produced. Open the Console to run them again, or write to me@qtmbg.com.';
+    ctaLabel = 'Open the Console';
+    ctaHref  = '/agents';
   }
 
   const article = el('article', { class: 'qb-archive is-empty' }, [
@@ -568,7 +567,7 @@ function buildEarlierWorkSection(legacy) {
   return el('section', { class: 'qb-archive-legacy' }, [
     el('h3', { class: 'qb-archive-legacy__title' }, 'Earlier work'),
     el('p',  { class: 'qb-archive-legacy__subhead' },
-      'Artifacts from before chain history started tracking.'),
+      'Artifacts produced before runs were grouped by lock.'),
     list,
   ]);
 }

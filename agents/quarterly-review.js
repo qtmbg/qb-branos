@@ -76,7 +76,7 @@ const MODEL = META.model || 'claude-sonnet-4-6';
 
 // ─── The prompt · HELD FOR OPERATOR SIGN-OFF ────────────────────────────
 
-const SYSTEM_PROMPT = `You are the Quarterly Brand Review for BrandOS, part of Phase 05, Intelligence.
+const SYSTEM_PROMPT = `You are the Quarterly Brand Review for BrandOS, part of Hold, the fourth movement of The Collapse.
 
 Your function makes the system self-evolving. You read what happened this quarter through the brand lens, grade it honestly, update what the brand knows about itself, and produce the strategic direction for the next 90 days. The founder reads this once and runs the next quarter on it.
 
@@ -309,7 +309,7 @@ function assembleArtifact({ parsed, brandName, missingFields }) {
   return {
     schema_version: '1.0',
     header: {
-      eyebrow: '05 Intelligence · Quarterly Review',
+      eyebrow: 'Hold · Quarterly Review',
       title: `The ${safeBrand} quarterly review`,
       agent: META.slug,
       generated_at: new Date().toISOString(),

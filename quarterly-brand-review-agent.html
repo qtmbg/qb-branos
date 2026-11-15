@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <script src="/js/qb-i18n.js" data-page="quarterly-brand-review-agent"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quarterly Brand Review Agent · BrandOS</title>
-<meta name="description" content="Close the quarter with a structured brand review. What held, what drifted, what changes next, fed straight back into your Brand Profile.">
+<title>Quarterly Brand Review · BrandOS</title>
+<meta name="description" content="The Quarterly Brand Review reads a quarter of data against your Brand Profile: what held, what drifted, what changes next, with proposed updates to the profile. Part of Hold in BrandOS. Not open yet.">
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1633,8 +1633,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BrandOS by Quantum Branding">
-<meta property="og:title" content="Quarterly Brand Review Agent · BrandOS">
-<meta property="og:description" content="Close the quarter with a structured brand review. What held, what drifted, what changes next, fed straight back into your Brand Profile.">
+<meta property="og:title" content="Quarterly Brand Review · BrandOS">
+<meta property="og:description" content="The Quarterly Brand Review reads a quarter of data against your Brand Profile: what held, what drifted, what changes next, with proposed updates to the profile. Part of Hold in BrandOS. Not open yet.">
 <meta property="og:url" content="https://quantumbranding.ai/quarterly-brand-review-agent.html">
 <meta property="og:image" content="https://quantumbranding.ai/img/brand/og/quarterly-brand-review-agent.png">
 <meta property="og:image:width" content="1200">
@@ -1643,8 +1643,8 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Quarterly Brand Review Agent · BrandOS">
-<meta name="twitter:description" content="Close the quarter with a structured brand review. What held, what drifted, what changes next, fed straight back into your Brand Profile.">
+<meta name="twitter:title" content="Quarterly Brand Review · BrandOS">
+<meta name="twitter:description" content="The Quarterly Brand Review reads a quarter of data against your Brand Profile: what held, what drifted, what changes next, with proposed updates to the profile. Part of Hold in BrandOS. Not open yet.">
 <meta name="twitter:image" content="https://quantumbranding.ai/img/brand/og/quarterly-brand-review-agent.png">
 <link rel="canonical" href="https://quantumbranding.ai/quarterly-brand-review-agent.html">
 <!-- QB JSON-LD -->
@@ -1653,7 +1653,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Quarterly Brand Review",
-  "description": "Close the quarter with a structured brand review and feed the next QBP loop.",
+  "description": "A structured brand review of the quarter: grades, learnings, proposed Brand Profile updates and the next 90 days. Part of Hold. Not open yet.",
   "url": "https://quantumbranding.ai/quarterly-brand-review-agent.html",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
@@ -1753,7 +1753,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
 <script type="text/babel">
 const { useState, useEffect } = React;
 
-const ARCHETYPES = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Jester','The Everyman','The Innocent'];
+const ARCHETYPES = ['The Rebel','The Sage','The Creator','The Ruler','The Magician','The Hero','The Explorer','The Caregiver','The Lover','The Jester','The Everyman','The Innocent'];
 const NATURAL_FORCES = ['The Ocean','Lightning','Wildfire','The River','The Earthquake','The Sunrise'];
 const QUARTERS = ['Q1 (Jan–Mar)','Q2 (Apr–Jun)','Q3 (Jul–Sep)','Q4 (Oct–Dec)'];
 
@@ -1803,28 +1803,13 @@ const Section = ({ n, title, children, note }) => (
   </div>
 );
 
-const ThemeToggle = () => {
-  const toggle = () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('qb-theme', next); } catch(e) {}
-  };
-  return (
-    <button onClick={toggle} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', padding: '6px 12px', borderRadius: 20, color: 'var(--text-2)' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em' }}>THEME</span>
-      <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'linear-gradient(135deg, var(--brass), var(--patina))' }} />
-    </button>
-  );
-};
-
 // ── QBP DIFF VIEW ─────────────────────────────────────────────────────────────
 const QBPDiffPanel = ({ updates }) => {
   if (!updates?.length) return <div style={{ color: 'var(--text-3)', fontSize: 14, padding: '40px 0', textAlign: 'center', fontStyle: 'italic' }}>The profile holds strong. No structural updates required this quarter.</div>;
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 8, padding: '16px 20px', background: 'var(--bg-surface)', borderRadius: 8, borderLeft: '2px solid var(--brass)' }}>
-        The QBP evolves based on what has been learned. These updates reflect what the brand has become - not what it was designed to be. Accept changes that feel true. Reject those that feel reactive.
+        These are proposed updates to the QBP, drawn from what the quarter taught. They reflect what the brand has become - not what it was designed to be. Nothing is applied for you. Keep the changes that feel true. Leave those that feel reactive.
       </div>
       {updates.map((u, i) => {
         let typeColor = 'var(--brass)';
@@ -1846,12 +1831,12 @@ const QBPDiffPanel = ({ updates }) => {
             
             {u.currentValue && (
               <div className="diff-old">
-                <span style={{ fontSize: 9, color: 'var(--error)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>PRIOR STATE</span>
+                <span style={{ fontSize: 9, color: 'var(--error)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>CURRENT STATE</span>
                 {u.currentValue}
               </div>
             )}
             <div className="diff-new">
-              <span style={{ fontSize: 9, color: 'var(--patina)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>EVOLVED STATE</span>
+              <span style={{ fontSize: 9, color: 'var(--patina)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>PROPOSED STATE</span>
               {u.proposedValue}
             </div>
             
@@ -1931,6 +1916,15 @@ const InitiativesPanel = ({ initiatives }) => {
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 const STEPS = ['Input Data', 'Intelligence', 'War Table'];
 
+// The five grades, as shown on the cards and written into the exported text.
+const GRADE_CARDS = [
+  { label: 'Overall', key: 'overall' },
+  { label: 'Coherence', key: 'brandCoherence' },
+  { label: 'Content', key: 'contentQuality' },
+  { label: 'Audience', key: 'audienceAlignment' },
+  { label: 'Commercial', key: 'commercialProgress' },
+];
+
 const QB_SYSTEM_PROMPT = `You are the Quarterly Brand Review Agent inside the BrandOS ecosystem.
 Your function is to run a full quarterly review that does three things:
 1. Read what happened this quarter through the brand lens - what the data says, what it means for identity
@@ -1944,7 +1938,7 @@ const LOADING_MESSAGES = [
   "Reading quarter's data through brand lens...",
   "Evaluating brand performance & coherence...",
   "Extracting core intelligence traces...",
-  "Re-calibrating Quantum Brand Profile...",
+  "Proposing Quantum Brand Profile updates...",
   "Constructing Q+1 strategic directives...",
   "Assembling War Table initiatives..."
 ];
@@ -2010,7 +2004,9 @@ function App() {
     return () => clearInterval(interval);
   }, [loading]);
 
-  const isValid = () => brandName.trim() && brandEssence.trim() && quarter && (whatWorked.trim() || topPerformers.trim() || keyMetrics.trim());
+  // Any quarter data field counts, as the error line below says.
+  const hasQuarterData = () => [contentProduced, topPerformers, lowestPerformers, keyMetrics, businessOutcomes, audienceEvolution, whatWorked, whatDidnt, biggestLesson, brandFeeling, identityDrift, emergingOpportunities].some(v => v.trim());
+  const isValid = () => brandName.trim() && brandEssence.trim() && quarter && hasQuarterData();
 
   const fmtProfile = (idx, p) => {
     if (!p || typeof p !== 'object') return `Persona ${idx + 1}: not specified`;
@@ -2141,7 +2137,7 @@ Requirements:
       setStep(2);
     } catch (e) {
       const msg = e.message === 'UNAVAILABLE'
-        ? 'Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.'
+        ? 'Synthesis was unavailable. The review could not be generated. Try again in a moment.'
         : 'Agent anomaly: ' + e.message;
       setError(msg);
       setStep(0);
@@ -2155,7 +2151,7 @@ Requirements:
     lines.push('QUARTER NARRATIVE:', result.quarterNarrative, '');
     if (result.quarterGrade) {
       lines.push('GRADES:');
-      Object.entries(result.quarterGrade).forEach(([k, v]) => k !== 'gradeExplanation' && lines.push(`  ${k}: ${v}`));
+      GRADE_CARDS.forEach(g => lines.push(`  ${g.label}: ${result.quarterGrade[g.key] || '-'}`));
       lines.push(result.quarterGrade.gradeExplanation, '');
     }
     lines.push('KEY LEARNINGS:');
@@ -2199,7 +2195,7 @@ Requirements:
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--text-1)', lineHeight: 1 }}>BrandOS</div>
           <div style={{ width: 1, height: 16, background: 'var(--border-medium)' }} />
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.15em', color: 'var(--text-3)', textTransform: 'uppercase' }}>Quarterly Review Phase</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.15em', color: 'var(--text-3)', textTransform: 'uppercase' }}>Quarterly Review</div>
         </div>
         <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
           <div className="step-indicator">
@@ -2213,7 +2209,6 @@ Requirements:
               </React.Fragment>
             ))}
           </div>
-          <ThemeToggle />
         </div>
       </header>
 
@@ -2221,10 +2216,10 @@ Requirements:
         {step === 0 && (
           <div className="fade-in">
             <div style={{ marginBottom: 56 }}>
-              <Label color="var(--brass)" mb={16}>Phase 05 - Intelligence + Pivot</Label>
+              <Label color="var(--brass)" mb={16}>Hold</Label>
               <h1 style={{ fontSize: 44, lineHeight: 1.1, marginBottom: 16, maxWidth: 600 }}>Quarterly Brand Review</h1>
               <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.8, maxWidth: 620 }}>
-                The tool that makes the system self-evolving. Feed the quarter's data, let the agent read it through your brand identity, update the QBP with learned reality, and produce the strategic direction for the next 90 days.
+                Feed the quarter's data. The agent reads it through your brand identity, proposes updates to the QBP from what it learned, and sets the strategic direction for the next 90 days.
               </p>
             </div>
 
@@ -2307,9 +2302,9 @@ Requirements:
           <div className="fade-in">
             <div style={{ marginBottom: 48, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }}>
               <div>
-                <Label color="var(--brass)" mb={12}>// Phase 05 Intelligence Complete</Label>
+                <Label color="var(--brass)" mb={12}>// Hold · Review complete</Label>
                 <h1 style={{ fontSize: 32, marginBottom: 8, color: 'var(--text-1)' }}>{brandName} - {quarter}</h1>
-                <p style={{ color: 'var(--text-3)', fontSize: 14 }}>Brand analyzed · QBP evolved · Directives set</p>
+                <p style={{ color: 'var(--text-3)', fontSize: 14 }}>Brand analyzed · QBP updates proposed · Directives set</p>
               </div>
               <div style={{ display: 'flex', gap: 12 }}>
                 <button onClick={exportReview} className="btn-secondary">Export Text</button>
@@ -2319,13 +2314,7 @@ Requirements:
 
             {result.quarterGrade && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 32 }}>
-                {[
-                  { label: 'Overall', key: 'overall' },
-                  { label: 'Coherence', key: 'brandCoherence' },
-                  { label: 'Content', key: 'contentQuality' },
-                  { label: 'Audience', key: 'audienceAlignment' },
-                  { label: 'Commercial', key: 'commercialProgress' },
-                ].map(g => (
+                {GRADE_CARDS.map(g => (
                   <div key={g.key} className="glass-card" style={{ padding: '20px 16px', textAlign: 'center' }}>
                     <div style={{ fontFamily: 'var(--font-display)', fontSize: 36, color: getGradeColor(result.quarterGrade[g.key]), lineHeight: 1 }}>{result.quarterGrade[g.key] || '-'}</div>
                     <div style={{ fontSize: 9, color: 'var(--text-3)', marginTop: 8, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>{g.label}</div>
@@ -2508,7 +2497,7 @@ Requirements:
 
       <footer style={{ borderTop: '1px solid var(--border-subtle)', padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-deep)', position: 'relative', zIndex: 10 }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.2em'}}>BrandOS</span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-4)', letterSpacing: '0.15em' }}>Entangled Time Edition</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-4)', letterSpacing: '0.15em' }}>Quarterly Brand Review / Hold</span>
       </footer>
     </div>
   );
