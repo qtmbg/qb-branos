@@ -15,7 +15,7 @@
 import { readFileSync } from 'node:fs';
 import { AGENTS } from '../../agents/registry.js';
 import { CANONICAL_MODELS, DEFAULT_MODEL } from '../../agents/contract.js';
-import { providerFor, hasKeyFor, pickModel, callModel, GOOGLE_MODELS, effectiveProvider, FALLBACK_ANTHROPIC_MODEL, GOOGLE_MIN_OUTPUT, GOOGLE_THINKING } from '../../agents/model-call.js';
+import { providerFor, hasKeyFor, pickModel, callModel, GOOGLE_MODELS, effectiveProvider, FALLBACK_ANTHROPIC_MODEL, GOOGLE_MIN_OUTPUT, GOOGLE_THINKING, forgetGoogleHealth } from '../../agents/model-call.js';
 import { OPERATOR_ONLY_SLUGS } from '../../api/_lib/operator-only.js';
 
 const failures = [];
@@ -125,6 +125,57 @@ console.log('\n2c · a Google call has room to answer');
     if (cfg.responseMimeType !== 'application/json') fail('the agent call lost JSON mode');
   } finally { globalThis.fetch = realFetch; }
   okIf('an agent call is sent with the output floor, the thinking level and JSON mode');
+
+  // A Google id that holds the request open. Seen live on 15 November 2026:
+  // the preferred id sat on every call for as long as it was allowed. An
+  // agent used to spend its whole limit there and fail, without asking the
+  // next id.
+  since();
+  const hang = init => new Promise((_, reject) => init.signal.addEventListener('abort', () => { const e = new Error('aborted'); e.name = 'AbortError'; reject(e); }));
+  const answer = text => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text }] } }], usageMetadata: {} }), { status: 200 });
+  process.env.QB_GOOGLE_STALL_MS = '60';
+  forgetGoogleHealth();
+  let urls = [];
+  try {
+    globalThis.fetch = async (url, init) => { urls.push(String(url)); return urls.length === 1 ? hang(init) : answer('{"from":"second"}'); };
+    let t0 = Date.now();
+    let r = await callModel({ model: G, system: 's', userContent: 'u', geminiKey: 'g', timeoutMs: 2000 });
+    if (!r.ok || r.text !== '{"from":"second"}') fail(`an agent whose first id stalled got no answer: ${JSON.stringify(r).slice(0, 160)}`);
+    if (urls.length !== 2 || urls[0] === urls[1] || !urls[0].includes(G)) fail(`after a stall the agent made ${urls.length} call(s): ${urls.map(u => u.split('/models/')[1]).join(', ')}`);
+    if (r.ok && urls[1] && !urls[1].includes(r.model)) fail(`the run records ${r.model}, not the id that answered`);
+    if (Date.now() - t0 > 1500) fail('the stalled id was held for the caller\'s whole limit, not the stall limit');
+
+    // The next run does not wait on the id that just stalled.
+    const stalled = urls[0];
+    urls = [];
+    globalThis.fetch = async (url) => { urls.push(String(url)); return answer('{"ok":true}'); };
+    r = await callModel({ model: G, system: 's', userContent: 'u', geminiKey: 'g' });
+    if (urls.length !== 1 || urls[0] === stalled) fail('the id that just stalled was asked first again');
+
+    // Every id stalls: a timeout, as before, after all three were asked.
+    forgetGoogleHealth();
+    urls = [];
+    globalThis.fetch = async (url, init) => { urls.push(String(url)); return hang(init); };
+    r = await callModel({ model: G, system: 's', userContent: 'u', geminiKey: 'g', timeoutMs: 150 });
+    if (r.ok || r.timeout !== true || r.retryable !== false) fail(`with every id stalled the result is ${JSON.stringify(r).slice(0, 140)}`);
+    if (new Set(urls).size !== GOOGLE_MODELS.size) fail(`with every id stalled only ${new Set(urls).size} of ${GOOGLE_MODELS.size} ids were asked`);
+
+    // A capacity refusal still walks, and rests the id that refused.
+    forgetGoogleHealth();
+    urls = [];
+    globalThis.fetch = async (url) => { urls.push(String(url)); return urls.length === 1 ? new Response('{"error":{"message":"high demand"}}', { status: 503 }) : answer('{"ok":true}'); };
+    r = await callModel({ model: G, system: 's', userContent: 'u', geminiKey: 'g' });
+    if (!r.ok || urls.length !== 2) fail('a capacity refusal no longer walks to the next id');
+    urls = [];
+    globalThis.fetch = async (url) => { urls.push(String(url)); return answer('{"ok":true}'); };
+    r = await callModel({ model: G, system: 's', userContent: 'u', geminiKey: 'g' });
+    if (urls.length !== 1 || urls[0].includes(`/${G}:`)) fail('the id that just refused for capacity was asked first again');
+  } finally {
+    globalThis.fetch = realFetch;
+    delete process.env.QB_GOOGLE_STALL_MS;
+    forgetGoogleHealth();
+  }
+  okIf('an agent leaves a stalled or refusing id for the next one, and the next run does not wait on it');
 }
 
 console.log('\n3 · model_override is validated, not trusted');

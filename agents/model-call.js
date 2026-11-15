@@ -143,25 +143,78 @@ export async function googleRequest({ model, apiKey, build, signal }) {
   return plain;
 }
 
-async function callGoogle({ model, system, text, apiKey, maxTokens, signal }) {
-  const res = await googleRequest({
-    model, apiKey, signal,
-    build: thinking => ({
-        contents: [{ role: 'user', parts: [{ text }] }],
-        ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
-        generationConfig: {
-          maxOutputTokens: Math.max(maxTokens, GOOGLE_MIN_OUTPUT),
-          ...(thinking ? { thinkingConfig: GOOGLE_THINKING } : {}),
-          // Every agent prompt ends "return only the JSON object". Asking
-          // for JSON at the API level removes the fenced-markdown failure
-          // mode the defensive parser exists to survive. The parser stays
-          // as the backstop.
-          responseMimeType: 'application/json',
-        },
-    }),
-  });
-  return res;
+// WHICH ID IS ASKED FIRST, AND FOR HOW LONG. Google's free tier often holds
+// a request open without answering, or refuses for capacity, on one id
+// while another answers at once. Seen live on 15 November 2026: the
+// preferred id sat on every call for as long as it was allowed, while the
+// next id answered the same request in 2 to 20 seconds.
+//   · An id that just stalled or refused is asked last for five minutes,
+//     so one bad id costs one caller one wait. It is never dropped.
+//   · An earlier id is given long enough to answer when healthy (a long
+//     reading arrived within 35 seconds) and no longer.
+// The memory is per warm instance. A cold start forgets, which is fine.
+const REST_MS = 5 * 60 * 1000;
+const restUntil = new Map();
+export function restGoogleId(id, now = Date.now()) { restUntil.set(id, now + REST_MS); }
+export function forgetGoogleHealth() { restUntil.clear(); }
+export function byHealth(preferred, now = Date.now()) {
+  const resting = m => (restUntil.get(m) || 0) > now;
+  return [...preferred.filter(m => !resting(m)), ...preferred.filter(resting)];
 }
+// Read at call time so a test can shorten it.
+export const googleStallMs = position => (Number(process.env.QB_GOOGLE_STALL_MS) || 45000) * [1, 4 / 3, 8 / 3][Math.min(position, 2)];
+
+/**
+ * Ask Google ids in turn. A capacity refusal (429, 503) or a stall rests
+ * that id and moves to the next. `limitMs(position, isLast)` is how long
+ * each one gets. Resolves { res, servedBy }, with res null when every id
+ * stalled. Throws AbortError only when the caller's own signal fired.
+ */
+export async function googleWalk({ chain, apiKey, build, signal, limitMs }) {
+  let res = null, servedBy = null;
+  for (let i = 0; i < chain.length; i++) {
+    const id = chain[i];
+    const last = i === chain.length - 1;
+    const attempt = new AbortController();
+    const whole = () => attempt.abort();
+    if (signal) { if (signal.aborted) attempt.abort(); else signal.addEventListener('abort', whole, { once: true }); }
+    const timer = setTimeout(() => attempt.abort(), limitMs(i, last));
+    try {
+      res = await googleRequest({ model: id, apiKey, build, signal: attempt.signal });
+    } catch (e) {
+      if (!(e && e.name === 'AbortError') || (signal && signal.aborted)) throw e;
+      console.warn(`[model-call] ${id} did not answer in ${Math.round(limitMs(i, last))} ms; ${last ? 'no routed model is left' : 'trying the next routed model'}`);
+      restGoogleId(id);
+      res = null;
+      continue;
+    } finally {
+      clearTimeout(timer);
+      if (signal) signal.removeEventListener('abort', whole);
+    }
+    servedBy = id;
+    // Only capacity walks. A 4xx is a real rejection and the next model
+    // would reject it too.
+    if (res.status !== 429 && res.status !== 503) break;
+    restGoogleId(id);
+    if (!last) console.warn(`[model-call] ${id} returned ${res.status}; trying the next routed model`);
+  }
+  return { res, servedBy };
+}
+
+// The body an agent sends to Google, with or without thinkingConfig.
+const googleBody = ({ system, text, maxTokens }) => thinking => ({
+  contents: [{ role: 'user', parts: [{ text }] }],
+  ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
+  generationConfig: {
+    maxOutputTokens: Math.max(maxTokens, GOOGLE_MIN_OUTPUT),
+    ...(thinking ? { thinkingConfig: GOOGLE_THINKING } : {}),
+    // Every agent prompt ends "return only the JSON object". Asking
+    // for JSON at the API level removes the fenced-markdown failure
+    // mode the defensive parser exists to survive. The parser stays
+    // as the backstop.
+    responseMimeType: 'application/json',
+  },
+});
 
 /**
  * @param {object}  o
@@ -199,39 +252,43 @@ export async function callModel({
              body: `no key for provider ${provider}` };
   }
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-  // Google's free tier answers 503 "high demand" on the busier models.
-  // Measured 2026-09-23: two of the three routed ids were unavailable
-  // while a third served every call. Retrying the SAME id does not help,
-  // so a capacity refusal walks to the next routed model instead. Claude
-  // has no equivalent list and does not walk.
-  const chain = provider === 'google'
-    ? [effectiveModel, ...[...GOOGLE_MODELS].filter(m => m !== effectiveModel)]
-    : [effectiveModel];
-
   let res, servedBy;
-  try {
-    for (const candidate of chain) {
-      const args = { model: candidate, system, text, apiKey: key, maxTokens, signal: controller.signal };
-      res = provider === 'google' ? await callGoogle(args) : await callAnthropic(args);
-      servedBy = candidate;
-      // Only capacity walks. A 4xx is a real rejection and the next
-      // model would reject it too.
-      if (res.status !== 429 && res.status !== 503) break;
-      if (candidate !== chain[chain.length - 1]) {
-        console.warn(`[model-call] ${candidate} returned ${res.status}; trying the next routed model`);
+  if (provider === 'google') {
+    // Google's free tier answers 503 "high demand" on the busier models,
+    // and sometimes does not answer at all. Retrying the SAME id does not
+    // help, so a refusal or a stall walks to the next routed model. The
+    // last id asked gets the caller's whole limit; an earlier one gets the
+    // shorter stall limit, so a caller's 60 seconds are not all spent
+    // waiting on an id that will not answer.
+    const chain = byHealth([effectiveModel, ...[...GOOGLE_MODELS].filter(m => m !== effectiveModel)]);
+    try {
+      ({ res, servedBy } = await googleWalk({
+        chain, apiKey: key,
+        build: googleBody({ system, text, maxTokens }),
+        limitMs: (i, last) => (last ? timeoutMs : Math.min(googleStallMs(i), timeoutMs)),
+      }));
+    } catch (e) {
+      return { ok: false, retryable: true, status: 0, body: (e && e.message) || '', provider };
+    }
+    // Every routed id stalled.
+    if (!res) return { ok: false, retryable: false, timeout: true, status: 0, body: '', provider };
+  } else {
+    // Claude has no equivalent list and does not walk.
+    const chain = [effectiveModel];
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      res = await callAnthropic({ model: chain[0], system, text, apiKey: key, maxTokens, signal: controller.signal });
+      servedBy = chain[0];
+    } catch (e) {
+      if (e && e.name === 'AbortError') {
+        return { ok: false, retryable: false, timeout: true, status: 0, body: '', provider };
       }
+      return { ok: false, retryable: true, status: 0, body: (e && e.message) || '', provider };
+    } finally {
+      clearTimeout(timer);
     }
-  } catch (e) {
-    clearTimeout(timer);
-    if (e && e.name === 'AbortError') {
-      return { ok: false, retryable: false, timeout: true, status: 0, body: '', provider };
-    }
-    return { ok: false, retryable: true, status: 0, body: (e && e.message) || '', provider };
   }
-  clearTimeout(timer);
 
   if (res.status === 429 || res.status >= 500) {
     return { ok: false, retryable: true, status: res.status, provider,

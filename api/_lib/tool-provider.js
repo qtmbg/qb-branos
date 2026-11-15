@@ -32,20 +32,16 @@ export const GOOGLE_TOOL_MODELS = [
 // route and the fleet cannot drift apart. See agents/model-call.js for why.
 export { GOOGLE_MIN_OUTPUT, GOOGLE_THINKING, googleRequest } from '../../agents/model-call.js';
 
-// WHICH ID IS ASKED FIRST. Google's free tier often holds a request open
-// without answering, or refuses for capacity, on one id while another
-// answers at once. An id that just did either is asked last for five
-// minutes, so one bad id costs one founder one wait and not every founder
-// every time. Kept per warm instance; a cold start forgets, which is fine.
-const REST_MS = 5 * 60 * 1000;
-const restUntil = new Map();
-export function restId(id, now = Date.now()) { restUntil.set(id, now + REST_MS); }
-export function forgetToolHealth() { restUntil.clear(); }
+// Which id is asked first is decided with the fleet's own health memory
+// (agents/model-call.js): an id that just stalled or refused is asked last
+// for five minutes, and never dropped.
+import { byHealth, restGoogleId, forgetGoogleHealth } from '../../agents/model-call.js';
+export { googleWalk } from '../../agents/model-call.js';
+export const restId = restGoogleId;
+export const forgetToolHealth = forgetGoogleHealth;
 export function toolChain(wanted, now = Date.now()) {
   const first = GOOGLE_TOOL_MODELS.includes(wanted) ? wanted : GOOGLE_TOOL_MODELS[0];
-  const preferred = [first, ...GOOGLE_TOOL_MODELS.filter(m => m !== first)];
-  const resting = m => (restUntil.get(m) || 0) > now;
-  return [...preferred.filter(m => !resting(m)), ...preferred.filter(resting)];
+  return byHealth([first, ...GOOGLE_TOOL_MODELS.filter(m => m !== first)], now);
 }
 
 /** Which provider serves a tool request, given the keys on the deployment. */
