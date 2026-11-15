@@ -9,7 +9,17 @@
 import { langFromRequest, withLanguage } from '../agents/lang.js';
 import { toolProvider, toGoogleContents, unwrapJsonFence, GOOGLE_TOOL_MODELS, GOOGLE_MIN_OUTPUT } from './_lib/tool-provider.js';
 
-export const config = { runtime: 'edge' };
+// Node serverless, not Edge. Edge must begin answering within about 25
+// seconds, and this route answers only once the model has finished: a long
+// reading (a Codex, a dossier) ran past that and the founder got a 504 page
+// in place of an answer. Seen live on 15 November 2026, on the day the
+// tools moved to Google. api/agents/run.js left Edge for the same reason.
+// Same Web-standard handler (Request → Response).
+export const config = { runtime: 'nodejs', maxDuration: 300 };
+
+// One budget for the whole request, the walk across Google ids included.
+// Under maxDuration, so the founder reads a sentence and not a platform page.
+const ANSWER_BUDGET_MS = 240000;
 
 const ALLOWED_MODELS = [
   'claude-opus-4-7',
@@ -30,7 +40,7 @@ const json = (obj, status) => new Response(JSON.stringify(obj), {
 // The pages read `error.message` first, then `error`. One shape for both providers.
 const fail = (status, message, type = 'upstream_error') => json({ type: 'error', error: { type, message } }, status);
 
-async function askGoogle({ body, system, maxTokens, apiKey }) {
+async function askGoogle({ body, system, maxTokens, apiKey, signal }) {
   const wanted = GOOGLE_TOOL_MODELS.includes(body.model) ? body.model : GOOGLE_TOOL_MODELS[0];
   const chain = [wanted, ...GOOGLE_TOOL_MODELS.filter(m => m !== wanted)];
   const payload = {
@@ -46,7 +56,7 @@ async function askGoogle({ body, system, maxTokens, apiKey }) {
   for (const candidate of chain) {
     upstream = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${candidate}:generateContent`,
-      { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey }, body: JSON.stringify(payload) }
+      { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey }, body: JSON.stringify(payload), signal }
     );
     servedBy = candidate;
     // Only capacity walks to the next id. Any other refusal would be
@@ -84,7 +94,7 @@ async function askGoogle({ body, system, maxTokens, apiKey }) {
   }, 200);
 }
 
-async function askAnthropic({ body, system, maxTokens, apiKey }) {
+async function askAnthropic({ body, system, maxTokens, apiKey, signal }) {
   const payload = {
     model: ALLOWED_MODELS.includes(body.model) ? body.model : DEFAULT_MODEL,
     max_tokens: maxTokens,
@@ -96,12 +106,13 @@ async function askAnthropic({ body, system, maxTokens, apiKey }) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify(payload),
+    signal,
   });
   const data = await upstream.json();
   return json(data, upstream.status);
 }
 
-export default async function handler(req) {
+async function handler(req) {
   // CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -137,11 +148,19 @@ export default async function handler(req) {
   // the answer comes back in French. English is passed through untouched.
   const system = withLanguage(body.system, langFromRequest(req));
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ANSWER_BUDGET_MS);
   try {
     return provider === 'google'
-      ? await askGoogle({ body, system, maxTokens, apiKey: geminiKey })
-      : await askAnthropic({ body, system, maxTokens, apiKey: anthropicKey });
+      ? await askGoogle({ body, system, maxTokens, apiKey: geminiKey, signal: controller.signal })
+      : await askAnthropic({ body, system, maxTokens, apiKey: anthropicKey, signal: controller.signal });
   } catch (err) {
+    if (err && err.name === 'AbortError') return fail(504, 'The AI service took too long to answer. Try again.', 'timeout_error');
     return fail(502, 'The AI service could not be reached.');
+  } finally {
+    clearTimeout(timer);
   }
 }
+
+export const POST = handler;
+export const OPTIONS = handler;

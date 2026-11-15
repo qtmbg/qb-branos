@@ -5,7 +5,10 @@
 
 import { langFromRequest, withLanguage } from '../agents/lang.js';
 
-export const config = { runtime: 'edge' };
+// Node serverless, not Edge: Edge must begin answering within about 25
+// seconds and this route answers only once the model has finished. See
+// api/claude.js, which hit that limit live on 15 November 2026.
+export const config = { runtime: 'nodejs', maxDuration: 300 };
 
 // Verified live 2026-09-23. The previous three ids are retired and
 // answer 404, so this proxy was dead on arrival for the iOS app too.
@@ -16,7 +19,7 @@ const ALLOWED_MODELS = [
 ];
 const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
 
-export default async function handler(req) {
+async function handler(req) {
   // CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -125,3 +128,6 @@ export default async function handler(req) {
     });
   }
 }
+
+export const POST = handler;
+export const OPTIONS = handler;

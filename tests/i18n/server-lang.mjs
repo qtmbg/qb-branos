@@ -83,7 +83,10 @@ ok(sent && sent.systemInstruction && sent.systemInstruction.parts[0].text === fr
 
 // 4. /api/claude.
 process.env.ANTHROPIC_API_KEY = 'test-key';
-const claude = (await import('../../api/claude.js')).default;
+// The route is a Node function: its handler is the POST export.
+const hadGemini = process.env.GEMINI_API_KEY;
+delete process.env.GEMINI_API_KEY;          // first the standby path, where only the Anthropic key is present
+const claude = (await import('../../api/claude.js')).POST;
 const post = headers => new Request('https://x.test/api/claude', {
   method: 'POST', headers: { 'Content-Type': 'application/json', ...headers },
   body: JSON.stringify({ system: PROMPT, messages: [{ role: 'user', content: 'hi' }] }),
@@ -92,6 +95,13 @@ await claude(post({}));
 ok(sent.system === PROMPT, '/api/claude in English passes the system prompt through');
 await claude(post({ 'X-QB-Lang': 'fr' }));
 ok(sent.system === frPrompt, '/api/claude in French appends the directive');
+// The path the tools take today: Google answers, and the directive rides in systemInstruction.
+process.env.GEMINI_API_KEY = 'test-google';
+await claude(post({}));
+ok(sent.systemInstruction && sent.systemInstruction.parts[0].text === PROMPT, '/api/claude on Google passes the English prompt through');
+await claude(post({ 'X-QB-Lang': 'fr' }));
+ok(sent.systemInstruction && sent.systemInstruction.parts[0].text === frPrompt, '/api/claude on Google appends the directive in French');
+if (hadGemini === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = hadGemini;
 globalThis.fetch = realFetch;
 
 // 5. Emails.
