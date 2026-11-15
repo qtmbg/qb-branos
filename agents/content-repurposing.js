@@ -56,7 +56,9 @@ export const META = {
   },
   triggers: ['manual', 'regenerate'],
   error_codes: ['config_missing', 'edge_timeout', 'model_call_failed'],
-  // model omitted · resolves to the canonical Sonnet default.
+  // On Google with the rest of the fleet. Operator decision, 15 November
+  // 2026: nothing may wait on the Anthropic account.
+  model: 'gemini-3.5-flash',
   retry_budget: 0,
 };
 

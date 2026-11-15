@@ -1235,6 +1235,7 @@ QBI18N.add('fr', {
   "The AI service refused the request.": "Le service d’IA a refusé la demande.",
   "The AI service returned no text ({0}).": "Le service d’IA n’a renvoyé aucun texte ({0}).",
   "The AI service could not be reached.": "Le service d’IA est injoignable.",
+  "The AI service did not answer.": "Le service d’IA n’a pas répondu.",
   "Lock write failed": "Écriture du verrouillage impossible",
   "Billing portal not configured": "Portail de facturation non configuré",
   "No active subscription": "Aucun abonnement actif",

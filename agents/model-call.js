@@ -13,7 +13,9 @@
 // FREE TIER, by operator decision 2026-09-23. Google's free tier uses
 // prompts and responses to improve their products. That is accepted
 // here: the free path costs nothing to run, which is the point. The
-// seven operator-only agents stay on Anthropic.
+// seven operator-only agents stayed on Anthropic until 15 November 2026,
+// when the operator moved them here too: with the Anthropic account
+// empty they could not run at all. Every production agent is on Google.
 //
 // WHAT CHANGED SINCE. This note once ended "nothing a customer paid for
 // is generated this way". That was true of the $79 document, which was

@@ -1,16 +1,15 @@
 // Content Bridge: three production layers, their platforms, the consent
-// gate, the API-key modal, the direct call to api.anthropic.com with its
-// language directive, every way that call can fail, the four tabs of the
-// brief, and copy.
+// gate, the call through /api/claude with the reader's language (no key is
+// asked for), every way that call can fail, the four tabs of the brief,
+// and copy.
 //
 // The page has no Content Approval Loop and no .txt pack, so neither is
 // walked here.
 import { languageDirective } from '../../../agents/lang.js';
 
 export const page = 'content-bridge.html';
-export const title = 'layers, consent, API-key modal, direct model call and its language, every error, brief tabs, copy';
+export const title = 'layers, consent, no key asked, the shared model route and its language, every error, brief tabs, copy';
 
-const KEY = 'sk-ant-api03-walk-key-000111';
 const SCRIPT = 'Four in the morning. The starter sets the pace. We bake until the street wakes.';
 const OWN_PROMPT_END = 'Return ONLY valid JSON. No markdown, no preamble.';
 
@@ -70,10 +69,11 @@ export async function walk(w) {
     return reply;
   });
   // Registered after the model mock, so it is asked first. It answers only
-  // while a failure is being staged.
-  await w.mock(/api\.anthropic\.com/, route => {
+  // while a failure is being staged, in the shapes /api/claude answers in.
+  const BUSY = 'The AI service is busy right now. Try again in a minute.';
+  await w.mock('**/api/claude', route => {
     const json = (status, body) => route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
-    if (mode === 'refused') return json(401, { error: { message: 'invalid x-api-key' } });
+    if (mode === 'refused') return json(429, { type: 'error', error: { type: 'overloaded_error', message: BUSY } });
     if (mode === 'bare') return json(500, {});
     if (mode === 'soft') return json(200, { error: { message: 'Quota reached' } });
     if (mode === 'soft-plain') return json(200, { error: 'Quota reached, plainly' });
@@ -81,6 +81,10 @@ export async function walk(w) {
     if (mode === 'offline') return route.abort();
     return route.fallback();
   });
+  // The page must never go to a provider on its own. It once called
+  // Anthropic from the browser with a key the operator had to paste in.
+  const direct = [];
+  p.on('request', r => { if (/api\.anthropic\.com|generativelanguage\.googleapis\.com/.test(r.url())) direct.push(r.url()); });
 
   // w.see flattens a no-break space before it searches and XPath does not,
   // so a French line that holds one ("Erreur de génération du brief\u00a0:")
@@ -98,9 +102,6 @@ export async function walk(w) {
   // As written in the page, for a label the stylesheet paints in capitals.
   const written = async locator => flat(await locator.textContent());
 
-  const modal = p.locator('.modal-overlay');
-  const keyButton = p.locator('#root header button.icon-btn');
-  const keyField = modal.locator('input');
   const generate = p.locator('#root main button.btn-primary').last();
   const script = p.locator('#root main textarea');
   const platforms = p.locator('#root .platform-btn');
@@ -109,16 +110,17 @@ export async function walk(w) {
   const fieldOf = async label => (await find(label)).locator('xpath=following-sibling::input[1]');
   const stored = () => p.evaluate(() => localStorage.getItem('qb-api-key'));
 
-  await w.step('open: no key yet, three layers', async () => {
+  await w.step('open: three layers, and no key is asked for', async () => {
     await w.open();
     await see('Phase 03 - Production Layer', { timeout: 30000 });
     await see('Content Bridge');
-    await see('API key required to generate briefs');
-    await see('Add your Anthropic API key to enable the AI brief engine.');
     w.check(await p.locator('#root .layer-card').count() === LAYERS.length, 'the page does not offer three production layers');
     for (const layer of LAYERS) await see(layer.label);
-    w.check(await keyButton.getAttribute('title') === await w.say('Add Anthropic API key'), 'the key button does not say a key is missing');
-    w.check(await keyButton.getAttribute('aria-label') === await w.say('Configure API key'), 'the key button is not named in the page language');
+    const named = /API key|clé API|Anthropic|sk-ant/i.exec(await p.locator('#root').innerText());
+    w.check(!named, `the page asks for a key or names a provider: ${JSON.stringify(named && named[0])}`);
+    w.check(await p.locator('#root header button.icon-btn').count() === 0, 'the header still carries a key button');
+    w.check(await p.locator('.modal-overlay').count() === 0, 'a key modal is on the page');
+    w.check(await stored() === null, 'a provider key is kept in this browser');
     await see('v1.0 · System Operational');
   });
 
@@ -152,75 +154,11 @@ export async function walk(w) {
     w.check(await generate.isDisabled(), 'the brief button is live with no script');
   });
 
-  await w.step('no key: the run stops and opens the key modal', async () => {
+  await w.step('a script in place: the brief button comes on, nothing was asked yet', async () => {
     await w.fill(script, SCRIPT);
     await w.fill(await fieldOf('Key message'), 'One loaf, one line');
     w.check(await generate.isEnabled(), 'the brief button stays off with a script in place');
-    await generate.click();
-    await see('API key required - click the key icon in the header.');
-    await see('Connect your account');
-    w.check(calls.length === 0, 'the model was called with no key');
-  });
-
-  await w.step('API-key modal: show, hide, save, reopen, cancel, close', async () => {
-    await see('Anthropic API Key', { in: modal });
-    await see('Content Bridge calls the Claude API directly from your browser. Your key is stored only in', { in: modal });
-    await see('localStorage', { in: modal });
-    await see('and never transmitted anywhere else.', { in: modal });
-    await see('Your API key', { in: modal });
-    await see('Get your key at', { in: modal });
-    w.check(await modal.locator('a').getAttribute('href') === 'https://console.anthropic.com/keys', 'the key link changed');
-    w.check(await keyField.getAttribute('placeholder') === 'sk-ant-api03-...', 'the key field placeholder changed');
-    const save = await find('Save & Connect', { in: modal });
-    w.check(await save.isDisabled(), 'Save is live on an empty key');
-    w.check(await (await find('Cancel', { in: modal })).count() === 0, 'Cancel is offered before any key was saved');
-
-    const eye = modal.locator('button[aria-label]');
-    w.check(await keyField.getAttribute('type') === 'password' && await eye.getAttribute('aria-label') === await w.say('Show key'), 'the key does not start hidden');
-    await eye.click();
-    w.check(await keyField.getAttribute('type') === 'text' && await eye.getAttribute('aria-label') === await w.say('Hide key'), 'the key did not show');
-    await eye.click();
-    w.check(await keyField.getAttribute('type') === 'password', 'the key did not hide again');
-
-    await w.fill(keyField, '   ');
-    w.check(await save.isDisabled(), 'Save is live on a key made of spaces');
-    await w.fill(keyField, `  ${KEY}  `);
-    await keyField.press('Enter');
-    await absent('Connect your account');
-    w.check(await stored() === KEY, `the stored key is ${JSON.stringify(await stored())}`);
-    await absent('API key required to generate briefs');
-    w.check(await keyButton.getAttribute('title') === await w.say(`API key configured (…${KEY.slice(-6)})`), `the key button says ${JSON.stringify(await keyButton.getAttribute('title'))}`);
-
-    await keyButton.click();
-    const active = await text((await find('KEY ACTIVE - ENDS IN …', { in: modal })));
-    w.check(active === `${await w.say('KEY ACTIVE - ENDS IN …')}${KEY.slice(-6)}`, `the modal says ${JSON.stringify(active)}`);
-    w.check(await keyField.inputValue() === KEY, 'the modal did not reopen on the saved key');
-    await click('Cancel', { in: modal });
-    await absent('Connect your account');
-
-    // The scrim covers the whole window, banner and site nav included: while
-    // the modal is open nothing behind it can be pressed, and a click
-    // anywhere outside the card closes it.
-    await keyButton.click();
-    await see('Connect your account');
-    // The scrim slides up into place over a quarter of a second. Judge it
-    // once it has arrived: until then its top edge is still on its way.
-    await p.waitForFunction(() => {
-      const m = document.querySelector('.modal-overlay');
-      return !!m && m.getAnimations().every(a => a.playState === 'finished');
-    }, null, { timeout: 3000 });
-    const under = await p.evaluate(() => [[6, 6], [640, 60], [1180, 86], [20, 450]].map(([x, y]) => {
-      const el = document.elementFromPoint(x, y);
-      return el && el.closest('.modal-overlay') ? '' : `(${x},${y}) is ${el ? el.tagName.toLowerCase() + '.' + String(el.className).split(' ')[0] : 'nothing'}`;
-    }).filter(Boolean));
-    w.check(under.length === 0, `the modal scrim does not cover the page: ${under.join(', ')}`);
-    await modal.click({ position: { x: 6, y: 6 } });           // over the banner, outside the card
-    await absent('Connect your account');
-    await keyButton.click();
-    await see('Connect your account');
-    await modal.click({ position: { x: 20, y: 450 } });        // beside the card
-    await absent('Connect your account');
-    w.check(await stored() === KEY, 'closing the modal changed the stored key');
+    w.check(calls.length === 0, 'the model was called before a brief was asked for');
   });
 
   // Each failure leaves the founder on the form, script intact, with the
@@ -229,6 +167,9 @@ export async function walk(w) {
     await w.step(`error: ${name}`, async () => {
       stage();
       await generate.click();
+      // Named here, before the wait below can time out on it.
+      await p.waitForTimeout(400);
+      w.check(direct.length === 0, `the page called a provider itself: ${direct[0]}`);
       await see(typeof message === 'function' ? await message() : message, { timeout: 12000 });
       w.check(await script.inputValue() === SCRIPT, 'the script was emptied by the failure');
       w.check(await generate.isEnabled(), 'the brief button did not come back after the failure');
@@ -237,15 +178,15 @@ export async function walk(w) {
     });
   };
   const parseError = text => p.evaluate(t => { try { JSON.parse(t); return ''; } catch (e) { return e.message; } }, text);
-  await fails('key refused', 'Brief generation error: API error 401: invalid x-api-key', () => { mode = 'refused'; });
-  await fails('refusal with no message', 'Brief generation error: API error 500 Internal Server Error', () => { mode = 'bare'; });
+  await fails('provider busy', 'Brief generation error: ' + BUSY, () => { mode = 'refused'; });
+  await fails('refusal with no message', 'Brief generation error: The AI service did not answer.', () => { mode = 'bare'; });
   await fails('error inside a 200', 'Brief generation error: Quota reached', () => { mode = 'soft'; });
   await fails('error as plain text inside a 200', 'Brief generation error: Quota reached, plainly', () => { mode = 'soft-plain'; });
-  await fails('answer with no text', 'Brief generation error: Empty or malformed response from API', () => { mode = 'empty'; });
+  await fails('answer with no text', 'Brief generation error: The AI service did not answer.', () => { mode = 'empty'; });
   await fails('no network', 'Brief generation error: Failed to fetch', () => { mode = 'offline'; });
   await fails('prose instead of a brief', async () => `Brief generation error: ${await parseError('I can not write that brief.')}`, () => { reply = 'I can not write that brief.'; });
 
-  await w.step('the call: straight to Anthropic, in the page language', async () => {
+  await w.step('the call: through the shared route, saying the reader\'s language', async () => {
     hold = 1800; calls.length = 0;
     await generate.click();
     await see('Processing…');
@@ -254,20 +195,15 @@ export async function walk(w) {
     hold = 0;
     w.check(calls.length === 1, `the model was called ${calls.length} times for one brief`);
     const call = calls[0] || { body: {}, headers: {}, url: '' };
-    w.check(call.url === 'https://api.anthropic.com/v1/messages' && call.method === 'POST', `the call went to ${call.method} ${call.url}`);
-    w.check(call.headers['x-api-key'] === KEY, 'the call did not carry the saved key');
-    w.check(call.headers['anthropic-version'] === '2023-06-01', 'the call did not name the API version');
-    w.check(!('x-qb-lang' in call.headers), 'the cross-origin call carries X-QB-Lang, which forces a preflight the other host never agreed to');
+    w.check(/\/api\/claude$/.test(call.url) && call.method === 'POST', `the call went to ${call.method} ${call.url}`);
+    w.check(direct.length === 0, `the page called a provider itself: ${direct[0]}`);
+    w.check(!('x-api-key' in call.headers), 'the browser sent a provider key');
+    w.check((call.headers['x-qb-lang'] === 'fr') === (w.lang === 'fr'), `the call tells the server the reader's language is ${call.headers['x-qb-lang']}`);
     w.check(call.body.model === 'claude-sonnet-4-6' && call.body.max_tokens === 3000, `the call asked for ${call.body.model}, ${call.body.max_tokens} tokens`);
     const system = call.body.system || '';
     w.check(system.startsWith('You are the QB Content Bridge inside the BrandOS ecosystem.'), 'the system prompt is not the page’s own');
-    if (w.lang === 'fr') {
-      w.check(system.endsWith(languageDirective('fr')), 'in French the system prompt does not end with the language directive');
-      w.check(system.slice(0, -languageDirective('fr').length).trimEnd().endsWith(OWN_PROMPT_END), 'the directive replaced part of the prompt instead of following it');
-    } else {
-      w.check(system.endsWith(OWN_PROMPT_END), 'in English the system prompt does not end where the page ends it');
-      w.check(!system.includes('LANGUAGE OF THE OUTPUT') && !languageDirective('en'), 'in English the system prompt carries a language directive');
-    }
+    // The server appends the language directive once, from that header.
+    w.check(system.endsWith(OWN_PROMPT_END) && !system.includes('LANGUAGE OF THE OUTPUT'), 'the browser changed the system prompt; the server adds the language directive itself');
     const asked = (call.body.messages && call.body.messages[0] && call.body.messages[0].content) || '';
     for (const part of [`PRODUCTION LAYER: ${first.label}`, 'TARGET PLATFORM: Canva', SCRIPT, 'keyMessage: One loaf, one line', 'Brand: not specified'])
       w.check(asked.includes(part), `the request does not carry ${JSON.stringify(part)}`);
