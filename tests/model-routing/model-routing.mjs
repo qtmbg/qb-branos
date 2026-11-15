@@ -191,7 +191,22 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
   // Anthropic body and read an Anthropic answer; the route decides who
   // answers. Every upstream call below is answered here, none leaves.
   const { TOOL_PROVIDER, GOOGLE_TOOL_MODELS, toolProvider, toGoogleContents, unwrapJsonFence } = await import('../../api/_lib/tool-provider.js');
-  const { default: handler } = await import('../../api/claude.js');
+  const route = await import('../../api/claude.js');
+  const handler = route.POST;
+
+  since();
+  // Edge must begin answering within about 25 seconds and this route answers
+  // only when the model is done. On Edge a long reading came back as a 504
+  // page (seen live, 15 November 2026). It has to stay a Node function with
+  // room to finish, and must not also export a default handler, which the
+  // Node runtime would call with (req, res).
+  if (route.config?.runtime !== 'nodejs') fail(`api/claude.js runs on "${route.config?.runtime}"; on Edge a long answer is cut at about 25 seconds`);
+  if (!(route.config?.maxDuration >= 120)) fail(`api/claude.js has maxDuration ${route.config?.maxDuration}; a long reading needs more`);
+  if (typeof route.POST !== 'function' || typeof route.OPTIONS !== 'function') fail('api/claude.js does not export POST and OPTIONS');
+  if (route.default) fail('api/claude.js still has a default export beside POST');
+  const gem = await import('../../api/gemini.js');
+  if (gem.config?.runtime !== 'nodejs' || typeof gem.POST !== 'function' || gem.default) fail('api/gemini.js is not a Node function with a POST export');
+  okIf('the tool route is a Node function with room for a long answer');
 
   since();
   if (TOOL_PROVIDER !== 'google') fail(`TOOL_PROVIDER is "${TOOL_PROVIDER}". If that is deliberate, the legal pages and this section change with it.`);
@@ -263,6 +278,15 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
     r = await call(ask);
     if (r.status !== 502 || !/SAFETY/.test(r.data?.error?.message || '')) fail('an empty answer was passed on as a success');
     okIf('a refusal or an empty answer reaches the page as error.message');
+
+    since();
+    globalThis.fetch = async () => { const e = new Error('aborted'); e.name = 'AbortError'; throw e; };
+    r = await call(ask);
+    if (r.status !== 504 || !/took too long/.test(r.data?.error?.message || '')) fail(`a call that runs out of time is not said plainly: ${r.status} ${JSON.stringify(r.data)}`);
+    globalThis.fetch = async () => { throw new TypeError('fetch failed'); };
+    r = await call(ask);
+    if (r.status !== 502 || !/could not be reached/.test(r.data?.error?.message || '')) fail(`a network failure is not said plainly: ${r.status} ${JSON.stringify(r.data)}`);
+    okIf('running out of time and losing the network are each said in one sentence');
 
     since();
     delete process.env.GEMINI_API_KEY;
