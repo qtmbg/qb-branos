@@ -28,10 +28,9 @@ export const GOOGLE_TOOL_MODELS = [
   'gemini-3.5-flash-lite',
 ];
 
-// The pages size max_tokens for Claude. Gemini may spend part of the same
-// cap on its own reasoning, so a tight cap can cut a JSON answer mid-object.
-// The prompt sets the length; this only stops the cap from doing it.
-export const GOOGLE_MIN_OUTPUT = 8192;
+// The output floor and the thinking level are the agents' own, so the tool
+// route and the fleet cannot drift apart. See agents/model-call.js for why.
+export { GOOGLE_MIN_OUTPUT, GOOGLE_THINKING, googleRequest } from '../../agents/model-call.js';
 
 /** Which provider serves a tool request, given the keys on the deployment. */
 export function toolProvider({ geminiKey, anthropicKey } = {}) {

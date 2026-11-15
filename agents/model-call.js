@@ -107,27 +107,59 @@ async function callAnthropic({ model, system, text, apiKey, maxTokens, signal })
   return res;
 }
 
-async function callGoogle({ model, system, text, apiKey, maxTokens, signal }) {
-  const res = await fetch(
+// ROOM TO ANSWER. Gemini counts its own reasoning against maxOutputTokens.
+// Seen live on 15 November 2026: a long answer asked for with a cap of
+// 8,192 came back cut after 1,742 characters, finishReason MAX_TOKENS,
+// because the thoughts had spent the rest. So a caller's cap is a floor
+// here, never the ceiling: the prompt sets the length. Flash models take
+// up to 65,536 output tokens.
+export const GOOGLE_MIN_OUTPUT = 32768;
+
+// LESS REASONING. These calls write a structured reading from a brief that
+// is already decided, so the default level buys latency more than quality:
+// the same 800-token answer took between 10 and 34 seconds. LOW is accepted
+// by every Flash id in Google's table. An id that refuses the field answers
+// 400; googleRequest then asks again without it and stops sending it.
+export const GOOGLE_THINKING = { thinkingLevel: 'LOW' };
+let thinkingAccepted = true;
+
+/**
+ * One generateContent call, shared by the agents and the tool route
+ * (api/claude.js). `build(thinking)` returns the request body with or
+ * without thinkingConfig.
+ */
+export async function googleRequest({ model, apiKey, build, signal }) {
+  const post = thinking => fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-      body: JSON.stringify({
+    { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey }, body: JSON.stringify(build(thinking)), signal }
+  );
+  const res = await post(thinkingAccepted);
+  if (res.status !== 400 || !thinkingAccepted) return res;
+  const plain = await post(false);
+  if (plain.ok) {
+    thinkingAccepted = false;
+    console.warn(`[model-call] ${model} refused thinkingConfig; sending without it from now on`);
+  }
+  return plain;
+}
+
+async function callGoogle({ model, system, text, apiKey, maxTokens, signal }) {
+  const res = await googleRequest({
+    model, apiKey, signal,
+    build: thinking => ({
         contents: [{ role: 'user', parts: [{ text }] }],
         ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
         generationConfig: {
-          maxOutputTokens: maxTokens,
+          maxOutputTokens: Math.max(maxTokens, GOOGLE_MIN_OUTPUT),
+          ...(thinking ? { thinkingConfig: GOOGLE_THINKING } : {}),
           // Every agent prompt ends "return only the JSON object". Asking
           // for JSON at the API level removes the fenced-markdown failure
           // mode the defensive parser exists to survive. The parser stays
           // as the backstop.
           responseMimeType: 'application/json',
         },
-      }),
-      signal,
-    }
-  );
+    }),
+  });
   return res;
 }
 

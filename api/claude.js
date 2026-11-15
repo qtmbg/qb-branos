@@ -7,7 +7,7 @@
 // name because sixteen pages call it.
 
 import { langFromRequest, withLanguage } from '../agents/lang.js';
-import { toolProvider, toGoogleContents, unwrapJsonFence, GOOGLE_TOOL_MODELS, GOOGLE_MIN_OUTPUT } from './_lib/tool-provider.js';
+import { toolProvider, toGoogleContents, unwrapJsonFence, GOOGLE_TOOL_MODELS, GOOGLE_MIN_OUTPUT, GOOGLE_THINKING, googleRequest } from './_lib/tool-provider.js';
 
 // Node serverless, not Edge. Edge must begin answering within about 25
 // seconds, and this route answers only once the model has finished: a long
@@ -43,21 +43,21 @@ const fail = (status, message, type = 'upstream_error') => json({ type: 'error',
 async function askGoogle({ body, system, maxTokens, apiKey, signal }) {
   const wanted = GOOGLE_TOOL_MODELS.includes(body.model) ? body.model : GOOGLE_TOOL_MODELS[0];
   const chain = [wanted, ...GOOGLE_TOOL_MODELS.filter(m => m !== wanted)];
-  const payload = {
+  const build = thinking => ({
     contents: toGoogleContents(body.messages),
     generationConfig: {
+      // A floor, not the page's own number: Gemini counts its reasoning
+      // against this cap and a tight one cuts the answer mid-object.
       maxOutputTokens: Math.max(maxTokens, GOOGLE_MIN_OUTPUT),
+      ...(thinking ? { thinkingConfig: GOOGLE_THINKING } : {}),
       ...(body.temperature !== undefined && { temperature: body.temperature }),
     },
     ...(system && { systemInstruction: { parts: [{ text: String(system) }] } }),
-  };
+  });
 
   let upstream, servedBy;
   for (const candidate of chain) {
-    upstream = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${candidate}:generateContent`,
-      { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey }, body: JSON.stringify(payload), signal }
-    );
+    upstream = await googleRequest({ model: candidate, apiKey, build, signal });
     servedBy = candidate;
     // Only capacity walks to the next id. Any other refusal would be
     // refused by the next model too.
@@ -84,6 +84,9 @@ async function askGoogle({ body, system, maxTokens, apiKey, signal }) {
     return fail(502, `The AI service returned no text (${why}).`);
   }
   const u = data?.usageMetadata || {};
+  if (cand?.finishReason === 'MAX_TOKENS') {
+    console.warn(`[api/claude] google ${servedBy} cut the answer at the cap · thoughts ${u.thoughtsTokenCount ?? '?'} · visible ${u.candidatesTokenCount ?? '?'}`);
+  }
   return json({
     type: 'message',
     role: 'assistant',
