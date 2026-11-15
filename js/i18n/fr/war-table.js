@@ -248,8 +248,8 @@ QBI18N.add('fr', {
     "Le point d’accès /api/claude ne tourne pas ici. Déployez sur Vercel (ou lancez `vercel dev`) pour activer la synthèse IA.",
   "Synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. Try again in a moment.":
     "La synthèse était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Réessayez dans un instant.",
-  "Claude API key is not configured. Full synthesis requires the QB API key.":
-    "La clé API Claude n’est pas configurée. La synthèse complète nécessite la clé API QB.",
+  "The AI service is not configured. Full synthesis requires the QB API key.":
+    "Le service d’IA n’est pas configuré. La synthèse complète nécessite la clé API QB.",
   "Unexpected response from AI service.": "Réponse inattendue du service d’IA.",
   "AI response was not valid JSON.": "La réponse de l’IA n’était pas un JSON valide.",
   "Could not parse the AI response as JSON.": "Impossible de lire la réponse de l’IA en JSON.",

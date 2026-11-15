@@ -2034,6 +2034,7 @@ textarea,input{ font-family:inherit; }
   width:100%; height:100%; object-fit:contain;
   padding:3px; display:block;
 }
+.r-arch .meta-ref-logo.has-img .meta-ref-fallback{ visibility:hidden; }
 .r-arch .meta-ref-fallback{
   font-family:var(--f-mono); font-size:6.5px; font-weight:600;
   letter-spacing:.04em; text-transform:uppercase;
@@ -3279,31 +3280,9 @@ function buildCard(sc, opt, idx, n){
       var fallback = el('span', {class:'peer-fallback'}, monogram || pName.charAt(0).toUpperCase());
       logoWrap.appendChild(fallback);
       if (pDomain){
-        // Multi-source fallback chain — Clearbit Logo API was sunset Dec 2023.
-        // Local override → Google Favicons → DuckDuckGo → monogram fallback.
-        var slug = pDomain.replace(/^www\./,'').replace(/\..*$/,'').toLowerCase();
-        var sources = [
-          'img/archetype/peer-' + slug + '.png',
-          'https://www.google.com/s2/favicons?domain=' + pDomain + '&sz=128',
-          'https://icons.duckduckgo.com/ip3/' + pDomain + '.ico'
-        ];
-        var img = el('img', {alt: pName + ' logo', loading:'lazy'});
-        var attempt = 0;
-        function tryNext(){
-          if (attempt >= sources.length){
-            img.remove();                 // every source failed; monogram remains
-            return;
-          }
-          img.src = sources[attempt++];
-        }
-        img.addEventListener('load', function(){
-          // First successful source wins; clear the no-img marker so the
-          // monogram hides and only the logo is visible (no superposition).
-          logoWrap.classList.remove('no-img');
-        });
-        img.addEventListener('error', tryNext);
-        tryNext();
-        logoWrap.appendChild(img);
+        // On load the no-img marker goes, so the monogram hides and only the
+        // logo shows. When no source answers, the monogram stays.
+        loadLogo(logoWrap, pName, pDomain, function(){ logoWrap.classList.remove('no-img'); });
       }
       cell.appendChild(logoWrap);
       cell.appendChild(el('div', {class:'peer-name'}, pName));
@@ -3580,7 +3559,7 @@ function renderResults(){
     var voice = el('div', {class:'r-triple'});
     voice.appendChild(cell('Register', r.voiceImplications.register || ''));
     voice.appendChild(cell('Never sounds like', r.voiceImplications.neverSounds || '', 'never'));
-    voice.appendChild(cell('Signature phrase', r.voiceImplications.signaturePhrase || '', 'signature'));
+    voice.appendChild(cell('Signature phrase', r.voiceImplications.signaturePhrase || (S.fallbackUsed ? RETRY_HINT.phrase : ''), 'signature'));
     results.appendChild(voice);
   }
 
@@ -3590,7 +3569,7 @@ function renderResults(){
     var visual = el('div', {class:'r-triple'});
     visual.appendChild(cell('Visual world', r.visualImplications.world || ''));
     visual.appendChild(cell('Never looks like', r.visualImplications.neverLooks || '', 'never'));
-    visual.appendChild(cell('Signature move', r.visualImplications.signatureMove || '', 'signature'));
+    visual.appendChild(cell('Signature move', r.visualImplications.signatureMove || (S.fallbackUsed ? RETRY_HINT.move : ''), 'signature'));
     results.appendChild(visual);
   }
 
@@ -3693,6 +3672,35 @@ function divider(num, ttl){
   ]);
 }
 
+/* --- Brand logos ----------------------------------------------------------
+   One loader for the peers exercise and the result cards. Two sources were a
+   failed request every time: Clearbit's Logo API, shut down in December 2023,
+   and img/archetype/peer-<slug>.png, a local override that was never filled
+   (48 misses on one run). A local file is requested only when its slug is
+   listed in LOCAL_LOGOS. The remote sources follow, and the monogram or the
+   name stays on screen when none answers. */
+var LOCAL_LOGOS = [];
+function logoSources(domain){
+  var slug = domain.replace(/^www\./,'').replace(/\..*$/,'').toLowerCase();
+  var list = [];
+  if (LOCAL_LOGOS.indexOf(slug) !== -1) list.push('img/archetype/peer-' + slug + '.png');
+  list.push('https://www.google.com/s2/favicons?domain=' + domain + '&sz=128');
+  list.push('https://icons.duckduckgo.com/ip3/' + domain + '.ico');
+  return list;
+}
+function loadLogo(wrap, name, domain, onLoad){
+  var sources = logoSources(domain), attempt = 0;
+  var img = el('img', {alt: name + ' logo', loading:'lazy'});
+  function tryNext(){
+    if (attempt >= sources.length){ img.remove(); return; }   // nothing answered; the fallback stays
+    img.src = sources[attempt++];
+  }
+  img.addEventListener('load', function(){ if (onLoad) onLoad(); });
+  img.addEventListener('error', tryNext);
+  tryNext();
+  wrap.appendChild(img);
+}
+
 function archCard(role, arch, read){
   var roleLabels = { primary:'01 · Primary', secondary:'02 · Secondary', tension:'03 · Tension' };
   var refRow = el('div', {class:'meta-ref'});
@@ -3701,10 +3709,7 @@ function archCard(role, arch, read){
   var fb = el('span', {class:'meta-ref-fallback'}, arch.brand);
   logoWrap.appendChild(fb);
   if (arch.domain){
-    var img = el('img', {alt: arch.brand + ' logo', loading:'lazy'});
-    img.src = 'https://logo.clearbit.com/' + arch.domain;
-    img.addEventListener('error', function(){ img.remove(); });
-    logoWrap.appendChild(img);
+    loadLogo(logoWrap, arch.brand, arch.domain, function(){ logoWrap.classList.add('has-img'); });
   }
   refRow.appendChild(refLabel);
   refRow.appendChild(logoWrap);
@@ -3991,8 +3996,8 @@ function callClaude(scored, isRefinement){
   }).then(function(res){
     return res.json().then(function(data){ return { status: res.status, data: data }; });
   }).then(function(wrap){
-    if (wrap.status === 503) throw new Error('Claude API key is not configured on the server.');
-    if (wrap.status === 502) throw new Error('Could not reach Claude (upstream error).');
+    if (wrap.status === 503) throw new Error('The AI service is not configured on the server.');
+    if (wrap.status === 502) throw new Error('Could not reach the AI service (upstream error).');
     if (wrap.status !== 200 || !wrap.data || !wrap.data.content){
       var msg = (wrap.data && wrap.data.error && (wrap.data.error.message || wrap.data.error)) || 'Unexpected response from the AI service.';
       throw new Error(msg);
@@ -4034,6 +4039,16 @@ function validateAndFill(parsed, scored){
   return r;
 }
 
+// The local reading is built from the scored trinity when the model does not
+// answer. Whatever it returns can be saved to the Brand Profile and is then
+// read by every tool downstream as the brand's own words. So it carries no
+// line addressed to the founder: "Retry for a brand-specific signature
+// phrase." was once saved as the brand's signature phrase. Those lines are
+// painted by the result view (RETRY_HINT) and never stored.
+var RETRY_HINT = {
+  phrase: 'Retry for a brand-specific signature phrase.',
+  move:   'Retry for a brand-specific signature visual move.'
+};
 function localFallback(scored){
   var p = ARCHETYPES[scored.primary];
   var s = ARCHETYPES[scored.secondary];
@@ -4047,7 +4062,7 @@ function localFallback(scored){
       whenUngoverned: 'Without discipline, ' + p.shadow.toLowerCase() + ' amplifies ' + s.shadow.toLowerCase() + ', and ' + t.shadow.toLowerCase() + ' pulls the brand off-axis.'
     },
     trinityReads: {
-      primary: p.name + ' is the operating system. The diagnostic points to a brand built around ' + p.gift.toLowerCase() + '. Retry for the deep reading tied to your specific answers.',
+      primary: p.name + ' is the operating system. The diagnostic points to a brand built around ' + p.gift.toLowerCase() + '.',
       secondary: s.name + ' adds texture. It brings ' + s.gift.toLowerCase() + ' into how the brand expresses itself.',
       tension: t.name + ' is the archetype this brand is tempted by. When governed it adds ' + t.gift.toLowerCase() + '; when ungoverned it produces ' + t.shadow.toLowerCase() + '.'
     },
@@ -4093,12 +4108,12 @@ function localFallback(scored){
     voiceImplications: {
       register: 'Voice should foreground the ' + p.gift.toLowerCase() + ' of the ' + p.name + ', modulated by the ' + s.gift.toLowerCase() + ' of the ' + s.name + '.',
       neverSounds: 'Never sound like the ' + t.name + ' - this is where the brand drifts when uncertain.',
-      signaturePhrase: 'Retry for a brand-specific signature phrase.'
+      signaturePhrase: ''
     },
     visualImplications: {
       world: 'Visual identity should sit in the world of the ' + p.name + ', with inflections from the ' + s.name + '.',
       neverLooks: 'Never look like the ' + t.name + ' - these visual cues take over the system fast.',
-      signatureMove: 'Retry for a brand-specific signature visual move.'
+      signatureMove: ''
     },
     firstMoveThisWeek: 'Audit one piece of recent brand output. Test it against the trinity: does it lead with ' + p.gift.toLowerCase() + '? Does the ' + s.name + ' texture come through? Does any ' + t.shadow.toLowerCase() + ' sneak in?',
     epigraph: "The brand isn't being invented here. It's being uncovered."

@@ -97,6 +97,11 @@ export async function walk(w) {
     ? route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'not configured' }) })
     : route.fallback()));
 
+  // Logos. Two sources never answered: Clearbit's Logo API (shut down) and
+  // local peer-*.png files that were never added. Neither may be asked again.
+  const deadLogoRequests = [];
+  p.on('request', r => { if (/logo\.clearbit\.com|\/img\/archetype\/peer-/.test(r.url())) deadLogoRequests.push(r.url()); });
+
   let plan = [];
 
   await w.step('open', async () => {
@@ -193,7 +198,7 @@ export async function walk(w) {
     model = 'down';
     await w.click('Synthesize trinity →');
     await w.see('Trinity set · Strategic reading', { timeout: 15000 });
-    await expect('AI synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. - Claude API key is not configured on the server.');
+    await expect('AI synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. - The AI service is not configured on the server.');
     await w.see('Retry');
 
     // The scoring is local, so the trinity is already right.
@@ -205,10 +210,17 @@ export async function walk(w) {
     // The local reading, sentence by sentence as the page builds it.
     await expect('Your brand reads as a The Sage primary with The Hero texture and The Rebel tension.');
     await expect('You are Sage yet Hero - and Rebel keeps knocking.');
-    await expect('The Sage is the operating system. The diagnostic points to a brand built around wisdom. Retry for the deep reading tied to your specific answers.');
+    await expect('The Sage is the operating system. The diagnostic points to a brand built around wisdom.');
     await expect('Retry for a brand-specific signature phrase.');
     await expect('Retry for a brand-specific signature visual move.');
     await expect('Only Your brand can be Sage and Hero at the same time.');
+
+    // The two hints above are painted, never stored. What a save writes is
+    // read here: "Retry for a brand-specific signature phrase." was once
+    // saved as the brand's signature phrase and read back by every tool.
+    const stored = await p.evaluate(() => JSON.stringify(S.result));
+    const leak = /[^".]*\bRetry\b[^"]*/.exec(stored);
+    w.check(!leak, `the local reading carries a line addressed to the founder in the data a save would write: ${JSON.stringify(leak && leak[0])}`);
     const text = await p.locator('#app').innerText();
     w.check(!/ANTHROPIC|Deploy with/i.test(text), 'operator instructions are shown to the founder');
 
@@ -264,6 +276,7 @@ export async function walk(w) {
   });
 
   await w.step('save to the profile', async () => {
+    w.check(deadLogoRequests.length === 0, `${deadLogoRequests.length} logo request(s) went to a source that never answers, first: ${deadLogoRequests[0]}`);
     await w.see('Save to QBP to lock the trinity into your brand profile');
     await w.click('Save to QBP');
     const qbp = await p.evaluate(() => JSON.parse(localStorage.getItem('qb_qbp') || '{}'));

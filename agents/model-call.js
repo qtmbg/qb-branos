@@ -13,8 +13,16 @@
 // FREE TIER, by operator decision 2026-09-23. Google's free tier uses
 // prompts and responses to improve their products. That is accepted
 // here: the free path costs nothing to run, which is the point. The
-// seven operator-only agents and the paid document path stay on
-// Anthropic, so nothing a customer paid for is generated this way.
+// seven operator-only agents stay on Anthropic.
+//
+// WHAT CHANGED SINCE. This note once ended "nothing a customer paid for
+// is generated this way". That was true of the $79 document, which was
+// to re-run the agents on Sonnet through model_override. The paid plan
+// is now Starter (3 October 2026), its agents are these same agents, and
+// nothing sets model_override, so Starter work is generated on Google's
+// free tier too. By operator decision of 15 November 2026 the tool pages
+// follow (api/_lib/tool-provider.js) until revenue covers Anthropic.
+// privacy.html and terms.html say exactly this.
 //
 // The response shape is identical whichever provider answers, so every
 // caller downstream is unchanged: { ok, text, raw, tokens_in, tokens_out }

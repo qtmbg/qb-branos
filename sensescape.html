@@ -5038,10 +5038,10 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     }).then(function(wrap){
       if (!wrap) return;  // error path already threw
       if (wrap.status === 503){
-        throw new Error('Claude API key is not configured for this environment. Deploy to test the full Codex - or click "Continue without AI synthesis" for the derived-only version.');
+        throw new Error('The AI service is not configured for this environment. Deploy to test the full Codex - or click "Continue without AI synthesis" for the derived-only version.');
       }
       if (wrap.status === 502){
-        throw new Error('Could not reach Claude. The network call failed - try again in a moment.');
+        throw new Error('Could not reach the AI service. The network call failed - try again in a moment.');
       }
       if (wrap.status !== 200 || !wrap.data || !wrap.data.content){
         var msg = (wrap.data && wrap.data.error && (wrap.data.error.message || wrap.data.error)) || 'Unexpected response from the AI service.';

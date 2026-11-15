@@ -4904,7 +4904,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
       return res.json().then(function(data){ return { status:res.status, data:data }; });
     }).then(function(wrap){
       if (wrap.status === 503){
-        var e = new Error('Claude API key is not configured. Full synthesis requires the QB API key.');
+        var e = new Error('The AI service is not configured. Full synthesis requires the QB API key.');
         e.kind = 'api-key'; throw e;
       }
       if (wrap.status !== 200 || !wrap.data || !wrap.data.content){

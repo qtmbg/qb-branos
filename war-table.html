@@ -3337,7 +3337,7 @@ p em, li em, .qb-type-opening em, .qb-type-text em {
     }).then(function(wrap){
       if (!wrap) return;
       if (wrap.status === 503){
-        var e3 = new Error('Claude API key is not configured. Full synthesis requires the QB API key.');
+        var e3 = new Error('The AI service is not configured. Full synthesis requires the QB API key.');
         e3.kind = 'api-key';
         throw e3;
       }

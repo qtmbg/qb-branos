@@ -170,6 +170,101 @@ console.log('\n6 · the tier decision is recorded where it is made');
   okIf('the tier decision is documented at the call site');
 }
 
+console.log('\n6b · the tool pages go through Google, in the shape they already speak');
+{
+  // Owner decision, 15 November 2026. The pages call /api/claude with an
+  // Anthropic body and read an Anthropic answer; the route decides who
+  // answers. Every upstream call below is answered here, none leaves.
+  const { TOOL_PROVIDER, GOOGLE_TOOL_MODELS, toolProvider, toGoogleContents, unwrapJsonFence } = await import('../../api/_lib/tool-provider.js');
+  const { default: handler } = await import('../../api/claude.js');
+
+  since();
+  if (TOOL_PROVIDER !== 'google') fail(`TOOL_PROVIDER is "${TOOL_PROVIDER}". If that is deliberate, the legal pages and this section change with it.`);
+  if ([...GOOGLE_TOOL_MODELS].sort().join() !== [...GOOGLE_MODELS].sort().join()) fail('the tool route and agents/model-call.js disagree on the Google ids');
+  if (toolProvider({ geminiKey: 'g', anthropicKey: 'a' }) !== 'google') fail('with both keys the tools did not go to Google');
+  if (toolProvider({ anthropicKey: 'a' }) !== 'anthropic') fail('with no Google key the tools did not fall back to Anthropic');
+  if (toolProvider({}) !== null) fail('with no key at all a provider was still named');
+  okIf('Google answers the tools; Anthropic only when the Google key is absent');
+
+  since();
+  const c = toGoogleContents([
+    { role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: 'QUJD' } }, { type: 'text', text: 'read this mark' }] },
+    { role: 'assistant', content: 'noted' },
+  ]);
+  if (c[0].role !== 'user' || c[1].role !== 'model') fail('roles were not mapped (assistant must become model)');
+  if (c[0].parts[0]?.inlineData?.mimeType !== 'image/jpeg' || c[0].parts[0]?.inlineData?.data !== 'QUJD') fail('a base64 image block did not become inlineData, so Logo Evaluation would send no image');
+  if (c[0].parts[1]?.text !== 'read this mark' || c[1].parts[0]?.text !== 'noted') fail('text was lost in translation');
+  if (unwrapJsonFence('```json\n{"a":1}\n```') !== '{"a":1}') fail('a fenced JSON answer kept its fence');
+  if (unwrapJsonFence('Use this:\n```css\na{}\n```') !== 'Use this:\n```css\na{}\n```') fail('prose with a code block was altered');
+  okIf('text, images and roles translate; only a whole-answer JSON fence is removed');
+
+  // The handler itself, with the network answered locally.
+  const realFetch = globalThis.fetch;
+  const env = { g: process.env.GEMINI_API_KEY, a: process.env.ANTHROPIC_API_KEY };
+  const call = async (body, headers = {}) => {
+    const res = await handler(new Request('https://x.test/api/claude', { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) }));
+    return { status: res.status, data: await res.json() };
+  };
+  const ask = { model: 'claude-sonnet-4-6', max_tokens: 3000, system: 'Return JSON.', messages: [{ role: 'user', content: 'hello' }] };
+  try {
+    since();
+    process.env.GEMINI_API_KEY = 'test-google'; process.env.ANTHROPIC_API_KEY = 'test-anthropic';
+    let seen = [];
+    globalThis.fetch = async (url, init) => {
+      seen.push({ url: String(url), body: JSON.parse(init.body), headers: init.headers });
+      return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '```json\n{"ok":true}\n```' }] }, finishReason: 'STOP' }], usageMetadata: { promptTokenCount: 7, candidatesTokenCount: 3 } }), { status: 200 });
+    };
+    let r = await call(ask, { 'X-QB-Lang': 'fr' });
+    if (seen.length !== 1 || !seen[0].url.includes('generativelanguage.googleapis.com')) fail(`the tool call went to ${seen.map(x => x.url).join(', ') || 'nowhere'}, not to Google`);
+    else {
+      if (seen[0].url.includes('claude')) fail('a Claude id was sent to Google');
+      if (seen[0].headers['x-goog-api-key'] !== 'test-google') fail('the Google key was not the one sent');
+      if (!/Return JSON\./.test(seen[0].body.systemInstruction?.parts?.[0]?.text || '')) fail('the system prompt did not reach Google');
+      if (seen[0].body.systemInstruction.parts[0].text === 'Return JSON.') fail('a French reader got no language directive on the Google path');
+      if (!(seen[0].body.generationConfig.maxOutputTokens >= 3000)) fail('the output cap was lowered below what the page asked for');
+    }
+    if (r.status !== 200 || r.data?.content?.[0]?.text !== '{"ok":true}') fail(`the answer is not in the shape the pages read: ${JSON.stringify(r.data)}`);
+    if (r.data?.usage?.input_tokens !== 7) fail('usage was not mapped');
+    okIf('a tool call reaches Google and comes back as content[0].text');
+
+    since();
+    seen = [];
+    globalThis.fetch = async (url, init) => {
+      seen.push(String(url));
+      return seen.length < 3
+        ? new Response(JSON.stringify({ error: { message: 'high demand' } }), { status: 503 })
+        : new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: 'third answered' }] } }] }), { status: 200 });
+    };
+    r = await call(ask);
+    if (seen.length !== 3 || new Set(seen).size !== 3) fail(`a capacity refusal did not walk the three ids (calls: ${seen.length}, distinct: ${new Set(seen).size})`);
+    if (r.data?.content?.[0]?.text !== 'third answered') fail('the walk did not return the model that answered');
+    okIf('a capacity refusal walks to the next Google id');
+
+    since();
+    globalThis.fetch = async () => new Response(JSON.stringify({ error: { message: 'quota' } }), { status: 429 });
+    r = await call(ask);
+    if (r.status !== 429 || typeof r.data?.error?.message !== 'string' || /quota/.test(r.data.error.message)) fail(`a refusal is not a fixed sentence under error.message: ${JSON.stringify(r.data)}`);
+    globalThis.fetch = async () => new Response(JSON.stringify({ candidates: [{ finishReason: 'SAFETY' }] }), { status: 200 });
+    r = await call(ask);
+    if (r.status !== 502 || !/SAFETY/.test(r.data?.error?.message || '')) fail('an empty answer was passed on as a success');
+    okIf('a refusal or an empty answer reaches the page as error.message');
+
+    since();
+    delete process.env.GEMINI_API_KEY;
+    seen = [];
+    globalThis.fetch = async (url, init) => { seen.push({ url: String(url), body: JSON.parse(init.body) }); return new Response(JSON.stringify({ content: [{ type: 'text', text: 'from claude' }] }), { status: 200 }); };
+    r = await call(ask);
+    if (seen.length !== 1 || !seen[0].url.includes('api.anthropic.com')) fail('with no Google key the call did not go to Anthropic');
+    else if (seen[0].body.model !== 'claude-sonnet-4-6') fail('the Anthropic path lost the model the page asked for');
+    if (r.data?.content?.[0]?.text !== 'from claude') fail('the Anthropic answer was not passed through');
+    okIf('with no Google key the same call is answered by Anthropic, unchanged');
+  } finally {
+    globalThis.fetch = realFetch;
+    if (env.g === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = env.g;
+    if (env.a === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = env.a;
+  }
+}
+
 const KEY = process.env.GEMINI_API_KEY || '';
 console.log(`\n7 · live Google call ${KEY ? '' : '(SKIPPED · no GEMINI_API_KEY)'}`);
 if (KEY) {
