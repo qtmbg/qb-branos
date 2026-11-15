@@ -122,13 +122,21 @@ until revenue covers Anthropic.
   November 2026; it now calls `/api/claude` like the rest. A key passed
   as `?apikey=` is the one case a browser goes to Anthropic itself.
 
-Never write that paid work, or in-tool work, is processed by Anthropic. It
-was written once, in `privacy.html` and `terms.html`, while every Starter
-agent ran on Gemini. Moving the tools or the paid runs back to Anthropic
-is one constant (`TOOL_PROVIDER`) or one argument (`model_override`), and
-both legal pages change in the same commit. `tests/e2e/walks/legal.mjs`
-reads the constant and the agents' models and fails when the pages say
-otherwise.
+**What the legal pages say about it.** Owner decision, 15 November 2026:
+`privacy.html` lists Google and Anthropic as AI processors and
+`terms.html` points to that list. Neither page describes what a provider
+does with a founder's work; each provider's own terms govern that. Do not
+add such a description back without the owner asking for it.
+
+What stays forbidden, because it would be false: writing that paid work or
+in-tool work is processed by Anthropic, or that a provider keeps a
+founder's work out of training. Both were written once, in `privacy.html`
+and `terms.html`, while every Starter agent ran on Gemini. Moving the
+tools or the paid runs back to Anthropic is one constant
+(`TOOL_PROVIDER`) or one argument (`model_override`), and the processor
+list changes in the same commit. `tests/e2e/walks/legal.mjs` reads the
+constant and the agents' models and fails when a page says otherwise or
+drops Google from the list.
 
 Error lines a founder reads say "the AI service", never a provider's name.
 
