@@ -1230,7 +1230,11 @@ QBI18N.add('fr', {
   "Profile not found": "Profil introuvable",
   "Profile lookup failed": "Recherche du profil impossible",
   "Foundation incomplete": "Fondation incomplète",
-  "Foundation incomplete": "Fondation incomplète",
+  /* /api/claude, when the model provider does not answer. Painted by the tools as the error detail. */
+  "The AI service is busy right now. Try again in a minute.": "Le service d’IA est saturé pour le moment. Réessayez dans une minute.",
+  "The AI service refused the request.": "Le service d’IA a refusé la demande.",
+  "The AI service returned no text ({0}).": "Le service d’IA n’a renvoyé aucun texte ({0}).",
+  "The AI service could not be reached.": "Le service d’IA est injoignable.",
   "Lock write failed": "Écriture du verrouillage impossible",
   "Billing portal not configured": "Portail de facturation non configuré",
   "No active subscription": "Aucun abonnement actif",

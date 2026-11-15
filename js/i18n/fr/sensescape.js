@@ -425,9 +425,9 @@ QBI18N.add('fr', {
     "Le point d’accès /api/claude ne tourne pas dans cet environnement. C’est normal sur un serveur Python local. Pour générer le Codex avec l’IA, déployez sur Vercel ou lancez `vercel dev` en local. Vous pouvez aussi cliquer sur « Continuer sans synthèse IA » pour voir le Codex dérivé dès maintenant.",
   "The server returned a non-JSON response (status {0}). The /api/claude route may not be available in this environment. First 120 chars: \"{1}…\"":
     "Le serveur a renvoyé une réponse non JSON (statut {0}). La route /api/claude n’est peut-être pas disponible dans cet environnement. 120 premiers caractères : « {1}… »",
-  "Claude API key is not configured for this environment. Deploy to test the full Codex - or click \"Continue without AI synthesis\" for the derived-only version.":
-    "La clé API Claude n’est pas configurée pour cet environnement. Déployez pour tester le Codex complet, ou cliquez sur « Continuer sans synthèse IA » pour la version dérivée seule.",
-  "Could not reach Claude. The network call failed - try again in a moment.": "Impossible de joindre Claude. L’appel réseau a échoué. Réessayez dans un instant.",
+  "The AI service is not configured for this environment. Deploy to test the full Codex - or click \"Continue without AI synthesis\" for the derived-only version.":
+    "Le service d’IA n’est pas configuré pour cet environnement. Déployez pour tester le Codex complet, ou cliquez sur « Continuer sans synthèse IA » pour la version dérivée seule.",
+  "Could not reach the AI service. The network call failed - try again in a moment.": "Impossible de joindre le service d’IA. L’appel réseau a échoué. Réessayez dans un instant.",
   "Unexpected response from the AI service.": "Réponse inattendue du service d’IA.",
   "The AI response was not valid JSON. Try again.": "La réponse de l’IA n’était pas un JSON valide. Réessayez.",
   "Could not parse the AI response as JSON. Try again.": "Impossible de lire la réponse de l’IA comme du JSON. Réessayez.",

@@ -414,7 +414,7 @@ export async function walk(w) {
   const json = (status, body) => route => route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
   const asText = text => json(200, { content: [{ type: 'text', text }] });
   const failures = [
-    ['the key is not configured (503)', json(503, {}), 'Synthesis unavailable', 'Full synthesis requires the QB API key.', 'Claude API key is not configured. Full synthesis requires the QB API key.'],
+    ['the key is not configured (503)', json(503, {}), 'Synthesis unavailable', 'Full synthesis requires the QB API key.', 'The AI service is not configured. Full synthesis requires the QB API key.'],
     ['the endpoint is missing (404)', route => route.fulfill({ status: 404, contentType: 'text/plain', body: 'not found' }), 'Synthesis unavailable', 'Full synthesis requires the QB API key.',
       'The /api/claude endpoint is not running here. Deploy to Vercel (or run `vercel dev`) to generate the Codex.'],
     ['an answer that is not JSON (502)', route => route.fulfill({ status: 502, contentType: 'text/html', body: '<html></html>' }), 'Synthesis pending', 'Synthesis is being finalised.', 'Non-JSON response from /api/claude (status 502).'],

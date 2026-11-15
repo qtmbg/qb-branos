@@ -649,8 +649,8 @@ QBI18N.add('fr', {
   "The /api/claude endpoint is not running here. Deploy to Vercel (or run `vercel dev`) to generate the Codex.":
     "Le point d’accès /api/claude ne tourne pas ici. Déployez sur Vercel (ou lancez `vercel dev`) pour générer le Codex.",
   "Non-JSON response from /api/claude (status {0}).": "Réponse non JSON de /api/claude (statut {0}).",
-  "Claude API key is not configured. Full synthesis requires the QB API key.":
-    "La clé API Claude n’est pas configurée. La synthèse complète nécessite la clé API QB.",
+  "The AI service is not configured. Full synthesis requires the QB API key.":
+    "Le service d’IA n’est pas configuré. La synthèse complète nécessite la clé API QB.",
   "Unexpected response from the AI service.": "Réponse inattendue du service d’IA.",
   "AI response was not valid JSON.": "La réponse de l’IA n’était pas un JSON valide.",
   "Could not parse the AI response as JSON.": "Impossible de lire la réponse de l’IA en JSON.",

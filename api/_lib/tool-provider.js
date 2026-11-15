@@ -1,0 +1,68 @@
+// api/_lib/tool-provider.js
+// Which provider answers the tool pages, and the translation between the
+// Anthropic shape the pages speak and the Gemini shape Google speaks.
+// Kept out of the route file so a test can import it without a request.
+//
+// WHICH PROVIDER ANSWERS. Owner decision, 15 November 2026: every in-tool
+// call goes through Google's API until revenue covers Anthropic. The
+// agents already run there (agents/model-call.js); this is the same
+// decision for the pages. Google's free tier uses prompts and responses to
+// improve its products. privacy.html and terms.html say so, and
+// tests/e2e/walks/legal.mjs holds them to this constant.
+//
+// To send the tools back to Anthropic, change TOOL_PROVIDER to 'anthropic'
+// and update both legal pages in the same change. No page is edited: the
+// route, the body and the answer keep their shape.
+
+export const TOOL_PROVIDER = 'google';
+
+// The ids agents/model-call.js routes to Google, in the order a capacity
+// refusal walks them. tests/model-routing asserts the two lists agree, so a
+// retired id is removed in one place and noticed in the other.
+export const GOOGLE_TOOL_MODELS = [
+  'gemini-3.5-flash',
+  'gemini-3.7-flash',
+  'gemini-3.5-flash-lite',
+];
+
+// The pages size max_tokens for Claude. Gemini may spend part of the same
+// cap on its own reasoning, so a tight cap can cut a JSON answer mid-object.
+// The prompt sets the length; this only stops the cap from doing it.
+export const GOOGLE_MIN_OUTPUT = 8192;
+
+/** Which provider serves a tool request, given the keys on the deployment. */
+export function toolProvider({ geminiKey, anthropicKey } = {}) {
+  if (TOOL_PROVIDER === 'google' && geminiKey) return 'google';
+  // No Google key: Anthropic answers if it can, as the agents do the other
+  // way round. Funding either account gives a working product.
+  if (anthropicKey) return 'anthropic';
+  return geminiKey ? 'google' : null;
+}
+
+/** Anthropic messages → Gemini contents. Text and base64 images, as the pages send them. */
+export function toGoogleContents(messages) {
+  return messages.map((m) => {
+    const blocks = Array.isArray(m.content) ? m.content : [{ type: 'text', text: String(m.content ?? '') }];
+    const parts = [];
+    for (const b of blocks) {
+      if (!b) continue;
+      if (typeof b === 'string') { parts.push({ text: b }); continue; }
+      if (b.type === 'text') { parts.push({ text: String(b.text ?? '') }); continue; }
+      if (b.type === 'image' && b.source && b.source.type === 'base64' && b.source.data) {
+        parts.push({ inlineData: { mimeType: b.source.media_type || 'image/png', data: b.source.data } });
+      }
+    }
+    return { role: m.role === 'assistant' ? 'model' : 'user', parts: parts.length ? parts : [{ text: '' }] };
+  });
+}
+
+/**
+ * A whole answer wrapped in one code fence around JSON loses the fence.
+ * Prose and markdown that merely contain a fence are left as written.
+ */
+export function unwrapJsonFence(text) {
+  const m = /^\s*```(?:json)?\s*\n([\s\S]*?)\n?```\s*$/i.exec(text);
+  if (!m) return text;
+  const inner = m[1].trim();
+  return (inner.startsWith('{') || inner.startsWith('[')) ? inner : text;
+}

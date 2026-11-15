@@ -396,8 +396,8 @@ QBI18N.add('fr', {
     "La synthèse par l’IA était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée.",
   "AI synthesis was unavailable. The diagnostic was scored but the deep reading could not be generated. - {0}":
     "La synthèse par l’IA était indisponible. Le diagnostic a été noté, mais la lecture approfondie n’a pas pu être générée. Détail\u00a0: {0}",
-  "Claude API key is not configured on the server.": "La clé d’API Claude n’est pas configurée sur le serveur.",
-  "Could not reach Claude (upstream error).": "Impossible de joindre Claude (erreur en amont).",
+  "The AI service is not configured on the server.": "Le service d’IA n’est pas configuré sur le serveur.",
+  "Could not reach the AI service (upstream error).": "Impossible de joindre le service d’IA (erreur en amont).",
   "Unexpected response from the AI service.": "Réponse inattendue du service d’IA.",
   "The AI response was not valid JSON.": "La réponse de l’IA n’était pas un JSON valide.",
   "Local reading · AI synthesis was skipped. Retry for the deep reading tied to your answers.":
@@ -487,8 +487,8 @@ QBI18N.add('fr', {
     "Tenue avec intention, cette combinaison produit une marque qui livre {0} à travers la texture de {1}.",
   "Without discipline, {0} amplifies {1}, and {2} pulls the brand off-axis.":
     "Sans discipline, {0} amplifie {1}, et {2} désaxe la marque.",
-  "{0} is the operating system. The diagnostic points to a brand built around {1}. Retry for the deep reading tied to your specific answers.":
-    "{0} est le système d’exploitation. Le diagnostic désigne une marque construite sur {1}. Réessayez pour obtenir la lecture approfondie liée à vos réponses.",
+  "{0} is the operating system. The diagnostic points to a brand built around {1}.":
+    "{0} est le système d’exploitation. Le diagnostic désigne une marque construite sur {1}.",
   "{0} adds texture. It brings {1} into how the brand expresses itself.":
     "{0} ajoute de la texture. Cet archétype fait entrer {1} dans la façon dont la marque s’exprime.",
   "{0} is the archetype this brand is tempted by. When governed it adds {1}; when ungoverned it produces {2}.":

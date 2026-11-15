@@ -287,7 +287,7 @@ export async function walk(w) {
     await modelDown(w);
     await press(w, 'Generate final codex');
     await w.see('We hit a snag.');
-    await w.see('Could not reach Claude. The network call failed - try again in a moment.');
+    await w.see('Could not reach the AI service. The network call failed - try again in a moment.');
     await press(w, 'Try again');
     await w.see('We hit a snag.');
     w.check(posts.length === 0, `the lead form posted outside the site: ${posts.join(', ')}`);

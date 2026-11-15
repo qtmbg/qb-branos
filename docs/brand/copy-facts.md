@@ -106,21 +106,30 @@ painted, exported, emailed or put in a meta tag.
 
 ## Who reads a founder's work
 
-Two providers, and the split is by tool, not by plan.
+Owner decision, 15 November 2026: everything goes through Google's API
+until revenue covers Anthropic.
 
-- **Anthropic** answers inside the tools, as the founder works in them
-  (`/api/claude`). Inputs are used only to generate the response.
-- **Google Gemini, free API tier,** generates the readings and the agent
-  documents (`agents/*.js`, every public agent's `META.model`), on the free
-  Brand Profile and on Starter alike. Google uses those prompts and
-  responses to improve its products, and human reviewers may read them.
+- **Google Gemini, free API tier,** generates every AI answer: inside the
+  tools (`/api/claude`, routed by `api/_lib/tool-provider.js`), the
+  readings and the agent documents (`agents/*.js`, every public agent's
+  `META.model`). Free Brand Profile and Starter alike. Google uses those
+  prompts and responses to improve its products, and human reviewers may
+  read them.
+- **Anthropic** is the standby. It answers the tools only when the Google
+  key is absent, and the agents only when `runtime_args.model_override`
+  names a Claude id, which nothing sets today.
+- **The Profiles** is the exception: its three AI steps run on the
+  founder's own Anthropic key, straight from the browser.
 
-Never write that paid work is processed by Anthropic only. It was written
-once, in `privacy.html` and `terms.html`, while all six Starter agents ran
-on Gemini. `runtime_args.model_override` exists and nothing sets it. If the
-owner routes paid runs to Anthropic, this section and both legal pages
-change together. `tests/e2e/walks/legal.mjs` reads the agents' models and
-fails when the pages say otherwise.
+Never write that paid work, or in-tool work, is processed by Anthropic. It
+was written once, in `privacy.html` and `terms.html`, while every Starter
+agent ran on Gemini. Moving the tools or the paid runs back to Anthropic
+is one constant (`TOOL_PROVIDER`) or one argument (`model_override`), and
+both legal pages change in the same commit. `tests/e2e/walks/legal.mjs`
+reads the constant and the agents' models and fails when the pages say
+otherwise.
+
+Error lines a founder reads say "the AI service", never a provider's name.
 
 ## What a rewrite may and may not do
 
