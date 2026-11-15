@@ -118,8 +118,9 @@ until revenue covers Anthropic.
 - **Anthropic** is the standby. It answers the tools only when the Google
   key is absent, and the agents only when `runtime_args.model_override`
   names a Claude id, which nothing sets today.
-- **The Profiles** is the exception: its three AI steps run on the
-  founder's own Anthropic key, straight from the browser.
+- **No tool asks the founder for a key.** The Profiles did until 15
+  November 2026; it now calls `/api/claude` like the rest. A key passed
+  as `?apikey=` is the one case a browser goes to Anthropic itself.
 
 Never write that paid work, or in-tool work, is processed by Anthropic. It
 was written once, in `privacy.html` and `terms.html`, while every Starter
