@@ -215,7 +215,7 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
   // Owner decision, 15 November 2026. The pages call /api/claude with an
   // Anthropic body and read an Anthropic answer; the route decides who
   // answers. Every upstream call below is answered here, none leaves.
-  const { TOOL_PROVIDER, GOOGLE_TOOL_MODELS, toolProvider, toGoogleContents, unwrapJsonFence } = await import('../../api/_lib/tool-provider.js');
+  const { TOOL_PROVIDER, GOOGLE_TOOL_MODELS, toolProvider, toGoogleContents, unwrapJsonFence, toolChain, restId, forgetToolHealth } = await import('../../api/_lib/tool-provider.js');
   const route = await import('../../api/claude.js');
   const handler = route.POST;
 
@@ -253,6 +253,20 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
   if (unwrapJsonFence('Use this:\n```css\na{}\n```') !== 'Use this:\n```css\na{}\n```') fail('prose with a code block was altered');
   okIf('text, images and roles translate; only a whole-answer JSON fence is removed');
 
+  since();
+  // An id that just stalled or refused is asked last for five minutes.
+  forgetToolHealth();
+  const [A, B, C] = toolChain('claude-sonnet-4-6');
+  if (toolChain(B)[0] !== B) fail('a Google id named by the page is not asked first');
+  restId(A, 1000);
+  if (toolChain(null, 2000).join() !== [B, C, A].join()) fail(`after ${A} stalled the order is ${toolChain(null, 2000).join()}`);
+  if (toolChain(A, 2000)[0] === A) fail('a resting id is still asked first when the page names it');
+  if (toolChain(null, 1000 + 5 * 60 * 1000 + 1)[0] !== A) fail('a rested id does not come back first after five minutes');
+  restId(B, 1000); restId(C, 1000);
+  if (toolChain(null, 2000).length !== 3) fail('with every id resting the route has nothing to ask');
+  forgetToolHealth();
+  okIf('an id that stalled or refused is asked last for five minutes, and never dropped');
+
   // The handler itself, with the network answered locally.
   const realFetch = globalThis.fetch;
   const env = { g: process.env.GEMINI_API_KEY, a: process.env.ANTHROPIC_API_KEY };
@@ -264,6 +278,7 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
   try {
     since();
     process.env.GEMINI_API_KEY = 'test-google'; process.env.ANTHROPIC_API_KEY = 'test-anthropic';
+    forgetToolHealth();
     let seen = [];
     globalThis.fetch = async (url, init) => {
       seen.push({ url: String(url), body: JSON.parse(init.body), headers: init.headers });
@@ -329,6 +344,7 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
     // call sat for the whole budget and the next id was never asked.
     process.env.GEMINI_API_KEY = 'test-google';
     process.env.QB_TOOL_ATTEMPT_MS = '60';
+    forgetToolHealth();
     seen = [];
     const hang = init => new Promise((_, reject) => init.signal.addEventListener('abort', () => { const e = new Error('aborted'); e.name = 'AbortError'; reject(e); }));
     globalThis.fetch = async (url, init) => {
@@ -341,6 +357,13 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
     if (seen.length !== 2 || seen[0] === seen[1]) fail(`after a stall the route made ${seen.length} call(s) to ${new Set(seen).size} id(s)`);
     if (r.data?.model && seen[1] && !seen[1].includes(r.data.model)) fail('the answer does not name the id that served it');
     if (Date.now() - t0 > 3000) fail('the stalled id was not dropped at its own time limit');
+    // The next founder does not pay for the same stall.
+    const stalledUrl = seen[0];
+    seen = [];
+    globalThis.fetch = async (url) => { seen.push(String(url)); return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: 'at once' }] } }] }), { status: 200 }); };
+    r = await call(ask);
+    if (seen.length !== 1 || seen[0] === stalledUrl) fail(`the id that just stalled was asked first again (${seen.length} call(s))`);
+    forgetToolHealth();
     seen = [];
     globalThis.fetch = async (url, init) => { seen.push(String(url)); return hang(init); };
     r = await call(ask);
