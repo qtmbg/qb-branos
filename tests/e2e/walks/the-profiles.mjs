@@ -2,8 +2,9 @@
 // briefs, then every way the work leaves the page.
 //
 // Everything is typed or clicked the way a founder would. The model is
-// answered by the walk; the founder's own Anthropic key never leaves the
-// browser except toward the mocked api.anthropic.com.
+// answered by the walk. The founder is never asked for a key: the page
+// calls /api/claude like every other tool, and the server decides who
+// answers (api/_lib/tool-provider.js).
 import fs from 'node:fs';
 
 export const page = 'the-profiles.html';
@@ -30,7 +31,6 @@ const strain = (person, n) => `${person.name} · strain ${n} · three sites wait
 const moment = (person, s, c) => `${person.name} · moment ${s}.${c} · the lift contractor calls again`;
 const sixteen = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen';
 const fifteen = sixteen.replace(/ sixteen$/, '');
-const KEY = 'sk-ant-walk-0000';
 
 // What the model returns, by call.
 const pattern = (who, n) => `${who} checks the ward plan before breakfast, note ${n}.`;
@@ -80,7 +80,8 @@ export async function walk(w) {
   let failing = false, delay = 0;
   await w.mockModel(async (body, route) => {
     const prompt = JSON.stringify(body.messages || []);
-    asked.push({ prompt, system: String(body.system || ''), model: body.model, key: route.request().headers()['x-api-key'] });
+    const sent = route.request().headers();
+    asked.push({ prompt, system: String(body.system || ''), model: body.model, url: route.request().url(), key: sent['x-api-key'], lang: sent['x-qb-lang'] });
     if (delay) await sleep(delay);
     if (/surface six psychological patterns/.test(prompt)) return XRAY;
     if (/What runs through all three/.test(prompt)) return COMMON;
@@ -88,12 +89,15 @@ export async function walk(w) {
     return SYNTHESIS;
   });
   // Registered after the model mock, so it is asked first; it steps aside
-  // unless the walk wants Anthropic itself to fail.
-  await w.mock(/api\.anthropic\.com/, async route => {
-    if (failing && route.request().method() === 'POST') return route.fulfill({ status: 529, contentType: 'text/plain', headers: { 'access-control-allow-origin': '*' }, body: 'overloaded' });
+  // unless the walk wants the provider to refuse, in the words the route uses.
+  const BUSY = 'The AI service is busy right now. Try again in a minute.';
+  await w.mock('**/api/claude', async route => {
+    if (failing && route.request().method() === 'POST') return route.fulfill({ status: 429, contentType: 'application/json', body: JSON.stringify({ type: 'error', error: { type: 'overloaded_error', message: BUSY } }) });
     return route.fallback();
   });
-  w.note('API 529: overloaded');
+  // The page must never go to a provider on its own.
+  const direct = [];
+  p.on('request', r => { if (/api\.anthropic\.com|generativelanguage\.googleapis\.com/.test(r.url())) direct.push(r.url()); });
 
   await w.step('intro says what the tool is, and how long it is', async () => {
     await w.open();
@@ -234,18 +238,21 @@ export async function walk(w) {
     }
   });
 
-  await w.step('chapter V: the key gate, then a failed call said plainly', async () => {
-    await w.see('API key required');
-    await w.see('Anthropic key needed');
-    await w.fill('#app input.gate-input', KEY);
-    await press('Save and continue');
-    w.check(await p.evaluate(() => localStorage.getItem('qb_anthropic_key')) === KEY, 'the key was not kept in this browser');
-    w.check(!JSON.stringify(await p.evaluate(() => localStorage.getItem('qb_profiles_state'))).includes(KEY), 'the key was written into the saved progress');
+  await w.step('chapter V: no key is asked for, then a failed call said plainly', async () => {
     await w.see('Chapter V · The Psychological X-Ray');
     await w.see('Now the layer underneath.');
+    // This screen used to stop the founder and ask for an Anthropic key.
+    w.check(await p.locator('#app input[type="password"]').count() === 0, 'the founder is asked for a key');
+    const screen = await p.locator('#app').innerText();
+    const named = /Anthropic|Claude|API key|clé API|sk-ant/i.exec(screen);
+    w.check(!named, `the screen names a provider or a key: ${JSON.stringify(named && named[0])}`);
+    w.check(await p.evaluate(() => localStorage.getItem('qb_anthropic_key')) === null, 'a provider key is kept in this browser');
     failing = true;
     await press('Generate');
-    await sees('X-Ray generation failed: API 529: overloaded');
+    // Named here, before the wait below can time out on it.
+    await p.waitForTimeout(500);
+    w.check(direct.length === 0, `the page called a provider itself: ${direct[0]}`);
+    await sees('X-Ray generation failed: ' + BUSY);
     failing = false;
   });
 
@@ -268,13 +275,16 @@ export async function walk(w) {
     w.check(await boxes.nth(5).inputValue() === 'Paul wants the ward to carry no plaque at all.', 'an edited pattern did not survive a tab change');
   });
 
-  await w.step('the model was asked in English, with the founder\'s key, and for French when in French', async () => {
+  await w.step('the model was asked through the shared route, in English, and the reader\'s language was said', async () => {
     w.check(asked.length === 1, `${asked.length} model call(s) for one generation`);
     const call = asked[0] || { prompt: '', system: '' };
-    w.check(call.key === KEY && call.model === 'claude-sonnet-4-6', `the call used key ${call.key} and model ${call.model}`);
+    w.check(/\/api\/claude$/.test(call.url || '') && !call.key, `the call went to ${call.url}${call.key ? ' with a key in the browser' : ''}`);
+    w.check(direct.length === 0, `the page called a provider itself: ${direct[0]}`);
     w.check(call.prompt.includes('PERSONA 1 (Paul)') && call.prompt.includes('Time and capacity: ' + strain(PEOPLE[0], 1)) && call.prompt.includes('Awareness:'), 'the prompt does not carry the work in its English labels');
     w.check(/senior brand strategist/.test(call.system), 'the system prompt did not reach the model');
-    w.check(/LANGUAGE OF THE OUTPUT/.test(call.system) === fr, fr ? 'the French directive is missing from the call' : 'the English call carries a language directive');
+    // The server appends the language directive once, from this header.
+    w.check((call.lang === 'fr') === fr, fr ? 'the call does not tell the server the reader is French (X-QB-Lang)' : `the English call is marked ${call.lang}`);
+    w.check(!/LANGUAGE OF THE OUTPUT/.test(call.system), 'the browser added a language directive of its own; the server would add a second');
   });
 
   await w.step('chapter VI: common thread, themes added and removed', async () => {

@@ -36,7 +36,7 @@ QBI18N.add('fr', {
   "Generate": "Générer",
   "// Working": "// En cours",
   "try again": "réessayez",
-  "No API key configured": "aucune clé API configurée",
+  "The AI service did not answer.": "le service d’IA n’a pas répondu.",
 
   /* ── Intro ──────────────────────────────────────────────────────── */
   "Three buyers.": "Trois acheteurs.",
@@ -204,8 +204,8 @@ QBI18N.add('fr', {
   /* ── Chapter V · psychological X-Ray ──────────────────────────────── */
   "Chapter V · The Psychological X-Ray": "Chapitre V · La radiographie psychologique",
   "Now the layer underneath.": "Maintenant, la couche du dessous.",
-  "Six psychological patterns per persona. Drawn from the biography, mindset, pain, and journey you have built so far. Claude proposes. You sharpen.":
-    "Six schémas psychologiques par persona. Tirés de la biographie, de l’état d’esprit, de la douleur et du cheminement que vous avez construits jusqu’ici. Claude propose. Vous affûtez.",
+  "Six psychological patterns per persona. Drawn from the biography, mindset, pain, and journey you have built so far. BrandOS proposes. You sharpen.":
+    "Six schémas psychologiques par persona. Tirés de la biographie, de l’état d’esprit, de la douleur et du cheminement que vous avez construits jusqu’ici. BrandOS propose. Vous affûtez.",
   "Micro-behaviors of control. Rationalizations. Hidden drivers. Defense mechanisms. Emotional contradiction. Aspirational undercurrent.":
     "Micro-comportements de contrôle. Rationalisations. Moteurs cachés. Mécanismes de défense. Contradiction émotionnelle. Aspiration souterraine.",
   "// Generating psychological X-Ray": "// Génération de la radiographie psychologique",
@@ -262,8 +262,8 @@ QBI18N.add('fr', {
   /* ── Chapter VII · synthesis ──────────────────────────────────────── */
   "Chapter VII · Synthesis": "Chapitre VII · Synthèse",
   "Final assembly.": "Assemblage final.",
-  "Claude assembles your work into the full deliverable: three persona briefs in your strategy format, plus the cross-cutting layers. You review, refine if needed, then save.":
-    "Claude assemble votre travail dans le livrable complet : trois briefs de persona au format de votre stratégie, plus les couches transversales. Vous relisez, vous affinez si besoin, puis vous enregistrez.",
+  "BrandOS assembles your work into the full deliverable: three persona briefs in your strategy format, plus the cross-cutting layers. You review, refine if needed, then save.":
+    "BrandOS assemble votre travail dans le livrable complet : trois briefs de persona au format de votre stratégie, plus les couches transversales. Vous relisez, vous affinez si besoin, puis vous enregistrez.",
   "Build deliverable": "Construire le livrable",
   "// Assembling the deliverable": "// Assemblage du livrable",
   "Three full persona briefs. Marketing approach. Key takeaways. Common themes. Binding insight. Detailed patterns. The complete document.":
@@ -309,8 +309,8 @@ QBI18N.add('fr', {
   "Refine failed: {0}": "L’affinage a échoué : {0}",
   "Refine {0}": "Affiner {0}",
   "{0} of 3": "{0} sur 3",
-  "What needs to change? Marketing approach? Takeaways? X-Ray pattern? One paragraph of direction. Claude will rebuild this persona's brief.":
-    "Que faut-il changer ? L’approche marketing ? Les points clés ? Un schéma de la radiographie ? Un paragraphe de consignes. Claude reconstruira le brief de ce persona.",
+  "What needs to change? Marketing approach? Takeaways? X-Ray pattern? One paragraph of direction. BrandOS will rebuild this persona's brief.":
+    "Que faut-il changer ? L’approche marketing ? Les points clés ? Un schéma de la radiographie ? Un paragraphe de consignes. BrandOS reconstruira le brief de ce persona.",
   "e.g. The marketing approach is too tactical. Lift it to ecosystem-level moves. The third takeaway is correct but the language is generic - make it specific to academic medical centers.":
     "ex. L’approche marketing est trop tactique. Élevez-la au niveau de l’écosystème. Le troisième point clé est exact mais sa formulation est générique. Rendez-le propre aux centres hospitaliers universitaires.",
   "Rebuild this persona": "Reconstruire ce persona",
@@ -339,12 +339,6 @@ QBI18N.add('fr', {
   "PPTX export still loading - try again in a second.": "L’export PPTX charge encore. Réessayez dans une seconde.",
   "Could not generate the PPTX. Check the console for details.": "Impossible de générer le PPTX. Le détail est dans la console.",
 
-  /* ── API key gate ───────────────────────────────────────────────── */
-  "API key required": "Clé API requise",
-  "Anthropic key needed": "Clé Anthropic nécessaire",
-  "Used for the X-Ray, Common Thread, and Synthesis steps. Stored locally only. Never sent anywhere except to Anthropic.":
-    "Utilisée pour les étapes Radiographie, Fil conducteur et Synthèse. Stockée en local uniquement. Jamais envoyée ailleurs que chez Anthropic.",
-  "sk-ant-...": true,
   "Save and continue": "Enregistrer et continuer",
 
   /* ── Footer blurb (short variant; common.js holds the long one) ─── */

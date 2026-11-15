@@ -1925,12 +1925,10 @@ function readApiKey() {
     var fromUrl = params.get("apikey");
     if (fromUrl) return fromUrl;
   } catch (e) {}
-  try { var s = localStorage.getItem("qb_anthropic_key"); if (s) return s; } catch (e) {}
+  // This page once asked the founder for an Anthropic key and kept it here.
+  // It no longer asks, so a key left from that time is removed, not reused.
+  try { localStorage.removeItem("qb_anthropic_key"); } catch (e) {}
   return "";
-}
-function saveApiKey(key) {
-  try { localStorage.setItem("qb_anthropic_key", key); } catch (e) {}
-  state.apiKey = key;
 }
 
 // ============================================================================
@@ -2119,16 +2117,17 @@ function fieldBlock(label, hint, child) {
 // API
 // ============================================================================
 
-async function callAnthropic(messages, system, maxTokens) {
-  if (!state.apiKey) throw new Error("No API key configured");
-  var res = await fetch("https://api.anthropic.com/v1/messages", {
+// Who answers is the server's decision (api/_lib/tool-provider.js). The page
+// speaks one shape to /api/claude and reads content[0].text back, so a
+// founder needs no key of their own. A key passed as ?apikey= is the one
+// case that goes to Anthropic directly, as on every tool.
+async function callModel(messages, system, maxTokens) {
+  var direct = !!state.apiKey;
+  var res = await fetch(direct ? "https://api.anthropic.com/v1/messages" : "/api/claude", {
     method: "POST",
-    headers: {
-      "x-api-key": state.apiKey,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-      "content-type": "application/json"
-    },
+    headers: direct
+      ? { "x-api-key": state.apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true", "content-type": "application/json" }
+      : { "content-type": "application/json" },
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
       max_tokens: maxTokens || 4000,
@@ -2136,12 +2135,15 @@ async function callAnthropic(messages, system, maxTokens) {
       messages: messages
     })
   });
-  if (!res.ok) {
-    var errText = await res.text();
-    throw new Error("API " + res.status + ": " + errText.substring(0, 200));
+  var raw = await res.text();
+  var data = {};
+  try { data = raw ? JSON.parse(raw) : {}; } catch (e) {}
+  var text = data && data.content && data.content[0] && data.content[0].text;
+  if (!res.ok || !text) {
+    var why = data && data.error && (data.error.message || data.error);
+    throw new Error(typeof why === "string" && why ? why : "The AI service did not answer.");
   }
-  var data = await res.json();
-  return data.content[0].text;
+  return text;
 }
 
 function extractJSON(raw) {
@@ -2168,13 +2170,6 @@ function render() {
   var app = document.getElementById("app");
   app.innerHTML = "";
   var stepName = STEPS[state.step];
-
-  // API key gate before any API-call step
-  if ((stepName === "xray-generate" || stepName === "common-generate" || stepName === "synthesize") && !state.apiKey) {
-    app.appendChild(renderHeader());
-    app.appendChild(renderApiKeyGate());
-    return;
-  }
 
   if (stepName !== "intro") app.appendChild(renderHeader());
 
@@ -2521,7 +2516,7 @@ function renderXrayGenerate() {
       h("div", { class: "center" },
         h("div", { class: "kicker", text: 'Chapter V · The Psychological X-Ray' }),
         h("h2", { class: "display mt-2 mb-4", text: "Now the layer underneath." }),
-        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 12px" }, text: "Six psychological patterns per persona. Drawn from the biography, mindset, pain, and journey you have built so far. Claude proposes. You sharpen." }),
+        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 12px" }, text: "Six psychological patterns per persona. Drawn from the biography, mindset, pain, and journey you have built so far. BrandOS proposes. You sharpen." }),
         h("p", { class: "small", style: { maxWidth: "520px", margin: "0 auto 32px" }, text: "Micro-behaviors of control. Rationalizations. Hidden drivers. Defense mechanisms. Emotional contradiction. Aspirational undercurrent." }),
         h("div", { class: "flex justify-center gap-3" },
           btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
@@ -2536,7 +2531,7 @@ async function runXrayGenerate() {
   state.loading = true; state.error = null; render();
   try {
     var prompt = buildXrayPrompt();
-    var raw = await callAnthropic(
+    var raw = await callModel(
       [{ role: "user", content: prompt }],
       "You are a senior brand strategist with deep psychological literacy. You read between the lines of professional language to surface the unspoken patterns that shape how someone actually behaves. You write each pattern in two to four crisp sentences. You return only valid JSON.",
       4000
@@ -2682,7 +2677,7 @@ async function runCommonGenerate() {
   state.loading = true; state.error = null; render();
   try {
     var prompt = buildCommonPrompt();
-    var raw = await callAnthropic(
+    var raw = await callModel(
       [{ role: "user", content: prompt }],
       "You are a senior brand strategist. You read across personas to find the strategic constants. You write themes that are precise, not platitudes. You return only valid JSON.",
       2500
@@ -2797,7 +2792,7 @@ function renderSynthesize() {
       h("div", { class: "center" },
         h("div", { class: "kicker", text: 'Chapter VII · Synthesis' }),
         h("h2", { class: "display mt-2 mb-4", text: "Final assembly." }),
-        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 32px" }, text: "Claude assembles your work into the full deliverable: three persona briefs in your strategy format, plus the cross-cutting layers. You review, refine if needed, then save." }),
+        h("p", { class: "body", style: { maxWidth: "560px", margin: "0 auto 32px" }, text: "BrandOS assembles your work into the full deliverable: three persona briefs in your strategy format, plus the cross-cutting layers. You review, refine if needed, then save." }),
         h("div", { class: "flex justify-center gap-3" },
           btn("Back", { variant: "ghost", icon: "arrowLeft", onClick: goPrev }),
           btn("Build deliverable", { size: "lg", icon: "sparkles", onClick: runSynthesis })
@@ -2811,7 +2806,7 @@ async function runSynthesis() {
   state.loading = true; state.error = null; render();
   try {
     var prompt = buildSynthesisPrompt();
-    var raw = await callAnthropic(
+    var raw = await callModel(
       [{ role: "user", content: prompt }],
       "You are a senior brand strategist assembling the final persona deliverable. You write in the brand strategist's voice: precise, observational, no fluff. You generate Marketing Approach (5 strategic moves) and Key Takeaways (5 strategic principles) per persona based on everything that has been built. You return only valid JSON.",
       6000
@@ -3045,7 +3040,7 @@ function openRefineModal(personaIdx) {
   var modal = h("div", { id: "refine-modal", class: "modal-overlay", onclick: function(e) { if (e.target === modal) modal.remove(); } },
     h("div", { class: "modal" },
       h("div", { class: "modal-title", text: "Refine " + state.seats[personaIdx].name }),
-      h("p", { class: "body", text: "What needs to change? Marketing approach? Takeaways? X-Ray pattern? One paragraph of direction. Claude will rebuild this persona's brief." }),
+      h("p", { class: "body", text: "What needs to change? Marketing approach? Takeaways? X-Ray pattern? One paragraph of direction. BrandOS will rebuild this persona's brief." }),
       feedbackInput = h("textarea", { class: "modal-textarea", placeholder: "e.g. The marketing approach is too tactical. Lift it to ecosystem-level moves. The third takeaway is correct but the language is generic - make it specific to academic medical centers." }),
       h("div", { class: "flex gap-3 justify-between" },
         h("button", { class: "btn btn-ghost btn-sm", onclick: function() { modal.remove(); } }, "Cancel"),
@@ -3081,7 +3076,7 @@ async function runRefine(personaIdx, feedback) {
       "USER FEEDBACK:\n" + feedback + "\n\n" +
       "Return ONLY valid JSON: { \"marketingApproach\": [5 strings], \"keyTakeaways\": [5 strings each headline + clause] }";
 
-    var raw = await callAnthropic(
+    var raw = await callModel(
       [{ role: "user", content: prompt }],
       "You are a senior brand strategist refining a persona brief based on direct feedback. Apply the feedback faithfully. Return only valid JSON.",
       2000
@@ -3459,28 +3454,6 @@ function buildBrandedHTML(out) {
 // ============================================================================
 // API KEY GATE
 // ============================================================================
-
-function renderApiKeyGate() {
-  var inputEl;
-  return h("div", { class: "screen screen-center" },
-    h("div", { class: "container-md fade-in" },
-      h("div", { class: "gate" },
-        h("div", { class: "kicker", text: 'API key required' }),
-        h("h2", { class: "display", style: { fontSize: "26px", marginBottom: "12px", marginTop: "8px" }, text: "Anthropic key needed" }),
-        h("p", { class: "body", style: { marginBottom: "16px" }, text: "Used for the X-Ray, Common Thread, and Synthesis steps. Stored locally only. Never sent anywhere except to Anthropic." }),
-        inputEl = h("input", { class: "gate-input", type: "password", placeholder: "sk-ant-...", value: state.apiKey || "" }),
-        h("div", { class: "flex justify-end mt-2" },
-          btn("Save and continue", { size: "sm", onClick: function() {
-            var k = inputEl.value.trim();
-            if (!k) return;
-            saveApiKey(k);
-            render();
-          } })
-        )
-      )
-    )
-  );
-}
 
 // ============================================================================
 // INIT
