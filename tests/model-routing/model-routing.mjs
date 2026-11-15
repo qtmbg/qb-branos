@@ -324,6 +324,30 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
     if (r.data?.content?.[0]?.text !== 'from claude') fail('the Anthropic answer was not passed through');
     okIf('with no Google key the same call is answered by Anthropic, unchanged');
 
+    since();
+    // An id that holds the request open without answering. Seen live: one
+    // call sat for the whole budget and the next id was never asked.
+    process.env.GEMINI_API_KEY = 'test-google';
+    process.env.QB_TOOL_ATTEMPT_MS = '60';
+    seen = [];
+    const hang = init => new Promise((_, reject) => init.signal.addEventListener('abort', () => { const e = new Error('aborted'); e.name = 'AbortError'; reject(e); }));
+    globalThis.fetch = async (url, init) => {
+      seen.push(String(url));
+      return seen.length === 1 ? hang(init) : new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: 'the second id answered' }] } }] }), { status: 200 });
+    };
+    let t0 = Date.now();
+    r = await call(ask);
+    if (r.status !== 200 || r.data?.content?.[0]?.text !== 'the second id answered') fail(`a stalled id was not left for the next one: ${r.status} ${JSON.stringify(r.data).slice(0, 140)}`);
+    if (seen.length !== 2 || seen[0] === seen[1]) fail(`after a stall the route made ${seen.length} call(s) to ${new Set(seen).size} id(s)`);
+    if (r.data?.model && seen[1] && !seen[1].includes(r.data.model)) fail('the answer does not name the id that served it');
+    if (Date.now() - t0 > 3000) fail('the stalled id was not dropped at its own time limit');
+    seen = [];
+    globalThis.fetch = async (url, init) => { seen.push(String(url)); return hang(init); };
+    r = await call(ask);
+    if (r.status !== 504 || !/took too long/.test(r.data?.error?.message || '') || seen.length !== 3) fail(`with every id stalled: ${r.status} after ${seen.length} id(s), ${JSON.stringify(r.data).slice(0, 120)}`);
+    delete process.env.QB_TOOL_ATTEMPT_MS;
+    okIf('a stalled id is dropped at its own limit and the next one is asked; three stalls are said in one sentence');
+
     // Last, because it changes what this process sends from here on.
     since();
     process.env.GEMINI_API_KEY = 'test-google';
