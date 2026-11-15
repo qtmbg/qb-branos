@@ -118,9 +118,12 @@ until revenue covers Anthropic.
 - **Anthropic** is the standby. It answers the tools only when the Google
   key is absent, and the agents only when `runtime_args.model_override`
   names a Claude id, which nothing sets today.
-- **No tool asks the founder for a key.** The Profiles did until 15
-  November 2026; it now calls `/api/claude` like the rest. A key passed
-  as `?apikey=` is the one case a browser goes to Anthropic itself.
+- **No page asks anyone for a key.** The Profiles and Content Bridge did
+  until 15 November 2026; both now call `/api/claude` like the rest. A key
+  passed as `?apikey=` is the one case a browser goes to Anthropic itself.
+- **Every production agent runs on Google,** the seven operator-only
+  content agents included, since the same date. Nothing may wait on the
+  Anthropic account.
 
 **What the legal pages say about it.** Owner decision, 15 November 2026:
 `privacy.html` lists Google and Anthropic as AI processors and

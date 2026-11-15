@@ -118,19 +118,34 @@ console.log('\n3 · model_override is validated, not trusted');
   okIf('non-canonical, empty and non-string overrides all fall back to the agent model');
 }
 
-console.log('\n4 · the fleet is on the providers the recut chose');
+console.log('\n4 · the whole fleet is on Google');
 {
+  // Operator decision, 15 November 2026: nothing may wait on the Anthropic
+  // account. The public agents moved at the recut, the seven operator-only
+  // agents on this date. An agent that resolves to a Claude id fails the
+  // moment that account is empty, which is how the seven stood for weeks.
   since();
   const pub = Object.keys(AGENTS).filter(s => !OPERATOR_ONLY_SLUGS.has(s));
   const wrong = pub.filter(s => providerFor(modelOf(s)) !== 'google');
   if (wrong.length) fail(`public agents not on Google: ${wrong.map(s => `${s} (${modelOf(s)})`).join(', ')}`);
-  else okIf(`all ${pub.length} public agents run the free path on Google`);
+  else okIf(`all ${pub.length} public agents run on Google`);
 
   since();
   const opOnly = [...OPERATOR_ONLY_SLUGS].filter(s => AGENTS[s]);
-  const drifted = opOnly.filter(s => providerFor(modelOf(s)) !== 'anthropic');
-  if (drifted.length) fail(`operator-only agents moved off Anthropic: ${drifted.join(', ')}`);
-  else okIf(`all ${opOnly.length} operator-only agents stay on Anthropic`);
+  const stuck = opOnly.filter(s => providerFor(modelOf(s)) !== 'google');
+  if (stuck.length) fail(`operator-only agents still wait on Anthropic: ${stuck.map(s => `${s} (${modelOf(s)})`).join(', ')}`);
+  else okIf(`all ${opOnly.length} operator-only agents run on Google`);
+
+  since();
+  // An agent with no META.model resolves to the Sonnet default by omission.
+  // Only an agent that makes no model call may leave it out.
+  const silent = Object.keys(AGENTS).filter(s => !AGENTS[s].META.model);
+  const calling = silent.filter(s => {
+    const file = `agents/${s.replace(/_synthesizer$/, '').replace(/_/g, '-')}.js`;
+    try { return /callModel\(/.test(read(file)); } catch { return false; }
+  });
+  if (calling.length) fail(`these agents call a model but name none, so they resolve to Anthropic: ${calling.join(', ')}`);
+  else okIf('no agent reaches Anthropic by leaving its model out');
 }
 
 console.log('\n5 · there is exactly one model call in the codebase');
