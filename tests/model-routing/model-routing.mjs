@@ -15,7 +15,7 @@
 import { readFileSync } from 'node:fs';
 import { AGENTS } from '../../agents/registry.js';
 import { CANONICAL_MODELS, DEFAULT_MODEL } from '../../agents/contract.js';
-import { providerFor, hasKeyFor, pickModel, callModel, GOOGLE_MODELS, effectiveProvider, FALLBACK_ANTHROPIC_MODEL } from '../../agents/model-call.js';
+import { providerFor, hasKeyFor, pickModel, callModel, GOOGLE_MODELS, effectiveProvider, FALLBACK_ANTHROPIC_MODEL, GOOGLE_MIN_OUTPUT, GOOGLE_THINKING } from '../../agents/model-call.js';
 import { OPERATOR_ONLY_SLUGS } from '../../api/_lib/operator-only.js';
 
 const failures = [];
@@ -100,6 +100,31 @@ console.log('\n2b · funding either account yields a working fleet');
   if (!/\[effectiveModel\]/.test(src)) fail('the fallback swaps provider but not model · a Gemini id would be sent to Anthropic');
   if (!/console\.warn\(`\[model-call\] GEMINI_API_KEY absent/.test(src)) fail('the fallback is silent · a free tier quietly running on Sonnet is a bill nobody chose');
   okIf('the fallback swaps the model too, and says so loudly');
+}
+
+console.log('\n2c · a Google call has room to answer');
+{
+  // Gemini counts its reasoning against maxOutputTokens. Seen live on 15
+  // November 2026: a long answer with a cap of 8,192 came back cut after
+  // 1,742 characters because the thoughts had spent the rest. An agent's
+  // own cap (3,000 to 6,500) would cut far sooner.
+  since();
+  const realFetch = globalThis.fetch;
+  let sent = null;
+  globalThis.fetch = async (_url, init) => {
+    sent = JSON.parse(init.body);
+    return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '{"ok":true}' }] } }], usageMetadata: {} }), { status: 200 });
+  };
+  try {
+    const r = await callModel({ model: G, system: 's', userContent: 'u', geminiKey: 'g', maxTokens: 3000 });
+    const cfg = sent?.generationConfig || {};
+    if (!r.ok) fail(`the mocked Google call failed: ${JSON.stringify(r).slice(0, 200)}`);
+    if (!(GOOGLE_MIN_OUTPUT >= 16384)) fail(`GOOGLE_MIN_OUTPUT is ${GOOGLE_MIN_OUTPUT}; thoughts alone were seen to spend about 7,700 tokens`);
+    if (cfg.maxOutputTokens !== GOOGLE_MIN_OUTPUT) fail(`an agent asking for 3000 tokens was sent maxOutputTokens ${cfg.maxOutputTokens}, so its reasoning can starve its answer`);
+    if (JSON.stringify(cfg.thinkingConfig) !== JSON.stringify(GOOGLE_THINKING)) fail(`the agent call carries thinkingConfig ${JSON.stringify(cfg.thinkingConfig)}`);
+    if (cfg.responseMimeType !== 'application/json') fail('the agent call lost JSON mode');
+  } finally { globalThis.fetch = realFetch; }
+  okIf('an agent call is sent with the output floor, the thinking level and JSON mode');
 }
 
 console.log('\n3 · model_override is validated, not trusted');
@@ -251,7 +276,8 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
       if (seen[0].headers['x-goog-api-key'] !== 'test-google') fail('the Google key was not the one sent');
       if (!/Return JSON\./.test(seen[0].body.systemInstruction?.parts?.[0]?.text || '')) fail('the system prompt did not reach Google');
       if (seen[0].body.systemInstruction.parts[0].text === 'Return JSON.') fail('a French reader got no language directive on the Google path');
-      if (!(seen[0].body.generationConfig.maxOutputTokens >= 3000)) fail('the output cap was lowered below what the page asked for');
+      if (seen[0].body.generationConfig.maxOutputTokens !== GOOGLE_MIN_OUTPUT) fail(`the tool call was sent maxOutputTokens ${seen[0].body.generationConfig.maxOutputTokens}; the page's own cap would let the reasoning starve the answer`);
+      if (JSON.stringify(seen[0].body.generationConfig.thinkingConfig) !== JSON.stringify(GOOGLE_THINKING)) fail('the tool call does not carry the thinking level');
     }
     if (r.status !== 200 || r.data?.content?.[0]?.text !== '{"ok":true}') fail(`the answer is not in the shape the pages read: ${JSON.stringify(r.data)}`);
     if (r.data?.usage?.input_tokens !== 7) fail('usage was not mapped');
@@ -297,6 +323,23 @@ console.log('\n6b · the tool pages go through Google, in the shape they already
     else if (seen[0].body.model !== 'claude-sonnet-4-6') fail('the Anthropic path lost the model the page asked for');
     if (r.data?.content?.[0]?.text !== 'from claude') fail('the Anthropic answer was not passed through');
     okIf('with no Google key the same call is answered by Anthropic, unchanged');
+
+    // Last, because it changes what this process sends from here on.
+    since();
+    process.env.GEMINI_API_KEY = 'test-google';
+    seen = [];
+    globalThis.fetch = async (url, init) => {
+      const body = JSON.parse(init.body);
+      seen.push(body);
+      return body.generationConfig.thinkingConfig
+        ? new Response(JSON.stringify({ error: { message: 'Unknown name "thinkingConfig"' } }), { status: 400 })
+        : new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: 'answered without it' }] } }] }), { status: 200 });
+    };
+    r = await call(ask);
+    if (r.data?.content?.[0]?.text !== 'answered without it' || seen.length !== 2) fail(`an id that refuses thinkingConfig was not asked again without it (calls: ${seen.length}, answer: ${JSON.stringify(r.data).slice(0, 120)})`);
+    r = await call(ask);
+    if (seen.length !== 3 || seen[2].generationConfig.thinkingConfig) fail('after a refusal the field is still sent, so every call pays a failed request first');
+    okIf('an id that refuses the thinking level is asked again without it, once');
   } finally {
     globalThis.fetch = realFetch;
     if (env.g === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = env.g;
