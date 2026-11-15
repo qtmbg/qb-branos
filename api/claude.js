@@ -7,7 +7,7 @@
 // name because sixteen pages call it.
 
 import { langFromRequest, withLanguage } from '../agents/lang.js';
-import { toolProvider, toGoogleContents, unwrapJsonFence, toolChain, restId, GOOGLE_MIN_OUTPUT, GOOGLE_THINKING, googleRequest } from './_lib/tool-provider.js';
+import { toolProvider, toGoogleContents, unwrapJsonFence, toolChain, googleWalk, GOOGLE_MIN_OUTPUT, GOOGLE_THINKING } from './_lib/tool-provider.js';
 
 // Node serverless, not Edge. Edge must begin answering within about 25
 // seconds, and this route answers only once the model has finished: a long
@@ -64,32 +64,10 @@ async function askGoogle({ body, system, maxTokens, apiKey, signal }) {
     ...(system && { systemInstruction: { parts: [{ text: String(system) }] } }),
   });
 
-  let upstream = null, servedBy;
-  for (let i = 0; i < chain.length; i++) {
-    const candidate = chain[i];
-    // This attempt ends when its own time is up or when the whole request's is.
-    const attempt = new AbortController();
-    const whole = () => attempt.abort();
-    if (signal) signal.addEventListener('abort', whole, { once: true });
-    const timer = setTimeout(() => attempt.abort(), attemptBudgetMs(i));
-    try {
-      upstream = await googleRequest({ model: candidate, apiKey, build, signal: attempt.signal });
-    } catch (err) {
-      if (!(err && err.name === 'AbortError') || (signal && signal.aborted)) throw err;
-      console.warn(`[api/claude] google ${candidate} did not answer in ${Math.round(attemptBudgetMs(i))} ms; asking the next id`);
-      restId(candidate);
-      upstream = null;
-      continue;
-    } finally {
-      clearTimeout(timer);
-      if (signal) signal.removeEventListener('abort', whole);
-    }
-    servedBy = candidate;
-    // Capacity walks to the next id, as a stall does above. Any other
-    // refusal would be refused by the next model too.
-    if (upstream.status !== 429 && upstream.status !== 503) break;
-    restId(candidate);
-  }
+  // Capacity and stalls both move to the next id (agents/model-call.js).
+  // A caller's own abort, the whole request out of time, is thrown and
+  // answered in the handler.
+  const { res: upstream, servedBy } = await googleWalk({ chain, apiKey, build, signal, limitMs: i => attemptBudgetMs(i) });
   // Every id stalled.
   if (!upstream) return fail(504, 'The AI service took too long to answer. Try again.', 'timeout_error');
 
