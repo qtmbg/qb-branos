@@ -136,7 +136,7 @@ async function handleChainsMode({ env, userId, profile, limit, corsH }) {
   if (dispatchIds.length > 0) {
     const inList = dispatchIds.map(encodeURIComponent).join(',');
     const dispParams = new URLSearchParams({
-      select: 'id,kind,chain_id,created_at,agent_slug',
+      select: 'id,kind,chain_id,created_at,agent_slug,status',
       id: `in.(${inList})`,
     });
     const dR = await fetch(`${env.SUPABASE_URL}/rest/v1/dispatch_jobs?${dispParams.toString()}`, {
@@ -260,5 +260,8 @@ async function handleChainsMode({ env, userId, profile, limit, corsH }) {
     return bT - aT;
   });
 
-  return json(200, { ok: true, chains, legacy }, corsH);
+  // Old queued artifacts can belong to a dispatch that has already
+  // settled. They must not hold the browser in its active polling mode.
+  const has_active_jobs = Array.from(dispatchById.values()).some(d => d.status === 'producing');
+  return json(200, { ok: true, chains, legacy, has_active_jobs }, corsH);
 }

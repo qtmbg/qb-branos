@@ -18,6 +18,10 @@
    qbp_snapshot, runtime_args, file_refs, agent_version, model.
 */
 
+import { createJobRefresh } from './qb-job-refresh.js';
+
+const consoleWatchers = new WeakMap();
+
 // What a founder reads above each group of agents: the movement, not the
 // phase number. The key stays internal (META.phase). '03' and '04' only
 // ever reach the operator: api/_lib/operator-only.js hides those agents
@@ -776,12 +780,8 @@ export function renderConsoleError(container, error) {
   ]));
 }
 
-// Step 9C · poll fallback cadence matches the bell. The Realtime manager
-// owns the realtime ↔ poll state machine; this is the consumer-side
-// cadence when state='poll'.
-const PHASE_POLL_MS = 30_000;
-
 export function renderConsole(container, payload, opts) {
+  consoleWatchers.get(container)?.();
   clear(container);
 
   const session = opts?.session;
@@ -1001,7 +1001,7 @@ export function renderConsole(container, payload, opts) {
       // Optimistic flip · the agent is a live reference in livePayload.agents.
       agent.inflight_dispatch_id = body.dispatch_id || 'pending';
       paintView();
-      refetchAndRepaint();
+      jobRefresh.refresh();
       return;
     }
     // 4xx → founder-facing copy mapped from the named dispatch error.
@@ -1031,7 +1031,7 @@ export function renderConsole(container, payload, opts) {
     revisionRounds[agent.slug] = (revisionRounds[agent.slug] || 0) + 1;
     agent.inflight_dispatch_id = body.dispatch_id || 'pending';
     paintView();
-    refetchAndRepaint();
+    jobRefresh.refresh();
   }
 
   // Direct storage upload for a single logo image, mirroring the harness +
@@ -1057,47 +1057,48 @@ export function renderConsole(container, payload, opts) {
   // Step 9C · Realtime subscription via the shared QBRealtimeManager.
   // Phase view refetches /api/agents/console on notification arrival
   // (chain_ready / dispatch_failed events) so agent state is live.
-  // Falls back to 30 s poll when the manager state is 'poll' (Realtime
-  // unavailable or SUBSCRIBED grace timeout). Manager owns the state
-  // machine + Supabase client; this consumer owns its own fetch.
-  let phasePollHandle = null;
-  let refetchInFlight = false;
+  // The fallback slows down while idle and expires after ten minutes.
+  let disposed = false;
+  const hasActiveJobs = data => (data.agents || []).some(a => a.inflight_dispatch_id);
 
   async function refetchAndRepaint() {
-    if (!session?.token || refetchInFlight) return;
-    refetchInFlight = true;
+    if (!session?.token || disposed) return null;
     try {
       const r = await fetch('/api/agents/console', {
         headers: { Authorization: `Bearer ${session.token}` },
       });
-      if (!r.ok) return; // silent · the next event or poll re-tries
+      if (!r.ok) return null;
       const fresh = await r.json().catch(() => null);
-      if (!fresh || !fresh.ok) return;
+      if (!fresh || !fresh.ok || disposed) return null;
       livePayload = fresh;
       tier = String(fresh?.user?.tier || 'free').toLowerCase();
       agentsBySlug = Object.fromEntries((fresh.agents || []).map(a => [a.slug, a]));
       paintView();
+      return hasActiveJobs(fresh);
     } catch {
-      // Network errors are non-fatal · next event or poll re-tries
-    } finally {
-      refetchInFlight = false;
+      return null;
     }
   }
 
+  const jobRefresh = createJobRefresh({ refresh: refetchAndRepaint, initialActive: hasActiveJobs(payload) });
   const mgr = window.QBRealtimeManager;
+  const unsubscribers = [];
   if (mgr && session?.token) {
     mgr.start({ authToken: session.token });
-    mgr.onNotification(() => refetchAndRepaint());
-    mgr.onState(s => {
-      if (s === 'realtime') {
-        if (phasePollHandle) { clearInterval(phasePollHandle); phasePollHandle = null; }
-      } else if (s === 'poll') {
-        if (phasePollHandle === null) {
-          phasePollHandle = setInterval(refetchAndRepaint, PHASE_POLL_MS);
-        }
-      }
-    });
+    unsubscribers.push(mgr.onNotification(() => jobRefresh.refresh()));
+    unsubscribers.push(mgr.onState(s => {
+      jobRefresh.setMode(s);
+      if (s === 'realtime') jobRefresh.refresh({ restartIdle: false });
+    }));
+  } else if (session?.token) {
+    jobRefresh.setMode('poll');
   }
+  function dispose() {
+    disposed = true;
+    jobRefresh.destroy();
+    unsubscribers.forEach(unsubscribe => unsubscribe());
+  }
+  consoleWatchers.set(container, dispose);
 
   // Initial paint.
   paintView();
