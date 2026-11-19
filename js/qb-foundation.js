@@ -12,8 +12,8 @@
      lock-ready  — all free-tier exercises complete, no lock yet
      locked      — foundation_locked_at present (3 sub-states)
 
-   Lock CTA dispatches POST /api/foundation/lock, polls artifacts
-   every 10 s until all settle. Polling pauses when the tab hides.
+   Lock CTA dispatches POST /api/foundation/lock. Realtime notifications
+   refresh artifacts; bounded polling covers a failed subscription.
 
    Exports:
      computeFoundationState({ qbp, artifacts, foundationLockedAt, tier })
@@ -27,6 +27,7 @@ import {
   createExerciseCard, createPhaseCard, createArtifactRow, createTierBadge,
   createPaywallModal, createLockFoundationCta, STARTER_ADDS, STARTER_PRICE_LINE,
 } from '/js/qb-components.js';
+import { createJobRefresh } from './qb-job-refresh.js';
 
 const PAID_TIERS = new Set(['starter','pro','agency','atelier']);
 
@@ -636,52 +637,54 @@ export function renderFoundationError(container, error) {
 }
 
 /* ─── Public: startArtifactPolling ───────────────────────── */
-const POLL_INTERVAL_MS = 10_000;
 const POLL_MAX_MS = 5 * 60_000;
 
-export function startArtifactPolling({ token, onUpdate, onStuck }) {
+export function startArtifactPolling({ token, onUpdate, onStuck, initialArtifacts }) {
   let stopped = false;
-  let timer = null;
-  const startedAt = Date.now();
-
-  async function tick() {
-    if (stopped) return;
-    if (document.hidden) {
-      // Pause: rearm a short tick to re-check visibility soon.
-      timer = setTimeout(tick, 1000);
-      return;
-    }
+  let previousRows = JSON.stringify(initialArtifacts);
+  const unsubscribers = [];
+  const watcher = createJobRefresh({ initialActive: true, activeInterval: 10_000, refresh: async () => {
+    if (stopped) return null;
     try {
       const r = await fetch('/api/artifacts?limit=200', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (r.ok) {
-        const d = await r.json().catch(() => ({}));
-        const rows = Array.isArray(d.artifacts) ? d.artifacts : [];
+        const d = await r.json().catch(() => null);
+        if (stopped || !Array.isArray(d?.artifacts)) return null;
+        const rows = d.artifacts;
         const inFlight = rows.some(a => a.status === 'queued' || a.status === 'generating');
-        if (typeof onUpdate === 'function') onUpdate(rows);
-        if (!inFlight) {
-          stopped = true;
-          return;
-        }
+        const nextRows = JSON.stringify(rows);
+        if (nextRows !== previousRows && typeof onUpdate === 'function') onUpdate(rows);
+        previousRows = nextRows;
+        if (!inFlight) stop();
+        return inFlight;
       }
-    } catch (_) { /* swallow transient errors; retry */ }
+    } catch { /* bounded fallback handles transient failures */ }
+    return null;
+  } });
+  // Preserve the existing five-minute watchdog for an active foundation.
+  const deadline = setTimeout(() => {
+    stop();
+    if (typeof onStuck === 'function') onStuck();
+  }, POLL_MAX_MS);
+  const mgr = window.QBRealtimeManager;
+  if (mgr) {
+    mgr.start({ authToken: token });
+    unsubscribers.push(mgr.onNotification(() => watcher.refresh()));
+    unsubscribers.push(mgr.onState(state => {
+      watcher.setMode(state);
+      if (state === 'realtime') watcher.refresh();
+    }));
+  } else watcher.setMode('poll');
 
-    if (Date.now() - startedAt >= POLL_MAX_MS) {
-      stopped = true;
-      if (typeof onStuck === 'function') onStuck();
-      return;
-    }
-    timer = setTimeout(tick, POLL_INTERVAL_MS);
-  }
-
-  // Kick off after a short head-start so the initial render finishes first.
-  timer = setTimeout(tick, POLL_INTERVAL_MS);
-
-  return function stop() {
+  function stop() {
     stopped = true;
-    if (timer) clearTimeout(timer);
-  };
+    watcher.destroy();
+    clearTimeout(deadline);
+    unsubscribers.forEach(unsubscribe => unsubscribe());
+  }
+  return stop;
 }
 
 const FoundationRenderer = {

@@ -212,6 +212,7 @@ async function rerender(session) {
   if (state.bucket === 'locked' && state.inFlight) {
     stopPolling = startArtifactPolling({
       token: session.token,
+      initialArtifacts: pkt.artifacts,
       onUpdate: (rows) => {
         const next = computeFoundationState({
           qbp: pkt.qbp,

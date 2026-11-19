@@ -19,6 +19,23 @@
 */
 
 import { createArtifactRow, createPaywallModal } from '/js/qb-components.js';
+import { createJobRefresh } from './qb-job-refresh.js';
+
+const archiveWatchers = new WeakMap();
+
+function hasActiveArtifacts(response) {
+  if (typeof response.has_active_jobs === 'boolean') return response.has_active_jobs;
+  const stack = [...(response.legacy || [])];
+  for (const chain of (response.chains || [])) {
+    for (const node of (chain.nodes || [])) stack.push(...(node.artifacts || []));
+  }
+  while (stack.length) {
+    const artifact = stack.pop();
+    if (artifact.status === 'queued' || artifact.status === 'generating') return true;
+    stack.push(...(artifact.children || []));
+  }
+  return false;
+}
 
 // Filter labels. The key is the internal phase an artifact is stored
 // under; what is painted is the movement it belongs to.
@@ -582,9 +599,10 @@ export function renderArchiveTree(container, response, opts = {}) {
   if (!(container instanceof HTMLElement)) {
     throw new Error('renderArchiveTree: container must be an HTMLElement');
   }
+  archiveWatchers.get(container)?.();
   const session = opts.session || null;
   let live = response || { chains: [], legacy: [] };
-  let refetchInFlight = false;
+  let disposed = false;
 
   function totalArtifactCount(resp) {
     const chainTotal = (resp.chains || []).reduce((acc, ch) => {
@@ -631,40 +649,44 @@ export function renderArchiveTree(container, response, opts = {}) {
   }
 
   async function refetchAndRepaint() {
-    if (!session?.token || refetchInFlight) return;
-    refetchInFlight = true;
+    if (!session?.token || disposed) return null;
     try {
       const r = await fetch('/api/artifacts?mode=chains', {
         headers: { Authorization: `Bearer ${session.token}` },
       });
-      if (!r.ok) return;
+      if (!r.ok) return null;
       const fresh = await r.json().catch(() => null);
-      if (!fresh || !fresh.ok) return;
+      if (!fresh || !fresh.ok || disposed) return null;
       live = fresh;
       render();
+      return hasActiveArtifacts(fresh);
     } catch {
-      // Silent · next event or poll re-tries
-    } finally {
-      refetchInFlight = false;
+      return null;
     }
   }
 
   // Step 11 §3.3 · Realtime subscription via shared qb-realtime-manager.
   // Inherits the step 9C canonical pattern: on chain_ready / dispatch_failed
-  // notification, refetch + repaint. Poll-fallback at 30s when state=poll.
+  // notification, refetch + repaint. The idle fallback is bounded.
   const mgr = (typeof window !== 'undefined') ? window.QBRealtimeManager : null;
-  let pollHandle = null;
+  const jobRefresh = createJobRefresh({ refresh: refetchAndRepaint, initialActive: hasActiveArtifacts(live) });
+  const unsubscribers = [];
   if (mgr && session?.token) {
     mgr.start({ authToken: session.token });
-    mgr.onNotification(() => refetchAndRepaint());
-    mgr.onState(s => {
-      if (s === 'realtime') {
-        if (pollHandle) { clearInterval(pollHandle); pollHandle = null; }
-      } else if (s === 'poll') {
-        if (pollHandle === null) pollHandle = setInterval(refetchAndRepaint, 30_000);
-      }
-    });
+    unsubscribers.push(mgr.onNotification(() => jobRefresh.refresh()));
+    unsubscribers.push(mgr.onState(s => {
+      jobRefresh.setMode(s);
+      if (s === 'realtime') jobRefresh.refresh({ restartIdle: false });
+    }));
+  } else if (session?.token) {
+    jobRefresh.setMode('poll');
   }
+  function dispose() {
+    disposed = true;
+    jobRefresh.destroy();
+    unsubscribers.forEach(unsubscribe => unsubscribe());
+  }
+  archiveWatchers.set(container, dispose);
 
   render();
 }
