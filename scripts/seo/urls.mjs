@@ -30,6 +30,8 @@ export const URLS = [
   { path: '/tools.html',                   file: 'tools.html',                        priority: '0.9', changefreq: 'weekly',  tier: 'explain' },
   { path: '/atelier',                      file: 'atelier.html',                      priority: '0.8', changefreq: 'monthly', tier: 'explain' },
   { path: '/payment.html',                 file: 'payment.html',                      priority: '0.8', changefreq: 'monthly', tier: 'commerce' },
+  { path: '/what-is-quantum-branding',     file: 'what-is-quantum-branding.html',     priority: '0.9', changefreq: 'monthly', tier: 'explain' },
+  { path: '/ai-brand-operating-system',    file: 'ai-brand-operating-system.html',    priority: '0.9', changefreq: 'monthly', tier: 'explain' },
 
   // Tier 3. Editorial. The answer surface Copilot reads from.
   { path: '/blog',                             file: 'blog/index.html',                        priority: '0.8', changefreq: 'weekly',  tier: 'editorial' },
@@ -37,6 +39,7 @@ export const URLS = [
   { path: '/blog/five-minute-brand-diagnostic',file: 'blog/five-minute-brand-diagnostic.html', priority: '0.7', changefreq: 'monthly', tier: 'editorial' },
   { path: '/blog/the-four-doors',              file: 'blog/the-four-doors.html',               priority: '0.7', changefreq: 'monthly', tier: 'editorial' },
   { path: '/blog/six-phases-idea-to-orbit',    file: 'blog/six-phases-idea-to-orbit.html',     priority: '0.7', changefreq: 'monthly', tier: 'editorial' },
+  { path: '/blog/brand-diagnostic-tool',       file: 'blog/brand-diagnostic-tool.html',       priority: '0.8', changefreq: 'monthly', tier: 'editorial' },
 
   // Tier 4. Phase 01, Discovery.
   { path: '/the-profiles.html',            file: 'the-profiles.html',                 priority: '0.7', changefreq: 'monthly', tier: 'tool' },
@@ -52,9 +55,17 @@ export const URLS = [
   { path: '/voice-guide-agent.html',       file: 'voice-guide-agent.html',            priority: '0.6', changefreq: 'monthly', tier: 'tool' },
 
   // Tier 4. Phase 04, Content.
+  { path: '/content-bridge.html',          file: 'content-bridge.html',               priority: '0.6', changefreq: 'monthly', tier: 'tool' },
+  { path: '/content-repurposing-engine.html', file: 'content-repurposing-engine.html', priority: '0.6', changefreq: 'monthly', tier: 'tool' },
+  { path: '/content-scheduler.html',       file: 'content-scheduler.html',            priority: '0.6', changefreq: 'monthly', tier: 'tool' },
+  { path: '/newsletter-architecture-agent.html', file: 'newsletter-architecture-agent.html', priority: '0.6', changefreq: 'monthly', tier: 'tool' },
+  { path: '/instagram-seed-agent.html',    file: 'instagram-seed-agent.html',         priority: '0.6', changefreq: 'monthly', tier: 'tool' },
+  { path: '/linkedin-strategy-agent.html', file: 'linkedin-strategy-agent.html',      priority: '0.6', changefreq: 'monthly', tier: 'tool' },
+  { path: '/youtube-strategy-agent.html',  file: 'youtube-strategy-agent.html',       priority: '0.6', changefreq: 'monthly', tier: 'tool' },
+  { path: '/war-room.html',                file: 'war-room.html',                     priority: '0.6', changefreq: 'monthly', tier: 'tool' },
 
   // Tier 4. Phase 05, Execution.
-  { path: '/predictive-panel..html',       file: 'predictive-panel..html',            priority: '0.6', changefreq: 'monthly', tier: 'tool' },
+  { path: '/predictive-panel.html',        file: 'predictive-panel..html',            priority: '0.6', changefreq: 'monthly', tier: 'tool' },
 
   // Tier 4. Phase 06, Intelligence.
   { path: '/brand-performance-dashboard.html',  file: 'brand-performance-dashboard.html',  priority: '0.6', changefreq: 'monthly', tier: 'tool' },
