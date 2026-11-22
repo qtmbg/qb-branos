@@ -62,7 +62,9 @@
     if (q) { var l = q[1].toLowerCase(); save(l); return l; }
     var s = readSaved();
     if (s) return s;
-    return (navigator.language || '').slice(0, 2).toLowerCase() === 'fr' ? 'fr' : 'en';
+    // English by default, whatever the browser says (decision of 2026-11-13).
+    // French stays one tap away in the switch, and a saved choice still wins.
+    return 'en';
   }
   var lang = pick();
 
