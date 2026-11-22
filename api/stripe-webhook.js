@@ -26,6 +26,15 @@
 //   3. Events: checkout.session.completed, customer.subscription.created,
 //              customer.subscription.updated, customer.subscription.deleted
 //   4. Copy the signing secret into STRIPE_WEBHOOK_SECRET on Vercel.
+//
+// BRAND MRI: a fourth case rides on checkout.session.completed. The six MRI
+// payment links are one-time payments that carry brand_mri_tier metadata.
+// Such a session is ours: it is recorded in the MRI ledger, the practice
+// inbox is told of the sale and the buyer receives their access link. The
+// work lives in api/_lib/mri.js (handleMriSale) and never throws.
+
+import { json } from './_lib/auth.js';
+import { handleMriSale, mriEnv } from './_lib/mri.js';
 
 export const config = { runtime: 'edge' };
 
@@ -63,6 +72,11 @@ async function resolveQbPrice(event, stripeKey) {
       // the Stripe account is shared with other products and their
       // payment sessions must still be dropped.
       if (obj.mode === 'payment') {
+        // Brand MRI. Recognised the same way as the Platform: by metadata
+        // this codebase set on its own payment links, never by mode alone.
+        if (obj.metadata?.brand_mri_tier) {
+          return { qb: true, mri: true, priceId: null };
+        }
         if (obj.metadata?.product !== 'platform') {
           return { qb: false, reason: 'non_qb_payment_session' };
         }
@@ -322,6 +336,16 @@ export default async function handler(req) {
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
+        // Brand MRI sale. Ledger row, sale email to the practice inbox,
+        // access email to the buyer. 200 whatever happens inside: a retry
+        // cannot repair a failed email, and the return page records the
+        // sale a second time through /api/mri-verify.
+        if (gate.mri) {
+          const sale = await handleMriSale(obj, mriEnv());
+          console.log('[webhook] brand mri sale', obj.id, JSON.stringify(sale));
+          return json(200, { received: true, handled: sale.ok, product: 'brand_mri' });
+        }
+
         // Recut Phase 5 · the Platform purchase. One row per session, and
         // the unique index on stripe_session_id is what makes a Stripe
         // retry a no-op rather than a second entitlement.
